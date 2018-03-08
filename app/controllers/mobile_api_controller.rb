@@ -28,7 +28,6 @@ class MobileApiController < ApplicationController
     accounts.count > 1 ? true : false
   end
 
-  # TODO : rework this
   def load_organization
     @organization = @user.organization
   end

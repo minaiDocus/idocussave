@@ -13,8 +13,6 @@ class Member < ActiveRecord::Base
   has_and_belongs_to_many :groups
   has_many :grouped_customers, through: :groups, source: :customers
 
-  # TODO2 : maybe attach remote_files ?
-
   validates_inclusion_of :role, in: ROLES
   validates :code, presence: true, length: { within: 3..15 }
   validate :uniqueness_of_code

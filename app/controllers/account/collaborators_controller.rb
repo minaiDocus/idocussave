@@ -51,12 +51,14 @@ class Account::CollaboratorsController < Account::OrganizationController
   def destroy
     if @member.user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-    else
+    elsif @user.leader? || @member.collaborator?
       if DestroyCollaboratorService.new(@member.user).execute
         flash[:success] = 'Supprimé avec succès.'
       else
         flash[:error] = 'Impossible de supprimer.'
       end
+    else
+      flash[:error] = 'Impossible de supprimer.'
     end
 
     redirect_to account_organization_collaborators_path(@organization)
@@ -133,7 +135,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   private
 
   def verify_rights
-    if @user.leader? || @member.manage_collaborators
+    if @user.leader? || @user.manage_collaborators
       if action_name.in?(%w(new create destroy edit update)) && !@organization.is_active
         flash[:error] = t('authorization.unessessary_rights')
         redirect_to account_organization_path(@organization)

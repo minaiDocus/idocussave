@@ -5,6 +5,7 @@ User.transaction do
   User.prescribers.each do |u|
     m = Member.find_by user_id: u.id, organization_id: u.organization_id
     next if m
+    next if u.organization.nil?
 
     if u.organization.leader_id == u.id || u.is_admin
       role = Member::ADMIN
@@ -31,7 +32,9 @@ User.transaction do
 
     print '.'
   end
-end
+end; nil
+
+# Problems : "MVN%#NBT"
 
 # TODO : create membership to all 3 organizations for Extentis
 
@@ -39,6 +42,7 @@ puts 'Reassign group membership from collaborator to member'
 Group.all.each do |g|
   g.users.prescribers.each do |u|
     m = Member.find_by user_id: u.id, organization_id: g.organization_id
+    next unless m
     next if m.groups.include?(g)
     m.groups << g
     m.save
@@ -46,7 +50,7 @@ Group.all.each do |g|
   end
 
   # cleanup old relations
-end
+end; nil
 
 puts 'Migrate parent/child relationship'
 User.customers.active.where(manager_id: nil).each do |u|
@@ -56,6 +60,6 @@ User.customers.active.where(manager_id: nil).each do |u|
   next unless m
   u.update(manager: m)
   print '.'
-end
+end; nil
 
 puts 'Done'

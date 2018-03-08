@@ -28,7 +28,7 @@
                   %td= group.customers.count
                   %td.last
                     - if @organization.is_active
-                      - if @user.leader? || @member.manage_groups
+                      - if @user.leader? || @user.manage_groups
                         = icon_link_to edit_account_organization_group_path(@organization, group), { icon: 'edit' }, { class: 'btn btn-mini' }
                       - if @user.leader?
                         - if group.is_dropbox_authorized

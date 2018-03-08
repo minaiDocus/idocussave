@@ -28,15 +28,15 @@ class Account::OrganizationController < ApplicationController
     if @user.admin?
       @organization = ::Organization.find organization_id
     elsif organization_id.present?
-      @member = Member.find_by!(user_id: @user.id, organization_id: organization_id.to_i)
-      @organization = @member.organization
+      @membership = Member.find_by!(user_id: @user.id, organization_id: organization_id.to_i)
+      @organization = @membership.organization
     else
       redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end
 
   def apply_membership
-    @user.with_scope @member, @organization
+    @user.with_scope @membership, @organization
   end
 
   def customers

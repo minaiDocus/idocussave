@@ -14,13 +14,13 @@
         %li{ class: (inside_organization? ? 'active' : '') }
           = link_to 'Mon organisation', path
     - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
-      %li.dropdown{ class: (inside_organization? ? 'active' : '') }
+      %li.dropdown
         %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
           Mon organisation
           %b.caret
         %ul.dropdown-menu
           - @user.organizations.each do |organization|
-            %li
+            %li{ class: ((inside_organization? && organization == @organization) ? 'active' : '') }
               - if organization.is_suspended
                 = link_to account_organization_path(organization, tab: 'payments') do
                   = organization.name
@@ -38,7 +38,8 @@
             %b.caret
           %ul.dropdown-menu
             - @user.organizations.each do |organization|
-              %li= link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id)
+              %li{ class: ('active' if controller_name == 'reporting' && organization.id.to_s == params[:organization_id]) }
+                = link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id)
       - else
         %li{ class: ('active' if controller_name == 'reporting') }
           = link_to 'Mon reporting', account_reporting_path
