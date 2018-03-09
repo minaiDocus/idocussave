@@ -31,7 +31,13 @@ class UploadedDocument
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
     if @errors.empty?
-      @errors << [:file_is_corrupted_or_protected, nil]                  unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+      begin
+        unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+          @errors << [:file_is_corrupted_or_protected, nil]
+        end
+      rescue Errno::ENOENT
+        @errors << [:file_is_corrupted_or_protected, nil]
+      end
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo]         unless valid_file_size?
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:already_exist, nil]                                   unless unique?
