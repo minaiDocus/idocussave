@@ -7,7 +7,7 @@ class Account::NotificationsController < Account::AccountController
   end
 
   def latest
-    if @user.organizations_suspended?
+    if organizations_suspended?
       render nothing: true
     else
       render partial: 'layouts/notifications'

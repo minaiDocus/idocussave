@@ -9,7 +9,7 @@
           = render partial: 'layouts/account/me/navigation'
 
     .span9
-      - unless @user.organizations_suspended? && @user.active?
+      - unless organizations_suspended? && @user.active?
         #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
           .span12
             .well.change_pass_parent
@@ -96,7 +96,7 @@
 
       - if @user.active?
         - if @user.organization.is_active
-          - unless @user.organizations_suspended?
+          - unless organizations_suspended?
             #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
               .span12.well
                 %h3.aligncenter Stockage externe des documents

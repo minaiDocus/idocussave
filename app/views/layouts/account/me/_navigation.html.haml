@@ -1,6 +1,6 @@
 .well.sidebar-nav
   %ul.nav.nav-list.dlink
-    - unless @user.organizations_suspended? && @user.active?
+    - unless organizations_suspended? && @user.active?
       %li{ class: ('active' if @active_panel == 'change_password') }
         = link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
       - if @user.active? && !@user.collaborator? && @user.organization.is_active
@@ -11,7 +11,7 @@
             = link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
     - if @user.active?
       - if @user.organization.is_active
-        - unless @user.organizations_suspended?
+        - unless organizations_suspended?
           %li{ class: ('active' if @active_panel == 'efs_management') }
             = link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'
           %li{ class: ('active' if @active_panel == 'subscription_options') }
@@ -26,6 +26,6 @@
         %li{ class: ('active' if @active_panel == 'active_organization') }
           = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
       - if @user.collaborator? || @user.invoices.count > 0
-        - unless @user.organizations_suspended?
+        - unless organizations_suspended?
           %li{ class: ('active' if @active_panel == 'invoices') }
             = link_to 'Factures', '#invoices', class: 'do-show'

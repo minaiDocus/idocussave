@@ -200,10 +200,19 @@ class ApplicationController < ActionController::Base
     yield
   end
 
+  def organizations_suspended?
+    if @user.class == Collaborator
+      @user&.organizations_suspended?
+    else
+      @user&.organization&.is_suspended
+    end
+  end
+  helper_method :organizations_suspended?
+
   def verify_suspension
     if controller_name == 'suspended'
-      redirect_to root_path unless @user&.organizations_suspended? && @user.active?
-    elsif @user&.organizations_suspended? && @user.active?
+      redirect_to root_path unless organizations_suspended? && @user.active?
+    elsif organizations_suspended? && @user.active?
       unless ((controller_name == 'organizations' && action_name == 'show') || controller_name == 'payments') && @user.leader?
         redirect_to account_suspended_path
       end
