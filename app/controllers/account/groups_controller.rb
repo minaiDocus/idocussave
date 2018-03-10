@@ -94,13 +94,11 @@ class Account::GroupsController < Account::OrganizationController
 
   def safe_group_params
     if @user.leader?
-      # TODO2 : Sanitize member_ids
       safe_ids = @organization.members.map(&:id).map(&:to_s)
       ids = params[:group][:member_ids]
       ids.delete_if { |id| !id.in?(safe_ids) }
       params[:group][:member_ids] = ids
     end
-    # TODO2 : Sanitize customer_ids
     safe_ids = @organization.customers.map(&:id).map(&:to_s)
     ids = params[:group][:customer_ids]
     ids.delete_if { |id| !id.in?(safe_ids) }

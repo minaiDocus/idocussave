@@ -156,7 +156,6 @@ class Account::CollaboratorsController < Account::OrganizationController
     user_attributes = [:id, :company, :first_name, :last_name]
     user_attributes << :email if action_name.in?(%w(new create)) || (not @member.user.admin?)
     attributes << { user_attributes: user_attributes }
-    # TODO2 : sanitize user id
     params.require(:member).permit(*attributes)
   end
 
