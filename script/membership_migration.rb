@@ -26,17 +26,19 @@ User.transaction do
       manage_customer_journals: u.organization_rights_is_customer_journals_management_authorized
     )
 
-    # empties organization_id for collaborator
-    # removes code from user
+    # Empties organization_id and code from collaborator since they will not be used anymore
     # user.update(code: nil, organization_id: nil) if member.persisted?
 
     print '.'
   end
 end; nil
 
-# Problems : "MVN%#NBT"
+# Problem : "MVN%#NBT" has an invalid character in his/her code
 
-# TODO : create membership to all 3 organizations for Extentis
+class GroupsUsers < ActiveRecord::Base
+  belongs_to :group
+  belongs_to :user
+end
 
 puts 'Reassign group membership from collaborator to member'
 Group.all.each do |g|
@@ -49,7 +51,8 @@ Group.all.each do |g|
     print '.'
   end
 
-  # cleanup old relations
+  # Cleanup old relations
+  # GroupsUsers.joins(:user).where(users: { is_prescriber: true }).delete_all
 end; nil
 
 puts 'Migrate parent/child relationship'
