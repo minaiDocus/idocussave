@@ -9,9 +9,9 @@ class Account::InvoicesController < Account::AccountController
 
     if owner && (@user == owner || owner.organization.admins.include?(@user) || @user.customers.include?(owner))
       authorized = true
-    elsif organization && @user.my_organization == organization
+    elsif organization && @user.class == Collaborator && organization.admins.include?(@user.user)
       authorized = true
-    elsif @user.is_admin
+    elsif @user.admin?
       authorized = true
     end
 

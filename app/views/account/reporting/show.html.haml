@@ -264,7 +264,7 @@
                     %span{ :class => "hide oversized value_7" }
                       #{month[:oversized]}
                     %span{ :class => "hide price value_8" }
-                      - if @user.leader? && @user.scoped?
+                      - if @user.leader? && (@user.has_one_organization? || @user.scoped?)
                         - time = Time.local(@year,(index+1),15,0,0)
                         - price = price_of_period_by_time(@user.organization.periods,time)
                         - month[:price_in_cents] = month[:price_in_cents] + price
@@ -280,7 +280,7 @@
                   %br
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
-                    - if @user.leader? && @user.scoped? && @user.organization.invoices.count > 0
+                    - if @user.leader? && (@user.has_one_organization? || @user.scoped?) && @user.organization.invoices.count > 0
                       - start_time = Time.local(@year, index+1, 1) + 1.month
                       - end_time = start_time.end_of_month
 

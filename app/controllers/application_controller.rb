@@ -209,6 +209,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :organizations_suspended?
 
+  def true_user
+    @user.class == Collaborator ? @user.user : @user
+  end
+  helper_method :true_user
+
   def verify_suspension
     if controller_name == 'suspended'
       redirect_to root_path unless organizations_suspended? && @user.active?

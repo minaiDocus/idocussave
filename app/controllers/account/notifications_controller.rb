@@ -16,7 +16,7 @@ class Account::NotificationsController < Account::AccountController
 
   def link_through
     notification = Notification.find params[:id]
-    notification.update is_read: true if notification.user == @user
+    notification.update is_read: true if notification.user == true_user
     redirect_to notification.url
   end
 end
