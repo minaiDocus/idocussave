@@ -44,7 +44,7 @@
                 %span{ :style => "position:relative;top:3px;" }
                   Légende
             .line2
-              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year)
+              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year, organization_id: params[:organization_id])
 
   - annual_summary = []
   - 12.times do
@@ -56,9 +56,9 @@
         %thead
           %tr
             %th{ :style => "width:15%;" }
-              != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+              = link_to((@year - 1), account_reporting_path(year: (@year - 1), organization_id: params[:organization_id]))
               %span.margin1left.margin1right #{@year}
-              != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+              = link_to((@year + 1), account_reporting_path(year: (@year + 1), organization_id: params[:organization_id]))
             - months.each do |month|
               %th.month
                 #{month}
@@ -293,9 +293,9 @@
           %tfooter
             %tr
               %th{ :style => "width:15%;" }
-                != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+                = link_to((@year - 1), account_reporting_path(year: (@year - 1), organization_id: params[:organization_id]))
                 %span.margin1left.margin1right #{@year}
-                != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+                = link_to((@year + 1), account_reporting_path(year: (@year + 1), organization_id: params[:organization_id]))
               - months.each do |month|
                 %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                   #{month}

@@ -119,6 +119,9 @@ class Account::CollaboratorsController < Account::OrganizationController
               redirect_to account_organization_collaborators_path(@organization)
             end
             return
+          elsif @organization.organization_group.nil? && member.user.memberships.count == 1
+            redirect_to account_organization_collaborator_path(@organization, @member)
+            return
           end
         else
           flash[:notice] = 'Ne peut supprimer le seul accès de ce collaborateur.'
