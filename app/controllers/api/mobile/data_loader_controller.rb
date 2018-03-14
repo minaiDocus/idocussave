@@ -42,11 +42,12 @@ class Api::Mobile::DataLoaderController < MobileApiController
         order_by = 'created_at'
       end
 
-      paper_processes = PaperProcess.search_for_collection_with_options_and_user(
-        PaperProcess.where(user_id: accounts),
-        search_terms(filters),
-        accounts
-      ).order(order_by => direction).includes(:user).page(params[:page]).per(20)
+      paper_processes = PaperProcess.where(user_id: accounts).
+        search(search_terms(filters)).
+        includes(:user).
+        order(order_by => direction).
+        page(params[:page]).
+        per(20)
 
       data_paper_processes = paper_processes.collect do |paper_process|
           company = customer_code = '-'
