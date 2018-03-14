@@ -24,6 +24,14 @@ class MobileApiController < ApplicationController
 
   protected
 
+  def load_user_and_role(name = :@user)
+    super do |collaborator|
+      if @user.organization.present?
+        collaborator.with_organization_scope(@user.organization)
+      end
+    end
+  end
+
   def has_multiple_accounts?
     accounts.count > 1 ? true : false
   end
@@ -33,6 +41,6 @@ class MobileApiController < ApplicationController
   end
 
   def customers
-    @customers ||= @user.collaborator? ? @user.customers : [@user]
+    @customers ||= (@user.collaborator? || @user.admin?) ? @user.customers : [@user]
   end
 end
