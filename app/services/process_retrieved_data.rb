@@ -43,11 +43,12 @@ class ProcessRetrievedData
                     bank_account.destroy
                     bank_account = nil
                   else
-                    bank_account.retriever = retriever
-                    bank_account.api_id    = account['id']
-                    bank_account.api_name  = 'budgea'
-                    bank_account.name      = account['name']
-                    bank_account.type_name = account['type']
+                    bank_account.retriever         = retriever
+                    bank_account.api_id            = account['id']
+                    bank_account.api_name          = 'budgea'
+                    bank_account.name              = account['name']
+                    bank_account.type_name         = account['type']
+                    bank_account.original_currency = account['currency']
                     bank_account.save if bank_account.changed?
                   end
                 else
@@ -56,13 +57,14 @@ class ProcessRetrievedData
                   else
                     BankAccount.new
                   end
-                  bank_account.user      = user
-                  bank_account.retriever = retriever
-                  bank_account.api_id    = account['id']
-                  bank_account.bank_name = retriever.service_name
-                  bank_account.name      = account['name']
-                  bank_account.number    = account['number']
-                  bank_account.type_name = account['type']
+                  bank_account.user              = user
+                  bank_account.retriever         = retriever
+                  bank_account.api_id            = account['id']
+                  bank_account.bank_name         = retriever.service_name
+                  bank_account.name              = account['name']
+                  bank_account.number            = account['number']
+                  bank_account.type_name         = account['type']
+                  bank_account.original_currency = account['currency']
                   bank_account.save
                 end
 

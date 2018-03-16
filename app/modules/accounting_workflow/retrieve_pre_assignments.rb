@@ -128,6 +128,7 @@ class AccountingWorkflow::RetrievePreAssignments
     preseizure.piece_number     = data.at_css('piece_number').try(:content)
     preseizure.amount           = to_float(data.at_css('amount').try(:content))
     preseizure.currency         = data.at_css('currency').try(:content)
+    preseizure.unit             = data.at_css('unit').try(:content)
     preseizure.conversion_rate  = to_float(data.at_css('conversion_rate').try(:content))
     preseizure.third_party      = data.at_css('third_party').try(:content)
     preseizure.date             = data.at_css('date').try(:content).try(:to_date)

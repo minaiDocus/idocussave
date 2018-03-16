@@ -2,6 +2,8 @@
 class BankAccount < ActiveRecord::Base
   attr_accessor :is_for_pre_assignment
 
+  serialize :original_currency, Hash
+
   belongs_to :user
   belongs_to :retriever
   has_many :operations, dependent: :nullify
@@ -12,11 +14,12 @@ class BankAccount < ActiveRecord::Base
   validate :uniqueness_of_number_and_name
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |e| e.is_for_pre_assignment }
+  validates_presence_of :currency, if: Proc.new { |e| e.is_for_pre_assignment }
   validates_length_of :journal, within: 2..10, if: Proc.new { |e| e.is_for_pre_assignment }
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |e| e.is_for_pre_assignment }
 
   scope :used,           -> { where(is_used: true) }
-  scope :configured,     -> { where.not(journal:[nil, ''], accounting_number: [nil, '']) }
+  scope :configured,     -> { where.not(journal: [nil, ''], accounting_number: [nil, '']) }
   scope :not_configured, -> { where(journal: [nil, ''], accounting_number: [nil, '']) }
 
   def configured?

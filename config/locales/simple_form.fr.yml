@@ -50,6 +50,7 @@ fr:
         number: Numéro de compte
         journal: Code journal
         foreign_journal: Journal comptable de l’outil comptable
+        currency: Devise
         accounting_number: Compte de trésorerie
         temporary_account: Compte d’attente
         start_date: Date limite de livraison
@@ -124,6 +125,7 @@ fr:
         entry_type_1: Notes de frais
         entry_type_2: Achat
         entry_type_3: Vente
+        currency: Devise
         meta_account_number: Compte de tiers
         meta_charge_account: Compte de charge / produit
         vat_account: Compte de TVA 20% appliqué à tous les documents dans le journal comptable iDocus

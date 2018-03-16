@@ -30,8 +30,12 @@ NotifyPaperQuotaReachedWorker:
 NotifyPublishedDocumentDailyWorker:
   queue: default
   cron: '0 8 * * *'
+ClearCurrencyRateWorker:
+  queue: default
+  cron: '0 1 1 */6 *'
 
 ## Budgea retrievers workers
+
 ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'

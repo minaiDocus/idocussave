@@ -34,6 +34,13 @@ class ProcessOperation
               preseizure.operation_label = operation.label
             end
             preseizure.category_id     = operation.category_id
+
+            if operation.need_conversion?
+              preseizure.amount           = operation.amount.abs
+              preseizure.currency         = operation.bank_account.original_currency["id"]
+              preseizure.unit             = operation.bank_account.currency
+              preseizure.conversion_rate  = CurrencyRate.get_operation_exchange_rate operation
+            end
             preseizure.save
 
             ### 1 ###
@@ -52,7 +59,7 @@ class ProcessOperation
               entry.type     = Pack::Report::Preseizure::Entry::DEBIT
             end
             entry.number     = 1
-            entry.amount     = operation.amount.abs
+            entry.amount     = CurrencyRateService.convert_operation_amount operation
             entry.save
 
             ### 2 ###
@@ -71,7 +78,7 @@ class ProcessOperation
               entry.type     = Pack::Report::Preseizure::Entry::CREDIT
             end
             entry.number     = 1
-            entry.amount     = operation.amount.abs
+            entry.amount     = CurrencyRateService.convert_operation_amount operation
             entry.save
 
             preseizures << preseizure

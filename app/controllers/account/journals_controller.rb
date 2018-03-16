@@ -195,6 +195,7 @@ class Account::JournalsController < Account::OrganizationController
       attrs += [
         :domain,
         :entry_type,
+        :currency,
         :account_type,
         :meta_account_number,
         :meta_charge_account,

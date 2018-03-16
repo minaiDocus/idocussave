@@ -2,6 +2,10 @@ object @preseizure_account
 
 attributes :type, :number, :lettering
 
+node :unit do |preseizure_account|
+  preseizure_account.preseizure.unit.to_s
+end
+
 node :id do |preseizure_account|
   preseizure_account.id.to_s
 end

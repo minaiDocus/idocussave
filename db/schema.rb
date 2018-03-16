@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.string   "description",                    limit: 255,   default: "",    null: false
     t.integer  "position",                       limit: 4,     default: 0,     null: false
     t.integer  "entry_type",                     limit: 4,     default: 0,     null: false
+    t.string   "currency",                       limit: 5,     default: "EUR"
     t.string   "domain",                         limit: 255,   default: "",    null: false
     t.string   "account_number",                 limit: 255
     t.string   "default_account_number",         limit: 255
@@ -125,6 +126,7 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.datetime "last_checked_at"
     t.integer  "user_id",          limit: 4
     t.string   "user_id_mongo_id", limit: 255
+    t.boolean  "is_updating",                  default: false
   end
 
   add_index "accounting_plans", ["mongo_id"], name: "index_accounting_plans_on_mongo_id", using: :btree
@@ -167,19 +169,25 @@ ActiveRecord::Schema.define(version: 20180302181749) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
-    t.string "a1_name",  limit: 255
-    t.string "a1_axis1", limit: 255
-    t.string "a1_axis2", limit: 255
-    t.string "a1_axis3", limit: 255
-    t.string "a2_name",  limit: 255
-    t.string "a2_axis1", limit: 255
-    t.string "a2_axis2", limit: 255
-    t.string "a2_axis3", limit: 255
-    t.string "a3_name",  limit: 255
-    t.string "a3_axis1", limit: 255
-    t.string "a3_axis2", limit: 255
-    t.string "a3_axis3", limit: 255
+    t.integer "temp_document_id", limit: 4
+    t.integer "pack_piece_id",    limit: 4
+    t.string  "analytic_id",      limit: 255
+    t.string  "a1_axis1",         limit: 255
+    t.string  "a1_axis2",         limit: 255
+    t.string  "a1_axis3",         limit: 255
+    t.string  "a1_name",          limit: 45
+    t.string  "a2_name",          limit: 255
+    t.string  "a2_axis1",         limit: 255
+    t.string  "a2_axis2",         limit: 255
+    t.string  "a2_axis3",         limit: 255
+    t.string  "a3_name",          limit: 255
+    t.string  "a3_axis1",         limit: 255
+    t.string  "a3_axis2",         limit: 255
+    t.string  "a3_axis3",         limit: 255
   end
+
+  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
+  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
@@ -212,17 +220,19 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.string   "name",                  limit: 255
     t.string   "number",                limit: 255
     t.string   "journal",               limit: 255
+    t.string   "currency",              limit: 5,     default: "EUR"
+    t.text     "original_currency",     limit: 65535
     t.string   "foreign_journal",       limit: 255
-    t.string   "accounting_number",     limit: 255, default: "512000", null: false
-    t.string   "temporary_account",     limit: 255, default: "471000", null: false
+    t.string   "accounting_number",     limit: 255,   default: "512000", null: false
+    t.string   "temporary_account",     limit: 255,   default: "471000", null: false
     t.date     "start_date"
     t.integer  "user_id",               limit: 4
     t.string   "user_id_mongo_id",      limit: 255
     t.integer  "retriever_id",          limit: 4
     t.string   "retriever_id_mongo_id", limit: 255
     t.string   "api_id",                limit: 255
-    t.string   "api_name",              limit: 255, default: "budgea"
-    t.boolean  "is_used",                           default: false
+    t.string   "api_name",              limit: 255,   default: "budgea"
+    t.boolean  "is_used",                             default: false
     t.string   "type_name",             limit: 255
   end
 
@@ -320,6 +330,19 @@ ActiveRecord::Schema.define(version: 20180302181749) do
   add_index "csv_descriptors", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
   add_index "csv_descriptors", ["user_id"], name: "user_id", using: :btree
   add_index "csv_descriptors", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
+  create_table "currency_rates", force: :cascade do |t|
+    t.datetime "date_rate"
+    t.string   "exchange_from",         limit: 5
+    t.string   "exchange_to",           limit: 5
+    t.string   "currency_name",         limit: 255
+    t.float    "exchange_rate",         limit: 24
+    t.float    "reverse_exchange_rate", limit: 24
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "currency_rates", ["date_rate", "exchange_from", "exchange_to"], name: "index_exchange_name_date", using: :btree
 
   create_table "dba_sequences", force: :cascade do |t|
     t.string   "mongo_id",     limit: 255
@@ -1239,10 +1262,8 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.string   "user_id_mongo_id",           limit: 255
     t.integer  "pack_id",                    limit: 4
     t.string   "pack_id_mongo_id",           limit: 255
-    t.integer  "analytic_reference_id",      limit: 4
   end
 
-  add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
   add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
   add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
@@ -1354,6 +1375,7 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.string   "piece_number",                   limit: 255
     t.decimal  "amount",                                            precision: 11, scale: 2
     t.string   "currency",                       limit: 255
+    t.string   "unit",                           limit: 5,                                   default: "EUR"
     t.float    "conversion_rate",                limit: 24
     t.string   "third_party",                    limit: 255
     t.integer  "category_id",                    limit: 4
@@ -1978,6 +2000,7 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.string   "user_id_mongo_id",                    limit: 255
     t.integer  "organization_id",                     limit: 4
     t.string   "organization_id_mongo_id",            limit: 255
+    t.boolean  "is_ocr_active",                                   default: true,  null: false
   end
 
   add_index "subscriptions", ["mongo_id"], name: "index_subscriptions_on_mongo_id", using: :btree
@@ -2065,10 +2088,8 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id",                   limit: 4
     t.integer  "ibizabox_folder_id",             limit: 4
-    t.integer  "analytic_reference_id",          limit: 4
   end
 
-  add_index "temp_documents", ["analytic_reference_id"], name: "index_temp_documents_on_analytic_reference_id", using: :btree
   add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
   add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
   add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree
@@ -2137,6 +2158,7 @@ ActiveRecord::Schema.define(version: 20180302181749) do
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
+    t.boolean  "is_ocr_authorized",                           default: false,        null: false
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end

@@ -72,7 +72,6 @@ class Pack < ActiveRecord::Base
     self.tags = original_document.tags
   end
 
-
   def set_pages_count
     self.scanned_pages_count = pages.scanned.size
 
@@ -171,7 +170,6 @@ class Pack < ActiveRecord::Base
   def archive_file_path
     File.join([Rails.root, 'files', Rails.env, 'archives', archive_name])
   end
-
 
   def self.find_by_name(name)
     where(name: name).first
