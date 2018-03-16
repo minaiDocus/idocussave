@@ -10,15 +10,17 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
   def ping
     version = params[:version] # app version
     platform = params[:platform] # android or ios
+    build_code = params[:build_code] || 0 # build code released
+
     code = 200 # neutral code
     message = 'Ping success'
 
     #(code 500 for automatically logout app mobile)
       #### EXAMPLE ####
-      # if (version.to_f <= 1.08 && platform == "android")
-      #   code = 500 
-      #   message = "Vous n'avez pas l'autorisation nécessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
-      # end
+      if (build_code.to_i < 1 || build_code.nil?)
+        code = 500 
+        message = "Le service iDocus actuel nécessite une version plus récente de l'application; Veuillez mettre à jour votre application iDocus s'il vous plaît. Merci."
+      end
     #(code 500 for automatically logout app mobile)
 
     render json: { success: true, message: message, code: code }, status: 200

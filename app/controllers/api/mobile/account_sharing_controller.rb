@@ -65,7 +65,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
       unless @user.leader?
         users = users.select do |user|
-          user.is_guest || @user.customers.include?(user)
+          user.is_guest || @organization.customers.include?(user)
         end
       end
 
@@ -79,7 +79,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     tags = []
 
     if params[:q].present?
-      @user.customers.active.where(
+      users = @organization.customers.active.where(
         "code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
         t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|

@@ -1,6 +1,11 @@
 class Api::Mobile::DataLoaderController < MobileApiController
   respond_to :json
 
+  def load_user_organizations
+    organizations = (@user.collaborator?)? @user.organizations : [@user.organization]
+    render json: { organizations: organizations }, status: 200
+  end
+
   def load_customers
     render json: { customers: accounts }, status: 200
   end

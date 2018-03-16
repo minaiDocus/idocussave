@@ -397,6 +397,7 @@ Idocus::Application.routes.draw do
       resources :data_loader do
         collection do
           post :load_customers
+          post :load_user_organizations
           post :load_packs
           post :load_documents_processed
           post :load_documents_processing

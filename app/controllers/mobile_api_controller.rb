@@ -36,14 +36,16 @@ class MobileApiController < ApplicationController
   def load_organization
     if @user.admin?
       @organization = ::Organization.find organization_id
-    else
+    elsif @user.collaborator?
       @membership = Member.find_by!(user_id: @user.id, organization_id: organization_id.to_i)
       @organization = @membership.organization
+    else
+      @organization = @user.organization
     end
   end
 
   def apply_membership
-    @user.with_scope @membership, @organization
+    @user.with_scope @membership, @organization if @user.respond_to?(:with_scope)
   end
 
   def customers
