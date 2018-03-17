@@ -11,6 +11,8 @@ database = case Rails.env
     2
   when 'test'
     3
+  when 'sandbox'
+    4
   end
 
 redis = { url: "redis://localhost:6379/#{database}" }
