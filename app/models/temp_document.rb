@@ -22,7 +22,7 @@ class TempDocument < ActiveRecord::Base
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
-                              path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/:filename',
+                              path: ':rails_root/:new_or_old_temp_document_folder/:rails_env/:class/:mongo_id_or_id/:filename',
                               url: '/account/documents/processing/:id/download/:style'
   do_not_validate_attachment_file_type :content
 
@@ -31,6 +31,17 @@ class TempDocument < ActiveRecord::Base
 
   Paperclip.interpolates :mongo_id_or_id do |attachment, style|
     attachment.instance.mongo_id || attachment.instance.id
+  end
+
+  Paperclip.interpolates :new_or_old_temp_document_folder do |attachment, style|
+    cid = attachment.instance.mongo_id || attachment.instance.id
+    old_path = Rails.root.join('files_old', Rails.env, 'temp_documents', cid.to_s, attachment.instance.content_file_name)
+    new_path = Rails.root.join('files', Rails.env, 'temp_documents', cid.to_s, attachment.instance.content_file_name)
+    if File.exist?(old_path) && !File.exist?(new_path)
+      'files_old'
+    else
+      'files'
+    end
   end
 
   before_content_post_process :is_thumb_generated
