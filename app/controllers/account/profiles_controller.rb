@@ -69,7 +69,8 @@ class Account::ProfilesController < Account::AccountController
         :dropbox_invalid_access_token,
         :dropbox_insufficient_space,
         :ftp_auth_failure,
-        :detected_preseizure_duplication
+        :detected_preseizure_duplication,
+        :new_scanned_documents
       ]
     )
   end

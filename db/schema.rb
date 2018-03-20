@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180216075047) do
+ActiveRecord::Schema.define(version: 20180319204124) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -965,6 +965,7 @@ ActiveRecord::Schema.define(version: 20180216075047) do
     t.boolean  "detected_preseizure_duplication",                   default: false
     t.integer  "detected_preseizure_duplication_count", limit: 4,   default: 0
     t.integer  "unblocked_preseizure_count",            limit: 4,   default: 0
+    t.boolean  "new_scanned_documents",                             default: true
     t.datetime "created_at",                                                          null: false
     t.datetime "updated_at",                                                          null: false
     t.integer  "user_id",                               limit: 4

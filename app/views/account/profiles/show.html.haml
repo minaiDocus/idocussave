@@ -275,6 +275,8 @@
                         = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
                       - if @user.is_prescriber
                         = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
+                      - unless @user.is_prescriber
+                        = o.input :new_scanned_documents, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mes documents papier ont été reçu.", wrapper: :inline_checkbox
                       %hr
                       %h4.margin2left.margin1bottom Doublons de pré-affectation
                       = o.input :detected_preseizure_duplication, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des doublons de pré-affectation sont bloqués/débloqués.", wrapper: :inline_checkbox
