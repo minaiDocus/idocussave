@@ -1,6 +1,11 @@
 class Api::Mobile::DataLoaderController < MobileApiController
   respond_to :json
 
+  def load_user_organizations
+    organizations = (@user.collaborator?)? @user.organizations : [@user.organization]
+    render json: { organizations: organizations }, status: 200
+  end
+
   def load_customers
     render json: { customers: accounts }, status: 200
   end
@@ -21,7 +26,6 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
   def load_stats
     if verify_rights_stats
-      # If rights authorized
       filters = params[:paper_process_contains]
       if filters.present?
         filters[:created_at] = { :>= => filters[:created_at_start], :<= => filters[:created_at_end] }
@@ -42,11 +46,12 @@ class Api::Mobile::DataLoaderController < MobileApiController
         order_by = 'created_at'
       end
 
-      paper_processes = PaperProcess.search_for_collection_with_options_and_user(
-        PaperProcess.where(user_id: accounts),
-        search_terms(filters),
-        accounts
-      ).order(order_by => direction).includes(:user).page(params[:page]).per(20)
+      paper_processes = PaperProcess.where(user_id: accounts).
+        search(search_terms(filters)).
+        includes(:user).
+        order(order_by => direction).
+        page(params[:page]).
+        per(20)
 
       data_paper_processes = paper_processes.collect do |paper_process|
           company = customer_code = '-'
@@ -155,10 +160,9 @@ class Api::Mobile::DataLoaderController < MobileApiController
     temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
 
     loaded = temp_packs.map do |tmp_pack|
-      pack_id = Pack.find_by_name(tmp_pack.name).try(:id) || 0
       {
         id:          tmp_pack.id,
-        pack_id:     pack_id,
+        pack_id:     Pack.find_by_name(tmp_pack.name).try(:id) || 0,
         name:        tmp_pack.basename,
         created_at:  tmp_pack.created_at,
         updated_at:  tmp_pack.updated_at,

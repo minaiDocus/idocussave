@@ -2,7 +2,6 @@ class Api::Mobile::AccountSharingController < MobileApiController
   respond_to :json
 
   def load_shared_docs
-    per_page  = 20
     order_by  = params[:order][:order_by] == 'approval' ? 'is_approved' : 'created_at'
     direction = params[:order][:direction] ? 'asc' : 'desc'
 
@@ -11,7 +10,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
       search(search_terms(params[:account_sharing_contains])).
       order(order_by => direction).
       page(params[:page]).
-      per(per_page)
+      per(20)
 
     data_docs = account_sharings.map do |account_sharing|
       {
@@ -23,17 +22,10 @@ class Api::Mobile::AccountSharingController < MobileApiController
       }
     end
 
-    data = {
-      data_shared: data_docs,
-      nb_pages:    account_sharings.total_pages,
-      total:       account_sharings.total_count
-    }
-
-    render json: data, status: 200
+    render json: { data_shared: data_docs, nb_pages: account_sharings.total_pages, total: account_sharings.total_count }, status: 200
   end
 
   def load_shared_contacts
-    per_page  = 20
     direction = params[:order][:direction] ? 'asc' : 'desc'
     order_by  = params[:order][:order_by] if params[:order][:order_by].in?(%w(email company))
     order_by  ||= 'created_at'
@@ -42,27 +34,21 @@ class Api::Mobile::AccountSharingController < MobileApiController
       search(search_terms(params[:guest_collaborator_contains])).
       order(order_by => direction).
       page(params[:page]).
-      per(per_page)
+      per(20)
 
-    contacts = guest_collaborators.map do |contact|
-      {
-        id_idocus:    contact.id.to_s,
-        date:         contact.created_at,
-        email:        contact.email,
-        company:      contact.company,
-        first_name:   contact.first_name,
-        last_name:    contact.last_name,
-        account_size: contact.accounts.size.to_s
-      }
-    end
+    contacts = guest_collaborators.map do |data|
+        {
+          id_idocus:      data.id.to_s,
+          date:           data.created_at, 
+          email:          data.email,
+          company:        data.company,
+          first_name:     data.first_name,
+          last_name:      data.last_name,
+          account_size:   data.accounts.size.to_s
+        }
+      end
 
-    data = {
-      contacts: contacts,
-      nb_pages: guest_collaborators.total_pages,
-      total:    guest_collaborators.total_count
-    }
-
-    render json: data, status: 200
+    render json: { contacts: contacts, nb_pages: guest_collaborators.total_pages, total: guest_collaborators.total_count }, status: 200
   end
 
   def get_list_collaborators
@@ -79,7 +65,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
       unless @user.leader?
         users = users.select do |user|
-          user.is_guest || @user.customers.include?(user)
+          user.is_guest || @organization.customers.include?(user)
         end
       end
 
@@ -93,7 +79,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     tags = []
 
     if params[:q].present?
-      @user.customers.active.where(
+      users = @organization.customers.active.where(
         "code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
         t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
@@ -109,6 +95,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def add_shared_docs
     account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
+
     if account_sharing.persisted?
       render json: { message: 'Dossier partagé avec succès.' }, status: 200
     else
@@ -117,7 +104,8 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def add_shared_contacts
-     guest_collaborator = CreateContact.new(user_params, @organization).execute
+    guest_collaborator = CreateContact.new(user_params, @organization).execute
+
     if guest_collaborator.persisted?
       render json: { message: 'Créé avec succès.' }, status: 200
     else
@@ -128,6 +116,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def edit_shared_contacts
     guest_collaborator = @organization.guest_collaborators.find params[:id]
     guest_collaborator.update(edit_user_params)
+
     if guest_collaborator.save
       render json: { message: 'Modifié avec succès.' }, status: 200
     else
@@ -137,6 +126,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def accept_shared_docs
     account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
+
     if AcceptAccountSharingRequest.new(account_sharing).execute
       render json: { message: 'Le partage a été validé avec succès.' }, status: 200
     else
@@ -145,11 +135,9 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def delete_shared_docs
-    if params[:type] && params[:type] == 'customers'
-      account_sharing = AccountSharing.unscoped.
-        where(id: params[:id]).
-        where('account_id = :id OR collaborator_id = :id', id: @user.id).
-        first!
+    if(params[:type] && params[:type] == 'customers')
+      account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
+
       if DestroyAccountSharing.new(account_sharing, @user).execute
         render json: { message: 'Le partage a été supprimé avec succès.' }, status: 200
       else
@@ -157,6 +145,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
       end
     else
       account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
+
       if DestroyAccountSharing.new(account_sharing).execute
         render json: { message: 'Le partage a été supprimé avec succès.' }, status: 200
       else
@@ -168,6 +157,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def delete_shared_contacts
     guest_collaborator = @organization.guest_collaborators.find params[:id]
     DestroyCollaboratorService.new(guest_collaborator).execute
+
     render json: { message: 'Supprimé avec succès.' }, status: 200
   end
 
@@ -185,6 +175,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def add_shared_docs_customers
     contact, account_sharing = ShareMyAccount.new(@user, user_params, current_user).execute
+
     if account_sharing.persisted?
       render json: { message: 'Votre compte a été partagé avec succès.' }, status: 200
     elsif Array(account_sharing.errors[:account] || account_sharing.errors[:collaborator]).include?('est déjà pris.')
@@ -199,10 +190,11 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def add_sharing_request_customers
     account_sharing_request = AccountSharingRequest.new(account_sharing_request_params_customers)
     account_sharing_request.user = @user
+
     if account_sharing_request.save
-      render json: { message: 'Demande envoyé avec succès.' }, status: 200
+      render json: { message: 'Demande envoyée avec succès.' }, status: 200
     else
-      render json: { message: "Impossible d'envoyé votre demande!!" }, status: 200
+      render json: { message: "Impossible d'envoyer votre demande!!" }, status: 200
     end
   end
 

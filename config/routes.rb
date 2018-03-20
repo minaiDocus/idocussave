@@ -388,13 +388,16 @@ Idocus::Application.routes.draw do
       devise_for :users
 
       resources :remote_authentication do
-        post 'request_connexion', on: :collection
-        post 'ping', on: :collection
+        collection do
+          post :request_connexion
+          post :ping
+        end
       end
 
       resources :data_loader do
         collection do
           post :load_customers
+          post :load_user_organizations
           post :load_packs
           post :load_documents_processed
           post :load_documents_processing
@@ -405,21 +408,23 @@ Idocus::Application.routes.draw do
       end
 
       resources :account_sharing do
-        post 'load_shared_docs', on: :collection
-        post 'load_shared_contacts', on: :collection
+        collection do
+          post :load_shared_docs
+          post :load_shared_contacts
 
-        post 'get_list_collaborators', on: :collection
-        post 'get_list_customers', on: :collection
-        post 'add_shared_docs', on: :collection
-        post 'add_shared_contacts', on: :collection
-        post 'edit_shared_contacts', on: :collection
-        post 'accept_shared_docs', on: :collection
-        post 'delete_shared_docs', on: :collection
-        post 'delete_shared_contacts', on: :collection
+          post :get_list_collaborators
+          post :get_list_customers
+          post :add_shared_docs
+          post :add_shared_contacts
+          post :edit_shared_contacts
+          post :accept_shared_docs
+          post :delete_shared_docs
+          post :delete_shared_contacts
 
-        post 'load_shared_docs_customers', on: :collection
-        post 'add_shared_docs_customers', on: :collection
-        post 'add_sharing_request_customers', on: :collection
+          post :load_shared_docs_customers
+          post :add_shared_docs_customers
+          post :add_sharing_request_customers
+        end
       end
 
       resources :file_uploader do
@@ -427,9 +432,11 @@ Idocus::Application.routes.draw do
       end
 
       resources :firebase_notification do
-        post 'get_notifications', on: :collection
-        post 'release_new_notifications', on: :collection
-        post 'register_firebase_token', on: :collection
+        collection do
+          post :get_notifications
+          post :release_new_notifications
+          post :register_firebase_token
+        end
       end
 
       resources :error_report do

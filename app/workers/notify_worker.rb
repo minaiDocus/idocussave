@@ -7,7 +7,7 @@ class NotifyWorker
     NotificationsMailer.notify(notification).deliver
     
     #sending push notification to FCM
-    FirebaseNotification.fcm_send_notification(notification)
+    FirebaseNotification.send_notification(notification)
     
     notification.update is_sent: true
   end
