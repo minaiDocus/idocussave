@@ -5,8 +5,6 @@ class MobileApiController < ApplicationController
   before_action :load_user_and_role
   before_action :verify_suspension
   before_action :verify_if_active
-  before_action :load_organization
-  before_action :apply_membership
 
   respond_to :json
 

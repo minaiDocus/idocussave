@@ -1,6 +1,4 @@
 class Api::Mobile::FirebaseNotificationController < MobileApiController
-  skip_before_action :load_organization
-  skip_before_action :apply_membership
   before_action :load_notifications
 
   respond_to :json

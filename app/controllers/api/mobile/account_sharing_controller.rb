@@ -1,4 +1,7 @@
 class Api::Mobile::AccountSharingController < MobileApiController
+  before_action :load_organization
+  before_action :apply_membership
+
   respond_to :json
 
   def load_shared_docs
