@@ -15,27 +15,12 @@ class Document < ActiveRecord::Base
                               thumb: ['46x67>', :png],
                               medium: ['92x133', :png]
                             },
-                            path: ':rails_root/:new_or_old_document_folder/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
+                            path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                             url: '/account/documents/:id/download/:style'
   do_not_validate_attachment_file_type :content
 
   Paperclip.interpolates :mongo_id_or_id do |attachment, style|
     attachment.instance.mongo_id || attachment.instance.id
-  end
-
-  Paperclip.interpolates :new_or_old_document_folder do |attachment, style|
-    # Copy file from old directory if missing
-    cid = attachment.instance.mongo_id || attachment.instance.id
-    old_path = Rails.root.join('files_old', Rails.env, 'documents', 'contents', cid.to_s, style.to_s, attachment.instance.content_file_name)
-    new_path = Rails.root.join('files', Rails.env, 'documents', 'contents', cid.to_s, style.to_s, attachment.instance.content_file_name)
-    if File.exist?(old_path) && !File.exist?(new_path)
-      dir = File.dirname new_path
-      prev_dir = File.dirname dir
-      `sudo chown idocus:idocus #{prev_dir}`
-      FileUtils.mkdir_p dir
-      FileUtils.cp old_path, new_path
-    end
-    'files'
   end
 
   before_content_post_process do |image|
