@@ -22,17 +22,17 @@ class Api::Mobile::FileUploaderController < MobileApiController
     if customer.try(:options).try(:is_upload_authorized)
       params[:files].each do |file|
         uploaded_document = UploadedDocument.new(
-                                                  file.tempfile,
-                                                  file.original_filename,
-                                                  customer,
-                                                  params[:file_account_book_type],
-                                                  params[:file_prev_period_offset],
-                                                  @user
-                                                )
+          file.tempfile,
+          file.original_filename,
+          customer,
+          params[:file_account_book_type],
+          params[:file_prev_period_offset],
+          @user
+        )
 
         data = present(uploaded_document).to_json
         
-        errors << {filename: file.original_filename, errors: uploaded_document.full_error_messages} unless uploaded_document.errors.empty?
+        errors << { filename: file.original_filename, errors: uploaded_document.full_error_messages } unless uploaded_document.errors.empty?
       end
     else
       render json: { error: true, message: 'Accès non autorisé.' }, status: 401

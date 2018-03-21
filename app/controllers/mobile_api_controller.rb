@@ -24,7 +24,7 @@ class MobileApiController < ApplicationController
   end
 
   def organization_id
-    (params[:organization_id].present?)? params[:organization_id] : @user.organization.id
+    params[:organization_id].present? ? params[:organization_id] : @user.organization.id
   end
 
   protected
@@ -45,7 +45,7 @@ class MobileApiController < ApplicationController
   end
 
   def apply_membership
-    @user.with_scope @membership, @organization if @user.respond_to?(:with_scope)
+    @user.with_scope @membership, @organization if @user.is_a?(Collaborator)
   end
 
   def customers

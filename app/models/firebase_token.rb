@@ -10,7 +10,7 @@ class FirebaseToken < ActiveRecord::Base
   end
 
   def valid_token?
-    return (self.last_registration_date < 7.days.ago)? false : true #token is no longer valid after 7 days
+    self.last_registration_date >= 7.days.ago
   end
 
   def delete_unless_valid
