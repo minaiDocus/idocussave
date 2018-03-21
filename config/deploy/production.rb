@@ -4,7 +4,6 @@ namespace :deploy do
   after :updated, :link_production_data do
     on roles(:all) do
       execute "ln -s /data/idocus/production_data/files #{release_path}/files"
-      execute "ln -s /dataold/idocus/production_data/files #{release_path}/files_old"
     end
   end
 end

@@ -19,23 +19,12 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :analytic_reference, inverse_of: :pieces
 
   has_attached_file :content,
-                            path: ':rails_root/:new_or_old_piece_folder/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
+                            path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                             url: '/account/documents/pieces/:id/download'
   do_not_validate_attachment_file_type :content
 
   Paperclip.interpolates :mongo_id_or_id do |attachment, style|
     attachment.instance.mongo_id || attachment.instance.id
-  end
-
-  Paperclip.interpolates :new_or_old_piece_folder do |attachment, style|
-    cid = attachment.instance.mongo_id || attachment.instance.id
-    old_path = Rails.root.join('files_old', Rails.env, 'pack', 'pieces', 'contents', cid.to_s, 'original', attachment.instance.content_file_name)
-    new_path = Rails.root.join('files', Rails.env, 'pack', 'pieces', 'contents', cid.to_s, 'original', attachment.instance.content_file_name)
-    if File.exist?(old_path) && !File.exist?(new_path)
-      'files_old'
-    else
-      'files'
-    end
   end
 
   scope :covers,           -> { where(is_a_cover: true) }
