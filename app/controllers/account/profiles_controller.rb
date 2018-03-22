@@ -70,7 +70,8 @@ class Account::ProfilesController < Account::AccountController
         :dropbox_insufficient_space,
         :ftp_auth_failure,
         :detected_preseizure_duplication,
-        :new_scanned_documents
+        :new_scanned_documents,
+        :pre_assignment_delivery_errors
       ]
     )
   end

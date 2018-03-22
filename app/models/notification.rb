@@ -59,7 +59,8 @@ class Notification < ActiveRecord::Base
         'ibiza_invalid_access_token',
         'detected_preseizure_duplication',
         'unblocked_preseizure',
-        'new_scanned_documents'
+        'new_scanned_documents',
+        'pre_assignment_delivery_failure'
       ].freeze
     end
   end

@@ -135,6 +135,8 @@ class PreAssignmentDeliveryService
           deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
         end
       end
+
+      NotifyPreAssignmentDeliveryFailure.new(@delivery).execute
     end
 
     @delivery.sent?

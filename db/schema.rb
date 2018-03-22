@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180319204124) do
+ActiveRecord::Schema.define(version: 20180321193441) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -965,7 +965,8 @@ ActiveRecord::Schema.define(version: 20180319204124) do
     t.boolean  "detected_preseizure_duplication",                   default: false
     t.integer  "detected_preseizure_duplication_count", limit: 4,   default: 0
     t.integer  "unblocked_preseizure_count",            limit: 4,   default: 0
-    t.boolean  "new_scanned_documents",                             default: true
+    t.boolean  "new_scanned_documents",                             default: false
+    t.string   "pre_assignment_delivery_errors",        limit: 255, default: "none"
     t.datetime "created_at",                                                          null: false
     t.datetime "updated_at",                                                          null: false
     t.integer  "user_id",                               limit: 4
@@ -974,6 +975,13 @@ ActiveRecord::Schema.define(version: 20180319204124) do
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
   add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
   add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
+
+  create_table "notifies_pre_assignment_deliveries", force: :cascade do |t|
+    t.integer "notify_id",                  limit: 4
+    t.integer "pre_assignment_delivery_id", limit: 4
+  end
+
+  add_index "notifies_pre_assignment_deliveries", ["notify_id", "pre_assignment_delivery_id"], name: "index_notify_id_pre_assignment_delivery_id", using: :btree
 
   create_table "notifies_preseizures", force: :cascade do |t|
     t.integer "notify_id",     limit: 4
