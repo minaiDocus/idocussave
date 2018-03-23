@@ -82,6 +82,8 @@ class McfProcessor
                                              @mcf_document.user,
                                              @mcf_document.journal,
                                              0, # document is always for current period
+                                             nil,
+                                             "mcf"
                                             )
 
     if uploaded_document.valid? || uploaded_document.already_exist?

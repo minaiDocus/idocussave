@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/moveobject
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/moveobject
     body:
       encoding: UTF-8
       string: AccessToken=fbaeb20da31c4967946dc72af2131216cd38b7eb605648df

@@ -97,7 +97,7 @@ describe McfProcessor do
 
         McfProcessor.new(@mcf_document).execute_retake
 
-        expect(WebMock).to have_requested(:post, 'https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/resendobject')
+        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/resendobject')
         expect(WebMock).to have_requested(:any, /.*/).times(1)
 
         expect(@mcf_document.retake_retry).to eq (retake + 1)
@@ -139,7 +139,7 @@ describe McfProcessor do
           McfProcessor.new(@mcf_document).execute_remove
         end
         
-        expect(WebMock).to have_requested(:post, 'https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/moveobject')
+        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/moveobject')
         expect(WebMock).to have_requested(:any, /.*/).times(1)
 
         expect(@mcf_document.is_moved).to be true
