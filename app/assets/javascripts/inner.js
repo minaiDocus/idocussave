@@ -66,7 +66,7 @@ notification_list.scroll(function() {
 });
 
 load_latest_notifications(false);
-setInterval(load_latest_notifications, 5000);
+setInterval(load_latest_notifications, 30000);
 
 $('#news.modal').on('show', function (e) {
     $.ajax({
