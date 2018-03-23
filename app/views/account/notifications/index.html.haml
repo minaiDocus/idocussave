@@ -4,7 +4,6 @@
       %h2 Notifications
 
       %ul
-        - @notifications.each do |notification|
-          = render partial: 'notification', locals: { notification: notification }
+        = render partial: 'notifications', locals: { notifications: @notifications }
 
       = paginate @notifications

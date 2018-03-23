@@ -4,7 +4,6 @@ class Account::AccountController < ApplicationController
   before_filter :load_user_and_role
   before_filter :verify_suspension
   before_filter :verify_if_active
-  before_filter :load_recent_notifications
 
   layout 'inner'
 
@@ -133,9 +132,5 @@ private
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
     end
-  end
-
-  def load_recent_notifications
-    @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
   end
 end
