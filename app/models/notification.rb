@@ -32,6 +32,7 @@ class Notification < ActiveRecord::Base
 
     def notice_types
       [
+        'test',
         'dropbox_invalid_access_token',
         'dropbox_insufficient_space',
         'share_account',
