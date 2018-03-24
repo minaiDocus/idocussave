@@ -46,10 +46,19 @@ function load_latest_notifications(load_more) {
     if (load_more || $('.dropdown-notifications.open').length == 0) {
         $.ajax({
             url: '/account/notifications/latest?per_page=' + (notification_per_page + (load_more ? 5 : 0)),
-            success: function(data){
+            success: function(data) {
                 if ((load_more || $('.dropdown-notifications.open').length == 0) && notification_data != data) {
                     $('#notifications .items').html(data);
                     notification_data = data;
+                    unread_notification_count = $('#unread_notification_count').data('count');
+                    if (unread_notification_count > 0) {
+                        $('#notifications .icon-bell').removeClass('notification-icon-disabled');
+                        $('#notifications .icon-bell').addClass('notification-icon');
+                    } else {
+                        $('#notifications .icon-bell').removeClass('notification-icon');
+                        $('#notifications .icon-bell').addClass('notification-icon-disabled');
+                    }
+                    $('#notifications .icon-bell').attr('data-count', unread_notification_count);
                     if (load_more)
                         notification_per_page += 5;
                 }

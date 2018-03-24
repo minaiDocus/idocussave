@@ -1,3 +1,4 @@
+#unread_notification_count{ data: { count: @user.notifications.not_read.count } }
 - @notifications.each do |notification|
   %li.notification{ class: ('active' unless notification.is_read ) }
     .row-fluid
