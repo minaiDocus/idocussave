@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180301105958) do
+ActiveRecord::Schema.define(version: 20180315150755) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -169,25 +169,19 @@ ActiveRecord::Schema.define(version: 20180301105958) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
-    t.integer "temp_document_id", limit: 4
-    t.integer "pack_piece_id",    limit: 4
-    t.string  "analytic_id",      limit: 255
-    t.string  "a1_axis1",         limit: 255
-    t.string  "a1_axis2",         limit: 255
-    t.string  "a1_axis3",         limit: 255
-    t.string  "a1_name",          limit: 45
-    t.string  "a2_name",          limit: 255
-    t.string  "a2_axis1",         limit: 255
-    t.string  "a2_axis2",         limit: 255
-    t.string  "a2_axis3",         limit: 255
-    t.string  "a3_name",          limit: 255
-    t.string  "a3_axis1",         limit: 255
-    t.string  "a3_axis2",         limit: 255
-    t.string  "a3_axis3",         limit: 255
+    t.string "a1_name",  limit: 255
+    t.string "a1_axis1", limit: 255
+    t.string "a1_axis2", limit: 255
+    t.string "a1_axis3", limit: 255
+    t.string "a2_name",  limit: 255
+    t.string "a2_axis1", limit: 255
+    t.string "a2_axis2", limit: 255
+    t.string "a2_axis3", limit: 255
+    t.string "a3_name",  limit: 255
+    t.string "a3_axis1", limit: 255
+    t.string "a3_axis2", limit: 255
+    t.string "a3_axis3", limit: 255
   end
-
-  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
-  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
@@ -267,6 +261,23 @@ ActiveRecord::Schema.define(version: 20180301105958) do
   end
 
   add_index "budgea_accounts", ["user_id"], name: "fk_rails_bc19f24997", using: :btree
+
+  create_table "ckeditor_assets", force: :cascade do |t|
+    t.string   "data_file_name",    limit: 255, null: false
+    t.string   "data_content_type", limit: 255
+    t.integer  "data_file_size",    limit: 4
+    t.string   "data_fingerprint",  limit: 255
+    t.integer  "assetable_id",      limit: 4
+    t.string   "assetable_type",    limit: 30
+    t.string   "type",              limit: 30
+    t.integer  "width",             limit: 4
+    t.integer  "height",            limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "ckeditor_assets", ["assetable_type", "assetable_id"], name: "idx_ckeditor_assetable", using: :btree
+  add_index "ckeditor_assets", ["assetable_type", "type", "assetable_id"], name: "idx_ckeditor_assetable_type", using: :btree
 
   create_table "cms_images", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -1256,8 +1267,10 @@ ActiveRecord::Schema.define(version: 20180301105958) do
     t.string   "user_id_mongo_id",           limit: 255
     t.integer  "pack_id",                    limit: 4
     t.string   "pack_id_mongo_id",           limit: 255
+    t.integer  "analytic_reference_id",      limit: 4
   end
 
+  add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
   add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
   add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
@@ -1995,7 +2008,6 @@ ActiveRecord::Schema.define(version: 20180301105958) do
     t.string   "user_id_mongo_id",                    limit: 255
     t.integer  "organization_id",                     limit: 4
     t.string   "organization_id_mongo_id",            limit: 255
-    t.boolean  "is_ocr_active",                                   default: true,  null: false
   end
 
   add_index "subscriptions", ["mongo_id"], name: "index_subscriptions_on_mongo_id", using: :btree
@@ -2083,8 +2095,10 @@ ActiveRecord::Schema.define(version: 20180301105958) do
     t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id",                   limit: 4
     t.integer  "ibizabox_folder_id",             limit: 4
+    t.integer  "analytic_reference_id",          limit: 4
   end
 
+  add_index "temp_documents", ["analytic_reference_id"], name: "index_temp_documents_on_analytic_reference_id", using: :btree
   add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
   add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
   add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree
@@ -2153,7 +2167,6 @@ ActiveRecord::Schema.define(version: 20180301105958) do
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
-    t.boolean  "is_ocr_authorized",                           default: false,        null: false
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end
