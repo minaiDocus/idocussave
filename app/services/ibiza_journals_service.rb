@@ -12,7 +12,7 @@ class IbizaJournalsService
       client.request.clear
       client.company(@user.ibiza_id).journal?
 
-      if success?
+      if success? && client.response.data.present?
         @journals = client.response.data.map do |j|
           {
             closed:      j['closed'],
