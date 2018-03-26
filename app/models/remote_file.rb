@@ -1,6 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class RemoteFile < ActiveRecord::Base
-  SERVICE_NAMES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings'].freeze
+  DROPBOX          = 'Dropbox'.freeze
+  DROPBOX_EXTENDED = 'Dropbox Extended'.freeze
+  GOOGLE_DRIVE     = 'Google Drive'.freeze
+  FTP              = 'FTP'.freeze
+  BOX              = 'Box'.freeze
+  KNOWINGS         = 'Knowings'.freeze
+  MY_COMPANY_FILES = 'My Company Files'.freeze
+  SERVICE_NAMES    = [DROPBOX, DROPBOX_EXTENDED, GOOGLE_DRIVE, FTP, BOX, KNOWINGS, MY_COMPANY_FILES].freeze
 
   belongs_to :user
   belongs_to :pack

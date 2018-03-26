@@ -288,3 +288,6 @@ fr:
           everyone: Tout le monde
           collaborators: Collaborateurs
           customers: Clients finaux
+      mcf_settings:
+        delivery_path_pattern: Chemin de livraison
+        is_delivery_activated: Activer la livraison ?

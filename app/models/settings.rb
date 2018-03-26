@@ -7,6 +7,7 @@ class Settings < ActiveRecord::Base
   serialize :notify_ibiza_deliveries_to
   serialize :micro_package_authorized_to
   serialize :notify_scans_not_delivered_to
+  serialize :notify_mcf_errors_to
 
 
   def self.update_setting(attribute, updated_value)

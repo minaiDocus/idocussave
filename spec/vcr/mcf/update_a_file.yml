@@ -1,0 +1,104 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
+    body:
+      encoding: UTF-8
+      base64_string: |
+        QWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
+        NjMxMDc1NWNlMDE0MDRmJkF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZBdHRyaWJ1
+        dGVWYWx1ZT1Kb2huJTIwRG9lJkxpc3RQYXRoJTVCJTVEPTIwMTgwMSUyRkFD
+        JTJGMnBhZ2VzLnBkZg==
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Mon, 05 Mar 2018 15:02:34 GMT
+      Content-Length:
+      - '110'
+    body:
+      encoding: UTF-8
+      base64_string: |
+        W3siUGF0aCI6IjIwMTgwMS9BQy8ycGFnZXMucGRmIiwiTWQ1IjoiOTdGOTBF
+        QUMwRDA3RkU1QURFOEY2MEEwRkE1NENERkMiLCJTdGF0dXMiOjYwMCwiTWVz
+        c2FnZSI6IkZpbGUgZXhpc3QifV0=
+    http_version: 
+  recorded_at: Mon, 05 Mar 2018 15:02:54 GMT
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
+    body:
+      encoding: UTF-8
+      base64_string: |
+        YWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
+        NjMxMDc1NWNlMDE0MDRmJmF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZhdHRyaWJ1
+        dGVWYWx1ZT1Kb2huJTIwRG9lJmZpbGU9JTIzJTNDRmlsZSUzQTB4MDAwMDAw
+        MGIzYmY1MjglM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT0yMDE4MDElMkZBQyUy
+        RjJwYWdlcy5wZGYmc2VuZE1haWw9ZmFsc2U=
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Mon, 05 Mar 2018 15:02:34 GMT
+      Content-Length:
+      - '104'
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJTdGF0dXMiOjYwMCwiUHJvdmlkZXJJZCI6NDczLCJQcm92aWRlck5hbWUi
+        OiJCb2Nhc2F5IiwiTWVzc2FnZSI6IlN1Y2Nlc3MiLCJTdG9yYWdlTGltaXRS
+        ZWFjaGVkIjpmYWxzZX0=
+    http_version: 
+  recorded_at: Mon, 05 Mar 2018 15:02:55 GMT
+recorded_with: VCR 3.0.3

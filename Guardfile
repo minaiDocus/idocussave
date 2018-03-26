@@ -10,7 +10,7 @@ guard 'rspec', cmd: 'bin/rspec' do
   watch(%r{^spec/support/(.+)\.rb$})                 { 'spec' }
 
   watch(%r{app/modules/dropbox_import/.*})           { |m| 'spec/modules/dropbox_import_spec.rb' }
-  watch('app/services/send_to_storage.rb')           { |m| ['spec/services/send_to_dropbox_spec.rb', 'spec/services/send_to_ftp_spec.rb'] }
+  watch('app/services/send_to_storage.rb')           { |m| ['spec/services/send_to_dropbox_spec.rb', 'spec/services/send_to_ftp_spec.rb', 'spec/services/send_to_mcf_spec.rb'] }
   watch('app/models/storage/metafile.rb')            { |m| ['spec/services/send_to_storage_spec.rb', 'spec/services/send_to_dropbox_spec.rb', 'spec/services/send_to_ftp_spec.rb'] }
   watch('app/services/ftp_client.rb')                { |m| ['spec/services/send_to_ftp_spec.rb', 'spec/services/ftp_import_spec.rb'] }
   watch(%r{app/models/(user|account_sharing).rb})    { |m| 'spec/integration/share_accounts_spec.rb' }
