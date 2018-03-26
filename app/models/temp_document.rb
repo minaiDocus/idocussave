@@ -16,7 +16,7 @@ class TempDocument < ActiveRecord::Base
   belongs_to :retriever
   belongs_to :ibizabox_folder
   belongs_to :analytic_reference
-  has_many :notifiables, dependent: :destroy
+  has_many :notifiables, dependent: :destroy, as: :notifiable
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
