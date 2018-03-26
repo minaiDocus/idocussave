@@ -1,3 +1,4 @@
+# TODO : remove this after migration
 class NotifiablePublishedDocument < ActiveRecord::Base
   self.table_name = 'notifies_temp_documents'
 

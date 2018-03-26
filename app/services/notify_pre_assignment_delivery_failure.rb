@@ -8,7 +8,7 @@ class NotifyPreAssignmentDeliveryFailure
     user = @user.parent || @user.organization.leader
 
     return unless user.notify.pre_assignment_delivery_errors?
-    NotifiablePreAssignmentDeliveryFailure.create(notify: user.notify, pre_assignment_delivery: @delivery)
+    Notifiable.create(notify: user.notify, notifiable: @delivery, label: 'failure')
     return unless user.notify.pre_assignment_delivery_errors_now?
     NotifyPreAssignmentDeliveryFailureWorker.perform_in(1.minute, user.id)
 
@@ -17,7 +17,7 @@ class NotifyPreAssignmentDeliveryFailure
 
   class << self
     def daily
-      NotifiablePreAssignmentDeliveryFailure.select(:notify_id).distinct.pluck(:notify_id).each do |notify_id|
+      Notifiable.select(:notify_id).distinct.pluck(:notify_id).each do |notify_id|
         notify = Notify.find notify_id
         execute(notify.user_id, false)
       end
@@ -26,11 +26,11 @@ class NotifyPreAssignmentDeliveryFailure
     def execute(user_id, send_mail=true)
       user = User.find user_id
 
-      list = user.notify.notifiable_pre_assignment_delivery_failures.includes(:pre_assignment_delivery).to_a
+      list = user.notify.notifiable_pre_assignment_delivery_failures.includes(:notifiable).to_a
 
       return if list.empty?
 
-      list.map(&:pre_assignment_delivery).group_by(&:organization).each do |organization, deliveries|
+      list.map(&:notifiable).group_by(&:organization).each do |organization, deliveries|
         notification = Notification.new
         notification.user        = user
         notification.notice_type = 'pre_assignment_delivery_failure'

@@ -1,12 +1,11 @@
 class Notify < ActiveRecord::Base
   belongs_to :user
-  has_many :notifiable_document_being_processed, dependent: :destroy
-  has_many :temp_document_being_processed, through: :notifiable_document_being_processed, source: :temp_document
-  has_many :notifiable_published_documents, dependent: :destroy
-  has_many :published_temp_documents, through: :notifiable_published_documents, source: :temp_document
-  has_many :notifiable_new_pre_assignments, dependent: :destroy
-  has_many :notifiable_pre_assignment_delivery_failures, dependent: :destroy
-  has_many :pre_assignment_delivery_failures, through: :notifiable_pre_assignment_delivery_failures, source: :pre_assignment_delivery
+  has_many :notifiables, dependent: :destroy
+  has_many :notifiable_document_being_processed,         -> { document_being_processed },         class_name: 'Notifiable'
+  has_many :notifiable_published_documents,              -> { published_documents },              class_name: 'Notifiable'
+  has_many :notifiable_new_pre_assignments,              -> { new_pre_assignments },              class_name: 'Notifiable'
+  has_many :notifiable_pre_assignment_delivery_failures, -> { pre_assignment_delivery_failures }, class_name: 'Notifiable'
+  has_many :pre_assignment_delivery_failures, through: :notifiables, source: :notifiable, source_type: 'PreAssignmentDelivery'
 
   TYPES = %w(none now delay).freeze
 

@@ -16,7 +16,7 @@ class NotifyDocumentBeingProcessed
 
     users.each do |user|
       next unless user.notify.document_being_processed
-      NotifiableDocumentBeingProcessed.create(notify: user.notify, temp_document: @temp_document)
+      Notifiable.create(notify: user.notify, notifiable: @temp_document, label: 'processing')
       NotifyDocumentBeingProcessedWorker.perform_in(1.minute, user.id)
     end
 
@@ -26,7 +26,7 @@ class NotifyDocumentBeingProcessed
   def self.execute(user_id)
     user = User.find user_id
 
-    list = user.notify.notifiable_document_being_processed.includes(temp_document: [:temp_pack]).to_a
+    list = user.notify.notifiable_document_being_processed.includes(notifiable: [:temp_pack]).to_a
 
     return if list.empty?
 
@@ -37,9 +37,9 @@ class NotifyDocumentBeingProcessed
     notification.url         = Rails.application.routes.url_helpers.account_documents_url ActionMailer::Base.default_url_options
 
     notification.message = if list.size == 1
-      "1 nouveau document a été reçu et est en cours de traitement pour le lot suivant : #{list.first.temp_document.temp_pack.name.sub(' all', '')}"
+      "1 nouveau document a été reçu et est en cours de traitement pour le lot suivant : #{list.first.notifiable.temp_pack.name.sub(' all', '')}"
     else
-      groups = list.map(&:temp_document).group_by(&:temp_pack)
+      groups = list.map(&:notifiable).group_by(&:temp_pack)
       message = "#{list.size} nouveaux documents ont été reçus et sont en cours de traitement pour "
       message += groups.size == 1 ? "le lot suivant :\n\n" : "les lots suivants :\n\n"
       message += groups.sort_by do |temp_pack, temp_documents|

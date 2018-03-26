@@ -7,7 +7,7 @@ class NotifyNewPreAssignmentAvailable
   def execute
     @pre_assignment.user.prescribers.each do |prescriber|
       next unless prescriber.notify.new_pre_assignment_available
-      NotifiableNewPreAssignment.create(notify: prescriber.notify, preseizure: @pre_assignment)
+      Notifiable.create(notify: prescriber.notify, notifiable: @pre_assignment, label: 'new')
       NotifyNewPreAssignmentAvailableWorker.perform_in(@time_delay, prescriber.id)
     end
     true
@@ -16,7 +16,7 @@ class NotifyNewPreAssignmentAvailable
   def self.execute(user_id)
     user = User.find user_id
 
-    list = user.notify.notifiable_new_pre_assignments.includes(preseizure: [:report]).to_a
+    list = user.notify.notifiable_new_pre_assignments.includes(notifiable: [:report]).to_a
 
     return if list.empty?
 
@@ -27,9 +27,9 @@ class NotifyNewPreAssignmentAvailable
     notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignments_url(user.organization, ActionMailer::Base.default_url_options)
 
     notification.message = if list.size == 1
-      "1 nouvelle pré-affectation est disponible pour le lot suivant : #{list.first.preseizure.report.name}"
+      "1 nouvelle pré-affectation est disponible pour le lot suivant : #{list.first.notifiable.report.name}"
     else
-      groups = list.map(&:preseizure).group_by(&:report)
+      groups = list.map(&:notifiable).group_by(&:report)
       message = "#{list.size} nouvelles pré-affectations sont disponibles pour "
       message += groups.size == 1 ? 'le lot suivant :' : 'les lots suivants :'
       message += "\n\n"
