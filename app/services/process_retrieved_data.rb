@@ -215,7 +215,8 @@ class ProcessRetrievedData
 
               RetrieverNotification.new(retriever).notify_info_needed
             when 'actionNeeded'
-              retriever.update budgea_error_message: 'Veuillez confirmer les nouveaux termes et conditions.'
+              error_message = connection['error_message'].presence || 'Veuillez confirmer les nouveaux termes et conditions.'
+              retriever.update budgea_error_message: error_message
               retriever.fail_budgea_connection
 
               RetrieverNotification.new(retriever).notify_action_needed

@@ -27,14 +27,11 @@ module FileDelivery
       else
         owner = pack.owner
 
+        # Owner
         pack.init_delivery_for(owner, options) if options[:type] != FileDelivery::RemoteFile::REPORT
 
-        if options[:type] != FileDelivery::RemoteFile::REPORT && owner.organization.try(:knowings).try(:ready?)
-          pack.init_delivery_for(owner.organization, options.merge(type: FileDelivery::RemoteFile::PIECES_ONLY))
-        end
-
-        # Organization's FTP
-        if owner.organization.try(:ftp).try(:configured?)
+        # Organization (Knowings, FTP, My Company Files)
+        if owner.organization.try(:knowings).try(:ready?) || owner.organization.try(:mcf_settings).try(:ready?) || owner.organization.try(:ftp).try(:configured?)
           pack.init_delivery_for(owner.organization, options)
         end
 
@@ -48,6 +45,7 @@ module FileDelivery
           pack.init_delivery_for(collaborator, options)
         end
 
+        # Groups (Dropbox Extended)
         owner.groups.each do |group|
           pack.init_delivery_for(group, options) if group.is_dropbox_authorized
         end

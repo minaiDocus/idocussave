@@ -9,6 +9,7 @@ tmp/
 /files/
 public/system
 public/assets
+public/ckeditor_assets
 coverage/
 doc_data.txt
 .sass-cache

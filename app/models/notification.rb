@@ -61,7 +61,9 @@ class Notification < ActiveRecord::Base
         'detected_preseizure_duplication',
         'unblocked_preseizure',
         'new_scanned_documents',
-        'pre_assignment_delivery_failure'
+        'pre_assignment_delivery_failure',
+        'mcf_invalid_access_token',
+        'mcf_insufficient_space'
       ].freeze
     end
   end

@@ -85,6 +85,10 @@ DeliverPreAssignmentsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
+McfProcessorWorker:
+  queue: default
+  cron: '0 */5 * * * *'
+
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults

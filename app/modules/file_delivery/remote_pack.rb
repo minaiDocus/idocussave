@@ -9,19 +9,23 @@ module FileDelivery::RemotePack
     force = options[:force]
     current_remote_files = []
 
-    services_name = if object.class.name == User.name
+    service_names = if object.class == User
                       object.find_or_create_external_file_storage.active_services_name
-                    elsif object.class == Organization && object.try(:knowings).try(:ready?)
-                      ['Knowings']
-                    elsif object.class == Organization && object.try(:ftp).try(:configured?)
-                      ['FTP']
+                    elsif object.class == Organization
+                      organization_services = []
+                      unless type == FileDelivery::RemoteFile::REPORT
+                        organization_services << 'Knowings'         if object.try(:knowings).try(:ready?)
+                        organization_services << 'My Company Files' if object.try(:mcf_settings).try(:ready?)
+                      end
+                      organization_services << 'FTP' if object.try(:ftp).try(:configured?)
+                      organization_services
                     else
                       ['Dropbox Extended']
                     end
 
-    services_name.each do |service_name|
+    service_names.each do |service_name|
       # original
-      if type.in? [FileDelivery::RemoteFile::ALL, FileDelivery::RemoteFile::ORIGINAL_ONLY]
+      if type.in?([FileDelivery::RemoteFile::ALL, FileDelivery::RemoteFile::ORIGINAL_ONLY]) && !service_name.in?(['Knowings', 'My Company Files'])
         document = original_document
         document.extend FileDelivery::RemoteFile
 

@@ -15,7 +15,7 @@ class NotifyDocumentBeingProcessed
     end
 
     users.each do |user|
-      next unless user.notify.document_being_processed
+      next unless user.notify&.document_being_processed
       Notifiable.create(notify: user.notify, notifiable: @temp_document, label: 'processing')
       NotifyDocumentBeingProcessedWorker.perform_in(1.minute, user.id)
     end

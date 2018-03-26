@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class ExternalFileStorage < ActiveRecord::Base
-  SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings'].freeze
+  SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings', 'My Company Files'].freeze
 
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
