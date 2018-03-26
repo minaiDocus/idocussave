@@ -23,7 +23,7 @@ class NotifyPreAssignmentDeliveryFailure
       end
     end
 
-    def execute(user_id, send_mail=true)
+    def execute(user_id)
       user = User.find user_id
 
       list = user.notify.notifiable_pre_assignment_delivery_failures.includes(:notifiable).to_a
@@ -51,7 +51,6 @@ class NotifyPreAssignmentDeliveryFailure
         notification.message = message
 
         notification.save
-        NotifyWorker.perform_async(notification.id) if send_mail
       end
 
       list.each(&:delete)

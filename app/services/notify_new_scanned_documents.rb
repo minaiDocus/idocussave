@@ -14,9 +14,13 @@ class NotifyNewScannedDocuments
       notification.user        = user
       notification.notice_type = 'new_scanned_documents'
       notification.title       = 'Nouveau document papier reçu'
-      notification.message     = "Votre total des documents papier envoyés cette période est : #{total}."
+      if user == @user
+        notification.message   = "Votre total des documents papier envoyés cette période est : #{total}."
+      else
+        notification.message   = "Le total des documents papier envoyés par #{@user.info} cette période est : #{total}."
+      end
       notification.url         = Rails.application.routes.url_helpers.account_paper_processes_url(ActionMailer::Base.default_url_options)
-      NotifyWorker.perform_async(notification.id) if notification.save
+      notification.save
     end
   end
 end
