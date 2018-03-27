@@ -29,7 +29,7 @@ class UpdateCustomerService
       # Regenerate dropbox mapping to keep link with other users in case of group change
       if previous_group_ids.sort != @customer.group_ids.sort
         groups = Group.find (previous_group_ids + @customer.group_ids)
-        DropboxImport.changed(groups.collaborators)
+        DropboxImport.changed(groups.flat_map(&:collaborators))
       end
     end
 
