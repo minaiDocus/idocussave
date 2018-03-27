@@ -69,7 +69,7 @@ class Collaborator
 
   def customers
     if @organization
-      member.customers
+      admin? ? @organization.customers : member.customers
     else
       all_customers
     end
