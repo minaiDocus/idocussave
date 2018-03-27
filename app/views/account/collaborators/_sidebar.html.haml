@@ -15,6 +15,8 @@
   = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue ''), class: 'span12'
   = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email')
   = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'span12'
+  = label_tag 'user_contains[role]', t('activerecord.models.member.attributes.role')
+  = select_tag 'user_contains[role]', options_for_select(organization_role_options, (params[:user_contains][:role] rescue '')), include_blank: true
   %br
   = submit_tag t('filters.action'), class: 'btn btn-primary'
   = link_to t('filters.reset'), account_organization_collaborators_path(@organization), class: 'btn'

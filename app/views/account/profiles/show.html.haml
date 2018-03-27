@@ -9,30 +9,30 @@
           = render partial: 'layouts/account/me/navigation'
 
     .span9
-      - unless @user.try(:organization).try(:is_suspended) && @user.active?
+      - unless organizations_suspended? && @user.active?
         #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
           .span12
             .well.change_pass_parent
               %h3.aligncenter Changer mon mot de passe
               %br/
               .change_pass
-                = form_for @user, :url => account_profile_path do |f|
+                = form_for true_user, url: account_profile_path do |f|
                   - if flash[:alert].present?
                     .alert-container
                       .alert.alert-error
-                        %a{ :class=>"close", "data-dismiss"=>"alert" } ×
+                        %a{ class: 'close', 'data-dismiss' => 'alert' } ×
                         %span
                           %ul
                             %li
                               Mots de passe invalides
 
-                  != f.label "Mot de passe actuel :"
-                  = f.password_field :current_password, :label => "Ancien mot de passe"
-                  != f.label "Nouveau mot de passe :"
-                  = f.password_field :password, :label => "Nouveau mot de passe"
-                  != f.label "Confirmation du mot de passe :"
-                  = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
-                  != f.submit "Modifier", :class => "btn blue"
+                  = f.label 'Mot de passe actuel :'
+                  = f.password_field :current_password, label: 'Ancien mot de passe'
+                  = f.label 'Nouveau mot de passe :'
+                  = f.password_field :password, label: 'Nouveau mot de passe'
+                  = f.label 'Confirmation du mot de passe :'
+                  = f.password_field :password_confirmation, label: 'Confirmation du nouveau mot de passe'
+                  = f.submit 'Modifier', class: 'btn btn-primary'
 
         - if @user.active? && !@user.is_prescriber && @user.organization.is_active
           #account_sharing.row-fluid.pan{ class: (@active_panel == 'account_sharing' ? 'active' : '')}
@@ -95,8 +95,8 @@
                     = link_to 'Configurer', account_addresses_path, class: 'btn'
 
       - if @user.active?
-        -if @user.organization.is_active
-          - unless @user.try(:organization).try(:is_suspended)
+        - if @user.organization.is_active
+          - unless organizations_suspended?
             #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
               .span12.well
                 %h3.aligncenter Stockage externe des documents
@@ -258,7 +258,7 @@
               .span12
                 .well
                   %h3.aligncenter.margin2bottom Notifications et remontées d'alertes
-                  = simple_form_for @user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
+                  = simple_form_for true_user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
                     = f.simple_fields_for :notify do |o|
                       %h4.margin2left.margin1bottom Générale
                       = hidden_field_tag :panel, 'subscription_options'
@@ -348,7 +348,7 @@
                       = "#{@user.email_code}@fw.idocus.com"
                     = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-mini btn-primary', data: { method: :post }, style: 'position:relative;top:-2px;'
 
-        -if !@user.organization.is_active && @user == @user.organization.leader
+        - if !@user.organization.is_active && @user.leader?
           #active_organization.row-fluid.pan{ class: (@active_panel == 'active_organization' ? 'active' : '')}
             .span12
               .well

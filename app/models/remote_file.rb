@@ -225,7 +225,15 @@ class RemoteFile < ActiveRecord::Base
   def receiver_info
     case receiver.class.name
     when User.name
-      receiver.code
+      if receiver.collaborator?
+        if receiver.memberships.count == 1
+          receiver.memberships.first.code
+        else
+          receiver.memberships.where(organization_id: pack.organization_id).first.code
+        end
+      else
+        receiver.code
+      end
     when Group.name
       "#{receiver.organization.code}/#{receiver.name}"
     when Organization.name

@@ -34,7 +34,9 @@ class ConfirmOrder
 
       UpdatePeriod.new(@order.period).execute
     elsif @order.errors[:address].any? && @order.type == 'paper_set'
-      OrderMailer.notify_paper_set_reminder(@order).deliver_later
+      @order.organization.admins.each do |admin|
+        OrderMailer.notify_paper_set_reminder(@order, admin.email).deliver_later
+      end
       ConfirmOrder.delay_for(24.hours).execute(@order.id)
     end
   end

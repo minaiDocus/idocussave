@@ -8,8 +8,8 @@ describe Account::AccountController do
       before(:each) do
         organization = create :organization
         user = create :user
-        UserOptions.create(user: user)
-        organization.members << user
+        user.create_options
+        organization.customers << user
 
         page.driver.post user_session_path, user: { email: user.email, password: user.password }
       end

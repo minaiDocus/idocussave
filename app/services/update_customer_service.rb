@@ -6,7 +6,6 @@ class UpdateCustomerService
     @customer = customer
   end
 
-
   def execute
     previous_group_ids = @customer.groups.pluck(:id)
 
@@ -19,7 +18,6 @@ class UpdateCustomerService
 
         @customer.reset_password_token   = encrypted_token
         @customer.reset_password_sent_at = Time.now
-
         @customer.save
 
         WelcomeMailer.welcome_customer(@customer, token).deliver_later
@@ -31,10 +29,7 @@ class UpdateCustomerService
       # Regenerate dropbox mapping to keep link with other users in case of group change
       if previous_group_ids.sort != @customer.group_ids.sort
         groups = Group.find (previous_group_ids + @customer.group_ids)
-
-        collaborators = groups.map(&:collaborators).flatten
-
-        DropboxImport.changed(collaborators)
+        DropboxImport.changed(groups.flat_map(&:collaborators))
       end
     end
 

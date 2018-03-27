@@ -4,14 +4,14 @@
       .row-fuild
         .span12
           .pull-left
-            %h3 Liste des collaborateurs (#{@collaborators_count})
+            %h3 Liste des collaborateurs (#{@members.total_count})
           .pull-right
             -if @organization.is_active
               = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 
   .row-fluid
     .span9.box
-      = render partial: 'shared/list_options', locals: { collection: @collaborators }
+      = render partial: 'shared/list_options', locals: { collection: @members }
       .row-fluid
         .span12
           %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
@@ -19,16 +19,18 @@
               %tr
                 %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
                 %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
+                %th= sortable :role, t('activerecord.models.member.attributes.role')
                 %th Action
             %tbody
-              - @collaborators.each do |collaborator|
+              - @members.each do |member|
                 %tr
-                  %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td.date= l member.created_at
                   %td.user_info
-                    %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
+                    %span.info= link_to member.info, account_organization_collaborator_path(@organization, member)
+                  %td= t('activerecord.models.member.attributes.role_values.' + member.role)
                   %td
-                    - if @organization.is_active && !collaborator.is_admin
-                      = link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
-      = render partial: 'shared/list_options', locals: { collection: @collaborators }
+                    - if @organization.is_active && !member.user.is_admin && (@user.leader? || member.collaborator?)
+                      = link_to icon_destroy, account_organization_collaborator_path(@organization, member), class: 'btn btn-danger btn-mini', data: { method: :delete, confirm: "Êtes-vous sûr de vouloir supprimer ce compte définitivement ? Cette action est irréversible." }
+      = render partial: 'shared/list_options', locals: { collection: @members }
     .span3.box
       = render partial: 'sidebar'

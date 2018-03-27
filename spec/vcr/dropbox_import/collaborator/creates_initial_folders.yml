@@ -449,7 +449,7 @@ http_interactions:
     uri: https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor
     body:
       encoding: UTF-8
-      string: '{"path":"/exportation vers iDocus/TS%COL1","recursive":true,"include_media_info":false,"include_deleted":false}'
+      string: '{"path":"/exportation vers iDocus","recursive":true,"include_media_info":false,"include_deleted":false}'
     headers:
       Authorization:
       - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO

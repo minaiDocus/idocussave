@@ -1,0 +1,5 @@
+- if @user.is_admin && @organization.is_active
+  #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
+    = render partial: 'account/customers/file_storages', locals: { user: @member.user }
+    .alignright
+      = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_file_storage_authorizations_path(@organization, @member), class: 'btn btn-primary'

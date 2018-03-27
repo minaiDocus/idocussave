@@ -1,5 +1,5 @@
 = simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path(@organization) : account_organization_group_path(@organization, @group)), html: { class: 'form form-horizontal margin0' } do |f|
-  - if is_leader?
+  - if @user.leader?
     %fieldset
       %legend Informations
       = f.input :name, label: t('activerecord.models.group.attributes.name')
@@ -9,32 +9,11 @@
         %legend Dropbox Extended
         = f.input :dropbox_delivery_folder, label: t('activerecord.models.group.attributes.dropbox_delivery_folder'), input_html: { class: 'input-xxlarge' }
         = f.input :is_dropbox_authorized, as: :boolean, label: t('activerecord.models.group.attributes.is_dropbox_authorized')
-    %fieldset
-      %legend Assignation
-      .control-group
-        .controls
-          .span6
-            %label
-              %b= t('activerecord.models.group.attributes.collaborators')
-            %br
-            - collaborators = @organization.collaborators.order(code: :asc)
-            = select_tag 'group[member_tokens][]', options_from_collection_for_select(collaborators, :id, :info, @group.collaborators.map(&:id)), multiple: true, class: 'searchable-option-list show-selection-below-list show-select-all'
-          .span6
-            %label
-              %b= t('activerecord.models.group.attributes.customers')
-            %br
-            - customers = @organization.customers.order(code: :asc)
-            = select_tag 'group[member_tokens][]', options_from_collection_for_select(customers, :id, :info, @group.customers.map(&:id)), multiple: true, class: 'searchable-option-list'
-          = hidden_field_tag 'group[member_tokens][]', ''
-  - else
-    %fieldset
-      %legend Assignation des clients
-      .control-group
-        %label.control-label= t('activerecord.models.group.attributes.customers')
-        .controls
-          - customers = @user.customers.order(code: :asc)
-          = select_tag 'group[customer_tokens][]', options_from_collection_for_select(customers, :id, :info, @group.customers.map(&:id)), multiple: true, class: 'searchable-option-list'
-          = hidden_field_tag 'group[customer_tokens][]', ''
+  %fieldset
+    %legend Assignation #{ 'des clients' if not @user.leader? }
+    - if @user.leader?
+      = f.association :members, collection: @organization.members.order(:code), label_method: :info, input_html: { class: 'searchable-option-list show-selection-below-list show-select-all' }
+    = f.association :customers, collection: @organization.customers.order(:code), label_method: :info, input_html: { class: 'searchable-option-list' }
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), account_organization_groups_path(@organization), class: 'btn'

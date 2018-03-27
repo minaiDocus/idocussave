@@ -8,7 +8,7 @@ module ActionMailer
     def self.smtp_settings
       return super if Rails.env.test?
 
-      if Rails.env.development? || Rails.env.staging?
+      if Rails.env.development? || Rails.env.staging? || Rails.env.sandbox?
         name = 'localhost'
       elsif mailer_name.in?(['welcome_mailer', 'invoice_mailer', 'devise/mailer', 'order_mailer'])
         name = 'secondary'

@@ -48,7 +48,7 @@ class Account::OrganizationPeriodOptionsController < Account::OrganizationContro
   private
 
   def verify_rights
-    if action_name.in?(%w(edit update)) && is_leader?
+    if action_name.in?(%w(edit update)) && @user.leader?
       true
     elsif action_name.in?(%w(select_propagation_options propagate)) && @user.is_admin
       true

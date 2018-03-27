@@ -1,4 +1,3 @@
-﻿# -*- encoding : UTF-8 -*-
 class Account::AccountController < ApplicationController
   before_filter :login_user!
   before_filter :load_user_and_role
@@ -14,7 +13,7 @@ class Account::AccountController < ApplicationController
     if params[:dashboard_summary].in? UserOptions::DASHBOARD_SUMMARIES
       @dashboard_summary = params[:dashboard_summary]
     else
-      @dashboard_summary = @user.try(:options).try(:dashboard_summary)
+      @dashboard_summary = @user.options.try(:dashboard_summary)
     end
 
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
@@ -75,34 +74,18 @@ class Account::AccountController < ApplicationController
     render partial: 'last_retrieved'
   end
 
-protected
+  protected
 
   def load_user_and_role(name = :@user)
-    instance = load_user(name)
-    instance.extend_organization_role if instance
-  end
-
-  def accounts
-    if @user
-      if @user.is_prescriber
-        @user.customers.order(code: :asc)
-      elsif @user.is_guest
-        @user.accounts.order(code: :asc)
-      else
-        User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
+    super do |collaborator|
+      if params[:organization_id].present?
+        organization = collaborator.organizations.find(params[:organization_id])
+        collaborator.with_organization_scope(organization)
       end
-    else
-      []
     end
   end
-  helper_method :accounts
 
-  def account_ids
-    accounts.map(&:id)
-  end
-  helper_method :account_ids
-
-private
+  private
 
   def user_ids
     @user_ids ||= accounts.active.map(&:id).sort
@@ -121,16 +104,5 @@ private
 
   def operations_key
     get_key_for 'operations'
-  end
-
-  def all_packs
-    Pack.where(owner_id: account_ids)
-  end
-
-  def verify_if_active
-    if @user && @user.inactive? && !controller_name.in?(%w(profiles documents))
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_documents_path
-    end
   end
 end

@@ -72,6 +72,9 @@ Idocus::Application.routes.draw do
       end
     end
 
+    # Named like that to avoid conflict with the routes of groups
+    resources :group_organizations, controller_name: 'organization_groups'
+
     resources :organizations, except: :destroy do
       patch :suspend,        on: :member
       patch :activate,       on: :member
@@ -123,6 +126,11 @@ Idocus::Application.routes.draw do
       resources :groups
 
       resources :collaborators do
+        member do
+          post   :add_to_organization
+          delete :remove_from_organization
+        end
+
         resource :rights, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
       end
@@ -395,36 +403,43 @@ Idocus::Application.routes.draw do
       devise_for :users
 
       resources :remote_authentication do
-        post 'request_connexion', on: :collection
-        post 'ping', on: :collection
+        collection do
+          post :request_connexion
+          post :ping
+        end
       end
 
       resources :data_loader do
-        post 'load_customers', on: :collection
-        post 'load_packs', on: :collection
-        post 'load_documents_processed', on: :collection
-        post 'load_documents_processing', on: :collection
-        post 'load_stats', on: :collection
-        post 'get_packs', on: :collection
-        get 'render_image_documents', on: :collection
+        collection do
+          post :load_customers
+          post :load_user_organizations
+          post :load_packs
+          post :load_documents_processed
+          post :load_documents_processing
+          post :load_stats
+          post :get_packs
+          get  :render_image_documents
+        end
       end
 
       resources :account_sharing do
-        post 'load_shared_docs', on: :collection
-        post 'load_shared_contacts', on: :collection
+        collection do
+          post :load_shared_docs
+          post :load_shared_contacts
 
-        post 'get_list_collaborators', on: :collection
-        post 'get_list_customers', on: :collection
-        post 'add_shared_docs', on: :collection
-        post 'add_shared_contacts', on: :collection
-        post 'edit_shared_contacts', on: :collection
-        post 'accept_shared_docs', on: :collection
-        post 'delete_shared_docs', on: :collection
-        post 'delete_shared_contacts', on: :collection
+          post :get_list_collaborators
+          post :get_list_customers
+          post :add_shared_docs
+          post :add_shared_contacts
+          post :edit_shared_contacts
+          post :accept_shared_docs
+          post :delete_shared_docs
+          post :delete_shared_contacts
 
-        post 'load_shared_docs_customers', on: :collection
-        post 'add_shared_docs_customers', on: :collection
-        post 'add_sharing_request_customers', on: :collection
+          post :load_shared_docs_customers
+          post :add_shared_docs_customers
+          post :add_sharing_request_customers
+        end
       end
 
       resources :file_uploader do
@@ -432,9 +447,11 @@ Idocus::Application.routes.draw do
       end
 
       resources :firebase_notification do
-        post 'get_notifications', on: :collection
-        post 'release_new_notifications', on: :collection
-        post 'register_firebase_token', on: :collection
+        collection do
+          post :get_notifications
+          post :release_new_notifications
+          post :register_firebase_token
+        end
       end
 
       resources :error_report do

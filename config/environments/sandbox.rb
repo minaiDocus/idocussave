@@ -41,7 +41,7 @@ Idocus::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = { host: 'test.idocus.com' }
+  config.action_mailer.default_url_options = { host: 'sandbox.idocus.com' }
 
   config.action_mailer.delivery_method = :smtp
 
@@ -51,6 +51,10 @@ Idocus::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  config.active_record.raise_in_transactional_callbacks = true
+
+  config.active_record.dump_schema_after_migration = false
 
   # Compress JavaScript and CSS
   config.assets.js_compress = :uglifier
@@ -64,10 +68,8 @@ Idocus::Application.configure do
   config.assets.digest = false
 
   # Adding js files
-  config.assets.precompile += %w(admin.js
-                                 help.js
-                                 html5.js
-                                 inner.js)
+  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)
+
   # Adding css files
-  config.assets.precompile += %w(admin.css)
+  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/stylesheets/**/*')).grep(/\.(css|sass|scss)\z/)
 end

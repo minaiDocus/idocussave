@@ -19,8 +19,8 @@ describe OrganizationBillingAmountService do
     UpdatePeriodPriceService.new(subscription2.current_period).execute
     # Organization
     organization = Organization.create(name: 'TEST', code: 'TS')
-    organization.members << customer1
-    organization.members << customer2
+    organization.customers << customer1
+    organization.customers << customer2
     organization_subscription = organization.find_or_create_subscription
     option3 = SubscriptionOption.create(name: 'Option 3', price_in_cents_wo_vat: 1500, position: 3, period_duration: 0)
     organization_subscription.options << option3

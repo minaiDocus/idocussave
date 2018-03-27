@@ -84,7 +84,7 @@ class FileSendingKitGenerator
 
     def to_mail(user)
       mail = {}
-      mail[:prescriber_company] = user.organization.leader.company
+      mail[:prescriber_company] = user.organization.admins.first&.company
       mail[:client_email] = user.email
       mail[:client_password] = 'v46hps32'
       mail[:client_code] = user.code

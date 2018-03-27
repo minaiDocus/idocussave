@@ -1,11 +1,8 @@
-# -*- encoding : UTF-8 -*-
 class Account::CompositionsController < Account::AccountController
   # POST /account/compositions
   def create
     params[:composition][:user_id] = @user.id
-
     Composition.create_with_documents params[:composition]
-
     @url = '/account/compositions/download'
 
     respond_to do |format|
@@ -15,27 +12,22 @@ class Account::CompositionsController < Account::AccountController
     end
   end
 
-
-  # /account/compositions/download
+  # GET /account/compositions/download
   def download
     @composition = @user.composition
-
     filepath = @composition.try(:path).to_s
 
     if File.exist?(filepath)
       filename = File.basename(filepath)
-
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
   end
 
-
-  # /account/compositions/reset
+  # DELETE /account/compositions/reset
   def reset
     @composition = @user.composition
-
     @composition.update_attribute(:document_ids, []) if @composition
 
     respond_to do |format|

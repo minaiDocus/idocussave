@@ -14,7 +14,7 @@ class Account::Organization::RetrieverController < Account::OrganizationControll
 
 
   def verify_rights
-    unless (is_leader? || @user.can_manage_customers?) && @customer.active? && @customer.options.is_retriever_authorized && @customer.organization.is_active
+    unless (@user.leader? || @user.manage_customers) && @customer.active? && @customer.options.is_retriever_authorized && @customer.organization.is_active
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to account_organization_path(@organization)

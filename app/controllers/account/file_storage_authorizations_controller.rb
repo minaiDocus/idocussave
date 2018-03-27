@@ -1,14 +1,12 @@
-# -*- encoding : UTF-8 -*-
 class Account::FileStorageAuthorizationsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_someone
-  before_filter :verify_if_someone_is_active
-  before_filter :load_url_path
+  before_action :verify_rights
+  before_action :load_someone
+  before_action :verify_if_someone_is_active
+  before_action :load_url_path
 
   # GET /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations/edit
   def edit
   end
-
 
   # PUT /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations
   def update
@@ -19,14 +17,12 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
 
   private
 
-
   def verify_rights
     unless current_user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def user_params
     params.require(:user).permit(
@@ -41,12 +37,13 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
     )
   end
 
-
   def load_someone
-    id = params[:collaborator_id] || params[:customer_id]
-    @someone = @organization.members.find id
+    if params[:collaborator_id].present?
+      @someone = @organization.collaborators.find params[:collaborator_id]
+    else
+      @someone = @organization.customers.find params[:customer_id]
+    end
   end
-
 
   def verify_if_someone_is_active
     if @someone.inactive?
@@ -54,7 +51,6 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def load_url_path
     if @someone.is_prescriber

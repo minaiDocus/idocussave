@@ -9,7 +9,7 @@ describe 'Micro package subscription' do
       @organization = FactoryGirl.create(:organization)
       @user = FactoryGirl.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
-      @organization.members << @user
+      @organization.customers << @user
     end
 
     describe 'options' do
@@ -202,7 +202,7 @@ describe 'Micro package subscription' do
       @organization = FactoryGirl.create(:organization)
       @user = FactoryGirl.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
-      @organization.members << @user
+      @organization.customers << @user
     end
 
     before(:all) do

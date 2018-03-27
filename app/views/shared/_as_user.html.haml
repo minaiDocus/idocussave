@@ -1,12 +1,17 @@
 - if current_user.is_admin?
-  .row-fluid
-    .span12.box
+  #change_user.modal.fade
+    .modal-header
+      %a.close{ 'data-dismiss' => 'modal' } ×
+      %h3 Visualiser et agir en tant que
+    .modal-body
       - if action_name == 'index' || (controller_name == 'organizations' && action_name == 'show') || (controller_name == 'reporting' && action_name == 'show') || controller_name == 'profiles'
-        - param_sym = request.path.match(/organizations/) ? :collaborator_code : :user_code
         %form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
-          = label_tag param_sym, 'Visualiser et agir en tant que :'
-          = text_field_tag param_sym, session[param_sym].presence, class: 'input-medium', placeholder: 'code utilisateur'
+          = label_tag :user_code, 'Visualiser et agir en tant que :'
+          = text_field_tag :user_code, session[:user_code].presence, class: 'input-medium', placeholder: 'code utilisateur'
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), current_url(Hash[param_sym, current_user.code]), class: 'btn'
+          = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.code]), class: 'btn'
       - else
-        Visualiser et agir en tant que : #{current_user_info}
+        Visualiser et agir en tant que :
+        %span.label.label-default #{current_user_info}
+        = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.code]), class: 'btn btn-mini'
+    .modal-footer

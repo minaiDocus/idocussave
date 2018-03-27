@@ -18,26 +18,17 @@ module AdminHelper
     end.map { |user| "{id: \"#{user.id}\", name: \"#{user.code.presence || user.email}\"}" } .join(',')
   end
 
-
-  def organization_link(user)
-    if user.organization
-      link_to user.organization.try(:name), account_organization_path(user.organization)
+  def organization_status(user, organization)
+    status = if organization.admins.include?(user)
+      'admin'
+    elsif user.collaborator?
+      'collaborator'
+    else
+      'customer'
     end
+
+    t('activerecord.models.organization.attributes.status.' + status)
   end
-
-
-  def organization_status(user)
-    if user.organization
-      if user.organization.leader == user
-        t('activerecord.models.organization.attributes.status.admin')
-      elsif user.is_prescriber
-        t('activerecord.models.organization.attributes.status.collaborator')
-      else
-        t('activerecord.models.organization.attributes.status.client')
-      end
-    end
-  end
-
 
   def email_state(email)
     klass = 'label'

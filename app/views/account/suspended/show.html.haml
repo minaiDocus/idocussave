@@ -1,12 +1,12 @@
 #suspended.container-fluid
   .row-fluid
     .span12.box.aligncenter
-      - if @user.is_prescriber
-        - if @user.organization.try(:leader) == @user
+      - if @user.collaborator?
+        - if @user.leader?
           iDocus vous informe que l’accès aux services est suspendu car vos données de facturation ne sont pas complètes.
           %br
           Merci de compléter le champ prélèvement dans l’onglet «
-          = link_to 'Mode de paiement', account_organization_path(@user.organization, tab: 'payments')
+          = link_to 'Mode de paiement', account_organization_path(@user.organizations.suspended.first, tab: 'payments')
           » de votre organisation.
           %br
           En cas de souci, envoyez un courriel à

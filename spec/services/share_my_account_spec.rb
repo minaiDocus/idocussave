@@ -6,7 +6,7 @@ describe ShareMyAccount do
 
     @organization = create :organization, code: 'TS'
     @user = create :user, code: 'TS%0001'
-    @organization.members << @user
+    @organization.customers << @user
   end
 
   after(:each) do
@@ -50,7 +50,7 @@ describe ShareMyAccount do
 
   it 'shares his account to another customer successfully' do
     user2 = create :user, code: 'TS%0002', email: 'test2@test.com'
-    @organization.members << user2
+    @organization.customers << user2
     params = { email: 'test2@test.com' }
 
     expect(NotifyWorker).to receive(:perform_async)
@@ -67,7 +67,7 @@ describe ShareMyAccount do
   it 'cannot share to a user of another organization' do
     user2 = create :user, code: 'TS%0002', email: 'test2@test.com'
     organization = create :organization
-    organization.members << user2
+    organization.customers << user2
     params = { email: 'test2@test.com' }
 
     expect(NotifyWorker).not_to receive(:perform_async)
@@ -83,8 +83,8 @@ describe ShareMyAccount do
   end
 
   it 'cannot share to a collaborator' do
-    user2 = create :prescriber, code: 'TS%COL1', email: 'col@test.com'
-    @organization.members << user2
+    user2 = create :prescriber, email: 'col@test.com'
+    Member.create(user: user2, organization: @organization, code: 'TS%COL1')
     params = { email: 'col@test.com' }
 
     expect(NotifyWorker).not_to receive(:perform_async)
@@ -101,7 +101,7 @@ describe ShareMyAccount do
   context 'given a contact already exist' do
     before(:each) do
       @contact = create :guest, code: 'TS%SHR1', email: 'john.doe@test.com'
-      @organization.members << @contact
+      @organization.guest_collaborators << @contact
     end
 
     it 'shares his account to the existing contact successfully' do

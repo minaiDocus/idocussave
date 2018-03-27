@@ -149,11 +149,7 @@ module ApplicationHelper
 
 
   def current_user_info
-    if request.path =~ /organizations/
-      session[:collaborator_code].presence || 'Moi-même'
-    else
-      session[:user_code].presence || 'Moi-même'
-    end
+    session[:user_code].presence || 'Moi-même'
   end
 
 
@@ -169,7 +165,7 @@ module ApplicationHelper
     end
 
     options = params.merge(contains)
-    
+
     link_to icon + title, options.merge(sort: column, direction: direction)
   end
 

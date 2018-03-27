@@ -14,15 +14,14 @@ describe ShareAccount do
       @organization = create :organization, code: 'TS'
 
       @customer = create :user, code: 'TS%0001'
-      @organization.members << @customer
+      @organization.customers << @customer
 
-      @collaborator = create :prescriber
-      @organization.members << @collaborator
-      @collaborator.extend_organization_role
-      @collaborator
+      user = create(:prescriber)
+      @collaborator = Collaborator.new(user)
+      @member = Member.create(user: user, organization: @organization, code: 'TS%COL1')
 
       @contact = create :guest
-      @organization.members << @contact
+      @organization.guest_collaborators << @contact
     end
 
     context 'and given customer and collaborator are in the same group' do
@@ -31,8 +30,8 @@ describe ShareAccount do
         @group.organization = @organization
         @group.name = 'Collaborateurs'
         @group.save
-        @group.members << @collaborator
-        @group.members << @customer
+        @group.members << @member
+        @group.customers << @customer
       end
 
       it "shares the customer's account to the contact" do
@@ -52,8 +51,8 @@ describe ShareAccount do
 
       it "shares the customer's account to another customer" do
         customer2 = create :user, code: 'TS%0002'
-        @organization.members << customer2
-        @group.members << customer2
+        @organization.customers << customer2
+        @group.customers << customer2
 
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
@@ -85,7 +84,7 @@ describe ShareAccount do
 
       it "fails to share the customer's account because customer2 is not part of the same group as collaborator" do
         customer2 = create :user, code: 'TS%0002'
-        @organization.members << customer2
+        @organization.customers << customer2
 
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 

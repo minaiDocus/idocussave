@@ -4,9 +4,9 @@
       .row-fluid
         .span12
           .pull-left
-            %h3 Liste des clients (#{@customers_count})
+            %h3 Liste des clients (#{@customers.total_count})
           .pull-right
-            - if (is_leader? || @user.can_manage_customers?) && @organization.is_active
+            - if (@user.leader? || @user.manage_customers) && @organization.is_active
               = link_to icon_new + ' ' + t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
   .row-fluid
     .span9.box
@@ -23,7 +23,7 @@
               - @customers.each do |customer|
                 %tr
                   %td.active_state= icon(icon: 'remove') if customer.inactive?
-                  %td.date= customer.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td.date= l customer.created_at
                   %td.user_info
                     %span.info
                       = link_to customer, account_organization_customer_path(@organization, customer)

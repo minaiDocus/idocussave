@@ -1,4 +1,3 @@
-# -*- encoding : UTF-8 -*-
 class PaperProcess < ActiveRecord::Base
   belongs_to :organization
   belongs_to :user
@@ -7,7 +6,6 @@ class PaperProcess < ActiveRecord::Base
 
   self.inheritance_column = :_type_disabled
   after_save :update_order, if: proc { |e| e.type == 'kit' }
-
 
   validate  :customer_exist, if: proc { |e| e.customer_code_changed? }
   validates :journals_count, numericality: { greater_than: 0 }, if: proc { |e| e.journals_count.present? }
@@ -21,8 +19,6 @@ class PaperProcess < ActiveRecord::Base
   validates_uniqueness_of :order_id, if: proc { |e| e.type == 'kit' }
   validate  :order_belonging, if: proc { |e| e.type == 'kit' }
 
-
-
   scope :kits,     -> { where(type: 'kit') }
   scope :l500,     -> { where(letter_type: 500) }
   scope :l1000,    -> { where(letter_type: 1000) }
@@ -30,7 +26,6 @@ class PaperProcess < ActiveRecord::Base
   scope :scans,    -> { where(type: 'scan') }
   scope :returns,  -> { where(type: 'return') }
   scope :receipts, -> { where(type: 'receipt') }
-
 
   def self.to_csv(collection)
     collection.map do |paper_process|
@@ -45,27 +40,26 @@ class PaperProcess < ActiveRecord::Base
     end.join("\n")
   end
 
+  def self.search(options)
+    paper_processes = self.all
 
-  def self.search_for_collection_with_options_and_user(collection, options, accounts)
     if options[:customer_company].present?
-      user_ids = accounts.where('company LIKE ?', "%#{options[:customer_company]}%").pluck(:id)
-      collection = collection.where(user_id: user_ids)
+      paper_processes.joins(:user).where('users.company LIKE ?', "%#{options[:customer_company]}%")
     end
 
-    collection = collection.where(type: options[:type]) if options[:type]
-    collection = collection.where('pack_name LIKE ?',         "%#{options[:pack_name]}%")       if options[:pack_name]
-    collection = collection.where('customer_code LIKE ?',   "%#{options[:customer_code]}%")  if options[:customer_code]
-    collection = collection.where('tracking_number LIKE ?', "%#{options[:tracking_number]}%") if options[:tracking_number]
+    paper_processes = paper_processes.where(type: options[:type]) if options[:type]
+    paper_processes = paper_processes.where('pack_name LIKE ?',       "%#{options[:pack_name]}%")       if options[:pack_name]
+    paper_processes = paper_processes.where('customer_code LIKE ?',   "%#{options[:customer_code]}%")   if options[:customer_code]
+    paper_processes = paper_processes.where('tracking_number LIKE ?', "%#{options[:tracking_number]}%") if options[:tracking_number]
 
     if options[:created_at]
       options[:created_at].each do |operator, value|
-        collection = collection.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
+        paper_processes = paper_processes.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 
-    collection
+    paper_processes
   end
-
 
   private
 

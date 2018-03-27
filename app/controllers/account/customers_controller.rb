@@ -11,16 +11,12 @@ class Account::CustomersController < Account::OrganizationController
   def index
     respond_to do |format|
       format.html do
-        @customers = customers.search(search_terms(params[:user_contains])).order(sort_column => sort_direction)
-
-        @customers_count = @customers.count
-
-        @customers  = @customers.page(params[:page]).per(params[:per_page])
-
+        @customers = customers.search(search_terms(params[:user_contains])).
+          order(sort_column => sort_direction).
+          page(params[:page]).
+          per(params[:per_page])
         @periods = Period.where(user_id: @customers.pluck(:id)).where("start_date < ? AND end_date > ?", Date.today, Date.today).includes(:user, :product_option_orders)
-
-        @groups = is_leader? ? @organization.groups : @user.groups
-        @groups = @groups.order(name: :asc)
+        @groups = @user.groups.order(name: :asc)
       end
 
       format.json do
@@ -46,7 +42,7 @@ class Account::CustomersController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/new
   def new
     @customer = User.new(code: "#{@organization.code}%")
-    @customer.options = UserOptions.new
+    @customer.build_options
   end
 
 
@@ -69,7 +65,7 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id
   def update
-    @customer.is_group_required = !is_leader?
+    @customer.is_group_required = @user.not_leader?
 
     if UpdateCustomerService.new(@customer, user_params).execute
       flash[:success] = 'Modifié avec succès'
@@ -223,7 +219,7 @@ class Account::CustomersController < Account::OrganizationController
     tags = []
     full_info = params[:full_info].present?
     if params[:q].present?
-      users = is_leader? ? @organization.customers.active : @user.customers.active
+      users = @user.leader? ? @organization.customers.active : @user.customers.active
       users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
@@ -243,7 +239,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def can_manage?
-    is_leader? || @user.can_manage_customers?
+    @user.leader? || @user.manage_customers
   end
 
 
@@ -252,7 +248,7 @@ class Account::CustomersController < Account::OrganizationController
     authorized = false unless can_manage?
     authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
     authorized = false if action_name.in?(%w(info new create destroy)) && !@organization.is_active
-    authorized = false if action_name.in?(%w(info new create)) && !(is_leader? || @user.groups.any?)
+    authorized = false if action_name.in?(%w(info new create)) && !(@user.leader? || @user.groups.any?)
     authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
     authorized = false if action_name.in?(%w(edit_ibiza update_ibiza)) && !@organization.ibiza.try(:configured?)
 
@@ -291,7 +287,7 @@ class Account::CustomersController < Account::OrganizationController
       :email,
       :phone_number,
       { group_ids: [] },
-      :parent_id,
+      :manager_id,
       { options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed] }
     ]
 

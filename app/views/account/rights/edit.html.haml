@@ -1,15 +1,15 @@
 #collaborator_rights
   .row-fluid
     .span12.box
-      %h3 Edition des autorisations du collaborateur : #{ link_to @collaborator.info, account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization') }
+      %h3 Edition des autorisations du collaborateur : #{ link_to @member.info, account_organization_collaborator_path(@organization, @member, tab: 'authorization') }
   .row-fluid
     .span12.box
-      = simple_form_for @collaborator, url: account_organization_collaborator_rights_url(@organization, @collaborator), html: { class: 'form form-horizontal margin0' } do |f|
-        = f.input :organization_rights_is_collaborators_management_authorized,     as: :boolean
-        = f.input :organization_rights_is_customers_management_authorized,         as: :boolean
-        = f.input :organization_rights_is_groups_management_authorized,            as: :boolean
-        = f.input :organization_rights_is_journals_management_authorized,          as: :boolean
-        = f.input :organization_rights_is_customer_journals_management_authorized, as: :boolean
+      = simple_form_for @member, url: account_organization_collaborator_rights_url(@organization, @member), html: { class: 'form form-horizontal margin0' } do |f|
+        = f.input :manage_collaborators,     as: :boolean
+        = f.input :manage_customers,         as: :boolean
+        = f.input :manage_groups,            as: :boolean
+        = f.input :manage_journals,          as: :boolean
+        = f.input :manage_customer_journals, as: :boolean
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @member, tab: 'authorization'), class: 'btn'

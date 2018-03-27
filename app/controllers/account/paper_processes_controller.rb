@@ -1,17 +1,17 @@
-# -*- encoding : UTF-8 -*-
 class Account::PaperProcessesController < Account::AccountController
   before_filter :verify_rights
 
   # GET /account/paper_processes
   def index
-    @paper_processes = PaperProcess.search_for_collection_with_options_and_user(
-      PaperProcess.where(user_id: accounts),
-      search_terms(params[:paper_process_contains]),
-      accounts
-    ).order(sort_column => sort_direction).includes(:user).page(params[:page]).per(params[:per_page])
+    @paper_processes = PaperProcess.where(user_id: accounts).
+      search(search_terms(params[:paper_process_contains])).
+      includes(:user).
+      order(sort_column => sort_direction).
+      page(params[:page]).
+      per(params[:per_page])
   end
 
-private
+  private
 
   def verify_rights
     unless accounts.detect { |e| e.options.is_upload_authorized }

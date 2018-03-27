@@ -16,14 +16,14 @@ describe DiscountBillingService do
           user = FactoryGirl.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_basic_package_active: true)
-          @organization.members << user
+          @organization.customers << user
           EvaluateSubscription.new(subscription).execute
         }
         @discount = DiscountBillingService.new(@organization)
       end
 
       after(:all) do
-        @organization.members = []
+        @organization.customers = []
       end
 
       it '#subscription_quota shoud be equal to 10' do
@@ -54,7 +54,7 @@ describe DiscountBillingService do
           user = FactoryGirl.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_basic_package_active: true)
-          @organization.members << user
+          @organization.customers << user
           EvaluateSubscription.new(subscription).execute
         }
         #micro_package : 5
@@ -62,7 +62,7 @@ describe DiscountBillingService do
           user = FactoryGirl.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_micro_package_active: true)
-          @organization.members << user
+          @organization.customers << user
           EvaluateSubscription.new(subscription).execute
         }
         #retriever_package: 5
@@ -70,7 +70,7 @@ describe DiscountBillingService do
           user = FactoryGirl.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_retriever_package_active: true)
-          @organization.members << user
+          @organization.customers << user
           EvaluateSubscription.new(subscription).execute
         }
         #basic package with quaterly period: 5
@@ -78,7 +78,7 @@ describe DiscountBillingService do
           user = FactoryGirl.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 3, user_id: user.id, is_basic_package_active: true)
-          @organization.members << user
+          @organization.customers << user
           EvaluateSubscription.new(subscription).execute
         }
 
@@ -86,7 +86,7 @@ describe DiscountBillingService do
       end
 
       after(:all) do
-        @organization.members = []
+        @organization.customers = []
       end
 
       it '#subscription_quota shoud be equal to 55' do

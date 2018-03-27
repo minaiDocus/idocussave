@@ -71,11 +71,15 @@ fr:
         authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
         auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
-        organization_rights_is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
-        organization_rights_is_customers_management_authorized: Gestion des clients autorisé ?
-        organization_rights_is_groups_management_authorized: Gestion des groupes autorisé ?
-        organization_rights_is_journals_management_authorized: Gestion des journaux comptables autorisé ?
-        organization_rights_is_customer_journals_management_authorized: Gestion des journaux comptables des clients autorisé ?
+      member:
+        code: Code collaborateur
+        role: Rôle
+        group_ids: Groupes
+        manage_collaborators: Gestion des collaborateurs autorisé ?
+        manage_customers: Gestion des clients autorisé ?
+        manage_groups: Gestion des groupes autorisé ?
+        manage_journals: Gestion des journaux comptables autorisé ?
+        manage_customer_journals: Gestion des journaux comptables des clients autorisé ?
       options:
         is_taxable: Le dossier est-il assujetti à TVA?
         is_pre_assignment_date_computed: Date de saisie des factures
@@ -88,8 +92,6 @@ fr:
         name: Nom
         description: Description
         code: Code
-        leader: Administrateur de l'organisation
-        leader_id: Administrateur de l'organisation
         authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
         auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
@@ -102,6 +104,13 @@ fr:
         is_operation_processing_forced: Souhaitez-vous forcer la pré-affectation des écritures récupérées par les automates ?
         is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
         is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
+      organization_group:
+        name: Nom du groupe
+        organizations: Organisations membre du groupe
+        is_auto_membership_activated: Membre automatique des organisations du groupe ?
+      group:
+        members: Collaborateurs
+        customers: Clients
       vat_account:
         code: Code TVA
         nature: Nature

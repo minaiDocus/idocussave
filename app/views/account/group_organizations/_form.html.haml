@@ -1,0 +1,9 @@
+= simple_form_for @organization_group, url: (@organization_group.persisted? ? account_group_organization_path : account_group_organizations_path), html: { class: 'form form-horizontal margin0' } do |f|
+  .row-fluid
+    .span6
+      = f.input :name
+      = f.association :organizations, collection: Organization.all.order(:name), input_html: { class: 'searchable-option-list' }, required: true, hint: "Une organisation ne peut être membre que d'un seul groupe à la fois."
+      = f.input :is_auto_membership_activated
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_group_organizations_path, class: 'btn'

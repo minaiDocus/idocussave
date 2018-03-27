@@ -3,7 +3,6 @@ module Account::ProfileHelper
     t('activerecord.models.ibiza.attributes.states.' + (state.presence || 'none'))
   end
 
-
   def ibiza_state_label(state)
     case state
     when 'waiting'

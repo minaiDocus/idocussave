@@ -9,9 +9,9 @@ describe 'Share accounts' do
     @guest_collaborator = create(:guest)
     @user               = create(:user)
 
-    @organization.members << @collaborator
-    @organization.members << @guest_collaborator
-    @organization.members << @user
+    Member.create(user: @user, organization: @organization, code: 'TS%COL1')
+    @organization.guest_collaborators << @guest_collaborator
+    @organization.customers << @user
   end
 
   after(:each) do
@@ -53,13 +53,13 @@ describe 'Share accounts' do
     expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"] })
 
     admin = create(:admin)
-    @organization.members << admin
+    Member.create(user: admin, organization: @organization, code: 'TS%ADM')
     account_sharing.collaborator = admin
     expect(account_sharing.save).to be false
     expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"] })
 
     user = create(:user)
-    @organization.members << user
+    @organization.customers << user
     account_sharing.collaborator = user
     expect(account_sharing.save).to be true
   end
@@ -75,13 +75,13 @@ describe 'Share accounts' do
     expect(account_sharing.errors.messages).to eq({ account_id: ["n'est pas valide"] })
 
     guest_collaborator = create(:guest)
-    @organization.members << guest_collaborator
+    @organization.guest_collaborators << guest_collaborator
     account_sharing.account = guest_collaborator
     expect(account_sharing.save).to be false
     expect(account_sharing.errors.messages).to eq({ account_id: ["n'est pas valide"] })
 
     admin = create(:admin)
-    @organization.members << admin
+    Member.create(user: admin, organization: @organization, code: 'TS%ADM')
     account_sharing.account = admin
     expect(account_sharing.save).to be false
     expect(account_sharing.errors.messages).to eq({ account_id: ["n'est pas valide"] })
@@ -89,7 +89,7 @@ describe 'Share accounts' do
 
   it 'guest_collaborator should belongs to the same organization' do
     organization2 = create(:organization)
-    organization2.members << @guest_collaborator
+    organization2.guest_collaborators << @guest_collaborator
 
     account_sharing = AccountSharing.new
     account_sharing.organization  = @organization
@@ -103,7 +103,7 @@ describe 'Share accounts' do
 
   it 'account should belongs to the same organization' do
     organization2 = create(:organization)
-    organization2.members << @user
+    organization2.customers << @user
 
     account_sharing = AccountSharing.new
     account_sharing.organization  = @organization
@@ -164,7 +164,7 @@ describe 'Share accounts' do
   context 'search' do
     before(:each) do
       @guest_collaborator2 = create(:guest)
-      @organization.members << @guest_collaborator2
+      @organization.guest_collaborators << @guest_collaborator2
 
       @guest_collaborator.company    = 'COMP4'
       @guest_collaborator.first_name = 'Paul'
@@ -177,10 +177,10 @@ describe 'Share accounts' do
       @guest_collaborator2.save
 
       @user2 = create(:user)
-      @organization.members << @user2
+      @organization.customers << @user2
 
       @user3 = create(:user)
-      @organization.members << @user3
+      @organization.customers << @user3
 
       @user.company    = 'COMP1'
       @user.first_name = 'John'

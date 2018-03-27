@@ -16,9 +16,9 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
     before(:all) do
       DatabaseCleaner.start
 
-      @leader = create :prescriber, code: 'IDO%ADM', organization: @organization
+      @leader = create :prescriber
       @leader.create_notify(@notify_options)
-      @organization.update(leader: @leader)
+      Member.create(user: @leader, organization: @organization, code: 'IDO%ADM', role: Member::ADMIN)
     end
 
     after(:all) do
@@ -54,11 +54,12 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
       before(:all) do
         DatabaseCleaner.start
 
-        @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
+        @collaborator = create :prescriber
         @collaborator.create_notify(@notify_options)
+        member = Member.create(user: @collaborator, organization: @organization, code: 'IDO%COL1')
         group = Group.create(name: 'Customers', organization: @organization)
-        group.members << @collaborator
-        group.members << @user
+        group.members << member
+        group.customers << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
         @contact.create_notify(@notify_options)
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
@@ -240,14 +241,15 @@ describe RetrieverNotification do
       before(:all) do
         DatabaseCleaner.start
 
-        @leader = create :prescriber, code: 'IDO%ADM', organization: @organization
+        @leader = create :prescriber
         @leader.create_notify(@notify_options)
-        @organization.update(leader: @leader)
-        @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
+        Member.create(user: @leader, organization: @organization, code: 'IDO%ADM', role: Member::ADMIN)
+        @collaborator = create :prescriber
         @collaborator.create_notify(@notify_options)
+        @member = Member.create(user: @collaborator, organization: @organization, code: 'IDO%COL1')
         group = Group.create(name: 'Customers', organization: @organization)
-        group.members << @collaborator
-        group.members << @user
+        group.members << @member
+        group.customers << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
         @contact.create_notify(@notify_options)
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
@@ -299,11 +301,12 @@ describe RetrieverNotification do
       before(:all) do
         DatabaseCleaner.start
 
-        @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
+        @collaborator = create :prescriber
         @collaborator.create_notify(@notify_options)
+        @member = Member.create(user: @collaborator, organization: @organization, code: 'IDO%COL1')
         group = Group.create(name: 'Customers', organization: @organization)
-        group.members << @collaborator
-        group.members << @user
+        group.members << @member
+        group.customers << @user
       end
 
       after(:all) { DatabaseCleaner.clean }

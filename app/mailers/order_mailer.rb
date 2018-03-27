@@ -24,9 +24,8 @@ class OrderMailer < ActionMailer::Base
     mail(to: to, cc: cc, subject: 'Commande de Kit envoi courrier')
   end
 
-  def notify_paper_set_reminder(order)
+  def notify_paper_set_reminder(order, email)
     @order = order
-    to  = order.organization.leader.email
-    mail(to: to, subject: 'Rappel Commande de Kit envoi courrier')
+    mail(to: email, subject: 'Rappel Commande de Kit envoi courrier')
   end
 end

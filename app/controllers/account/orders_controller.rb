@@ -122,7 +122,7 @@ class Account::OrdersController < Account::OrganizationController
   def verify_rights
     subscription = @customer.subscription
     authorized = true
-    authorized = false unless is_leader? || @user.can_manage_customers?
+    authorized = false unless @user.leader? || @user.manage_customers
     authorized = false unless @customer.active?
     authorized = false unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
 

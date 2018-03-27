@@ -615,7 +615,7 @@ describe DropboxImport do
         context 'given user has access to another account' do
           before(:each) do
             organization = Organization.create(name: 'TEST', code: 'TS')
-            organization.members << @user
+            organization.customers << @user
             @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
             @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
             @user2.organization = organization
@@ -738,10 +738,10 @@ describe DropboxImport do
 
         @organization = Organization.create(name: 'TEST', code: 'TS')
 
-        @collaborator = FactoryGirl.create(:prescriber, code: 'TS%COL1')
+        @collaborator = FactoryGirl.create(:prescriber)
         @collaborator.organization = @organization
         @collaborator.save
-        @collaborator.extend_organization_role
+        @member = Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
         @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
         @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
@@ -762,9 +762,9 @@ describe DropboxImport do
         @group = Group.new
         @group.name = 'Customers'
         @group.organization = @organization
-        @group.members << @collaborator
-        @group.members << @user
-        @group.members << @user2
+        @group.members << @member
+        @group.customers << @user
+        @group.customers << @user2
         @group.save
 
         efs = @collaborator.find_or_create_external_file_storage
@@ -812,7 +812,7 @@ describe DropboxImport do
 
         # get latest cursor
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor').
-          with(headers: @headers_2, body: '{"path":"/exportation vers iDocus/TS%COL1","recursive":true,"include_media_info":false,"include_deleted":false}')
+          with(headers: @headers_2, body: '{"path":"/exportation vers iDocus","recursive":true,"include_media_info":false,"include_deleted":false}')
         # delta
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/continue').
           with(headers: @headers_2, body: /\{"cursor":".*"\}/)
@@ -821,7 +821,7 @@ describe DropboxImport do
 
         expect(@dropbox.checked_at).to be_present
         expect(@dropbox.delta_cursor).to be_present
-        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%COL1')
+        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus')
         expect(@dropbox.import_folder_paths).to eq(folder_paths)
 
         expect(dropbox_import.folders.size).to eq 8
@@ -830,7 +830,7 @@ describe DropboxImport do
 
       context 'given initial folders have been created' do
         before(:each) do
-          @dropbox.delta_path_prefix = '/exportation vers iDocus/TS%COL1'
+          @dropbox.delta_path_prefix = '/exportation vers iDocus'
           @dropbox.import_folder_paths = [
             '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC',
             '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT',
@@ -1256,11 +1256,8 @@ describe DropboxImport do
             AccountBookType.create(user_id: @user3.id, name: 'AC', description: '( Achat )')
             AccountBookType.create(user_id: @user3.id, name: 'BQ', description: '( Banque )')
 
-            @group.members << @user3
+            @group.customers << @user3
             @group.save
-
-            @user3.groups << @group
-            @user3.save
           end
 
           it 'creates TS%0003\'s folders' do

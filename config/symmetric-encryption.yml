@@ -63,3 +63,6 @@ production: &production_defaults
 
 staging:
   <<: *production_defaults
+
+sandbox:
+  <<: *production_defaults

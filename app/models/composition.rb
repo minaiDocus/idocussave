@@ -9,18 +9,15 @@ class Composition < ActiveRecord::Base
 
     name = 'Undefined'.pdf if name == ''
 
-
     user_id      = options.delete(:user_id)
     document_ids = options.delete(:document_ids)
 
     user = User.find user_id
-
-
-    user.extend_organization_role
+    user = Collaborator.new(user) if user.collaborator?
 
     accounts = [user] + user.accounts
     documents = Document.find(document_ids).select do |document|
-      document.pack.owner == accounts || user.customers.include?(document.pack.owner) || user.is_admin
+      document.pack.owner == accounts || (user.collaborator? && user.customers.include?(document.pack.owner)) || user.is_admin
     end.sort_by do |x|
       document_ids.index(x.id.to_s)
     end

@@ -28,7 +28,7 @@ class UsersToCsvService
         I18n.l(user.created_at),
         user.organization.try(:name),
         user.is_admin ? 'Oui' : 'Non',
-        user.organization.try(:leader) == user ? 'Oui' : 'Non',
+        user.memberships.admins.present? ? 'Oui' : 'Non',
         user.is_prescriber ? 'Oui' : 'Non',
         user.inactive? ? 'Oui' : 'Non',
         user.company,

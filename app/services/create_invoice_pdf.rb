@@ -25,20 +25,21 @@ class CreateInvoicePdf
         puts "Generating invoice for organization : #{organization.name}"
         invoice = Invoice.new
         invoice.organization = organization
-        invoice.user         = organization.leader
         invoice.period       = organization_period
         invoice.save
         print "-> Invoice #{invoice.number}..."
         CreateInvoicePdf.new(invoice).execute
         print "done\n"
 
-        notification = Notification.new
-        notification.user        = invoice.user
-        notification.notice_type = 'invoice'
-        notification.title       = 'Nouvelle facture disponible'
-        notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
-        notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
-        notification.save
+        organization.admins.each do |admin|
+          notification = Notification.new
+          notification.user        = admin
+          notification.notice_type = 'invoice'
+          notification.title       = 'Nouvelle facture disponible'
+          notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+          notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
+          notification.save
+        end
 
         InvoiceMailer.delay(queue: :high).notify(invoice)
       end

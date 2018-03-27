@@ -39,7 +39,7 @@ class NotifyDocumentBeingProcessed
     notification.message = if list.size == 1
       "1 nouveau document a été reçu et est en cours de traitement pour le lot suivant : #{list.first.notifiable.temp_pack.name.sub(' all', '')}"
     else
-      groups = list.map(&:notifiable).group_by(&:temp_pack)
+      groups = list.map(&:notifiable).compact.group_by(&:temp_pack)
       message = "#{list.size} nouveaux documents ont été reçus et sont en cours de traitement pour "
       message += groups.size == 1 ? "le lot suivant :\n\n" : "les lots suivants :\n\n"
       message += groups.sort_by do |temp_pack, temp_documents|

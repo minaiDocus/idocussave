@@ -11,7 +11,7 @@
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
                 - options = []
-                - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
                   - options += [["Montant facture (€ HT)",8], ["Dépassement (€ HT)",9]]
                 - options += [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
@@ -44,7 +44,7 @@
                 %span{ :style => "position:relative;top:3px;" }
                   Légende
             .line2
-              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year)
+              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year, organization_id: params[:organization_id])
 
   - annual_summary = []
   - 12.times do
@@ -56,9 +56,9 @@
         %thead
           %tr
             %th{ :style => "width:15%;" }
-              != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+              = link_to((@year - 1), account_reporting_path(year: (@year - 1), organization_id: params[:organization_id]))
               %span.margin1left.margin1right #{@year}
-              != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+              = link_to((@year + 1), account_reporting_path(year: (@year + 1), organization_id: params[:organization_id]))
             - months.each do |month|
               %th.month
                 #{month}
@@ -146,7 +146,7 @@
                             %span{ :class => "hide excess_compta_pieces value_13" }
                               - period.duration.times do |i|
                                 %div{ class: "period_#{i+1}" }= period_billing.data(:excess_compta_pieces, i+1)
-                            - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                            - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
                               %span{ :class => "hide price value_8" }
                                 - period.duration.times do |i|
                                   %div{ class: "period_#{i+1}" }
@@ -178,7 +178,7 @@
                   - else
                     %td.align-middle.block
                       \-
-          - if current_user.is_prescriber || current_user.is_admin
+          - if @user.collaborator?
             %tr#total
               %td
                 %b.value
@@ -264,7 +264,7 @@
                     %span{ :class => "hide oversized value_7" }
                       #{month[:oversized]}
                     %span{ :class => "hide price value_8" }
-                      - if @user.organization.leader == @user
+                      - if @user.leader? && (@user.has_one_organization? || @user.scoped?)
                         - time = Time.local(@year,(index+1),15,0,0)
                         - price = price_of_period_by_time(@user.organization.periods,time)
                         - month[:price_in_cents] = month[:price_in_cents] + price
@@ -280,7 +280,7 @@
                   %br
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
-                    - if @user.organization.leader == @user && @user.organization.invoices.count > 0
+                    - if @user.leader? && (@user.has_one_organization? || @user.scoped?) && @user.organization.invoices.count > 0
                       - start_time = Time.local(@year, index+1, 1) + 1.month
                       - end_time = start_time.end_of_month
 
@@ -289,13 +289,13 @@
                         - if invoice.content.try(:url)
                           %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                           %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
-        - if current_user.is_prescriber || current_user.is_admin
+        - if @user.collaborator?
           %tfooter
             %tr
               %th{ :style => "width:15%;" }
-                != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+                = link_to((@year - 1), account_reporting_path(year: (@year - 1), organization_id: params[:organization_id]))
                 %span.margin1left.margin1right #{@year}
-                != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+                = link_to((@year + 1), account_reporting_path(year: (@year + 1), organization_id: params[:organization_id]))
               - months.each do |month|
                 %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                   #{month}
@@ -468,7 +468,7 @@
         </tr>
       </table>
     </div>
-  - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+  - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
     :plain
       <div class="separator"></div>
       <div class="optionslist">

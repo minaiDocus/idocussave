@@ -14,15 +14,22 @@ class AccountSharingRequest
       account_sharing.collaborator  = user
       account_sharing.account       = account
       account_sharing.is_approved   = false
+
       if account_sharing.save
-        if account.parent || account.organization.leader
+        collaborators = if account.manager&.user
+          [account.manager.user]
+        else
+          account.organization.admins
+        end
+
+        collaborators.each do |collaborator|
           notification = Notification.new
-          notification.user        = account.parent || account.organization.leader
+          notification.user        = collaborator
           notification.notice_type = 'account_sharing_request'
           notification.title       = "Demande d'accès à un dossier"
           notification.message     = "#{user.info} souhaite accéder au dossier #{account.info}."
           notification.url         = Rails.application.routes.url_helpers.account_organization_account_sharings_url(
-                                       notification.user.organization,
+                                       account.organization,
                                        ActionMailer::Base.default_url_options
                                      )
           NotifyWorker.perform_async(notification.id) if notification.save

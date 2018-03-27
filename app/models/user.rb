@@ -1,24 +1,23 @@
-# -*- encoding : UTF-8 -*-
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
+  include ::CodeFormatValidation
 
+  devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
 
   AUTHENTICATION_TOKEN_LENGTH = 20
 
-  validate :format_of_code,      if: proc { |u| u.code_changed? }
-  validate :belonging_of_parent, if: proc { |u| u.parent_id_changed? && u.parent.present? }
+  validate :belonging_of_manager, if: proc { |u| u.manager_id_changed? && u.manager_id.present? }
   validates :authd_prev_period,            numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
-  validates_length_of :code, within: 3..15, unless: Proc.new { |u| u.is_guest }
+  validates_length_of :code, within: 3..15, unless: Proc.new { |u| u.collaborator? || u.is_guest }
   validates_length_of :email, maximum: 50
   validates_length_of :company, :first_name, :last_name, :knowings_code, within: 0..50, allow_nil: true
   validates_presence_of :email, :encrypted_password
-  validates_presence_of :code, unless: Proc.new { |u| u.is_guest }
+  validates_presence_of :code, unless: Proc.new { |u| u.collaborator? || u.is_guest }
   validates_presence_of :company
   validates_inclusion_of :knowings_visibility, in: 0..2
   validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
-  validates_uniqueness_of :code, unless: Proc.new { |u| u.is_guest }
+  validates_uniqueness_of :code, unless: Proc.new { |u| u.collaborator? || u.is_guest }
   validates_uniqueness_of :email_code, unless: Proc.new { |u| u.is_prescriber }
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
   validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
@@ -26,13 +25,15 @@ class User < ActiveRecord::Base
 
   attr_accessor :is_group_required
 
+  has_many :memberships, class_name: 'Member', foreign_key: :user_id, dependent: :destroy
+  has_many :organizations, through: :memberships
+
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
   has_one :dematbox
   has_one :composition
   has_one :subscription
   has_one :csv_descriptor, autosave: true
   has_one :accounting_plan
-  has_one :my_organization, class_name: 'Organization', inverse_of: 'leader', foreign_key: :leader_id
   has_one :external_file_storage, autosave: true, dependent: :destroy
   has_one :notify, dependent: :destroy
 
@@ -42,7 +43,6 @@ class User < ActiveRecord::Base
   has_many :periods
   has_many :expenses, class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :invoices
-  has_many :children, class_name: 'User', inverse_of: :parent, foreign_key: :parent_id
   has_many :addresses, as: :locatable
   has_many :exercises
   has_many :temp_packs
@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
   has_many :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :user
   has_many :pack_pieces,  class_name: 'Pack::Piece',              inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report',             inverse_of: :user
-  has_many :remote_files, dependent: :destroy
+  has_many :remote_files
   has_many :sended_emails, class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy, foreign_key: :from_user_id
   has_many :bank_accounts,                                                                      dependent: :destroy
   has_many :temp_documents
@@ -63,7 +63,8 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   has_many :ibizabox_folders, dependent: :destroy
 
-  belongs_to :parent,            class_name: 'User', inverse_of: :children
+  belongs_to :manager, class_name: 'Member', inverse_of: :managed_users
+
   belongs_to :organization,      inverse_of: 'members'
   belongs_to :scanning_provider, inverse_of: 'customers'
 
@@ -216,40 +217,12 @@ class User < ActiveRecord::Base
     self.password_confirmation = new_password
   end
 
-
   def prescribers
-    if !is_prescriber
-      user_ids = []
-
-      user_ids << organization.leader.id if organization.try(:leader)
-      user_ids += User.joins(:groups).where("groups.id" => group_ids, "users.is_prescriber" => true).pluck(:id) if group_ids.present?
-
-      if user_ids.any?
-        User.where(id: user_ids).order(code: :asc)
-      else
-        []
-      end
-    else
-      []
-    end
+    collaborator? ? [] : ((organization&.admins || []) + group_prescribers)
   end
 
   def group_prescribers
-    if is_prescriber
-      []
-    else
-      User.joins(:groups).where("groups.id" => group_ids, "users.is_prescriber" => true)
-    end
-  end
-
-  def extend_organization_role
-    if is_prescriber
-      if my_organization
-        extend OrganizationManagement::Leader
-      elsif organization
-        extend OrganizationManagement::Collaborator
-      end
-    end
+    collaborator? ? [] : groups.flat_map(&:collaborators)
   end
 
   def compta_processable_journals
@@ -295,16 +268,8 @@ class User < ActiveRecord::Base
 
 
   def format_name
-    self.first_name = begin
-                        first_name.split.map(&:capitalize).join(' ')
-                      rescue
-                        ''
-                      end
-    self.last_name = begin
-                       last_name.upcase
-                     rescue
-                       ''
-                     end
+    self.first_name = (first_name.split.map(&:capitalize).join(' ') rescue '')
+    self.last_name = (last_name.upcase rescue '')
   end
 
 
@@ -315,6 +280,14 @@ class User < ActiveRecord::Base
 
   def recently_created?
     created_at > 24.hours.ago
+  end
+
+  def collaborator?
+    is_prescriber
+  end
+
+  def admin?
+    is_admin
   end
 
   # TODO : need a test
@@ -344,19 +317,11 @@ class User < ActiveRecord::Base
     users
   end
 
-private
+  private
 
-
-  def format_of_code
-    if organization && !code.match(/\A#{organization.code}%[A-Z0-9]{1,13}\z/)
-      errors.add(:code, :invalid)
-    end
-  end
-
-
-  def belonging_of_parent
-    unless parent.organization_id == organization_id
-      errors.add(:parent_id, :invalid)
+  def belonging_of_manager
+    unless manager.organization_id == organization_id
+      errors.add(:manager_id, :invalid)
     end
   end
 
@@ -371,5 +336,4 @@ private
       end
     end
   end
-
 end
