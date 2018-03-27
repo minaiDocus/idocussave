@@ -5,12 +5,14 @@ class NotifyPreAssignmentDeliveryFailure
   end
 
   def execute
-    user = @user.parent || @user.organization.leader
+    users = @user.manager ? [@user.manager.user] : @user.organization.admins
 
-    return unless user.notify.pre_assignment_delivery_errors?
-    Notifiable.create(notify: user.notify, notifiable: @delivery, label: 'failure')
-    return unless user.notify.pre_assignment_delivery_errors_now?
-    NotifyPreAssignmentDeliveryFailureWorker.perform_in(1.minute, user.id)
+    users.each do |user|
+      next unless user.notify.pre_assignment_delivery_errors?
+      Notifiable.create(notify: user.notify, notifiable: @delivery, label: 'failure')
+      next unless user.notify.pre_assignment_delivery_errors_now?
+      NotifyPreAssignmentDeliveryFailureWorker.perform_in(1.minute, user.id)
+    end
 
     true
   end

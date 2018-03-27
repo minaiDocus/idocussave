@@ -5,9 +5,13 @@ class NotifyNewScannedDocuments
   end
 
   def execute
-    total = @user.periods.order(start_date: :desc).first.scanned_sheets + @new_count
+    period = @user.periods.order(start_date: :desc).first
+    total = period.scanned_sheets + @new_count
 
-    [@user, @user.parent || @user.organization.leader].compact.each do |user|
+    users = [@user]
+    users += @user.manager ? [@user.manager.user] : @user.organization.admins
+
+    users.compact.each do |user|
       return unless user.notify.new_scanned_documents
 
       notification = Notification.new
@@ -15,7 +19,8 @@ class NotifyNewScannedDocuments
       notification.notice_type = 'new_scanned_documents'
       notification.title       = 'Nouveau document papier reçu'
       if user == @user
-        notification.message   = "Votre total des documents papier envoyés cette période est : #{total}."
+        period_name = Period.period_name(period.duration, 0, period.start_date.to_time)
+        notification.message   = "Le total des documents papier envoyés pour la période #{period_name} est de : #{total}."
       else
         notification.message   = "Le total des documents papier envoyés par #{@user.info} cette période est : #{total}."
       end
