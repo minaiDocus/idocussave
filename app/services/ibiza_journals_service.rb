@@ -4,6 +4,7 @@ class IbizaJournalsService
 
   def initialize(user)
     @user = user
+    @journals = []
   end
 
 

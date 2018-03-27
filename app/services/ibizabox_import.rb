@@ -72,7 +72,7 @@ class IbizaboxImport
 
   def get_file(document_id, file_path)
     client.request.clear
-    client.company(@user.ibiza_id).ged.file?(document_id)
+    client.company(@user.ibiza_id).box.file?(document_id)
 
     if client.response.success?
       xml_file  = Nokogiri::XML(client.response.body.force_encoding('UTF-8'))
@@ -85,7 +85,7 @@ class IbizaboxImport
 
   def get_ibiza_folder_contents(period)
     client.request.clear
-    client.company(@user.ibiza_id).ged.accountingdocuments
+    client.company(@user.ibiza_id).box.accountingdocuments
     client.request.path += "?" + URI.escape("journal=#{@journal.pseudonym}&period=#{period}")
     client.request.run
 
