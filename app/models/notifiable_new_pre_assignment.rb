@@ -1,3 +1,4 @@
+# TODO : remove this after migration
 class NotifiableNewPreAssignment < ActiveRecord::Base
   self.table_name = 'notifies_preseizures'
 

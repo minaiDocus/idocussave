@@ -1,0 +1,13 @@
+#unread_notification_count{ data: { count: @user.notifications.not_read.count } }
+- @notifications.each do |notification|
+  %li.notification{ class: ('active' unless notification.is_read ) }
+    .row-fluid
+      .media.span12
+        .media-body
+          %a{ href: link_through_account_notification_path(notification) }
+            %strong.notification-title= notification.title
+          %p.notification-desc!= markdown_render notification.message
+          .notification-meta
+            %small.timestamp
+              Il y a
+              = distance_of_time_in_words Time.now, notification.created_at

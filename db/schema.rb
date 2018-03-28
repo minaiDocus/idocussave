@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180315150755) do
+ActiveRecord::Schema.define(version: 20180324201145) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1004,6 +1004,15 @@ ActiveRecord::Schema.define(version: 20180315150755) do
   add_index "news", ["published_at"], name: "index_news_on_published_at", using: :btree
   add_index "news", ["target_audience"], name: "index_news_on_target_audience", using: :btree
 
+  create_table "notifiables_notifies", force: :cascade do |t|
+    t.integer "notifiable_id",   limit: 4
+    t.string  "notifiable_type", limit: 255
+    t.integer "notify_id",       limit: 4
+    t.string  "label",           limit: 255
+  end
+
+  add_index "notifiables_notifies", ["notify_id", "notifiable_id", "notifiable_type", "label"], name: "index_notifiable", using: :btree
+
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
     t.string   "notice_type", limit: 255,                   null: false
@@ -1040,6 +1049,8 @@ ActiveRecord::Schema.define(version: 20180315150755) do
     t.boolean  "detected_preseizure_duplication",                   default: false
     t.integer  "detected_preseizure_duplication_count", limit: 4,   default: 0
     t.integer  "unblocked_preseizure_count",            limit: 4,   default: 0
+    t.boolean  "new_scanned_documents",                             default: false
+    t.string   "pre_assignment_delivery_errors",        limit: 255, default: "none"
     t.datetime "created_at",                                                          null: false
     t.datetime "updated_at",                                                          null: false
     t.integer  "user_id",                               limit: 4
@@ -1048,21 +1059,6 @@ ActiveRecord::Schema.define(version: 20180315150755) do
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
   add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
   add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
-
-  create_table "notifies_preseizures", force: :cascade do |t|
-    t.integer "notify_id",     limit: 4
-    t.integer "preseizure_id", limit: 4
-  end
-
-  add_index "notifies_preseizures", ["notify_id", "preseizure_id"], name: "index_notify_id_preseizure_id", using: :btree
-
-  create_table "notifies_temp_documents", force: :cascade do |t|
-    t.string  "label",            limit: 255
-    t.integer "notify_id",        limit: 4
-    t.integer "temp_document_id", limit: 4
-  end
-
-  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", using: :btree
 
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255

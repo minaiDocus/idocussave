@@ -3,7 +3,6 @@ class Account::AccountController < ApplicationController
   before_filter :load_user_and_role
   before_filter :verify_suspension
   before_filter :verify_if_active
-  before_filter :load_recent_notifications
 
   layout 'inner'
 

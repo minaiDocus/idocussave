@@ -40,20 +40,42 @@ Number.prototype.formatMoney = function(c, d, t){
     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 };
 
-function load_latest_notifications() {
-    if ($('.dropdown-notifications.open').length == 0) {
+var notification_per_page = 5;
+var notification_data = null;
+function load_latest_notifications(load_more) {
+    if (load_more || $('.dropdown-notifications.open').length == 0) {
         $.ajax({
-            url: '/account/notifications/latest',
-            success: function(data){
-                if ($('.dropdown-notifications.open').length == 0) {
-                    $('#notifications').html(data);
+            url: '/account/notifications/latest?per_page=' + (notification_per_page + (load_more ? 5 : 0)),
+            success: function(data) {
+                if ((load_more || $('.dropdown-notifications.open').length == 0) && notification_data != data) {
+                    $('#notifications .items').html(data);
+                    notification_data = data;
+                    unread_notification_count = $('#unread_notification_count').data('count');
+                    if (unread_notification_count > 0) {
+                        $('#notifications .icon-bell').removeClass('notification-icon-disabled');
+                        $('#notifications .icon-bell').addClass('notification-icon');
+                    } else {
+                        $('#notifications .icon-bell').removeClass('notification-icon');
+                        $('#notifications .icon-bell').addClass('notification-icon-disabled');
+                    }
+                    $('#notifications .icon-bell').attr('data-count', unread_notification_count);
+                    if (load_more)
+                        notification_per_page += 5;
                 }
             }
         });
     }
 }
 
-setInterval(load_latest_notifications, 5000);
+var notification_list = $('#notifications .items')
+notification_list.scroll(function() {
+    if ((notification_list.innerHeight() + notification_list.scrollTop()) >= notification_list[0].scrollHeight) {
+        load_latest_notifications(true);
+    }
+});
+
+load_latest_notifications(false);
+setInterval(load_latest_notifications, 30000);
 
 $('#news.modal').on('show', function (e) {
     $.ajax({

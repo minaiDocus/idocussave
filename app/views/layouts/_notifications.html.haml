@@ -1,4 +1,4 @@
-%ul.nav.pull-right
+%ul#notifications.nav.pull-right
   %li.dropdown.dropdown-notifications
     %a.dropdown-toggle{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
       %i.icon-bell.icon-white{ class: (@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled'), data: { count: @user.notifications.not_read.count } }
@@ -6,9 +6,8 @@
       .dropdown-toolbar
         .dropdown-toolbar-actions
         %h3 Notifications
-      %ul.dropdown-menu
-        - @last_notifications.each do |notification|
-          = render partial: 'account/notifications/notification', locals: { notification: notification }
+      %ul.dropdown-menu.items
+        - # notification items will be dynamically inserted here
       .dropdown-footer
         %a{ href: account_notifications_path }
           %i.icon-search

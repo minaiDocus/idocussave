@@ -35,8 +35,7 @@
               - if current_user.admin?
                 = render partial: 'layouts/change_user'
               = render partial: 'layouts/user'
-              #notifications
-                = render partial: 'layouts/notifications'
+              = render partial: 'layouts/notifications'
 
       .container-fluid.padding6top.dynamic_padding
         = render 'shared/as_user'

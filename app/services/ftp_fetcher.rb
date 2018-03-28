@@ -61,6 +61,10 @@ class FtpFetcher
         document_delivery.processed
 
         ftp.rename dir, fetched_dir(dir)
+
+        document_delivery.temp_documents.group_by(&:user).each do |user, temp_documents|
+          NotifyNewScannedDocuments.new(user, temp_documents.count).execute
+        end
       end
 
       # notify corrupted documents

@@ -32,6 +32,7 @@ class Notification < ActiveRecord::Base
 
     def notice_types
       [
+        'test',
         'dropbox_invalid_access_token',
         'dropbox_insufficient_space',
         'share_account',
@@ -59,6 +60,8 @@ class Notification < ActiveRecord::Base
         'ibiza_invalid_access_token',
         'detected_preseizure_duplication',
         'unblocked_preseizure',
+        'new_scanned_documents',
+        'pre_assignment_delivery_failure',
         'mcf_invalid_access_token',
         'mcf_insufficient_space'
       ].freeze

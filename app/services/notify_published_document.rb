@@ -9,7 +9,7 @@ class NotifyPublishedDocument
 
     users.each do |user|
       next unless user.notify.published_docs?
-      NotifiablePublishedDocument.create(notify: user.notify, temp_document: @temp_document)
+      Notifiable.create(notify: user.notify, notifiable: @temp_document, label: 'published')
       next unless user.notify.published_docs_now?
       NotifyPublishedDocumentWorker.perform_in(1.minute, user.id)
     end
@@ -19,7 +19,7 @@ class NotifyPublishedDocument
 
   class << self
     def daily
-      NotifiablePublishedDocument.select(:notify_id).distinct.pluck(:notify_id).each do |notify_id|
+      Notifiable.published_documents.select(:notify_id).distinct.pluck(:notify_id).each do |notify_id|
         notify = Notify.find notify_id
         execute(notify.user.id, false)
       end
@@ -28,7 +28,7 @@ class NotifyPublishedDocument
     def execute(user_id, send_mail=true)
       user = User.find user_id
 
-      list = user.notify.notifiable_published_documents.includes(temp_document: [:temp_pack]).to_a
+      list = user.notify.notifiable_published_documents.includes(notifiable: [:temp_pack]).to_a
 
       return if list.empty?
 
@@ -38,7 +38,7 @@ class NotifyPublishedDocument
       notification.title       = list.size == 1 ? 'Nouveau document disponible' : 'Nouveaux documents disponibles'
       notification.url         = Rails.application.routes.url_helpers.account_documents_url ActionMailer::Base.default_url_options
 
-      groups = list.map(&:temp_document).group_by(&:temp_pack)
+      groups = list.map(&:notifiable).group_by(&:temp_pack)
       if list.size == 1
         message = '1 nouveau document a été ajouté dans '
       else
