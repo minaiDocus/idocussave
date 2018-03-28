@@ -209,9 +209,10 @@ class Budgea
       run_and_parse_response 'accounts'
     end
 
-    def get_transactions(account_id)
+    def get_transactions(account_id, min_date=nil, max_date=nil)
+      request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
       @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions",
+        @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions#{request_filters}",
         method:  :get,
         proxy:   @settings[:proxy],
         headers: headers

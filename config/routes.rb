@@ -493,7 +493,9 @@ Idocus::Application.routes.draw do
     resources :dematbox_files, only: :index
 
     resources :retrievers, only: %w(index edit destroy) do
-      post 'run', on: :collection
+      post 'run',     on: :collection
+      post 'fetcher', on: :collection
+      get 'fetcher',  on: :collection
     end
 
     resources :new_provider_requests, only: %w(index show edit) do

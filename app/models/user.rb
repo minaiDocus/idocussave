@@ -317,6 +317,13 @@ class User < ActiveRecord::Base
     users
   end
 
+  def self.get_by_code(code)
+    member = Member.find_by_code(code)
+
+    return member.user if member
+    return User.find_by_code(code)
+  end
+
   private
 
   def belonging_of_manager
