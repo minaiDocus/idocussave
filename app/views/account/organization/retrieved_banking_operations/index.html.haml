@@ -33,7 +33,7 @@
                 %td= "#{operation.label} - #{operation.value_date}"
               - else
                 %td= operation.label
-              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.bank_account.original_currency["symbol"] || '€'}"
+              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.bank_account.try(:original_currency).try(:[], 'symbol') || '€'}"
               %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
     .span3.box
