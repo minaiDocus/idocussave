@@ -9,9 +9,9 @@
           = label_tag :user_code, 'Visualiser et agir en tant que :'
           = text_field_tag :user_code, session[:user_code].presence, class: 'input-medium', placeholder: 'code utilisateur'
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.code]), class: 'btn'
+          = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first.code]), class: 'btn'
       - else
         Visualiser et agir en tant que :
         %span.label.label-default #{current_user_info}
-        = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.code]), class: 'btn btn-mini'
+        = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first.code]), class: 'btn btn-mini'
     .modal-footer
