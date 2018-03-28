@@ -59,7 +59,7 @@ class Account::McfSettingsController < Account::OrganizationController
   private
 
   def verify_rights
-    unless is_leader?
+    unless @user.leader?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
