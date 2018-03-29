@@ -22,7 +22,7 @@ class CurrencyRate < ActiveRecord::Base
   end
 
   def self.get_operation_exchange_rate(operation)
-    get_exchange_rate operation.value_date, operation.bank_account.currency, operation.bank_account.original_currency["id"]
+    get_exchange_rate operation.value_date, operation.bank_account.currency, operation.currency['id']
   end
 
   def self.already_present?(currency, day)

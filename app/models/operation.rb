@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Operation < ActiveRecord::Base
+  serialize :currency, Hash
+
   belongs_to :organization
   belongs_to :user
   belongs_to :bank_account
@@ -65,7 +67,7 @@ class Operation < ActiveRecord::Base
   end
 
   def need_conversion?
-    bank_account.original_currency["id"] != bank_account.currency
+    currency['id'] != bank_account.currency
   end
 
   def retrieved?

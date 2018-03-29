@@ -56,5 +56,5 @@
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
               %td= operation.label
-              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.bank_account.try(:original_currency).try(:[], 'symbol') || '€'}"
+              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || '€'}"
       = render partial: 'shared/list_options', locals: { collection: @operations }
