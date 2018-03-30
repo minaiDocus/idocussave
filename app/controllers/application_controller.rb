@@ -41,14 +41,21 @@ class ApplicationController < ActionController::Base
     user = nil
     if current_user && current_user.is_admin
       if params[:user_code].present? || session[:user_code].present?
+        member = nil
         user = User.find_by_code(params[:user_code].presence || session[:user_code].presence)
         user || (member = Member.find_by_code(params[:user_code].presence || session[:user_code].presence))
         user ||= member.try(:user)
         user ||= current_user
+        prev_user_code = session[:user_code]
         session[:user_code] = if user == current_user
           nil
         else
           member.try(:code) || user.code
+        end
+
+        if user.collaborator? && prev_user_code != session[:user_code] && request.path.match(/^\/account\/organizations/)
+          organization = (member || user.memberships.first).organization
+          redirect_to account_organization_path(organization)
         end
       end
     end
