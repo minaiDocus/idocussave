@@ -33,7 +33,16 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     if resource.valid_password?(params[:user_login][:password])
       sign_in('user', resource)
       resource.update_authentication_token unless resource.authentication_token
-      render json: { success: true, user: resource }, status: 200
+
+      user = resource
+      if resource.collaborator?
+        resource = Collaborator.new resource
+      end
+
+      user.code = resource.try(:code) || '-'
+      user.organization_id = resource.try(:organization).try(:id) || '0'
+
+      render json: { success: true, user: user }, status: 200
       return
     end
 
