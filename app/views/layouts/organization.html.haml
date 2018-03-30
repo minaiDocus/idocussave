@@ -32,8 +32,6 @@
               = image_tag 'logo/tiny_logo.png', :alt => 'logo'
             .nav-collapse.collapse
               = render partial: 'layouts/navigation'
-              - if current_user.admin?
-                = render partial: 'layouts/change_user'
               = render partial: 'layouts/user'
               = render partial: 'layouts/notifications'
 
@@ -93,6 +91,5 @@
       = javascript_include_tag 'account/addresses'
     - elsif not controller_name.in?(%w(organizations rights collaborators organization_addresses accounting_plans vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharing_groups guest_collaborators))
       = javascript_include_tag "account/#{controller_name}"
-    = javascript_include_tag 'change_user'
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'

@@ -28,8 +28,6 @@
             - if current_user
               .nav-collapse.collapse
                 = render partial: 'layouts/navigation'
-                - if current_user.admin?
-                  = render partial: 'layouts/change_user'
                 = render partial: 'layouts/user'
                 = render partial: 'layouts/notifications'
 
@@ -67,6 +65,5 @@
       = javascript_include_tag 'account/addresses'
     - elsif controller_name == 'group_organizations'
       = javascript_include_tag 'account/group_organizations'
-    = javascript_include_tag 'change_user'
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'
