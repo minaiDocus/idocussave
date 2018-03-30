@@ -1098,6 +1098,7 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.datetime "deleted_at"
     t.datetime "forced_processing_at"
     t.integer  "forced_processing_by_user_id", limit: 4
+    t.text     "currency",                     limit: 65535
   end
 
   add_index "operations", ["api_id"], name: "fiduceo_id", using: :btree
