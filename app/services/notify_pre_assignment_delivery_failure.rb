@@ -21,7 +21,7 @@ class NotifyPreAssignmentDeliveryFailure
     def daily
       Notifiable.select(:notify_id).distinct.pluck(:notify_id).each do |notify_id|
         notify = Notify.find notify_id
-        execute(notify.user_id, false)
+        execute(notify.user_id)
       end
     end
 
