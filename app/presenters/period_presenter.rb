@@ -4,6 +4,7 @@ class PeriodPresenter
     @period = period
     @owner  = @period.user
     @viewer = viewer || @owner
+    @viewer = Collaborator.new(@viewer) if @viewer.collaborator?
   end
 
 
