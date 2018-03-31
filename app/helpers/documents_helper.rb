@@ -119,7 +119,7 @@ module DocumentsHelper
         unless pack.is_fully_processed
           concat content_tag :tr, content_tag(:td, content_tag(:b, 'Nombre de pages en cours de traitement'), width: content_width) + content_tag(:td, TempPack.find_by_name(pack.name).temp_documents.not_published.sum(:pages_number).to_i.to_s)
         end
-        concat content_tag :tr, content_tag(:td, content_tag(:b, 'Tags: '), width: content_width) + content_tag(:td, pack.tags, class: 'tags')
+        concat content_tag :tr, content_tag(:td, content_tag(:b, 'Tags: '), width: content_width) + content_tag(:td, pack.tags.try(:join, ' '), class: 'tags')
       end
     end
   end
