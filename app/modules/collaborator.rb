@@ -81,7 +81,7 @@ class Collaborator
     organization_ids = @user.memberships.select(&:admin?).map(&:organization_id)
     member_ids       = @user.memberships.map(&:id)
 
-    @all_customers = User.customers.joins(groups: :groups_members).
+    @all_customers = User.customers.joins('LEFT JOIN `groups_users` ON `groups_users`.`user_id` = `users`.`id` LEFT JOIN `groups` ON `groups`.`id` = `groups_users`.`group_id` LEFT JOIN `groups_members` ON `groups_members`.`group_id` = `groups`.`id`').
       where('groups_members.member_id IN (?) OR users.organization_id IN (?)', member_ids, organization_ids).distinct
   end
 

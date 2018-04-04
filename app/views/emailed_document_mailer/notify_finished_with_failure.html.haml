@@ -7,7 +7,7 @@
     Bonjour #{@emailed_document.user.name},
     %br
     %br
-    Suite à votre envoi par mail, la plateforme iDocus n'a pas sû récupérer certain(s) document(s) :
+    Suite à votre envoi par mail, la plateforme iDocus n'a pas sû récupérer certains documents :
     %br
     %ul
       - @emailed_document.attachments.each do |attachment|
