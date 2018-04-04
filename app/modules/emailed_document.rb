@@ -124,7 +124,12 @@ class EmailedDocument
             email.save
 
             if emailed_document.user.notify.reception_of_emailed_docs
-              EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now
+              if emailed_document.get_invalid_attachments.any?
+                email.update_attribute(:errors_list, emailed_document.errors)
+                EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver_now
+              else
+                EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now
+              end
             end
           else
             email.update_attribute(:errors_list, emailed_document.errors)
@@ -234,10 +239,29 @@ class EmailedDocument
     end
   end
 
+  def get_invalid_attachments
+    if attachments.any? && @invalid_attachments.nil?
+      @invalid_attachments = []
+
+      attachments.each do |attachment|
+        next if attachment.valid?
+        attachment_errors = []
+        attachment_errors << attachment.name
+        attachment_errors << :size          unless attachment.valid_size?
+        attachment_errors << :content       unless attachment.valid_content?
+        attachment_errors << :pages_number  unless attachment.valid_pages_number?
+        attachment_errors << :already_exist unless attachment.unique?
+        @invalid_attachments << attachment_errors
+      end
+    end
+
+    @invalid_attachments || []
+  end
+
   # syntactic sugar ||= does not store false/nil value
   def valid?
     if @valid.nil?
-      @valid = user.present? && journal.present? && period.present? && valid_attachments?
+      @valid = get_errors(false).present? ? false : true
     else
       @valid
     end
@@ -285,23 +309,14 @@ class EmailedDocument
     false
   end
 
-  def get_errors
+  def get_errors(check_individual_attachments=true)
     _errors = []
     _errors << :code       unless user.present?
     _errors << :journal    unless journal.present?
     _errors << :period     unless period.present?
     _errors << :total_size unless valid_total_size?
     if attachments.any?
-      attachments.each do |attachment|
-        next if attachment.valid?
-        attachment_errors = []
-        attachment_errors << attachment.name
-        attachment_errors << :size          unless attachment.valid_size?
-        attachment_errors << :content       unless attachment.valid_content?
-        attachment_errors << :pages_number  unless attachment.valid_pages_number?
-        attachment_errors << :already_exist unless attachment.unique?
-        _errors << attachment_errors
-      end
+      _errors += get_invalid_attachments if check_individual_attachments
     else
       _errors << if @mail.attachments.empty?
                    :no_attachments
@@ -309,7 +324,6 @@ class EmailedDocument
                    :no_acceptable_attachments
                  end
     end
-    _errors << :unknown unless _errors.any?
     _errors
   end
 
@@ -318,6 +332,7 @@ class EmailedDocument
     pack.update_pack_state
     @temp_documents = []
     attachments.each do |attachment|
+      next unless attachment.valid?
       options = {
         delivery_type:         'upload',
         delivered_by:          User.find_by_email(@mail.from.first).try(:code),

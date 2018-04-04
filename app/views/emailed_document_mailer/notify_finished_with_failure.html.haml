@@ -1,0 +1,62 @@
+!!!
+%html
+  %head
+    %title [iDocus] Envoi par mail : terminé avec erreur
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@emailed_document.user.name},
+    %br
+    %br
+    Suite à votre envoi par mail, la plateforme iDocus n'a pas sû récupérer certain(s) document(s) :
+    %br
+    %ul
+      - @emailed_document.attachments.each do |attachment|
+        %li
+          = attachment.name
+          %ul
+            - if attachment.valid?
+              %li pièce jointe importée avec succès
+            - unless attachment.valid_size?
+              %li la pièce jointe a une taille supérieure à 5 Mo
+            - unless attachment.valid_pages_number?
+              %li la pièce jointe a un nombre de pages supérieurs à 100
+            - unless attachment.valid_content?
+              %li la pièce jointe est corrompue ou protégée ou non imprimable
+            - unless attachment.unique?
+              %li la pièce jointe a déjà été importée
+    %br
+    =================
+    %br
+    %br
+    Rappel des règles d’utilisation pour envoyer par mail des pièces dans iDocus
+    %br
+    %br
+    Format de l’objet du mail : [libellé court] [période]
+    %br
+    exemple :
+    %i #{@journals.first.name || 'AC'} #{@period_service.names.first}
+    %br
+    %br
+    La plateforme iDocus intégrera les pièces jointes (#{UploadedDocument.valid_extensions}) de votre mail.
+    %br
+    %br
+    La somme des tailles des pièces jointes de votre mail ne doit pas dépasser 10 Mo.
+    %br
+    %br
+    Vos journaux comptables accessibles :
+    %br
+    %ul
+      - @journals.each do |journal|
+        %li= "#{journal.name} (#{journal.description.sub(/\A\s*\(/,'').sub(/\)\s*\z/,'')})"
+    %br
+    Vos périodes actuellement accessibles :
+    %br
+    %ul
+      - @period_service.names.each do |name|
+        %li= name
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

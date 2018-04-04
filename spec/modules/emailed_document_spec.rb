@@ -83,11 +83,10 @@ describe EmailedDocument do
         end
         emailed_document = EmailedDocument.new mail
 
-        expect(emailed_document.valid_attachments?).to be false
         expect(emailed_document).to be_invalid
       end
 
-      it 'with file size > 5 Mo should be invalid' do
+      it '1 attachment file size > 5 Mo, attachments should be invalid but emailed document valid' do
         code = @user.email_code
         mail = Mail.new do
           from     'customer@example.com'
@@ -98,8 +97,23 @@ describe EmailedDocument do
         allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 5.megabytes+1 }
         emailed_document = EmailedDocument.new mail
 
-        expect(emailed_document.valid_attachments?).to be false
-        expect(emailed_document).to be_invalid
+        expect(emailed_document).to be_valid
+      end
+
+      it 'with 2 attachments, if 1 file got errors, attachments should be invalid but emailed document valid' do
+        code = @user.email_code
+        mail = Mail.new do
+          from     'customer@example.com'
+          to       "#{code}@fw.idocus.com"
+          subject  'TS'
+          add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+          add_file filename: 'doc2.pdf', content: File.read(Rails.root.join('spec/support/files/corrupted.pdf'))
+        end
+
+        emailed_document = EmailedDocument.new mail
+        expect(emailed_document).to be_valid
+        expect(emailed_document.attachments.size).to eq 2
+        expect(emailed_document.temp_documents.size).to eq 1
       end
 
       it 'with total file sizes > 10 Mo should be invalid' do
@@ -124,11 +138,10 @@ describe EmailedDocument do
         expect(emailed_document.attachments[2]).to be_valid
         expect(emailed_document.attachments[3]).to be_valid
         expect(emailed_document.attachments[4]).to be_valid
-        expect(emailed_document.valid_attachments?).to be false
         expect(emailed_document).to be_invalid
       end
 
-      it 'with pages number > 100 should be invalid' do
+      it 'with pages number > 100 should be valid but has invalid attachments' do
         code = @user.email_code
         mail = Mail.new do
           from     'customer@example.com'
@@ -141,12 +154,11 @@ describe EmailedDocument do
 
         emailed_document = EmailedDocument.new mail
         expect(emailed_document.attachments.first).not_to be_valid
-        expect(emailed_document.valid_attachments?).to be false
-        expect(emailed_document).to be_invalid
+        expect(emailed_document).to be_valid
         expect(emailed_document.errors).to eq([['doc1.pdf', :pages_number]])
       end
 
-      it 'with corrupted file should be invalid' do
+      it 'with corrupted file should be valid but has invalid attachments' do
         code = @user.email_code
         mail = Mail.new do
           from     'customer@example.com'
@@ -157,10 +169,10 @@ describe EmailedDocument do
 
         emailed_document = EmailedDocument.new mail
         expect(emailed_document.attachments.first.valid_content?).to eq(false)
-        expect(emailed_document).to be_invalid
+        expect(emailed_document).to be_valid
       end
 
-      it 'with protected file should be invalid' do
+      it 'with protected file should be valid but has invalid attachments' do
         code = @user.email_code
         mail = Mail.new do
           from     'customer@example.com'
@@ -171,7 +183,7 @@ describe EmailedDocument do
 
         emailed_document = EmailedDocument.new mail
         expect(emailed_document.attachments.first.valid_content?).to eq(false)
-        expect(emailed_document).to be_invalid
+        expect(emailed_document).to be_valid
       end
 
       it 'with printable file should be valid' do
@@ -203,7 +215,6 @@ describe EmailedDocument do
 
         expect(emailed_document.user).to be_present
         expect(emailed_document.journal).to be_present
-        expect(emailed_document.valid_attachments?).to be true
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(1)
         document = emailed_document.temp_documents.first
@@ -224,7 +235,6 @@ describe EmailedDocument do
 
         expect(emailed_document.user).to be_present
         expect(emailed_document.journal).to be_present
-        expect(emailed_document.valid_attachments?).to be true
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(2)
 
@@ -267,7 +277,7 @@ describe EmailedDocument do
 
           emailed_document = EmailedDocument.new mail
           expect(emailed_document.errors).to eq([["2pages.pdf", :already_exist]])
-          expect(emailed_document).to be_invalid
+          expect(emailed_document).to be_valid
           expect(@temp_pack.temp_documents.count).to eq 1
         end
       end
@@ -291,7 +301,6 @@ describe EmailedDocument do
 
         expect(emailed_document.user).to be_present
         expect(emailed_document.journal).to be_present
-        expect(emailed_document.valid_attachments?).to be true
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(1)
         document = emailed_document.temp_documents.first
@@ -367,7 +376,6 @@ describe EmailedDocument do
 
         expect(emailed_document.user).to be_present
         expect(emailed_document.journal).to be_present
-        expect(emailed_document.valid_attachments?).to be true
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(2)
 
@@ -445,7 +453,7 @@ describe EmailedDocument do
       expect(email.state).to eql('rejected')
     end
 
-    it 'should create email with invalid content' do
+    it 'should be valid but create email with some invalid content' do
       code = @user.email_code
       mail = Mail.new do
         from     'customer@example.com'
@@ -456,9 +464,9 @@ describe EmailedDocument do
       end
       emailed_document, email = EmailedDocument.receive(mail, false)
 
-      expect(emailed_document).to be_invalid
+      expect(emailed_document).to be_valid
       expect(email).to be_valid
-      expect(email.state).to eql('unprocessable')
+      expect(email.state).to eql('processed')
       expect(email.errors_list).to eq([["corrupted.pdf", :content]])
     end
 
