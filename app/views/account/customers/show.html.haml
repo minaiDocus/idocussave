@@ -32,7 +32,7 @@
             - unless @organization.ibiza.try(:used?)
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
-            - if @organization.mcf_settings.try(:access_token).present?
+            - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
               %li{ class: ('active' if params[:tab] == 'mcf') }
                 %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
             - if @organization.is_csv_descriptor_used
@@ -337,25 +337,38 @@
                   = render 'ibiza_box'
                 - else
                   = render 'shared/ibiza_not_configured_warning'
-            - if @organization.mcf_settings.try(:access_token).present?
+            - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
               #mcf.tab-pane{ class: ('active' if params[:tab] == 'mcf') }
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th Compte associé
-                      %td
-                        - if @customer.mcf_storage.present?
-                          = @customer.mcf_storage
-                        - else
-                          %i{ style: 'color:gray' } Aucun
-                .row-fluid
-                  .span12.alignright
-                    - if @organization.mcf_settings.configured?
-                      = link_to icon_edit + ' Modifier', edit_mcf_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-                      = link_to icon_destroy + ' Liste des erreurs de récupération', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-                    - else @organization.mcf_settings.configured?
-                      = link_to icon_edit + ' Modifier', '#', class: 'btn btn-primary', disabled: true
-                      = link_to icon_destroy + ' Liste des erreurs', '#', class: 'btn btn-primary', disabled: true
+                - if @organization.mcf_settings.try(:access_token).present?
+                  %h4 Paramètre de compte
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Compte associé
+                        %td
+                          - if @customer.mcf_storage.present?
+                            = @customer.mcf_storage
+                          - else
+                            %i{ style: 'color:gray' } Aucun
+                  .row-fluid
+                    .span12.alignright
+                      - if @organization.mcf_settings.configured?
+                        = link_to icon_edit + ' Modifier', edit_mcf_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+                      - else @organization.mcf_settings.configured?
+                        = link_to icon_edit + ' Modifier', '#', class: 'btn btn-primary', disabled: true
+                  %br
+                  %br
+                - if @customer.try(:mcf_documents).try(:not_processable).try(:any?)
+                  %h4 Erreur de récupération de documents
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th
+                          %i{ style: 'color:red' }= @customer.mcf_documents.not_processable.count
+                          erreur(s) de récupération de documents venant de MCF detectée(s)
+                  .row-fluid
+                    .span12.alignright
+                      = link_to icon_destroy + ' Détails des erreurs', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter
