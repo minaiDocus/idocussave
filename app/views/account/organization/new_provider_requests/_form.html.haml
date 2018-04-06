@@ -3,13 +3,35 @@
 - else
   - url = account_organization_customer_new_provider_requests_path(@organization, @customer)
 = simple_form_for @new_provider_request, url: url, html: { class: 'form form-horizontal' } do |f|
-  = f.input :name
-  = f.input :url
-  = f.input :email
-  = f.input :login
-  = f.input :password, required: true
-  = f.input :types, hint: 'Document, opération bancaire, les deux, autres...'
-  = f.input :description, as: :text
-  .form-actions
+  .row-fluid
+    .span6
+      = f.input :name
+      = f.input :url
+      = f.input :email
+      = f.input :login
+      = f.input :password, required: true
+      = f.input :types, hint: 'Document, opération bancaire, les deux, autres...'
+      = f.input :description, as: :text
+    .span6
+      .well
+        %p
+          Cher client,
+          %br
+          %br
+          Le développement d'un nouvel <strong>automate bancaire</strong> est <strong>soumis à un devis</strong>.
+          %br
+          Votre demande sera faite auprès de notre partenaire, puis nous reviendrons vers vous avec le devis et le délai de création de cet automate.
+          %br
+          %br
+          Le développement d'un <strong>automate fournisseur</strong> est quant à lui <strong>inclus</strong>. Le délai de création varie selon le type de fournisseur. 
+          %br
+          La demande se fait également avec le nom du fournisseur souhaité et vos identifiants.
+          %br
+          %br
+          Merci,
+          %br
+          L'équipe technique iDocus.
+  .form-actions{ style: "text-align:center;padding-left:0!important;" }
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), account_organization_customer_retrievers_path(@organization, @customer), class: 'btn'
+    
