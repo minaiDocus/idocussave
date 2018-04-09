@@ -9,7 +9,9 @@ describe SendToMcf do
 
   before(:each) do
     @leader = FactoryGirl.create :user, code: 'IDO%LEAD'
-    @organization = create :organization, code: 'IDO', leader: @leader
+    @organization = create :organization, code: 'IDO'
+    @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
+    @organization.admin_members << @leader.memberships.first
     @leader.update(organization: @organization)
     @mcf = McfSettings.create(
       organization: @organization,
