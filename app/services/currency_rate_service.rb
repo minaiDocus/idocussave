@@ -5,7 +5,7 @@ class CurrencyRateService
       tries = 0
       @currency = currency
       @date = date.to_s
-      @resource = Nokogiri::HTML(open("http://www.xe.com/currencytables/?from=#{@currency}&date=#{@date}", "User-Agent" => "Mozilla/5.0"))
+      @resource = Nokogiri::HTML(open("https://www.xe.com/currencytables/?from=#{@currency}&date=#{@date}", "User-Agent" => "Mozilla/5.0"))
     rescue Exception => e
       tries += 1
       sleep(1)
