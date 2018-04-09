@@ -27,13 +27,14 @@ class Account::McfUsersController < Account::OrganizationController
   end
 
   def accounts
-    @accounts ||= Rails.cache.fetch [:mcf, @mcf_settings.id, :users] do
+    if @accounts.nil?
       _accounts = McfApi::Client.new(@mcf_settings.access_token).accounts
       if _accounts.present?
-        [{ name: 'Aucun', id: '' }] + _accounts.map { |account| { name: account, id: account } }
+        @accounts = [{ name: 'Aucun', id: '' }] + _accounts.map { |account| { name: account, id: account } }
       else
-        nil
+        @accounts = nil
       end
     end
+    @accounts
   end
 end
