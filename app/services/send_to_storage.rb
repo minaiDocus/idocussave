@@ -14,8 +14,6 @@ class SendToStorage
 
     if @storage.class == Ftp && @storage.organization
       @options[:path_pattern] = File.join @storage.root_path, @options[:path_pattern]
-    elsif @storage.class == McfSettings
-      @options[:path_pattern] = File.join remote_files.first.pack.owner.mcf_storage, @options[:path_pattern]
     end
 
     @folder_path = ExternalFileStorage.delivery_path(remote_files.first, @options[:path_pattern]).freeze
