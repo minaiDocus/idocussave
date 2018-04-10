@@ -357,7 +357,8 @@
               - if @organization.mcf_settings.try(:access_token).present?
                 = link_to icon_destroy + ' Supprimer mes paramètres', account_organization_mcf_settings_path(@organization), class: 'btn btn-danger pull-right margin05left', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres pour My Company Files ?' }
                 = link_to icon_edit + ' Editer', edit_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right margin05left'
-              = link_to icon(icon: 'share-alt') + ' Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right', method: :post
+              - else
+                = link_to icon(icon: 'share-alt') + ' Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right', method: :post
             #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }
               %table.table.table-condensed.table-striped
                 %tbody
