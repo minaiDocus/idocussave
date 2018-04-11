@@ -18,15 +18,15 @@ describe SendToMcf do
       access_token: '64b01bda571f47aea8814cb7a29a7dc356310755ce01404f',
       access_token_expires_at: 1.year.from_now
     )
-    user = FactoryGirl.create :user, code: 'IDO%0001', mcf_storage: 'John Doe'
+    @user = FactoryGirl.create :user, code: 'IDO%0001', mcf_storage: 'John Doe'
 
-    pack = Pack.new
-    pack.owner = user
-    pack.name = 'IDO%0001 AC 201801 all'
-    pack.save
+    @pack = Pack.new
+    @pack.owner = @user
+    @pack.name = 'IDO%0001 AC 201801 all'
+    @pack.save
 
     @document = Document.new
-    @document.pack       = pack
+    @document.pack       = @pack
     @document.position   = 1
     @document.content    = File.open Rails.root.join('spec/support/files/2pages.pdf')
     @document.origin     = 'upload'
@@ -35,7 +35,7 @@ describe SendToMcf do
 
     @remote_file              = RemoteFile.new
     @remote_file.receiver     = @organization
-    @remote_file.pack         = pack
+    @remote_file.pack         = @pack
     @remote_file.service_name = RemoteFile::MY_COMPANY_FILES
     @remote_file.remotable    = @document
     @remote_file.save
@@ -52,6 +52,15 @@ describe SendToMcf do
 
     expect(result).to eq true
     expect(@remote_file.state).to eq 'synced'
+  end
+
+  it 'cancels remote files if mcf storage is not present', :failed_sending do
+    @user.update(mcf_storage: "")
+    allow_any_instance_of(SendToMcf).to receive(:execute).and_return(true) #this is used for avoiding real sending if spec failed
+
+    DeliverFile.to "mcf"
+
+    expect(@remote_file.reload.state).to eq 'cancelled'
   end
 
   context 'a file has already been uploaded', :upload_existing_file do
