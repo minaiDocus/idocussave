@@ -5,7 +5,7 @@ http_interactions:
     uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
     body:
       encoding: UTF-8
-      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&AttributeName=Storage&AttributeValue=John%20Doe&ListPath%5B%5D=201801%2FAC%2F2pages.pdf
+      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&AttributeName=Storage&AttributeValue=John%20Doe&ListPath%5B%5D=201804%2FAC%2F2pages.pdf
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -35,13 +35,12 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 05 Mar 2018 15:02:28 GMT
+      - Fri, 13 Apr 2018 13:38:03 GMT
       Content-Length:
-      - '110'
+      - '92'
     body:
       encoding: UTF-8
-      string: '[{"Path":"201801/AC/2pages.pdf","Md5":"97F90EAC0D07FE5ADE8F60A0FA54CDFC","Status":600,"Message":"File
-        exist"}]'
+      string: '[{"Path":"201804/AC/2pages.pdf","Md5":"97f90eac0d07fe5ade8f60a0fa54cdfc","Status":600,"Message":"Success"}]'
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 15:02:49 GMT
+  recorded_at: Fri, 13 Apr 2018 13:38:03 GMT
 recorded_with: VCR 3.0.3

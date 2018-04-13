@@ -8,7 +8,7 @@ http_interactions:
       base64_string: |
         QWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
         NjMxMDc1NWNlMDE0MDRmJkF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZBdHRyaWJ1
-        dGVWYWx1ZT1Kb2huJTIwRG9lJkxpc3RQYXRoJTVCJTVEPTIwMTgwMSUyRkFD
+        dGVWYWx1ZT1Kb2huJTIwRG9lJkxpc3RQYXRoJTVCJTVEPTIwMTgwNCUyRkFD
         JTJGMnBhZ2VzLnBkZg==
     headers:
       User-Agent:
@@ -39,17 +39,17 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 05 Mar 2018 15:02:34 GMT
+      - Fri, 13 Apr 2018 13:38:11 GMT
       Content-Length:
-      - '110'
+      - '92'
     body:
       encoding: UTF-8
       base64_string: |
-        W3siUGF0aCI6IjIwMTgwMS9BQy8ycGFnZXMucGRmIiwiTWQ1IjoiOTdGOTBF
-        QUMwRDA3RkU1QURFOEY2MEEwRkE1NENERkMiLCJTdGF0dXMiOjYwMCwiTWVz
-        c2FnZSI6IkZpbGUgZXhpc3QifV0=
+        W3siUGF0aCI6IjIwMTgwNC9BQy8ycGFnZXMucGRmIiwiTWQ1IjoiIiwiU3Rh
+        dHVzIjozMTIsIk1lc3NhZ2UiOiJUaGUgZm9sZGVyIGRvZXNuJ3QgZXhpc3Qi
+        fV0=
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 15:02:54 GMT
+  recorded_at: Fri, 13 Apr 2018 13:38:12 GMT
 - request:
     method: post
     uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
@@ -59,7 +59,7 @@ http_interactions:
         YWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
         NjMxMDc1NWNlMDE0MDRmJmF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZhdHRyaWJ1
         dGVWYWx1ZT1Kb2huJTIwRG9lJmZpbGU9JTIzJTNDRmlsZSUzQTB4MDAwMDAw
-        MGIzYmY1MjglM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT0yMDE4MDElMkZBQyUy
+        MGExZjNkZDAlM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT0yMDE4MDQlMkZBQyUy
         RjJwYWdlcy5wZGYmc2VuZE1haWw9ZmFsc2U=
     headers:
       User-Agent:
@@ -90,7 +90,7 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 05 Mar 2018 15:02:34 GMT
+      - Fri, 13 Apr 2018 13:38:12 GMT
       Content-Length:
       - '104'
     body:
@@ -100,5 +100,5 @@ http_interactions:
         OiJCb2Nhc2F5IiwiTWVzc2FnZSI6IlN1Y2Nlc3MiLCJTdG9yYWdlTGltaXRS
         ZWFjaGVkIjpmYWxzZX0=
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 15:02:55 GMT
+  recorded_at: Fri, 13 Apr 2018 13:38:14 GMT
 recorded_with: VCR 3.0.3

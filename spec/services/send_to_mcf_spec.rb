@@ -22,7 +22,7 @@ describe SendToMcf do
 
     @pack = Pack.new
     @pack.owner = @user
-    @pack.name = 'IDO%0001 AC 201801 all'
+    @pack.name = 'IDO%0001 AC 201804 all'
     @pack.save
 
     @document = Document.new
@@ -43,36 +43,37 @@ describe SendToMcf do
 
   it 'sends a file successfully', :send_files do
     result = VCR.use_cassette('mcf/upload_file') do
-      SendToMcf.new(@mcf, [@remote_file]).execute
+      DeliverFile.to "mcf"
     end
 
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
     expect(WebMock).to have_requested(:any, /.*/).times(2)
 
-    expect(result).to eq true
-    expect(@remote_file.state).to eq 'synced'
+    expect(@remote_file.reload.state).to eq 'synced'
   end
 
   it 'cancels remote files if mcf storage is not present', :failed_sending do
     @user.update(mcf_storage: "")
-    allow_any_instance_of(SendToMcf).to receive(:execute).and_return(true) #this is used for avoiding real sending if spec failed
 
-    DeliverFile.to "mcf"
+    result = VCR.use_cassette('mcf/upload_file') do
+      DeliverFile.to "mcf"
+    end
 
+    expect(WebMock).to have_requested(:any, /.*/).times(0)
     expect(@remote_file.reload.state).to eq 'cancelled'
   end
 
   context 'a file has already been uploaded', :upload_existing_file do
     it 'does not update an existing file' do
       result = VCR.use_cassette('mcf/does_not_update_an_existing_file') do
-        SendToMcf.new(@mcf, [@remote_file]).execute
+        DeliverFile.to "mcf"
       end
 
       expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
       expect(WebMock).to have_requested(:any, /.*/).times(1)
 
-      expect(result).to eq true
+      expect(@remote_file.reload.state).to eq 'synced'
     end
 
     it 'updates an existing file' do
@@ -84,14 +85,14 @@ describe SendToMcf do
         @document.save
 
         result = VCR.use_cassette('mcf/update_a_file', preserve_exact_body_bytes: true) do
-          SendToMcf.new(@mcf, [@remote_file]).execute
+          DeliverFile.to "mcf"
         end
 
         expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
         expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
         expect(WebMock).to have_requested(:any, /.*/).times(2)
 
-        expect(result).to eq true
+        expect(@remote_file.reload.state).to eq 'synced'
       end
     end
   end

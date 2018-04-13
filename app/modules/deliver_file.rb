@@ -27,15 +27,10 @@ module DeliverFile
 
         services_name = efs.active_services_name
       elsif receiver.class.name == Organization.name
-        services_name = if receiver.knowings.try(:is_configured?)
-                          ['Knowings']
-                        elsif receiver.ftp.try(:configured?)
-                          ['FTP']
-                        elsif receiver.mcf_settings.try(:configured?)
-                          ['My Company Files']
-                        else
-                          []
-                        end
+        services_name = []
+        services_name << RemoteFile::KNOWINGS if receiver.knowings.try(:is_configured?)
+        services_name << RemoteFile::FTP if receiver.ftp.try(:configured?)
+        services_name << RemoteFile::MY_COMPANY_FILES if receiver.mcf_settings.try(:configured?)
       else
         services_name = ['Dropbox Extended']
       end
@@ -107,19 +102,19 @@ module DeliverFile
   def self.to_service_name(service_prefix)
     case service_prefix
     when 'dbb'
-      'Dropbox'
+      RemoteFile::DROPBOX
     when 'dbx'
-      'Dropbox Extended'
+      RemoteFile::DROPBOX_EXTENDED
     when 'gdr'
-      'Google Drive'
+      RemoteFile::GOOGLE_DRIVE
     when 'box'
-      'Box'
+      RemoteFile::BOX
     when 'ftp'
-      'FTP'
+      RemoteFile::FTP
     when 'kwg'
-      'Knowings'
+      RemoteFile::KNOWINGS
     when 'mcf'
-      'My Company Files'
+      RemoteFile::MY_COMPANY_FILES
     else
       ''
     end
