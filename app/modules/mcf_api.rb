@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class McfApi
   class Client
     attr_accessor :access_token

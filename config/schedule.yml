@@ -111,3 +111,6 @@ DeliverFileToFTP:
 DeliverFileToKnowings:
   <<: *deliver_file_defaults
   args: kwg
+DeliverFileToMcf:
+  <<: *deliver_file_defaults
+  args: mcf

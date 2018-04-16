@@ -34,7 +34,7 @@ class SendToMcf < SendToStorage
   end
 
   def max_number_of_threads
-    10
+    1
   end
 
   def list_files
