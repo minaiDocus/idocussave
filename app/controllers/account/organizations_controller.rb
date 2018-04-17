@@ -142,7 +142,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
-        :is_duplicate_blocker_activated
+        :is_duplicate_blocker_activated,
+        :preseizure_date_option
       )
     else
       params.require(:organization).permit(
@@ -155,7 +156,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
-        :is_duplicate_blocker_activated
+        :is_duplicate_blocker_activated,
+        :preseizure_date_option
       )
     end
   end

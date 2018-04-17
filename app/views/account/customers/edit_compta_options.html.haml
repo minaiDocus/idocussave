@@ -17,6 +17,7 @@
           = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, as: :radio_buttons
           = o.input :is_operation_processing_forced, collection: operation_processing_options, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques).", as: :radio_buttons
           = o.input :is_operation_value_date_needed, collection: operation_value_date_options, hint: "La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation.", as: :radio_buttons
+          = o.input :preseizure_date_option, as: :radio_buttons, collection: preseizure_date_options(true), hint: "Cette option permet de choisir la date d'écriture de l'opération qui sera exportée."
         .form-actions.margin0bottom
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary'

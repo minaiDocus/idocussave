@@ -1249,6 +1249,7 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.string   "leader_id_mongo_id",              limit: 255
     t.boolean  "is_operation_processing_forced",              default: false
     t.boolean  "is_operation_value_date_needed",              default: false
+    t.integer  "preseizure_date_option",          limit: 4,   default: 0
     t.boolean  "is_duplicate_blocker_activated",              default: true
     t.integer  "organization_group_id",           limit: 4
   end
@@ -2207,6 +2208,7 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
+    t.integer  "preseizure_date_option",          limit: 4,   default: 0
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end

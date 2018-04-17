@@ -415,6 +415,10 @@ fr:
           is_retriever_authorized: Automate autorisé ?
           is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+          preseizure_date_option: Date de l'écriture des opérations bancaires
+          preseizure_date_option_organization: Paramètres du cabinet
+          operation_date: Date de réalisation de l'opération
+          operation_value_date: Date de prélèvement de l'opération
       address:
         zero: 0 adresses
         one: 1 adresse
@@ -658,6 +662,7 @@ fr:
           is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
           is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
+          preseizure_date_option: Date de l'écriture des opérations bancaires
           status:
             admin: Administrateur
             collaborator: Collaborateur

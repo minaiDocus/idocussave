@@ -80,6 +80,9 @@
                       %th= t('activerecord.models.organization.attributes.is_operation_value_date_needed')
                       %td= @organization.is_operation_value_date_needed ? t('yes_value') : t('no_value')
                     %tr
+                      %th= t('activerecord.models.organization.attributes.preseizure_date_option')
+                      %td= t("activerecord.models.user_options.attributes.#{@organization.get_preseizure_date_option}")
+                    %tr
                       %th= t('activerecord.models.organization.attributes.is_duplicate_blocker_activated')
                       %td= @organization.is_duplicate_blocker_activated ? t('yes_value') : t('no_value')
                 .span4

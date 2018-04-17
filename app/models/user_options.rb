@@ -2,6 +2,7 @@
 class UserOptions < ActiveRecord::Base
   belongs_to :user
 
+  PRESEIZURE_DATE_OPTIONS = ['operation_date', 'operation_value_date'].freeze
   DASHBOARD_SUMMARIES = ['last_scans', 'last_uploads', 'last_dematbox_scans', 'last_retrieved'].freeze
 
   validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
@@ -38,6 +39,16 @@ class UserOptions < ActiveRecord::Base
       user.organization.try(:is_operation_processing_forced)
     else
       is_operation_processing_forced == 1
+    end
+  end
+
+  # -1 means we refer to organization
+  # Else we refer to the index value of PRESEIZURE_DATE_OPTIONS
+  def get_preseizure_date_option
+    if preseizure_date_option == -1
+      UserOptions::PRESEIZURE_DATE_OPTIONS[user.organization.try(:preseizure_date_option)]
+    else
+      UserOptions::PRESEIZURE_DATE_OPTIONS[preseizure_date_option]
     end
   end
 

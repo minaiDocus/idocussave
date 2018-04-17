@@ -75,4 +75,14 @@ module Account::OrganizationHelper
   def inside_organization?
     request.path =~ /organizations/ && !((controller_name == 'organizations' && action_name.in?(%w(index new create))) || controller_name == 'group_organizations')
   end
+
+  def preseizure_date_options(with_organization_option=false)
+    options = with_organization_option ? [[t("activerecord.models.user_options.attributes.preseizure_date_option_organization"), -1]] : []
+
+    UserOptions::PRESEIZURE_DATE_OPTIONS.each_with_index do |type, index|
+      options << [t("activerecord.models.user_options.attributes.#{type}"), index]
+    end
+
+    options
+  end
 end

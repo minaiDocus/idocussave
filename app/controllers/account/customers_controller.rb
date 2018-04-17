@@ -331,7 +331,8 @@ class Account::CustomersController < Account::OrganizationController
       :is_taxable,
       :is_pre_assignment_date_computed,
       :is_operation_processing_forced,
-      :is_operation_value_date_needed
+      :is_operation_value_date_needed,
+      :preseizure_date_option
     ])
   end
 

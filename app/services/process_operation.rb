@@ -26,7 +26,7 @@ class ProcessOperation
             preseizure.report          = pack_report
             preseizure.operation       = operation
             preseizure.type            = 'FLUX'
-            preseizure.date            = operation.date
+            preseizure.date            = user.options.get_preseizure_date_option == 'operation_date' ? operation.date : operation.value_date
             preseizure.position        = counter
             if user.options.operation_value_date_needed? && operation.retrieved? && operation.date != operation.value_date
               preseizure.operation_label = "#{operation.label} - #{operation.value_date}"

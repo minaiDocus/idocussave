@@ -147,4 +147,8 @@ class Organization < ActiveRecord::Base
 
     organizations
   end
+
+  def get_preseizure_date_option
+    UserOptions::PRESEIZURE_DATE_OPTIONS[preseizure_date_option]
+  end
 end
