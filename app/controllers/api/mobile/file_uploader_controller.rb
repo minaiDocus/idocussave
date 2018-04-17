@@ -27,7 +27,8 @@ class Api::Mobile::FileUploaderController < MobileApiController
           customer,
           params[:file_account_book_type],
           params[:file_prev_period_offset],
-          @user
+          @user,
+          'mobile'
         )
 
         data = present(uploaded_document).to_json
