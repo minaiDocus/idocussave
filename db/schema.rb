@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328105102) do
+ActiveRecord::Schema.define(version: 20180418115910) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1060,6 +1060,9 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.datetime "created_at",                                                          null: false
     t.datetime "updated_at",                                                          null: false
     t.integer  "user_id",                               limit: 4
+    t.boolean  "pre_assignment_ignored_piece",                      default: false
+    t.boolean  "pre_assignment_ignored_piece_count",                default: 0
+
   end
 
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
@@ -1291,6 +1294,7 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.integer  "position",                   limit: 4
     t.string   "token",                      limit: 255
     t.boolean  "is_awaiting_pre_assignment",             default: false, null: false
+    t.string   "pre_assignment_state",       limit: 255, default: "ready"
     t.string   "pre_assignment_comment",     limit: 255
     t.string   "content_file_name",          limit: 255
     t.string   "content_content_type",       limit: 255
@@ -2208,7 +2212,7 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
-    t.integer  "preseizure_date_option",          limit: 4,   default: 0
+    t.integer  "preseizure_date_option",          limit: 4,   default: -1
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end

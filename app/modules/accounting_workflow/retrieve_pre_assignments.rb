@@ -72,23 +72,20 @@ class AccountingWorkflow::RetrievePreAssignments
 
       errors = []
       errors << "Piece #{xml_piece['name']} unknown" unless piece
-      errors << "Piece #{xml_piece['name']} already pre-assigned" if piece && is_already_pre_assigned?(piece)
+      errors << "Piece #{xml_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
       if errors.empty?
         [piece, xml_piece, file_path]
       else
+        if piece
+          piece.update(is_awaiting_pre_assignment: false)
+          piece.not_processed_pre_assignment
+        end
         move_and_write_errors(file_path, errors)
         nil
       end
     end.compact
   end
-
-
-  def is_already_pre_assigned?(piece)
-    return true unless piece.is_awaiting_pre_assignment?
-    is_preseizure? ? piece.preseizures.any? : piece.expense.present?
-  end
-
 
   def grouped_xml_pieces
     valid_xml_pieces.group_by do |piece, _xml_piece, _file_path|
@@ -100,21 +97,32 @@ class AccountingWorkflow::RetrievePreAssignments
   def get_pre_assignments(xml_pieces, report)
     pre_assignments = []
     xml_pieces.each do |piece, xml_piece, file_path|
+      _ignored = false
+
       if is_preseizure?
-        xml_piece.css('preseizure').each do |data|
-          pre_assignments << create_preseizure(piece, report, data)
+        _ignoring_reason = xml_piece.at_css('ignore').try(:content).to_s.presence
+
+        if _ignoring_reason.present?
+          _ignored = true
+
+          NotifyPreAssignmentIgnoredPiece.new(piece, 5.minutes).execute
+        else
+          xml_piece.css('preseizure').each do |data|
+            pre_assignments << create_preseizure(piece, report, data)
+          end
         end
       elsif is_expense?
         pre_assignments << create_expense(piece, report, xml_piece)
       end
-      piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
-      path = output_path.join("processed/#{Time.now.strftime('%Y-%m-%d')}")
-      FileUtils.mkdir_p path
-      FileUtils.mv file_path, path
-      archive_path      = manual_archive_dir.join(report.type).to_s
-      file_name_pattern = manual_dir.join report.type, "#{piece.name.tr(' ', '_')}*.pdf"
-      move_to_archive archive_path, file_name_pattern
+
+      move_output_xml file_path, (_ignored ? 'ignored' : 'processed')
+
+      delete_input_file_piece piece, report
+
+      _ignored ? piece.ignored_pre_assignment : piece.processed_pre_assignment
+      piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: _ignoring_reason)
     end
+
     pre_assignments
   end
 
@@ -243,22 +251,24 @@ class AccountingWorkflow::RetrievePreAssignments
     File.write output_path.join("errors/#{File.basename(file_path, '.xml')}.txt"), errors.join("\n")
   end
 
-
-  def manual_archive_dir
-    AccountingWorkflow.pre_assignments_dir.join 'archives'
+  def move_output_xml(file_path, _dir = "processed")
+    path = output_path.join("#{_dir}/#{Time.now.strftime('%Y-%m-%d')}")
+    FileUtils.mkdir_p path
+    FileUtils.mv file_path, path
   end
-
 
   def manual_dir
     AccountingWorkflow.pre_assignments_dir.join 'input'
   end
 
+  def delete_input_file_piece(piece, report)
+    if(piece.pre_assignment_force_processing?)
+      file_name_pattern = manual_dir.join report.type, "#{piece.name.tr(' ', '_')}_recycle.pdf"
+    else
+      file_name_pattern = manual_dir.join report.type, "#{piece.name.tr(' ', '_')}.pdf"
+    end
 
-  def move_to_archive(archive_path, file_name_pattern)
-    FileUtils.mkdir_p archive_path
-
-    file_path = Dir.glob(file_name_pattern).first
-
-    FileUtils.mv file_path, archive_path if file_path
+    File.delete(file_name_pattern) if File.exist? file_name_pattern
   end
+
 end

@@ -19,6 +19,8 @@ class AccountingWorkflow::SendPieceToPreAssignment
     end
 
     @piece.update(is_awaiting_pre_assignment: true)
+
+    @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
   end
 
 
@@ -47,6 +49,9 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
-    FileUtils.cp(@piece.temp_document.content.path, File.join(dir, @piece.name.tr(' ', '_') + '.pdf'))
+
+    _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}.pdf" : @piece.name.tr(' ', '_') + '_recycle.pdf'
+
+    FileUtils.cp(@piece.temp_document.content.path, File.join(dir, _piece_name))
   end
 end

@@ -95,4 +95,32 @@ FactoryGirl.define do
       }
     }}
   end
+
+  factory :pack do
+    name 'AC0000 AC 201804 ALL'
+    original_document_id "1550058"
+    content_url "/account/documents/1550058/download/original?15238"
+    pages_count 2
+    is_fully_processed true
+  end
+
+  factory :piece, :class => Pack::Piece  do
+    sequence(:name) { |n| "AC0000 AC 201804 0#{n}" }
+    sequence(:number) { |n| "000#{n}" }
+    is_a_cover false
+    origin "upload"
+    sequence(:position) {|n| n }
+    content_file_name "test.pdf"
+    content_content_type "application/pdf"
+    content_file_size 33928
+    content_updated_at Time.now
+    content_fingerprint "0ac66f058d5eaddbe233670cf214780b"
+  end
+
+  factory :period do
+    start_date "2018-04-01"
+    end_date "2018-04-30"
+    duration 1
+    subscription_id 1
+  end
 end

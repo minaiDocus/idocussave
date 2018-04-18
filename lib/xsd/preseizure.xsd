@@ -3,18 +3,19 @@
   <element name="piece">
     <complexType>
       <sequence>
+        <element type="string" name="ignore" minOccurs="0"/>
         <element name="preseizure" maxOccurs="unbounded" minOccurs="1">
           <complexType>
             <sequence>
-              <element type="string" name="date"/>
-              <element type="string" name="third_party"/>
-              <element type="string" name="piece_number"/>
-              <element type="string" name="amount"/>
-              <element type="string" name="currency"/>
-              <element type="string" name="conversion_rate"/>
-              <element type="string" name="unit"/>
-              <element type="string" name="deadline_date"/>
-              <element type="string" name="observation"/>
+              <element type="string"  name="date"/>
+              <element type="string"  name="third_party"/>
+              <element type="string"  name="piece_number"/>
+              <element type="string"  name="amount"/>
+              <element type="string"  name="currency"/>
+              <element type="string"  name="conversion_rate"/>
+              <element type="string"  name="unit"/>
+              <element type="string"  name="deadline_date"/>
+              <element type="string"  name="observation"/>
               <element type="boolean" name="is_made_by_abbyy"/>
               <element name="account" maxOccurs="unbounded" minOccurs="2">
                 <complexType>

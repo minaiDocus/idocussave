@@ -27,15 +27,48 @@ class Pack::Piece < ActiveRecord::Base
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  scope :covers,           -> { where(is_a_cover: true) }
-  scope :scanned,          -> { where(origin: 'scan') }
-  scope :retrieved,        -> { where(origin: 'retriever') }
-  scope :of_month,         -> (time) { where('created_at > ? AND created_at < ?', time.beginning_of_month, time.end_of_month) }
-  scope :uploaded,         -> { where(origin: 'upload') }
-  scope :not_covers,       -> { where(is_a_cover: [false, nil]) }
-  scope :by_position,      -> { order(position: :asc) }
-  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :covers,                 -> { where(is_a_cover: true) }
+  scope :scanned,                -> { where(origin: 'scan') }
+  scope :retrieved,              -> { where(origin: 'retriever') }
+  scope :of_month,               -> (time) { where('created_at > ? AND created_at < ?', time.beginning_of_month, time.end_of_month) }
+  scope :uploaded,               -> { where(origin: 'upload') }
+  scope :not_covers,             -> { where(is_a_cover: [false, nil]) }
+  scope :by_position,            -> { order(position: :asc) }
+  scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
+  scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
 
+  state_machine :pre_assignment_state, initial: :ready, namespace: :pre_assignment do
+    state :ready
+    state :processing
+    state :force_processing
+    state :processed
+    state :ignored
+    state :not_processed
+
+    event :ready do
+      transition any => :ready
+    end
+
+    event :processing do
+      transition :ready => :processing
+    end
+
+    event :force_processing do
+      transition [:ready, :ignored] => :force_processing
+    end
+
+    event :processed do
+      transition [:processing, :force_processing] => :processed
+    end
+
+    event :ignored do
+      transition processing: :ignored
+    end
+
+    event :not_processed do
+      transition [:processing, :force_processing] => :not_processed
+    end
+  end
 
   def get_token
     if token.present?
@@ -75,6 +108,11 @@ class Pack::Piece < ActiveRecord::Base
 
   def retrieved?
     origin == 'retriever'
+  end
+
+  def is_already_pre_assigned_with?(process='preseizure')
+    return true unless is_awaiting_pre_assignment?
+    process == 'preseizure' ? preseizures.any? : expense.present?
   end
 
 

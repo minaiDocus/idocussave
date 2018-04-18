@@ -1,0 +1,62 @@
+#pre_assignment_ignored
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3 Liste des pièces ignorées à la pré-affectation (#{@ignored_list.total_count})
+      .pull-right
+        = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
+  .row-fluid
+    .span12.box
+      = render partial: 'shared/list_options', locals: { collection: @ignored_list }
+      = form_tag force_pre_assignment_account_organization_pre_assignment_ignored_index_path, method: :post, class: 'form form-vertical margin0bottom' do
+        %table.table.table-striped.table-condensed
+          %thead
+            %tr
+              %th= check_box_tag 'master_checkbox', 0, false
+              %th= sortable :created_at, 'Date de création'
+              %th= sortable :name, 'N° pièce'
+              %th= sortable :number, 'N° facture'
+              %th Nom de lot
+              %th Remarque
+              %th= sortable :pre_assignment_stat, 'Statut'
+              %th Pièces (PDF)
+          %tbody
+            - @ignored_list.each do |piece|
+              %tr
+                %td
+                  - if piece.pre_assignment_ignored?
+                    = check_box_tag 'ignored_ids[]', piece.id, false, class: 'checkbox'
+                %td
+                  %b
+                    - if piece.created_at
+                      - if piece.created_at.today?
+                        = l(piece.created_at, format: '%H:%M')
+                      - else
+                        = l(piece.created_at, format: '%d %b %Y %H:%M')
+                    - else
+                      \-
+                %td= piece.name
+                %td= piece.number
+                %td= piece.pack.name
+                %td= piece.pre_assignment_comment
+                %td
+                  - if piece.pre_assignment_ignored?
+                    %b Pré-affectation ignorée
+                  - else
+                    %b En cours de renvoi à la pré-affectation
+                %td
+                  = link_to icon_show, '#', class: 'do-showPieces', title: 'Voir la pièces', data: { piece_name: piece.name, piece_url: piece.content.url }
+        = content_tag :i, '', class: 'icon-arrow-up'
+        = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right'
+
+      = render partial: 'shared/list_options', locals: { collection: @ignored_list }
+  #showPieces.modal.hide.fade
+    .modal-header
+      %a.close{ data: { dismiss: :modal } } ×
+      %h3 Pièce
+    .modal-body
+      .row-fluid
+        .span12.aligncenter
+          %h3.name
+      .aligncenter
+        %iframe.piece{ src: '' }

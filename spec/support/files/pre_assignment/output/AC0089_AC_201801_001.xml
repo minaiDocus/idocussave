@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<piece name="AC0089_AC_201801_001">
+  <preseizure>
+    <date>27/09/2017</date>
+    <third_party>OVH</third_party>
+    <piece_number>FR21226536</piece_number>
+    <amount/>
+    <currency/>
+    <conversion_rate/>
+    <unit />
+    <deadline_date/>
+    <observation>TIERS NON TROUVE DANS LE PLAN COMPTABLE</observation>
+    <is_made_by_abbyy>true</is_made_by_abbyy>
+    <account type="TTC" number="0DIV" lettering="">
+      <credit>2.78</credit>
+    </account>
+    <account type="HT" number="471000" lettering="">
+      <debit number="1">2.32</debit>
+    </account>
+    <account type="TVA" number="445660" lettering="">
+      <debit number="1">0.46</debit>
+    </account>
+  </preseizure>
+</piece>

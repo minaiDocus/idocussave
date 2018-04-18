@@ -6,6 +6,7 @@
           .pull-left
             %h3 Pré-affectations
           .pull-right
+            = link_to 'Pièces ignorées', account_organization_pre_assignment_ignored_index_path(@organization), class: 'btn'
             = link_to 'Doublons', account_organization_pre_assignment_blocked_duplicates_path(@organization), class: 'btn'
             = link_to 'Livraisons en erreurs', account_organization_pre_assignment_delivery_errors_path(@organization), class: 'btn'
   .row-fluid

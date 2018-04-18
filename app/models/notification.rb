@@ -63,7 +63,8 @@ class Notification < ActiveRecord::Base
         'new_scanned_documents',
         'pre_assignment_delivery_failure',
         'mcf_invalid_access_token',
-        'mcf_insufficient_space'
+        'mcf_insufficient_space',
+        'pre_assignment_ignored_piece'
       ].freeze
     end
   end

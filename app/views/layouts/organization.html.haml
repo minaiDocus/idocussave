@@ -62,7 +62,7 @@
                 - if @organization.is_active
                   %li{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
                     = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization)
-                %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
+                %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_ignored pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
                   = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
                 %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
                   = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
