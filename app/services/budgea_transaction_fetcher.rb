@@ -116,7 +116,7 @@ class BudgeaTransactionFetcher
           end
         else
           log_message += "[BudgeaTransactionFetcher][#{@user.code}] - Parameters invalid!"
-          logger.info message
+          logger.info log_message
           return log_message
         end
       else
@@ -124,8 +124,7 @@ class BudgeaTransactionFetcher
         logger.info log_message
         return log_message
       end
-
-      log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New operations: #{new_operations_count} / Deleted Operations: #{deleted_operations_count} / Total operations fetched: #{operations_fetched_count}"
+      log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New operations: #{new_operations_count} / Deleted operations: #{deleted_operations_count} / Total operations fetched: #{operations_fetched_count}"
       logger.info log_message
       return log_message
     end

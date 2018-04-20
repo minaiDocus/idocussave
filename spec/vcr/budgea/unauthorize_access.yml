@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/accounts
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer FakeToken
+      Expect:
+      - ''
+  response:
+    status:
+      code: 401
+      message: UNAUTHORIZED
+    headers:
+      Server:
+      - nginx/1.10.3
+      Date:
+      - Fri, 20 Apr 2018 12:17:28 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '24'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      X-Recruiting:
+      - 'Budget Insight is hiring! Do not hesitate to contact us at jobs@budget-insight.com
+        or on #budget-insight @ Freenode'
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: UTF-8
+      string: '{"code": "unauthorized"}'
+    http_version: 
+  recorded_at: Fri, 20 Apr 2018 12:17:24 GMT
+recorded_with: VCR 3.0.3
