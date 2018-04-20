@@ -272,9 +272,20 @@ class FTPImport
   end
 
   def mark_file_as_not_processable(path, file_name, error_message=' (erreur fichier non valide pour iDocus)')
-    new_file_name = File.basename(file_name, '.*') + error_message + File.extname(file_name)
+    file_rename = File.basename(file_name, '.*') + error_message + File.extname(file_name)
+    new_file_name = file_rename
+    loop_count = 1
+    error = true
 
-    client.rename File.join(path, file_name), File.join(path, new_file_name)
+    while (error && loop_count <= 5)
+      begin
+        client.rename File.join(path, file_name), File.join(path, new_file_name)
+        error = false
+      rescue
+        new_file_name = "#{loop_count}_#{file_rename}"
+        loop_count += 1
+      end
+    end
   end
 
   def logger
