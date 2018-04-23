@@ -103,11 +103,18 @@ class IbizaAPI::Utils
                     3.times do |e|
                       i = e+1
                       if preseizure.analytic_reference.send("a#{i}_name").present?
+                        ventilation_rate = preseizure.analytic_reference.send("a#{i}_ventilation") || 0
+
                         xml.importAnalyticalEntry do
                           xml.analysis preseizure.analytic_reference.send("a#{i}_name")
                           xml.axis1 preseizure.analytic_reference.send("a#{i}_axis1")
                           xml.axis2 preseizure.analytic_reference.send("a#{i}_axis2")
                           xml.axis3 preseizure.analytic_reference.send("a#{i}_axis3")
+                          if entry.type == Pack::Report::Preseizure::Entry::DEBIT
+                            xml.debit entry.amount * (ventilation_rate / 100)
+                          else
+                            xml.credit entry.amount * (ventilation_rate / 100)
+                          end
                         end
                       end
                     end

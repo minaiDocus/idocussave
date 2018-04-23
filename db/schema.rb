@@ -12,7 +12,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20180514121333) do
+ActiveRecord::Schema.define(version: 20180602121234) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -171,14 +171,17 @@ ActiveRecord::Schema.define(version: 20180514121333) do
 
   create_table "analytic_references", force: :cascade do |t|
     t.string "a1_name",  limit: 255
+    t.decimal "a1_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string "a1_axis1", limit: 255
     t.string "a1_axis2", limit: 255
     t.string "a1_axis3", limit: 255
     t.string "a2_name",  limit: 255
+    t.decimal "a2_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string "a2_axis1", limit: 255
     t.string "a2_axis2", limit: 255
     t.string "a2_axis3", limit: 255
     t.string "a3_name",  limit: 255
+    t.decimal "a3_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string "a3_axis1", limit: 255
     t.string "a3_axis2", limit: 255
     t.string "a3_axis3", limit: 255

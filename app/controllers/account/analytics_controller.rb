@@ -4,7 +4,6 @@ class Account::AnalyticsController < Account::AccountController
 
   def index
     result = IbizaAnalytic.new(@customer.ibiza_id, ibiza.access_token).list
-
     respond_to do |format|
       format.json { render json: result.to_json, status: :ok }
     end

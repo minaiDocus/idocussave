@@ -681,7 +681,10 @@
         analytics = null;
 
         $('.analytic_axis_group').addClass('hide');
+        $('.analytic_ventilation_group').addClass('hide');
+
         $('.analytic_select').html('');
+        $('.analytic_ventilation').val(0);
         $('.hidden_analytic_input').val('');
       }
 
@@ -735,9 +738,11 @@
         $('#analytic_'+number+'_group .analytic_axis').html('');
         $('#analytic_'+number+'_group .hidden_analytic_axis').val('');
         $('#analytic_'+number+'_group .analytic_axis_group').addClass('hide');
+        $('#analytic_'+number+'_group .analytic_ventilation_group').addClass('hide');
 
         if(current_analytic.val() != '') {
           var analytic = analytics.find(byAnalyticId, current_analytic);
+          $('#analytic_'+number+'_group .analytic_ventilation_group').removeClass('hide');
 
           for (var i=1; i<4; i++) {
             var axis_name   = 'axis' + i;
@@ -800,6 +805,17 @@
     $('.analytic_select').on('change', function() {
       $(this).siblings('.hidden_analytic_input').val($(this).val());
     });
+
+    $('.analytic_ventilation').on('change', function(){
+      var total_ventilation = 0
+      $('.analytic_ventilation:visible').each(function(){ total_ventilation += parseFloat($(this).val()) })
+      $('#actual_ventilation_rate').html(`(Total ventilation actuelle : ${total_ventilation} %)`)
+
+      if(total_ventilation == 100)
+        $('#actual_ventilation_rate').addClass('green')
+      else
+        $('#actual_ventilation_rate').removeClass('green')
+    })
 
     function lock_file_upload_params() {
       var title = null;

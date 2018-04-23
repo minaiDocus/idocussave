@@ -61,6 +61,9 @@
                   = label_tag "h_analytic_#{i}_name", "Analyse #{i} :"
                   = select_tag "h_analytic_#{i}_name", nil, class: 'analytic_select analytic_name', data: { analytic_number: i }
                   = hidden_field_tag "analytic[#{i}][name]", nil, class: 'hidden_analytic_input hidden_analytic_name'
+                  .analytic_ventilation_group.hide{ id:"analytic_ventilation_#{i}-group"}
+                    = label_tag "analytic[#{i}][ventilation]", 'Ventilation (%):'
+                    = number_field_tag "analytic[#{i}][ventilation]", 0, min: 0, max: 100, class: 'analytic_ventilation', step: 0.25
                   .analytic_axis_group.hide{ id: "analytic_#{i}_axis1-group" }
                     = label_tag "h_analytic_#{i}_axis1", 'Axe 1 :'
                     = select_tag "h_analytic_#{i}_axis1", nil, class: 'analytic_select analytic_axis'
@@ -77,6 +80,7 @@
               %span.label.label-warning.margin1right
                 Attention :
               Ventilation à 100% uniquement.
+              %i{ id: "actual_ventilation_rate" }
       :plain
         <div class="row fileupload-buttonbar">
             <div class="span6">

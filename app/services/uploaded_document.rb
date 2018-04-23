@@ -22,8 +22,6 @@ class UploadedDocument
     @original_file_name  = original_file_name.gsub(/\0/, '')
     @prev_period_offset  = prev_period_offset.to_i
 
-    @analytic = analytic
-
     @errors = []
 
     @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
@@ -38,10 +36,14 @@ class UploadedDocument
       rescue Errno::ENOENT
         @errors << [:file_is_corrupted_or_protected, nil]
       end
+
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo]         unless valid_file_size?
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:already_exist, nil]                                   unless unique?
-      @errors << [:invalid_analytic_params, nil]                         unless valid_analytic_params?
+
+      analytic_validator = IbizaAnalytic::Validator.new(@user, analytic)
+      @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
+      @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
     end
 
     if @errors.empty?
@@ -59,7 +61,7 @@ class UploadedDocument
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
-      add_analytic_reference if analytic_requested?
+      IbizaAnalytic.add_analytic_to_temp_document analytic, @temp_document if analytic_validator.analytic_params_present?
     end
 
     clean_tmp
@@ -210,40 +212,5 @@ class UploadedDocument
 
   def fingerprint
     @fingerprint ||= DocumentTools.checksum(@file.path)
-  end
-
-  def analytic_requested?
-    result = false
-    3.times do |e|
-      i = (e+1).to_s
-      result ||= @analytic.try(:[], i).try(:[], :name).present? && (@analytic[i][:axis1].present? || @analytic[i][:axis2].present? || @analytic[i][:axis3].present?)
-    end
-    result
-  end
-
-  def valid_analytic_params?
-    if analytic_requested?
-      IbizaAnalytic.new(@user.ibiza_id, @user.organization.ibiza.access_token).valid?(@analytic)
-    else
-      true
-    end
-  end
-
-  def add_analytic_reference
-    analytic_reference = AnalyticReference.create(
-      a1_name:  @analytic['1'][:name].presence,
-      a1_axis1: @analytic['1'][:axis1].presence,
-      a1_axis2: @analytic['1'][:axis2].presence,
-      a1_axis3: @analytic['1'][:axis3].presence,
-      a2_name:  @analytic['2'][:name].presence,
-      a2_axis1: @analytic['2'][:axis1].presence,
-      a2_axis2: @analytic['2'][:axis2].presence,
-      a2_axis3: @analytic['2'][:axis3].presence,
-      a3_name:  @analytic['3'][:name].presence,
-      a3_axis1: @analytic['3'][:axis1].presence,
-      a3_axis2: @analytic['3'][:axis2].presence,
-      a3_axis3: @analytic['3'][:axis3].presence
-    )
-    @temp_document.update(analytic_reference: analytic_reference)
   end
 end

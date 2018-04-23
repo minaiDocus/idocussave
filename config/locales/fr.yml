@@ -333,6 +333,7 @@ fr:
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
             already_exist: existe déjà
             invalid_analytic_params: paramètres analytiques invalides
+            invalid_analytic_ventilation: la ventilation analytique doit être répartie sur un total de 100%
         bank_account:
           attributes:
             journal:
