@@ -1,0 +1,12 @@
+<td><%= @analytic.name %></td>
+<td>
+  <ul>
+    <% if @analytic.axis1 : %><li><%= @analytic.axis1 %></li><% end %>
+    <% if @analytic.axis2 : %><li><%= @analytic.axis2 %></li><% end %>
+    <% if @analytic.axis3 : %><li><%= @analytic.axis3 %></li><% end %>
+  </ul>
+</td>
+<td><%= @analytic.ventilation %> %</td>
+<td class="amount">
+  <%= (parseFloat(@amount) * (parseFloat(@analytic.ventilation) / 100)).toFixed(3) %>
+</td>

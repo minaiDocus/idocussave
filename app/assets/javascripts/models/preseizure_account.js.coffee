@@ -20,6 +20,7 @@ class Idocus.Models.PreseizureAccount extends Backbone.Model
       lettering: @get('lettering')
       unit: @get('unit')
       entries_attributes: @get('entries')
+      analytic_reference: @get('analytic_reference')
 
   typeName: ->
     if parseInt(@get('type')) == 1

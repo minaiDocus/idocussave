@@ -2,6 +2,10 @@ object @preseizure_account
 
 attributes :type, :number, :lettering
 
+node :analytic_reference do |preseizure_account|
+  preseizure_account.preseizure.analytic_reference.to_json
+end
+
 node :unit do |preseizure_account|
   preseizure_account.preseizure.unit.to_s
 end

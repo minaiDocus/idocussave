@@ -9,5 +9,20 @@
       <th></th>
     </tr>
   </thead>
-  <tbody></tbody>
+  <tbody class="entries"></tbody>
 </table>
+<div id="analytic_reference">
+  <hr />
+  <strong>Compta analytique</strong>
+  <table class="table table-striped table-condensed table-bordered margin0bottom">
+    <thead>
+      <tr>
+        <th>Analyse</th>
+        <th>Axe</th>
+        <th>Ventilation</th>
+        <th class="amount">Montant ventilé</th>
+      </tr>
+    </thead>
+    <tbody class="analytic"></tbody>
+  </table>
+</div>
