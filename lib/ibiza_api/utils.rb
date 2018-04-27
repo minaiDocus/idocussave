@@ -62,7 +62,14 @@ class IbizaAPI::Utils
 
                 if preseizure.piece
                   xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
-                  xml.voucherID "https://my.idocus.com"+ preseizure.piece.get_access_url
+
+                  _temp_document = preseizure.piece.temp_document
+                  if _temp_document.delivered_by == 'ibiza' && _temp_document.api_id.present?
+                    xml.voucherID _temp_document.api_id
+                  else
+                    xml.voucherID "https://my.idocus.com"+ preseizure.piece.get_access_url
+                  end
+
                   xml.voucherRef preseizure.piece_number
                 else
                   xml.piece preseizure.operation_name
