@@ -14,7 +14,7 @@
         %li
           = attachment.name
           %ul
-            - if attachment.valid?
+            - if attachment.valid?(true)
               %li pièce jointe importée avec succès
             - unless attachment.valid_size?
               %li la pièce jointe a une taille supérieure à 5 Mo
@@ -22,7 +22,7 @@
               %li la pièce jointe a un nombre de pages supérieurs à 100
             - unless attachment.valid_content?
               %li la pièce jointe est corrompue ou protégée ou non imprimable
-            - unless attachment.unique?
+            - unless attachment.unique?(true)
               %li la pièce jointe a déjà été importée
     %br
     =================
