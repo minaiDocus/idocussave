@@ -83,7 +83,7 @@ class DiscountBillingService
   end
 
   def concerned_subscriptions
-    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
+    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false).where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ?", true, true)
   end
 
 end
