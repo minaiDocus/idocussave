@@ -108,9 +108,15 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /account/documents/:id/download/:style
   def download
-    document = Document.find(params[:id])
-    owner    = document.pack.owner
-    filepath = document.content.path(params[:style].presence)
+    begin
+      document = params[:id].size > 20 ? Document.find_by_mongo_id(params[:id]) : Document.find(params[:id])
+      owner    = document.pack.owner
+      filepath = document.content.path(params[:style].presence)
+    rescue
+      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
+      owner    = document.temp_pack.user
+      filepath = document.content.path(params[:style].presence)
+    end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
