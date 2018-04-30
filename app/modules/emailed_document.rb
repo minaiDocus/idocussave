@@ -244,7 +244,7 @@ class EmailedDocument
       @invalid_attachments = []
 
       attachments.each do |attachment|
-        next if attachment.valid?
+        next if attachment.valid?(true)
         attachment_errors = []
         attachment_errors << attachment.name
         attachment_errors << :size          unless attachment.valid_size?
