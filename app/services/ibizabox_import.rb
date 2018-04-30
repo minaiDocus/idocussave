@@ -54,7 +54,7 @@ class IbizaboxImport
   end
 
   def valid?
-    @folder.active? && @user.organization.ibiza.first_configured?
+    @folder.active? && @user.organization.ibiza.first_configured? && accessible_ibiza_journal
   end
 
   def accessible_ibiza_periods
@@ -66,6 +66,25 @@ class IbizaboxImport
       date += 1.month
     end
     periods
+  end
+
+  def accessible_ibiza_journal
+    journal_ref = @folder.journal.pseudonym.presence || @folder.journal.name
+
+    client.request.clear
+    client.company(@user.ibiza_id).journal
+    client.request.path += "/#{journal_ref}"
+    client.request.run
+
+    if client.response.success? && journal_ref
+      xml_data = client.response.body.force_encoding('UTF-8')
+      valid = xml_data.match /<presentInGed>1<\/presentInGed>/
+    else
+      valid = false
+    end
+
+    @folder.disable if @folder.can_disable? && !valid
+    valid
   end
 
   private

@@ -13,9 +13,16 @@
     %th Actions
   - @customer.ibizabox_folders.includes(:journal).each do |folder|
     %tr
-      %td= folder.journal.name
+      %td
+        = folder.journal.name
+        - unless ibiza_journal_accessible?(folder)
+          %i
+            %strong (Journal inexistant ou inaccessible depuis la ged ibiza)
       %td= folder.journal.pseudonym
       %td= IbizaboxImport.new(folder).accessible_ibiza_periods.join(" - ")
       %td= ibizabox_folder_state(folder)
       %td
-        = link_to "#{folder.active? ? 'Désactiver' : 'Activer'}", account_organization_customer_ibizabox_folder_path(@organization, @customer, folder), method: 'patch', class: "btn btn-mini btn-#{folder.active? ? 'danger' : 'primary'}"
+        - if ibiza_journal_accessible?(folder)
+          = link_to "#{folder.active? ? 'Désactiver' : 'Activer'}", account_organization_customer_ibizabox_folder_path(@organization, @customer, folder), method: 'patch', class: "btn btn-mini btn-#{folder.active? ? 'danger' : 'primary'}"
+        - else
+          = link_to "Activer", '#', class: "btn btn-mini btn-primary", disabled: true
