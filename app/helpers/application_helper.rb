@@ -296,6 +296,8 @@ module ApplicationHelper
       [t('activerecord.models.csv_descriptor.attributes.conversion_rate'), :conversion_rate],
       [t('activerecord.models.csv_descriptor.attributes.credit'), :credit],
       [t('activerecord.models.csv_descriptor.attributes.debit'), :debit],
+      [t('activerecord.models.csv_descriptor.attributes.complete_unit'), :complete_unit],
+      [t('activerecord.models.csv_descriptor.attributes.partial_unit'), :partial_unit],
       [t('activerecord.models.csv_descriptor.attributes.lettering'), :lettering],
       [t('activerecord.models.csv_descriptor.attributes.piece_url'), :piece_url],
       [t('activerecord.models.csv_descriptor.attributes.remark'), :remark],

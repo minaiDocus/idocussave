@@ -106,6 +106,10 @@ class PreseizuresToCsv
             "#{entry.get_debit}".gsub(/[\.,\,]/, @descriptor.separator)
           when /\Acredit\z/
             "#{entry.get_credit}".gsub(/[\.,\,]/, @descriptor.separator)
+          when /\Acomplete_unit\z/
+            entry.preseizure.unit.try(:upcase)
+          when /\Apartial_unit\z/
+            entry.preseizure.unit.split(//).try(:first).try(:upcase)
           when /\Aoperation_label\z/
             entry.preseizure.operation_label
           when /\Alettering\z/

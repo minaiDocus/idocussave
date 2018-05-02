@@ -514,6 +514,8 @@ fr:
           third_party: Tiers
           credit: Crédit
           debit: Débit
+          complete_unit: Unité monétaire (Complète)
+          partial_unit: Unité monétaire (Partielle)
           lettering: Lettrage
           piece_url: URL pièce
           remark: Remarque
