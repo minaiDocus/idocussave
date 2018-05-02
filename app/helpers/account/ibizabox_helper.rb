@@ -9,6 +9,22 @@ module Account::IbizaboxHelper
     end
   end
 
+  def ibiza_journal_accessible?(folder, ibiza_journals)
+    return @is_accessible if @folder == folder && !@is_accessible.nil?
+
+    @folder = folder
+    @is_accessible = false
+
+    unless ibiza_journals.nil? || ibiza_journals.at_css('data').children.empty?
+      ibiza_journals.css('wsJournals').each do |node|
+        ref_ibiza = node.at_css('ref').try(:content)
+        ref_folder = folder.journal.pseudonym.presence || folder.journal.name
+
+        return @is_accessible = true if (ref_folder == ref_ibiza && !ref_folder.nil? && node.at_css('presentInGed').try(:content).to_i == 1)
+      end
+    end
+    @is_accessible
+  end
 
   def ibizabox_state_label(state)
     case state

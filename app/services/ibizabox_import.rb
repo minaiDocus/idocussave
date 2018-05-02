@@ -22,6 +22,22 @@ class IbizaboxImport
         ImportFromIbizaboxWorker.perform_async user.id
       end
     end
+
+    def get_accessible_journals(user)
+      client = user.organization.try(:ibiza).try(:first_client)
+
+      if client
+        client.request.clear
+        client.company(user.ibiza_id).journal
+        client.request.run
+
+        if client.response.success?
+          xml_data = Nokogiri::XML(client.response.body.force_encoding('UTF-8'))
+        else
+          nil
+        end
+      end
+    end
   end
 
   def initialize(folder)

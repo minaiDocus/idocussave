@@ -49,13 +49,6 @@ module JournalHelper
     end
   end
 
-  def ibiza_journal_accessible?(folder)
-    return @is_accessible if @folder == folder && !@is_accessible.nil?
-
-    @folder = folder
-    @is_accessible = IbizaboxImport.new(@folder).accessible_ibiza_journal
-  end
-
 
   def journals_for_select(journal_name, type = nil)
     journals = ibiza_journals
