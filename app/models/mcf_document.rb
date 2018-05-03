@@ -9,6 +9,7 @@ class McfDocument < ActiveRecord::Base
   scope :to_process,                      -> { where(state: 'ready') }
   scope :not_delivered_and_not_notified,  -> { where("state = 'not_delivered' AND is_notified = false") }
   scope :not_processable,                 -> { where("state = 'not_processable' AND is_generated = true") }
+  scope :not_processable_and_not_notified,-> { where("state = 'not_processable' AND is_notified = false") }
 
   state_machine initial: :ready do
     state :ready

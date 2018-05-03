@@ -100,6 +100,7 @@ class McfProcessor
         else
           @mcf_document.got_error uploaded_document.full_error_messages
           move_file
+          NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
           return
         end
       end
@@ -115,6 +116,7 @@ class McfProcessor
         @mcf_document.update(is_generated: true)
     rescue => e
       notify_ungenerated_file e.message
+      @mcf_document.update(is_notified: true)
       @mcf_document.got_error e.message
 
       logger.info "[MCF][GENERATION ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}"

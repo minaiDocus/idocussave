@@ -283,6 +283,7 @@
                         = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
                       - if @user.is_prescriber
                         = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
+                        = o.input :mcf_document_errors, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'il y a des erreurs de récupération de documents venant de MCF (My Company Files)", wrapper: :inline_checkbox
                       - unless @user.is_prescriber
                         = o.input :new_scanned_documents, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mes documents papier ont été reçu.", wrapper: :inline_checkbox
                       - if @user.is_prescriber

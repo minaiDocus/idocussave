@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180418115910) do
+ActiveRecord::Schema.define(version: 20180503072559) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1062,6 +1062,7 @@ ActiveRecord::Schema.define(version: 20180418115910) do
     t.integer  "user_id",                               limit: 4
     t.boolean  "pre_assignment_ignored_piece",                      default: false
     t.boolean  "pre_assignment_ignored_piece_count",                default: 0
+    t.boolean  "mcf_document_errors",                               default: false
 
   end
 

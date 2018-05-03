@@ -77,7 +77,8 @@ class Account::ProfilesController < Account::AccountController
         :detected_preseizure_duplication,
         :pre_assignment_ignored_piece,
         :new_scanned_documents,
-        :pre_assignment_delivery_errors
+        :pre_assignment_delivery_errors,
+        :mcf_document_errors
       ]
     )
   end

@@ -218,7 +218,7 @@ class User < ActiveRecord::Base
   end
 
   def prescribers
-    collaborator? ? [] : ((organization&.admins || []) + group_prescribers)
+    collaborator? ? [] : ((organization&.admins || []) | group_prescribers)
   end
 
   def group_prescribers
