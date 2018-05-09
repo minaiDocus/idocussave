@@ -36,7 +36,7 @@ class Collaborator
   end
 
   def leader?
-    @user.is_admin || (@member && @member.admin?) || @user.memberships.detect(&:admin?)
+    @user.is_admin || (@member && @member.admin?)
   end
 
   def not_leader?
