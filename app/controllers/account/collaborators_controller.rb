@@ -78,7 +78,7 @@ class Account::CollaboratorsController < Account::OrganizationController
         member = Member.create(
           organization: related_organization,
           user: @member.user,
-          role: @member.role,
+          role: 'collaborator', #new collaborator for mutli-organization must have collaborator role by default
           code: @member.code.sub(/^#{base_code}/, new_base_code)
         )
 
