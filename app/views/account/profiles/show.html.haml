@@ -132,6 +132,14 @@
                             .span6.margin2top
                               = render partial: 'storage_form', locals: { storage: @external_file_storage.dropbox_basic }
                             .span6.margin2top
+                              - if @dropbox_account
+                                %h4 Information de compte
+                                Nom utilisateur: 
+                                %strong= @dropbox_account.name.display_name
+                                %br
+                                Email: 
+                                %strong= @dropbox_account.email
+                                %hr
                               %h4 Import de documents vers iDocus
                               Importer automatiquement des documents depuis la Dropbox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
                               %br
