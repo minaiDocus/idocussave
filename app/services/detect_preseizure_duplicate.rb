@@ -19,7 +19,6 @@ class DetectPreseizureDuplicate
   def valid?
     @preseizure.third_party.present? &&
     @preseizure.cached_amount.present? &&
-    @preseizure.date.present? &&
     @preseizure.piece_number.present?
   end
 
@@ -32,7 +31,6 @@ class DetectPreseizureDuplicate
       user_id:       @preseizure.user_id,
       third_party:   @preseizure.third_party,
       cached_amount: @preseizure.cached_amount,
-      date:          @preseizure.date,
       piece_number:  @preseizure.piece_number
     }
   end
