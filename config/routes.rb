@@ -483,7 +483,7 @@ Idocus::Application.routes.draw do
 
     resources :events, only: %w(index show)
     resources :scanning_providers
-    resources :subscription_options, except: %w(index show)
+    resources :subscription_options, except: %w(show)
 
     resources :dematboxes, only: %w(index show destroy) do
       post 'subscribe', on: :member

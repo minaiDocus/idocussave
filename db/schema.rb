@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180503072559) do
+
+ActiveRecord::Schema.define(version: 20180514121333) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -228,8 +229,8 @@ ActiveRecord::Schema.define(version: 20180503072559) do
     t.string   "api_name",              limit: 255,   default: "budgea"
     t.boolean  "is_used",                             default: false
     t.string   "type_name",             limit: 255
-    t.boolean  "lock_old_operation",                default: true
-    t.integer  "permitted_late_days",   limit: 4,   default: 7
+    t.boolean  "lock_old_operation",                  default: true
+    t.integer  "permitted_late_days",   limit: 4,     default: 30
   end
 
   add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree
@@ -1063,7 +1064,6 @@ ActiveRecord::Schema.define(version: 20180503072559) do
     t.boolean  "pre_assignment_ignored_piece",                      default: false
     t.boolean  "pre_assignment_ignored_piece_count",                default: 0
     t.boolean  "mcf_document_errors",                               default: false
-
   end
 
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
@@ -1290,11 +1290,11 @@ ActiveRecord::Schema.define(version: 20180503072559) do
     t.datetime "updated_at"
     t.string   "name",                       limit: 255
     t.integer  "number",                     limit: 4
-    t.boolean  "is_a_cover",                             default: false, null: false
+    t.boolean  "is_a_cover",                             default: false,   null: false
     t.string   "origin",                     limit: 255
     t.integer  "position",                   limit: 4
     t.string   "token",                      limit: 255
-    t.boolean  "is_awaiting_pre_assignment",             default: false, null: false
+    t.boolean  "is_awaiting_pre_assignment",             default: false,   null: false
     t.string   "pre_assignment_state",       limit: 255, default: "ready"
     t.string   "pre_assignment_comment",     limit: 255
     t.string   "content_file_name",          limit: 255
@@ -2011,6 +2011,21 @@ ActiveRecord::Schema.define(version: 20180503072559) do
     t.integer "subscription_id",        limit: 4
     t.integer "subscription_option_id", limit: 4
   end
+
+  create_table "subscription_statistics", force: :cascade do |t|
+    t.date     "month"
+    t.integer  "organization_id",   limit: 4
+    t.string   "organization_code", limit: 255
+    t.string   "organization_name", limit: 255
+    t.text     "options",           limit: 65535
+    t.text     "consumption",       limit: 65535
+    t.text     "customers",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "subscription_statistics", ["month"], name: "index_subscription_statistics_on_month", using: :btree
+  add_index "subscription_statistics", ["organization_code"], name: "index_subscription_statistics_on_organization_code", using: :btree
 
   create_table "subscriptions", force: :cascade do |t|
     t.string   "mongo_id",                            limit: 255

@@ -1,7 +1,10 @@
 #subscriptions
   .row-fluid
-    .span12.panel
-      %h4.margin1top.margin1bottom Forfaits
+    .span12
+      = render 'layouts/admin/subscription/navigation'
+  .row-fluid
+    .span12
+      %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
       %table.table.table-condensed.table-striped.table-bordered
         %thead
           %tr
@@ -25,33 +28,95 @@
             %td= @retriever_package_count
             %td= @pre_assignment_count
             %td= @stamp_count
-
   .row-fluid
-    .span12.panel
-      .row-fluid.margin1top.margin1bottom
-        .span6
-          %h4 Options
-        .span6.alignright
-          = link_to 'Nouveau', new_admin_subscription_option_path, class: 'btn btn-primary'
-      %table.table.table-bordered.table-condensed.table-striped
+    .span12
+      %h3 Reporting détaillés
+  .row-fluid
+    .span12
+      .filter.panel.margin1top
+        = form_tag admin_subscriptions_path, method: :get, class: 'form form-vertical margin0bottom' do
+          %table.table.table-condensed.margin0bottom
+            %thead
+              %tr
+                %th Nb. Organisations
+                %th.field.date_field= label_tag 'first_period', 'Première période'
+                %th.field.date_field= label_tag 'second_period', 'Deuxième période'
+                %th.field.text_field= label_tag 'organization', 'Organisation'
+                %th= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Exporter vers XLS', "/admin/subscriptions.xls?first_period=#{params[:first_period]}&second_period=#{params[:second_period]}&organization=#{params[:organization]}"
+            %tbody
+              %tr
+                %td
+                  %b= @organization_count
+                %td.field
+                  = select_tag 'first_period', subscription_period_options_for_select(params[:first_period])
+                %td.field
+                  = select_tag 'second_period', subscription_period_options_for_select(params[:second_period])
+                %td.field.text_field= text_field_tag 'organization', (params[:organization] rescue '')
+                %td
+                  = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
+                  = link_to t('filters.reset'), admin_subscriptions_path, class: 'btn'
+  .row-fluid
+    .span12
+      = render partial: 'shared/list_options', locals: { collection: @statistics }
+  .row-fluid
+    .span12
+      %table.table.table-condensed.table-striped.table-bordered.margin1top
         %thead
           %tr
-            %th.position=              t('activerecord.models.subscription_option.attributes.position')
-            %th.updated_at=            t('activerecord.models.common.attributes.updated_at')
-            %th.name=                  t('activerecord.models.subscription_option.attributes.name')
-            %th.price_in_cents_wo_vat= t('activerecord.models.subscription_option.attributes.price_in_cents_wo_vat')
-            %th.period_duration=       t('activerecord.models.subscription_option.attributes.period_duration')
-            %th Abonnés
-            %th Actions
+            %th(colspan='3') Information
+            %th(colspan='6') Forfaits
+            %th(colspan='4') Utilisation
+            %th(colspan='3') Clients
+          %tr
+            %th période
+            %th organisation
+            %th code
+            %th micro
+            %th basique
+            %th courrier
+            %th box
+            %th automate
+            %th annuel
+            %th téléversement
+            %th numérisation
+            %th dematbox
+            %th automate
+            %th actifs
+            %th nouveaux
+            %th clôturés
         %tbody
-          - @subscription_options.each do |option|
+          - @statistics.each do |statistic|
             %tr
-              %td= option.position
-              %td= l option.updated_at
-              %td= option.name
-              %td.alignright= option.price_in_cents_wo_vat
-              %td= option.period_duration == 0 ? 'Continuelle' : 'Une période'
-              %td= option.subscribers.count
+              %td= I18n.l(statistic.month, format: "%b%y").titleize
+              %td= statistic.organization_name
+              %td= statistic.organization_code
               %td
-                = icon_link_to edit_admin_subscription_option_path(option), { icon: 'edit' }
-                = icon_link_to admin_subscription_option_path(option), { icon: 'remove' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }
+                %span= statistic.options[:micro_package]
+                = subscription_diff_content_for(statistic.options[:micro_package_diff])
+              %td
+                %span= statistic.options[:basic_package]
+                = subscription_diff_content_for(statistic.options[:basic_package_diff])
+              %td
+                %span= statistic.options[:mail_package]
+                = subscription_diff_content_for(statistic.options[:mail_package_diff])
+              %td
+                %span= statistic.options[:scan_box_package]
+                = subscription_diff_content_for(statistic.options[:scan_box_package_diff])
+              %td
+                %span= statistic.options[:retriever_package]
+                = subscription_diff_content_for(statistic.options[:retriever_package_diff])
+              %td
+                %span= statistic.options[:annual_package]
+                = subscription_diff_content_for(statistic.options[:annual_package_diff])
+              %td= statistic.consumption[:upload]
+              %td= statistic.consumption[:scan]
+              %td= statistic.consumption[:dematbox_scan]
+              %td= statistic.consumption[:retriever]
+              %td= statistic.customers.size
+              %td
+                = subscription_customers_popover_content_for(statistic.new_customers, 'positive')
+              %td
+                = subscription_customers_popover_content_for(statistic.closed_customers, 'negative')
+  .row-fluid
+    .span12
+      = render partial: 'shared/list_options', locals: { collection: @statistics }

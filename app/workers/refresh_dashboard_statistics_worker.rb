@@ -4,7 +4,7 @@ class RefreshDashboardStatisticsWorker
 
   def perform
     UniqueJobs.for 'RefreshDashboardStatistics' do
-      StatisticsManager::Generator.generate_dashboard_statistics
+      StatisticsManager::Dashboard.generate_statistics
     end
   end
 end

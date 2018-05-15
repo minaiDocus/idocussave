@@ -5,12 +5,40 @@ module StatisticsManager
     end
   end
 
+  def self.create_subscription_statistics(datas)
+    statistic   = SubscriptionStatistic.where(organization_id: datas[:organization].id, month: datas[:date]).first
+    statistic ||= SubscriptionStatistic.new
+    
+    statistic.month             = datas[:date]
+    statistic.organization_id   = datas[:organization].id
+    statistic.organization_name = datas[:organization].name
+    statistic.organization_code = datas[:organization].code
+    statistic.options           = datas[:options]
+    statistic.consumption       = datas[:consumption]
+    statistic.customers         = datas[:customers]
+
+    if statistic.persisted?
+      statistic.save if statistic.changed?
+    else
+      statistic.save
+    end
+  end
+
+  def self.get_compared_subscription_statistics(statistic_params={})
+    statistics = StatisticsManager::Subscription.compare_statistics_between(statistic_params[:first_period], statistic_params[:second_period])
+    if statistic_params[:organization] && statistic_params[:organization].length > 2
+      statistics.select { |stat| stat.organization_name =~ /#{Regexp.quote(statistic_params[:organization])}/i }
+    else
+      statistics
+    end
+  end
+
   def self.get_statistic(information)
     get_statistic_value(information)
   end
 
   def self.remove_unused_statistics
-    Statistic.where.not(information: StatisticsManager::Generator.statistic_names).destroy_all
+    Statistic.where.not(information: StatisticsManager::Dashboard.statistic_names).destroy_all
   end
 
 private

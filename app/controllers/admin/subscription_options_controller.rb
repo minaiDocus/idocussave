@@ -1,6 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Admin::SubscriptionOptionsController < Admin::AdminController
-  before_filter :load_subscription_option, except: %w(new create)
+  before_filter :load_subscription_option, except: %w(new create index)
+
+  # GET /admin/subscription_options
+  def index
+    @subscription_options = SubscriptionOption.by_position
+  end
 
   # GET /admin/subscription_options/new
   def new
@@ -15,7 +20,7 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
     if @subscription_option.save
       flash[:notice] = 'Créé avec succès.'
 
-      redirect_to admin_subscriptions_path
+      redirect_to admin_subscription_options_path
     else
       render :new
     end
@@ -33,7 +38,7 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
 
       flash[:notice] = 'Modifié avec succès.'
 
-      redirect_to admin_subscriptions_path
+      redirect_to admin_subscription_options_path
     else
       render :edit
     end
@@ -47,7 +52,7 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
     else
       flash[:error] = "Impossible de supprimer l'option d'abonnement : #{@subscription_option.name}"
     end
-    redirect_to admin_subscriptions_path
+    redirect_to admin_subscription_options_path
   end
 
   private

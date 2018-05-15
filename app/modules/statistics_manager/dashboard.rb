@@ -1,5 +1,5 @@
-class StatisticsManager::Generator
-  def self.generate_dashboard_statistics
+class StatisticsManager::Dashboard
+  def self.generate_statistics
     StatisticsManager.create_statistics(statistics_to_be_generated)
     true
   end
@@ -89,4 +89,5 @@ private
       ['not_processed_not_locked_operations_count', Operation.not_processed.not_locked.count],
     ]
   end
+
 end

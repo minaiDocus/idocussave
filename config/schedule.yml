@@ -9,6 +9,9 @@ CreateInvoicePdfWorker:
 InitializePeriodsWorker:
   queue: high
   cron: '0 3 1 * *'
+SubscriptionStatisticsWorker:
+  queue: default
+  cron: '0 6 1 * *'
 DocumentNotificationWorker:
   queue: default
   cron: '0 8 * * *'
