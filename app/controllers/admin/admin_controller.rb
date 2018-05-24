@@ -156,7 +156,7 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/failed_reports_delivery
   def failed_reports_delivery
-    @failed_reports_delivery = Pack::Report.failed_delivery
+    @failed_reports_delivery = Pack::Report.failed_delivery(nil, 200)
 
     render partial: 'process', locals: { collection: @failed_reports_delivery }
   end
