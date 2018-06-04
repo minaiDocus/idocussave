@@ -12,7 +12,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20180602121234) do
+ActiveRecord::Schema.define(version: 20180606062157) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -974,6 +974,19 @@ ActiveRecord::Schema.define(version: 20180602121234) do
   add_index "members", ["code"], name: "index_members_on_code", unique: true, using: :btree
   add_index "members", ["organization_id", "user_id"], name: "index_organization_user_on_members", unique: true, using: :btree
   add_index "members", ["role"], name: "index_members_on_role", using: :btree
+
+  create_table "mobile_connexions", force: :cascade do |t|
+    t.integer "user_id",       limit: 4
+    t.string  "platform",      limit: 255
+    t.string  "version",       limit: 255
+    t.integer "periode",       limit: 4
+    t.integer "daily_counter", limit: 4,   default: 1
+    t.date    "date"
+  end
+
+  add_index "mobile_connexions", ["periode"], name: "index_mobile_connexions_on_periode", using: :btree
+  add_index "mobile_connexions", ["platform"], name: "index_mobile_connexions_on_platform", using: :btree
+
 
   create_table "new_provider_requests", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255

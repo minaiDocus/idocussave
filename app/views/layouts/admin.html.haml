@@ -21,6 +21,7 @@
     = javascript_include_tag 'admin/pre_assignment_blocked_duplicates' if controller_name == 'pre_assignment_blocked_duplicates'
     = javascript_include_tag 'admin/news' if controller_name == 'news'
     = javascript_include_tag 'admin/subscriptions' if params[:controller] == 'admin/subscriptions'
+    = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
   %body
     .navbar.navbar-fixed-top
       .navbar-inner

@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require jquery.ui.all
 //= require bootstrap
+//= require chart.min
 //= require jquery.qtip.min
 //= require help
 //= require tmpl.min

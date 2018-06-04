@@ -481,6 +481,11 @@ Idocus::Application.routes.draw do
     get 'orders', controller: 'orders', action: 'index'
     get 'subscriptions', controller: 'subscriptions', action: 'index'
 
+    resources :mobile_reporting, only: %w(index) do
+      get 'mobile_users_stats(/:month)(/:year)', action: 'download_mobile_users', on: :collection, as: :download_users
+      get 'mobile_documents_stats(/:month)(/:year)', action: 'download_mobile_documents', on: :collection, as: :download_documents
+    end
+
     resources :events, only: %w(index show)
     resources :scanning_providers
     resources :subscription_options, except: %w(show)

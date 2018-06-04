@@ -1,0 +1,74 @@
+#mobile_reporting
+  .row-fluid
+    .span12
+      = render 'layouts/admin/subscription/navigation'
+  .row-fluid
+    .span12
+      %h3.margin1top.margin1bottom Statistiques d'utilisation de l'application mobile
+  .row-fluid
+    .span12
+      .filter.panel.margin1top
+        = form_tag admin_mobile_reporting_index_path, method: :get, class: 'form form-vertical margin0bottom' do
+          %table.table.table-condensed.margin0bottom
+            %thead
+              %tr
+                %th Mois
+                %th Année
+                %th
+            %tbody
+              %tr
+                %td
+                  = select_tag "month", options_for_select(get_options_months, params[:month] || Date.today.strftime("%m").to_s)
+                %td
+                  = select_tag "year", options_for_select(get_options_years, params[:year] || Date.today.strftime("%Y").to_s)
+                %td
+                  = submit_tag t('actions.submit'), class: 'btn btn-primary'
+  .row-fluid
+    .span12.center
+      %br
+      %h3{ style: 'text-decoration: underline' }
+        - month = get_options_months.map{ |m| m.first if(m.last == @month_params) }.compact
+        = "Statistique du mois de : #{month.first} #{@year_params}"
+  .row-fluid
+    .span6
+      .boxChart
+        = hidden_field_tag 'users', @users
+        = hidden_field_tag 'mobile_users', @mobile_users
+        = hidden_field_tag 'ios_users', @ios_users
+        = hidden_field_tag 'android_users', @android_users
+        %h3 UTILISATEURS APPLICATION MOBILE
+        %canvas.chartContainer#chartUsersContainer
+        .legends
+          .row-fluid
+            .span6
+              %ul.list-group
+                %li.list-group-item
+                  %span.badge{ style: 'background-color:#FF420E;' } Utilisateurs mobile total
+                  %strong= @mobile_users
+                %li.list-group-item
+                  %span.badge{ style: 'background-color:#F08A42;' } iOS
+                  %strong= @ios_users
+                %li.list-group-item
+                  %span.badge{ style: 'background-color:#C0D838;' } Android
+                  %strong= @android_users
+            .span3
+              %span.badge{ style: 'background-color:#3E2F24;' } Utilisateurs iDocus
+              %strong= @users
+            .span3= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+    .span6
+      .boxChart
+        = hidden_field_tag 'documents', @documents
+        = hidden_field_tag 'mobile_documents', @mobile_documents
+        %h3 TELEVERSEMENT DE DOCUMENTS
+        %canvas.chartContainer#chartDocumentsContainer
+        .legends
+          .row-fluid
+            .span6
+              %ul.list-group
+                %li.list-group-item
+                  %span.badge{ style: 'background-color:#018CCF;' } Upload via iDocus
+                  %strong= (@documents - @mobile_documents)
+                %li.list-group-item
+                  %span.badge{ style: 'background-color:#FF420E;' } Upload via App Mobile
+                  %strong= @mobile_documents
+            .span6= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"

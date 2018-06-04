@@ -1,7 +1,7 @@
 class MobileConnexion < ActiveRecord::Base
   belongs_to :user
 
-  scope :ios,     -> { where("platform = 'ios'") }
+  scope :ios,     -> { where("platform = 'iOS'") }
   scope :android, -> { where("platform = 'android'") }
   scope :periode, -> (periode) { where(periode: periode) }
 
