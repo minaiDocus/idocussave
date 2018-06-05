@@ -873,7 +873,7 @@
     })
 
     $('#uploadDialog').on('shown', function() {
-      if($('#h_file_code').val() != '' && $('#fileupload').data('params') == undefined) {
+      if( $('#h_file_code').val() != '' && ( $('#fileupload').data('params') == 'undefined' || jQuery.isEmptyObject($('#fileupload').data('params')) ) ) {
         setAnalytics($('#h_file_code').val(), true);
       } else {
         $('#h_file_code').chosen({
