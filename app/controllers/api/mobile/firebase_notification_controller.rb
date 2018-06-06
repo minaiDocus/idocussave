@@ -27,6 +27,8 @@ class Api::Mobile::FirebaseNotificationController < MobileApiController
     FirebaseToken.create_or_initialize(@user, params[:firebase_token], params[:platform], params[:version]) if params[:firebase_token].present?
     @user.firebase_tokens.each do |token| token.delete_unless_valid end
 
+    MobileConnexion.log(@user, params[:platform], params[:version])
+
     render json: { success: true }, status: 200
   end
 
