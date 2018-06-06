@@ -7,9 +7,8 @@ class Admin::MobileReportingController < Admin::AdminController
     @ios_users = MobileConnexion.ios.periode(date_params).group(:user_id).count.size
     @android_users = MobileConnexion.android.periode(date_params).group(:user_id).count.size
 
-    temp_documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}")
-    @documents = temp_documents.size
-    @mobile_documents = temp_documents.select{|d| d.api_name == 'mobile'}.size
+    @documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
+    @mobile_documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
   end
 
   def download_mobile_users
