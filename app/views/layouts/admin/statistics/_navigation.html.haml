@@ -3,7 +3,5 @@
     %ul.nav
       %li{ class: ('active' if controller_name == 'subscriptions') }
         = link_to 'Reporting', admin_subscriptions_path
-      %li{ class: ('active' if controller_name == 'subscription_options') }
-        = link_to 'Options', admin_subscription_options_path
       %li{ class: ('active' if controller_name == 'mobile_reporting') }
         = link_to 'Reporting Mobile', admin_mobile_reporting_index_path
