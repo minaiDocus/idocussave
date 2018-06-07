@@ -3,12 +3,13 @@ class Admin::MobileReportingController < Admin::AdminController
   def index
     @users = User.active.all.distinct.count
 
-    @mobile_users = MobileConnexion.periode(date_params).group(:user_id).count.size
-    @ios_users = MobileConnexion.ios.periode(date_params).group(:user_id).count.size
-    @android_users = MobileConnexion.android.periode(date_params).group(:user_id).count.size
+    @mobile_users = MobileConnexion.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @ios_users = MobileConnexion.ios.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @android_users = MobileConnexion.android.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @mobile_users_uploader = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").distinct.select(:delivered_by).count
 
     @documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
-    @mobile_documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
+    @mobile_documents = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
   end
 
   def download_mobile_users

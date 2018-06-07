@@ -69,6 +69,7 @@ class TempDocument < ActiveRecord::Base
   scope :wait_selection,    -> { where(state: 'wait_selection') }
   scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
   scope :from_ibizabox,     -> { where.not(ibizabox_folder_id: nil) }
+  scope :from_mobile,       -> { where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile'") }
 
 
   state_machine initial: :created do

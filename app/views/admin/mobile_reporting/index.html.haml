@@ -30,32 +30,49 @@
         - month = get_options_months.map{ |m| m.first if(m.last == @month_params) }.compact
         = "Statistique du mois de : #{month.first} #{@year_params}"
   .row-fluid
-    .span6
+    .span8
       .boxChart
         = hidden_field_tag 'users', @users
         = hidden_field_tag 'mobile_users', @mobile_users
         = hidden_field_tag 'ios_users', @ios_users
         = hidden_field_tag 'android_users', @android_users
+        = hidden_field_tag 'users_uploader', @mobile_users_uploader
         %h3 UTILISATEURS APPLICATION MOBILE
-        %canvas.chartContainer#chartUsersContainer
-        .legends
-          .row-fluid
-            .span6
+        .row-fluid
+          .span6
+            %canvas.chartContainer#chartUsersContainer
+            .legends
               %ul.list-group
-                %li.list-group-item
+                %li.liFloat.list-group-item
+                  %span.badge{ style: 'background-color:#3E2F24;' } Utilisateurs iDocus (actifs)
+                  %strong= @users
+              .clearfix
+                %br
+                %br
+              %ul.list-group
+                %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#FF420E;' } Utilisateurs mobile total
                   %strong= @mobile_users
-                %li.list-group-item
+                %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#F08A42;' } iOS
                   %strong= @ios_users
-                %li.list-group-item
+                %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#C0D838;' } Android
                   %strong= @android_users
-            .span3
-              %span.badge{ style: 'background-color:#3E2F24;' } Utilisateurs iDocus
-              %strong= @users
-            .span3= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
-    .span6
+          .span6
+            %canvas.chartContainer#chartUploaderContainer
+            .legends
+              .row-fluid
+                .span6
+                  %ul.list-group
+                    %li.list-group-item
+                      .legend_badge.badge{ style: 'background-color:#018CCF;' } Simple consultation
+                      %strong= (@mobile_users - @mobile_users_uploader)
+                    %li.list-group-item
+                      .legend_badge.badge{ style: 'background-color:#FF420E;' } Avec téléversement
+                      %strong= @mobile_users_uploader
+                .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+    .span4
       .boxChart
         = hidden_field_tag 'documents', @documents
         = hidden_field_tag 'mobile_documents', @mobile_documents
@@ -66,9 +83,9 @@
             .span6
               %ul.list-group
                 %li.list-group-item
-                  %span.badge{ style: 'background-color:#018CCF;' } Upload via iDocus
+                  .legend_badge.badge{ style: 'background-color:#018CCF;' } Upload via iDocus
                   %strong= (@documents - @mobile_documents)
                 %li.list-group-item
-                  %span.badge{ style: 'background-color:#FF420E;' } Upload via App Mobile
+                  .legend_badge.badge{ style: 'background-color:#FF420E;' } Upload via App Mobile
                   %strong= @mobile_documents
-            .span6= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+            .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"

@@ -8,7 +8,7 @@ class MobileReportingXls
     book = Spreadsheet::Workbook.new
     sheet = book.create_worksheet name: "Reporting Utilisateurs Mobile"
 
-    headers = %w(utilisateur collaborateur email organizations dernière_connexion plateforme)
+    headers = %w(utilisateur collaborateur email organizations dernière_connexion plateforme documents_téléversés)
     sheet.row(0).replace headers
 
     mobile_users.each_with_index do |user_connexion, index|
@@ -29,7 +29,8 @@ class MobileReportingXls
         user.email,
         organizations_lists,
         user.firebase_tokens.where("platform LIKE '#{user_connexion.platform}%'").order(last_registration_date: :desc).first.try(:last_registration_date),
-        user_connexion.platform
+        user_connexion.platform,
+        documents_uploaded_by(user)
       ]
 
       sheet.row(row_number).replace cells
@@ -79,6 +80,16 @@ class MobileReportingXls
 
 
   def mobile_documents
-    @documents ||= TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{@date} AND api_name = 'mobile'")
+    @documents ||= TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{@date}")
+  end
+
+  def documents_uploaded_by(user)
+    if user.collaborator?
+      code_lists = user.memberships.map{ |member| "'#{member.code}'" }.join(',')
+    else
+      code_lists = "'#{user.code}'"
+    end
+
+    TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{@date} AND delivered_by IN (#{code_lists})").count
   end
 end
