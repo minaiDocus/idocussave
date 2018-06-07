@@ -110,7 +110,7 @@ class UploadedDocument
         if DocumentTools.protected?(@file.path)
           DocumentTools.remove_pdf_security(@file.path, file_path)
           unless File.exist?(file_path) && DocumentTools.modifiable?(file_path)
-            FileUtils.cp @file.path, file_path
+            re_create_pdf @file.path, file_path
           end
         else
           FileUtils.cp @file.path, file_path
@@ -129,6 +129,14 @@ class UploadedDocument
     end
   end
 
+  def re_create_pdf(source, destination)
+    _tmp_file = Tempfile.new('tmp_pdf').path
+    success = DocumentTools.to_pdf_hight_quality source, _tmp_file
+
+    success ? FileUtils.cp(_tmp_file, destination) : FileUtils.cp(source, destination)
+
+    File.unlink _tmp_file
+  end
 
   def clean_tmp
     @temp_file.close if @temp_file

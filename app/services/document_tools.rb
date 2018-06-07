@@ -26,6 +26,10 @@ class DocumentTools
     system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
   end
 
+  def self.to_pdf_hight_quality(file_path, output_file_path)
+    system "convert -density 200 '#{file_path}' -quality 100 'pdf:#{output_file_path}' 2>&1"
+  end
+
   def self.to_a4_pdf(file_path, output_file_path)
     system "convert -page A4+0+350 '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
   end
