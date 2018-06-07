@@ -107,13 +107,17 @@ class UploadedDocument
       file_path = File.join(@dir, file_name)
 
       if extension == '.pdf'
+        _file = @file.path
+
         if DocumentTools.protected?(@file.path)
           DocumentTools.remove_pdf_security(@file.path, file_path)
-          unless File.exist?(file_path) && DocumentTools.modifiable?(file_path)
-            re_create_pdf @file.path, file_path
-          end
-        else
+          _file = file_path
+        end
+
+        if File.exist?(_file) && DocumentTools.modifiable?(_file)
           FileUtils.cp @file.path, file_path
+        else
+          re_create_pdf @file.path, file_path
         end
       else
         geometry = Paperclip::Geometry.from_file @file.path
