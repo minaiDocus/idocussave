@@ -53,13 +53,15 @@ class Subscription < ActiveRecord::Base
     is_mail_package_active      ||
     is_scan_box_package_active  ||
     is_retriever_package_active ||
-    is_annual_package_active
+    is_annual_package_active    ||
+    is_mini_package_active
   end
 
 
   def to_be_configured?
     is_basic_package_active     && !is_basic_package_to_be_disabled     ||
     is_micro_package_active     && !is_micro_package_to_be_disabled     ||
+    is_mini_package_active      && !is_mini_package_to_be_disabled      ||
     is_mail_package_active      && !is_mail_package_to_be_disabled      ||
     is_scan_box_package_active  && !is_scan_box_package_to_be_disabled  ||
     is_retriever_package_active && !is_retriever_package_to_be_disabled ||
@@ -72,6 +74,7 @@ class Subscription < ActiveRecord::Base
     self.is_mail_package_active      = false if is_mail_package_to_be_disabled
     self.is_basic_package_active     = false if is_basic_package_to_be_disabled
     self.is_micro_package_active     = false if is_micro_package_to_be_disabled
+    self.is_mini_package_active      = false if is_mini_package_to_be_disabled
     self.is_pre_assignment_active    = false if is_pre_assignment_to_be_disabled
     self.is_scan_box_package_active  = false if is_scan_box_package_to_be_disabled
     self.is_retriever_package_active = false if is_retriever_package_to_be_disabled
@@ -82,18 +85,16 @@ class Subscription < ActiveRecord::Base
     !is_annual_package_active
   end
 
-
-  def annual_or_micro_package_active?
-    is_annual_package_active || is_micro_package_active
+  def heavy_package?
+    is_annual_package_active || is_micro_package_active || is_mini_package_active
   end
-
 
   def owner
     user || organization
   end
 
   def set_start_date_and_end_date
-    if self.is_micro_package_active
+    if self.is_micro_package_active || self.is_mini_package_active
       # Updating start_date and end_date when subscription term is reached
       if self.end_date.present? && self.end_date < Date.today
         self.start_date = self.period_duration == 1 ? (self.end_date + 1.day) : (self.end_date + 1.day).beginning_of_quarter

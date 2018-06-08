@@ -10,33 +10,35 @@ update_form = ->
 
   if $('#subscription_is_basic_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
-    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
-    $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
+    lock_heavy_package()
   if $('#subscription_is_mail_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment', 'stamp'
-    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
-    $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
+    lock_heavy_package()
   if $('#subscription_is_scan_box_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
-    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
-    $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
+    lock_heavy_package()
   if $('#subscription_is_retriever_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals'
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
   else
     $('.retriever_package_warning').hide()
+
   if $('#subscription_is_annual_package_active').is(':checked')
     selected_options.push 'number_of_journals'
     $('.package .light_package').attr('disabled', 'disabled')
   if $('#subscription_is_micro_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
-    $('#subscription_is_basic_package_active').attr('disabled', 'disabled')
-    $('#subscription_is_mail_package_active').attr('disabled', 'disabled')
-    $('#subscription_is_scan_box_package_active').attr('disabled', 'disabled')
+    lock_light_package()
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+    $('#subscription_is_mini_package_active').attr('disabled', 'disabled')
     $('.micro_package_warning').show()
   else 
     $('.micro_package_warning').hide() 
+  if $('#subscription_is_mini_package_active').is(':checked')
+    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    lock_light_package()
+    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+    $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
 
   for option in options
     if selected_options.indexOf(option) != -1
@@ -76,6 +78,12 @@ update_warning = ->
     unless $('.micro_package_disable_warning').length > 0
       $('#subscription_is_micro_package_active').parent('label').append('<b class="label label-warning micro_package_disable_warning">'+to_be_disabled_text+'</b>')
 
+  if $('#subscription_is_mini_package_active').is(':checked')
+    $('.mini_package_disable_warning').remove()
+  else if $('#subscription_is_mini_package_active').data('original-value') == 1 && !is_recently_created
+    unless $('.mini_package_disable_warning').length > 0
+      $('#subscription_is_mini_package_active').parent('label').append('<b class="label label-warning mini_package_disable_warning">'+to_be_disabled_text+'</b>')
+
   if $('#subscription_is_retriever_package_active').is(':checked')
     $('.retriever_package_disable_warning').remove()
     if !$('#subscription_is_micro_package_active').is(':checked') && !$('#subscription_is_basic_package_active').is(':checked') && !$('#subscription_is_mail_package_active').is(':checked') && !$('#subscription_is_scan_box_package_active').is(':checked')
@@ -98,6 +106,16 @@ update_warning = ->
   else if $('#subscription_is_stamp_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.stamp_disable_warning').length > 0
       $('#subscription_is_stamp_active_false').parent('label').parent('.choice').after('<div class="stamp_disable_warning"><b class="label label-warning">'+to_be_disabled_text+'</b></div>')
+
+lock_heavy_package = ->
+  $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+  $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
+  $('#subscription_is_mini_package_active').attr('disabled', 'disabled')
+
+lock_light_package = ->
+  $('#subscription_is_basic_package_active').attr('disabled', 'disabled')
+  $('#subscription_is_mail_package_active').attr('disabled', 'disabled')
+  $('#subscription_is_scan_box_package_active').attr('disabled', 'disabled')
 
 update_price = ->
   price_list = {
@@ -140,6 +158,8 @@ update_price = ->
       options.push $('#subscription_is_retriever_package_active').data('retriever-price-option')
     if $('#subscription_is_micro_package_active').is(':checked')
       options.push 'subscription'
+    if $('#subscription_is_mini_package_active').is(':checked')
+      options.push 'subscription', 'pre_assignment'
     options = _.uniq(options)
 
 

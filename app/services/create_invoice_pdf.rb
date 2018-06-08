@@ -73,6 +73,8 @@ class CreateInvoicePdf
 
     mail_package_count      = 0
     basic_package_count     = 0
+    micro_package_count     = 0
+    mini_package_count      = 0
     annual_package_count    = 0
     scan_box_package_count  = 0
     retriever_package_count = 0
@@ -90,6 +92,10 @@ class CreateInvoicePdf
           retriever_package_count += 1
         when 'annual_package_subscription'
           annual_package_count += 1
+        when 'micro_package_subscription'
+          micro_package_count += 1
+        when 'mini_package_subscription'
+          mini_package_count += 1
         end
       end
     end
@@ -103,6 +109,14 @@ class CreateInvoicePdf
       ["Nombre de dossiers actifs : #{periods.count}", ''],
       ['Forfaits et options iDocus pour ' + previous_month.downcase + ' ' + year.to_s + ' :', format_price(@total) + " €"]
     ]
+
+    if micro_package_count > 0
+      @data << ["- #{micro_package_count} forfait#{'s' if micro_package_count > 1} iDo'Micro", '']
+    end
+
+    if mini_package_count > 0
+      @data << ["- #{mini_package_count} forfait#{'s' if mini_package_count > 1} iDo'Mini", '']
+    end
 
     if basic_package_count > 0
       @data << ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Basique", '']

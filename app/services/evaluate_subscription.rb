@@ -15,7 +15,7 @@ class EvaluateSubscription
       authorize_pre_assignment
       authorize_upload
     else
-      if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+      if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
         authorize_upload
       else
         unauthorize_upload

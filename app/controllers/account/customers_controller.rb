@@ -271,8 +271,8 @@ class Account::CustomersController < Account::OrganizationController
   def verify_if_account_can_be_closed
     subscription = @customer.subscription
 
-    if subscription.is_micro_package_active && subscription.created_at > 12.months.ago && !params[:close_now]
-      flash[:error] = "Ce dossier est souscrit à un forfait iDo'Micro avec un engagement minimum de un an"
+    if (subscription.is_micro_package_active || subscription.is_mini_package_active) && !params[:close_now] && (subscription.end_date.strftime('%Y%m') != Time.now.strftime('%Y%m'))
+      flash[:error] = "Ce dossier est souscrit à un forfait avec un engagement minimum de un an"
 
       redirect_to account_organization_customer_path(@organization, @customer)
     end

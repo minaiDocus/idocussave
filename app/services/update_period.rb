@@ -106,6 +106,24 @@ class UpdatePeriod
         selected_options << option
       end
 
+      if @subscription.is_mini_package_active
+        is_base_package_priced = true
+
+        price = package_options_price([:subscription, :pre_assignment], type)
+
+        option = ProductOptionOrder.new
+
+        option.title    = 'Téléchargement + Pré-saisie comptable + Engagement 12 mois'
+        option.name     = 'mini_package_subscription'
+        option.duration = 0
+        option.quantity = 1
+        option.group_title = "iDo'Mini"
+        option.is_to_be_disabled     = @subscription.is_micro_package_to_be_disabled
+        option.price_in_cents_wo_vat = price
+
+        selected_options << option
+      end
+
       if @subscription.is_mail_package_active
         if is_base_package_priced
           price = package_options_price([:return_paper], type)
@@ -176,7 +194,7 @@ class UpdatePeriod
         selected_options << option
       end
 
-      if (@subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
+      if (@subscription.is_basic_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
         option = ProductOptionOrder.new
 
         option.title    = 'Suppression pré-saisie comptable des factures'

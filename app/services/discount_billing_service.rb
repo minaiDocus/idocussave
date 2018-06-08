@@ -23,19 +23,28 @@ class DiscountBillingService
   end
 
   def title
-    if unit_amount(:subscription) < 0 && unit_amount(:retriever) < 0
-     "Remise sur CA (Abo. mensuels : #{unit_amount(:subscription)} € x #{quantity_of(:subscription)}, iDofacb. : #{unit_amount(:retriever)} € x #{quantity_of(:retriever)})"
-    elsif unit_amount(:subscription) < 0
-      "Remise sur CA (Abo. mensuels : #{unit_amount(:subscription)} € x #{quantity_of(:subscription)})"
-    elsif unit_amount(:retriever) < 0
-      "Remise sur CA (iDofacb. : #{unit_amount(:retriever)} € x #{quantity_of(:retriever)})"
+    discount_title = []
+
+    if is_iDoMini_discount?
+      discount_title << "iDoMini : #{unit_amount(:iDoMini)} € x #{quantity_of(:iDoMini)}"
     else
-      "Remise sur CA (-50 dossiers)"
+      discount_title << "Abo. mensuels : #{unit_amount(:subscription)} € x #{quantity_of(:subscription)}" if unit_amount(:subscription) < 0
+      discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{quantity_of(:retriever)}" if unit_amount(:retriever) < 0
     end
+
+    discount_title << '-50 dossiers' if discount_title.empty?
+    "Remise sur CA (#{discount_title.join(', ')})"
   end
 
   def total_amount_in_cents
-    amount_in_cents_of(:subscription) + amount_in_cents_of(:retriever)
+    total_amount = 0
+
+    if is_iDoMini_discount?
+      total_amount += amount_in_cents_of(:iDoMini)
+    else
+      total_amount += amount_in_cents_of(:subscription)
+      total_amount += amount_in_cents_of(:retriever)
+    end
   end
 
   def amount_in_cents_of(option)
@@ -48,12 +57,42 @@ class DiscountBillingService
         concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
       when 'retriever'
         concerned_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
+      when 'iDoMini'
+        concerned_subscriptions.where("subscriptions.is_mini_package_active" => true).size
       else 0
     end
   end
 
   def unit_amount(option)
-    amount = if apply_special_policy?
+    if option.to_s == 'iDoMini'
+      quantity_of(option) > 75 ? -4 : 0
+    else
+      amount = get_amount_policy option
+      amount[:retriever] = 0.0 if @organization.subscription.retriever_price_option.to_s == 'reduced_retriever'
+      amount[option]
+    end
+  end
+
+  def apply_special_policy?
+    %w(GMBA).include? @organization.code
+  end
+
+  private
+
+  def is_iDoMini_discount?
+    unit_amount(:iDoMini) < 0
+  end
+
+  def customers
+    @organization.customers.active
+  end
+
+  def concerned_subscriptions
+    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
+  end
+
+  def get_amount_policy(option)
+    if apply_special_policy?
       case quantity_of(option)
         when (0..50)
           {subscription: -1, retriever: 0}
@@ -86,22 +125,6 @@ class DiscountBillingService
           {subscription: -4, retriever: -1.5}
       end
     end
-    amount[:retriever] = 0.0 if @organization.subscription.retriever_price_option.to_s == 'reduced_retriever'
-    amount[option]
-  end
-
-  def apply_special_policy?
-    %w(GMBA).include? @organization.code
-  end
-
-  private
-
-  def customers
-    @organization.customers.active
-  end
-
-  def concerned_subscriptions
-    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
   end
 
 end
