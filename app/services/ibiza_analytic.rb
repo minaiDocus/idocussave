@@ -50,7 +50,7 @@ class IbizaAnalytic
               sections = [sections] if sections.is_a?(Hash)
               sections.each do |section|
                 next if section['closed'].to_i == 1
-                analytic[axis][:sections] << { code: section['code'], description: section['description'] }
+                analytic[axis][:sections] << { code: section['code'], description: section['description'] || section['code'] }
               end
             end
           end
