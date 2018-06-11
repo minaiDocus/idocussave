@@ -1,15 +1,22 @@
 # -*- encoding : UTF-8 -*-
 class Admin::MobileReportingController < Admin::AdminController
   def index
-    @users = User.active.all.distinct.count
+    date_params
 
-    @mobile_users = MobileConnexion.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
-    @ios_users = MobileConnexion.ios.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
-    @android_users = MobileConnexion.android.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
-    @mobile_users_uploader = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").distinct.select(:delivered_by).count
-
-    @documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
-    @mobile_documents = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
+    if params[:ajax]
+      if params[:mobile_users_count]
+        get_stats_mobile_users
+        render json: { users: @users, ios_users: @ios_users, android_users: @android_users, mobile_users: @mobile_users }, status: 200
+      elsif params[:users_uploader_count]
+        get_stats_mobile_visit
+        render json: { mobile_users: @mobile_users, mobile_users_uploader: @mobile_users_uploader }, status: 200
+      elsif params[:documents_uploaded]
+        get_stats_uploaded_documents
+        render json: { documents: @documents, mobile_documents: @mobile_documents }, status: 200
+      else
+        render json: { error: 'Unauthorized request' }, status: 401
+      end
+    end
   end
 
   def download_mobile_users
@@ -31,5 +38,22 @@ class Admin::MobileReportingController < Admin::AdminController
     @month_params = params[:month].present? ? params[:month].to_s : Date.today.strftime("%m").to_s
 
     "#{@year_params}#{@month_params}"
+  end
+
+  def get_stats_mobile_users
+    @users = User.active.all.distinct.count
+    @mobile_users = MobileConnexion.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @ios_users = MobileConnexion.ios.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @android_users = MobileConnexion.android.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+  end
+
+  def get_stats_mobile_visit
+    @mobile_users = MobileConnexion.periode(date_params).joins(:user).merge(User.active).group(:user_id).count.size
+    @mobile_users_uploader = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").distinct.select(:delivered_by).count
+  end
+
+  def get_stats_uploaded_documents
+    @documents = TempDocument.where("state='processed' AND delivery_type = 'upload' AND DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
+    @mobile_documents = TempDocument.from_mobile.where("DATE_FORMAT(created_at, '%Y%m') = #{date_params}").count
   end
 end

@@ -1,6 +1,30 @@
 window.onload = () ->
-  ios_users = parseInt($('#ios_users').val())
-  android_users = parseInt($('#android_users').val())
+  $.ajax
+    url: "/admin/mobile_reporting"
+    data: { ajax: true, mobile_users_count: true, month: $('#month').val(), year: $('#year').val() }
+    datatype: 'json'
+    type: 'GET'
+    success: (data) -> render_users_chart(data)
+
+  $.ajax
+    url: "/admin/mobile_reporting"
+    data: { ajax: true, users_uploader_count: true, month: $('#month').val(), year: $('#year').val() }
+    datatype: 'json'
+    type: 'GET'
+    success: (data) -> render_users_uploader_chart(data)
+
+  $.ajax
+    url: "/admin/mobile_reporting"
+    data: { ajax: true, documents_uploaded: true, month: $('#month').val(), year: $('#year').val() }
+    datatype: 'json'
+    type: 'GET'
+    success: (data) -> render_documents_uploaded_chart(data)
+
+
+render_users_chart = (data) ->
+  android_users = data.android_users
+  ios_users = data.ios_users
+
   users = ios_users + android_users
 
   max_step = android_users
@@ -44,8 +68,15 @@ window.onload = () ->
               }
   })
 
-  mobile_users   = parseInt($('#mobile_users').val())
-  users_uploader = parseInt($('#users_uploader').val())
+  $('#usersCount').html(data.users)
+  $('#usersMobileCount').html(data.mobile_users)
+  $('#iOSUsersCount').html(data.ios_users)
+  $('#androidUsersCount').html(data.android_users)
+  $('#usersLoading').remove()
+
+render_users_uploader_chart = (data) ->
+  mobile_users = data.mobile_users
+  users_uploader = data.mobile_users_uploader
 
   users_uploader_percent = 0
   if mobile_users > 0
@@ -74,9 +105,13 @@ window.onload = () ->
               }
   })
 
+  $('#viewerUsersCount').html(mobile_users - users_uploader)
+  $('#uploaderUsersCount').html(users_uploader)
+  $('#uploaderLoading').remove()
 
-  documents        = parseInt($('#documents').val())
-  mobile_documents = parseInt($('#mobile_documents').val())
+render_documents_uploaded_chart = (data) ->
+  documents = data.documents
+  mobile_documents = data.mobile_documents
 
   mobile_documents_percent = 0
   if documents > 0
@@ -105,3 +140,7 @@ window.onload = () ->
                         }
               }
   })
+
+  $('#uploadedFrameworkDocumentsCount').html(documents - mobile_documents)
+  $('#uploadedMobileDocumentsCount').html(mobile_documents)
+  $('#documentsLoading').remove()

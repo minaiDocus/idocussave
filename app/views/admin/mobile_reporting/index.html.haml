@@ -32,34 +32,31 @@
   .row-fluid
     .span8
       .boxChart
-        = hidden_field_tag 'users', @users
-        = hidden_field_tag 'mobile_users', @mobile_users
-        = hidden_field_tag 'ios_users', @ios_users
-        = hidden_field_tag 'android_users', @android_users
-        = hidden_field_tag 'users_uploader', @mobile_users_uploader
         %h3 UTILISATEURS APPLICATION MOBILE
         .row-fluid
           .span6
+            #usersLoading.blink Chargement en cours...
             %canvas.chartContainer#chartUsersContainer
             .legends
               %ul.list-group
                 %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#3E2F24;' } Utilisateurs iDocus (actifs)
-                  %strong= @users
+                  %strong#usersCount 0
               .clearfix
                 %br
                 %br
               %ul.list-group
                 %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#FF420E;' } Utilisateurs mobile total
-                  %strong= @mobile_users
+                  %strong#usersMobileCount 0
                 %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#F08A42;' } iOS
-                  %strong= @ios_users
+                  %strong#iOSUsersCount 0
                 %li.liFloat.list-group-item
                   %span.badge{ style: 'background-color:#C0D838;' } Android
-                  %strong= @android_users
+                  %strong#androidUsersCount 0
           .span6
+            #uploaderLoading.blink Chargement en cours...
             %canvas.chartContainer#chartUploaderContainer
             .legends
               .row-fluid
@@ -67,16 +64,15 @@
                   %ul.list-group
                     %li.list-group-item
                       .legend_badge.badge{ style: 'background-color:#018CCF;' } Simple consultation
-                      %strong= (@mobile_users - @mobile_users_uploader)
+                      %strong#viewerUsersCount 0
                     %li.list-group-item
                       .legend_badge.badge{ style: 'background-color:#FF420E;' } Avec téléversement
-                      %strong= @mobile_users_uploader
+                      %strong#uploaderUsersCount 0
                 .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
     .span4
       .boxChart
-        = hidden_field_tag 'documents', @documents
-        = hidden_field_tag 'mobile_documents', @mobile_documents
         %h3 TELEVERSEMENT DE DOCUMENTS
+        #documentsLoading.blink Chargement en cours...
         %canvas.chartContainer#chartDocumentsContainer
         .legends
           .row-fluid
@@ -84,8 +80,8 @@
               %ul.list-group
                 %li.list-group-item
                   .legend_badge.badge{ style: 'background-color:#018CCF;' } Upload via iDocus
-                  %strong= (@documents - @mobile_documents)
+                  %strong#uploadedFrameworkDocumentsCount 0
                 %li.list-group-item
                   .legend_badge.badge{ style: 'background-color:#FF420E;' } Upload via App Mobile
-                  %strong= @mobile_documents
+                  %strong#uploadedMobileDocumentsCount 0
             .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"

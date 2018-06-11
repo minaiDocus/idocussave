@@ -5,6 +5,15 @@
     margin: 10px
     padding: 25px
     text-align: center
+    .blink
+      color: #3E2F24
+      font-size: 18px
+      margin: 20px
+      animation: blinkingText 1s infinite
+      //Firefox 1+
+      -webkit-animation: blinkingText 1s infinite
+      //Safari 3-4
+      -moz-animation: blinkingText 1s infinite
     .chartContainer
       max-width: 563px !important
       max-height: 281px !important
@@ -27,3 +36,40 @@
         margin-right: 10px
   .table
     width: auto !important
+@keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Firefox 1+
+@-webkit-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Safari 3-4
+@-moz-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
