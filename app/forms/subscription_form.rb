@@ -40,6 +40,20 @@ class SubscriptionForm
           @subscription.is_retriever_package_active         = params[:is_retriever_package_active] == '1'
           @subscription.is_retriever_package_to_be_disabled = false if @subscription.is_retriever_package_to_be_disabled
         end
+
+        if @subscription.is_mini_package_active && dont_apply_now
+          @subscription.is_mini_package_to_be_disabled      = params[:is_mini_package_active]      == '0'
+        else
+          @subscription.is_mini_package_active              = params[:is_mini_package_active]      == '1'
+          @subscription.is_mini_package_to_be_disabled      = false if @subscription.is_mini_package_to_be_disabled
+        end
+
+        if @subscription.is_micro_package_active && dont_apply_now
+          @subscription.is_micro_package_to_be_disabled      = params[:is_micro_package_active]      == '0'
+        else
+          @subscription.is_micro_package_active              = params[:is_micro_package_active]      == '1'
+          @subscription.is_micro_package_to_be_disabled      = false if @subscription.is_micro_package_to_be_disabled
+        end
       end
     else
       if params[:is_annual_package_active] == '1'
