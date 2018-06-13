@@ -23,6 +23,9 @@
   = label_tag 'banking_operation_contains[label]', 'Libellé'
   = text_field_tag 'banking_operation_contains[label]', (params[:banking_operation_contains][:label] rescue ''), class: 'span12'
 
+  = label_tag 'banking_operation_contains[pre_assigned]', 'Pré-affecté'
+  = select_tag 'banking_operation_contains[pre_assigned]', options_for_select({"" => "", "Oui" => "pre_assigned", "Non" => "not_pre_assigned", "En attente" => "is_waiting"}, (params[:banking_operation_contains][:pre_assigned] rescue nil)), class: 'span12'
+
   .margin2top
   = submit_tag t('filters.action'), class: 'btn btn-primary'
   = link_to t('filters.reset'), account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn'

@@ -35,6 +35,10 @@ class Operation < ActiveRecord::Base
   def self.search_for_collection(collection, contains)
     user = collection.first.user if collection.first
 
+    collection = collection.processed                                    if contains[:pre_assigned] == "pre_assigned"
+    collection = collection.locked                                       if contains[:pre_assigned] == "not_pre_assigned"
+    collection = collection.waiting_processing.not_locked.not_processed  if contains[:pre_assigned] == "is_waiting"
+
     collection = collection.where("label LIKE ?",    "%#{contains[:label]}%")    unless contains[:label].blank?
     collection = collection.where("category LIKE ?", "%#{contains[:category]}%") unless contains[:category].blank?
 
