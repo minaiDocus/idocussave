@@ -12,6 +12,8 @@ class Admin::SubscriptionsController < Admin::AdminController
     @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_pre_assignment_active:    true).count }
     @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_scan_box_package_active:  true).count }
     @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_retriever_package_active: true).count }
+    @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_mini_package_active: true).count }
+    @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_micro_package_active: true).count }
 
     params[:per_page] ||= 50
     statistics =  StatisticsManager.get_compared_subscription_statistics(statistic_params)

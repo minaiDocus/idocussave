@@ -12,6 +12,8 @@
             %th iDo'Basique
             %th iDo'Courrier
             %th iDo'Box
+            %th iDo'Mini
+            %th iDo'Micro
             %th Pack Annuel
             %th Total
             %th iDo'FacBanque
@@ -23,8 +25,10 @@
             %td= @basic_package_count
             %td= @mail_package_count
             %td= @scan_box_package_count
+            %td= @mini_package_count
+            %td= @micro_package_count
             %td= @annual_package_count
-            %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count
+            %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
             %td= @retriever_package_count
             %td= @pre_assignment_count
             %td= @stamp_count
@@ -64,18 +68,19 @@
         %thead
           %tr
             %th(colspan='3') Information
-            %th(colspan='6') Forfaits
+            %th(colspan='7') Forfaits
             %th(colspan='4') Utilisation
             %th(colspan='3') Clients
           %tr
             %th période
             %th organisation
             %th code
-            %th micro
             %th basique
             %th courrier
             %th box
             %th automate
+            %th mini
+            %th micro
             %th annuel
             %th téléversement
             %th numérisation
@@ -91,9 +96,6 @@
               %td= statistic.organization_name
               %td= statistic.organization_code
               %td
-                %span= statistic.options[:micro_package]
-                = subscription_diff_content_for(statistic.options[:micro_package_diff])
-              %td
                 %span= statistic.options[:basic_package]
                 = subscription_diff_content_for(statistic.options[:basic_package_diff])
               %td
@@ -105,6 +107,12 @@
               %td
                 %span= statistic.options[:retriever_package]
                 = subscription_diff_content_for(statistic.options[:retriever_package_diff])
+              %td
+                %span= statistic.options[:mini_package]
+                = subscription_diff_content_for(statistic.options[:mini_package_diff])
+              %td
+                %span= statistic.options[:micro_package]
+                = subscription_diff_content_for(statistic.options[:micro_package_diff])
               %td
                 %span= statistic.options[:annual_package]
                 = subscription_diff_content_for(statistic.options[:annual_package_diff])
