@@ -44,7 +44,7 @@ class Budgea
         method:  :post,
         proxy:   @settings[:proxy],
         headers: { accept: :json },
-        params:  authentification_params
+        body:  authentification_params
       )
       @response = @request.run
       if @response.code == 200
@@ -129,7 +129,7 @@ class Budgea
         method:  :post,
         proxy:   @settings[:proxy],
         headers: headers,
-        params:  { application: 'sharedAccess' }
+        body:  { application: 'sharedAccess' }
       )
       run_and_parse_response
     end
@@ -151,7 +151,7 @@ class Budgea
         method:  :post,
         proxy:   @settings[:proxy],
         headers: { accept: :json },
-        params:  authentification_params.merge(params)
+        body:  authentification_params.merge(params)
       )
       run_and_parse_response
     end
@@ -162,7 +162,7 @@ class Budgea
         method:  :post,
         proxy:   @settings[:proxy],
         headers: headers,
-        params:  params
+        body:  params
       )
       run_and_parse_response
     end
