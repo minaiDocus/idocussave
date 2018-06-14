@@ -368,35 +368,5 @@
                   Pour réactiver votre compte client veuillez envoyer un courriel à
                   = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
 
-        - if @user.is_prescriber || @user.invoices.count > 0
-          - unless @user.try(:organization).try(:is_suspended)
-            #invoices.row-fluid.pan{ class: (@active_panel == 'invoices' ? 'active' : '')}
-              .span12
-                .well
-                  %h3.aligncenter Factures
-                  %table.table.table-bordered.table-striped
-                    %thead
-                      %tr
-                        %th Numéro
-                        %th Montant
-                        %th Actions
-                    %tbody
-                      - @invoices.each do |invoice|
-                        %tr
-                          %td= invoice.number
-                          %th.price
-                            - if invoice.amount_in_cents_w_vat
-                              = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
-                          %td.actions
-                            = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                            = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
-                  = paginate @invoices, params: { panel: 'invoices' }
-              #showInvoice.modal.hide.fade
-                .modal-header
-                  %a.close{ data: { dismiss: :modal } } ×
-                  %h3
-                .modal-body
-                  %iframe{ :src => '' }
-
 
 = render "help"

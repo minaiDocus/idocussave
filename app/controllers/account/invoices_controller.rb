@@ -1,21 +1,13 @@
-class Account::InvoicesController < Account::AccountController
-  # GET /account/invoices/:id/download/
+class Account::InvoicesController < Account::OrganizationController
+  def show
+    @invoices = @organization.invoices.order(created_at: :desc).page(params[:page])
+  end
+
   def download
-    invoice      = Invoice.find params[:id]
-    owner        = invoice.user
-    organization = invoice.organization
+    invoice    = Invoice.find params[:id] if params[:id].present?
+    authorized = @user.leader?
 
-    authorized = false
-
-    if owner && (@user == owner || owner.organization.admins.include?(@user) || @user.customers.include?(owner))
-      authorized = true
-    elsif organization && @user.class == Collaborator && organization.admins.include?(@user.user)
-      authorized = true
-    elsif @user.admin?
-      authorized = true
-    end
-
-    if File.exist?(invoice.content.path) && authorized
+    if invoice && invoice.organization == @organization && File.exist?(invoice.content.path) && authorized
       filename = File.basename invoice.content.path
       type = invoice.content_content_type || 'application/pdf'
       send_file(invoice.content.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')

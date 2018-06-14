@@ -70,13 +70,6 @@ jQuery ->
       if result == false
         $(this).attr('checked', true)
 
-  $('a.do-showInvoice').click (e) ->
-    e.preventDefault()
-    $invoiceDialog = $('#showInvoice')
-    $invoiceDialog.find('h3').text($(this).attr('title'))
-    $invoiceDialog.find("iframe").attr('src',$(this).attr('href'))
-    $invoiceDialog.modal()
-
   if $('.storage_form').length > 0
     update_path_preview($('#dropbox_basic_path'))
     update_path_preview($('#google_doc_path'))

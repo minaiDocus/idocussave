@@ -25,7 +25,3 @@
       - if !@user.organization.is_active && @user.can_unsuspend?
         %li{ class: ('active' if @active_panel == 'active_organization') }
           = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
-      - if @user.collaborator? || @user.invoices.count > 0
-        - unless organizations_suspended?
-          %li{ class: ('active' if @active_panel == 'invoices') }
-            = link_to 'Factures', '#invoices', class: 'do-show'

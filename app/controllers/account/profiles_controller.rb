@@ -4,7 +4,6 @@ class Account::ProfilesController < Account::AccountController
   def show
     if @user.active?
       @external_file_storage = @user.find_or_create_external_file_storage
-      @invoices = @user.invoices.order(created_at: :desc).page(params[:page])
 
       if @external_file_storage.is_dropbox_basic_authorized?
         if @external_file_storage.dropbox_basic.access_token

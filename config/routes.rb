@@ -15,7 +15,6 @@ Idocus::Application.routes.draw do
 
   get '/account' => redirect('/account/documents')
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
-  get '/account/invoices/:id/download/:style',             controller: 'account/invoices',  action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
   get '/account/documents/processing/:id/download/:style', controller: 'account/documents', action: 'download_processing'
   get '/account/documents/pieces/:id/download',            controller: 'account/documents', action: 'piece'
@@ -289,6 +288,10 @@ Idocus::Application.routes.draw do
       resource :mcf_settings, only: %w(edit update destroy) do
         post :authorize
         get  :callback
+      end
+
+      resource :invoices, only: %w(index show) do
+        get 'download(/:id)', action: 'download', as: :download
       end
     end
 
