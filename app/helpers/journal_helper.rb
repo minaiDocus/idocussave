@@ -73,7 +73,7 @@ module JournalHelper
       if journal_name.present? && !journal_name.in?(values.map(&:last))
         description = journal_name
         description = 'JC' + description if journal_name =~ /\A\d/
-        values << ["#{description} (n'existe pas)", journal_name]
+        values << ["#{description} (inaccessible depuis la ged ibiza)", journal_name]
         values.sort_by(&:first)
       else
         values
@@ -82,7 +82,7 @@ module JournalHelper
     elsif journal_name.present?
       description = journal_name
       description = 'JC' + description if journal_name =~ /\A\d/
-      [[description, journal_name]]
+      [["#{description} (inaccessible depuis la ged ibiza)", journal_name]]
     else
       []
     end
