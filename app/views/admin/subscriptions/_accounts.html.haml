@@ -1,0 +1,5 @@
+#accountsList
+  %h4= "#{data_accounts.size} Dossier(s)"
+  %ul.lists
+    - data_accounts.each do |account|
+      %li.listNode= account.code

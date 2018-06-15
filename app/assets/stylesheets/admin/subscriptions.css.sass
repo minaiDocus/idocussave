@@ -13,3 +13,66 @@
       color: #00b600
     .negative
       color: #ff6969
+  #showAccounts
+    .loading
+      color: #3E2F24
+      font-size: 18px
+      margin: 20px
+      animation: blinkingText 1s infinite
+      //Firefox 1+
+      -webkit-animation: blinkingText 1s infinite
+      //Safari 3-4
+      -moz-animation: blinkingText 1s infinite
+    #accountsList
+      width: 100%
+      h4
+        width: 95%
+        padding: 0 10px
+        text-align: center
+      .lists
+        margin: 8px 5px
+        list-style: inside
+        .listNode
+          width: 160px
+          height: 30px
+          float: left
+          padding: 3px
+
+
+@keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Firefox 1+
+@-webkit-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Safari 3-4
+@-moz-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24

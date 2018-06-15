@@ -29,6 +29,34 @@ class Admin::SubscriptionsController < Admin::AdminController
     end
   end
 
+  def accounts
+    accounts = User.customers.active_at(Time.now).joins(:subscription)
+
+    case params[:type]
+      when 'stamp_active'
+        data_accounts = Rails.cache.fetch('admin_report_stamp_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_stamp_active:  true)) }
+      when 'mail_package'
+        data_accounts = Rails.cache.fetch('admin_report_mail_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_mail_package_active: true)) }
+      when 'basic_package'
+        data_accounts = Rails.cache.fetch('admin_report_basic_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_basic_package_active: true)) }
+      when 'annual_package'
+        data_accounts = Rails.cache.fetch('admin_report_annual_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_annual_package_active: true)) }
+      when 'pre_assignment_active'
+        data_accounts = Rails.cache.fetch('admin_report_pre_assignment_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_pre_assignment_active: true)) }
+      when 'scan_box_package'
+        data_accounts = Rails.cache.fetch('admin_report_scan_box_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_scan_box_package_active: true)) }
+      when 'retriever_package'
+        data_accounts = Rails.cache.fetch('admin_report_retriever_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_retriever_package_active: true)) }
+      when 'mini_package'
+        data_accounts = Rails.cache.fetch('admin_report_mini_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_mini_package_active: true)) }
+      when 'micro_package'
+        data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_micro_package_active: true)) }
+      else
+        data_accounts = []
+      end
+    render partial: '/admin/subscriptions/accounts', layout: false, locals: { data_accounts: data_accounts }
+  end
+
   private
 
   def statistic_params

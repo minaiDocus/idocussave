@@ -22,16 +22,16 @@
         %tbody
           %tr
             %th Abonnés
-            %td= @basic_package_count
-            %td= @mail_package_count
-            %td= @scan_box_package_count
-            %td= @mini_package_count
-            %td= @micro_package_count
-            %td= @annual_package_count
+            %td= link_to @basic_package_count, "#", class: 'do-showAccounts', title: "iDo'Basique", type: "basic_package"
+            %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "iDo'Courrier", type: "mail_package"
+            %td= link_to @scan_box_package_count, "#", class: 'do-showAccounts', title: "iDo'Box", type: "scan_box_package"
+            %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo'Mini", type: "mini_package"
+            %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo'Micro", type: "micro_package"
+            %td= link_to @annual_package_count, "#", class: 'do-showAccounts', title: "Pack Annuel", type: "annual_package"
             %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
-            %td= @retriever_package_count
-            %td= @pre_assignment_count
-            %td= @stamp_count
+            %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
+            %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
+            %td= link_to @stamp_count, "#", class: 'do-showAccounts', title: "Tamponnage du papier", type: "stamp_active"
   .row-fluid
     .span12
       %h3 Reporting détaillés
@@ -128,3 +128,9 @@
   .row-fluid
     .span12
       = render partial: 'shared/list_options', locals: { collection: @statistics }
+
+  #showAccounts.modal.hide.fade
+    .modal-header
+      %a.close{ data: { dismiss: :modal } } ×
+      %h3
+    .modal-body
