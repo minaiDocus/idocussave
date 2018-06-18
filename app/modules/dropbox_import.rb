@@ -1,5 +1,15 @@
 class DropboxImport
   ROOT_FOLDER = '/exportation vers iDocus'.freeze
+  ERROR_LISTS = {
+                  already_exist: 'fichier déjà importé sur iDocus',
+                  invalid_period: 'période invalide',
+                  journal_unknown: 'journal invalide',
+                  invalid_file_extension: 'extension invalide',
+                  file_size_is_too_big: 'fichier trop volumineux',
+                  pages_number_is_too_high: 'nombre de page trop important',
+                  file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mdp',
+                  unprocessable: 'erreur fichier non valide pour iDocus'
+                }.freeze
 
   class << self
     def check
@@ -235,7 +245,7 @@ class DropboxImport
     path = File.dirname file_path
     file_name = File.basename file_path
 
-    unless file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
+    if valid_file_name(file_name)
       if needed_folders.include?(path)
         if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase) && metadata.size <= 10.megabytes
           customer, journal_name, period_offset, collaborator_code = get_info_from_path path
@@ -254,33 +264,30 @@ class DropboxImport
                 if uploaded_document.valid?
                   logger.info "[Dropbox Import][#{uploader.code}][SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
                   client.delete file_path
-                elsif uploaded_document.already_exist?
-                  logger.info "[Dropbox Import][#{uploader.code}][ALREADY_EXIST] #{file_path}"
-                  mark_file_as_already_exist(path, file_name)
                 else
-                  logger.info "[Dropbox Import][#{uploader.code}][INVALID] #{file_path}"
-                  mark_file_as_not_processable(path, file_name)
+                  logger.info "[Dropbox Import][#{uploader.code}][#{uploaded_document.errors.last[0].to_s}] #{file_path}"
+                  mark_file_error(path, file_name, uploaded_document.errors)
                 end
               end
             end
           rescue DropboxApi::Errors::NotFoundError
           end
         else
-          mark_file_as_not_processable(path, file_name)
+          mark_file_error(path, file_name)
         end
       end
     end
   end
 
-  def mark_file_as_already_exist(path, file_name)
-    mark_file_as_not_processable(path, file_name, ' (fichier déjà importé sur iDocus)')
-  end
+  def mark_file_error(path, file_name, errors=[])
+    error_message = ERROR_LISTS[:unprocessable]
+    errors.each do |err|
+      error_message = ERROR_LISTS[err[0].to_sym] if ERROR_LISTS[err[0].to_sym].present?
+    end
 
-  def mark_file_as_not_processable(path, file_name, error_message=' (erreur fichier non valide pour iDocus)')
-    new_file_name = File.basename(file_name, '.*') + error_message + File.extname(file_name)
-
+    new_file_name = File.basename(file_name, '.*') + " (#{error_message})" + File.extname(file_name)
     client.move(File.join(path, file_name), File.join(path, new_file_name), autorename: true)
-  rescue DropboxApi::Errors::NotFoundError
+    rescue DropboxApi::Errors::NotFoundError
   end
 
   def update_folders
@@ -338,5 +345,14 @@ class DropboxImport
   def file_detail(uploaded_document)
     file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
     "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
+  end
+
+  def valid_file_name(file_name)
+    ERROR_LISTS.each do |pattern|
+      if file_name =~ /#{pattern.last}/i
+        return false
+      end
+    end
+    return true
   end
 end

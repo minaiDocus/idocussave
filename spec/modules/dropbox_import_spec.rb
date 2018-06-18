@@ -219,7 +219,7 @@ describe DropboxImport do
               with(headers: @headers.merge({ 'Dropbox-API-Arg' => { path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf' }.to_json }))
             # rename file
             expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/move').
-              with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf' })
+              with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted (fichier corrompu ou protégé par mdp).pdf' })
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -253,7 +253,7 @@ describe DropboxImport do
           end
 
           context 'given another invalid file with the same name at : /exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf' do
-            it 'marks the file as invalid but with number : corrupted (erreur fichier non valide pour iDocus) (1).pdf' do
+            it 'marks the file as invalid but with number : corrupted (fichier corrompu ou protégé par mdp) (1).pdf' do
               delta_cursor = @dropbox.delta_cursor = 'AAEoM_ev4xOyiBuzDKXR1l62aBvB_IQw9t__CMFJ8P5zjiZaEYPXY3Lb82-jNHOatUoLebLikcT6t0N6K74bjw2LTQMKNSqRTMi95VX_e0srrbo6pqTiPCSxmXFTtLTheEJzHpIM9M6leMfIH4dqfqmZkgYE_Rl1CUebwY-6xtqU0ruCCX80np4kg3Uj3b4SPQU'
               @dropbox.save
 
@@ -270,7 +270,7 @@ describe DropboxImport do
                 with(headers: @headers.merge({ 'Dropbox-API-Arg' => { path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf' }.to_json }))
               # rename file
               expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/move').
-                with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf' })
+                with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted (fichier corrompu ou protégé par mdp).pdf' })
 
               expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -579,7 +579,7 @@ describe DropboxImport do
                       with(headers: @headers.merge({ 'Dropbox-API-Arg' => { path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/corrupted.pdf' }.to_json }))
                     # mark corrupted file as invalid
                     expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/move').
-                      with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/corrupted (erreur fichier non valide pour iDocus).pdf' })
+                      with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/corrupted.pdf', to_path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/corrupted (fichier corrompu ou protégé par mdp).pdf' })
                     # get file
                     expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/download').
                       with(headers: @headers.merge({ 'Dropbox-API-Arg' => { path: '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/2pages.pdf' }.to_json }))
@@ -895,7 +895,7 @@ describe DropboxImport do
               with(headers: @headers.merge({ 'Dropbox-API-Arg' => { path: '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted.pdf' }.to_json }))
             # rename file
             expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/move').
-              with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf' })
+              with(headers: @headers_2, body: { autorename: true, from_path: '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted.pdf', to_path: '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted (fichier corrompu ou protégé par mdp).pdf' })
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 

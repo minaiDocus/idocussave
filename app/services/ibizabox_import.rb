@@ -99,7 +99,6 @@ class IbizaboxImport
       valid = false
     end
 
-    @folder.disable if @folder.can_disable? && !valid
     valid
   end
 
