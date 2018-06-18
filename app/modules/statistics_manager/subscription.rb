@@ -60,7 +60,7 @@ module StatisticsManager::Subscription
         options = {}
         stats[1].options.keys.each do |key|
           options[key] = stats[1].options[key]
-          options["#{key}_diff".to_sym] = stats[1].options[key] - stats[0].options[key]
+          options["#{key}_diff".to_sym] = stats[1].options[key].to_i - stats[0].options[key].to_i
         end
         SubscriptionStatistic.new(
           month: stats[1].month,
