@@ -27,7 +27,7 @@ class Pdftk
   end
 
 
-  def burst(file_path, path = '/tmp', prefix = 'page', counter_size = 3)
+  def burst(file_path, path = '/tmp', prefix = 'page', counter_size = 3, remake = false)
     @path      = path
     @prefix    = prefix
     @file_path = file_path
@@ -35,7 +35,19 @@ class Pdftk
     @path_with_prefix = File.join(@path, @prefix)
 
     command = "#{@exe_path} #{@file_path} burst output #{@path_with_prefix}_%0#{@counter_size}d.pdf"
-    `#{command}`
+    is_bursted = system "#{command}"
+
+    unless remake
+      unless is_bursted
+        @tmp_file_remake = Tempfile.new('tmp_pdf').path
+        success = DocumentTools.to_pdf_hight_quality file_path, @tmp_file_remake
+        is_bursted = burst @tmp_file_remake, @path, @prefix, @counter_size, true
+      end
+    else
+      File.unlink @tmp_file_remake if File.exist? @tmp_file_remake
+    end
+
+    is_bursted
   rescue Exception => e
     raise "Failed to execute:\n#{command}\nError: #{e}"
   end
