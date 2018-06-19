@@ -36,6 +36,8 @@
               - if current_user.is_admin
                 %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
                   %i.icon-share-alt
+              %a.do-tooltip{ :href => '#', :id => "download_multi_pack", :title => "Télécharger la séléction" }
+                %i.icon-download-alt
               %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
                 %i.icon-tag
               |

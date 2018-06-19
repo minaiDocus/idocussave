@@ -480,6 +480,15 @@
       }
     });
 
+    $("#download_multi_pack").click(function(){
+      $(".alerts").html('')
+      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      if(pack_ids != "")
+        window.location = "/account/documents/multi_pack_download?pack_ids=" + pack_ids.join('_')
+      else
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez selectionner au moins un document.</span></div></div>");
+    })
+
     $("#deliverButton").click(function() {
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       var view = $("select[name=document_owner_list]").val();

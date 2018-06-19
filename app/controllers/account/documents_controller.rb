@@ -73,6 +73,51 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
+  def multi_pack_download
+    _tmp_archive = Tempfile.new(['archive', '.zip'])
+    _tmp_archive_path = _tmp_archive.path
+    _tmp_archive.close
+    _tmp_archive.unlink
+
+    params_valid = params[:pack_ids].present?
+    ready_to_send = false
+
+    if params_valid
+      packs = Pack.where(id: params[:pack_ids].split("_")).order(created_at: :desc)
+
+      files_path = packs.map do |pack|
+        document = pack.original_document
+        if document && (pack.owner.in?(accounts) || curent_user.try(:is_admin))
+          document.content.path('original')
+        else
+          nil
+        end
+      end
+      files_path.compact!
+
+      files_path.in_groups_of(50).each do |group|
+        DocumentTools.archive(_tmp_archive_path, group)
+      end
+
+      ready_to_send = true if files_path.any? && File.exist?(_tmp_archive_path)
+    end
+
+    if ready_to_send
+      begin
+        contents = File.read(_tmp_archive_path)
+        File.unlink _tmp_archive_path if File.exist?(_tmp_archive_path)
+
+        send_data(contents, type: 'application/zip', filename: 'pack_archives', disposition: 'attachment')
+      rescue
+        File.unlink _tmp_archive_path if File.exist?(_tmp_archive_path)
+        redirect_to account_path, alert: "Impossible de proceder au téléchargment"
+      end
+    else
+      File.unlink _tmp_archive_path if File.exist?(_tmp_archive_path)
+      redirect_to account_path, alert: "Impossible de proceder au téléchargment"
+    end
+  end
+
   # POST /account/documents/sync_with_external_file_storage
   def sync_with_external_file_storage
     if current_user.is_admin
