@@ -76,7 +76,7 @@ describe SendToMcf do
       expect(@remote_file.reload.state).to eq 'synced'
     end
 
-    it 'updates an existing file' do
+    it 'updates a modified existing file' do
       Dir.mktmpdir do |dir|
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
@@ -122,5 +122,12 @@ describe SendToMcf do
     expect(result).to eq false
     expect(@mcf).to_not be_configured
     expect(@leader.notifications.size).to eq 1
+  end
+
+  it 'cancels the remote sending if no receiver' do
+    @remote_file.update(organization_id: nil, user_id: nil, group_id: nil)
+    DeliverFile.to "mcf"
+
+    expect(@remote_file.reload.state).to eq 'cancelled'
   end
 end

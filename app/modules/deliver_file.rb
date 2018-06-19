@@ -17,62 +17,67 @@ module DeliverFile
 
       pack         = remote_file.pack
       receiver     = remote_file.receiver
-      remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
 
-      storage = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
-      storage ||= receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
-
-      if receiver.class.name == User.name
-        efs = receiver.find_or_create_external_file_storage
-
-        services_name = efs.active_services_name
-      elsif receiver.class.name == Organization.name
-        services_name = []
-        services_name << RemoteFile::KNOWINGS if receiver.knowings.try(:is_configured?)
-        services_name << RemoteFile::FTP if receiver.ftp.try(:configured?)
-        services_name << RemoteFile::MY_COMPANY_FILES if receiver.mcf_settings.try(:configured?)
+      unless receiver
+        remote_file.cancel!
       else
-        services_name = ['Dropbox Extended']
-      end
+        remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
 
-      if service_name.in?(services_name)
-        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{remote_files.size} - SYNC START"
-        start_time = Time.now
+        storage = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
+        storage ||= receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
 
-        remote_files = remote_files.sort do |a, b|
-          a.local_name <=> b.local_name
+        if receiver.class.name == User.name
+          efs = receiver.find_or_create_external_file_storage
+
+          services_name = efs.active_services_name
+        elsif receiver.class.name == Organization.name
+          services_name = []
+          services_name << RemoteFile::KNOWINGS if receiver.knowings.try(:is_configured?)
+          services_name << RemoteFile::FTP if receiver.ftp.try(:configured?)
+          services_name << RemoteFile::MY_COMPANY_FILES if receiver.mcf_settings.try(:configured?)
+        else
+          services_name = ['Dropbox Extended']
         end
 
-        if receiver.class.name == Group.name || service_class == :dropbox_extended
-          SendToDropbox.new(DropboxExtended, remote_files, path_pattern: receiver.dropbox_delivery_folder, logger: logger).execute
-        elsif service_class == :knowings
-          KnowingsSyncService.new(remote_files).execute
-        elsif service_class == :my_company_files
-          mcf_storage = remote_files.first.pack.owner.mcf_storage
-          if mcf_storage.present?
-            path_pattern = Pathname.new '/' + mcf_storage
-            path_pattern = path_pattern.join receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
-            SendToMcf.new(receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger).execute
-          else
-            remote_files.each(&:cancel!)
+        if service_name.in?(services_name)
+          logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{remote_files.size} - SYNC START"
+          start_time = Time.now
+
+          remote_files = remote_files.sort do |a, b|
+            a.local_name <=> b.local_name
           end
-        elsif service_class == :dropbox_basic
-          SendToDropbox.new(storage, remote_files, logger: logger).execute
-        elsif service_class == :box
-          BoxSyncService.new(remote_files).sync
-        elsif service_class == :ftp
-          SendToFTP.new(storage, remote_files, logger: logger).execute
-        elsif service_class == :google_doc
-          GoogleDriveSyncService.new(storage).sync(remote_files)
+
+          if receiver.class.name == Group.name || service_class == :dropbox_extended
+            SendToDropbox.new(DropboxExtended, remote_files, path_pattern: receiver.dropbox_delivery_folder, logger: logger).execute
+          elsif service_class == :knowings
+            KnowingsSyncService.new(remote_files).execute
+          elsif service_class == :my_company_files
+            mcf_storage = remote_files.first.pack.owner.mcf_storage
+            if mcf_storage.present?
+              path_pattern = Pathname.new '/' + mcf_storage
+              path_pattern = path_pattern.join receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
+              SendToMcf.new(receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger).execute
+            else
+              remote_files.each(&:cancel!)
+            end
+          elsif service_class == :dropbox_basic
+            SendToDropbox.new(storage, remote_files, logger: logger).execute
+          elsif service_class == :box
+            BoxSyncService.new(remote_files).sync
+          elsif service_class == :ftp
+            SendToFTP.new(storage, remote_files, logger: logger).execute
+          elsif service_class == :google_doc
+            GoogleDriveSyncService.new(storage).sync(remote_files)
+          end
+
+          total_synced = remote_files.select { |e| e.state == 'synced' }.size
+          logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)"
+        else
+          remote_files.each(&:cancel!)
         end
 
-        total_synced = remote_files.select { |e| e.state == 'synced' }.size
-        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)"
-      else
-        remote_files.each(&:cancel!)
+        processed_receiver_ids << receiver.id
       end
-
-      processed_receiver_ids << receiver.id
     end
   end
 
