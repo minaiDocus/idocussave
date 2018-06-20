@@ -53,7 +53,7 @@ class NotifyMcfDocumentError
         notification.message     = notif
         notification.save
 
-        NotifyWorker.perform_async(notification.id)
+        NotifyWorker.perform_async(notification.id) if user.try(:notify).try(:mcf_document_errors)
       end
     end
   end
