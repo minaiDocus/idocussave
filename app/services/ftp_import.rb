@@ -1,4 +1,15 @@
 class FTPImport
+  ERROR_LISTS = {
+                  already_exist: 'fichier déjà importé sur iDocus',
+                  invalid_period: 'période invalide',
+                  journal_unknown: 'journal invalide',
+                  invalid_file_extension: 'extension invalide',
+                  file_size_is_too_big: 'fichier trop volumineux, 10Mo max.',
+                  pages_number_is_too_high: 'nombre de page trop important',
+                  file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mdp',
+                  unprocessable: 'erreur fichier non valide pour iDocus'
+                }.freeze
+
   class << self
     def execute
       Ftp.importable.each do |ftp|
@@ -241,9 +252,17 @@ class FTPImport
         file_path = File.join(item.path, file_name)
 
         next if file_name =~ /^\./
-        next unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
-        next if file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
-        next unless client.size(file_path) <= 10.megabytes
+        next unless valid_file_name(file_name)
+
+        unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
+          mark_file_error item.path, file_name, [[:invalid_file_extension]]
+          next
+        end
+
+        if client.size(file_path) > 10.megabytes
+          mark_file_error item.path, file_name, [[:file_size_is_too_big]]
+          next
+        end
 
         Dir.mktmpdir do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
@@ -254,12 +273,9 @@ class FTPImport
             if uploaded_document.valid?
               logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
               client.delete file_path
-            elsif uploaded_document.already_exist?
-              logger.info "#{log_prefix}[ALREADY_EXIST] #{file_path}"
-              mark_file_as_already_exist item.path, file_name
             else
-              logger.info "#{log_prefix}[INVALID] #{file_path}"
-              mark_file_as_not_processable item.path, file_name
+              logger.info "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}"
+              mark_file_error(item.path, file_name, uploaded_document.errors)
             end
           end
         end
@@ -267,12 +283,13 @@ class FTPImport
     end
   end
 
-  def mark_file_as_already_exist(path, file_name)
-    mark_file_as_not_processable path, file_name, ' (fichier déjà importé sur iDocus)'
-  end
+  def mark_file_error(path, file_name, errors=[])
+    error_message = ERROR_LISTS[:unprocessable]
+    errors.each do |err|
+      error_message = ERROR_LISTS[err[0].to_sym] if ERROR_LISTS[err[0].to_sym].present?
+    end
 
-  def mark_file_as_not_processable(path, file_name, error_message=' (erreur fichier non valide pour iDocus)')
-    file_rename = File.basename(file_name, '.*') + error_message + File.extname(file_name)
+    file_rename = File.basename(file_name, '.*') + " (#{error_message})" + File.extname(file_name)
     new_file_name = file_rename
     loop_count = 1
     error = true
@@ -299,5 +316,14 @@ class FTPImport
   def file_detail(uploaded_document)
     file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
     "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
+  end
+
+  def valid_file_name(file_name)
+    ERROR_LISTS.each do |pattern|
+      if file_name =~ /#{pattern.last}/i
+        return false
+      end
+    end
+    return true
   end
 end
