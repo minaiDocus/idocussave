@@ -156,7 +156,16 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/failed_reports_delivery
   def failed_reports_delivery
-    @failed_reports_delivery = Pack::Report.failed_delivery(nil, 200)
+    reports = PreAssignmentDelivery.where(state: 'error').order(created_at: :desc).limit(200)
+
+    @failed_reports_delivery = reports.map do |report|
+      object = OpenStruct.new
+      object.date           = report.created_at
+      object.name           = report.pack_name
+      object.document_count = report.total_item
+      object.message        = report.error_message.presence || '-'
+      object
+    end
 
     render partial: 'process', locals: { collection: @failed_reports_delivery }
   end
