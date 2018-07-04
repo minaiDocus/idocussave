@@ -71,7 +71,7 @@ class CreatePreAssignmentDeliveryService
         end
       end
 
-      @report.update_attribute(:is_locked, (@report.preseizures.not_locked.count == 0))
+      @report.update_attribute(:is_locked, (@report.preseizures(true).not_locked.count == 0))
       @deliveries
     else
       false
