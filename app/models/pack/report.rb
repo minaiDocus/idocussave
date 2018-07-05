@@ -31,7 +31,13 @@ class Pack::Report < ActiveRecord::Base
 
   def self.failed_delivery(user_ids = [], limit = 50)
     return [] unless user_ids.present? || user_ids.nil?
-    collection = Pack::Report::Preseizure.where.not("pack_report_preseizures.delivery_message" => ['',nil])
+
+    if user_ids.nil?
+      collection = Pack::Report::Preseizure.not_delivered.where.not(delivery_tried_at: nil)
+    else
+      collection = Pack::Report::Preseizure.where.not("pack_report_preseizures.delivery_message" => ['',nil])
+    end
+
     collection = collection.where("pack_report_preseizures.user_id" => user_ids) unless user_ids.nil?
     fields     = "pack_report_preseizures.delivery_tried_at as date, count(*) as document_count, pack_reports.name as name, pack_report_preseizures.delivery_message as message"
     collection = collection.joins(:report).group(:delivery_message, :name).select(fields).order(date: :desc).limit(limit)
