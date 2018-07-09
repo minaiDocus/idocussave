@@ -11,7 +11,7 @@ class Member < ActiveRecord::Base
   belongs_to :user
   has_many :managed_users, class_name: 'User', inverse_of: :manager
   has_and_belongs_to_many :groups
-  has_many :grouped_customers, through: :groups, source: :customers
+  has_many :grouped_customers, -> { distinct }, through: :groups, source: :customers
 
   validates_inclusion_of :role, in: ROLES
   validates :code, presence: true, length: { within: 3..15 }
