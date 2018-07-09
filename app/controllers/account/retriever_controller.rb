@@ -15,9 +15,14 @@ private
   end
 
   def load_account
-    account_id = params[:account_id].presence || session[:retrievers_account_id].presence
-    @account = accounts.where(id: account_id).first || accounts.first
-    session[:retrievers_account_id] = @account.id if @account
+    account_id = params[:account_id].presence || session[:retrievers_account_id].presence || 'all'
+
+    @account = nil
+    unless account_id == 'all'
+      @account = accounts.where(id: account_id).first || accounts.first
+    end
+
+    session[:retrievers_account_id] = account_id
   end
 
   def accounts

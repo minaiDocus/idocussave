@@ -3,31 +3,37 @@
     - if has_multiple_accounts?
       .row-fluid
         .span12.box
-          - if action_name == 'index'
-            %form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
-              = label_tag :retrievers_account_id, 'Dossier :'
-              = select_tag :account_id, options_from_collection_for_select(accounts.active, :id, :info, @account.id), class: 'chosen-select'
-              = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          - else
-            Dossier : #{@account.info}
+          - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
+          %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
+            = label_tag :retrievers_account_id, 'Dossier :'
+            = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
     .row-fluid
       .span3
         .box.sidebar-nav
           %ul.nav.nav-list
             %li.nav-header Automates
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name.in?(%w(index edit select_documents select_bank_accounts wait_for_user_action))) }= link_to 'Mes automates', account_retrievers_path
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }= link_to 'Ajouter un automate', new_account_retriever_path
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }= link_to 'Liste des automates disponibles', list_account_retrievers_path
-            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }= link_to 'Demander un nouvel automate', new_account_new_provider_request_path
-            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }= link_to 'Suivi de mes demandes', account_new_provider_requests_path
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name.in?(%w(index edit select_documents select_bank_accounts wait_for_user_action))) }
+              = link_to 'Mes automates', account_retrievers_path
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
+              = link_to 'Ajouter un automate', @account.try(:id)? new_account_retriever_path : '#', link_retriever_options(@account)
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
+              = link_to 'Liste des automates disponibles', @account.try(:id)? list_account_retrievers_path : '#', link_retriever_options(@account)
+            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
+              = link_to 'Demander un nouvel automate', @account.try(:id)? new_account_new_provider_request_path : '#', link_retriever_options(@account)
+            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }
+              = link_to 'Suivi de mes demandes', @account.try(:id)? account_new_provider_requests_path : '#', link_retriever_options(@account)
             %li.divider
             %li.nav-header Historique de récupération
-            %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }= link_to 'Opérations bancaires', account_retrieved_banking_operations_path
-            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }= link_to 'Documents', account_retrieved_documents_path
+            %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
+              = link_to 'Opérations bancaires', @account.try(:id)? account_retrieved_banking_operations_path : '#', link_retriever_options(@account)
+            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }
+              = link_to 'Documents', @account.try(:id)? account_retrieved_documents_path : '#', link_retriever_options(@account)
             %li.divider
             %li.nav-header Autres
-            %li{ class: ('active' if controller_name == 'bank_accounts') }= link_to 'Paramétrage des automates bancaires', account_bank_accounts_path
-            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }= link_to 'Sélection de documents restant à récupérer', select_account_retrieved_documents_path
+            %li{ class: ('active' if controller_name == 'bank_accounts') }
+              = link_to 'Paramétrage des automates bancaires', @account.try(:id)? account_bank_accounts_path : '#', link_retriever_options(@account)
+            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
+              = link_to 'Sélection de documents restant à récupérer', @account.try(:id)? select_account_retrieved_documents_path : '#', link_retriever_options(@account)
       .span9
         .alerts
           = render partial: 'shared/messages'

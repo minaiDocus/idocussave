@@ -136,6 +136,8 @@ jQuery ->
           _url += '&page=' + page
         if window.retriever_contains_name != ''
           _url += '&retriever_contains[name]=' + window.retriever_contains_name
+        if window.retriever_contains_state != ''
+          _url += '&retriever_contains[state]=' + window.retriever_contains_state
       $.ajax
         url: _url
         dataType: 'html'
@@ -154,21 +156,25 @@ jQuery ->
             load_retrievers_list(url)
 
     window.retriever_contains_name = ''
+    window.retriever_contains_state = ''
     window.retrievers_url = 'retrievers?part=true'
     load_retrievers_list()
 
     $('.retriever_search.form').on 'submit', (e) ->
       window.retriever_contains_name = $('#retriever_contains_name').val()
+      window.retriever_contains_state = $('#retriever_contains_state').val()
       e.preventDefault()
       load_retrievers_list()
     $('.reset_filter').on 'click', (e) ->
       e.preventDefault()
       $('#retriever_contains_name').val('')
+      $('#retriever_contains_state').val('')
       $('#direction').val(null)
       $('#sort').val(null)
       $('#per_page').val(null)
       $('#page').val(null)
       window.retriever_contains_name = ''
+      window.retriever_contains_state = ''
       load_retrievers_list()
 
     window.setInterval(load_retrievers_list, 5000)
@@ -187,3 +193,12 @@ jQuery ->
     search_contains: true,
     no_results_text: 'Aucun résultat correspondant à'
   })
+
+  $('select#account_id').on 'change', (e)->
+    $('#retrievers #account_id_form').submit()
+
+  $('#retrievers a.disabled').on 'click', (e)->
+    $('#retrievers .hint_selection').remove()
+    text = $(this).attr('title')
+    $('#retrievers #account_id_form #account_id_chosen').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
+    $('#retrievers .hint_selection').delay(2500).fadeOut('fast')

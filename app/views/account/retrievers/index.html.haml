@@ -12,6 +12,8 @@
       = form_tag account_retrievers_path, method: :get, class: 'retriever_search form form-inline margin0bottom' do
         = label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name') + ' :'
         = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
+        = label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state') + ' :'
+        = select_tag 'retriever_contains[state]', options_for_select( retriever_states, (params[:retriever_contains][:state] rescue '') )
         = submit_tag t('filters.action'), class: 'btn btn-primary'
         = link_to icon(icon: 'remove'), account_retrievers_path, class: 'btn reset_filter', title: t('filters.reset')
     .retrievers_list.box

@@ -7,22 +7,18 @@
 %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
   %thead
     %tr
-      - if current_user.is_admin
-        %th F
-        %th B
+      %th= sortable 'users.code', 'Dossier'
       %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
       %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
       %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
-      %th Journal
-      %th.retriever_state= t('activerecord.models.retriever.attributes.state')
+      %th= sortable :journal_name, 'Journal'
+      %th.retriever_state= sortable :state, t('activerecord.models.retriever.attributes.state')
       %th Actions
   %tbody
     - @retrievers.each do |retriever|
       - present retriever do |retriever_presenter|
         %tr
-          - if current_user.is_admin
-            %td= retriever_presenter.fiduceo_state
-            %td= retriever_presenter.budgea_state
+          %td= retriever_presenter.user
           %td= retriever_presenter.capabilities
           %td= retriever_presenter.service_name
           %td= retriever_presenter.name

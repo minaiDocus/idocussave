@@ -13,4 +13,25 @@ module Account::RetrieverHelper
     end
     hsh.to_json
   end
+
+  def retriever_states
+    {
+      '-': '',
+      'OK': 'ready',
+      'Synchronisation en cours': 'configuring',
+      'Suppression en cours': 'destroying',
+      'Sélection de documents': 'waiting_selection',
+      "En attente de l'utilisateur": 'waiting_additionnal_info',
+      'Erreur': 'error',
+      "Demander la création d'un automate": 'unavailable',
+    }
+  end
+
+  def customers_active
+    accounts.active.map { |u| [u, u.id] } || []
+  end
+
+  def link_retriever_options(account)
+    { class: account.try(:id)? '' : 'disabled', title: account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+  end
 end

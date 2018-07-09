@@ -318,6 +318,7 @@ class Retriever < ActiveRecord::Base
     end
 
     def search_for_collection(collection, contains)
+      collection = collection.where(state: contains[:state]) unless contains[:state].blank?
       collection = collection.where('name LIKE ?', "%#{contains[:name]}%") unless contains[:name].blank?
       collection
     end

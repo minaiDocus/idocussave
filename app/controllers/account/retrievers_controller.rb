@@ -5,8 +5,18 @@ class Account::RetrieversController < Account::RetrieverController
   before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
-    @retrievers = Retriever.search_for_collection(@account.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    @is_filter_empty = search_terms(params[:fiduceo_retriever_contains]).empty?
+    if @account
+      retrievers = @account.retrievers
+    else
+      retrievers = Retriever.where(user: accounts)
+    end
+
+    @retrievers = Retriever.search_for_collection(retrievers, search_terms(params[:retriever_contains]))
+                  .joins(:user)
+                  .order("#{sort_column} #{sort_direction}")
+                  .page(params[:page])
+                  .per(params[:per_page])
+    @is_filter_empty = search_terms(params[:retriever_contains]).empty?
     render partial: 'retrievers', locals: { scope: :account } if params[:part].present?
   end
 
