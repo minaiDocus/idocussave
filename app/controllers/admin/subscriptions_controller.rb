@@ -19,6 +19,7 @@ class Admin::SubscriptionsController < Admin::AdminController
     statistics =  StatisticsManager.get_compared_subscription_statistics(statistic_params)
     @organization_count = statistics.size
     @statistics = Kaminari.paginate_array(statistics).page(params[:page]).per(params[:per_page])
+    @statistics_total = calculate_total_of statistics
 
     respond_to do |format|
       format.html  
@@ -70,6 +71,25 @@ class Admin::SubscriptionsController < Admin::AdminController
     ensure
       return options
     end
+  end
+
+  def calculate_total_of(statistics)
+    {
+      basic_package:      statistics.inject(0){ |sum, s| sum + s.options[:basic_package]  },
+      mail_package:       statistics.inject(0){ |sum, s| sum + s.options[:mail_package] },
+      scan_box_package:   statistics.inject(0){ |sum, s| sum + s.options[:scan_box_package] },
+      retriever_package:  statistics.inject(0){ |sum, s| sum + s.options[:retriever_package]  },
+      mini_package:       statistics.inject(0){ |sum, s| sum + s.options[:mini_package] },
+      micro_package:      statistics.inject(0){ |sum, s| sum + s.options[:micro_package]  },
+      annual_package:     statistics.inject(0){ |sum, s| sum + s.options[:annual_package] },
+      upload:             statistics.inject(0){ |sum, s| sum + s.consumption[:upload] },
+      scan:               statistics.inject(0){ |sum, s| sum + s.consumption[:scan] },
+      dematbox_scan:      statistics.inject(0){ |sum, s| sum + s.consumption[:dematbox_scan]  },
+      retriever:          statistics.inject(0){ |sum, s| sum + s.consumption[:retriever]  },
+      customers:          statistics.inject(0){ |sum, s| sum + s.customers.size },
+      new_customers:      statistics.inject(0){ |sum, s| sum + (s.try(:new_customers).try(:size) || 0)  },
+      closed_customers:   statistics.inject(0){ |sum, s| sum + (s.try(:closed_customers).try(:size) || 0) },
+    }
   end
 
 end

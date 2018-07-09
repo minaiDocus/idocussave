@@ -1,4 +1,31 @@
 #subscriptions
+  #detachable_header
+    %table.table.table-condensed.table-striped
+      %thead
+        %tr
+          %th.ths(colspan='3') Information
+          %th.ths(colspan='7') Forfaits
+          %th.ths(colspan='4') Utilisation
+          %th.ths(colspan='3') Clients
+        %tr
+          %th.ths{style: 'width:4%'} période
+          %th.ths organisation
+          %th.ths{style: 'width:7%'} code
+          %th.ths{style: 'width:5%'} basique
+          %th.ths{style: 'width:5%'} courrier
+          %th.ths{style: 'width:5%'} box
+          %th.ths{style: 'width:5%'} automate
+          %th.ths{style: 'width:5%'} mini
+          %th.ths{style: 'width:5%'} micro
+          %th.ths{style: 'width:5%'} annuel
+          %th.ths{style: 'width:5%'} téléversement
+          %th.ths{style: 'width:5%'} numérisation
+          %th.ths{style: 'width:5%'} dematbox
+          %th.ths{style: 'width:5%'} automate
+          %th.ths{style: 'width:5%'} actifs
+          %th.ths{style: 'width:5%'} nouveaux
+          %th.ths{style: 'width:5%'} clôturés
+
   .row-fluid
     .span12
       = render 'layouts/admin/statistics/navigation'
@@ -64,7 +91,7 @@
       = render partial: 'shared/list_options', locals: { collection: @statistics }
   .row-fluid
     .span12
-      %table.table.table-condensed.table-striped.table-bordered.margin1top
+      %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top
         %thead
           %tr
             %th(colspan='3') Information
@@ -72,23 +99,23 @@
             %th(colspan='4') Utilisation
             %th(colspan='3') Clients
           %tr
-            %th période
+            %th{style: 'width:4%'} période
             %th organisation
-            %th code
-            %th basique
-            %th courrier
-            %th box
-            %th automate
-            %th mini
-            %th micro
-            %th annuel
-            %th téléversement
-            %th numérisation
-            %th dematbox
-            %th automate
-            %th actifs
-            %th nouveaux
-            %th clôturés
+            %th{style: 'width:7%'} code
+            %th{style: 'width:5%'} basique
+            %th{style: 'width:5%'} courrier
+            %th{style: 'width:5%'} box
+            %th{style: 'width:5%'} automate
+            %th{style: 'width:5%'} mini
+            %th{style: 'width:5%'} micro
+            %th{style: 'width:5%'} annuel
+            %th{style: 'width:5%'} téléversement
+            %th{style: 'width:5%'} numérisation
+            %th{style: 'width:5%'} dematbox
+            %th{style: 'width:5%'} automate
+            %th{style: 'width:5%'} actifs
+            %th{style: 'width:5%'} nouveaux
+            %th{style: 'width:5%'} clôturés
         %tbody
           - @statistics.each do |statistic|
             %tr
@@ -125,6 +152,25 @@
                 = subscription_customers_popover_content_for(statistic.new_customers, 'positive')
               %td
                 = subscription_customers_popover_content_for(statistic.closed_customers, 'negative')
+          %tr
+            %td.total_footer -
+            %td.total_footer -
+            %td.total_footer -
+            %td.total_footer= @statistics_total[:basic_package]
+            %td.total_footer= @statistics_total[:mail_package]
+            %td.total_footer= @statistics_total[:scan_box_package]
+            %td.total_footer= @statistics_total[:retriever_package]
+            %td.total_footer= @statistics_total[:mini_package]
+            %td.total_footer= @statistics_total[:micro_package]
+            %td.total_footer= @statistics_total[:annual_package]
+            %td.total_footer= @statistics_total[:upload]
+            %td.total_footer= @statistics_total[:scan]
+            %td.total_footer= @statistics_total[:dematbox_scan]
+            %td.total_footer= @statistics_total[:retriever]
+            %td.total_footer= @statistics_total[:customers]
+            %td.total_footer= @statistics_total[:new_customers]
+            %td.total_footer= @statistics_total[:closed_customers]
+
   .row-fluid
     .span12
       = render partial: 'shared/list_options', locals: { collection: @statistics }
