@@ -121,7 +121,13 @@ private
   end
 
   def load_retriever
-    @retriever = @account.retrievers.find params[:id]
+    if @account
+      @retriever = @account.retrievers.find params[:id]
+    else
+      @retriever = Retriever.find params[:id]
+      @account = @retriever.user
+      session[:retrievers_account_id] = @account.id
+    end
   end
 
   def verify_retriever_state

@@ -3,10 +3,13 @@
     - if has_multiple_accounts?
       .row-fluid
         .span12.box
-          - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
-          %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
-            = label_tag :retrievers_account_id, 'Dossier :'
-            = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
+          - if action_name == 'edit'
+            = "Dossier : #{@account}"
+          - else
+            - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
+            %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
+              = label_tag :retrievers_account_id, 'Dossier :'
+              = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
     .row-fluid
       .span3
         .box.sidebar-nav
