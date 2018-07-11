@@ -125,7 +125,7 @@ class PreAssignmentDeliveryService
 
       retry_delivery = true
 
-      ['Le journal est inconnu', 'Le compte est fermé', 'Le compte est absent'].each do |message|
+      ['Le journal est inconnu'].each do |message|
         retry_delivery = false if client.response.message.to_s.match /#{message}/
       end
 
