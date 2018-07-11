@@ -1760,10 +1760,8 @@ ActiveRecord::Schema.define(version: 20180608064725) do
   add_index "pre_assignment_deliveries", ["is_notified"], name: "index_pre_assignment_deliveries_on_is_notified", using: :btree
   add_index "pre_assignment_deliveries", ["is_to_notify"], name: "index_pre_assignment_deliveries_on_is_to_notify", using: :btree
   add_index "pre_assignment_deliveries", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pre_assignment_deliveries", ["pack_name"], name: "index_pre_assignment_deliveries_on_pack_name", using: :btree
   add_index "pre_assignment_deliveries", ["report_id"], name: "report_id", using: :btree
   add_index "pre_assignment_deliveries", ["state"], name: "index_pre_assignment_deliveries_on_state", using: :btree
-  add_index "pre_assignment_deliveries", ["total_item"], name: "index_pre_assignment_deliveries_on_total_item", using: :btree
   add_index "pre_assignment_deliveries", ["user_id"], name: "user_id", using: :btree
 
   create_table "product_option_orders", force: :cascade do |t|
