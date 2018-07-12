@@ -4,12 +4,16 @@
       .row-fluid
         .span12.box
           - if action_name == 'edit'
-            = "Dossier : #{@account}"
+            = "Dossier : "
+            = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
           - else
             - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
             %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
               = label_tag :retrievers_account_id, 'Dossier :'
               = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
+              -if @account.try(:id)
+                %span.icon-arrow-left
+                = link_to 'Aller sur la fiche cliente', account_organization_customer_path(@account.organization, @account)
     .row-fluid
       .span3
         .box.sidebar-nav

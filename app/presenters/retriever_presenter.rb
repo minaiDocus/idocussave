@@ -54,12 +54,7 @@ class RetrieverPresenter < BasePresenter
     if retriever.ready? or retriever.error?
       title = 'Lancer la récupération'
       title = 'Réessayer maintenant' if retriever.error?
-      if organization.present?
-        url = h.run_account_organization_customer_retriever_path(organization, customer, retriever)
-      else
-        url = h.run_account_retriever_path(retriever)
-      end
-      h.link_to icon(icon: 'download'), url, data: { method: :post, confirm: t('actions.confirm') }, title: title, rel: 'tooltip'
+      h.link_to icon(icon: 'download'), '#', class: 'trigger_retriever', data: { id: retriever.id }, title: title, rel: 'tooltip'
     else
       ''
     end
@@ -72,30 +67,6 @@ class RetrieverPresenter < BasePresenter
       'Documents'
     elsif retriever.bank?
       'Op. bancaires'
-    end
-  end
-
-  def fiduceo_state
-    if retriever.fiduceo_connection_not_configured?
-      '-'
-    elsif retriever.fiduceo_connection_successful?
-      icon_ok
-    elsif retriever.fiduceo_connection_failed?
-      icon_not_ok
-    else
-      icon_refresh
-    end
-  end
-
-  def budgea_state
-    if retriever.budgea_connection_not_configured?
-      '-'
-    elsif retriever.budgea_connection_successful?
-      icon_ok
-    elsif retriever.budgea_connection_failed?
-      icon_not_ok
-    else
-      icon_refresh
     end
   end
 

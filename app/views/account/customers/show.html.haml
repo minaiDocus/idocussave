@@ -21,7 +21,7 @@
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.options.is_retriever_authorized
-              %li= link_to "iDo'FacBanque", account_organization_customer_retrievers_path(@organization, @customer)
+              %li= link_to "iDo'FacBanque", account_retrievers_path(account_id: @customer.id)
               %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }

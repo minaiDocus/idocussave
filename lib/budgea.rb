@@ -186,7 +186,12 @@ class Budgea
         headers: headers
       )
       @response = @request.run
-      @response.code == 200
+      if @response.code.in? [200, 404]
+        true
+      else
+        @error_message = @response.body
+        false
+      end
     end
 
     def trigger_connection(id)
@@ -207,6 +212,20 @@ class Budgea
         headers: headers
       )
       run_and_parse_response 'accounts'
+    end
+
+    def get_all_accounts_of(connection_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + '/users/me/connections?expand=all_accounts',
+        method:  :get,
+        proxy:   @settings[:proxy],
+        headers: headers
+      )
+      connections = run_and_parse_response 'connections'
+      connections.each do |connection|
+        return connection['all_accounts'] if connection['id'].to_s == connection_id.to_s
+      end
+      []
     end
 
     def get_transactions(account_id, min_date=nil, max_date=nil)
@@ -255,6 +274,44 @@ class Budgea
       end
     end
 
+    def get_terms
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + '/terms',
+        method:  :get,
+        proxy:   @settings[:proxy],
+        headers: { accept: :json }
+      )
+      @response = @request.run
+      if @response.code == 200
+        JSON.parse(@response.body)
+      else
+        begin
+          JSON.parse(@response.body)
+        rescue JSON::ParserError
+          @response.body
+        end
+      end
+    end
+
+    def accept_terms(params)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + '/users/me/terms',
+        method:  :post,
+        proxy:   @settings[:proxy],
+        headers: headers,
+        body: params
+      )
+      @response = @request.run
+      unless @response.code == 200
+        begin
+          result = JSON.parse(@response.body)
+          @error_message = "Error: #{result['code']}: #{result['description']}"
+        rescue JSON::ParserError
+          @error_message = @response.body
+        end
+      end
+    end
+
   private
 
     def headers
@@ -282,6 +339,8 @@ class Budgea
                            'Site web indisponible.'
                          when 'bug'
                            'Service indisponible.'
+                         when 'config'
+                           result['description']
                          when 'actionNeeded'
                            'Veuillez confirmer les nouveaux termes et conditions.'
                          else

@@ -9,6 +9,26 @@ div.token-input-dropdown, div.token-input-dropdown-facebook
 body
   background-color: #f2f2f2
 
+.budgea_logo
+  width: 180px
+
+#connectors_list
+  .retriever_index
+    .active
+      color: #3E2F24
+      font-weight: bold
+      font-size: 18px
+      text-decoration: underline
+  .loading
+    color: #3E2F24
+    font-size: 18px
+    margin: 20px
+    animation: blinkingText 1s infinite
+    //Firefox 1+
+    -webkit-animation: blinkingText 1s infinite
+    //Safari 3-4
+    -moz-animation: blinkingText 1s infinite
+
 #retrievers, #retriever
   .box.sidebar-nav
     ul.nav-list
@@ -19,7 +39,7 @@ body
       position: relative
       top: -3px
   .controls
-    input
+    input, textarea
       width: 252px
     input[type="submit"], input[type="reset"], input[type="button"], input[type="radio"], input[type="checkbox"]
       width: auto
@@ -51,3 +71,76 @@ body
     .date
       input
         width: 64px
+
+#budgea_sync
+  #budgea_retrievers
+    .loading
+      color: #3E2F24
+      font-size: 16px
+      animation: blinkingText 1s infinite
+      //Firefox 1+
+      -webkit-animation: blinkingText 1s infinite
+      //Safari 3-4
+      -moz-animation: blinkingText 1s infinite
+  #section2
+    #budgea_bank_accounts
+      #information, #info_selection
+        padding-bottom: 5px
+
+#showCguBI
+  height: 600px
+  width: 878px
+  margin: -250px 0 0 -439px !important
+  .modal-body
+    max-height: 500px
+    overflow: hidden
+    #terms
+      width: 853px
+      height: 430px
+      overflow-y: scroll
+    #controls
+      height: 25px
+
+#showProviderRequest
+  width: auto!important
+  .head
+    color: #333333
+    font-weight: bold
+
+@keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Firefox 1+
+@-webkit-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24
+
+//Safari 3-4
+@-moz-keyframes blinkingText
+  0%
+    color: #3E2F24
+  49%
+    color: transparent
+  50%
+    color: transparent
+  99%
+    color:transparent
+  100%
+    color: #3E2F24

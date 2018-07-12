@@ -7,7 +7,7 @@ class SynchronizeRetriever
   def execute
     logger.info "[#{@retriever.user.code}][Retriever:#{@retriever.budgea_id}][#{@retriever.service_name}] start - #{@retriever.state}"
     start_time = Time.now
-    if @retriever.connector.is_budgea_active?
+    if @retriever.budgea_connector_id.present?
       begin
         $remote_lock.synchronize("create_budgea_account_for_user_id_#{@retriever.user.id}", expiry: 10.seconds) do
           CreateBudgeaAccount.execute(@retriever.user) if @retriever.user.budgea_account.nil?

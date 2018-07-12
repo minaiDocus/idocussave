@@ -11,7 +11,7 @@
         %table.table-condensed
           %tr
             %th= label_tag 'bank_account_contains[retriever_id]', 'Banque'
-            %td= select_tag 'bank_account_contains[retriever_id]', options_for_select(@user.retrievers.banks.map { |e| [e.name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
+            %td= select_tag 'bank_account_contains[retriever_id]', options_for_select(@account.retrievers.banks.map { |e| [e.service_name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
             %td
               = submit_tag t('filters.action'), class: 'btn btn-primary'
               = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')

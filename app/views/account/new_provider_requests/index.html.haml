@@ -1,4 +1,4 @@
-.row-fluid
+#new_provider_requests_list.row-fluid
   .span12
     .box
       %h3 Mes demandes (#{@new_provider_requests.size})
@@ -13,19 +13,50 @@
             %th= sortable :name,       t('activerecord.models.new_provider_request.attributes.name')
             %th= t('activerecord.models.new_provider_request.attributes.url')
             %th= t('activerecord.models.new_provider_request.attributes.email')
-            %th= t('activerecord.models.new_provider_request.attributes.login')
-            %th Action
+            %th Détails
         %tbody
           - @new_provider_requests.each do |new_provider_request|
-            %tr
-              %td= l(new_provider_request.created_at)
-              %td= l(new_provider_request.updated_at)
-              %td= new_provider_request_state(new_provider_request)
-              %td= new_provider_request.name
-              %td= new_provider_request.url
-              %td= new_provider_request.email
-              %td= new_provider_request.login
+            %tr{class: "detail_#{new_provider_request.id}" }
+              %td.created_at= l(new_provider_request.created_at)
+              %td.updated_at= l(new_provider_request.updated_at)
+              %td._state= new_provider_request_state(new_provider_request)
+              %td.name= new_provider_request.name
+              %td.url= new_provider_request.url
+              %td.email= new_provider_request.email
+              %td.hide.login= new_provider_request.login
+              %td.hide.types= new_provider_request.types
+              %td.hide.description= new_provider_request.description
               %td
-                - if new_provider_request.pending?
-                  = link_to icon_edit, edit_account_new_provider_request_path(new_provider_request)
+                = link_to content_tag(:i, '', class: 'icon-eye-open'), '#', title: 'Afficher les détails', data: {id: new_provider_request.id}, class: 'show_provider_request'
       = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
+
+#showProviderRequest.modal.hide.fade
+  .modal-header
+    %a.close{ data: { dismiss: :modal } } ×
+    %h3 Détails de la demande
+  .modal-body
+    %div.clearfix
+      %label.head.pull-left.margin1right= t('activerecord.models.common.attributes.created_at') + ':'
+      .pull-left.created_at
+    %div.clearfix
+      %label.head.pull-left.margin7right= t('activerecord.models.new_provider_request.attributes.state') + ':'
+      .pull-left._state
+    %div.margin1top.margin1bottom
+      %table.table.table-bordered.table-condensed.table-striped{style: "min-width:500px"}
+        %thead
+          %tr
+            %th= t('activerecord.models.new_provider_request.attributes.name')
+            %th= t('activerecord.models.new_provider_request.attributes.url')
+            %th= t('activerecord.models.new_provider_request.attributes.email')
+            %th= t('activerecord.models.new_provider_request.attributes.login')
+            %th= t('activerecord.models.new_provider_request.attributes.types')
+        %tbody
+          %tr
+            %td.name
+            %td.url
+            %td.email
+            %td.login
+            %td.types
+    %div
+      %label.head= t('activerecord.models.new_provider_request.attributes.description') + ':'
+      %p.padding1left.description

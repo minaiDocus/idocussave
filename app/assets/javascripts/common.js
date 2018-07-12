@@ -63,3 +63,19 @@ jQuery(function () {
   // Bind event listener
   $(window).resize(dynamicTopPadding);
 });
+
+function _require(script) {
+    var src = ''
+    $.ajax({
+        url: script,
+        dataType: "script",
+        async: false,
+        success: function (data) {
+          src = data
+        },
+        error: function () {
+          throw new Error("Could not load script " + script);
+        }
+    });
+    return src;
+}

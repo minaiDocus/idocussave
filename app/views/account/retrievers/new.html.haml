@@ -1,6 +1,9 @@
 .row-fluid
   .span12
     .box
-      %h3 Configuration d'un nouveau récupérateur
-    .box{ style: 'padding-bottom:0;' }
-      = render partial: 'form'
+      .row-fluid
+        .span8.padding1top
+          %h3 Configuration d'un nouveau récupérateur
+        .span4
+          = image_tag('application/budgealogo.png', alt: 'Budget Insight', class: 'budgea_logo pull-right')
+    = render partial: 'form'

@@ -1,9 +1,10 @@
+= hidden_field_tag :retriever_budgea_config, @bi_config
 .row-fluid
   .span12
     .box
       .row-fluid
         .span6
-          %h3 Mes automates (#{@retrievers.size})
+          %h3 Mes automates (#{@retrievers.total_count})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
           / Information obsolète

@@ -35,36 +35,6 @@ class BudgeaTransactionFetcher
                   account['number']
                 ).first
 
-                # if bank_account
-                #   # NOTE 'deleted' type is datetime
-                #   if account['deleted'].present?
-                #     bank_account.operations.update_all(api_id: nil)
-                #     bank_account.destroy
-                #     bank_account = nil
-                #     deleted_bank_account_count += 1
-                #   else
-                #     bank_account.retriever         = retriever
-                #     bank_account.api_id            = account['id']
-                #     bank_account.api_name          = 'budgea'
-                #     bank_account.name              = account['name']
-                #     bank_account.type_name         = account['type']
-                #     bank_account.original_currency = account['currency']
-                #     bank_account.save if bank_account.changed?
-                #   end
-                # else
-                #   bank_account = BankAccount.new
-                #   bank_account.user              = @user
-                #   bank_account.retriever         = retriever
-                #   bank_account.api_id            = account['id']
-                #   bank_account.bank_name         = retriever.service_name
-                #   bank_account.name              = account['name']
-                #   bank_account.number            = account['number']
-                #   bank_account.type_name         = account['type']
-                #   bank_account.original_currency = account['currency']
-                #   bank_account.save
-                #   new_bank_account_count += 1
-                # end
-
                 @transactions = client.get_transactions account['id'], @min_date, @max_date
 
                 if bank_account && @transactions.present?
@@ -132,11 +102,7 @@ class BudgeaTransactionFetcher
   private
 
     def find_orphaned_operation(bank_account, transaction)
-      operations = if bank_account.retriever.connector.is_fiduceo_active?
-        bank_account.user.sandbox_operations
-      else
-        bank_account.user.operations
-      end
+      operations = bank_account.user.operations
 
       orphaned_operation = operations.where(
         date:       transaction['date'],
@@ -203,9 +169,6 @@ class BudgeaTransactionFetcher
         @client = token.nil? ? nil : Budgea::Client.new(token)
       end
       @client
-
-      # user_id = 1339
-      # @client ||= Budgea::Client.new 'VNEr6s0xI8ZIho8/zna1uNP81yxHFccb'
     end
 
     def logger

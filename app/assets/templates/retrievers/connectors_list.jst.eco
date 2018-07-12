@@ -1,0 +1,48 @@
+<div class='box'>
+  <h3>Liste des automates disponibles</h3>
+</div>
+<div class='box'>
+  <div class='row-fluid'>
+    <table class='table retriever_index'>
+      <tbody>
+        <tr>
+          <td>
+            <a href='#' class='index_filter <% if @active == '': %>active<% end %>' data-filter="">Tous</a>
+          </td>
+          <td>
+            <a href='#' class='index_filter <% if @active == '[0-9]': %>active<% end %>' data-filter="[0-9]" >(1-9)</a>
+          </td>
+          <% for ind in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] : %>
+            <td>
+              <a href='#' class='index_filter <% if @active == ind: %>active<% end %>' data-filter="<%= ind %>"><%= ind %></a>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class='box'>
+  <div class='row-fluid'>
+    <%if @loading: %>
+      <div class='span12 loading'>Chargement en cours ...</span>
+    <% else: %>
+      <div class='span6'>
+        <h3>Documents (<%= @providers.length %>)</h3>
+        <ul>
+          <% for connector in @providers: %>
+            <li><a href='new?connector_id=<%= connector.get('id') %>' class='connector' data-id={<%=  %>}><%= connector.get('name') %></a></li>
+          <% end %>
+        </ul>
+      </div>
+      <div class='span6'>
+        <h3>Banques (<%= @banks.length %>)</h3>
+        <ul>
+          <% for connector in @banks: %>
+            <li><a href='new?connector_id=<%= connector.get('id') %>' class='connector' data-id={<%= connector.get('id') %>}><%= connector.get('name') %></a></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</div>

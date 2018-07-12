@@ -9,19 +9,15 @@ class NewProviderRequest < ActiveRecord::Base
   attr_encrypted :description, random_iv: true
   attr_encrypted :message,     random_iv: true
   attr_encrypted :email,       random_iv: true
-  attr_encrypted :password,    random_iv: true
   attr_encrypted :types,       random_iv: true
 
   validates :encrypted_url,         symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_url.nil? }
-  validates :encrypted_login,       symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_login.nil? }
   validates :encrypted_description, symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_description.nil? }
   validates :encrypted_message,     symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_message.nil? }
   validates :encrypted_email,       symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_email.nil? }
-  validates :encrypted_password,    symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_password.nil? }
   validates :encrypted_types,       symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_types.nil? }
 
   validates_presence_of :name, :url
-  validates_presence_of :password, :types, if: :edited_by_customer
   validate :presence_of_login
 
   scope :pending,                 -> { where(state: 'pending') }
@@ -129,7 +125,7 @@ class NewProviderRequest < ActiveRecord::Base
     end
   end
 
-private
+  private
 
   def presence_of_login
     unless email.present? || login.present?
@@ -137,4 +133,5 @@ private
       errors.add(:login, :blank)
     end
   end
+
 end

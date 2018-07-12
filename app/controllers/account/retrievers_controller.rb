@@ -1,8 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrieversController < Account::RetrieverController
-  before_filter :load_retriever, except: %w(index list new create)
-  before_filter :verify_retriever_state, except: %w(index list new create)
-  before_filter :load_connectors, only: %w(list new create edit update)
+  before_filter :load_budgea_config
+  before_filter :load_retriever, except: %w(index list new)
+  before_filter :verify_retriever_state, except: %w(index list new)
+  before_filter :load_retriever_edition, only: %w(new edit)
 
   def index
     if @account
@@ -24,73 +25,13 @@ class Account::RetrieversController < Account::RetrieverController
   end
 
   def new
-    @retriever = Retriever.new
-    @retriever.connector_id = params[:connector_id]
-  end
-
-  def create
-    @retriever = Retriever.new(retriever_params)
-    @retriever.confirm_dyn_params = true
-    @retriever.user = @account
-    if @retriever.save
-      flash[:success] = 'Création en cours.'
+    if params[:create] == '1'
+      flash[:success] = 'Edition terminée'
       redirect_to account_retrievers_path
-    else
-      render :new
     end
   end
 
   def edit
-  end
-
-  def update
-    if UpdateRetriever.new(@retriever, retriever_params).execute
-      if @retriever.configuring?
-        flash[:success] = 'Configuration en cours.'
-      else
-        flash[:success] = 'Modifié avec succès.'
-      end
-      redirect_to account_retrievers_path
-    else
-      render :edit
-    end
-  end
-
-  def destroy
-    if @retriever.unavailable?
-      if @retriever.bank_accounts.any?
-        Operation.where(bank_account_id: @retriever.bank_accounts.map(&:id)).update_all(api_id: nil)
-        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id))
-      end
-      @retriever.destroy
-      flash[:success] = 'Supprimé avec succès.'
-    else
-      if @retriever.destroy_connection
-        flash[:success] = 'Suppression en cours.'
-      else
-        flash[:error] = 'Impossible de supprimer.'
-      end
-    end
-    redirect_to account_retrievers_path
-  end
-
-  def run
-    @retriever.run
-    flash[:success] = 'Traitement en cours...'
-    redirect_to account_retrievers_path
-  end
-
-  def waiting_additionnal_info
-  end
-
-  def additionnal_info
-    if @retriever.update(answers: params[:answers])
-      @retriever.configure_connection
-      flash[:success] = 'Traitement en cours...'
-      redirect_to account_retrievers_path
-    else
-      render :waiting_additionnal_info
-    end
   end
 
 private
@@ -104,21 +45,6 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def retriever_params
-    dyn_attrs = [
-      { param1: [:name, :value] },
-      { param2: [:name, :value] },
-      { param3: [:name, :value] },
-      { param4: [:name, :value] },
-      { param5: [:name, :value] }
-    ]
-    if action_name == 'update'
-      params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)
-    else
-      params.require(:retriever).permit(:connector_id, :journal_id, :name, *dyn_attrs)
-    end
-  end
 
   def load_retriever
     if @account
@@ -139,8 +65,6 @@ private
       elsif @retriever.ready? || @retriever.error?
         is_ok = true unless action_name == 'run' && @retriever.budgea_id.nil?
       end
-    elsif action_name.in?(%w(waiting_additionnal_info additionnal_info)) && @retriever.waiting_additionnal_info?
-      is_ok = true
     end
 
     unless is_ok
@@ -149,9 +73,28 @@ private
     end
   end
 
-  def load_connectors
-    @connectors = Connector.budgea.order(name: :asc).list
-    @providers  = Connector.budgea.providers.order(name: :asc)
-    @banks      = Connector.budgea.banks.order(name: :asc)
+  def load_retriever_edition
+    @account.update_authentication_token unless @account.authentication_token.present?
+    @user_token = @account.authentication_token
+    @bi_token = @account.try(:budgea_account).try(:access_token)
+    @journals = @account.account_book_types.map do |journal|
+      "#{journal.id}:#{journal.name}"
+    end.join("_")
+    @cgu_accepted = @account.try(:budgea_account).try(:cgu_accepted)
+  end
+
+  def pattern_index
+    return '[0-9]' if params[:index] == 'number'
+    params[:index].to_s
+  end
+
+  def load_budgea_config
+    bi_config = {
+                  url:    "https://#{Budgea.config.domain}/2.0",
+                  c_id:   Budgea.config.client_id,
+                  c_ps:   Budgea.config.client_secret,
+                  proxy:  Budgea.config.proxy
+                }.to_json
+    @bi_config = Base64.encode64(bi_config.to_s)
   end
 end

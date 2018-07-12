@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
+<<<<<<< HEAD
     t.string  "a1_name",        limit: 255
     t.decimal "a1_ventilation",             precision: 5, scale: 2, default: 0.0
     t.string  "a1_axis1",       limit: 255
@@ -184,7 +185,30 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.string  "a3_axis1",       limit: 255
     t.string  "a3_axis2",       limit: 255
     t.string  "a3_axis3",       limit: 255
+=======
+    t.integer "temp_document_id", limit: 4
+    t.integer "pack_piece_id",    limit: 4
+    t.string  "analytic_id",      limit: 255
+    t.string  "a1_axis1",         limit: 255
+    t.string  "a1_axis2",         limit: 255
+    t.string  "a1_axis3",         limit: 255
+    t.string  "a1_name",          limit: 45
+    t.decimal "a1_ventilation",               precision: 5, scale: 2, default: 0.0
+    t.string  "a2_name",          limit: 255
+    t.decimal "a2_ventilation",               precision: 5, scale: 2, default: 0.0
+    t.string  "a2_axis1",         limit: 255
+    t.string  "a2_axis2",         limit: 255
+    t.string  "a2_axis3",         limit: 255
+    t.string  "a3_name",          limit: 255
+    t.decimal "a3_ventilation",               precision: 5, scale: 2, default: 0.0
+    t.string  "a3_axis1",         limit: 255
+    t.string  "a3_axis2",         limit: 255
+    t.string  "a3_axis3",         limit: 255
+>>>>>>> f5d0c53... New agent budgea system
   end
+
+  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
+  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
@@ -348,7 +372,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
   add_index "csv_descriptors", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "currency_rates", force: :cascade do |t|
-    t.datetime "date"
+    t.datetime "date_rate"
     t.string   "exchange_from",         limit: 5
     t.string   "exchange_to",           limit: 5
     t.string   "currency_name",         limit: 255
@@ -358,7 +382,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.datetime "updated_at"
   end
 
-  add_index "currency_rates", ["date", "exchange_from", "exchange_to"], name: "index_exchange_name_date", using: :btree
+  add_index "currency_rates", ["date_rate", "exchange_from", "exchange_to"], name: "index_exchange_name_date", using: :btree
 
   create_table "dba_sequences", force: :cascade do |t|
     t.string   "mongo_id",     limit: 255
@@ -1003,7 +1027,6 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.text     "encrypted_description", limit: 65535
     t.text     "encrypted_message",     limit: 65535
     t.string   "encrypted_email",       limit: 255
-    t.string   "encrypted_password",    limit: 255
     t.string   "encrypted_types",       limit: 255
   end
 
@@ -1335,7 +1358,6 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.integer  "analytic_reference_id",      limit: 4
   end
 
-  add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
   add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
   add_index "pack_pieces", ["name"], name: "index_pack_pieces_on_name", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
@@ -1895,40 +1917,26 @@ ActiveRecord::Schema.define(version: 20180907075002) do
   add_index "retrieved_data", ["user_id"], name: "fk_rails_c47071c4c1", using: :btree
 
   create_table "retrievers", force: :cascade do |t|
-    t.integer  "budgea_id",                  limit: 4
-    t.string   "fiduceo_id",                 limit: 255
-    t.string   "fiduceo_transaction_id",     limit: 255
-    t.string   "name",                       limit: 255
-    t.text     "additionnal_fields",         limit: 65535
-    t.string   "journal_name",               limit: 255
+    t.integer  "budgea_id",              limit: 4
+    t.string   "name",                   limit: 255
+    t.string   "journal_name",           limit: 255
     t.datetime "sync_at"
-    t.boolean  "is_sane",                                  default: true
-    t.boolean  "is_new_password_needed",                   default: false
-    t.boolean  "is_selection_needed",                      default: true
-    t.string   "state",                      limit: 255
-    t.string   "error_message",              limit: 255
-    t.string   "budgea_state",               limit: 255
-    t.text     "budgea_additionnal_fields",  limit: 65535
-    t.string   "budgea_error_message",       limit: 255
-    t.string   "fiduceo_state",              limit: 255
-    t.text     "fiduceo_additionnal_fields", limit: 65535
-    t.string   "fiduceo_error_message",      limit: 255
-    t.datetime "created_at",                                               null: false
-    t.datetime "updated_at",                                               null: false
-    t.integer  "user_id",                    limit: 4
-    t.integer  "journal_id",                 limit: 4
-    t.integer  "connector_id",               limit: 4
-    t.string   "service_name",               limit: 255
-    t.text     "capabilities",               limit: 65535
-    t.text     "encrypted_param1",           limit: 65535
-    t.text     "encrypted_param2",           limit: 65535
-    t.text     "encrypted_param3",           limit: 65535
-    t.text     "encrypted_param4",           limit: 65535
-    t.text     "encrypted_param5",           limit: 65535
-    t.text     "encrypted_answers",          limit: 65535
+    t.boolean  "is_sane",                              default: true
+    t.boolean  "is_new_password_needed",               default: false
+    t.boolean  "is_selection_needed",                  default: true
+    t.string   "state",                  limit: 255
+    t.string   "error_message",          limit: 255
+    t.string   "budgea_state",           limit: 255
+    t.string   "budgea_error_message",   limit: 255
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.integer  "user_id",                limit: 4
+    t.integer  "journal_id",             limit: 4
+    t.integer  "budgea_connector_id",    limit: 4
+    t.string   "service_name",           limit: 255
+    t.text     "capabilities",           limit: 65535
   end
 
-  add_index "retrievers", ["connector_id"], name: "index_retrievers_on_connector_id", using: :btree
   add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree
   add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
   add_index "retrievers", ["user_id"], name: "index_retrievers_on_user_id", using: :btree
@@ -2128,6 +2136,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.string   "user_id_mongo_id",                    limit: 255
     t.integer  "organization_id",                     limit: 4
     t.string   "organization_id_mongo_id",            limit: 255
+    t.boolean  "is_ocr_active",                                   default: true,  null: false
   end
 
   add_index "subscriptions", ["mongo_id"], name: "index_subscriptions_on_mongo_id", using: :btree
@@ -2215,10 +2224,9 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id",                   limit: 4
     t.integer  "ibizabox_folder_id",             limit: 4
-    t.integer  "analytic_reference_id",          limit: 4
+    t.integer  "analytic_reference_id",          limit: 4,          default: 0
   end
 
-  add_index "temp_documents", ["analytic_reference_id"], name: "index_temp_documents_on_analytic_reference_id", using: :btree
   add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
   add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
   add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree
@@ -2288,6 +2296,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
     t.integer  "preseizure_date_option",          limit: 4,   default: -1
+    t.boolean  "is_ocr_authorized",                           default: false,        null: false
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end
