@@ -56,7 +56,7 @@ class McfApi
         'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile',
         method:  :post,
         headers: { accept: :json },
-        timeout: 10,
+        timeout: 20,
         body:    {
           AccessToken:    @access_token,
           AttributeName:  "Storage",
@@ -77,7 +77,9 @@ class McfApi
             { path: File.join(remote_storage, info['Path']), md5: info['Md5'] }
           end
         end
-     else
+      elsif @response.code.nil? || @response.code == 0
+        []
+      else
         raise Errors::Unknown.new("#{@response.code} / verif=> #{@response.body}")
       end
     end
@@ -108,7 +110,7 @@ class McfApi
         uri,
         method:  :post,
         headers: { accept: :json },
-        timeout: 10,
+        timeout: 20,
         body: params   
       )
       @request.run
