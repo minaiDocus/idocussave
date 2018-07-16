@@ -50,7 +50,7 @@ class SendToMcf < SendToStorage
   end
 
   def retryable_failure?(error)
-    error.is_a?(McfApi::Errors::Unauthorized)
+    error.is_a?(McfApi::Errors::Unauthorized) || error.is_a?(McfApi::Errors::Unknown)
   end
 
   def manageable_failure?(error)

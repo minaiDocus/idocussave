@@ -56,7 +56,7 @@ module DeliverFile
             if mcf_storage.present?
               path_pattern = Pathname.new '/' + mcf_storage
               path_pattern = path_pattern.join receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
-              SendToMcf.new(receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger).execute
+              SendToMcf.new(receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger, max_retries: 4).execute
             else
               remote_files.each(&:cancel!)
             end

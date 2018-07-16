@@ -78,7 +78,7 @@ class McfApi
           end
         end
      else
-        raise Errors::Unknown.new(@response.body)
+        raise Errors::Unknown.new("#{@response.code} / verif=> #{@response.body}")
       end
     end
 
@@ -92,14 +92,14 @@ class McfApi
         elsif data['Message'].match(/(access token doesn't exist|argument missing AccessToken)/i)
           raise Errors::Unauthorized
         else
-          raise Errors::Unknown.new(data.to_s)
+          raise Errors::Unknown.new("#{@response.code} / response=> #{data.to_s}")
         end
       else
         error_mess = @response.code if @response.code.present?
         error_mess = @response.return_code if @response.return_code.present?
         error_mess = @response.body if @response.body.present?
 
-        raise Errors::Unknown.new(error_mess)
+        raise Errors::Unknown.new("#{@response.code} / response=> #{error_mess}")
       end
     end
 

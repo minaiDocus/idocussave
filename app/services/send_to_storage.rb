@@ -7,7 +7,7 @@ class SendToStorage
     @storage = storage
     @options = {
       max_number_of_threads: max_number_of_threads,
-      max_retries:           8,
+      max_retries:           (options[:max_retries] || 8),
       chunk_size:            150.megabytes,
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
