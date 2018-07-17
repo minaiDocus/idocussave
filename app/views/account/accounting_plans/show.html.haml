@@ -30,15 +30,15 @@
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom
         %thead
           %tr
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.code')
         %tbody
           - @accounting_plan.providers.each do |provider|
             %tr
-              %td= provider.third_party_account
               %td= provider.third_party_name
+              %td= provider.third_party_account
               %td= provider.conterpart_account
               %th= provider.code
     .span6.box
@@ -56,14 +56,14 @@
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom
         %thead
           %tr
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
             %th= t('activerecord.models.accounting_plan_item.attributes.code')
         %tbody
           - @accounting_plan.customers.each do |customer|
             %tr
-              %td= customer.third_party_account
               %td= customer.third_party_name
+              %td= customer.third_party_account
               %td= customer.conterpart_account
               %td= customer.code
