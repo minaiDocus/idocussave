@@ -115,7 +115,7 @@ class PreseizuresToCsv
           when /\Alettering\z/
             entry.account.lettering
           when /\Aother\z/
-            part[1].presence || ''
+            part[1].nil? ? '' : part[1]
           when /\Aseparator\z/
             ';'
           else ''
