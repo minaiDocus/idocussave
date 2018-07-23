@@ -366,6 +366,7 @@
         <tr>
           <th>Nom des documents</th>
           <th class="center">Pièces</th>
+          <th class="center">Pré-aff.</th>
           <th class="center">Feuilles</th>
           <th class="center">Pages</th>
           <th class="center">Attaches</th>
@@ -396,6 +397,7 @@
               {% } %}
             </td>
             <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %}, {%= o.documents.list[i].retrieved_pieces %})</td>
+            <td class="center">{%= o.documents.list[i].pre_assignments %}</td>
             <td class="center">{%= o.documents.list[i].scanned_sheets %}</td>
             <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %}, {%= o.documents.list[i].retrieved_pages %})</td>
             <td class="center">{%= o.documents.list[i].paperclips %}</td>
@@ -417,6 +419,7 @@
         <tr>
           <td><b>Total</b></td>
           <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %}, {%= o.documents.total.retrieved_pieces %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pre_assignments %}<b/></td>
           <td class="center"><b>{%= o.documents.total.scanned_sheets %}</b></td>
           <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %}, {%= o.documents.total.retrieved_pages %})</b></td>
           <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>

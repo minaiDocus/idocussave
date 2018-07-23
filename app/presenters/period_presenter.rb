@@ -28,6 +28,7 @@ class PeriodPresenter
     total = {}
     total[:pages]  = 0
     total[:pieces] = 0
+    total[:pre_assignments] = 0
 
     total[:scanned_pages]  = 0
     total[:scanned_pieces] = 0
@@ -56,17 +57,21 @@ class PeriodPresenter
         if pack
           list[:historic] = pack.content_historic.each { |h| h[:date] = h[:date].strftime('%d/%m/%Y') }
           list[:link] = Rails.application.routes.url_helpers.account_documents_path(pack_name: pack.name)
+          pre_assignments = pack.pieces.inject(0){ |c, p| c += p.preseizures.count }
         else
           list[:historic] = ''
           list[:link] = '#'
+          pre_assignments = 0
         end
       rescue
         list[:historic] = ''
         list[:link] = '#'
+        pre_assignments = 0
       end
 
       list[:pages]  = document.pages.to_s
       list[:pieces] = document.pieces.to_s
+      list[:pre_assignments] = pre_assignments.to_s
 
       list[:scanned_pages]  = document.scanned_pages.to_s
       list[:scanned_pieces] = document.scanned_pieces.to_s
@@ -102,6 +107,7 @@ class PeriodPresenter
 
       total[:pages]  += document.pages
       total[:pieces] += document.pieces
+      total[:pre_assignments] += pre_assignments
 
       total[:scanned_pages]  += document.scanned_pages
       total[:scanned_pieces] += document.scanned_pieces
@@ -122,6 +128,7 @@ class PeriodPresenter
 
     total[:pages]  = total[:pages].to_s
     total[:pieces] = total[:pieces].to_s
+    total[:pre_assignments] = total[:pre_assignments].to_s
 
     total[:scanned_pages]  = total[:scanned_pages].to_s
     total[:scanned_pieces] = total[:scanned_pieces].to_s
