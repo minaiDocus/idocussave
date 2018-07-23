@@ -44,6 +44,7 @@ class IbizaboxImport
     @folder  = folder
     @user    = folder.user
     @journal = folder.journal
+    @journal_ref = @journal.pseudonym.presence || @journal.name
     @initial_documents_count = folder.temp_documents(true).size
   end
 
@@ -85,14 +86,12 @@ class IbizaboxImport
   end
 
   def accessible_ibiza_journal
-    journal_ref = @folder.journal.pseudonym.presence || @folder.journal.name
-
     client.request.clear
     client.company(@user.ibiza_id).journal
-    client.request.path += "/#{journal_ref}"
+    client.request.path += "/#{@journal_ref}"
     client.request.run
 
-    if client.response.success? && journal_ref
+    if client.response.success? && @journal_ref.present?
       xml_data = client.response.body.force_encoding('UTF-8')
       valid = xml_data.match /<presentInGed>1<\/presentInGed>/
     else
@@ -120,7 +119,7 @@ class IbizaboxImport
   def get_ibiza_folder_contents(period)
     client.request.clear
     client.company(@user.ibiza_id).box.accountingdocuments
-    client.request.path += "?" + URI.escape("journal=#{@journal.pseudonym}&period=#{period}")
+    client.request.path += "?" + URI.escape("journal=#{@journal_ref}&period=#{period}")
     client.request.run
 
     if client.response.success?
