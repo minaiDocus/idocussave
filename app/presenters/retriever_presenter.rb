@@ -54,7 +54,7 @@ class RetrieverPresenter < BasePresenter
     if retriever.ready? or retriever.error?
       title = 'Lancer la récupération'
       title = 'Réessayer maintenant' if retriever.error?
-      h.link_to icon(icon: 'download'), '#', class: 'trigger_retriever', data: { id: retriever.id }, title: title, rel: 'tooltip'
+      h.link_to icon(icon: 'download'), '#', class: "trigger_retriever trigger_retriever_#{retriever.id}", data: { id: retriever.id }, title: title, rel: 'tooltip'
     else
       ''
     end

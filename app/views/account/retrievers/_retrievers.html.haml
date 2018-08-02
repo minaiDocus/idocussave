@@ -31,5 +31,5 @@
                 = retriever_presenter.action_link
               = link_to icon_edit, edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip'
             - if retriever.ready? || retriever.error? || retriever.unavailable?
-              = link_to icon_destroy, '#', class: 'destroy_retriever', data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
+              = link_to icon_destroy, '#', class: "destroy_retriever destroy_retriever_#{retriever.id}", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
 = render partial: 'account/retrievers/list_options'

@@ -2,9 +2,9 @@ _require("/assets/budgea_api.js")
 
 Idocus.vent = _.extend({}, Backbone.Events)
 
-jQuery ->
-  window.clearInterval(refreshRetrievers)
+Idocus.refreshRetrieversTimer = null
 
+jQuery ->
   if $('#budgea_sync').length > 0
     router = new Idocus.Routers.BudgeaRetrieversRouter()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
@@ -25,6 +25,21 @@ jQuery ->
 
   if $('.retrievers_list').length > 0
     budgeaApi = new Idocus.BudgeaApi()
+
+    refreshRetrievers = (id)->
+      if Idocus.refreshRetrieversTimer == null
+        load_retrievers_list()
+        Idocus.refreshRetrieversTimer = window.setInterval(load_retrievers_list, 10000)
+      if id != undefined && id != null
+        $('.destroy_retriever_'+id).show()
+        $('.trigger_retriever_'+id).show()
+
+    releaseRetrieversTimer = (id)->
+      window.clearInterval(Idocus.refreshRetrieversTimer)
+      Idocus.refreshRetrieversTimer = null
+      if id != undefined && id != null
+        $('.destroy_retriever_'+id).hide()
+        $('.trigger_retriever_'+id).hide()
 
     load_retrievers_list = (url) ->
       _url = ''
@@ -72,26 +87,35 @@ jQuery ->
             e.preventDefault()
             if confirm('Voulez-vous vraiment supprimer cette automate?')
               id = $(this).attr('data-id')
+              releaseRetrieversTimer(id)
               $('.state_field_'+id).html('<span class="label">Suppression en cours</span>')
               budgeaApi.delete_connection(id).then(
-                null,
-                ()-> $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
+                ()->
+                  refreshRetrievers(id)
+                ()->
+                  refreshRetrievers(id)
+                  $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
               )
 
           $('.trigger_retriever').bind 'click', (e)->
             e.preventDefault()
             if confirm('Voulez-vous vraiment synchroniser cette automate?')
               id = $(this).attr('data-id')
+              releaseRetrieversTimer(id)
               $('.state_field_'+id).html('<span class="label">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
-                null,
-                ()-> $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
+                ()->
+                  refreshRetrievers(id)
+                ()->
+                  refreshRetrievers(id)
+                  $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
               )
 
+    releaseRetrieversTimer()
     window.retriever_contains_name = ''
     window.retriever_contains_state = ''
     window.retrievers_url = 'retrievers?part=true'
-    load_retrievers_list()
+    refreshRetrievers()
 
     $('.retriever_search.form').on 'submit', (e) ->
       window.retriever_contains_name = $('#retriever_contains_name').val()
@@ -110,8 +134,6 @@ jQuery ->
       window.retriever_contains_name = ''
       window.retriever_contains_state = ''
       load_retrievers_list()
-
-    refreshRetrievers = window.setInterval(load_retrievers_list, 10000)
 
   if $('#retrievers .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
     $('a.toggle_filter').click (e) ->

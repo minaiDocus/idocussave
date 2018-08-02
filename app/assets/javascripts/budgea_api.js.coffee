@@ -248,7 +248,7 @@ class Idocus.BudgeaApi
       else
         remote_method = "PUT"
 
-      local_fetch = (params)->
+      local_request = (params)->
           self.local_fetch({
             url: "/retriever/#{type}"
             data: params
@@ -261,11 +261,11 @@ class Idocus.BudgeaApi
           self.remote_fetch({
             url: "/users/me/connections/#{budgea_id}"
             type: remote_method
-            onSuccess: (data)-> local_fetch({id: id, success: true, data_remote: data})
-            onError: (error)-> local_fetch({id: id, success: false, error_message: error})
+            onSuccess: (data)-> local_request({id: id, success: true, data_remote: data})
+            onError: (error)-> local_request({id: id, success: false, error_message: error})
           })
         else
-          local_fetch({ id: id, success: true, data_remote: {} })
+          local_request({ id: id, success: true, data_remote: {} })
 
       self.local_fetch({
         url: "/retriever/get_retriever_infos"

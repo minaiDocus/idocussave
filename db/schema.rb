@@ -1028,6 +1028,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.text     "encrypted_message",     limit: 65535
     t.string   "encrypted_email",       limit: 255
     t.string   "encrypted_types",       limit: 255
+    t.string   "encrypted_password",    limit: 255
   end
 
   add_index "new_provider_requests", ["mongo_id"], name: "index_new_provider_requests_on_mongo_id", using: :btree
@@ -1917,24 +1918,38 @@ ActiveRecord::Schema.define(version: 20180907075002) do
   add_index "retrieved_data", ["user_id"], name: "fk_rails_c47071c4c1", using: :btree
 
   create_table "retrievers", force: :cascade do |t|
-    t.integer  "budgea_id",              limit: 4
-    t.string   "name",                   limit: 255
-    t.string   "journal_name",           limit: 255
+    t.integer  "budgea_id",                  limit: 4
+    t.string   "name",                       limit: 255
+    t.string   "journal_name",               limit: 255
     t.datetime "sync_at"
-    t.boolean  "is_sane",                              default: true
-    t.boolean  "is_new_password_needed",               default: false
-    t.boolean  "is_selection_needed",                  default: true
-    t.string   "state",                  limit: 255
-    t.string   "error_message",          limit: 255
-    t.string   "budgea_state",           limit: 255
-    t.string   "budgea_error_message",   limit: 255
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
-    t.integer  "user_id",                limit: 4
-    t.integer  "journal_id",             limit: 4
-    t.integer  "budgea_connector_id",    limit: 4
-    t.string   "service_name",           limit: 255
-    t.text     "capabilities",           limit: 65535
+    t.boolean  "is_sane",                                  default: true
+    t.boolean  "is_new_password_needed",                   default: false
+    t.boolean  "is_selection_needed",                      default: true
+    t.string   "state",                      limit: 255
+    t.string   "error_message",              limit: 255
+    t.string   "budgea_state",               limit: 255
+    t.string   "budgea_error_message",       limit: 255
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
+    t.integer  "user_id",                    limit: 4
+    t.integer  "journal_id",                 limit: 4
+    t.integer  "budgea_connector_id",        limit: 4
+    t.string   "service_name",               limit: 255
+    t.text     "capabilities",               limit: 65535
+    t.text     "encrypted_answers",          limit: 65535
+    t.text     "encrypted_param5",           limit: 65535
+    t.text     "encrypted_param4",           limit: 65535
+    t.text     "encrypted_param3",           limit: 65535
+    t.text     "encrypted_param2",           limit: 65535
+    t.text     "encrypted_param1",           limit: 65535
+    t.integer  "connector_id",               limit: 4
+    t.string   "fiduceo_error_message",      limit: 255
+    t.text     "fiduceo_additionnal_fields", limit: 65535
+    t.string   "fiduceo_state",              limit: 255
+    t.text     "budgea_additionnal_fields",  limit: 65535
+    t.text     "additionnal_fields",         limit: 65535
+    t.string   "fiduceo_transaction_id",     limit: 255
+    t.string   "fiduceo_id",                 limit: 255
   end
 
   add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree

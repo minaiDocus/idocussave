@@ -39,27 +39,6 @@ class Budgea
       @access_token = access_token
     end
 
-    def create_user
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/auth/init',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        body:  authentification_params
-      )
-      @response = @request.run
-      if @response.code == 200
-        result = JSON.parse(@response.body)
-        if result['type'] == 'permanent'
-          @access_token = result['auth_token']
-        else
-          false
-        end
-      else
-        false
-      end
-    end
-
     def destroy_user
       if @access_token.present?
         @request = Typhoeus::Request.new(
@@ -80,29 +59,6 @@ class Budgea
       end
     end
 
-    def get_banks
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/banks?expand=fields',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        params:  authentification_params
-      )
-      run_and_parse_response 'banks'
-    end
-
-    def get_providers
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/providers?expand=fields',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        params:  authentification_params
-      )
-      # NOTE it is really 'banks' here...
-      run_and_parse_response 'banks'
-    end
-
     def get_categories
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/categories',
@@ -112,16 +68,6 @@ class Budgea
         params:  authentification_params
       )
       run_and_parse_response 'categories'
-    end
-
-    def get_profiles
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/profiles',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response 'profiles'
     end
 
     def get_new_access_token(user_id)
@@ -146,66 +92,7 @@ class Budgea
       @response.code == 200
     end
 
-    def request_new_connector(params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/connectors',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        body:  authentification_params.merge(params)
-      )
-      run_and_parse_response
-    end
-
-    def create_connection(params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/connections',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:  params
-      )
-      run_and_parse_response
-    end
-
-    def update_connection(id, params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:    params
-      )
-      run_and_parse_response
-    end
-
-    def destroy_connection(id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :delete,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      @response = @request.run
-      if @response.code.in? [200, 404]
-        true
-      else
-        @error_message = @response.body
-        false
-      end
-    end
-
-    def trigger_connection(id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :put,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response
-    end
-
-    def get_accounts
+    def get_accounts ##used by transaction fetcher
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',
         method:  :get,
@@ -215,21 +102,7 @@ class Budgea
       run_and_parse_response 'accounts'
     end
 
-    def get_all_accounts_of(connection_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/connections?expand=all_accounts',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      connections = run_and_parse_response 'connections'
-      connections.each do |connection|
-        return connection['all_accounts'] if connection['id'].to_s == connection_id.to_s
-      end
-      []
-    end
-
-    def get_transactions(account_id, min_date=nil, max_date=nil)
+    def get_transactions(account_id, min_date=nil, max_date=nil) ##used by transaction fetcher
       request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions#{request_filters}",
@@ -238,19 +111,6 @@ class Budgea
         headers: headers
       )
       run_and_parse_response 'transactions'
-    end
-
-    def get_documents(connection_id=nil)
-      path = '/users/me'
-      path += "/connections/#{connection_id}" if connection_id
-      path += '/documents'
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + path,
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response 'documents'
     end
 
     def get_file(document_id)
@@ -271,44 +131,6 @@ class Budgea
           JSON.parse(@response.body)
         rescue JSON::ParserError
           @response.body
-        end
-      end
-    end
-
-    def get_terms
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/terms',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json }
-      )
-      @response = @request.run
-      if @response.code == 200
-        JSON.parse(@response.body)
-      else
-        begin
-          JSON.parse(@response.body)
-        rescue JSON::ParserError
-          @response.body
-        end
-      end
-    end
-
-    def accept_terms(params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/terms',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body: params
-      )
-      @response = @request.run
-      unless @response.code == 200
-        begin
-          result = JSON.parse(@response.body)
-          @error_message = "Error: #{result['code']}: #{result['description']}"
-        rescue JSON::ParserError
-          @error_message = @response.body
         end
       end
     end
