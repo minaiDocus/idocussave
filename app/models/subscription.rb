@@ -114,7 +114,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def excess_of(value, max_value=nil)
-    return 0 unless is_micro_package_active && current_period.start_date.between?(self.start_date, self.end_date)
+    return 0 unless is_micro_package_active && self.start_date.present? && self.end_date.present? && current_period.start_date.between?(self.start_date, self.end_date)
 
     max_value ||= "max_#{value.to_s}_authorized"
     current_value        = current_period.send(value.to_sym)
