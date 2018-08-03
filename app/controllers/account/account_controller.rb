@@ -48,7 +48,7 @@ class Account::AccountController < ApplicationController
 
   def last_uploads
     @last_uploads = Rails.cache.fetch ['user', @user.id, 'last_uploads', temp_documents_key] do
-      TempDocument.where(user_id: user_ids).upload.order(created_at: :desc).includes({ user: :organization }, :piece, :temp_pack).limit(10).to_a
+      TempDocument.where(user_id: user_ids).where.not(original_file_name: nil).upload.order(created_at: :desc).includes({ user: :organization }, :piece, :temp_pack).limit(10).to_a
     end
 
     render partial: 'last_uploads'
