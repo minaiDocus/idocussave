@@ -27,7 +27,13 @@ class RetrieversController < ApiController
   def get_retriever_infos
     user = @retriever.user
     bi_token = user.try(:budgea_account).try(:access_token)
-    render json: { success: bi_token ? true : false, bi_token: bi_token, budgea_id: @retriever.budgea_id }, status: 200
+    if params[:remote_method] == 'DELETE' && !@retriever.budgea_id.present?
+      success = false
+      success = DestroyBudgeaConnection.execute(@retriever) if @retriever.destroy_connection
+      render json: { success: success, deleted: success, bi_token: bi_token, budgea_id: nil }, status: 200
+    else
+      render json: { success: bi_token ? true : false, bi_token: bi_token, budgea_id: @retriever.budgea_id }, status: 200
+    end
   end
 
   def create_budgea_user

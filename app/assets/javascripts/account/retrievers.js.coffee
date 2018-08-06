@@ -3,6 +3,8 @@ _require("/assets/budgea_api.js")
 Idocus.vent = _.extend({}, Backbone.Events)
 
 jQuery ->
+  window.clearInterval(refreshRetrievers)
+
   if $('#budgea_sync').length > 0
     router = new Idocus.Routers.BudgeaRetrieversRouter()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
@@ -75,7 +77,6 @@ jQuery ->
                 null,
                 ()-> $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
               )
-              sync_retriever( 'destroy', id )
 
           $('.trigger_retriever').bind 'click', (e)->
             e.preventDefault()
@@ -110,7 +111,7 @@ jQuery ->
       window.retriever_contains_state = ''
       load_retrievers_list()
 
-    window.setInterval(load_retrievers_list, 10000)
+    refreshRetrievers = window.setInterval(load_retrievers_list, 10000)
 
   if $('#retrievers .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
     $('a.toggle_filter').click (e) ->

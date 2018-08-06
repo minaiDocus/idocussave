@@ -15,10 +15,10 @@ class Idocus.Models.Common
     for obj in data
       if obj.name.match(/\[\]/)
         obj_index = obj.name.replace(/\[\]/g, '')
-        obj_val = eval("result.#{obj_index}")
+        obj_val = result[obj_index]
         if  obj_val != '' && obj_val != undefined && obj_val != null
           if obj.value != undefined && obj.value != '' && obj.value != null
-            eval("result.#{obj_index}.push('#{obj.value}')")
+            result[obj_index].push(obj.value)
         else
           if obj.value != undefined && obj.value != '' && obj.value != null
             Object.assign(result, result, {"#{obj_index}": [obj.value]})

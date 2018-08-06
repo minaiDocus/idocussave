@@ -9,16 +9,17 @@ class Budgea
     end
 
     def config=(new_config)
-      config.domain        = new_config['domain']        if new_config['domain']
-      config.client_id     = new_config['client_id']     if new_config['client_id']
-      config.client_secret = new_config['client_secret'] if new_config['client_secret']
-      config.redirect_uri  = new_config['redirect_uri']  if new_config['redirect_uri']
-      config.proxy         = new_config['proxy']         if new_config['proxy']
+      config.domain         = new_config['domain']          if new_config['domain']
+      config.client_id      = new_config['client_id']       if new_config['client_id']
+      config.client_secret  = new_config['client_secret']   if new_config['client_secret']
+      config.redirect_uri   = new_config['redirect_uri']    if new_config['redirect_uri']
+      config.encryption_key = new_config['encryption_key']  if new_config['encryption_key']
+      config.proxy          = new_config['proxy']           if new_config['proxy']
     end
   end
 
   class Configuration
-    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy
+    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy, :encryption_key
   end
 
   class Client

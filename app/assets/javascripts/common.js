@@ -73,7 +73,8 @@ function _require(script) {
         success: function (data) {
           src = data
         },
-        error: function () {
+        error: function (e) {
+          console.error(e)
           throw new Error("Could not load script " + script);
         }
     });

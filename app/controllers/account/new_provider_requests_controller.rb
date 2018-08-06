@@ -48,6 +48,7 @@ private
                   url:    "https://#{Budgea.config.domain}/2.0",
                   c_id:   Budgea.config.client_id,
                   c_ps:   Budgea.config.client_secret,
+                  c_ky:   Budgea.config.encryption_key ? Base64.encode64(Budgea.config.encryption_key.to_json.to_s) : '',
                   proxy:  Budgea.config.proxy
                 }.to_json
     @bi_config = Base64.encode64(bi_config.to_s)

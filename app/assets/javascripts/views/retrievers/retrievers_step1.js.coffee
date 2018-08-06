@@ -45,7 +45,7 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
           self.common.action_loading(self.$el, false)
 
           #####TEST###
-          #Object.assign(data.remote_response, data.remote_response, { additionnal_fields: [{"regex": null, "type": "text", "name": "security_code", "value": null, "label": "Enter your 6-digit code"}] })
+          Object.assign(data.remote_response, data.remote_response, { additionnal_fields: [{"regex": null, "type": "text", "name": "security_code", "value": null, "label": "Enter your 6-digit code"}] })
           ############
           if data.remote_response.fields != '' && data.remote_response.fields != undefined && data.remote_response.fields != null
             Object.assign(data.remote_response, data.remote_response, {additionnal_fields: data.remote_response.fields})
