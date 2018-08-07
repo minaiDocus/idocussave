@@ -20,8 +20,6 @@
                 %select.select.disabled{ disabled: 'disabled' }
                 %p
                   = render 'shared/ibiza_not_configured_warning'
-        - else
-          = f.input :journal,         required: true
         = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@bank_account.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de valeur"
         = f.input :accounting_number, required: true
         = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
