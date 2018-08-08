@@ -1,4 +1,13 @@
 (function($) {
+  // show or hide selection field
+  function toogleSelectionBox(){
+    lists = btoa($('#selectionsBox #selectionlist ul.list').html().trim());
+    if ( lists == '' )
+      $('#selectionsBox').addClass('hide');
+    else
+      $('#selectionsBox').removeClass('hide');
+  }
+
   // add page to the selection field
   function addPage(page) {
     var id = page.attr("id").split("_")[1];
@@ -13,12 +22,14 @@
       ul.append("<li><a class='delete do-removePageFromSelection' href='#' title='Supprimer'></a><li>");
       initEventOnClickOnLinkButton();
     }
+    toogleSelectionBox();
   }
 
   // remove page from the selection field
   function removePage(page) {
     var id = page.attr("id").split("_")[1];
     $("#composition_"+id).remove();
+    toogleSelectionBox();
   }
 
   // showing all pages of the document given by link
@@ -628,6 +639,7 @@
       e.preventDefault();
       synchroniseRemovedSelection();
       $("#selectionlist .content ul").html("");
+      toogleSelectionBox();
       $.ajax({
         url: '/account/compositions/reset',
         data: { _method: 'DELETE' },
@@ -638,6 +650,7 @@
         },
         success: function(data){
           logAfterAction();
+
         },
         error: function(data){
           logAfterAction();
