@@ -98,6 +98,7 @@
     id = li.attr("id").split("_")[1];
     $("#document_"+id).removeClass("selected");
     li.remove();
+    toogleSelectionBox();
   }
 
   // synchronise the newly shown pages with selection
