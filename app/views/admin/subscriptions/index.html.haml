@@ -156,20 +156,36 @@
             %td.total_footer -
             %td.total_footer -
             %td.total_footer -
-            %td.total_footer= @statistics_total[:basic_package]
-            %td.total_footer= @statistics_total[:mail_package]
-            %td.total_footer= @statistics_total[:scan_box_package]
-            %td.total_footer= @statistics_total[:retriever_package]
-            %td.total_footer= @statistics_total[:mini_package]
-            %td.total_footer= @statistics_total[:micro_package]
-            %td.total_footer= @statistics_total[:annual_package]
+            %td.total_footer
+              %span= @statistics_total[:basic_package]
+              = subscription_diff_content_for(@statistics_total[:basic_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:mail_package]
+              = subscription_diff_content_for(@statistics_total[:mail_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:scan_box_package]
+              = subscription_diff_content_for(@statistics_total[:scan_box_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:retriever_package]
+              = subscription_diff_content_for(@statistics_total[:retriever_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:mini_package]
+              = subscription_diff_content_for(@statistics_total[:mini_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:micro_package]
+              = subscription_diff_content_for(@statistics_total[:micro_package_diff])
+            %td.total_footer
+              %span= @statistics_total[:annual_package]
+              = subscription_diff_content_for(@statistics_total[:annual_package_diff])
             %td.total_footer= @statistics_total[:upload]
             %td.total_footer= @statistics_total[:scan]
             %td.total_footer= @statistics_total[:dematbox_scan]
             %td.total_footer= @statistics_total[:retriever]
             %td.total_footer= @statistics_total[:customers]
-            %td.total_footer= @statistics_total[:new_customers]
-            %td.total_footer= @statistics_total[:closed_customers]
+            %td.total_footer
+              %span{ class: ("positive" if @statistics_total[:new_customers] > 0) }= @statistics_total[:new_customers]
+            %td.total_footer
+              %span{ class: ("negative" if @statistics_total[:closed_customers] > 0) }= @statistics_total[:closed_customers]
 
   .row-fluid
     .span12
