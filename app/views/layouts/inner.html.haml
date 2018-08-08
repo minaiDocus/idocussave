@@ -16,7 +16,7 @@
     = stylesheet_link_tag 'account/group_organizations' if controller_name == 'group_organizations'
 
   %body
-    %div{ id: ('wrap' unless controller_name == 'documents') }
+    #wrap
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
@@ -37,8 +37,7 @@
             = render 'shared/as_user'
         != content_for?(:content) ? yield(:content) : yield
 
-      - unless controller_name == 'documents'
-        #push
+      #push
 
     = render 'layouts/footer'
     = render 'layouts/news'
