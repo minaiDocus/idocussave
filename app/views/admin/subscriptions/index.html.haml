@@ -18,8 +18,8 @@
           %th.ths{style: 'width:5%'} mini
           %th.ths{style: 'width:5%'} micro
           %th.ths{style: 'width:5%'} annuel
-          %th.ths{style: 'width:5%'} téléversement
-          %th.ths{style: 'width:5%'} numérisation
+          %th.ths{style: 'width:6%'} téléversement
+          %th.ths{style: 'width:6%'} numérisation
           %th.ths{style: 'width:5%'} dematbox
           %th.ths{style: 'width:5%'} automate
           %th.ths{style: 'width:5%'} actifs
@@ -100,22 +100,22 @@
             %th(colspan='3') Clients
           %tr
             %th{style: 'width:4%'} période
-            %th organisation
-            %th{style: 'width:7%'} code
-            %th{style: 'width:5%'} basique
-            %th{style: 'width:5%'} courrier
-            %th{style: 'width:5%'} box
-            %th{style: 'width:5%'} automate
-            %th{style: 'width:5%'} mini
-            %th{style: 'width:5%'} micro
-            %th{style: 'width:5%'} annuel
-            %th{style: 'width:5%'} téléversement
-            %th{style: 'width:5%'} numérisation
-            %th{style: 'width:5%'} dematbox
-            %th{style: 'width:5%'} automate
-            %th{style: 'width:5%'} actifs
-            %th{style: 'width:5%'} nouveaux
-            %th{style: 'width:5%'} clôturés
+            %th= sortable 'organization_name', 'organisation'
+            %th{style: 'width:7%'}= sortable 'organization_code', 'code'
+            %th{style: 'width:5%'}= sortable 'options.basic_package', 'basique'
+            %th{style: 'width:5%'}= sortable 'options.mail_package', 'courrier'
+            %th{style: 'width:5%'}= sortable 'options.scan_box_package', 'box'
+            %th{style: 'width:5%'}= sortable 'options.retriever_package', 'automate'
+            %th{style: 'width:5%'}= sortable 'options.mini_package', 'mini'
+            %th{style: 'width:5%'}= sortable 'options.micro_package', 'micro'
+            %th{style: 'width:5%'}= sortable 'options.annual_package', 'annuel'
+            %th{style: 'width:6%'}= sortable 'consumption.upload', 'téléversement'
+            %th{style: 'width:6%'}= sortable 'consumption.scan', 'numérisation'
+            %th{style: 'width:5%'}= sortable 'consumption.dematbox_scan', 'dematbox'
+            %th{style: 'width:5%'}= sortable 'consumption.retriever', 'automate'
+            %th{style: 'width:5%'}= sortable 'customers', 'actifs'
+            %th{style: 'width:5%'}= sortable 'new_customers', 'nouveaux'
+            %th{style: 'width:5%'}= sortable 'closed_customers', 'clôturés'
         %tbody
           - @statistics.each do |statistic|
             %tr

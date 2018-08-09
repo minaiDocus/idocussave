@@ -16,7 +16,7 @@ class Admin::SubscriptionsController < Admin::AdminController
     @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_micro_package_active: true).count }
 
     params[:per_page] ||= 50
-    statistics =  StatisticsManager.get_compared_subscription_statistics(statistic_params)
+    statistics =  order(StatisticsManager.get_compared_subscription_statistics(statistic_params))
     @organization_count = statistics.size
     @statistics = Kaminari.paginate_array(statistics).page(params[:page]).per(params[:per_page])
     @statistics_total = calculate_total_of statistics
@@ -93,10 +93,37 @@ class Admin::SubscriptionsController < Admin::AdminController
       scan:               statistics.inject(0){ |sum, s| sum + s.consumption[:scan].to_i },
       dematbox_scan:      statistics.inject(0){ |sum, s| sum + s.consumption[:dematbox_scan].to_i  },
       retriever:          statistics.inject(0){ |sum, s| sum + s.consumption[:retriever].to_i  },
-      customers:          statistics.inject(0){ |sum, s| sum + s.customers.try(:size) || 0 },
-      new_customers:      statistics.inject(0){ |sum, s| sum + (s.try(:new_customers).try(:size) || 0)  },
-      closed_customers:   statistics.inject(0){ |sum, s| sum + (s.try(:closed_customers).try(:size) || 0) },
+      customers:          statistics.inject(0){ |sum, s| sum + s.customers&.size.to_i },
+      new_customers:      statistics.inject(0){ |sum, s| sum + (s.try(:new_customers)&.size.to_i)  },
+      closed_customers:   statistics.inject(0){ |sum, s| sum + (s.try(:closed_customers)&.size.to_i) },
     }
+  end
+
+  def sort_column
+    params[:sort] || 'organization_name'
+  end
+  helper_method :sort_column
+
+
+  def sort_direction
+    params[:direction] || 'asc'
+  end
+  helper_method :sort_direction
+
+  def order(statistics)
+    attribute = sort_column.to_s.split('.')[0]
+    h_value = sort_column.to_s.split('.')[1] || nil
+    if h_value.nil?
+      if attribute == 'customers' || attribute == 'new_customers' || attribute == 'closed_customers'
+        result = statistics.sort{ |a,b| a.send(attribute)&.size.to_i <=> b.send(attribute)&.size.to_i }
+      else
+        result = statistics.sort{ |a,b| a.send(attribute) <=> b.send(attribute) }
+      end
+    else
+      result = statistics.sort{ |a,b| a.send(attribute)[h_value.to_sym] <=> b.send(attribute)[h_value.to_sym] }
+    end
+
+    sort_direction == 'desc' ? result.reverse! : result
   end
 
 end
