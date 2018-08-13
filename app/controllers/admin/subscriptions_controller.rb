@@ -1,19 +1,17 @@
 # -*- encoding : UTF-8 -*-
 class Admin::SubscriptionsController < Admin::AdminController
+  before_filter :load_accounts_ids
   # GET /admin/subscriptions
   def index
-    user_ids = Rails.cache.fetch('admin_report_user_ids', expires_in: 10.minutes) { User.customers.active_at(Time.now).pluck(:id) }
-
-
-    @stamp_count             = Rails.cache.fetch('admin_report_stamp_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_stamp_active:  true).count }
-    @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_mail_package_active:      true).count }
-    @basic_package_count     = Rails.cache.fetch('admin_report_basic_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_basic_package_active:     true).count }
-    @annual_package_count    = Rails.cache.fetch('admin_report_annual_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_annual_package_active:    true).count }
-    @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_pre_assignment_active:    true).count }
-    @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_scan_box_package_active:  true).count }
-    @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_retriever_package_active: true).count }
-    @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_mini_package_active: true).count }
-    @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: user_ids, is_micro_package_active: true).count }
+    @stamp_count             = Rails.cache.fetch('admin_report_stamp_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_stamp_active:  true).count }
+    @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mail_package_active:      true).count }
+    @basic_package_count     = Rails.cache.fetch('admin_report_basic_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_basic_package_active:     true).count }
+    @annual_package_count    = Rails.cache.fetch('admin_report_annual_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_annual_package_active:    true).count }
+    @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_pre_assignment_active:    true).count }
+    @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_scan_box_package_active:  true).count }
+    @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_retriever_package_active: true).count }
+    @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mini_package_active: true).count }
+    @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_micro_package_active: true).count }
 
     params[:per_page] ||= 50
     statistics =  order(StatisticsManager.get_compared_subscription_statistics(statistic_params))
@@ -31,7 +29,7 @@ class Admin::SubscriptionsController < Admin::AdminController
   end
 
   def accounts
-    accounts = User.customers.active_at(Time.now).joins(:subscription)
+    accounts = User.where(id: @accounts_ids).joins(:subscription)
 
     case params[:type]
       when 'stamp_active'
@@ -59,6 +57,14 @@ class Admin::SubscriptionsController < Admin::AdminController
   end
 
   private
+
+  def load_accounts_ids
+    @accounts_ids = []
+    Organization.billed.each do |org|
+      @accounts_ids += org.customers.active_at(Time.now).pluck(:id)
+    end
+    @accounts_ids.flatten!
+  end
 
   def statistic_params
     begin

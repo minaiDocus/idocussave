@@ -14,7 +14,7 @@ module StatisticsManager::Subscription
       options     = { micro_package: 0, basic_package: 0, mail_package: 0, scan_box_package: 0, retriever_package: 0, mini_package: 0, annual_package: 0 }
       consumption = { upload: 0, scan: 0, dematbox_scan: 0, retriever: 0 }
 
-      periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', period_date, period_date)
+      periods = Period.where(user_id: organization.customers.active_at(end_date).map(&:id)).where('start_date <= ? AND end_date >= ?', period_date, period_date)
       next if periods.empty?
       
       #options counter
