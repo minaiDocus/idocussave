@@ -43,6 +43,7 @@ class ZohoControl
     @users_count, @success_usr_count, @errors_usr_count, @exist_usr_count = 0, 0, 0, 0
 
     users = User.where(is_prescriber: true)
+
     send_users = []
     users.each do |u|
       member = u.memberships.first
