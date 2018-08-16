@@ -662,6 +662,12 @@ Rails.application.routes.draw do
     resources :news do
       post :publish, on: :member
     end
+
+    resources :zoho_crm, only: %w(index) do
+      get 'dpl_org', action: 'duplicate_organizations', on: :collection
+      get 'dpl_usr', action: 'duplicate_users', on: :collection
+      get 'synchronize', action: 'synchronize', on: :collection
+    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'

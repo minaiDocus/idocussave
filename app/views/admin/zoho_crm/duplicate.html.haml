@@ -1,0 +1,20 @@
+= render partial: 'navigation'
+- content_for :titre_h1, "Data ZohoCrm doublon"
+.panel-heading.clearfix
+  %span.title_page
+    ZohoCrm Doublons
+  
+.panel-body
+  .accounts 
+    %p= @title
+    %p= @duplicate_datas.count
+    %p= "Aucun doublon detecté" if @duplicate_datas.empty?
+    %p
+      %ul
+        - @duplicate_datas.each do |key, dbl|
+          %li 
+            = key
+            %ul
+              - dbl.each do |list|
+                %li
+                  = "#{list[0]} => #{list[1]}"
