@@ -51,6 +51,18 @@ jQuery ->
     if $('#journal.new form').length > 0
       form_to_wizard()
 
+    $("#toogle_ibiza_journal_list").on 'click', (e)->
+      e.preventDefault()
+      is_selection_visible = $(".block_selection_ibiza").is(":visible")
+      if is_selection_visible
+        $(".block_selection_ibiza").slideUp('fast')
+      else
+        $(".block_selection_ibiza").slideDown('fast')
+
+    $("#select_journal_from_ibiza").on 'change', (e)->
+      selected = $(this).val()
+      $("#account_book_type_pseudonym").val(selected)
+
     update_form()
     $("#account_book_type_entry_type, #account_book_type_account_type").change ->
       update_form()

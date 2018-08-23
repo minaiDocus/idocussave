@@ -2,7 +2,15 @@
   = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
   - if @customer && @organization.ibiza.try(:used?)
     - if @organization.ibiza.configured?
-      = f.input :pseudonym, collection: journals_for_select(@journal.pseudonym), hint: 'si différent de "Code journal" ci-dessus'
+      .block_input.clearfix
+        = f.input :pseudonym, wrapper_html: { class: "account_book_type_ibiza pull-left" }
+        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_ibiza_journal_list"}
+          %i.icon-chevron-down
+      .controls{style: 'margin-bottom: 18px'}
+        .block_selection_ibiza
+          %strong.help-block{style: 'margin-top: 2px'} Journaux Ibiza :
+          = select_tag 'select_journal_from_ibiza', options_for_select(journals_for_select(@journal.pseudonym)), size: 8, style: "width: 300px"
+        %p.help-block si différent de "Code journal" ci-dessus
     - else
       .control-group
         %label.control-label= t('simple_form.labels.account_book_type.pseudonym')
