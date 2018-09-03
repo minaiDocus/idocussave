@@ -5,6 +5,7 @@ class KnowingsApi::Client
   def initialize(username, password, url)
     @uri      = URI.parse(url)
     @http     = Net::HTTP.new(@uri.host, @uri.port)
+    @http.read_timeout = 15 #seconds
     @username = username
     @password = password
 
