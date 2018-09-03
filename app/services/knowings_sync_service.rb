@@ -38,7 +38,7 @@ class KnowingsSyncService
         else
           log.info { "#{number} retrying later" }
 
-          remote_file.not_synced!("[#{e.class}] #{e.message}")
+          remote_file.not_retryable!("[#{e.class}] #{e.message}")
         end
       end
     end
