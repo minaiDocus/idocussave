@@ -1,6 +1,11 @@
 update_form = ->
   options = ['period_duration', 'number_of_journals', 'pre_assignment', 'stamp']
   selected_options = []
+  
+  $('.package input').each((e)->
+    if !$(this).hasClass('commitment_pending')
+      $(this).removeAttr('disabled')
+  )
 
   if $('.package').hasClass('locked')
     if $('.package').hasClass('ligth_package_locked')
