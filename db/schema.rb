@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180608064725) do
+ActiveRecord::Schema.define(version: 20180912064725) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1271,6 +1271,7 @@ ActiveRecord::Schema.define(version: 20180608064725) do
     t.integer  "preseizure_date_option",          limit: 4,   default: 0
     t.boolean  "is_duplicate_blocker_activated",              default: true
     t.integer  "organization_group_id",           limit: 4
+    t.boolean  "subject_to_vat",                              default: true
   end
 
   add_index "organizations", ["leader_id"], name: "leader_id", using: :btree

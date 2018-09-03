@@ -143,7 +143,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
         :is_duplicate_blocker_activated,
-        :preseizure_date_option
+        :preseizure_date_option,
+        :subject_to_vat
       )
     else
       params.require(:organization).permit(

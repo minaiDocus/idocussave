@@ -240,9 +240,17 @@ class CreateInvoicePdf
 
       pdf.move_down 7
       pdf.float do
-        pdf.text_box 'TVA (20%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
+        if @invoice.organization.subject_to_vat
+          pdf.text_box 'TVA (20%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
+        else
+          pdf.text_box 'TVA (0%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
+        end
       end
-      pdf.text_box format_price(@total * @invoice.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      if @invoice.organization.subject_to_vat
+        pdf.text_box format_price(@total * @invoice.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      else
+        pdf.text_box "0 €", at: [470, pdf.cursor], width: 66, align: :right
+      end
       pdf.move_down 10
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
 
@@ -250,7 +258,11 @@ class CreateInvoicePdf
       pdf.float do
         pdf.text_box 'Total TTC', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * @invoice.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      if @invoice.organization.subject_to_vat
+        pdf.text_box format_price(@total * @invoice.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      else
+        pdf.text_box format_price(@total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      end
       pdf.move_down 10
       pdf.stroke_color '000000'
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor

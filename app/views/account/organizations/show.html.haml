@@ -85,6 +85,10 @@
                     %tr
                       %th= t('activerecord.models.organization.attributes.is_duplicate_blocker_activated')
                       %td= @organization.is_duplicate_blocker_activated ? t('yes_value') : t('no_value')
+                    - if @user.is_admin
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.subject_to_vat')
+                        %td= @organization.subject_to_vat ? t('yes_value') : t('no_value')
                 .span4
                   %table.table.table-condensed.table-striped
                     %tr
