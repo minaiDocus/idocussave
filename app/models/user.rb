@@ -292,7 +292,8 @@ class User < ActiveRecord::Base
   end
 
   def commitment_end?
-    self.subscription && (self.subscription.is_micro_package_active || self.subscription.is_mini_package_active) && (self.subscription.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m'))
+    return true unless self.subscription && (self.subscription.is_micro_package_active || self.subscription.is_mini_package_active) 
+    self.subscription.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
   end
 
   # TODO : need a test
