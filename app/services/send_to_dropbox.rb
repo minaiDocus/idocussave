@@ -43,7 +43,7 @@ class SendToDropbox < SendToStorage
       data = []
     end
 
-    data.map { |e| [e.name, e.size] }
+    data.map { |e| [e.name, e.try(:size)] }
   end
 
   def retryable_failure?(error)
