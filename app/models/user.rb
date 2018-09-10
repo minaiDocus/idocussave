@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   AUTHENTICATION_TOKEN_LENGTH = 20
 
   validate :belonging_of_manager, if: proc { |u| u.manager_id_changed? && u.manager_id.present? }
-  validates :authd_prev_period,            numericality: { greater_than_or_equal_to: 0 }
+  validates :authd_prev_period,            inclusion: { in: 0..36 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
   validates_length_of :code, within: 3..15, unless: Proc.new { |u| u.collaborator? || u.is_guest }
