@@ -218,8 +218,7 @@ class UploadedDocument
   end
 
   def unique?
-    temp_pack = TempPack.where(name: pack_name).first
-    temp_pack && temp_pack.temp_documents.where('original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint, fingerprint).first ? false : true
+    TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).first ? false : true
   end
 
   def fingerprint

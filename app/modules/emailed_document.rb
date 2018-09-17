@@ -298,7 +298,7 @@ class EmailedDocument
     if user.present? && journal.present? && period.present?
       @mail.attachments.select do |attachment|
         supported_attachment_filename? attachment.filename
-      end.map { |a| Attachment.new(a, file_name) }
+      end.map { |a| Attachment.new(a, file_name, user) }
     else
       []
     end

@@ -1,9 +1,10 @@
 class EmailedDocument::Attachment
   attr_accessor :file_path, :file_name
 
-  def initialize(original, file_name)
+  def initialize(original, file_name, user)
     @original  = original
     @file_name = file_name
+    @user      = user
     @file_path = get_file_path
     DocumentTools.remove_pdf_security(processed_file_path, processed_file_path) if is_printable_only?
   end
@@ -65,11 +66,10 @@ class EmailedDocument::Attachment
   end
 
   def unique?(without_self=false)
-    temp_pack = TempPack.where(name: DocumentTools.pack_name(@file_name)).first
     if without_self
-      temp_pack && temp_pack.temp_documents.where('original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint, fingerprint).count > 1 ? false : true
+      TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).count > 1 ? false : true
     else
-      temp_pack && temp_pack.temp_documents.where('original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint, fingerprint).first ? false : true
+      TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).first ? false : true
     end
   end
 
