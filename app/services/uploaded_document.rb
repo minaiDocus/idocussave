@@ -120,11 +120,15 @@ class UploadedDocument
           re_create_pdf @file.path, file_path
         end
       else
-        geometry = Paperclip::Geometry.from_file @file.path
         tmp_file_path = @file.path
-        if geometry.height > 2000 || geometry.width > 2000
-          tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
-          DocumentTools.resize_img(@file.path, tmp_file_path)
+        begin
+          geometry = Paperclip::Geometry.from_file @file.path
+          if geometry.height > 2000 || geometry.width > 2000
+            tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
+            DocumentTools.resize_img(@file.path, tmp_file_path)
+          end
+        rescue => e
+          tmp_file_path = @file.path
         end
         DocumentTools.to_pdf(tmp_file_path, file_path)
       end
