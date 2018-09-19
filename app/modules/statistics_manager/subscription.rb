@@ -45,7 +45,7 @@ module StatisticsManager::Subscription
       delivery_types  = customers.joins(:temp_documents).where("temp_documents.state = 'processed' and temp_documents.created_at >= ? and temp_documents.created_at <= ?",start_date, end_date).group("delivery_type").select("temp_documents.delivery_type as delivery_type, count(distinct users.code) as count")
 
       delivery_types.each { |delivery| consumption[delivery.delivery_type.to_sym] = delivery.count }
-      
+
       StatisticsManager.create_subscription_statistics({organization: organization, date: start_date, options: options, consumption: consumption, customers: customers.map(&:code)})
 
     end
@@ -56,6 +56,7 @@ module StatisticsManager::Subscription
     second_date = second_date.to_date.beginning_of_month
     compared_statistics = []
     SubscriptionStatistic.where(month: [first_date, second_date]).order(:month).group_by(&:organization_id).each_pair do |organization_id, stats|
+      next unless Organization.billed.where(id: organization_id).first
       statistic = if stats.length == 2
         options = {}
         stats[1].options.keys.each do |key|
