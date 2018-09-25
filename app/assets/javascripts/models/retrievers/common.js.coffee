@@ -30,12 +30,16 @@ class Idocus.Models.Common
   fields_constructor: (fields)->
     html = ''
     for field in fields
+      class_plus = ''
+      if field.class
+        class_plus = " "+field.class
+
       class_required = abbr_required = ''
       if field.required
         class_required = 'required'
         abbr_required = '<abbr title="champ requis">*</abbr>'
 
-      field_input = '<input class="field '+class_required+'" style="outline: medium none currentcolor;" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'">'
+      field_input = '<input class="field '+class_required+class_plus+'" style="outline: medium none currentcolor;" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'">'
 
       if field.type == "list"
         options = ""
@@ -45,7 +49,11 @@ class Idocus.Models.Common
             selected = 'selected'
           options += "<option value='#{option.value}' #{selected}>#{option.label}</options>"
 
-        field_input = '<select class="select field '+class_required+'" style="outline: medium none currentcolor; width: 263px!important;" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
+        class_website = ''
+        if field.name == "website"
+          class_website = ' field_website'
+
+        field_input = '<select class="select field '+class_required+class_website+class_plus+'" style="outline: medium none currentcolor; width: 263px!important;" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
 
       html += '<div class="control-group '+class_required+' field_parent">
                 <label class="'+class_required+' control-label" for="field_'+field.name+'">

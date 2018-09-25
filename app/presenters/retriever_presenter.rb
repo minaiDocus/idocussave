@@ -23,13 +23,7 @@ class RetrieverPresenter < BasePresenter
         end
       end
     elsif retriever.waiting_additionnal_info?
-      if scope == :account
-        h.link_to "En attente de l'utilisateur", h.waiting_additionnal_info_account_retriever_path(retriever), class: 'btn btn-mini'
-      elsif scope == :collaborator
-        h.link_to "En attente de l'utilisateur", h.waiting_additionnal_info_account_organization_customer_retriever_path(user.organization, user, retriever), class: 'btn btn-mini'
-      elsif scope == :admin
-        h.content_tag :span, "En attente de l'utilisateur", class: 'label'
-      end
+      h.content_tag :span, "Inforamtion de connexion manquante", class: 'label'
     elsif retriever.configuring? || retriever.running?
       h.content_tag :span, 'Synchronisation en cours', class: 'label'
     elsif retriever.destroying?

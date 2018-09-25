@@ -4,7 +4,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
 
   events:
     'keyup #retriever_connector_name': 'filter_connectors'
-    'click #retriever_connections_list': 'load_connector'
+    'change #retriever_connections_list': 'load_connector'
     'click .filter_type': 'filter_by_connector_type'
 
   initialize: (options) ->

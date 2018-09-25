@@ -15,6 +15,13 @@
   </div>
   <%- @connector.basic_fields() %>
   <%- @connector.information_fields() %>
+  <div class="contact_fields hide" id="contact_fields">
+    <hr class='margin0top margin2bottom'>
+    <div style='margin-bottom: 16px'>
+      <h5 style='float:left;margin:0 10px;'>Informations de contact</h5><span>(Obligatoire pour les comptes de type professionnels)</span>
+    </div>
+    <%- @connector.contact_fields() %>
+  </div>
   <div class="form-actions">
     <div class="actions">
       <input name="commit" value="Valider" class="btn btn-primary" id="retriever_commit" type="button">

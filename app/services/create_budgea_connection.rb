@@ -14,7 +14,7 @@ class CreateBudgeaConnection
 
     retriever.configure_budgea_connection
 
-    if @budgea_response[:additionnal_info]
+    if @budgea_response[:error].present? && @budgea_response[:error] == "additionalInformationNeeded"
       retriever.pause_budgea_connection
     else
       retriever.synchronize_budgea_connection

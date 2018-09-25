@@ -3,6 +3,7 @@ _require("/assets/jose.js")
 class Idocus.BudgeaApi
   constructor: ()->
     @encryptor = null
+    @user_profiles = {}
     @local_host = "#{location.protocol}//#{location.host}"
     config = ''
     if $('#retriever_budgea_config').length > 0
@@ -42,23 +43,8 @@ class Idocus.BudgeaApi
       alert(error)
       location.href = "#{self.local_host}/account/retrievers"
 
-    not_registered = false
-    if @bi_token.length == 0
-      not_registered = true
-    else
-      @remote_fetch({
-        url: "/users/me/terms"
-        type: "GET"
-        onError:(error)-> got_error(error)
-        onSuccess: (data)->
-          if data.to_sign == undefined || data.to_sign == '' || data.to_sign == null
-            not_registered = true
-          else
-            self.init_or_create_user()
-      })
-
-    if not_registered
-      @remote_fetch({
+    not_registered = ()->
+      self.remote_fetch({
         url: "/terms"
         type: "GET"
         onError: (error)-> got_error(error)
@@ -68,6 +54,20 @@ class Idocus.BudgeaApi
           content = data.content.replace(/\n/g, "<br>")
           $('#terms').html("<p>#{content}</p>")
           $('#showCguBI').modal()
+      })
+
+    if @bi_token.length == 0
+      not_registered()
+    else
+      @remote_fetch({
+        url: "/users/me/terms"
+        type: "GET"
+        onError:(error)-> got_error(error)
+        onSuccess: (data)->
+          if data.to_sign == true
+            not_registered()
+          else
+            self.init_or_create_user()
       })
 
   validate_cgu: (self)->
@@ -111,7 +111,15 @@ class Idocus.BudgeaApi
               got_error('Impossible de créer un compte budget insight')
         })
       else
-        resolve()
+        self.remote_fetch({
+          url: '/users/me/profiles'
+          type: 'GET'
+          collection: 'profiles'
+          onError: (error)-> resolve()
+          onSuccess: (remote_data)->
+            self.user_profiles = remote_data[0]
+            resolve()
+        })
     )
 
   get_accounts_of: (connector_id) ->
@@ -239,6 +247,18 @@ class Idocus.BudgeaApi
       )
     )
 
+  update_contact: (data)->
+    self = this
+    promise = new Promise((resolve, reject)->
+      self.remote_fetch({
+        url: "/users/me/profiles/me"
+        data: {contact: data}
+        type: "POST"
+        onSuccess: (data)-> resolve(data)
+        onError: (error)-> reject(error)
+      })
+    )
+
   sync_connection: (type, id)->
     self = this
     promise = new Promise((resolve, reject)->
@@ -262,7 +282,11 @@ class Idocus.BudgeaApi
             url: "/users/me/connections/#{budgea_id}"
             type: remote_method
             onSuccess: (data)-> local_request({id: id, success: true, data_remote: data})
-            onError: (error)-> local_request({id: id, success: false, error_message: error})
+            onError: (error)->
+              if error.match(/Error: 404/) && remote_method == 'DELETE'
+                local_request({id: id, success: true, data_remote: {}})
+              else
+                local_request({id: id, success: false, error_message: error})
           })
         else
           local_request({ id: id, success: true, data_remote: {} })
@@ -353,6 +377,7 @@ class Idocus.BudgeaApi
           onError("service non disponible (Error: #{xhr.status})")
       else
         onError("service non disponible (Error: #{xhr.status})")
+
     xhr.onerror = ()->
       onError("service non disponible (Error: #{xhr.status})")
 

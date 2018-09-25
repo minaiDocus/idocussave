@@ -12,7 +12,21 @@ class Idocus.Models.Connector extends Backbone.Model
 
     html += '</ul>'
 
-  information_fields: () ->
+  set_contact_values: ()->
+    contact = Idocus.budgeaApi.user_profiles.contact || {}
+    $('#connector_fields #field_contact_field_society').val(contact.society || $('#contact_company').val() || '')
+    $('#connector_fields #field_contact_field_name').val(contact.name || $('#contact_name').val() || '')
+    $('#connector_fields #field_contact_field_first_name').val(contact.first_name || $('#contact_first_name').val() || '')
+
+  contact_fields: ()->
+    fields = [
+                { type: "text", name: "contact_field_society", label: "Nom de la société", class: 'contact_fields', value: '' },
+                { type: "text", name: "contact_field_name", label: "Nom du dirigeant", class: 'contact_fields', value: '' },
+                { type: "text", name: "contact_field_first_name", label: "Prénom du dirigeant", class: 'contact_fields', value: '' }
+             ]
+    @common.fields_constructor(fields)
+
+  information_fields: ()->
     fields = @get('fields')
     if Idocus.new_connector
       for f in fields

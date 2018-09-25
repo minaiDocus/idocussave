@@ -43,7 +43,7 @@ class Idocus.Views.RetrieversStep3 extends Backbone.View
 
     data = @common.serialize_form_json( @$el.find('#accounts_selection') )
     accounts = []
-    for account_id in data.accounts
+    for account_id in (data.accounts || [])
       account = @accounts.find('id', 'is', account_id)
       if account.length > 0
         accounts.push(account[0].attributes)

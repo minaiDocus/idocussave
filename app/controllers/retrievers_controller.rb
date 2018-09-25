@@ -96,7 +96,7 @@ class RetrieversController < ApiController
   end
 
   def create_bank_accounts
-    if CreateBankAccount.execute(@current_user, params[:connector_id], params[:accounts])
+    if CreateBankAccount.execute(@current_user, params[:connector_id], (params[:accounts] || []))
       render json: { success: true }, status: 200
     else
       render json: { success: false, error_message: 'Impossible de synchroniser un compte bancaire' }, status: 200

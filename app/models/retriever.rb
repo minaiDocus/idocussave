@@ -64,7 +64,7 @@ class Retriever < ActiveRecord::Base
     end
 
     event :ready do
-      transition [:configuring, :running, :waiting_selection, :error] => :ready
+      transition [:configuring, :running, :waiting_selection, :waiting_additionnal_info, :error] => :ready
     end
 
     event :configure_connection do
@@ -88,7 +88,7 @@ class Retriever < ActiveRecord::Base
     end
 
     event :error do
-      transition [:ready, :configuring, :destroying, :running] => :error
+      transition [:ready, :configuring, :destroying, :waiting_additionnal_info, :running] => :error
     end
 
     event :unavailable do

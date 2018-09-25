@@ -5,7 +5,8 @@ class DestroyBankAccounts
 
   def execute
     @bank_accounts.each do |bank_account|
-      bank_account.destroy unless bank_account.retriever
+      # bank_account.destroy unless bank_account.retriever
+      bank_account.destroy # to delete
     end
   end
 end

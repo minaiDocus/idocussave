@@ -2,10 +2,15 @@
 = hidden_field_tag :retriever_user_token, @user_token
 = hidden_field_tag :retriever_bi_token, @bi_token
 = hidden_field_tag :retriever_journals, @journals
+
 = hidden_field_tag :retriever_connector_id, @retriever.try(:budgea_connector_id) || params[:connector_id] || nil
 = hidden_field_tag :retriever_custom_name, @retriever.try(:name) || nil
 = hidden_field_tag :retriever_journal_id, @retriever.try(:journal_id) || nil
 = hidden_field_tag :retriever_budgea_id, @retriever.try(:budgea_id) || nil
+
+= hidden_field_tag :contact_company, @contact_company || nil
+= hidden_field_tag :contact_name, @contact_name || nil
+= hidden_field_tag :contact_first_name, @contact_first_name || nil
 
 #budgea_sync
   #section1.row-fluid
@@ -35,7 +40,6 @@
       #terms
       #controls.form-actions
         .pull-right
-          =hidden_field_tag :cgu_accepted, @cgu_accepted
           .feedback.pull-left
-          =button_tag "J'accepte les conditions générale d'utilisation", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn'
+          =button_tag "J'accepte les conditions générales d'utilisation", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn'
           %a{href: account_retrievers_path, id: 'cgu_bi_exit', class: 'btn-danger btn', style: 'margin-left: 10px'} Sortir

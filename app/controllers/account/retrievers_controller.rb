@@ -59,11 +59,9 @@ private
   def verify_retriever_state
     is_ok = false
 
-    if action_name.in? %w(edit update destroy run)
-      if action_name == 'destroy' && (@retriever.ready? || @retriever.error? || @retriever.unavailable?)
+    if action_name.in? %w(edit update)
+      if @retriever.ready? || @retriever.error? || @retriever.waiting_additionnal_info?
         is_ok = true
-      elsif @retriever.ready? || @retriever.error?
-        is_ok = true unless action_name == 'run' && @retriever.budgea_id.nil?
       end
     end
 
@@ -80,7 +78,9 @@ private
     @journals = @account.account_book_types.map do |journal|
       "#{journal.id}:#{journal.name}"
     end.join("_")
-    @cgu_accepted = @account.try(:budgea_account).try(:cgu_accepted)
+    @contact_company    = @account.company
+    @contact_name       = @account.last_name
+    @contact_first_name = @account.first_name
   end
 
   def pattern_index
