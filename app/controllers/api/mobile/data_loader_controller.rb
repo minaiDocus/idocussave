@@ -21,7 +21,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def load_documents_processing
-    render json: { publishing: temp_documents_collection }, status: 200
+    data_loaded = temp_documents_collection
+    render json: { publishing: data_loaded[:datas], total: data_loaded[:total], nb_pages: data_loaded[:nb_pages] }, status: 200
   end
 
   def load_stats
@@ -199,7 +200,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
     documents = Document.search(params[:filter],
       pack_id:  params[:id],
       page:     params[:page],
-      per_page: 30,
+      per_page: 20,
       sort:     true
     ).not_mixed.order(position: :asc).includes(:pack)
 
@@ -227,10 +228,10 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
     unless @pack.is_fully_processed || params[:filter].presence
       temp_pack      = TempPack.find_by_name(@pack.name)
-      temp_documents = temp_pack.temp_documents.not_published
+      temp_documents = temp_pack.temp_documents.not_published.page(params[:page] || 1).per(20)
     end
 
-    temp_documents.collect do |temp_document|
+    data_collected = temp_documents.collect do |temp_document|
       if File.exist?(temp_document.content.path(:medium))
         thumb = { id: temp_document.id, style: 'medium', filter: temp_document.content_file_name }
       else
@@ -243,5 +244,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
         large: { id: temp_document.id, style: 'large', filter: temp_document.content_file_name }
       }
     end
+
+    { datas: data_collected, nb_pages: temp_documents.try(:total_pages) || 0, total: temp_documents.try(:total_count) || 0 }
   end
 end
