@@ -37,7 +37,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order.type             = 'paper_set'
     @customer               = @organization.customers.find(params[:order][:user_id])
     if OrderPaperSet.new(@customer, @order).execute
-      copy_back_paper_return_address
+      copy_back_address
       flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
       redirect_to account_organization_paper_set_orders_path(@organization)
     else
@@ -58,7 +58,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   # PUT /account/organizations/:organization_id/paper_set_orders/:id
   def update
     if @order.update(order_params)
-      copy_back_paper_return_address
+      copy_back_address
       OrderPaperSet.new(@customer, @order, true).execute
       flash[:success] = 'Votre commande a été modifiée avec succès.'
       redirect_to account_organization_paper_set_orders_path(@organization)
@@ -211,6 +211,23 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     end
 
     address.copy(@order.paper_return_address)
+
+    address.save
+  end
+
+
+  def copy_back_address
+    copy_back_paper_return_address
+
+    address = @customer.paper_set_shipping_address
+
+    unless address
+      address = Address.new
+      address.is_for_paper_set_shipping = true
+      address.locatable = @customer
+    end
+
+    address.copy(@order.address)
 
     address.save
   end
