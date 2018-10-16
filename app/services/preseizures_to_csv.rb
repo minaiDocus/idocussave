@@ -31,12 +31,15 @@ class PreseizuresToCsv
   def format_line(entry)
     line = ''
     if @is_coala
+      fifth_column = entry.preseizure.third_party || entry.preseizure.operation_label
+      fifth_column = [entry.preseizure.third_party, entry.preseizure.piece_number].join(' ') if ['NSA'].include?(entry.preseizure.organization.code)
+
       result =  [
                   entry.preseizure.date.try(:strftime, "%d/%m/%Y"),
                   entry.preseizure.journal_name.downcase,
                   entry.account.number,
                   entry.preseizure.coala_piece_name,
-                  entry.preseizure.third_party || entry.preseizure.operation_label,
+                  fifth_column,
                   "#{entry.get_debit}".gsub(/[\.,\,]/, '.'),
                   "#{entry.get_credit}".gsub(/[\.,\,]/, '.'),
                   "E"

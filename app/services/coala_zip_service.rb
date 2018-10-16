@@ -1,8 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class CoalaZipService
-  def initialize(user, preseizures)
+  def initialize(user, preseizures, options={preseizures_only: false})
     @preseizures = preseizures
     @user = user
+    @options = options
   end
 
   def execute
@@ -13,17 +14,23 @@ class CoalaZipService
 
     CoalaZipService.delay_for(6.hours).remove_temp_dir(dir)
     data = PreseizuresToCsv.new(@user, @preseizures, true).execute
-    File.open("#{dir}/#{base_name}.csv", 'w') do |f|
-      f.write(data)
+    file = File.open("#{dir}/#{base_name}.csv", 'w')
+    file.write(data)
+
+    if @options[:preseizures_only]
+      file_path = file.path
+    else
+      @preseizures.each do |preseizure|
+        entry = preseizure.entries.first
+        file_name = preseizure.coala_piece_name + '.pdf'
+        FileUtils.cp preseizure.piece.content.path, File.join(dir, file_name) if preseizure.type.nil? && File.exist?(preseizure.piece.try(:content).try(:path).to_s)
+      end
+      file_path = File.join(dir, base_name + '.zip')
+      Dir.chdir dir
+      POSIX::Spawn::system "zip #{file_path} *"
     end
-    @preseizures.each do |preseizure|
-      entry = preseizure.entries.first
-      file_name = preseizure.coala_piece_name + '.pdf'
-      FileUtils.cp preseizure.piece.content.path, File.join(dir, file_name) if preseizure.type.nil? && File.exist?(preseizure.piece.try(:content).try(:path).to_s)
-    end
-    file_path = File.join(dir, base_name + '.zip')
-    Dir.chdir dir
-    POSIX::Spawn::system "zip #{file_path} *"
+
+    file.close
     file_path
   end
 
