@@ -194,6 +194,16 @@ update_price = ->
 
   $('.total_price').html(price+",00€ HT")
 
+check_disabled_options = ->
+  $('#subscription_package_form input:checkbox').each(->
+    if $(this).attr('disabled') == 'disabled'
+      hidden = $("#subscription_package_form input:hidden[name='"+$(this).attr('name')+"']")
+      if hidden
+        hidden.val($(this).is(':checked'))
+      else
+        $(this).after('<input type="hidden" name="'+$(this).attr('name')+'" value="'+$(this).is(':checked')+'">')
+  )
+
 jQuery ->
   if $('#subscriptions.edit, #organization_subscriptions.edit').length > 0
     update_form()
@@ -206,3 +216,6 @@ jQuery ->
     $('input, select').on 'change', ->
       update_warning()
       update_price()
+
+    $('#subscription_package_form').on 'submit', ->
+      check_disabled_options()
