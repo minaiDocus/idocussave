@@ -77,33 +77,39 @@ class McfProcessor
   private
 
   def process_file
-    uploaded_document = UploadedDocument.new(File.new(@file_path),
-                                             @mcf_document.original_file_name,
-                                             @mcf_document.user,
-                                             @mcf_document.journal,
-                                             0, # document is always for current period
-                                             nil,
-                                             "mcf"
-                                            )
+    if @mcf_document.user.try(:options).try(:is_upload_authorized)
+      uploaded_document = UploadedDocument.new(File.new(@file_path),
+                                               @mcf_document.original_file_name,
+                                               @mcf_document.user,
+                                               @mcf_document.journal,
+                                               0, # document is always for current period
+                                               nil,
+                                               "mcf"
+                                              )
 
-    if uploaded_document.valid? || uploaded_document.already_exist?
-      @mcf_document.processed
-      logger.info "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}"
-      
-      move_file
-    else
-      logger.info "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}"
+      if uploaded_document.valid? || uploaded_document.already_exist?
+        @mcf_document.processed
+        logger.info "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}"
 
-      uploaded_document.errors.each do |err|
-        if err.include? :file_is_corrupted_or_protected
-          @mcf_document.needs_retake
-        else
-          @mcf_document.got_error uploaded_document.full_error_messages
-          move_file
-          NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
-          return
+        move_file
+      else
+        logger.info "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}"
+
+        uploaded_document.errors.each do |err|
+          if err.include? :file_is_corrupted_or_protected
+            @mcf_document.needs_retake
+          else
+            @mcf_document.got_error uploaded_document.full_error_messages
+            move_file
+            NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
+            return
+          end
         end
       end
+    else
+      @mcf_document.got_error 'Téléversement de document non authorisé'
+      move_file
+      NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
     end
   end
 
