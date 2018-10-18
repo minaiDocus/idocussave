@@ -1,0 +1,18 @@
+defaults: &defaults
+  client_id: 1234
+  client_secret: 5678
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

@@ -32,7 +32,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/slimpay.yml',
   'config/pdftk.yml',
   'config/smtp.yml',
-  'config/ftp_delivery.yml'
+  'config/ftp_delivery.yml',
+  'config/exact_online.yml'
 )
 
 server 'my.idocus.com', user: 'idocus', roles: %w{app db web}

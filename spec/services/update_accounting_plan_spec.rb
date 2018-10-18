@@ -48,7 +48,7 @@ describe UpdateAccountingPlan do
       @user.ibiza_id = '{INVALID}'
       updater = UpdateAccountingPlan.new(@user)
       expect(updater.execute).to be_falsy
-      expect(updater.error_message).to eq({"error" => {"details"=>"Invalid length for a Base-64 char array or string."}})
+      expect(updater.ibiza_error_message).to eq({"error" => {"details"=>"Invalid length for a Base-64 char array or string."}})
     end
   end
 end

@@ -22,7 +22,6 @@ class User < ActiveRecord::Base
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
   validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
 
-
   attr_accessor :is_group_required
 
   has_many :memberships, class_name: 'Member', foreign_key: :user_id, dependent: :destroy
@@ -356,6 +355,10 @@ class User < ActiveRecord::Base
 
   def uses_ibiza?
     self.try(:softwares).try(:is_ibiza_used) && self.organization.try(:ibiza).try(:used?)
+  end
+
+  def uses_exact?
+    self.try(:softwares).try(:is_exact_used) && self.organization.try(:exact_online).try(:used?)
   end
 
   def uses_coala?

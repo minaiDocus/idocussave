@@ -102,22 +102,27 @@
                   - if @organization.ibiza.try(:configured?)
                     .choice
                       %label{ for: 'is_ibiza_used' }
-                        = check_box_tag 'softwares_is_ibiza_used', 1, @customer.uses_ibiza? || false
+                        = check_box_tag 'softwares_is_ibiza_used', 1, @customer.uses_ibiza? || false, class: 'softwares_setting'
                         Ibiza
+                  - if @organization.exact_online.try(:used?)
+                    .choice
+                      %label{ for: 'is_exact_used' }
+                        = check_box_tag 'softwares_is_exact_used', 1, @customer.uses_exact? || false, class: 'softwares_setting'
+                        Exact Online
                   - if @organization.is_coala_used
                     .choice
                       %label{ for: 'is_coala_used' }
-                        = check_box_tag 'softwares_is_coala_used', 1, @customer.uses_coala? || false
+                        = check_box_tag 'softwares_is_coala_used', 1, @customer.uses_coala? || false, class: 'softwares_setting'
                         Coala
                   - if @organization.is_quadratus_used
                     .choice
                       %label{ for: 'is_quadratus_used' }
-                        = check_box_tag 'softwares_is_quadratus_used', 1, @customer.uses_quadratus? || false
+                        = check_box_tag 'softwares_is_quadratus_used', 1, @customer.uses_quadratus? || false, class: 'softwares_setting'
                         Quadratus
                   - if @organization.is_csv_descriptor_used
                     .choice
                       %label{ for: 'is_other_used' }
-                        = check_box_tag 'softwares_is_csv_descriptor_used', 1, @customer.uses_csv_descriptor? || false
+                        = check_box_tag 'softwares_is_csv_descriptor_used', 1, @customer.uses_csv_descriptor? || false, class: 'softwares_setting'
                         Autre(Format csv personnalisé)
             %tr.stamp{ style: 'display:none' }
               %td.question

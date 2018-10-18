@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180907075002) do
+ActiveRecord::Schema.define(version: 20181015133851) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -589,6 +589,20 @@ ActiveRecord::Schema.define(version: 20180907075002) do
 
   add_index "events", ["organization_id"], name: "organization_id", using: :btree
   add_index "events", ["user_id"], name: "user_id", using: :btree
+
+  create_table "exact_online", force: :cascade do |t|
+    t.string   "user_name",               limit: 255
+    t.string   "full_name",               limit: 255
+    t.string   "email",                   limit: 255
+    t.string   "state",                   limit: 255
+    t.boolean  "is_auto_deliver"
+    t.text     "encrypted_refresh_token", limit: 65535
+    t.text     "encrypted_access_token",  limit: 65535
+    t.integer  "organization_id",         limit: 4
+    t.datetime "token_expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "exercises", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
@@ -2043,6 +2057,8 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.boolean "is_csv_descriptor_used",                       default: false
     t.boolean "use_own_csv_descriptor_format",                default: false
     t.integer "is_csv_descriptor_auto_deliver",     limit: 4, default: -1,    null: false
+    t.boolean "is_exact_used",                                default: false
+    t.integer "is_exact_auto_deliver",              limit: 4, default: -1,    null: false
   end
 
   create_table "statistics", force: :cascade do |t|
@@ -2336,6 +2352,7 @@ ActiveRecord::Schema.define(version: 20180907075002) do
     t.boolean  "is_dematbox_authorized",                                                       default: false,                                              null: false
     t.datetime "return_label_generated_at"
     t.string   "ibiza_id",                                                       limit: 255
+    t.string   "exact_id",                                                       limit: 255
     t.boolean  "is_fiduceo_authorized",                                                        default: false,                                              null: false
     t.string   "email_code",                                                     limit: 255
     t.integer  "authd_prev_period",                                              limit: 4,     default: 1,                                                  null: false

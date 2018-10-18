@@ -17,6 +17,7 @@ class Organization < ActiveRecord::Base
   has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
   has_one  :ibiza
+  has_one  :exact_online
   has_one  :knowings
   has_one  :subscription
   has_one  :csv_descriptor
@@ -154,7 +155,11 @@ class Organization < ActiveRecord::Base
   end
 
   def uses_softwares?
-    ibiza.try(:configured?) || uses_other_softwares?
+    uses_api_softwares? || uses_other_softwares?
+  end
+
+  def uses_api_softwares?
+    exact_online.try(:used?) || ibiza.try(:configured?)
   end
 
   def uses_other_softwares?

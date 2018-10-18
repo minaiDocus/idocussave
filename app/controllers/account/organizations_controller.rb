@@ -36,6 +36,8 @@ class Account::OrganizationsController < Account::OrganizationController
                           'Export csv personnalisé'
                         when 'ibiza'
                           'Ibiza'
+                        when 'exact'
+                          'Exact Online'
                         else
                           ''
                       end
@@ -52,7 +54,9 @@ class Account::OrganizationsController < Account::OrganizationController
       elsif software == 'quadratus'
         softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
       elsif software == 'ibiza'
-        softwares_params = { is_ibiza_used: software_users.include?(customer.to_s) }
+        softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact?) }
+      elsif software == 'exact'
+        softwares_params = { is_exact_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
       end
@@ -95,6 +99,10 @@ class Account::OrganizationsController < Account::OrganizationController
 
   # PUT /account/organizations/:id
   def update
+    if params[:organization][:exact_online]
+      @organization.exact_online.update(params[:organization][:exact_online].to_hash)
+    end
+
     if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       if params[:part].present?

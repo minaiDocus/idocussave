@@ -26,3 +26,4 @@ config/smtp.yml
 config/budgea.yml
 config/fiduceo.yml
 config/ftp_delivery.yml
+config/exact_online.yml

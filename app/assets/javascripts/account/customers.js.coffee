@@ -29,6 +29,29 @@ jQuery ->
         $('.feedback').remove()
         $('input[type=submit]').removeAttr('disabled')
 
+  if $('#customer.edit.exact').length > 0
+    $('#user_exact_id').after('<div class="feedback"></div>')
+    $.ajax
+      url: $('#user_exact_id').data('users-list-url'),
+      data: '',
+      dataType: 'json',
+      type: 'GET',
+      success: (data) ->
+        original_value = $('#user_exact_id').data('original-value') || ''
+        for d in data
+          option_html = ''
+          if original_value.length > 0 && original_value == d['id']
+            option_html = '<option value="'+d['id']+'" selected="selected">'+d['name']+'</option>'
+          else
+            option_html = '<option value="'+d['id']+'">'+d['name']+'</option>'
+          $('#user_exact_id').append(option_html)
+        $('#user_exact_id').show()
+        $('#user_exact_id').chosen
+          search_contains: true,
+          no_results_text: 'Aucun résultat correspondant à'
+        $('.feedback').remove()
+        $('input[type=submit]').removeAttr('disabled')
+
   if $('#customer.edit.mcf').length > 0
     $('#user_mcf_storage').after('<div class="feedback"></div>')
     $.ajax

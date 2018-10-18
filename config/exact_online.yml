@@ -1,0 +1,18 @@
+defaults: &defaults
+  client_id: 0cf9f68f-7d26-4949-ad4e-8befd982533f
+  client_secret: BOhcM7O82Kvx
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

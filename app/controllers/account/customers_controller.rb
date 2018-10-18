@@ -100,6 +100,34 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer, tab: params[:software])
   end
 
+  # GET /account/organizations/:organization_id/customers/:id/edit_exact
+  def edit_exact
+  end
+
+  # PUT /account/organizations/:organization_id/customers/:id/update_exact
+  def update_exact
+    @customer.assign_attributes(exact_params)
+
+    is_exact_id_changed = @customer.exact_id_changed?
+
+    if @customer.save
+      if @customer.configured?
+        if is_exact_id_changed && @user.exact_id.present?
+          UpdateAccountingPlan.new(@user.id).execute
+        end
+
+        flash[:success] = 'Modifié avec succès'
+
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'exact')
+      else
+        next_configuration_step
+      end
+    else
+      flash[:error] = 'Impossible de modifier'
+      render 'edit'
+    end
+  end
+
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
   def edit_ibiza
   end
@@ -326,6 +354,9 @@ class Account::CustomersController < Account::OrganizationController
     params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated])
   end
 
+  def exact_params
+    params.require(:user).permit(:exact_id, softwares_attributes: [:id, :is_exact_auto_deliver])
+  end
 
   def period_options_params
     if current_user.is_admin
