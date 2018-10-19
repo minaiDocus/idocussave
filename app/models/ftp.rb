@@ -16,9 +16,9 @@ class Ftp < ActiveRecord::Base
 
   validates :login,    length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
   validates :password, length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
-  validates_format_of :host, with: /\Aftp:\/\/(([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5})|localhost)(\/)?\z/ix, if: proc { |e| e.persisted? }
   validates_numericality_of :port, greater_than: 0, less_than: 65536, if: proc { |e| e.persisted? }
   validate :uniqueness_of_path
+  validate :host_format, if: proc { |e| e.persisted? }
 
   before_create do
     self.host     ||= 'ftp://ftp.example.com'
@@ -68,6 +68,15 @@ class Ftp < ActiveRecord::Base
   end
 
   private
+
+  def host_format
+    #host valid for :
+    #ftp host format : ex : ftp://ftp.example.com
+    #ipv4 format : ex : 192.168.0.1
+    valid_format = host.match(/\Aftp:\/\/(([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5})|localhost)(\/)?\z/ix) ||
+                   host.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)
+    errors.add(:host, :invalid) unless valid_format
+  end
 
   def uniqueness_of_path
     if organization && path.match(/\A(\/)*INPUT(\/)*/)
