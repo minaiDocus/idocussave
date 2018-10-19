@@ -36,7 +36,7 @@ class Account::OrganizationsController < Account::OrganizationController
                           'Export csv personnalisé'
                         when 'ibiza'
                           'Ibiza'
-                        when 'exact'
+                        when 'exact_online'
                           'Exact Online'
                         else
                           ''
@@ -54,9 +54,9 @@ class Account::OrganizationsController < Account::OrganizationController
       elsif software == 'quadratus'
         softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
       elsif software == 'ibiza'
-        softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact?) }
-      elsif software == 'exact'
-        softwares_params = { is_exact_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
+        softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact_online?) }
+      elsif software == 'exact_online'
+        softwares_params = { is_exact_online_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
       end

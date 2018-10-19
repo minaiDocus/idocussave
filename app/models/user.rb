@@ -101,7 +101,6 @@ class User < ActiveRecord::Base
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
-  scope :using_ibiza,                 -> { joins(:softwares).where('softwares_settings.is_ibiza_used = true') }
 
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :softwares
@@ -186,9 +185,14 @@ class User < ActiveRecord::Base
   def create_or_update_software(attributes)
     software = self.softwares || SoftwaresSetting.new()
     software.assign_attributes(attributes.to_hash)
-    software.user = self
-    software.save
-    software
+
+    unless software.is_exact_online_used && software.is_ibiza_used
+      software.user = self
+      software.save
+      software
+    else
+      software = nil
+    end
   end
 
   def paper_return_address
@@ -357,8 +361,8 @@ class User < ActiveRecord::Base
     self.try(:softwares).try(:is_ibiza_used) && self.organization.try(:ibiza).try(:used?)
   end
 
-  def uses_exact?
-    self.try(:softwares).try(:is_exact_used) && self.organization.try(:exact_online).try(:used?)
+  def uses_exact_online?
+    self.try(:softwares).try(:is_exact_online_used) && self.organization.try(:exact_online).try(:used?)
   end
 
   def uses_coala?

@@ -1,9 +1,9 @@
 <table class="pull-left">
   <tr>
-    <% if(window.is_ibiza_configured): %>
+    <% if(@model.get('user_software')): %>
       <td class="option">
-        <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
-          <a class="tip deliver" href="" title="Envoyer vers iBiza">
+        <% if(@model.get('is_locked') == false && @model.get('is_delivered_to') == ''): %>
+          <a class="tip deliver" href="" title="Envoyer vers <%= @model.get('user_software') %>">
             <i class="icon-refresh"></i>
           </a>
         <% end %>

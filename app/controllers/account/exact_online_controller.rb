@@ -18,15 +18,15 @@ class Account::ExactOnlineController < Account::OrganizationController
       SetupExactOnline.new(@exact_online.id.to_s, params[:code], subscribe_account_exact_online_url).execute
       flash[:success] = 'Vérification en cours...'
     else
-      flash[:error] = "Configuration d'Exact annulée."
+      flash[:error] = "Configuration d'Exact Online annulée."
     end
-    redirect_to account_organization_path(@organization, tab: 'exact')
+    redirect_to account_organization_path(@organization, tab: 'exact_online')
   end
 
   def unsubscribe
     @exact_online.reset unless @exact_online.deactivated?
-    flash[:success] = 'Liaison avec Exact supprimée.'
-    redirect_to account_organization_path(@organization, tab: 'exact')
+    flash[:success] = 'Liaison avec Exact Online supprimée.'
+    redirect_to account_organization_path(@organization, tab: 'exact_online')
   end
 
 private

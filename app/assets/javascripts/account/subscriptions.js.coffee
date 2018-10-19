@@ -213,8 +213,8 @@ check_disabled_options = ->
 
 refresh_softwares = (obj)->
   if(obj.attr('id') == 'softwares_is_ibiza_used' && obj.is(':checked'))
-    $('#softwares_is_exact_used').removeAttr('checked')
-  else if(obj.attr('id') == 'softwares_is_exact_used' && obj.is(':checked'))
+    $('#softwares_is_exact_online_used').removeAttr('checked')
+  else if(obj.attr('id') == 'softwares_is_exact_online_used' && obj.is(':checked'))
     $('#softwares_is_ibiza_used').removeAttr('checked')
 
 jQuery ->

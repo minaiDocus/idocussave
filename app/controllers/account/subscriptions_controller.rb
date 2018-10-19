@@ -82,7 +82,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   def softwares_params
     {
       is_ibiza_used:           params[:softwares_is_ibiza_used] || false,
-      is_exact_used:           params[:softwares_is_exact_used] || false,
+      is_exact_online_used:    params[:softwares_is_exact_online_used] || false,
       is_coala_used:           params[:softwares_is_coala_used] || false,
       is_quadratus_used:       params[:softwares_is_quadratus_used] || false,
       is_csv_descriptor_used:  params[:softwares_is_csv_descriptor_used] || false

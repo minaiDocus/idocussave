@@ -106,8 +106,8 @@
                         Ibiza
                   - if @organization.exact_online.try(:used?)
                     .choice
-                      %label{ for: 'is_exact_used' }
-                        = check_box_tag 'softwares_is_exact_used', 1, @customer.uses_exact? || false, class: 'softwares_setting'
+                      %label{ for: 'is_exact_online_used' }
+                        = check_box_tag 'softwares_is_exact_online_used', 1, @customer.uses_exact_online? || false, class: 'softwares_setting'
                         Exact Online
                   - if @organization.is_coala_used
                     .choice

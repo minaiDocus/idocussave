@@ -35,15 +35,15 @@ class UpdateAccountingPlan
       else
         false
       end
-    elsif @user.exact_id.present? && @user.organization.exact_online.try(:configured?) && @accounting_plan.need_update?
-      if exact_accounts.present?
+    elsif @user.exact_online_id.present? && @user.organization.exact_online.try(:configured?) && @accounting_plan.need_update?
+      if exact_online_accounts.present?
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
         @accounting_plan.providers = []
         @accounting_plan.customers = []
 
-        exact_accounts.each do |account|
-          create_exact_item(account)
+        exact_online_accounts.each do |account|
+          create_exact_online_item(account)
         end
 
         @accounting_plan.is_updating = false
@@ -102,7 +102,7 @@ class UpdateAccountingPlan
     @accounting_plan.providers << item if item.kind == 'provider'
   end
 
-  def create_exact_item(account)
+  def create_exact_online_item(account)
     item = AccountingPlanItem.new
     item.third_party_name       = account[:name]
     item.conterpart_account     = account[:account]
@@ -115,12 +115,12 @@ class UpdateAccountingPlan
     end
   end
 
-  def exact_data
-    @exact_data ||= ExactOnlineData.new(@user.organization.exact_online, @user.exact_id)
+  def exact_online_data
+    @exact_online_data ||= ExactOnlineData.new(@user.organization.exact_online, @user.exact_online_id)
   end
 
-  def exact_accounts
-    @exact_accounts ||= exact_data.accounting_plans
+  def exact_online_accounts
+    @exact_online_accounts ||= exact_online_data.accounting_plans
   end
 end
 

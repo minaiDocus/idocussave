@@ -42,8 +42,8 @@
                     .pull-left iBiza
                     - if @organization.try(:ibiza).try(:used?)
                       %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'exact') }
-                  %a{ href: '#exact', data: { toggle: 'tab' } }
+                %li{ class: ('active' if params[:tab] == 'exact_online') }
+                  %a{ href: '#exact_online', data: { toggle: 'tab' } }
                     .pull-left Exact Online
                     - if @organization.try(:exact_online).try(:used?)
                       %i.icon-ok.pull-right
@@ -412,11 +412,11 @@
                     -if @organization.is_coala_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #exact.tab-pane{ class: ('active' if params[:tab] == 'exact') }
+            #exact_online.tab-pane{ class: ('active' if params[:tab] == 'exact_online') }
               .aligncenter
                 %h4.margin1bottom Configuration Exact Online
-              = simple_form_for [:account, @organization], html: { id: 'form_exact', class: 'form form-horizontal margin0' } do |c|
-                = hidden_field_tag :part, 'exact'
+              = simple_form_for [:account, @organization], html: { id: 'form_exact_online', class: 'form form-horizontal margin0' } do |c|
+                = hidden_field_tag :part, 'exact_online'
                 = c.simple_fields_for :exact_online do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
@@ -429,22 +429,22 @@
                             %span.label Non configuré
                       %tr
                         %th= t('activerecord.models.exact_online.attributes.user_name')
-                        %td{colspan: 2}= @organization.exact_online.user_name
+                        %td{colspan: 2}= @organization.exact_online.try(:user_name)
                       %tr
                         %th= t('activerecord.models.exact_online.attributes.email')
-                        %td{colspan: 2}= @organization.exact_online.email
+                        %td{colspan: 2}= @organization.exact_online.try(:email)
                       %tr
                         %th= t('activerecord.models.exact_online.attributes.full_name')
-                        %td{colspan: 2}= @organization.exact_online.full_name
+                        %td{colspan: 2}= @organization.exact_online.try(:full_name)
                       - if @organization.exact_online.try(:used?)
                         %tr
                           %th= t('activerecord.models.exact_online.attributes.is_auto_deliver')
-                          %td{width: '5%'}= f.input :is_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.exact_online.is_auto_deliver }
+                          %td{width: '5%'}= f.input :is_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.exact_online.try(:is_auto_deliver) }
                           %td{width: '5%'}= f.submit t('actions.submit'), class: 'btn btn-primary'
                   - if @user.leader?
                     .alignright
                       - if @organization.exact_online.try(:used?)
-                        = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact'), class: 'btn'
+                        = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn'
                         = link_to 'Supprimer la liaison', unsubscribe_account_exact_online_path(o: Base64.encode64(@organization.id.to_s)), method: 'POST', data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
                       -else
                         = link_to 'Configurer', authenticate_account_exact_online_path(organization_id: @organization.id), class: 'btn btn-primary'

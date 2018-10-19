@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181015133851) do
+<<<<<<< Updated upstream
+ActiveRecord::Schema.define(version: 20181024123658) do
+=======
+<<<<<<< Updated upstream
+ActiveRecord::Schema.define(version: 20180907075002) do
+=======
+ActiveRecord::Schema.define(version: 20181030114758) do
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -232,7 +240,7 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.boolean  "is_used",                             default: false
     t.string   "type_name",             limit: 255
     t.boolean  "lock_old_operation",                  default: true
-    t.integer  "permitted_late_days",   limit: 4,     default: 30
+    t.integer  "permitted_late_days",   limit: 4,     default: 7
   end
 
   add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree
@@ -1017,7 +1025,6 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.text     "encrypted_description", limit: 65535
     t.text     "encrypted_message",     limit: 65535
     t.string   "encrypted_email",       limit: 255
-    t.string   "encrypted_password",    limit: 255
     t.string   "encrypted_types",       limit: 255
   end
 
@@ -1469,7 +1476,7 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.boolean  "is_made_by_abbyy",                                                           default: false, null: false
     t.boolean  "is_delivered",                                                               default: false, null: false
     t.datetime "delivery_tried_at"
-    t.string   "delivery_message",               limit: 255
+    t.text     "delivery_message",               limit: 65535
     t.boolean  "is_locked",                                                                  default: false, null: false
     t.integer  "organization_id",                limit: 4
     t.string   "organization_id_mongo_id",       limit: 255
@@ -1489,6 +1496,7 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.datetime "duplicate_unblocked_at"
     t.integer  "duplicate_unblocked_by_user_id", limit: 4
     t.decimal  "cached_amount",                                     precision: 11, scale: 2
+    t.string   "is_delivered_to",                limit: 255,                                 default: ""
   end
 
   add_index "pack_report_preseizures", ["duplicate_unblocked_by_user_id"], name: "index_pack_report_preseizures_on_duplicate_unblocked_by_user_id", using: :btree
@@ -1528,10 +1536,10 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.datetime "updated_at"
     t.string   "name",                     limit: 255
     t.string   "type",                     limit: 255
-    t.boolean  "is_delivered",                         default: false, null: false
+    t.boolean  "is_delivered",                           default: false, null: false
     t.datetime "delivery_tried_at"
-    t.string   "delivery_message",         limit: 255
-    t.boolean  "is_locked",                            default: false, null: false
+    t.text     "delivery_message",         limit: 65535
+    t.boolean  "is_locked",                              default: false, null: false
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
     t.integer  "user_id",                  limit: 4
@@ -1540,6 +1548,14 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.string   "pack_id_mongo_id",         limit: 255
     t.integer  "document_id",              limit: 4
     t.string   "document_id_mongo_id",     limit: 255
+<<<<<<< Updated upstream
+    t.string   "is_delivered_to",          limit: 255, default: ""
+=======
+<<<<<<< Updated upstream
+=======
+    t.string   "is_delivered_to",          limit: 255,   default: ""
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   end
 
   add_index "pack_reports", ["document_id"], name: "document_id", using: :btree
@@ -1750,7 +1766,6 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.datetime "delivery_created_at"
     t.datetime "delivery_updated_at"
     t.string   "delivery_state",                           limit: 255,   default: "wait", null: false
-    t.boolean  "is_paper_quota_reached_notified",                        default: false
   end
 
   add_index "periods", ["mongo_id"], name: "index_periods_on_mongo_id", using: :btree
@@ -1764,22 +1779,28 @@ ActiveRecord::Schema.define(version: 20181015133851) do
   create_table "pre_assignment_deliveries", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "pack_name",       limit: 255
-    t.string   "state",           limit: 255
+    t.string   "pack_name",                limit: 255
+    t.string   "state",                    limit: 255
     t.boolean  "is_auto"
-    t.integer  "total_item",      limit: 4
+    t.integer  "total_item",               limit: 4
     t.date     "grouped_date"
-    t.text     "xml_data",        limit: 4294967295
-    t.text     "error_message",   limit: 65535
+    t.text     "data_to_deliver",          limit: 4294967295
+    t.text     "error_message",            limit: 65535
     t.boolean  "is_to_notify"
     t.boolean  "is_notified"
     t.datetime "notified_at"
-    t.integer  "organization_id", limit: 4
-    t.integer  "report_id",       limit: 4
-    t.integer  "user_id",         limit: 4
-    t.string   "ibiza_id",        limit: 255
+    t.integer  "organization_id",          limit: 4
+    t.integer  "report_id",                limit: 4
+    t.integer  "user_id",                  limit: 4
+    t.string   "software_id",              limit: 255
+    t.string   "mongo_id",                 limit: 255
+    t.string   "organization_id_mongo_id", limit: 255
+    t.string   "report_id_mongo_id",       limit: 255
+    t.string   "user_id_mongo_id",         limit: 255
+    t.string   "deliver_to",               limit: 255,        default: "ibiza"
   end
 
+  add_index "pre_assignment_deliveries", ["deliver_to"], name: "index_pre_assignment_deliveries_on_deliver_to", using: :btree
   add_index "pre_assignment_deliveries", ["is_auto"], name: "index_pre_assignment_deliveries_on_is_auto", using: :btree
   add_index "pre_assignment_deliveries", ["is_notified"], name: "index_pre_assignment_deliveries_on_is_notified", using: :btree
   add_index "pre_assignment_deliveries", ["is_to_notify"], name: "index_pre_assignment_deliveries_on_is_to_notify", using: :btree
@@ -1909,40 +1930,26 @@ ActiveRecord::Schema.define(version: 20181015133851) do
   add_index "retrieved_data", ["user_id"], name: "fk_rails_c47071c4c1", using: :btree
 
   create_table "retrievers", force: :cascade do |t|
-    t.integer  "budgea_id",                  limit: 4
-    t.string   "fiduceo_id",                 limit: 255
-    t.string   "fiduceo_transaction_id",     limit: 255
-    t.string   "name",                       limit: 255
-    t.text     "additionnal_fields",         limit: 65535
-    t.string   "journal_name",               limit: 255
+    t.integer  "budgea_id",              limit: 4
+    t.string   "name",                   limit: 255
+    t.string   "journal_name",           limit: 255
     t.datetime "sync_at"
-    t.boolean  "is_sane",                                  default: true
-    t.boolean  "is_new_password_needed",                   default: false
-    t.boolean  "is_selection_needed",                      default: true
-    t.string   "state",                      limit: 255
-    t.string   "error_message",              limit: 255
-    t.string   "budgea_state",               limit: 255
-    t.text     "budgea_additionnal_fields",  limit: 65535
-    t.string   "budgea_error_message",       limit: 255
-    t.string   "fiduceo_state",              limit: 255
-    t.text     "fiduceo_additionnal_fields", limit: 65535
-    t.string   "fiduceo_error_message",      limit: 255
-    t.datetime "created_at",                                               null: false
-    t.datetime "updated_at",                                               null: false
-    t.integer  "user_id",                    limit: 4
-    t.integer  "journal_id",                 limit: 4
-    t.integer  "connector_id",               limit: 4
-    t.string   "service_name",               limit: 255
-    t.text     "capabilities",               limit: 65535
-    t.text     "encrypted_param1",           limit: 65535
-    t.text     "encrypted_param2",           limit: 65535
-    t.text     "encrypted_param3",           limit: 65535
-    t.text     "encrypted_param4",           limit: 65535
-    t.text     "encrypted_param5",           limit: 65535
-    t.text     "encrypted_answers",          limit: 65535
+    t.boolean  "is_sane",                              default: true
+    t.boolean  "is_new_password_needed",               default: false
+    t.boolean  "is_selection_needed",                  default: true
+    t.string   "state",                  limit: 255
+    t.string   "error_message",          limit: 255
+    t.string   "budgea_state",           limit: 255
+    t.string   "budgea_error_message",   limit: 255
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.integer  "user_id",                limit: 4
+    t.integer  "journal_id",             limit: 4
+    t.integer  "budgea_connector_id",    limit: 4
+    t.string   "service_name",           limit: 255
+    t.text     "capabilities",           limit: 65535
   end
 
-  add_index "retrievers", ["connector_id"], name: "index_retrievers_on_connector_id", using: :btree
   add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree
   add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
   add_index "retrievers", ["user_id"], name: "index_retrievers_on_user_id", using: :btree
@@ -2057,8 +2064,8 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.boolean "is_csv_descriptor_used",                       default: false
     t.boolean "use_own_csv_descriptor_format",                default: false
     t.integer "is_csv_descriptor_auto_deliver",     limit: 4, default: -1,    null: false
-    t.boolean "is_exact_used",                                default: false
-    t.integer "is_exact_auto_deliver",              limit: 4, default: -1,    null: false
+    t.boolean "is_exact_online_used",                         default: false
+    t.integer "is_exact_online_auto_deliver",       limit: 4, default: -1,    null: false
   end
 
   create_table "statistics", force: :cascade do |t|
@@ -2352,7 +2359,7 @@ ActiveRecord::Schema.define(version: 20181015133851) do
     t.boolean  "is_dematbox_authorized",                                                       default: false,                                              null: false
     t.datetime "return_label_generated_at"
     t.string   "ibiza_id",                                                       limit: 255
-    t.string   "exact_id",                                                       limit: 255
+    t.string   "exact_online_id",                                                limit: 255
     t.boolean  "is_fiduceo_authorized",                                                        default: false,                                              null: false
     t.string   "email_code",                                                     limit: 255
     t.integer  "authd_prev_period",                                              limit: 4,     default: 1,                                                  null: false

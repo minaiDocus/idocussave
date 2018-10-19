@@ -8,9 +8,9 @@ class Account::PackReportsController < Account::OrganizationController
     @pack_reports = @pack_reports.where("name LIKE ?", "%#{params[:name]}%") if params[:name].present?
 
     if params[:view] == 'delivered'
-      @pack_reports = @pack_reports.where(is_delivered: true)
+      @pack_reports = Pack::Report.where(id: @pack_reports.select{ |report| report.is_delivered? }.collect(&:id))
     elsif params[:view] == 'not_delivered'
-      @pack_reports = @pack_reports.where(is_delivered: false)
+      @pack_reports = Pack::Report.where(id: @pack_reports.select{ |report| report.is_not_delivered? }.collect(&:id))
     end
 
     @pack_reports_count = @pack_reports.count
@@ -23,7 +23,7 @@ class Account::PackReportsController < Account::OrganizationController
   def deliver
     preseizures = @report.preseizures.by_position.not_locked.not_delivered
 
-    CreatePreAssignmentDeliveryService.new(preseizures).execute
+    CreatePreAssignmentDeliveryService.new(preseizures, ['ibiza', 'exact_online']).execute
 
     respond_to do |format|
       format.json { render json: { status: :ok } }

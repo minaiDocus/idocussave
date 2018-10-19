@@ -69,7 +69,11 @@ class Account::CustomersController < Account::OrganizationController
   def update
     if params[:user][:softwares_attributes].present?
       software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-      flash[:success] = 'Modifié avec succès.'
+      if software && software.persisted?
+        flash[:success] = 'Modifié avec succès.'
+      else
+        flash[:error] = 'Impossible de modifier.'
+      end
 
       redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
     else
@@ -92,7 +96,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def update_software
     software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-    if software.persisted?
+    if software && software.persisted?
       flash[:success] = 'Modifié avec succès.'
     else
       flash[:error] = 'Impossible de modifier.'
@@ -100,25 +104,25 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer, tab: params[:software])
   end
 
-  # GET /account/organizations/:organization_id/customers/:id/edit_exact
-  def edit_exact
+  # GET /account/organizations/:organization_id/customers/:id/edit_exact_online
+  def edit_exact_online
   end
 
-  # PUT /account/organizations/:organization_id/customers/:id/update_exact
-  def update_exact
-    @customer.assign_attributes(exact_params)
+  # PUT /account/organizations/:organization_id/customers/:id/update_exact_online
+  def update_exact_online
+    @customer.assign_attributes(exact_online_params)
 
-    is_exact_id_changed = @customer.exact_id_changed?
+    is_exact_online_id_changed = @customer.exact_online_id_changed?
 
     if @customer.save
       if @customer.configured?
-        if is_exact_id_changed && @user.exact_id.present?
+        if is_exact_online_id_changed && @user.exact_online_id.present?
           UpdateAccountingPlan.new(@user.id).execute
         end
 
         flash[:success] = 'Modifié avec succès'
 
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'exact')
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'exact_online')
       else
         next_configuration_step
       end
@@ -354,8 +358,8 @@ class Account::CustomersController < Account::OrganizationController
     params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated])
   end
 
-  def exact_params
-    params.require(:user).permit(:exact_id, softwares_attributes: [:id, :is_exact_auto_deliver])
+  def exact_online_params
+    params.require(:user).permit(:exact_online_id, softwares_attributes: [:id, :is_exact_online_auto_deliver])
   end
 
   def period_options_params

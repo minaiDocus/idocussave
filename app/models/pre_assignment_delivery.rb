@@ -7,18 +7,21 @@ class PreAssignmentDelivery < ActiveRecord::Base
 
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
 
+  validates_inclusion_of  :deliver_to, in: %w(ibiza exact_online)
   validates_presence_of   :pack_name, :state
 
-  scope :auto,         -> { where(is_auto: true) }
-  scope :sent,         -> { where(state: 'sent') }
-  scope :error,        -> { where(state: 'error') }
-  scope :manual,       -> { where(is_auto: false) }
-  scope :pending,      -> { where(state: 'pending') }
-  scope :sending,      -> { where(state: 'sending') }
-  scope :notified,     -> { where(is_notified: true) }
-  scope :xml_built,    -> { where(state: 'xml_built') }
-  scope :building_xml, -> { where(state: 'building_xml') }
-  scope :not_notified, -> { where(is_to_notify: true, is_notified: [nil, false]) }
+  scope :ibiza,         -> { where(deliver_to: 'ibiza') }
+  scope :exact_online,  -> { where(deliver_to: 'exact_online') }
+  scope :auto,          -> { where(is_auto: true) }
+  scope :sent,          -> { where(state: 'sent') }
+  scope :error,         -> { where(state: 'error') }
+  scope :manual,        -> { where(is_auto: false) }
+  scope :pending,       -> { where(state: 'pending') }
+  scope :sending,       -> { where(state: 'sending') }
+  scope :notified,      -> { where(is_notified: true) }
+  scope :data_built,    -> { where(state: 'data_built') }
+  scope :building_data, -> { where(state: 'building_data') }
+  scope :not_notified,  -> { where(is_to_notify: true, is_notified: [nil, false]) }
 
 
   state_machine initial: :pending do
@@ -26,19 +29,19 @@ class PreAssignmentDelivery < ActiveRecord::Base
     state :error
     state :pending
     state :sending
-    state :xml_built
-    state :building_xml
+    state :data_built
+    state :building_data
 
-    event :building_xml do
-      transition pending: :building_xml
+    event :building_data do
+      transition pending: :building_data
     end
 
-    event :xml_built do
-      transition building_xml: :xml_built
+    event :data_built do
+      transition building_data: :data_built
     end
 
     event :sending do
-      transition [:pending, :xml_built, :error] => :sending
+      transition [:pending, :data_built, :error] => :sending
     end
 
     event :sent do
@@ -46,7 +49,7 @@ class PreAssignmentDelivery < ActiveRecord::Base
     end
 
     event :error do
-      transition [:building_xml, :sending] => :error
+      transition [:building_data, :sending] => :error
     end
   end
 
@@ -55,6 +58,14 @@ class PreAssignmentDelivery < ActiveRecord::Base
     @ibiza ||= organization.ibiza
   end
 
+  def human_form_of_deliver_to
+    case self.deliver_to
+      when 'ibiza'
+        'Ibiza'
+      when 'exact_online'
+        'Exact Online'
+    end
+  end
 
   def ibiza_access_token
     if ibiza.two_channel_delivery?

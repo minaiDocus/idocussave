@@ -151,8 +151,8 @@ Idocus::Application.routes.draw do
         member do
           get   'edit_ibiza'
           patch 'update_ibiza'
-          get   'edit_exact'
-          patch 'update_exact'
+          get   'edit_exact_online'
+          patch 'update_exact_online'
           patch 'close_account'
           patch 'reopen_account'
           get   'edit_compta_options'
@@ -263,7 +263,7 @@ Idocus::Application.routes.draw do
       resource :ibiza, controller: 'ibiza', only: %w(create edit update)
 
       resources :ibiza_users,                       only: :index
-      resources :exact_users,                       only: :index
+      resources :exact_online_users,                       only: :index
       resources :mcf_users,                         only: :index
       resources :pre_assignments,                   only: :index
       resources :pre_assignment_delivery_errors,    only: :index

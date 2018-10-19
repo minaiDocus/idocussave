@@ -33,6 +33,22 @@ class ExactOnline < ActiveRecord::Base
     end
   end
 
+  def reset
+    self.refresh_token    = nil
+    self.access_token     = nil
+    self.token_expires_at = nil
+    self.user_name        = nil
+    self.email            = nil
+    self.full_name        = nil
+    self.is_auto_deliver  = false
+    self.save
+    self.deactivate
+  end
+
+  def used?
+    self.access_token.present? && self.configured?
+  end
+
   def is_session_expired?
     self.token_expires_at <= 30.seconds.from_now
   end
@@ -65,20 +81,13 @@ class ExactOnline < ActiveRecord::Base
     })
   end
 
-  def client(division=nil)
-    @client ||= ExactOnlineSdk::Client.new(session, division)
+  def clear_client
+    @client   = nil
+    @session  = nil
   end
 
-  def reset
-    self.refresh_token    = nil
-    self.access_token     = nil
-    self.token_expires_at = nil
-    self.user_name        = nil
-    self.email            = nil
-    self.full_name        = nil
-    self.is_auto_deliver  = false
-    self.save
-    self.deactivate
+  def client(division=nil)
+    @client ||= ExactOnlineSdk::Client.new(session, division)
   end
 
   def users
@@ -87,10 +96,11 @@ class ExactOnline < ActiveRecord::Base
 
     refresh_session_if_needed
 
-    result = client.users.map do |e|
+    p tests = client.users
+    result = tests.map do |e|
       o = OpenStruct.new
       o.name = e['customer_name']
-      o.id = e['customer']
+      o.id = e['user_id']
       o
     end
 
@@ -98,7 +108,13 @@ class ExactOnline < ActiveRecord::Base
     result
   end
 
-  def used?
-    self.access_token.present? && self.configured?
+  def transactions
+    refresh_session_if_needed
+    p result = client.transactions
+  end
+
+  def divisions
+    refresh_session_if_needed
+    p result = client.divisions
   end
 end

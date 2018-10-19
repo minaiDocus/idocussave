@@ -89,7 +89,7 @@ class ProcessOperation
             pack_report.update_attribute(:is_delivered, false)
           end
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
-            CreatePreAssignmentDeliveryService.new(pres, is_auto: true).execute
+            CreatePreAssignmentDeliveryService.new(pres, ['ibiza', 'exact_online'], is_auto: true).execute
           end
         else
           operations.each do |operation|

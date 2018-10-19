@@ -400,7 +400,7 @@ fr:
           is_dematbox_authorized: Dematbox autorisé ?
           prescriber: Prescripteur
           ibiza_id: Dossier correspondant dans iBiza
-          exact_id: Dossier correspondant dans Exact Online
+          exact_online_id: Dossier correspondant dans Exact Online
           authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
           auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
@@ -894,17 +894,18 @@ fr:
         zero: 0 livraison
         one: 1 livraison
         other: '%{count} livraisons'
-        name: Livraison de pré-affectation vers iBiza
+        name: Livraison de pré-affectation
         attributes:
           pack_name: Nom du lot
           number: N°
           state: Etat
           is_auto: Automatique ?
           total_item: Nombre d'élément
-          ibiza_id: Identifiant iBiza
+          software_id: Identifiant externe
           grouped_date: Date groupé
-          xml_data: Donnée XML
+          data_to_deliver: Donnée à envoyer
           error_message: Message d'erreur
+          deliver_to: Livraison vers
       paper_process:
         zero: 0 traitement papier
         one: 1 traitement papier
@@ -1029,16 +1030,16 @@ fr:
         attributes:
           is_ibiza_auto_deliver: Livrer automatiquement les écritures ?
           is_ibiza_compta_analysis_activated: Activer la compta analytique ?
-          is_exact_auto_deliver: Livrer automatiquement les écritures ?
+          is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
           is_coala_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
           is_quadratus_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
           use_own_csv_descriptor_format: Utilise son propre format de CSV ?
           is_csv_descriptor_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
       exact_online:
-        zero: 0 Exact
-        one: 1 Exact
-        other: '%{count} Exact'
-        name: Exact
+        zero: 0 Exact online
+        one: 1 Exact online
+        other: '%{count} Exact online'
+        name: Exact online
         attributes:
           user_name: Nom d'utilisateur
           email: Email
@@ -1090,8 +1091,8 @@ fr:
       pre_assignment_delivery:
         states:
           pending: En attente de traitement
-          building_xml: Construction du XML
-          xml_built: XML construit
+          building_data: Construction des données à envoyer
+          data_built: Donnée construite
           sending: Envoi en cours
           sent: Envoyé
           error: Erreur

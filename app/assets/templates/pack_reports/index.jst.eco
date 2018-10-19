@@ -1,4 +1,4 @@
-<% if(window.is_ibiza_configured): %>
+<% if(window.is_ibiza_configured || window.is_exact_online_configured): %>
   <div class='aligncenter'>
     <span style='position:relative;top:-4px;'>Afficher :</span>
     <select name='view' id='view_filter'>

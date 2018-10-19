@@ -24,4 +24,14 @@ node :delivery_message do |report|
   report.delivery_message
 end
 
-attributes :is_delivered, :type, :is_locked
+node :user_software do |report|
+  if report.user.uses_ibiza?
+    'Ibiza'
+  elsif report.user.uses_exact_online?
+    'Exact Online'
+  else
+    nil
+  end
+end
+
+attributes :is_delivered_to, :type, :is_locked

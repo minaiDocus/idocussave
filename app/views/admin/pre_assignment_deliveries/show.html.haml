@@ -4,9 +4,12 @@
       .pull-left.margin1bottom
         %h3 Détail de la livraison n°#{@delivery.id}
       .pull-right
-        = link_to t('actions.return'), admin_pre_assignment_deliveries_path, class: 'btn'
+        = link_to t('actions.return'), admin_pre_assignment_deliveries_path(software: @delivery.deliver_to), class: 'btn'
       %br
       %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.deliver_to')
+          %td= @delivery.human_form_of_deliver_to
         %tr
           %th= t('activerecord.models.common.attributes.created_at')
           %td= l(@delivery.created_at, format: '%d %b %Y %H:%M')
@@ -23,8 +26,8 @@
           %th= t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
           %td= @delivery.is_auto ? t('yes_value') : t('no_value')
         %tr
-          %th= t('activerecord.models.pre_assignment_delivery.attributes.ibiza_id')
-          %td= @delivery.ibiza_id
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.software_id')
+          %td= @delivery.software_id
         %tr
           %th= t('activerecord.models.pre_assignment_delivery.attributes.grouped_date')
           %td= l(@delivery.grouped_date, format: '%B %Y') rescue nil
@@ -35,6 +38,6 @@
           %th= t('activerecord.models.pre_assignment_delivery.attributes.state')
           %td= pre_assignment_delivery_state @delivery
         %tr
-          %th= t('activerecord.models.pre_assignment_delivery.attributes.xml_data')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.data_to_deliver')
           %td
-            %textarea{ rows: 50 }= @delivery.xml_data
+            %textarea{ rows: 50 }= @delivery.data_to_deliver

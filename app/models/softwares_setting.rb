@@ -7,7 +7,7 @@ class SoftwaresSetting < ActiveRecord::Base
   validates_inclusion_of :is_coala_auto_deliver,                 in: [-1, 0, 1]
   validates_inclusion_of :is_quadratus_auto_deliver,             in: [-1, 0, 1]
   validates_inclusion_of :is_csv_descriptor_auto_deliver,        in: [-1, 0, 1]
-  validates_inclusion_of :is_exact_auto_deliver,                 in: [-1, 0, 1]
+  validates_inclusion_of :is_exact_online_auto_deliver,          in: [-1, 0, 1]
 
   # -1 means we refer to organization
   # 0 means manuel deliver
@@ -65,11 +65,11 @@ class SoftwaresSetting < ActiveRecord::Base
   # -1 means we refer to organization
   # 0 means manuel deliver
   # 1 means auto deliver
-  def exact_auto_deliver?
-    if is_exact_auto_deliver == -1
+  def exact_online_auto_deliver?
+    if is_exact_online_auto_deliver == -1
       user.organization.try(:exact_online).try(:is_auto_deliver)
     else
-      is_exact_auto_deliver == 1
+      is_exact_online_auto_deliver == 1
     end
   end
 end

@@ -1,58 +1,85 @@
-# Ibiza delivery's xml for a specific pre assignment delivery
+# Delivery's xml for a specific pre assignment delivery
 class PreAssignmentDeliveryXmlBuilder
   def initialize(delivery_id)
     @delivery    = PreAssignmentDelivery.find(delivery_id)
 
     @user        = @delivery.user
-    @ibiza       = @delivery.organization.ibiza
+    @software    = @delivery.deliver_to == 'ibiza' ? @delivery.organization.ibiza : @delivery.organization.exact_online
     @report      = @delivery.report
     @preseizures = @delivery.preseizures
   end
 
 
   def execute
-    @delivery.building_xml
-
-    if exercise
-      @delivery.xml_data = IbizaAPI::Utils.to_import_xml(exercise, @preseizures, @ibiza.description, @ibiza.description_separator, @ibiza.piece_name_format, @ibiza.piece_name_format_sep)
-
-      @delivery.save
-
-      @delivery.xml_built
+    if @delivery.deliver_to == 'ibiza'
+      build_for_ibiza
     else
-      if is_exercises_present?
-        @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans iBiza."
-      else
-        if @ibiza.client.response.message.to_s.size > 255
-          @delivery.error_message = @report.delivery_message = 'Erreur inconnu.'
-        else
-          @delivery.error_message = @report.delivery_message = @ibiza.client.response.message.to_s
-        end
-      end
-
-      @report.save
-      @delivery.save
-      @delivery.error
-
-      time = Time.now
-
-      @preseizures.each do |preseizure|
-        preseizure.delivery_tried_at = time
-        preseizure.delivery_message  = @report.delivery_message
-        preseizure.is_locked         = false
-        preseizure.save
-      end
-
-      @report.delivery_tried_at = time
-      @report.is_locked         = false
-      @report.save
-
-      PreAssignmentDeliveryService.notify
-
-      false
+      build_for_exact_online
     end
   end
 
+
+  def build_for_ibiza
+    @delivery.building_data
+
+    if ibiza_exercise
+      @delivery.data_to_deliver = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software.description, @software.description_separator, @software.piece_name_format, @software.piece_name_format_sep)
+      @delivery.save
+      @delivery.data_built
+    else
+      if is_ibiza_exercises_present?
+        error_message = "L'exercice correspondant n'est pas défini dans iBiza."
+      else
+        if @software.client.response.message.to_s.size > 255
+          error_message = 'Erreur inconnu.'
+        else
+          error_message = @software.client.response.message.to_s
+        end
+      end
+
+      building_failed error_message
+    end
+  end
+
+  ##TODO build data for exact online
+  def build_for_exact_online
+    @delivery.building_data
+    response = ExactOnlineDataBuilder.new(@delivery).execute
+
+    if response[:data_built]
+      @delivery.data_to_deliver = response[:data]
+      @delivery.save
+      @delivery.data_built
+    else
+      building_failed response[:error_message]
+    end
+  end
+
+  private
+
+  def building_failed(error_message)
+    @delivery.error_message = error_message
+    @delivery.save
+    @delivery.error
+
+    time = Time.now
+
+    @preseizures.each do |preseizure|
+      preseizure.delivery_tried_at = time
+      preseizure.is_locked         = false
+      preseizure.save
+      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message)
+    end
+
+    @report.delivery_tried_at = time
+    @report.is_locked         = false
+    @report.save
+    @report.set_delivery_message_for(@delivery.deliver_to, error_message)
+
+    PreAssignmentDeliveryService.notify
+
+    false
+  end
 
   def grouped_date
     first_date = @preseizures.map(&:date).compact.sort.first
@@ -65,12 +92,12 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
 
-  def exercise
-    @exercise ||= IbizaExerciseFinder.new(@user, grouped_date, @ibiza).execute
+  def ibiza_exercise
+    @ibiza_exercise ||= IbizaExerciseFinder.new(@user, grouped_date, @software).execute
   end
 
 
-  def is_exercises_present?
-    Rails.cache.read(IbizaExerciseFinder.ibiza_exercises_cache_name(@user.ibiza_id, @ibiza.updated_at)).present?
+  def is_ibiza_exercises_present?
+    Rails.cache.read(IbizaExerciseFinder.ibiza_exercises_cache_name(@user.ibiza_id, @software.updated_at)).present?
   end
 end

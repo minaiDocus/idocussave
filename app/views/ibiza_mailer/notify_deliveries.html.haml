@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %title [iDocus] Import d'écriture
+    %title [iDocus][#{@deliveries.first.deliver_to}] Import d'écriture
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     %table{ border: '1', style: 'margin-bottom:20px;' }
@@ -22,7 +22,7 @@
           %th Date
           %th Cabinet
           %th Client
-          %th Id. iBiza
+          %th Id. (#{@deliveries.first.deliver_to})
           %th Token
           %th Lot
           %th Total
@@ -36,8 +36,8 @@
             %td= I18n.l(delivery.updated_at)
             %td= delivery.organization.name
             %td= delivery.user.company
-            %td= delivery.user.ibiza_id
-            %td= delivery.ibiza_access_token
+            %td= delivery.deliver_to == 'ibiza' ? delivery.user.ibiza_id : delivery.user.exact_online_id
+            %td= delivery.deliver_to == 'ibiza' ? delivery.ibiza_access_token : '-'
             %td= delivery.pack_name
             %td= delivery.preseizures.count
             %td= delivery.is_auto ? 'Auto.' : 'Manuel'

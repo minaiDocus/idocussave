@@ -48,4 +48,14 @@ node :delivery_tried_at do |preseizure|
   I18n.l(preseizure.delivery_tried_at) if preseizure.delivery_tried_at
 end
 
-attributes :position, :operation_label, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked, :delivery_message
+node :user_software do |preseizure|
+  if preseizure.user.uses_ibiza?
+    'Ibiza'
+  elsif preseizure.user.uses_exact_online?
+    'Exact Online'
+  else
+    nil
+  end
+end
+
+attributes :position, :operation_label, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered_to, :type, :is_locked, :delivery_message
