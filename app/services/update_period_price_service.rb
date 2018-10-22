@@ -7,6 +7,9 @@ class UpdatePeriodPriceService
   end
 
   def execute
+    if @period.try(:organization)
+      @period.tva_ratio = @period.organization.subject_to_vat ? 1.2 : 1
+    end
     @period.recurrent_products_price_in_cents_wo_vat = recurrent_price
     @period.ponctual_products_price_in_cents_wo_vat  = ponctual_price
     @period.products_price_in_cents_wo_vat           = options_price

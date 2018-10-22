@@ -26,6 +26,7 @@ class CreateInvoicePdf
         invoice = Invoice.new
         invoice.organization = organization
         invoice.period       = organization_period
+        invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
         invoice.save
         print "-> Invoice #{invoice.number}..."
         CreateInvoicePdf.new(invoice).execute
