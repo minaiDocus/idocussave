@@ -26,18 +26,42 @@
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
               %a{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
-            - if @organization.ibiza.try(:used?)
+            - if @customer.uses_ibiza?
               %li{ class: ('active' if params[:tab] == 'ibiza_box') }
                 %a{ href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
-            - unless @organization.ibiza.try(:used?)
-              %li{ class: ('active' if params[:tab] == 'others') }
-                %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
+            %li.dropdown{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus'].include? params[:tab]) }
+              %a.dropdown-toogle{ href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+              %ul.dropdown-menu{ style: "min-width: 187px" }
+                -if @organization.ibiza.try(:used?)
+                  %li{ class: ('active' if params[:tab] == 'ibiza') }
+                    %a{ href: '#ibiza', data: { toggle: 'tab' } }
+                      .pull-left iBiza
+                      - if @customer.uses_ibiza?
+                        %i.icon-ok.pull-right
+                -if @organization.is_coala_used
+                  %li{ class: ('active' if params[:tab] == 'coala') }
+                    %a{ href: '#coala', data: { toggle: 'tab' } }
+                      .pull-left Coala
+                      - if @customer.uses_coala?
+                        %i.icon-ok.pull-right
+                -if @organization.is_quadratus_used
+                  %li{ class: ('active' if params[:tab] == 'quadratus') }
+                    %a{ href: '#quadratus', data: { toggle: 'tab' } }
+                      .pull-left Quadratus
+                      - if @customer.uses_quadratus?
+                        %i.icon-ok.pull-right
+                -if @organization.is_csv_descriptor_used
+                  %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
+                    %a{ href: '#csv_descriptor', data: { toggle: 'tab' } }
+                      .pull-left Format d’export (.csv)
+                      - if @customer.uses_csv_descriptor?
+                        %i.icon-ok.pull-right
+            - unless @customer.uses_ibiza?
+              %li{ class: ('active' if params[:tab] == 'accounting_plan') }
+                %a{ href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
             - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
               %li{ class: ('active' if params[:tab] == 'mcf') }
                 %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
-            - if @organization.is_csv_descriptor_used
-              %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
-                %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
             - if @organization.knowings.try(:ready?)
               %li{ class: ('active' if params[:tab] == 'ged') }
                 %a{ href: '#ged', data: { toggle: 'tab' } } Outil GED
@@ -290,51 +314,7 @@
               .row-fluid
                 .span12
                   = link_to icon_edit + ' ' + 'Modifier', edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
-              - if @organization.ibiza.try(:used?)
-                %h4.margin2top.margin1bottom iBiza
-                - unless @organization.ibiza.configured?
-                  %p
-                    = render 'shared/ibiza_not_configured_warning'
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.user.attributes.ibiza_id')
-                      - if @organization.ibiza.configured?
-                        - users = @organization.ibiza.users
-                        - if @customer.ibiza_id.nil?
-                          %td
-                            %i{ style: 'color:gray' } Aucun
-                        - elsif users.is_a?(Array)
-                          %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
-                        - elsif users.nil?
-                          %td
-                            %span.label Rafraîchissement en cours
-                        - else
-                          %td
-                            %span.label.label-important Erreur
-                      - else
-                        %td
-                    %tr
-                      %th= t('activerecord.models.user_options.attributes.is_auto_deliver')
-                      %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
-                    %tr
-                      %th= t('activerecord.models.user_options.attributes.is_compta_analysis_activated')
-                      %td= @customer.options.compta_analysis_activated? ? t('yes_value') : t('no_value')
-                .row-fluid
-                  .span12
-                    - if @organization.ibiza.configured?
-                      = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
-                    - else
-                      = link_to icon_edit + ' ' + 'Modifier', '#', class: 'btn btn-primary pull-right', disabled: true
-            - unless @organization.ibiza.try(:used?)
-              #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
-                .row-fluid
-                  .span12.aligncenter
-                    - if @customer.active?
-                      = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
-                      = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
-                    = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
-            - if @organization.ibiza.try(:used?)
+            - if @customer.uses_ibiza?
               #ibiza_box.tab-pane{ class: ('active' if params[:tab] == 'ibiza_box') }
                 - if @organization.ibiza.first_configured?
                   = render 'ibiza_box'
@@ -372,23 +352,156 @@
                   .row-fluid
                     .span12.alignright
                       = link_to icon_destroy + ' Détails des erreurs', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+            - if @organization.ibiza.try(:used?)
+              #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
+                %h4.margin1bottom Activation Ibiza
+                = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_ibiza', class: 'form form-horizontal margin0' } do |c|
+                  = hidden_field_tag :part, 'ibiza'
+                  = c.simple_fields_for :softwares do |f|
+                    %table.table.table-condensed.table-striped
+                      %tbody
+                        %tr
+                          %th= 'Ce dossier utilise Ibiza?'
+                          %td{width: '5%'}= f.input :is_ibiza_used, as: 'boolean', label: 'oui?'
+                          - if @user.leader?
+                            %td{width: '8%'}
+                              .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+                - if @customer.uses_ibiza?
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Ibiza
+                  - unless @organization.ibiza.configured?
+                    %p
+                      = render 'shared/ibiza_not_configured_warning'
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.user.attributes.ibiza_id')
+                        - if @organization.ibiza.configured?
+                          - users = @organization.ibiza.users
+                          - if @customer.ibiza_id.nil?
+                            %td
+                              %i{ style: 'color:gray' } Aucun
+                          - elsif users.is_a?(Array)
+                            %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
+                          - elsif users.nil?
+                            %td
+                              %span.label Rafraîchissement en cours
+                          - else
+                            %td
+                              %span.label.label-important Erreur
+                        - else
+                          %td
+                      %tr
+                        %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_auto_deliver')
+                        %td= @customer.try(:softwares).try(:ibiza_auto_deliver?) ? t('yes_value') : t('no_value')
+                      %tr
+                        %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_compta_analysis_activated')
+                        %td= @customer.try(:softwares).try(:ibiza_compta_analysis_activated?) ? t('yes_value') : t('no_value')
+                  .row-fluid
+                    .span12
+                      - if @organization.ibiza.configured?
+                        = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                      - else
+                        = link_to icon_edit + ' ' + 'Modifier', '#', class: 'btn btn-primary pull-right', disabled: true
+            - if @organization.is_coala_used
+              #coala.tab-pane{ class: ('active' if params[:tab] == 'coala') }
+                %h4.margin1bottom Activation Coala
+                = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_coala', class: 'form form-horizontal margin0' } do |c|
+                  = hidden_field_tag :part, 'coala'
+                  = c.simple_fields_for :softwares do |f|
+                    %table.table.table-condensed.table-striped
+                      %tbody
+                        %tr
+                          %th= 'Ce dossier utilise Coala?'
+                          %td{width: '5%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
+                          - if @user.leader?
+                            %td{width: '8%'}
+                              .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+                .hide
+                  - if @customer.try(:softwares).try(:is_coala_used)
+                    %hr
+                    %h4.margin2top.margin1bottom Configuration Coala
+                    %table.table.table-striped.table-condensed
+                      %tbody
+                        %tr
+                          %th Générer automatiquement l'export des écritures et pièces ?
+                          %td= @customer.try(:softwares).try(:coala_auto_deliver?) ? t('yes_value') : t('no_value')
+                    .row-fluid
+                      .span12
+                        = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'coala'), class: 'btn btn-primary pull-right'
+            - if @organization.is_quadratus_used
+              #quadratus.tab-pane{ class: ('active' if params[:tab] == 'quadratus') }
+                %h4.margin1bottom Activation Quadratus
+                = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal margin0' } do |c|
+                  = hidden_field_tag :part, 'quadratus'
+                  = c.simple_fields_for :softwares do |f|
+                    %table.table.table-condensed.table-striped
+                      %tbody
+                        %tr
+                          %th= 'Ce dossier utilise Quadratus?'
+                          %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
+                          - if @user.leader?
+                            %td{width: '8%'}
+                              .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+                .hide
+                  - if @customer.try(:softwares).try(:is_quadratus_used)
+                    %hr
+                    %h4.margin2top.margin1bottom Configuration Quadratus
+                    %table.table.table-striped.table-condensed
+                      %tbody
+                        %tr
+                          %th Générer automatiquement l'export des écritures et pièces ?
+                          %td= @customer.try(:softwares).try(:quadratus_auto_deliver?) ? t('yes_value') : t('no_value')
+                    .row-fluid
+                      .span12
+                        = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'quadratus'), class: 'btn btn-primary pull-right'
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
-                .aligncenter
-                  - if @customer.options.is_own_csv_descriptor_used
-                    Ce dossier utilise son propre format de fichier d'export .csv.
-                    %br
-                    = link_to 'Cliquez ici ', deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
-                    pour adopter le format de l'organisation.
-                    %br
-                    Vous pouvez également éditer le format actuel en cliquant sur le bouton ci-dessous.
-                    %br
-                    = link_to icon_edit + ' ' + 'Modifier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
-                  - else
-                    Ce dossier utilise le format de fichier d'export .csv de l'organisation.
-                    %br
-                    = link_to 'Cliquez ici', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
-                    pour créer un format propre au dossier.
+                %h4.margin1bottom Activation Fichier d'export personnalisé (.csv)
+                = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal margin0' } do |c|
+                  = hidden_field_tag :part, 'csv_descriptor'
+                  = c.simple_fields_for :softwares do |f|
+                    %table.table.table-condensed.table-striped
+                      %tbody
+                        %tr
+                          %th= "Ce dossier utilise un format d'export personnalisé ?"
+                          %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
+                          - if @user.leader?
+                            %td{width: '8%'}
+                              .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+                - if @customer.uses_csv_descriptor?
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr.hide
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td
+                          .alignright
+                            %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
+                            -if @user.leader?
+                              = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary pull-right'
+                      %tr
+                        %th 
+                          - if @customer.softwares.use_own_csv_descriptor_format
+                            Ce dossier utilise son propre format de fichier d'export .csv.
+                          - else
+                            Ce dossier utilise le format de fichier d'export .csv de l'organisation.
+                        %td
+                          - if @user.leader?
+                            .alignright
+                              - if @customer.softwares.use_own_csv_descriptor_format
+                                = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
+                                = link_to icon_edit + ' Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
+                              - else
+                                = link_to icon_edit + ' Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
+            #accounting_plan.tab-pane{ class: ('active' if params[:tab] == 'accounting_plan') }
+              .row-fluid
+                .span12.aligncenter
+                  - if @customer.active?
+                    = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
+                    = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
+                  = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
             - if @organization.knowings.try(:ready?)
               #ged.tab-pane{ class: ('active' if params[:tab] == 'ged') }
                 %table.table.table-striped.table-condensed

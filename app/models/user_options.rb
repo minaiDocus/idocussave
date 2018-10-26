@@ -5,11 +5,9 @@ class UserOptions < ActiveRecord::Base
   PRESEIZURE_DATE_OPTIONS = ['operation_date', 'operation_value_date'].freeze
   DASHBOARD_SUMMARIES = ['last_scans', 'last_uploads', 'last_dematbox_scans', 'last_retrieved'].freeze
 
-  validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
   validates_inclusion_of :is_operation_processing_forced,  in: [-1, 0, 1]
   validates_inclusion_of :is_operation_value_date_needed,  in: [-1, 0, 1]
-  validates_inclusion_of :is_compta_analysis_activated,    in: [-1, 0, 1]
   validates_inclusion_of :dashboard_default_summary,       in: DASHBOARD_SUMMARIES
 
   def pre_assignment_date_computed?
@@ -17,17 +15,6 @@ class UserOptions < ActiveRecord::Base
       user.organization.try(:is_pre_assignment_date_computed)
     else
       is_pre_assignment_date_computed == 1
-    end
-  end
-
-  # -1 means we refer to organization
-  # 0 means manuel deliver
-  # 1 means auto deliver
-  def auto_deliver?
-    if is_auto_deliver == -1
-      user.organization.try(:ibiza).try(:is_auto_deliver)
-    else
-      is_auto_deliver == 1
     end
   end
 
@@ -59,19 +46,6 @@ class UserOptions < ActiveRecord::Base
       is_operation_value_date_needed == 1
     end
   end
-
-  def compta_analysis_activated?
-    if is_compta_analysis_activated == -1
-      user.organization.ibiza.try(:is_analysis_activated)
-    else
-      is_compta_analysis_activated == 1
-    end
-  end
-
-  def own_csv_descriptor_used?
-    is_own_csv_descriptor_used
-  end
-
 
   def upload_authorized?
     is_upload_authorized

@@ -1,11 +1,14 @@
 # -*- encoding : UTF-8 -*-
 class AccountingPlan < ActiveRecord::Base
+  # IBIZA     = 'ibiza'.freeze
+  # COALA     = 'coala'.freeze
+  # QUADRATUS = 'quadratus'.freeze
+
   has_many :providers, -> { where(kind: 'provider') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable, dependent: :destroy
   has_many :customers, -> { where(kind: 'customer') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable, dependent: :destroy
   has_many :vat_accounts, class_name: 'AccountingPlanVatAccount', inverse_of: :accounting_plan
 
   belongs_to :user
-
 
   accepts_nested_attributes_for :providers,    allow_destroy: true
   accepts_nested_attributes_for :customers,    allow_destroy: true
@@ -112,6 +115,6 @@ class AccountingPlan < ActiveRecord::Base
 
   def need_update?
     return true unless last_checked_at
-    (last_checked_at < 4.hours.ago && !is_updating)? true : false
+    last_checked_at < 4.hours.ago && !is_updating
   end
 end

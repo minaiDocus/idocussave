@@ -65,7 +65,8 @@ class Notification < ActiveRecord::Base
         'mcf_invalid_access_token',
         'mcf_insufficient_space',
         'pre_assignment_ignored_piece',
-        'mcf_document_errors'
+        'mcf_document_errors',
+        'pre_assignment_export',
       ].freeze
     end
   end

@@ -21,7 +21,7 @@ class PreseizuresToCsv
   private
 
   def descriptor
-    if @user.options.is_own_csv_descriptor_used
+    if @user.try(:softwares).try(:use_own_csv_descriptor_format)
       @user.csv_descriptor!
     else
       @user.organization.csv_descriptor!

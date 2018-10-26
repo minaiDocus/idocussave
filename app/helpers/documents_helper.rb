@@ -197,7 +197,7 @@ module DocumentsHelper
             j.name + ' ' + j.description
           end,
           periods:  options_for_period(period_service),
-          is_analytic_used: (user.ibiza_id.present? && user.options.compta_analysis_activated?)
+          is_analytic_used: (user.ibiza_id.present? && user.uses_ibiza? && user.try(:softwares).try(:ibiza_compta_analysis_activated?))
         }
 
         if period_service.prev_expires_at

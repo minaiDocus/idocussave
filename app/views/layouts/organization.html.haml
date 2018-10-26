@@ -6,6 +6,7 @@
     %link{ :rel => 'shortcut icon', :type => 'image/ico', :href => image_path('favicon.ico') }
     = csrf_meta_tag
     = stylesheet_link_tag 'application', 'account/organizations'
+    = stylesheet_link_tag 'account/software_users' if controller_name == 'organizations' && action_name == 'edit_software_users'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
       = stylesheet_link_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_descriptors organization_csv_descriptors))
@@ -86,6 +87,7 @@
       <![endif]-->
 
     = javascript_include_tag 'application', 'inner'
+    = javascript_include_tag 'account/software_users' if controller_name == 'organizations' && action_name == 'edit_software_users'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
       = javascript_include_tag 'account/subscriptions', 'account/organization_subscriptions'
     - elsif controller_name.in?(%w(csv_descriptors organization_csv_descriptors))

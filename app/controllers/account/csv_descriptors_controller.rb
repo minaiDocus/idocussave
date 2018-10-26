@@ -35,7 +35,7 @@ class Account::CsvDescriptorsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/csv_descriptor/activate
   def activate
-    @customer.options.update_attribute(:is_own_csv_descriptor_used, true)
+    @customer.softwares.update_attribute(:use_own_csv_descriptor_format, true)
 
     redirect_to edit_account_organization_customer_csv_descriptor_path(@organization, @customer, template: true)
   end
@@ -43,7 +43,7 @@ class Account::CsvDescriptorsController < Account::OrganizationController
 
   # PUT  /account/organizations/:organization_id/customers/:customer_id/csv_descriptor/deactivate
   def deactivate
-    @customer.options.update_attribute(:is_own_csv_descriptor_used, false)
+    @customer.softwares.update_attribute(:use_own_csv_descriptor_format, false)
 
     flash[:success] = 'Modifié avec succès.'
 

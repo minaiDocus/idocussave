@@ -1,7 +1,7 @@
 class IbizaboxImport
   class << self
     def update_folders(user)
-      return false unless user.organization.ibiza.try(:first_configured?)
+      return false unless user.organization.ibiza.try(:first_configured?) && user.uses_ibiza?
       folder_ids = if user.ibizabox_folders.exists?
         user.account_book_types.map(&:id) - user.ibizabox_folders.map(&:journal_id)
       else
@@ -18,7 +18,7 @@ class IbizaboxImport
 
     def init
       IbizaboxFolder.ready.includes(:user).map(&:user).uniq.each do |user|
-        next unless user.organization.ibiza.first_configured?
+        next unless user.organization.ibiza.first_configured? && user.uses_ibiza?
         ImportFromIbizaboxWorker.perform_async user.id
       end
     end
@@ -71,7 +71,7 @@ class IbizaboxImport
   end
 
   def valid?
-    @folder.active? && @user.organization.ibiza.first_configured? && accessible_ibiza_journal
+    @folder.active? && @user.organization.ibiza.first_configured? && @user.uses_ibiza? && accessible_ibiza_journal
   end
 
   def accessible_ibiza_periods

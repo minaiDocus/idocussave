@@ -6,6 +6,7 @@ class Pack::Report < ActiveRecord::Base
   has_many   :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :destroy
   has_many   :remote_files, as: :remotable, dependent: :destroy
   has_many   :pre_assignment_deliveries
+  has_many   :pre_assignment_exports
 
 
   belongs_to :user
@@ -28,6 +29,9 @@ class Pack::Report < ActiveRecord::Base
     end
   end
 
+  def period
+    name.split[2] || '0000'
+  end
 
   def self.failed_delivery(user_ids = [], limit = 50)
     return [] unless user_ids.present? || user_ids.nil?

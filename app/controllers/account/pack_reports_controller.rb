@@ -42,24 +42,24 @@ class Account::PackReportsController < Account::OrganizationController
 
     case params[:download].try(:[], :format)
     when 'csv'
-      if preseizures.any? && @report.organization.is_csv_descriptor_used
+      if preseizures.any? && @report.user.uses_csv_descriptor?
         data = PreseizuresToCsv.new(@report.user, preseizures).execute
 
         send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_')}.csv")
       else
-        unless @report.organization.is_csv_descriptor_used
-          flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation avant d'utiliser cette fonctionnalité."
+        unless @report.user.uses_csv_descriptor?
+          flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation et paramètres client avant d'utiliser cette fonctionnalité."
         end
         render :select_to_download
       end
-    when 'xml'
+    when 'xml_ibiza'
       if current_user.is_admin
         if preseizures.any?
           file_name = "#{@report.name.tr(' ', '_')}.xml"
 
           ibiza = @organization.ibiza
 
-          if ibiza.try(:configured?) && @report.user.ibiza_id
+          if ibiza.try(:configured?) && @report.user.ibiza_id && @report.user.uses_ibiza?
             date = DocumentTools.to_period(@report.name)
 
             exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute
@@ -67,14 +67,18 @@ class Account::PackReportsController < Account::OrganizationController
               data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
 
               send_data(data, type: 'application/xml', filename: file_name)
+            else
+              render :select_to_download
             end
+          else
+            render :select_to_download
           end
         else
           render :select_to_download
         end
       end
-    when 'zip'
-      if @organization.is_quadratus_used
+    when 'zip_quadratus'
+      if @report.user.uses_quadratus?
         file_path = QuadratusZipService.new(preseizures).execute
 
         logger.info(file_path.inspect)
@@ -84,7 +88,7 @@ class Account::PackReportsController < Account::OrganizationController
         render :select_to_download
       end
     when 'zip_coala'
-      if @organization.is_coala_used
+      if @report.user.uses_coala?
         file_path = CoalaZipService.new(@report.user, preseizures).execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else

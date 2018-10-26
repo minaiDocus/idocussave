@@ -31,6 +31,7 @@ class Account::CustomersController < Account::OrganizationController
     @period           = @subscription.periods.order(created_at: :desc).first
     @journals         = @customer.account_book_types.order(name: :asc)
     @pending_journals = @customer.retrievers.where(journal_id: nil).where.not(journal_name: [nil]).distinct.pluck(:journal_name)
+    @customer.build_softwares if @customer.softwares.nil?
   end
 
 
@@ -43,6 +44,7 @@ class Account::CustomersController < Account::OrganizationController
   def new
     @customer = User.new(code: "#{@organization.code}%")
     @customer.build_options
+    @customer.build_softwares
   end
 
 
@@ -65,15 +67,37 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id
   def update
-    @customer.is_group_required = @user.not_leader?
+    if params[:user][:softwares_attributes].present?
+      software = @customer.create_or_update_software(params[:user][:softwares_attributes])
+      flash[:success] = 'Modifié avec succès.'
 
-    if UpdateCustomerService.new(@customer, user_params).execute
-      flash[:success] = 'Modifié avec succès'
-
-      redirect_to account_organization_customer_path(@organization, @customer)
+      redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
     else
-      render :edit
+      @customer.is_group_required = @user.not_leader?
+
+      if UpdateCustomerService.new(@customer, user_params).execute
+        flash[:success] = 'Modifié avec succès'
+
+        redirect_to account_organization_customer_path(@organization, @customer)
+      else
+        render :edit
+      end
     end
+  end
+
+  def edit_software
+    @customer.build_softwares if @customer.softwares.nil?
+    @software = params[:software]
+  end
+
+  def update_software
+    software = @customer.create_or_update_software(params[:user][:softwares_attributes])
+    if software.persisted?
+      flash[:success] = 'Modifié avec succès.'
+    else
+      flash[:error] = 'Impossible de modifier.'
+    end
+    redirect_to account_organization_customer_path(@organization, @customer, tab: params[:software])
   end
 
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
@@ -95,7 +119,7 @@ class Account::CustomersController < Account::OrganizationController
 
         flash[:success] = 'Modifié avec succès'
 
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'compta')
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza')
       else
         next_configuration_step
       end
@@ -286,10 +310,11 @@ class Account::CustomersController < Account::OrganizationController
       :phone_number,
       { group_ids: [] },
       :manager_id,
-      { options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed] }
+      { options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed] },
+      { softwares_attributes: [] }
     ]
 
-    attributes[-1][:options_attributes] << :is_own_csv_descriptor_used if @user.is_admin
+    attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format if @user.is_admin
 
     attributes << :code if action_name == 'create'
 
@@ -298,7 +323,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, options_attributes: [:id, :is_auto_deliver, :is_compta_analysis_activated])
+    params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated])
   end
 
 

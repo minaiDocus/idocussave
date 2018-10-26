@@ -14,7 +14,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
   def load_user_analytics
     user = User.find params[:user_id]
     result = {}
-    if user && user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.options.compta_analysis_activated?
+    if user && user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.softwares.ibiza_compta_analysis_activated?
       result = IbizaAnalytic.new(user.ibiza_id, user.organization.ibiza.access_token).list
     end
     render json: { data: result.to_json.to_s }, status: 200
@@ -79,7 +79,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
         }
       end
 
-      result[:compta_analysis] = (user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.options.compta_analysis_activated?) ? true : false
+      result[:compta_analysis] = (user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.softwares.ibiza_compta_analysis_activated?) ? true : false
     end
     result
   end

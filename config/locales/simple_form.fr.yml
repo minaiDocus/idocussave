@@ -85,12 +85,16 @@ fr:
       options:
         is_taxable: Le dossier est-il assujetti à TVA?
         is_pre_assignment_date_computed: Date de saisie des factures
-        is_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
-        is_compta_analysis_activated: Souhaitez-vous activer la compta analytique ?
-        is_own_csv_descriptor_used: Utilise son propre format de CSV ?
         is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
         is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
         preseizure_date_option: Date de l'écriture des opérations bancaires
+      softwares:
+        is_ibiza_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+        is_ibiza_compta_analysis_activated: Souhaitez-vous activer la compta analytique ?
+        is_coala_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        is_quadratus_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+        is_csv_descriptor_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures ?
       organization:
         name: Nom
         description: Description
@@ -100,9 +104,9 @@ fr:
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
         is_detail_authorized: Divulguer le coût iDocus au client ?
         is_test: Organisation de test ?
-        is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?
-        is_coala_used: Activer le fichier de récupération des écritures comptables et pièces pour Coala (.zip)?
-        is_csv_descriptor_used: Activer l’option de création du fichier export .csv (un nouvel onglet va s’afficher)?
+        is_quadratus_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+        is_coala_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+        is_csv_descriptor_used: Activer l’option de création d'export (csv) des écritures comptables ?
         is_pre_assignment_date_computed: Date de saisie des factures
         is_operation_processing_forced: Souhaitez-vous forcer la pré-affectation des écritures récupérées par les automates ?
         is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?

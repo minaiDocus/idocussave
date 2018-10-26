@@ -45,6 +45,7 @@ class Organization < ActiveRecord::Base
   has_many :account_book_types
   has_many :account_number_rules
   has_many :pre_assignment_deliveries
+  has_many :pre_assignment_exports
   has_many :account_sharings
 
   scope :admin,       -> { where(is_for_admin: true) }
@@ -150,5 +151,13 @@ class Organization < ActiveRecord::Base
 
   def get_preseizure_date_option
     UserOptions::PRESEIZURE_DATE_OPTIONS[preseizure_date_option]
+  end
+
+  def uses_softwares?
+    ibiza.try(:configured?) || uses_other_softwares?
+  end
+
+  def uses_other_softwares?
+    is_coala_used || is_quadratus_used || is_csv_descriptor_used
   end
 end

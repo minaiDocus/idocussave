@@ -47,7 +47,7 @@
               après le
               %span.date
               \.
-      - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || (@user.ibiza_id.present? && @user.options.compta_analysis_activated?))
+      - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || (@user.ibiza_id.present? && @user.uses_ibiza? && @user.try(:softwares).try(:ibiza_compta_analysis_activated?)))
         .control-group
           %label.control-label Compta analytique :
           #analytic.controls

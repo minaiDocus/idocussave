@@ -41,7 +41,7 @@ class Account::SetupsController < Account::OrganizationController
         if @customer.options.upload_authorized?
           result = 'period_options'
         elsif @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?)
+          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    else
                      'use_csv_descriptor'
@@ -51,7 +51,7 @@ class Account::SetupsController < Account::OrganizationController
         end
       elsif step.in?(%w(ibiza use_csv_descriptor))
         if @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?)
+          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    else
                      'use_csv_descriptor'
@@ -61,7 +61,7 @@ class Account::SetupsController < Account::OrganizationController
         end
       elsif step == 'csv_descriptor'
         if @customer.subscription.is_pre_assignment_active
-          result = if @customer.options.own_csv_descriptor_used?
+          result = if @customer.try(:softwares).try(:use_own_csv_descriptor_format)
                      'csv_descriptor'
                    else
                      'use_csv_descriptor'
@@ -71,7 +71,7 @@ class Account::SetupsController < Account::OrganizationController
         end
       elsif step.in?(%w(accounting_plans vat_accounts exercises))
         if @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?)
+          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    else
                      step

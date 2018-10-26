@@ -18,7 +18,7 @@ module JournalHelper
 
 
   def ibiza_journals
-    if @customer.ibiza_id.present?
+    if @customer.ibiza_id.present? && @customer.uses_ibiza?
       Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/, ''), :journals], expires_in: 5.minutes do
         service = IbizaJournalsService.new(@customer)
 

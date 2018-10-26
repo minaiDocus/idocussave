@@ -1,0 +1,30 @@
+#organizations.container-fluid
+  .edit_software_users
+    .row-fluid
+      .span12.box
+        %h3 Edition des utilisateurs : #{@software_name}
+
+    .row-fluid
+      .span12.box
+        = form_tag update_software_users_account_organization_path(@organization), method: 'patch', multipart: true, class: 'form form-horizontal margin0' do |f|
+          = hidden_field_tag :software, @software
+          %fieldset
+            %legend Assignation des dossiers
+            .control-group
+              = label_tag 'software_account_list', "Liste des clients assignés à l'option : #{@software_name}", class: 'select control-label'
+              .controls
+                -list_options  = @organization.customers.active.order(:code)
+                -list_selected = []
+                -if @software == 'coala'
+                  -list_selected = list_options.select{ |c| c.uses_coala? }
+                -elsif @software == 'quadratus'
+                  -list_selected = list_options.select{ |c| c.uses_quadratus? }
+                -elsif @software == 'csv_descriptor'
+                  -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
+                -elsif @software == 'ibiza'
+                  -list_selected = list_options.select{ |c| c.uses_ibiza? }
+
+                = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
+          .form-actions.margin0bottom
+            = submit_tag t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: @software), class: 'btn'

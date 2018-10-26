@@ -17,7 +17,7 @@ class Account::AccountController < ApplicationController
     end
 
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
-      customers = @user.is_admin ? @user.organization.customers : @user.customers
+      customers = @user.is_admin ? @user.organization.customers.using_ibiza : @user.customers.using_ibiza
       @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
     end
 

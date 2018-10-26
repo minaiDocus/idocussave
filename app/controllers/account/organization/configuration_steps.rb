@@ -26,7 +26,7 @@ module Account::Organization::ConfigurationSteps
                                              'period_options'
                                            when 'period_options'
                                              if @customer.subscription.is_pre_assignment_active
-                                               if @organization.ibiza.try(:configured?)
+                                               if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
                                                else
                                                  'use_csv_descriptor'
@@ -35,7 +35,7 @@ module Account::Organization::ConfigurationSteps
                                                'journals'
                                              end
                                            when 'use_csv_descriptor'
-                                             if @customer.options.is_own_csv_descriptor_used
+                                             if @customer.softwares.use_own_csv_descriptor_format
                                                'csv_descriptor'
                                              else
                                                'accounting_plans'
@@ -124,7 +124,7 @@ module Account::Organization::ConfigurationSteps
                                              'journals'
                                            when 'journals'
                                              if @customer.subscription.is_pre_assignment_active
-                                               if @organization.ibiza.try(:configured?)
+                                               if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
                                                else
                                                  'exercises'
@@ -141,7 +141,7 @@ module Account::Organization::ConfigurationSteps
                                            when 'vat_accounts'
                                              'accounting_plans'
                                            when 'accounting_plans'
-                                             if @customer.options.is_own_csv_descriptor_used
+                                             if @customer.softwares.use_own_csv_descriptor_format
                                                'csv_descriptor'
                                              else
                                                'use_csv_descriptor'

@@ -95,6 +95,30 @@
                   %label{ for: 'subscription_is_pre_assignment_active_false' }
                     = f.radio_button :is_pre_assignment_active, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }
                     Non
+            %tr.softwares{ style: 'display:none' }
+              - if @organization.uses_softwares?
+                %td.question Quel logiciel comptable utilise ce dossier ?
+                %td
+                  - if @organization.ibiza.try(:configured?)
+                    .choice
+                      %label{ for: 'is_ibiza_used' }
+                        = check_box_tag 'softwares_is_ibiza_used', 1, @customer.uses_ibiza? || false
+                        Ibiza
+                  - if @organization.is_coala_used
+                    .choice
+                      %label{ for: 'is_coala_used' }
+                        = check_box_tag 'softwares_is_coala_used', 1, @customer.uses_coala? || false
+                        Coala
+                  - if @organization.is_quadratus_used
+                    .choice
+                      %label{ for: 'is_quadratus_used' }
+                        = check_box_tag 'softwares_is_quadratus_used', 1, @customer.uses_quadratus? || false
+                        Quadratus
+                  - if @organization.is_csv_descriptor_used
+                    .choice
+                      %label{ for: 'is_other_used' }
+                        = check_box_tag 'softwares_is_csv_descriptor_used', 1, @customer.uses_csv_descriptor? || false
+                        Autre(Format csv personnalisé)
             %tr.stamp{ style: 'display:none' }
               %td.question
                 Souhaitez-vous bénéficier du tamponnage du papier en sortie de numérisation
@@ -111,6 +135,7 @@
                     Non
                 %div{ style: "clear:both;" }
                   %i Ce tamponnage permet d’avoir un tampon « Numérisé le…”  sur le verso de la feuille numérisée.
+
         - if @user.is_admin
           .well
             .row-fluid

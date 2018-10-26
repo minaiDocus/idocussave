@@ -1,0 +1,33 @@
+#customer.edit.softwares
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des options #{@software} du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: @software)}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 Configuration #{@software} pour le dossier : #{@customer}
+
+  .rwo-fluid
+    .span12.box
+      = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |c|
+        = hidden_field_tag :software, @software
+        = c.simple_fields_for :softwares do |f|
+          -if @software == 'coala'
+            = f.input :is_coala_auto_deliver, collection: auto_deliver_options, include_blank: false
+
+          -if @software == 'quadratus'
+            = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, include_blank: false
+
+          -if @software == 'csv_descriptor'
+            = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, include_blank: false
+
+        .form-actions.margin0bottom
+          - if @customer.configured?
+            = c.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: @software), class: 'btn'
+          - else
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = c.submit t('actions.next_step'), class: 'btn btn-primary'

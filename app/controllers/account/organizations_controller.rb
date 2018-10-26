@@ -24,6 +24,45 @@ class Account::OrganizationsController < Account::OrganizationController
     redirect_to account_organizations_path
   end
 
+  # GET /account/organizations/:id/edit_software_users
+  def edit_software_users
+    @software = params[:software]
+    @software_name =  case @software
+                        when 'coala'
+                          'Coala'
+                        when 'quadratus'
+                          'Quadratus'
+                        when 'csv_descriptor'
+                          'Export csv personnalisé'
+                        when 'ibiza'
+                          'Ibiza'
+                        else
+                          ''
+                      end
+  end
+
+  # PUT /account/organizations/:id/update_software_users
+  def update_software_users
+    software = params[:software]
+    software_users = params[:software_account_list] || ''
+    @organization.customers.active.each do |customer|
+      softwares_params = nil
+      if software == 'coala'
+        softwares_params = { is_coala_used: software_users.include?(customer.to_s) }
+      elsif software == 'quadratus'
+        softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
+      elsif software == 'ibiza'
+        softwares_params = { is_ibiza_used: software_users.include?(customer.to_s) }
+      elsif software == 'csv_descriptor'
+        softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
+      end
+
+      customer.create_or_update_software(softwares_params) unless softwares_params.nil?
+    end
+    flash[:success] = 'Modifié avec succès.'
+    redirect_to edit_software_users_account_organization_path(@organization, software: software)
+  end
+
   # GET /account/organizations/new
   def new
     @organization = Organization.new
@@ -58,10 +97,10 @@ class Account::OrganizationsController < Account::OrganizationController
   def update
     if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
-      if params[:part] != 'other_software'
-        redirect_to account_organization_path(@organization)
+      if params[:part].present?
+        redirect_to account_organization_path(@organization, tab: params[:part])
       else
-        redirect_to account_organization_path(@organization, tab: 'other_software')
+        redirect_to account_organization_path(@organization)
       end
     else
       render 'edit'
@@ -106,11 +145,11 @@ class Account::OrganizationsController < Account::OrganizationController
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if current_user.is_admin && action_name.in?(%w(index edit_options update_options new create suspend unsuspend))
+      if current_user.is_admin && action_name.in?(%w(index edit_options update_options edit_software_users update_software_users new create suspend unsuspend))
         authorized = true
       elsif action_name.in?(%w(show)) && @user.is_prescriber
         authorized = true
-      elsif action_name.in?(%w(edit update)) && @user.leader?
+      elsif action_name.in?(%w(edit update edit_software_users update_software_users)) && @user.leader?
         authorized = true
       end
 
@@ -137,8 +176,11 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_detail_authorized,
         :is_test,
         :is_quadratus_used,
+        :is_quadratus_auto_deliver,
         :is_coala_used,
+        :is_coala_auto_deliver,
         :is_csv_descriptor_used,
+        :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
@@ -152,8 +194,11 @@ class Account::OrganizationsController < Account::OrganizationController
         :authd_prev_period,
         :auth_prev_period_until_day,
         :is_quadratus_used,
+        :is_quadratus_auto_deliver,
         :is_coala_used,
+        :is_coala_auto_deliver,
         :is_csv_descriptor_used,
+        :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,

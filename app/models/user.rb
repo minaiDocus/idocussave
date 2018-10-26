@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   has_many :organizations, through: :memberships
 
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
+  has_one :softwares, class_name: 'SoftwaresSetting', dependent: :destroy
   has_one :dematbox
   has_one :composition
   has_one :subscription
@@ -60,6 +61,7 @@ class User < ActiveRecord::Base
   has_many :period_documents
   has_many :account_book_types
   has_many :pre_assignment_deliveries
+  has_many :pre_assignment_exports
   has_many :notifications, dependent: :destroy
   has_many :ibizabox_folders, dependent: :destroy
 
@@ -100,8 +102,10 @@ class User < ActiveRecord::Base
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
+  scope :using_ibiza,                 -> { joins(:softwares).where('softwares_settings.is_ibiza_used = true') }
 
   accepts_nested_attributes_for :options
+  accepts_nested_attributes_for :softwares
   accepts_nested_attributes_for :addresses, allow_destroy: true
   accepts_nested_attributes_for :csv_descriptor
   accepts_nested_attributes_for :external_file_storage
@@ -180,6 +184,13 @@ class User < ActiveRecord::Base
     self.subscription ||= Subscription.create(user_id: id)
   end
 
+  def create_or_update_software(attributes)
+    software = self.softwares || SoftwaresSetting.new()
+    software.assign_attributes(attributes.to_hash)
+    software.user = self
+    software.save
+    software
+  end
 
   def paper_return_address
     addresses.for_paper_return.first
@@ -328,6 +339,35 @@ class User < ActiveRecord::Base
 
     return member.user if member
     return User.find_by_code(code)
+  end
+
+  def uses_many_exportable_softwares?
+    softwares_count = 0
+    softwares_count += 1 if uses_coala?
+    softwares_count += 1 if uses_quadratus?
+    softwares_count += 1 if uses_csv_descriptor?
+
+    softwares_count > 1
+  end
+
+  def uses_other_softwares?
+    uses_coala? || uses_quadratus? || uses_csv_descriptor?
+  end
+
+  def uses_ibiza?
+    self.try(:softwares).try(:is_ibiza_used) && self.organization.try(:ibiza).try(:used?)
+  end
+
+  def uses_coala?
+    self.try(:softwares).try(:is_coala_used) && self.organization.is_coala_used
+  end
+
+  def uses_quadratus?
+    self.try(:softwares).try(:is_quadratus_used) && self.organization.is_quadratus_used
+  end
+
+  def uses_csv_descriptor?
+    self.try(:softwares).try(:is_csv_descriptor_used) && self.organization.is_csv_descriptor_used
   end
 
   private

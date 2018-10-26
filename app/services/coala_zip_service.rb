@@ -1,9 +1,12 @@
 # -*- encoding : UTF-8 -*-
 class CoalaZipService
-  def initialize(user, preseizures, options={preseizures_only: false})
+  def initialize(user, preseizures, options={})
     @preseizures = preseizures
     @user = user
-    @options = options
+    @options =  {
+                  preseizures_only: options[:preseizures_only] || false,
+                  to_xls: options[:to_xls] || false
+                }
   end
 
   def execute
@@ -14,8 +17,25 @@ class CoalaZipService
 
     CoalaZipService.delay_for(6.hours).remove_temp_dir(dir)
     data = PreseizuresToCsv.new(@user, @preseizures, true).execute
-    file = File.open("#{dir}/#{base_name}.csv", 'w')
-    file.write(data)
+
+    if @options[:to_xls]
+      file = OpenStruct.new({path: "#{dir}/#{base_name}.xls", close: nil})
+      data_array = data.split("\n")
+      xls_data = []
+      data_array.each do |d|
+        xls = d.split(';')
+        tmp_data = {}
+        xls.each_with_index do |o, i|
+          tmp_data["field_#{i.to_s}".to_sym] = o
+        end
+        xls_data << OpenStruct.new(tmp_data)
+      end
+
+      ToXls::Writer.new(xls_data, columns: [:field_0, :field_1, :field_2, :field_3, :field_4, :field_5, :field_6, :field_7], headers: false).write_io(file.path)
+    else
+      file = File.open("#{dir}/#{base_name}.csv", 'w')
+      file.write(data)
+    end
 
     if @options[:preseizures_only]
       file_path = file.path

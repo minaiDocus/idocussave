@@ -5,7 +5,7 @@
         .row-fluid
           .span12
             .pull-left
-              %h3 Exercices comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+              %h3 Exercices comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
             .pull-right
               = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'
   - else

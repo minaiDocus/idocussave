@@ -19,7 +19,7 @@ class UpdateAccountingPlan
 
 
   def execute
-    if @user.ibiza_id.present? && @user.organization.try(:ibiza).try(:configured?) && @accounting_plan.need_update?
+    if @user.ibiza_id.present? && @user.uses_ibiza? && @user.organization.try(:ibiza).try(:configured?) && @accounting_plan.need_update?
       if get_ibiza_accounting_plan
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 

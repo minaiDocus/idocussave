@@ -104,9 +104,16 @@ update_warning = ->
 
   if $('#subscription_is_pre_assignment_active_true').is(':checked')
     $('.pre_assignment_disable_warning').remove()
+    if $('#subscription_is_pre_assignment_active_true').is(':visible')
+      $('.softwares').show()
+    else
+      $('.softwares').hide()
   else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
+    $('.softwares').hide()
     unless $('.pre_assignment_disable_warning').length > 0
       $('#subscription_is_pre_assignment_active_false').parent('label').parent('.choice').after('<div class="pre_assignment_disable_warning"><b class="label label-warning">'+to_be_disabled_text+'</b></div>')
+  else
+    $('.softwares').hide()
 
   if $('#subscription_is_stamp_active_true').is(':checked')
     $('.stamp_disable_warning').remove()

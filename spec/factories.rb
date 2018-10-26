@@ -70,8 +70,15 @@ FactoryGirl.define do
       is_fully_processed true
     end
 
+    factory :report, :class => Pack::Report do
+      organization factory: :organization
+      user factory: :user
+      type 'FLUX'
+      name 'AC0000 AC 201804'
+    end
+
     factory :piece, :class => Pack::Piece  do
-      sequence(:name) { |n| "AC0000 AC 201804 0#{n}" }
+      sequence(:name)   { |n| "AC0000 AC 201804 0#{n}" }
       sequence(:number) { |n| "#{'%04d' % n}" }
       is_a_cover false
       origin "upload"

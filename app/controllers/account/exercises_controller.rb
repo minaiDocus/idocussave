@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::ExercisesController < Account::OrganizationController
+  before_filter :load_customer
   before_filter :verify_rights
   before_filter :verify_access
-  before_filter :load_customer
   before_filter :redirect_to_current_step
   before_filter :load_exercise, except: %w(index new create)
 
@@ -75,13 +75,12 @@ class Account::ExercisesController < Account::OrganizationController
 
 
   def verify_access
-    if @organization.ibiza.try(:access_token).present?
+    if @customer.uses_ibiza?
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def load_customer
     @customer = customers.find params[:customer_id]

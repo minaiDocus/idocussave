@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180912064725) do
+ActiveRecord::Schema.define(version: 20180907075002) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -169,21 +169,21 @@ ActiveRecord::Schema.define(version: 20180912064725) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
-    t.string "a1_name",  limit: 255
-    t.decimal "a1_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string "a1_axis1", limit: 255
-    t.string "a1_axis2", limit: 255
-    t.string "a1_axis3", limit: 255
-    t.string "a2_name",  limit: 255
-    t.decimal "a2_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string "a2_axis1", limit: 255
-    t.string "a2_axis2", limit: 255
-    t.string "a2_axis3", limit: 255
-    t.string "a3_name",  limit: 255
-    t.decimal "a3_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string "a3_axis1", limit: 255
-    t.string "a3_axis2", limit: 255
-    t.string "a3_axis3", limit: 255
+    t.string  "a1_name",        limit: 255
+    t.decimal "a1_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.string  "a1_axis1",       limit: 255
+    t.string  "a1_axis2",       limit: 255
+    t.string  "a1_axis3",       limit: 255
+    t.string  "a2_name",        limit: 255
+    t.decimal "a2_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.string  "a2_axis1",       limit: 255
+    t.string  "a2_axis2",       limit: 255
+    t.string  "a2_axis3",       limit: 255
+    t.string  "a3_name",        limit: 255
+    t.decimal "a3_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.string  "a3_axis1",       limit: 255
+    t.string  "a3_axis2",       limit: 255
+    t.string  "a3_axis3",       limit: 255
   end
 
   create_table "audits", force: :cascade do |t|
@@ -986,7 +986,6 @@ ActiveRecord::Schema.define(version: 20180912064725) do
   add_index "mobile_connexions", ["periode"], name: "index_mobile_connexions_on_periode", using: :btree
   add_index "mobile_connexions", ["platform"], name: "index_mobile_connexions_on_platform", using: :btree
 
-
   create_table "new_provider_requests", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
@@ -1077,8 +1076,9 @@ ActiveRecord::Schema.define(version: 20180912064725) do
     t.datetime "updated_at",                                                          null: false
     t.integer  "user_id",                               limit: 4
     t.boolean  "pre_assignment_ignored_piece",                      default: false
-    t.boolean  "pre_assignment_ignored_piece_count",                default: 0
+    t.integer  "pre_assignment_ignored_piece_count",    limit: 4,   default: 0
     t.boolean  "mcf_document_errors",                               default: false
+    t.boolean  "pre_assignment_export",                             default: true
   end
 
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
@@ -1258,9 +1258,12 @@ ActiveRecord::Schema.define(version: 20180912064725) do
     t.boolean  "is_active",                                   default: true,  null: false
     t.boolean  "is_suspended",                                default: false, null: false
     t.boolean  "is_quadratus_used",                           default: false, null: false
+    t.boolean  "is_quadratus_auto_deliver",                   default: false
     t.boolean  "is_pre_assignment_date_computed",             default: false, null: false
     t.boolean  "is_csv_descriptor_used",                      default: false, null: false
+    t.boolean  "is_csv_descriptor_auto_deliver",              default: false
     t.boolean  "is_coala_used",                               default: false, null: false
+    t.boolean  "is_coala_auto_deliver",                       default: false
     t.integer  "authd_prev_period",               limit: 4,   default: 1,     null: false
     t.integer  "auth_prev_period_until_day",      limit: 4,   default: 11,    null: false
     t.integer  "auth_prev_period_until_month",    limit: 4,   default: 0,     null: false
@@ -1334,6 +1337,7 @@ ActiveRecord::Schema.define(version: 20180912064725) do
 
   add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
   add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
+  add_index "pack_pieces", ["name"], name: "index_pack_pieces_on_name", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
   add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
   add_index "pack_pieces", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
@@ -1492,6 +1496,11 @@ ActiveRecord::Schema.define(version: 20180912064725) do
   create_table "pack_report_preseizures_pre_assignment_deliveries", force: :cascade do |t|
     t.integer "pre_assignment_delivery_id", limit: 4
     t.integer "preseizure_id",              limit: 4
+  end
+
+  create_table "pack_report_preseizures_pre_assignment_exports", force: :cascade do |t|
+    t.integer "preseizure_id",            limit: 4
+    t.integer "pre_assignment_export_id", limit: 4
   end
 
   create_table "pack_report_preseizures_remote_files", force: :cascade do |t|
@@ -1765,6 +1774,26 @@ ActiveRecord::Schema.define(version: 20180912064725) do
   add_index "pre_assignment_deliveries", ["state"], name: "index_pre_assignment_deliveries_on_state", using: :btree
   add_index "pre_assignment_deliveries", ["user_id"], name: "user_id", using: :btree
 
+  create_table "pre_assignment_exports", force: :cascade do |t|
+    t.string   "state",           limit: 255
+    t.string   "pack_name",       limit: 255
+    t.string   "for",             limit: 255
+    t.string   "file_name",       limit: 255
+    t.integer  "total_item",      limit: 4,     default: 0
+    t.text     "error_message",   limit: 65535
+    t.boolean  "is_notified",                   default: false
+    t.datetime "notified_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",         limit: 4
+    t.integer  "organization_id", limit: 4
+    t.integer  "report_id",       limit: 4
+  end
+
+  add_index "pre_assignment_exports", ["for"], name: "index_pre_assignment_exports_on_for", using: :btree
+  add_index "pre_assignment_exports", ["pack_name"], name: "index_pre_assignment_exports_on_pack_name", using: :btree
+  add_index "pre_assignment_exports", ["state"], name: "index_pre_assignment_exports_on_state", using: :btree
+
   create_table "product_option_orders", force: :cascade do |t|
     t.string  "mongo_id",                       limit: 255
     t.string  "name",                           limit: 255
@@ -2001,6 +2030,20 @@ ActiveRecord::Schema.define(version: 20180912064725) do
   end
 
   add_index "settings", ["mongo_id"], name: "index_mongoid_app_settings_records_on_mongo_id", using: :btree
+
+  create_table "softwares_settings", force: :cascade do |t|
+    t.integer "user_id",                            limit: 4
+    t.boolean "is_ibiza_used",                                default: false
+    t.integer "is_ibiza_auto_deliver",              limit: 4, default: -1,    null: false
+    t.integer "is_ibiza_compta_analysis_activated", limit: 4, default: -1,    null: false
+    t.boolean "is_coala_used",                                default: false
+    t.integer "is_coala_auto_deliver",              limit: 4, default: -1,    null: false
+    t.boolean "is_quadratus_used",                            default: false
+    t.integer "is_quadratus_auto_deliver",          limit: 4, default: -1,    null: false
+    t.boolean "is_csv_descriptor_used",                       default: false
+    t.boolean "use_own_csv_descriptor_format",                default: false
+    t.integer "is_csv_descriptor_auto_deliver",     limit: 4, default: -1,    null: false
+  end
 
   create_table "statistics", force: :cascade do |t|
     t.datetime "created_at"

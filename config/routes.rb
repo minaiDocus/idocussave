@@ -76,13 +76,15 @@ Idocus::Application.routes.draw do
     resources :group_organizations, controller_name: 'organization_groups'
 
     resources :organizations, except: :destroy do
-      patch :suspend,        on: :member
-      patch :activate,       on: :member
-      patch :unsuspend,      on: :member
-      patch :deactivate,     on: :member
-      get   :edit_options,   on: :collection
-      get   :close_confirm,  on: :member
-      patch :update_options, on: :collection
+      patch :suspend,               on: :member
+      patch :activate,              on: :member
+      patch :unsuspend,             on: :member
+      patch :deactivate,            on: :member
+      get   :edit_options,          on: :collection
+      get   :edit_software_users,   on: :member
+      get   :close_confirm,         on: :member
+      patch :update_options,        on: :collection
+      patch :update_software_users, on: :member
 
       resources :addresses, controller: 'organization_addresses'
 
@@ -162,6 +164,8 @@ Idocus::Application.routes.draw do
           get   'edit_mcf'
           get   'show_mcf_errors'
           patch 'update_mcf'
+          get   'edit_software'
+          patch 'update_software'
         end
 
         resource :setup, only: [] do

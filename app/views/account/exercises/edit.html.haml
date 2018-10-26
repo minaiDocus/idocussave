@@ -2,7 +2,7 @@
   - if @customer.configured?
     .row-fluid
       .span12.box
-        %h3 Edition d'un exercice comptable pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+        %h3 Edition d'un exercice comptable pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
   - else
     = render 'account/customers/steps'
     .row-fluid

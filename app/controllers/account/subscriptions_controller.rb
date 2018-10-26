@@ -36,6 +36,7 @@ class Account::SubscriptionsController < Account::OrganizationController
         end
       end
 
+      @customer.create_or_update_software(softwares_params)
       if @customer.configured?
         flash[:success] = 'Modifié avec succès.'
 
@@ -76,5 +77,14 @@ class Account::SubscriptionsController < Account::OrganizationController
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
+  end
+
+  def softwares_params
+    {
+      is_ibiza_used:           params[:softwares_is_ibiza_used] || false,
+      is_coala_used:           params[:softwares_is_coala_used] || false,
+      is_quadratus_used:       params[:softwares_is_quadratus_used] || false,
+      is_csv_descriptor_used:  params[:softwares_is_csv_descriptor_used] || false
+    }
   end
 end

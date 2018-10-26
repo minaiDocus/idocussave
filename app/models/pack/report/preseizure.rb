@@ -13,6 +13,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
   has_and_belongs_to_many :remote_files, foreign_key: 'pack_report_preseizure_id'
   has_and_belongs_to_many :pre_assignment_deliveries
+  has_and_belongs_to_many :pre_assignment_exports
 
   has_many :duplicates, class_name: 'Pack::Report::Preseizure', foreign_key: :similar_preseizure_id
   belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure'

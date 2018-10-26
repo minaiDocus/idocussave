@@ -26,9 +26,9 @@
           %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
           %li= link_to 'Paramètres bancaires', account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
         %li= link_to 'Comptabilité', account_organization_customer_path(@organization, @customer, tab: 'compta')
-        - unless @organization.ibiza.try(:used?)
+        - unless @customer.uses_ibiza?
           %li= link_to 'Plan comptable', account_organization_customer_path(@organization, @customer, tab: 'others')
-        - if @organization.ibiza.try(:used?)
+        - if @customer.uses_ibiza?
           %li= link_to 'Ibiza Box', account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')
         - if @organization.is_csv_descriptor_used
           %li= link_to 'Format d’export .csv', account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
