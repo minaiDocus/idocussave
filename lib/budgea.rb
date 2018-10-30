@@ -277,7 +277,7 @@ class Budgea
         result = JSON.parse(@response.body)
         @error_message = case result['code']
                          when 'wrongpass'
-                           'Mot de passe incorrecte.'
+                           'Mot de passe incorrect.'
                          when 'websiteUnavailable'
                            'Site web indisponible.'
                          when 'bug'
