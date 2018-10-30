@@ -39,7 +39,9 @@ class CoalaZipService
 
     if @options[:preseizures_only]
       file_path = file.path
+      file.close
     else
+      file.close
       @preseizures.each do |preseizure|
         entry = preseizure.entries.first
         file_name = preseizure.coala_piece_name + '.pdf'
@@ -50,7 +52,6 @@ class CoalaZipService
       POSIX::Spawn::system "zip #{file_path} *"
     end
 
-    file.close
     file_path
   end
 
