@@ -31,7 +31,7 @@
             - formats << ['XML (Ibiza)', 'xml_ibiza'] if @user.is_admin && @organization.ibiza.try(:configured?) && @report.user.uses_ibiza?
             - formats << ['ZIP (Quadratus)', 'zip_quadratus'] if @report.user.uses_quadratus?
             - formats << ['ZIP (Coala)', 'zip_coala'] if @report.user.uses_coala?
-            - formats << ['CSV (Coala)', 'csv_coala'] if @report.user.uses_coala?
+            - formats << ['XLS (Coala)', 'xls_coala'] if @report.user.uses_coala?
             = select_tag 'download[format]', options_for_select(formats), include_blank: false
         .form-actions.margin0top.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'

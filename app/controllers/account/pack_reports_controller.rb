@@ -89,15 +89,15 @@ class Account::PackReportsController < Account::OrganizationController
       end
     when 'zip_coala'
       if @report.user.uses_coala?
-        file_path = CoalaZipService.new(@report.user, preseizures).execute
+        file_path = CoalaZipService.new(@report.user, preseizures, {to_xls: true}).execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
-    when 'csv_coala'
+    when 'xls_coala'
       if @organization.is_coala_used
-        file_path = CoalaZipService.new(@report.user, preseizures, {preseizures_only: true}).execute
-        send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
+        file_path = CoalaZipService.new(@report.user, preseizures, {preseizures_only: true, to_xls: true}).execute
+        send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
