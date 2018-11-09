@@ -1,0 +1,32 @@
+#customer.edit_softwares_selection
+  = render 'steps'
+  .row-fluid
+    .span12.box
+      %h3 Séléction de logiciels comptables pour le dossier : #{@customer}
+  .row-fluid
+    .span12.box
+      = simple_form_for @customer, url: update_softwares_selection_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |c|
+        = c.simple_fields_for :softwares do |f|
+          .row-fluid
+            .span6
+              %table.table.table-condensed.table-striped
+                -if @organization.ibiza.try(:used?)
+                  %tr
+                    %td Ce dossier utilise Ibiza ?
+                    %td= f.check_box :is_ibiza_used, style: "position:unset"
+                -if @organization.is_coala_used
+                  %tr
+                    %td Ce dossier utilise Coala ?
+                    %td= f.check_box :is_coala_used, style: "position:unset"
+                -if @organization.is_quadratus_used
+                  %tr
+                    %td Ce dossier utilise Quadratus ?
+                    %td= f.check_box :is_quadratus_used, style: "position:unset"
+                -if @organization.is_csv_descriptor_used
+                  %tr
+                    %td Ce dossier utilise un format d'export .csv ? (personnalisable)
+                    %td= f.check_box :is_csv_descriptor_used, style: "position:unset"
+          .form-actions.margin0bottom
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = f.submit t('actions.next_step'), class: 'btn btn-primary'

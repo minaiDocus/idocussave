@@ -166,6 +166,8 @@ Idocus::Application.routes.draw do
           patch 'update_mcf'
           get   'edit_software'
           patch 'update_software'
+          get   'edit_softwares_selection'
+          patch 'update_softwares_selection'
         end
 
         resource :setup, only: [] do

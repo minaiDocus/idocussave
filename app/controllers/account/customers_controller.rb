@@ -100,6 +100,19 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer, tab: params[:software])
   end
 
+  def edit_softwares_selection
+    unless @customer.configured?
+      @customer.build_softwares if @customer.softwares.nil?
+    else
+      redirect_to account_organization_customer_path(@organization, @customer)
+    end
+  end
+
+  def update_softwares_selection
+    software = @customer.create_or_update_software(params[:user][:softwares_attributes])
+    next_configuration_step
+  end
+
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
   def edit_ibiza
   end

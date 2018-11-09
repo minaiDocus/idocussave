@@ -29,7 +29,17 @@ class Account::SetupsController < Account::OrganizationController
     if !@customer.last_configuration_step.nil?
       step = @customer.current_configuration_step = @customer.last_configuration_step
       result = @customer.last_configuration_step = nil
-      if step == 'compta_options'
+      if step == 'softwares_selection'
+        result = if @organization.uses_softwares?
+                   'softwares_selection'
+                 elsif @customer.subscription.is_pre_assignment_active
+                   'compta_options'
+                 elsif @customer.options.upload_authorized?
+                   'period_options'
+                 else
+                   'journals'
+                 end
+      elsif step == 'compta_options'
         result = if @customer.subscription.is_pre_assignment_active
                    'compta_options'
                  elsif @customer.options.upload_authorized?
@@ -43,8 +53,10 @@ class Account::SetupsController < Account::OrganizationController
         elsif @customer.subscription.is_pre_assignment_active
           result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
-                   else
+                   elsif @customer.uses_csv_descriptor?
                      'use_csv_descriptor'
+                   else
+                     'accounting_plans'
                    end
         else
           result = 'journals'
@@ -53,8 +65,10 @@ class Account::SetupsController < Account::OrganizationController
         if @customer.subscription.is_pre_assignment_active
           result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
-                   else
+                   elsif @customer.uses_csv_descriptor?
                      'use_csv_descriptor'
+                   else
+                     'accounting_plans'
                    end
         else
           result = 'journals'

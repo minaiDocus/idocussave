@@ -12,77 +12,91 @@ module Account::Organization::ConfigurationSteps
   def next_configuration_step
     was_last_step = last_step?
     @customer.current_configuration_step = case @customer.current_configuration_step
-                                           when 'account'
-                                             'subscription'
-                                           when 'subscription'
-                                             if @customer.subscription.is_pre_assignment_active
-                                               'compta_options'
-                                             elsif @customer.options.is_upload_authorized
-                                               'period_options'
-                                             else
-                                               'journals'
-                                             end
-                                           when 'compta_options'
-                                             'period_options'
-                                           when 'period_options'
-                                             if @customer.subscription.is_pre_assignment_active
-                                               if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
-                                                 'ibiza'
+                                             when 'account'
+                                               'subscription'
+                                             when 'subscription'
+                                               if @customer.subscription.is_pre_assignment_active
+                                                 'compta_options'
+                                               elsif @organization.uses_softwares?
+                                                 'softwares_selection'
+                                               elsif @customer.options.is_upload_authorized
+                                                 'period_options'
                                                else
-                                                 'use_csv_descriptor'
-                                               end
-                                             else
-                                               'journals'
-                                             end
-                                           when 'use_csv_descriptor'
-                                             if @customer.softwares.use_own_csv_descriptor_format
-                                               'csv_descriptor'
-                                             else
-                                               'accounting_plans'
-                                             end
-                                           when 'csv_descriptor'
-                                             'accounting_plans'
-                                           when 'accounting_plans'
-                                             'vat_accounts'
-                                           when 'vat_accounts'
-                                             'exercises'
-                                           when 'exercises'
-                                             'journals'
-                                           when 'ibiza'
-                                             'journals'
-                                           when 'journals'
-                                             if @customer.subscription.is_mail_package_active
-                                               if @customer.account_book_types.count > 0
-                                                 'order_paper_set'
-                                               else
-                                                 flash[:error] = 'Vous devez configurer au moins un journal comptable.'
                                                  'journals'
                                                end
-                                             elsif @customer.subscription.is_scan_box_package_active
-                                               'order_dematbox'
-                                             elsif @customer.subscription.is_retriever_package_active
-                                               'retrievers'
-                                             elsif @organization.knowings.try(:configured?)
-                                               'ged'
-                                             end
-                                           when 'order_paper_set'
-                                             if @customer.subscription.is_scan_box_package_active
-                                               'order_dematbox'
-                                             elsif @customer.subscription.is_retriever_package_active
-                                               'retrievers'
-                                             elsif @organization.knowings.try(:configured?)
-                                               'ged'
-                                             end
-                                           when 'order_dematbox'
-                                             if @customer.subscription.is_retriever_package_active
-                                               'retrievers'
-                                             elsif @organization.knowings.try(:configured?)
-                                               'ged'
-                                             end
-                                           when 'retrievers'
-                                             'ged' if @organization.knowings.try(:configured?)
-                                           when 'ged'
-                                             nil
+                                             when 'compta_options'
+                                                if @organization.uses_softwares?
+                                                  'softwares_selection'
+                                                else
+                                                  'period_options'
+                                                end
+                                             when 'softwares_selection'
+                                                if @customer.options.is_upload_authorized
+                                                 'period_options'
+                                                else
+                                                 'journals'
+                                                end
+                                             when 'period_options'
+                                               if @customer.subscription.is_pre_assignment_active
+                                                 if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+                                                   'ibiza'
+                                                 elsif @customer.uses_csv_descriptor?
+                                                   'use_csv_descriptor'
+                                                 else
+                                                   'accounting_plans'
+                                                 end
+                                               else
+                                                 'journals'
+                                               end
+                                             when 'use_csv_descriptor'
+                                               if @customer.softwares.use_own_csv_descriptor_format
+                                                 'csv_descriptor'
+                                               else
+                                                 'accounting_plans'
+                                               end
+                                             when 'csv_descriptor'
+                                               'accounting_plans'
+                                             when 'accounting_plans'
+                                               'vat_accounts'
+                                             when 'vat_accounts'
+                                               'exercises'
+                                             when 'exercises'
+                                               'journals'
+                                             when 'ibiza'
+                                               'journals'
+                                             when 'journals'
+                                               if @customer.subscription.is_mail_package_active
+                                                 if @customer.account_book_types.count > 0
+                                                   'order_paper_set'
+                                                 else
+                                                   flash[:error] = 'Vous devez configurer au moins un journal comptable.'
+                                                   'journals'
+                                                 end
+                                               elsif @customer.subscription.is_scan_box_package_active
+                                                 'order_dematbox'
+                                               elsif @customer.subscription.is_retriever_package_active
+                                                 'retrievers'
+                                               elsif @organization.knowings.try(:configured?)
+                                                 'ged'
+                                               end
+                                             when 'order_paper_set'
+                                               if @customer.subscription.is_scan_box_package_active
+                                                 'order_dematbox'
+                                               elsif @customer.subscription.is_retriever_package_active
+                                                 'retrievers'
+                                               elsif @organization.knowings.try(:configured?)
+                                                 'ged'
+                                               end
+                                             when 'order_dematbox'
+                                               if @customer.subscription.is_retriever_package_active
+                                                 'retrievers'
+                                               elsif @organization.knowings.try(:configured?)
+                                                 'ged'
+                                               end
+                                             when 'retrievers'
+                                               'ged' if @organization.knowings.try(:configured?)
+                                             when 'ged'
+                                               nil
     end
 
     @customer.save
@@ -131,6 +145,10 @@ module Account::Organization::ConfigurationSteps
                                                end
                                              elsif @customer.options.is_upload_authorized
                                                'period_options'
+                                             elsif @organization.uses_softwares?
+                                               'softwares_selection'
+                                             elsif @customer.subscription.is_pre_assignment_active
+                                               'compta_options'
                                              else
                                                'subscription'
                                              end
@@ -143,21 +161,31 @@ module Account::Organization::ConfigurationSteps
                                            when 'accounting_plans'
                                              if @customer.softwares.use_own_csv_descriptor_format
                                                'csv_descriptor'
-                                             else
+                                             elsif @customer.uses_csv_descriptor?
                                                'use_csv_descriptor'
+                                             else
+                                               'period_options'
                                              end
                                            when 'csv_descriptor'
                                              'use_csv_descriptor'
                                            when 'use_csv_descriptor'
                                              'period_options'
                                            when 'period_options'
-                                             if @customer.subscription.is_pre_assignment_active
+                                              if @organization.uses_softwares?
+                                               'softwares_selection'
+                                              elsif @customer.subscription.is_pre_assignment_active
                                                'compta_options'
-                                             else
+                                              else
                                                'subscription'
-                                             end
+                                              end
+                                           when 'softwares_selection'
+                                              if @customer.subscription.is_pre_assignment_active
+                                                'compta_options'
+                                              else
+                                                'subscription'
+                                              end
                                            when 'compta_options'
-                                             'subscription'
+                                              'subscription'
                                            when 'subscription'
                                              'subscription'
                                            when 'account'
@@ -169,36 +197,38 @@ module Account::Organization::ConfigurationSteps
 
   def current_step?
     case @customer.current_configuration_step
-    when 'account'
-      false
-    when 'subscription'
-      controller_name == 'subscriptions'
-    when 'compta_options'
-      controller_name == 'customers' && action_name.in?(%w(edit_compta_options update_compta_options))
-    when 'period_options'
-      controller_name == 'customers' && action_name.in?(%w(edit_period_options update_period_options))
-    when 'ibiza'
-      controller_name == 'customers' && action_name.in?(%w(edit_ibiza update_ibiza))
-    when 'use_csv_descriptor'
-      controller_name == 'use_csv_descriptors'
-    when 'csv_descriptor'
-      controller_name == 'csv_descriptors'
-    when 'accounting_plans'
-      controller_name == 'accounting_plans'
-    when 'vat_accounts'
-      controller_name == 'vat_accounts'
-    when 'exercises'
-      controller_name == 'exercises'
-    when 'journals'
-      controller_name.in?(%w(journals list_journals))
-    when 'order_paper_set'
-      controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'paper_set') || action_name.in?(%w(edit update)))
-    when 'order_dematbox'
-      controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox') || action_name.in?(%w(edit update)))
-    when 'retrievers'
-      controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts')) && params[:customer_id].present?
-    when 'ged'
-      controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))
+      when 'account'
+        false
+      when 'subscription'
+        controller_name == 'subscriptions'
+      when 'softwares_selection'
+        controller_name == 'customers' && action_name.in?(%w(edit_softwares_selection update_softwares_selection))
+      when 'compta_options'
+        controller_name == 'customers' && action_name.in?(%w(edit_compta_options update_compta_options))
+      when 'period_options'
+        controller_name == 'customers' && action_name.in?(%w(edit_period_options update_period_options))
+      when 'ibiza'
+        controller_name == 'customers' && action_name.in?(%w(edit_ibiza update_ibiza))
+      when 'use_csv_descriptor'
+        controller_name == 'use_csv_descriptors'
+      when 'csv_descriptor'
+        controller_name == 'csv_descriptors'
+      when 'accounting_plans'
+        controller_name == 'accounting_plans'
+      when 'vat_accounts'
+        controller_name == 'vat_accounts'
+      when 'exercises'
+        controller_name == 'exercises'
+      when 'journals'
+        controller_name.in?(%w(journals list_journals))
+      when 'order_paper_set'
+        controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'paper_set') || action_name.in?(%w(edit update)))
+      when 'order_dematbox'
+        controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox') || action_name.in?(%w(edit update)))
+      when 'retrievers'
+        controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts')) && params[:customer_id].present?
+      when 'ged'
+        controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))
     end
   end
 
@@ -231,6 +261,8 @@ module Account::Organization::ConfigurationSteps
       nil
     when 'subscription'
       edit_account_organization_customer_subscription_path(@organization, @customer)
+    when 'softwares_selection'
+      edit_softwares_selection_account_organization_customer_path(@organization, @customer)
     when 'compta_options'
       edit_compta_options_account_organization_customer_path(@organization, @customer)
     when 'period_options'

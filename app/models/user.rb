@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   validates_presence_of :code, unless: Proc.new { |u| u.collaborator? || u.is_guest }
   validates_presence_of :company
   validates_inclusion_of :knowings_visibility, in: 0..2
-  validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
+  validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription softwares_selection compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
   validates_uniqueness_of :code, unless: Proc.new { |u| u.collaborator? || u.is_guest }
   validates_uniqueness_of :email_code, unless: Proc.new { |u| u.is_prescriber }
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
