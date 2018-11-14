@@ -107,7 +107,7 @@ class Account::DocumentsController < Account::AccountController
         contents = File.read(_tmp_archive_path)
         File.unlink _tmp_archive_path if File.exist?(_tmp_archive_path)
 
-        send_data(contents, type: 'application/zip', filename: 'pack_archives', disposition: 'attachment')
+        send_data(contents, type: 'application/zip', filename: 'pack_archive.zip', disposition: 'attachment')
       rescue
         File.unlink _tmp_archive_path if File.exist?(_tmp_archive_path)
         redirect_to account_path, alert: "Impossible de proceder au téléchargment"
