@@ -1,7 +1,8 @@
 class UpdateRetriever
   def initialize(retriever, params)
     @retriever = retriever
-    @params    = params
+    @retriever.check_journal = params[:check_journal] || false
+    @params    = params.except!(:check_journal)
   end
 
   def execute

@@ -31,6 +31,7 @@ class Account::RetrieversController < Account::RetrieverController
   def create
     @retriever = Retriever.new(retriever_params)
     @retriever.confirm_dyn_params = true
+    @retriever.check_journal      = true
     @retriever.user = @account
     if @retriever.save
       flash[:success] = 'Création en cours.'
@@ -111,7 +112,8 @@ private
       { param2: [:name, :value] },
       { param3: [:name, :value] },
       { param4: [:name, :value] },
-      { param5: [:name, :value] }
+      { param5: [:name, :value] },
+      { check_journal: true     }
     ]
     if action_name == 'update'
       params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Retriever < ActiveRecord::Base
-  attr_accessor :confirm_dyn_params
+  attr_accessor :confirm_dyn_params, :check_journal
 
   belongs_to :user
   belongs_to :journal,               class_name: 'AccountBookType'
@@ -36,10 +36,10 @@ class Retriever < ActiveRecord::Base
   validates :encrypted_answers, symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_answers.nil? }
 
   validates_presence_of :name
-  validates_presence_of :journal,      if: Proc.new { |r| r.provider? || r.provider_and_bank? }
   validates_presence_of :connector_id
   validate :presence_of_dyn_params,    if: :confirm_dyn_params
   validate :presence_of_answers,       if: Proc.new { |r| r.answers.present? }
+  validate :presence_of_journal
 
   before_validation do |retriever|
     if retriever.connector
@@ -353,6 +353,12 @@ class Retriever < ActiveRecord::Base
   end
 
 private
+
+  def presence_of_journal
+    if check_journal && (provider? || provider_and_bank?)
+      errors.add(:journal, :blank) unless journal_id
+    end
+  end
 
   # TODO move into a form service
   def presence_of_dyn_params
