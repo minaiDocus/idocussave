@@ -40,9 +40,9 @@ class AccountingWorkflow::TempPackProcessor
           DocumentTools.correct_pdf_if_needed original_file_path
 
           DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
-                                                                                                                      is_stamp_background_filled: user.is_stamp_background_filled,
-                                                                                                                      dir: dir,
-                                                                                                                      logger: logger
+                                                                                                              is_stamp_background_filled: user.is_stamp_background_filled,
+                                                                                                              dir: dir,
+                                                                                                              logger: logger
 
           pages_number = DocumentTools.pages_number piece_file_path
 
@@ -60,6 +60,8 @@ class AccountingWorkflow::TempPackProcessor
           piece.analytic_reference_id = temp_document.analytic_reference_id
           piece.save
           added_pieces << piece
+
+          DocumentTools.sign_pdf(piece_file_path, piece.content.path)
 
           ## Dividers
           pack_divider              = pack.dividers.build
@@ -144,6 +146,7 @@ class AccountingWorkflow::TempPackProcessor
             page.origin         = temp_document.delivery_type
             page.is_a_cover     = is_a_cover
             page.save
+            DocumentTools.sign_pdf(page_file_path, page.content.path)
 
             current_page_position += 1 unless is_a_cover
           end
