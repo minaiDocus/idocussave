@@ -20,11 +20,13 @@ class AccountingPlan < ActiveRecord::Base
     items = type == 'providers' ? providers : customers
     begin
       ::CSV.foreach(file.path, headers: true, col_sep: ';') do |row|
-        attrs = row.to_hash.slice('NOM_TIERS', 'COMPTE_TIERS', 'COMPTE_CONTREPARTIE', 'CODE_TVA')
+        json_string = row.to_hash.to_json.dup.force_encoding("UTF-8")
+        json_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+        encoded_hash = JSON.parse(json_string).with_indifferent_access
 
-        attrs = { third_party_name: attrs['NOM_TIERS'], third_party_account: attrs['COMPTE_TIERS'], conterpart_account: attrs['COMPTE_CONTREPARTIE'], code: attrs['CODE_TVA'] }
+        attrs = { third_party_name: encoded_hash['NOM_TIERS'], third_party_account: encoded_hash['COMPTE_TIERS'], conterpart_account: encoded_hash['COMPTE_CONTREPARTIE'], code: encoded_hash['CODE_TVA'] }
 
-        if (item = items.find_by_name(row['NOM_TIERS']))
+        if (item = items.find_by_name(encoded_hash['NOM_TIERS']))
           item.update(attrs)
         else
           item = AccountingPlanItem.new(attrs)
