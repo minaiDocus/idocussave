@@ -30,7 +30,11 @@ class SendToFTP < SendToStorage
 
   def list_files
     begin
-      results = client.list(@folder_path)
+      if dir_exist?(@folder_path)
+        results = client.list(@folder_path)
+      else
+        results = []
+      end
     rescue Net::FTPTempError, Net::FTPPermError => e
       if e.message.match(/(No such file or directory)|(Directory not found)/)
         results = []
@@ -51,14 +55,23 @@ class SendToFTP < SendToStorage
         client.chdir @folder_path
       else
         client.chdir '/'
-        folders = @folder_path.split('/').reject(&:empty?)
-        folders.each do |folder|
-          client.mkdir(folder) unless client.nlst.include?(folder)
-          client.chdir(folder)
-        end
+        dir_exist?(@folder_path, true)
         @is_folder_ready = true
       end
     end
+  end
+
+  def dir_exist?(dir, then_create=false)
+    folders = dir.split('/').reject(&:empty?)
+    folders.each do |folder|
+      if then_create
+        client.mkdir(folder) unless client.nlst.include?(folder)
+      else
+        return false unless client.nlst.include?(folder)
+      end
+      client.chdir(folder)
+    end
+    true
   end
 
   # TODO : handle global failure and abort all attempts
