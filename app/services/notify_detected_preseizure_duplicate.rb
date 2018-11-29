@@ -19,11 +19,17 @@ class NotifyDetectedPreseizureDuplicate
 
     return if count == 0
 
+    organization = user.organization
+    if user.collaborator?
+      collaborator = Collaborator.new user
+      organization = collaborator.organizations.first
+    end
+
     notification = Notification.new
     notification.user        = user
     notification.notice_type = 'detected_preseizure_duplication'
     notification.title       = count == 1 ? 'Pré-affectation bloqué' : 'Pré-affectations bloqués'
-    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignment_blocked_duplicates_url(user.organization, ActionMailer::Base.default_url_options)
+    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignment_blocked_duplicates_url(organization, ActionMailer::Base.default_url_options)
     notification.message = if count == 1
       "1 pré-affectation est susceptible d'être un doublon et a été bloqué."
     else
