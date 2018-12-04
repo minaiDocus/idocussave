@@ -24,6 +24,6 @@
         )
         %br
         - users = @account_number_rule.present? ? @account_number_rule.users : []
-        - @organization.customers.order(code: :asc).each do |user|
+        - @organization.customers.active.order(code: :asc).each do |user|
           = check_box_tag 'account_number_rule[user_ids][]', user.id, users.include?(user),id: "account_number_rule_user_ids_#{user.id}"
           %label{ for: "account_number_rule_user_ids_#{user.id}" }= user.info
