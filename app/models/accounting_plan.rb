@@ -19,10 +19,19 @@ class AccountingPlan < ActiveRecord::Base
   def import(file, type)
     items = type == 'providers' ? providers : customers
     begin
-      ::CSV.foreach(file.path, headers: true, col_sep: ';') do |row|
-        json_string = row.to_hash.to_json.dup.force_encoding("UTF-8")
-        json_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
-        encoded_hash = JSON.parse(json_string).with_indifferent_access
+      csv_string = File.read(file.path)
+      csv_string.encode!('UTF-8')
+
+      begin
+        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if csv_string.match(/\\x([0-9a-zA-Z]{2})/)
+      rescue => e
+        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+      end
+
+      csv_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+
+      ::CSV.parse(csv_string, headers: true, col_sep: ';') do |row|
+        encoded_hash = row.to_hash.with_indifferent_access
 
         attrs = { third_party_name: encoded_hash['NOM_TIERS'], third_party_account: encoded_hash['COMPTE_TIERS'], conterpart_account: encoded_hash['COMPTE_CONTREPARTIE'], code: encoded_hash['CODE_TVA'] }
 
@@ -39,11 +48,10 @@ class AccountingPlan < ActiveRecord::Base
           end
           item.save
         end
-
       end
 
       true
-    rescue
+    rescue => e
       false
     end
   end
