@@ -295,7 +295,9 @@ private
         )
       )
     else
-      orphaned_operation = orphaned_operation.where(label: transaction['original_wording'])
+      label = [transaction['original_wording']]
+      label << bank_account.number if bank_account.type_name == 'card'
+      orphaned_operation = orphaned_operation.where(label: [transaction['original_wording'], label.join(' ')])
     end
 
     orphaned_operation.first
@@ -308,7 +310,9 @@ private
     if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
       operation.label     = '[CB] ' + transaction['original_wording']
     else
-      operation.label     = transaction['original_wording']
+      label = [transaction['original_wording']]
+      label << bank_account.number if bank_account.type_name == 'card'
+      operation.label     = label.join(' ')
     end
     operation.amount      = transaction['value']
     operation.comment     = transaction['comment']
