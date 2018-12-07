@@ -47,7 +47,7 @@
                 %td
                   = link_to icon_show, '#', class: ("do-showPieces piece_" + ind.to_s), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.content.url }
         = content_tag :i, '', class: 'icon-arrow-up'
-        = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right'
+        = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
 
       = render partial: 'shared/list_options', locals: { collection: @ignored_list }
   #showPieces.modal.hide.fade

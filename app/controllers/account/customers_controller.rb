@@ -215,6 +215,15 @@ class Account::CustomersController < Account::OrganizationController
     render :show_mcf_errors
   end
 
+  def retake_mcf_errors
+    mcf_documents_errors = @customer.mcf_documents.where(id: params[:mcf_documents_ids])
+    if mcf_documents_errors.any?
+      mcf_documents_errors.each(&:reset)
+      flash[:success] = 'Récupération en cours...'
+    end
+    redirect_to show_mcf_errors_account_organization_customer_path(@organization, @customer)
+  end
+
   def update_mcf
     if @customer.update(mcf_params)
       flash[:success] = 'Modifié avec succès.'

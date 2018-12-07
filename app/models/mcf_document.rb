@@ -94,4 +94,10 @@ class McfDocument < ActiveRecord::Base
     update(error_message: error)
   end
 
+  def reset
+    self.state = 'ready'
+    self.is_generated = false
+    self.error_message = nil
+    self.save
+  end
 end

@@ -1,4 +1,4 @@
-#customer.edit.mcf
+#customer.errors.mcf
   .row-fluid
     .span12.box
       %h3 Listes des erreurs de récupération de documents depuis le storage MCF : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'mcf')}
@@ -12,20 +12,25 @@
         - if @mcf_documents_error.empty?
           .span12 Aucune erreur de récupération de document détéctée.
         - else
-          %table.table.table-striped.table-condensed.margin0bottom
-            %tr
-              %th 
-              %th= sortable :created_at, "Date"
-              %th= sortable :original_file_name, "Nom du fichier"
-              %th Journal
-              %th Message erreur
-            - @mcf_documents_error.each_with_index do |mcf_document, index|
+          = form_tag retake_mcf_errors_account_organization_customer_path(@organization, @customer), method: :post, class: 'form form-vertical margin0bottom' do
+            %table.table.table-striped.table-condensed.margin0bottom
               %tr
-                %td= index + 1
-                %td= mcf_document.created_at.strftime('%d/%m/%Y %H:%M')
-                %td= mcf_document.original_file_name
-                %td= mcf_document.journal
-                %td= mcf_document.error_message
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= sortable :created_at, "Date"
+                %th= sortable :original_file_name, "Nom du fichier"
+                %th Journal
+                %th Message erreur
+              - @mcf_documents_error.each_with_index do |mcf_document, index|
+                %tr
+                  %td= check_box_tag 'mcf_documents_ids[]', mcf_document.id, false, class: ('checkbox checker_mcf_document_' + index.to_s)
+                  %td= mcf_document.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td= mcf_document.original_file_name
+                  %td= mcf_document.journal
+                  %td= mcf_document.error_message
+              %tr
+                %td{colspan: 6}
+                  = content_tag :i, '', class: 'icon-arrow-up'
+                  = submit_tag 'Relancer la récupération', name: 'retake_mcf_documents', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
       .span12{style: "margin-left:0!important"}
         .pull-right
           = paginate @mcf_documents_error

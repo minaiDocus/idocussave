@@ -54,3 +54,10 @@ jQuery ->
       error: (data) ->
         $('.feedback').remove()
         $('#user_mcf_storage').after('<span class="label label-important error">Erreur</span>')
+
+  if $('#customer.errors.mcf').length > 0
+    $('#master_checkbox').change ->
+      if $(this).is(':checked')
+        $('.checkbox').prop('checked', true)
+      else
+        $('.checkbox').prop('checked', false)
