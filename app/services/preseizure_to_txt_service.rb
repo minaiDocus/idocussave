@@ -22,7 +22,7 @@ class PreseizureToTxtService
 
         line[9..10]    = preseizure.journal_name[0..1]
         line[11..13]   = '000'
-        line[14..19]   = preseizure.date.strftime('%d%m%y') if preseizure.date
+        line[14..19]   = preseizure.computed_date.strftime('%d%m%y') if preseizure.date
 
         e = 21 + label[0..19].size - 1
 

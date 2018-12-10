@@ -35,7 +35,7 @@ class PreseizuresToCsv
       fifth_column = [entry.preseizure.third_party, entry.preseizure.piece_number].join(' ') if ['NSA'].include?(entry.preseizure.organization.code)
 
       result =  [
-                  entry.preseizure.date.try(:strftime, "%d/%m/%Y"),
+                  entry.preseizure.computed_date.try(:strftime, "%d/%m/%Y"),
                   entry.preseizure.journal_name.downcase,
                   entry.account.number,
                   entry.preseizure.coala_piece_name,

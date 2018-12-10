@@ -95,6 +95,35 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
   end
 
+  def computed_date(exercise=nil)
+    date = self.date.try(:to_date)
+
+    if self.is_period_range_used
+      out_of_period_range = begin
+                              date < self.period_start_date || self.period_end_date < date
+                            rescue
+                              true
+                            end
+    end
+
+    result = if (self.is_period_range_used && out_of_period_range) || date.nil?
+               self.period_start_date
+             else
+               date
+             end
+
+    if exercise
+      if result < exercise.start_date && result.beginning_of_month == exercise.start_date.beginning_of_month
+        exercise.start_date
+      elsif exercise.next.nil? && result > exercise.end_date && result.beginning_of_month == exercise.end_date.beginning_of_month
+        exercise.end_date
+      else
+        result
+      end
+    else
+      result
+    end
+  end
 
   def period_start_date
     period_date.to_date
