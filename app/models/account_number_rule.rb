@@ -35,16 +35,27 @@ class AccountNumberRule < ActiveRecord::Base
 
   def self.import(file, account_number_rule_params, organization)
     begin
-      ::CSV.foreach(file.path, headers: true, col_sep: ';') do |row|
-        attrs = row.to_hash.slice('PRIORITE','NOM','TYPE','CATEGORISATION','CONTENU_RECHERCHE','NUMERO_COMPTE')
+      csv_string = File.read(file.path)
+      csv_string.encode!('UTF-8')
+
+      begin
+        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if csv_string.match(/\\x([0-9a-zA-Z]{2})/)
+      rescue => e
+        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+      end
+
+      csv_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+
+      ::CSV.parse(csv_string, headers: true, col_sep: ';') do |row|
+        encoded_hash = row.to_hash.with_indifferent_access
 
         attrs = {
-          name: attrs['NOM'],
-          rule_type: attrs['TYPE'],
-          content: attrs['CONTENU_RECHERCHE'],
-          third_party_account: attrs['NUMERO_COMPTE'],
-          priority: attrs['PRIORITE'],
-          categorization: attrs['CATEGORISATION']
+          name: encoded_hash['NOM'],
+          rule_type: encoded_hash['TYPE'],
+          content: encoded_hash['CONTENU_RECHERCHE'],
+          third_party_account: encoded_hash['NUMERO_COMPTE'],
+          priority: encoded_hash['PRIORITE'],
+          categorization: encoded_hash['CATEGORISATION']
         }
 
         attrs[:rule_type] = case attrs[:rule_type].to_s
