@@ -192,7 +192,25 @@ class UpdatePeriod
         option.price_in_cents_wo_vat = package_options_price([@subscription.retriever_price_option], type)
 
         selected_options << option
+
+        if @subscription.user.organization.code == 'AFH'
+          retrievers_count = @subscription.user.retrievers_historics.banks.has_operations.count
+
+          if retrievers_count > 2
+            option = ProductOptionOrder.new
+
+            option.title    = "#{retrievers_count} automates bancaires supplémentaires"
+            option.name     = 'excess_retrievers'
+            option.duration = 0
+            option.quantity = retrievers_count
+            option.group_title = "iDo'FacBanque"
+            option.price_in_cents_wo_vat = (retrievers_count * 200.0)
+
+            selected_options << option
+          end
+        end
       end
+
 
       if (@subscription.is_basic_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
         option = ProductOptionOrder.new

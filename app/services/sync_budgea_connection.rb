@@ -33,6 +33,18 @@ class SyncBudgeaConnection
 
           if client.response.code == 200
             @retriever.success_budgea_connection
+            
+            if @retriever.user.organization.code == 'AFH'
+              RetrieversHistoric.find_or_initialize({
+                                                      user_id:      @retriever.user_id,
+                                                      connector_id: @retriever.connector_id,
+                                                      retriever_id: @retriever.id,
+                                                      name:         @retriever.name,
+                                                      service_name: @retriever.service_name,
+                                                      capabilities: @retriever.capabilities
+                                                    })
+              UpdatePeriod.new(@retriever.user.subscription.current_period).execute
+            end
           elsif client.response.code == 202
             @retriever.update(budgea_additionnal_fields: data['fields']) if data['fields'].present?
             @retriever.pause_budgea_connection

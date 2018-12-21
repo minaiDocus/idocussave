@@ -66,6 +66,9 @@ class ProcessRetrievedData
                   bank_account.type_name         = account['type']
                   bank_account.original_currency = account['currency']
                   bank_account.save
+
+                  historic = user.retrievers_historics.where(retriever_id: retriever.id).first
+                  historic.update(banks_count: (historic.banks_count.to_i + 1)) if historic
                 end
 
                 if bank_account && account['transactions'].present?
@@ -109,6 +112,9 @@ class ProcessRetrievedData
                         operation.api_name     = 'budgea'
                         assign_attributes(bank_account, operation, transaction)
                         operation.save
+
+                        historic = user.retrievers_historics.where(retriever_id: retriever.id).first
+                        historic.update(operations_count: (historic.operations_count.to_i + 1)) if historic
 
                         new_operations_count += 1
                       end

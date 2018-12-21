@@ -72,6 +72,7 @@ class User < ActiveRecord::Base
 
   has_one  :budgea_account,                                                                     dependent: :destroy
   has_many :retrievers,                                                                         dependent: :destroy
+  has_many :retrievers_historics,                                                               dependent: :destroy
   has_many :retrieved_data,                                                                     dependent: :destroy
   has_many :new_provider_requests,                                                              dependent: :destroy
   has_many :sandbox_bank_accounts,                                                              dependent: :destroy
