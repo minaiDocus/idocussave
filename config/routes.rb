@@ -411,6 +411,10 @@ Idocus::Application.routes.draw do
       resources :pre_assignments do
         post 'update_comment', on: :collection
       end
+
+      resources :system, only: %w(index) do
+        post 'my_customers', on: :collection
+      end
     end
 
     namespace :mobile do
