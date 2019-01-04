@@ -31,7 +31,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
 
     if resource.valid_password?(params[:user_login][:password])
       sign_in('user', resource)
-      resource.update_authentication_token unless resource.authentication_token
+      resource.update_authentication_token unless resource.authentication_token.present?
 
       user = resource
       if resource.collaborator?
