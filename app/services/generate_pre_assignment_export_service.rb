@@ -115,14 +115,6 @@ private
   def file_path
     FileUtils.mkdir_p @export.path unless File.exists? @export.path
 
-    ##TO DO: desabled for now
-    #generate .htaccess file after path creation
-    # unless File.exist? @export.base_path.join('.htaccess')
-    #   File.open(@export.base_path.join('.htaccess'), 'w') do |f|
-    #     f.write("Require group #{@report.user.code.gsub(/[%]/, '_')}")
-    #   end
-    # end
-
     @export.path
   end
 

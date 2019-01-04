@@ -36,7 +36,7 @@ class AccountingWorkflow::RetrievePreAssignments
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
       if not_blocked_pre_assignments.size > 0
         CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
-        #To be enable later : GeneratePreAssignmentExportService.new(not_blocked_pre_assignments).execute
+        GeneratePreAssignmentExportService.new(not_blocked_pre_assignments).execute
         FileDelivery.prepare(report)
         FileDelivery.prepare(pack)
       end
