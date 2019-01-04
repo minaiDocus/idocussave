@@ -151,6 +151,8 @@ Idocus::Application.routes.draw do
         member do
           get   'edit_ibiza'
           patch 'update_ibiza'
+          get   'edit_exact_online'
+          patch 'update_exact_online'
           patch 'close_account'
           patch 'reopen_account'
           get   'edit_compta_options'
@@ -264,6 +266,7 @@ Idocus::Application.routes.draw do
       resource :ibiza, controller: 'ibiza', only: %w(create edit update)
 
       resources :ibiza_users,                       only: :index
+      resources :exact_online_users,                       only: :index
       resources :mcf_users,                         only: :index
       resources :pre_assignments,                   only: :index
       resources :pre_assignment_delivery_errors,    only: :index
@@ -385,6 +388,12 @@ Idocus::Application.routes.draw do
 
     resources :emailed_documents do
       post 'regenerate_code', on: :collection
+    end
+
+    resource :exact_online, only: [] do
+      get 'authenticate', on: :member
+      get 'subscribe',    on: :member
+      post 'unsubscribe',  on: :member
     end
 
     resources :paper_processes, only: :index

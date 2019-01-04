@@ -3,13 +3,13 @@
   - if @customer && @customer.uses_ibiza?
     - if @organization.ibiza.configured?
       .block_input.clearfix
-        = f.input :pseudonym, wrapper_html: { class: "account_book_type_ibiza pull-left" }
-        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_ibiza_journal_list"}
+        = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
+        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
           %i.icon-chevron-down
       .controls{style: 'margin-bottom: 18px'}
-        .block_selection_ibiza
+        .block_selection_journals
           %strong.help-block{style: 'margin-top: 2px'} Journaux Ibiza :
-          = select_tag 'select_journal_from_ibiza', options_for_select(journals_for_select(@journal.pseudonym)), size: 8, style: "width: 300px"
+          = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
         %p.help-block si différent de "Code journal" ci-dessus
     - else
       .control-group
@@ -18,6 +18,17 @@
           %select.select.disabled{ disabled: 'disabled' }
           %p
             = render 'shared/ibiza_not_configured_warning'
+  - elsif @customer && @customer.uses_exact_online?
+    - if @customer.exact_online.try(:fully_configured?)
+      .block_input.clearfix
+        = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
+        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
+          %i.icon-chevron-down
+      .controls{style: 'margin-bottom: 18px'}
+        .block_selection_journals
+          %strong.help-block{style: 'margin-top: 2px'} Journaux Exact Online :
+          = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
+        %p.help-block si différent de "Code journal" ci-dessus
   - else
     = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
   = f.input :description

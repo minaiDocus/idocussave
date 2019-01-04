@@ -22,7 +22,6 @@ class User < ActiveRecord::Base
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
   validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
 
-
   attr_accessor :is_group_required
 
   has_many :memberships, class_name: 'Member', foreign_key: :user_id, dependent: :destroy
@@ -30,6 +29,7 @@ class User < ActiveRecord::Base
 
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
   has_one :softwares, class_name: 'SoftwaresSetting', dependent: :destroy
+  has_one :exact_online, dependent: :destroy
   has_one :dematbox
   has_one :composition
   has_one :subscription
@@ -103,10 +103,10 @@ class User < ActiveRecord::Base
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
-  scope :using_ibiza,                 -> { joins(:softwares).where('softwares_settings.is_ibiza_used = true') }
 
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :softwares
+  accepts_nested_attributes_for :exact_online
   accepts_nested_attributes_for :addresses, allow_destroy: true
   accepts_nested_attributes_for :csv_descriptor
   accepts_nested_attributes_for :external_file_storage
@@ -188,9 +188,14 @@ class User < ActiveRecord::Base
   def create_or_update_software(attributes)
     software = self.softwares || SoftwaresSetting.new()
     software.assign_attributes(attributes.to_hash)
-    software.user = self
-    software.save
-    software
+
+    unless software.is_exact_online_used && software.is_ibiza_used
+      software.user = self
+      software.save
+      software
+    else
+      software = nil
+    end
   end
 
   def paper_return_address
@@ -351,12 +356,20 @@ class User < ActiveRecord::Base
     softwares_count > 1
   end
 
-  def uses_other_softwares?
+  def uses_api_softwares?
+    uses_ibiza? || uses_exact_online?
+  end
+
+  def uses_non_api_softwares?
     uses_coala? || uses_quadratus? || uses_csv_descriptor?
   end
 
   def uses_ibiza?
     self.try(:softwares).try(:is_ibiza_used) && self.organization.try(:ibiza).try(:used?)
+  end
+
+  def uses_exact_online?
+    self.try(:softwares).try(:is_exact_online_used) && self.organization.is_exact_online_used
   end
 
   def uses_coala?

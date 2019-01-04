@@ -154,10 +154,14 @@ class Organization < ActiveRecord::Base
   end
 
   def uses_softwares?
-    ibiza.try(:configured?) || uses_other_softwares?
+    uses_api_softwares? || uses_non_api_softwares?
   end
 
-  def uses_other_softwares?
+  def uses_api_softwares?
+    is_exact_online_used || ibiza.try(:configured?)
+  end
+
+  def uses_non_api_softwares?
     is_coala_used || is_quadratus_used || is_csv_descriptor_used
   end
 end

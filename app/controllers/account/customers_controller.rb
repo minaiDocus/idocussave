@@ -69,7 +69,11 @@ class Account::CustomersController < Account::OrganizationController
   def update
     if params[:user][:softwares_attributes].present?
       software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-      flash[:success] = 'Modifié avec succès.'
+      if software && software.persisted?
+        flash[:success] = 'Modifié avec succès.'
+      else
+        flash[:error] = 'Impossible de modifier.'
+      end
 
       redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
     else
@@ -92,7 +96,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def update_software
     software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-    if software.persisted?
+    if software && software.persisted?
       flash[:success] = 'Modifié avec succès.'
     else
       flash[:error] = 'Impossible de modifier.'
@@ -113,6 +117,38 @@ class Account::CustomersController < Account::OrganizationController
     next_configuration_step
   end
 
+  # GET /account/organizations/:organization_id/customers/:id/edit_exact_online
+  def edit_exact_online
+    @customer.build_exact_online if @customer.exact_online.nil?
+  end
+
+  # PUT /account/organizations/:organization_id/customers/:id/update_exact_online
+  def update_exact_online
+    api_keys = @customer.exact_online.try(:api_keys)
+
+    @customer.assign_attributes(exact_online_params)
+
+    is_api_keys_changed = @customer.exact_online.try(:client_id) != api_keys.try(:[], :client_id) || @customer.exact_online.try(:client_secret) != api_keys.try(:[], :client_secret)
+
+    if @customer.save
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès'
+
+        if is_api_keys_changed && exact_online_params[:exact_online_attributes][:client_id].present? && exact_online_params[:exact_online_attributes][:client_secret].present?
+          @customer.exact_online.try(:reset)
+          redirect_to authenticate_account_exact_online_path(customer_id: @customer.id)
+        else
+          redirect_to account_organization_customer_path(@organization, @customer, tab: 'exact_online')
+        end
+      else
+        next_configuration_step
+      end
+    else
+      flash[:error] = 'Impossible de modifier'
+      render 'edit'
+    end
+  end
+
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
   def edit_ibiza
   end
@@ -127,7 +163,7 @@ class Account::CustomersController < Account::OrganizationController
     if @customer.save
       if @customer.configured?
         if is_ibiza_id_changed && @user.ibiza_id.present?
-          UpdateAccountingPlan.new(@user.id).execute
+          UpdateAccountingPlan.new(@user).execute
         end
 
         flash[:success] = 'Modifié avec succès'
@@ -297,6 +333,7 @@ class Account::CustomersController < Account::OrganizationController
     authorized = false if action_name.in?(%w(info new create)) && !(@user.leader? || @user.groups.any?)
     authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
     authorized = false if action_name.in?(%w(edit_ibiza update_ibiza)) && !@organization.ibiza.try(:configured?)
+    authorized = false if action_name.in?(%w(edit_exact_online update_exact_online)) && !@organization.is_exact_online_used
 
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
@@ -348,6 +385,9 @@ class Account::CustomersController < Account::OrganizationController
     params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated])
   end
 
+  def exact_online_params
+    params.require(:user).permit(exact_online_attributes: [:id, :client_id, :client_secret], softwares_attributes: [:id, :is_exact_online_auto_deliver])
+  end
 
   def period_options_params
     if current_user.is_admin

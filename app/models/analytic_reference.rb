@@ -3,7 +3,7 @@ class AnalyticReference < ActiveRecord::Base
   has_many :pieces, class_name: 'Pack::Piece'
 
   validate :presence_of_one_analysis
-  validate :total_ventilation_rate
+  # validate :total_ventilation_rate
 
   private
 

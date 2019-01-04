@@ -1,0 +1,146 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://start.exactonline.fr/api/v1/current/Me?$select=CurrentDivision
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Authorization:
+      - Bearer gAAAAG6CitnBAyu2-MOJHkLySVV-GavQMGqZzNS8yiV76E2um-aX7Ybb-H7wnQn2ytXz8r1qJ5MIrz5JtL6b5g7lJWkfqms53wGHw49T_dQFmZJW-eJCSY81Wbx0_RVKrHi7GgsBf9E8swO37LgA3ull2exeVWthsnVVD2w5TmqSsoJmZAEAAIAAAAAfYLrR-1rYxNiwM0UoDbtS2cvlVeqgbO9YZ0mDtMYXf3KFFBGmSOFfZ6cjadT17-7-nbGrf-7RerIRI7iRMnYbxbAJQgLJ-1ciEFLXYztxAD091hAInLhlodZ5o67gaS9bx0eQUWZhEYguQ42kHivEfEVcOwKeMqfna3vLPk9EyrRXy9NbWVGX2UYG_ROwVw8wjpPiwVv2mN0_cGWnKWdCe76NQM2Bvr6cIvOpdHuPsci3uGZQPujRX7ZfqPNkGOCu_jsS7DpkeOHwpuZeeUkms8Q-CO7I75C3a7ZOlogl5ZpvF1cfnccuR3z5vhBRoHSVq8WaSpBkX_0TkSGW4ti6a6RQsqDtKYt8_Kdgk9rB1oCQu1TRpWPI1nmcwcstNX_a3ThYzMsWl-0uJT4knpL3zxTqk7MFZwwFrJogeCn140UIwbPaX2FD92r4TycsLQH1xQwlfPv1m0SAuXvS6GjA
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '221'
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - "-1"
+      Dataserviceversion:
+      - 2.0;
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Date:
+      - Tue, 18 Dec 2018 12:26:13 GMT
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - ASP.NET_SessionId=m2b5cp1ezmupvro1orphammk; SameSite=lax; path=/; secure;
+        HttpOnly
+      - AWSALB=dhEPteHH3T/MuQk874uFMa/6gJSgnlmFKKx3qxZ5pxtmzmWvi9Iw25bP+rOrB3QBMQg9/Gpy1rDjBoB81vboAfe1GaRX8qg0exxYD8Uvdk1Uk5upzKmVtPcaCe16;
+        Expires=Tue, 25 Dec 2018 12:26:13 GMT; Path=/
+      - ExactOnlineClient=9oMr67pvqw5tLN2G2m17Xbrk4VVZQeqOqTDpMP49YwUVwFzBkc5t+wXadAsWxHo7S2NemOYtK9tjbQfjNb//HmzBJPkBiieBkD7iXS1gtEz8Fv+ad3fYVEXbjYpnKRYYqhHi4/zAPfgQc2/6UGymX5WzIQ46PRiJPTNOifaE56M=;
+        SameSite=lax; expires=Mon, 31-Dec-2198 23:00:00 GMT; path=/; secure; HttpOnly
+      - ExactServer{05bee804-0253-4ecc-a637-e2d6b9ce0aa9}=Division=65941; SameSite=lax;
+        path=/; secure; HttpOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n\"d\" : {\r\n\"results\": [\r\n{\r\n\"__metadata\": {\r\n\"uri\":
+        \"https://start.exactonline.fr/api/v1/current/Me(guid'05bee804-0253-4ecc-a637-e2d6b9ce0aa9')\",
+        \"type\": \"Exact.Web.Api.System.Me\"\r\n}, \"CurrentDivision\": 65941\r\n}\r\n]\r\n}\r\n}"
+    http_version: 
+  recorded_at: Tue, 18 Dec 2018 12:25:54 GMT
+- request:
+    method: post
+    uri: https://start.exactonline.fr/api/v1/65941/purchaseentry/PurchaseEntries
+    body:
+      encoding: UTF-8
+      string: '{"Supplier":"f4e06755-79f4-4b4a-a29a-bc5968473679","Journal":"60","EntryDate":"2018-12-18","PurchaseEntryLines":[{"AmountFC":"1011.23","GLAccount":"e51e8dda-f010-44ad-a53e-c5f605c33072","VATCode":"AR"}]}'
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Authorization:
+      - Bearer gAAAAG6CitnBAyu2-MOJHkLySVV-GavQMGqZzNS8yiV76E2um-aX7Ybb-H7wnQn2ytXz8r1qJ5MIrz5JtL6b5g7lJWkfqms53wGHw49T_dQFmZJW-eJCSY81Wbx0_RVKrHi7GgsBf9E8swO37LgA3ull2exeVWthsnVVD2w5TmqSsoJmZAEAAIAAAAAfYLrR-1rYxNiwM0UoDbtS2cvlVeqgbO9YZ0mDtMYXf3KFFBGmSOFfZ6cjadT17-7-nbGrf-7RerIRI7iRMnYbxbAJQgLJ-1ciEFLXYztxAD091hAInLhlodZ5o67gaS9bx0eQUWZhEYguQ42kHivEfEVcOwKeMqfna3vLPk9EyrRXy9NbWVGX2UYG_ROwVw8wjpPiwVv2mN0_cGWnKWdCe76NQM2Bvr6cIvOpdHuPsci3uGZQPujRX7ZfqPNkGOCu_jsS7DpkeOHwpuZeeUkms8Q-CO7I75C3a7ZOlogl5ZpvF1cfnccuR3z5vhBRoHSVq8WaSpBkX_0TkSGW4ti6a6RQsqDtKYt8_Kdgk9rB1oCQu1TRpWPI1nmcwcstNX_a3ThYzMsWl-0uJT4knpL3zxTqk7MFZwwFrJogeCn140UIwbPaX2FD92r4TycsLQH1xQwlfPv1m0SAuXvS6GjA
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '1690'
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - "-1"
+      Location:
+      - https://start.exactonline.fr/api/v1/65941/purchaseentry/PurchaseEntries(guid'28530481-b033-43d3-a62f-98ef012ba24b')
+      Dataserviceversion:
+      - 1.0;
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Date:
+      - Tue, 18 Dec 2018 12:26:14 GMT
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - ASP.NET_SessionId=wqypqugz0pv0vnoeqqihu5mi; SameSite=lax; path=/; secure;
+        HttpOnly
+      - AWSALB=TR56B661duXWqJlNNGamiApSVXEfW4f4rYDBrci9g7GZ04F7ZSB7ncbBGuLXeFap4xHB7C7asjtdYYcEuIPrZpofwR4UJt04kLzkEowXWtKEq0HJarQnVkjSiQIr;
+        Expires=Tue, 25 Dec 2018 12:26:13 GMT; Path=/
+      - ExactOnlineClient=jgtAwVUZEQnPPfMJim3O60sgR4Uvj8e/MMwg4mVN8sPauRKN0ldYVz5itS7IdSUKI+/IIKGoUw1Tx7XJkuSWfxEw35JbaJBSk+lSaq/cxHZtvQcQhm4Ne4itnHYgW/ZCpTejGdeKbv/3fhZjMMKcVOoI/XU2CaYbJWSjlyVBqnQ=;
+        SameSite=lax; expires=Mon, 31-Dec-2198 23:00:00 GMT; path=/; secure; HttpOnly
+      - ExactServer{05bee804-0253-4ecc-a637-e2d6b9ce0aa9}=Division=65941; SameSite=lax;
+        path=/; secure; HttpOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: "{\r\n\"d\" : {\r\n\"__metadata\": {\r\n\"uri\": \"https://start.exactonline.fr/api/v1/65941/purchaseentry/PurchaseEntries(guid'28530481-b033-43d3-a62f-98ef012ba24b')\",
+        \"type\": \"Exact.Web.Api.Models.PurchaseEntry\"\r\n}, \"AmountDC\": -1112.35,
+        \"AmountFC\": -1112.35, \"BatchNumber\": null, \"Created\": \"\\/Date(1545139574083)\\/\",
+        \"Creator\": \"05bee804-0253-4ecc-a637-e2d6b9ce0aa9\", \"CreatorFullName\":
+        \"Mina RAKOTONIRAINY\", \"Currency\": \"EUR\", \"Supplier\": \"f4e06755-79f4-4b4a-a29a-bc5968473679\",
+        \"SupplierName\": \"Exact Software France\", \"Description\": null, \"Division\":
+        65941, \"Document\": \"a9cbb021-1336-43fd-bcf1-63b14c0fbc76\", \"DocumentNumber\":
+        14, \"DocumentSubject\": \"Facture: 18600014\", \"DueDate\": \"\\/Date(1547683200000)\\/\",
+        \"EntryDate\": \"\\/Date(1545091200000)\\/\", \"EntryID\": \"28530481-b033-43d3-a62f-98ef012ba24b\",
+        \"EntryNumber\": 18600014, \"ExternalLinkDescription\": null, \"ExternalLinkReference\":
+        null, \"GAccountAmountFC\": null, \"InvoiceNumber\": 18600014, \"Journal\":
+        \"60\", \"JournalDescription\": \"Achats\", \"Modified\": \"\\/Date(1545139574110)\\/\",
+        \"Modifier\": \"05bee804-0253-4ecc-a637-e2d6b9ce0aa9\", \"ModifierFullName\":
+        \"Mina RAKOTONIRAINY\", \"OrderNumber\": null, \"PaymentCondition\": \"30\",
+        \"PaymentConditionDescription\": \"30 jours\", \"PaymentReference\": null,
+        \"ProcessNumber\": 0, \"Rate\": 1, \"ReportingYear\": 2018, \"ReportingPeriod\":
+        12, \"Reversal\": false, \"Status\": 20, \"StatusDescription\": \"Ouvert\",
+        \"Type\": 30, \"TypeDescription\": \"\\u00c9criture d'achat\", \"VATAmountDC\":
+        null, \"VATAmountFC\": -101.12, \"YourRef\": null, \"PurchaseEntryLines\":
+        {\r\n\"__deferred\": {\r\n\"uri\": \"https://start.exactonline.fr/api/v1/65941/purchaseentry/PurchaseEntries(guid'28530481-b033-43d3-a62f-98ef012ba24b')/PurchaseEntryLines\"\r\n}\r\n}\r\n}\r\n}"
+    http_version: 
+  recorded_at: Tue, 18 Dec 2018 12:25:55 GMT
+recorded_with: VCR 3.0.3

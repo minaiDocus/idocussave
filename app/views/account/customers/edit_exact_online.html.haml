@@ -1,0 +1,46 @@
+#customer.edit.exact_online
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des options Exact Online du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'exact_online')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 Configuration Exact Online pour le dossier : #{@customer}
+
+  .rwo-fluid
+    .span12.box
+      = simple_form_for @customer, url: update_exact_online_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+        .row-fluid
+          .span7
+            %h4 Clé API Exact Online
+            = f.simple_fields_for :exact_online do |e|
+              = e.hidden_field :id
+              = e.input :client_id
+              = e.input :client_secret
+          .span5
+            Vous devez fournir votre identifiant api depuis votre compte "Exact Online" pour établir la liaison iDocus/Exact Online
+            %br
+            La création de votre clé api est disponible
+            = link_to 'ici', 'https://apps.exactonline.com/fr/fr-FR/V2', target: '_blank'
+            %br
+            %br
+            %span.label.label-warning
+              Attention :
+            &nbsp;&nbsp;L'URL de redirection de la clé api créée dans Exact Online doit être obligatoirement :
+            %br
+            %span.label
+              = subscribe_account_exact_online_url
+        %hr
+        = f.simple_fields_for :softwares do |o|
+          = o.hidden_field :id
+          = o.input :is_exact_online_auto_deliver, collection: auto_deliver_options, include_blank: false
+        .form-actions.margin0bottom
+          - if @customer.configured?
+            = f.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'exact_online'), class: 'btn'
+          - else
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = f.submit t('actions.next_step'), class: 'btn btn-primary', disabled: true

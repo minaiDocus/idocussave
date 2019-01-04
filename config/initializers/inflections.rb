@@ -23,5 +23,6 @@ ActiveSupport::Inflector.inflections do |inflect|
     retrieved_data
     temp_document_metadata
     news
+    exact_online
   )
 end

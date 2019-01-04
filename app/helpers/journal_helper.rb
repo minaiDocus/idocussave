@@ -16,6 +16,27 @@ module JournalHelper
     end
   end
 
+  def exact_online_journals
+    if @customer.exact_online.try(:fully_configured?) && @customer.uses_exact_online?
+      Rails.cache.fetch [:exact_online, :user, @customer.exact_online.id, :journals], expires_in: 5.minutes do
+        journals = ExactOnlineData.new(@customer).journals
+        if journals
+          journals.map do |j|
+            {
+              closed:      0,
+              name:        j['code'],
+              description: j['description'],
+              type:        j['type']
+            }
+          end
+        else
+          []
+        end
+      end
+    else
+      []
+    end
+  end
 
   def ibiza_journals
     if @customer.ibiza_id.present? && @customer.uses_ibiza?
@@ -51,14 +72,14 @@ module JournalHelper
 
 
   def journals_for_select(journal_name, type = nil)
-    journals = ibiza_journals
+    journals = @customer.uses_exact_online? ? exact_online_journals : ibiza_journals
 
     if journals.any?
       journals = journals.select do |j|
         j[:closed].to_i == 0
       end
 
-      if type == 'bank'
+      if type == 'bank' && @customer.uses_ibiza?
         journals = journals.select do |j|
           j[:type].to_i.in? [5, 6]
         end
@@ -73,7 +94,7 @@ module JournalHelper
       if journal_name.present? && !journal_name.in?(values.map(&:last))
         description = journal_name
         description = 'JC' + description if journal_name =~ /\A\d/
-        values << ["#{description} (inaccessible depuis la ged ibiza)", journal_name]
+        values << ["#{description} (inaccessible depuis la ged)", journal_name]
         values.sort_by(&:first)
       else
         values
@@ -82,7 +103,7 @@ module JournalHelper
     elsif journal_name.present?
       description = journal_name
       description = 'JC' + description if journal_name =~ /\A\d/
-      [["#{description} (inaccessible depuis la ged ibiza)", journal_name]]
+      [["#{description} (inaccessible depuis la ged)", journal_name]]
     else
       []
     end

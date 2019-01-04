@@ -204,6 +204,12 @@ check_disabled_options = ->
         $(this).after('<input type="hidden" name="'+$(this).attr('name')+'" value="'+$(this).is(':checked')+'">')
   )
 
+refresh_softwares = (obj)->
+  if(obj.attr('id') == 'softwares_is_ibiza_used' && obj.is(':checked'))
+    $('#softwares_is_exact_online_used').removeAttr('checked')
+  else if(obj.attr('id') == 'softwares_is_exact_online_used' && obj.is(':checked'))
+    $('#softwares_is_ibiza_used').removeAttr('checked')
+
 jQuery ->
   if $('#subscriptions.edit, #organization_subscriptions.edit').length > 0
     update_form()
@@ -219,3 +225,7 @@ jQuery ->
 
     $('#subscription_package_form').on 'submit', ->
       check_disabled_options()
+
+    $('.softwares_setting').on 'click', ->
+      refresh_softwares($(this))
+

@@ -51,15 +51,15 @@ jQuery ->
     if $('#journal.new form').length > 0
       form_to_wizard()
 
-    $("#toogle_ibiza_journal_list").on 'click', (e)->
+    $("#toogle_external_journal_list").on 'click', (e)->
       e.preventDefault()
-      is_selection_visible = $(".block_selection_ibiza").is(":visible")
+      is_selection_visible = $(".block_selection_journals").is(":visible")
       if is_selection_visible
-        $(".block_selection_ibiza").slideUp('fast')
+        $(".block_selection_journals").slideUp('fast')
       else
-        $(".block_selection_ibiza").slideDown('fast')
+        $(".block_selection_journals").slideDown('fast')
 
-    $("#select_journal_from_ibiza").on 'change', (e)->
+    $("#select_external_journal").on 'change', (e)->
       selected = $(this).val()
       $("#account_book_type_pseudonym").val(selected)
 

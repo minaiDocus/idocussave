@@ -8,6 +8,9 @@ class Pack::Report::Preseizure::Account < ActiveRecord::Base
   has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :destroy
   belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
 
+  scope :ttc, -> { where(type: TTC) }
+  scope :ht,  -> { where(type: HT) }
+  scope :vat, -> { where(type: TVA) }
 
   accepts_nested_attributes_for :entries
 

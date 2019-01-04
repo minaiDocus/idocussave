@@ -18,17 +18,20 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   has_many :duplicates, class_name: 'Pack::Report::Preseizure', foreign_key: :similar_preseizure_id
   belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure'
 
-  scope :locked,          -> { where(is_locked: true) }
-  scope :delivered,       -> { where(is_delivered: true) }
-  scope :not_locked,      -> { where(is_locked: false) }
-  scope :by_position,     -> { order(position: :asc) }
-  scope :not_delivered,   -> { where(is_delivered: false) }
-  scope :failed_delivery, -> { where.not(delivery_message: '') }
+  scope :locked,                        -> { where(is_locked: true) }
+  scope :ibiza_delivered,               -> { where('is_delivered_to LIKE "%ibiza%"') }
+  scope :not_ibiza_delivered,           -> { where.not('is_delivered_to LIKE "%ibiza%"') }
+  scope :exact_online_delivered,        -> { where('is_delivered_to LIKE "%exact_online%"') }
+  scope :not_exact_online_delivered,    -> { where.not('is_delivered_to LIKE "%exact_online%"') }
+  scope :failed_ibiza_delivery,         -> { where('delivery_message LIKE "%ibiza%"') }
+  scope :failed_exact_online_delivery,  -> { where('delivery_message LIKE "%exact_online%"') }
+  scope :not_locked,                    -> { where(is_locked: false) }
+  scope :by_position,                   -> { order(position: :asc) }
 
-  scope :blocked_duplicates,     -> { unscoped.where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
-  scope :potential_duplicates,   -> { unscoped.where.not(duplicate_detected_at: nil) }
-  scope :approved_duplicates,    -> { unscoped.where.not(marked_as_duplicate_at: nil) }
-  scope :disapproved_duplicates, -> { where.not(duplicate_unblocked_at: nil) }
+  scope :blocked_duplicates,            -> { unscoped.where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
+  scope :potential_duplicates,          -> { unscoped.where.not(duplicate_detected_at: nil) }
+  scope :approved_duplicates,           -> { unscoped.where.not(marked_as_duplicate_at: nil) }
+  scope :disapproved_duplicates,        -> { where.not(duplicate_unblocked_at: nil) }
 
   default_scope { where(is_blocked_for_duplication: false) }
 
@@ -54,6 +57,14 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
 
     preseizures
+  end
+
+  def self.delivered
+    self.where(id: self.all.select{ |s| s.is_delivered? }.collect(&:id))
+  end
+
+  def self.not_delivered
+    self.where(id: self.all.select{ |s| s.is_not_delivered? }.collect(&:id))
   end
 
   def piece_name
@@ -187,6 +198,16 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     nil
   end
 
+  def is_delivered?
+    ( self.user.uses_ibiza? && self.is_delivered_to.match(/ibiza/) ) ||
+    ( self.user.uses_exact_online? && self.is_delivered_to.match(/exact_online/) )
+  end
+
+  def is_not_delivered?
+    ( self.user.uses_ibiza? && !self.is_delivered_to.match(/ibiza/) ) ||
+    ( self.user.uses_exact_online? && !self.is_delivered_to.match(/exact_online/) )
+  end
+
   def is_not_blocked_for_duplication
     !is_blocked_for_duplication
   end
@@ -197,5 +218,42 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
   def marked_as_duplicate_by_user
     @marked_as_duplicate_by_user ||= User.find_by id: marked_as_duplicate_by_user_id
+  end
+
+  def delivered_to(software)
+    softwares = self.is_delivered_to.split(',') || []
+    softwares << software unless softwares.include? software
+    self.is_delivered_to = softwares.join(',')
+    save
+  end
+
+  def is_delivered_to?(software='ibiza')
+    softwares = self.is_delivered_to.split(',') || []
+    softwares.include? software
+  end
+
+  def set_delivery_message_for(software='ibiza', message)
+    begin
+      mess = self.delivery_message.present? ? JSON.parse(self.delivery_message) : {}
+    rescue
+      mess = {}
+    end
+
+    if message.present?
+      mess[software.to_s] = message
+    else
+      mess.except!(software.to_s)
+    end
+    self.delivery_message = mess.to_json.to_s
+    save
+  end
+
+  def get_delivery_message_of(software='ibiza')
+    mess = ''
+    if self.delivery_message.present?
+      mess = JSON.parse(self.delivery_message) rescue { "#{software.to_s}" => self.delivery_message }
+      mess = mess[software.to_s] || ''
+    end
+    mess
   end
 end

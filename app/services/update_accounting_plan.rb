@@ -3,7 +3,7 @@ class UpdateAccountingPlan
   # Come accross all organizations customers to update their accounting plan
   def self.execute
     Organization.all.each do |organization|
-      next unless organization.ibiza.try(:configured?)
+      next unless organization.ibiza.try(:configured?) || organization.is_exact_online_used
       organization.customers.order(code: :asc).active.each do |customer|
         new(customer).execute
         print '.'
@@ -19,15 +19,32 @@ class UpdateAccountingPlan
 
 
   def execute
-    if @user.ibiza_id.present? && @user.uses_ibiza? && @user.organization.try(:ibiza).try(:configured?) && @accounting_plan.need_update?
+    if @user.ibiza_id.present? && @user.uses_ibiza? && @accounting_plan.need_update?
       if get_ibiza_accounting_plan
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
         @accounting_plan.providers = []
         @accounting_plan.customers = []
 
-        accounts.each do |account|
-          create_item(account)
+        ibiza_accounts.each do |account|
+          create_ibiza_item(account)
+        end
+
+        @accounting_plan.is_updating = false
+        @accounting_plan.save
+      else
+        false
+      end
+    elsif @user.exact_online.try(:fully_configured?) && @user.uses_exact_online? && @accounting_plan.need_update?
+      if exact_online_accounts.present?
+        @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
+
+        @accounting_plan.providers    = []
+        @accounting_plan.customers    = []
+        @accounting_plan.vat_accounts = []
+
+        exact_online_accounts.each do |account|
+          create_exact_online_item(account)
         end
 
         @accounting_plan.is_updating = false
@@ -40,39 +57,37 @@ class UpdateAccountingPlan
     end
   end
 
-
-  def error_message
-    client.response.message unless client.response.success?
+  def ibiza_error_message
+    ibiza_client.response.message unless ibiza_client.response.success?
   end
 
   private
 
 
-  def client
-    @client ||= @user.organization.ibiza.client
+  def ibiza_client
+    @ibiza_client ||= @user.organization.ibiza.client
   end
 
 
   def get_ibiza_accounting_plan
-    client.request.clear
-    client.company(@user.ibiza_id).accounts?
+    ibiza_client.request.clear
+    ibiza_client.company(@user.ibiza_id).accounts?
 
-    if client.response.success?
-      @xml_data = client.response.body.force_encoding('UTF-8')
+    if ibiza_client.response.success?
+      @xml_data = ibiza_client.response.body.force_encoding('UTF-8')
     else
       false
     end
   end
 
-
-  def accounts
+  def ibiza_accounts
     Nokogiri::XML(@xml_data).css('wsAccounts').select do |account|
       account.css('closed').text.to_i == 0 && account.css('category').text.to_i.in?([1, 2])
     end
   end
 
 
-  def create_item(account)
+  def create_ibiza_item(account)
     item = AccountingPlanItem.new
     item.third_party_name    = account.css('name').text
     item.third_party_account = account.css('number').text
@@ -86,6 +101,33 @@ class UpdateAccountingPlan
 
     @accounting_plan.customers << item if item.kind == 'customer'
     @accounting_plan.providers << item if item.kind == 'provider'
+  end
+
+  def create_exact_online_item(account)
+    item = AccountingPlanItem.new
+    item.third_party_name       = account[:name]
+    item.third_party_account    = account[:number]
+    item.conterpart_account     = account[:account]
+    item.code                   = account[:vat][:code] if account[:vat][:code].present?
+    item.kind                   = account[:is_provider] ? 'provider' : 'customer'
+
+    @accounting_plan.customers << item if item.kind == 'customer'
+    @accounting_plan.providers << item if item.kind == 'provider'
+    @accounting_plan.vat_accounts << create_exact_online_vat_account(account[:vat]) if account[:vat][:code].present?
+  end
+
+  def create_exact_online_vat_account(vat_infos)
+    vat                = AccountingPlanVatAccount.new
+    vat.code           = vat_infos[:code]
+    vat.nature         = vat_infos[:description]
+    vat.account_number = vat_infos[:number]
+    vat.save
+
+    vat
+  end
+
+  def exact_online_accounts
+    @exact_online_accounts ||= ExactOnlineData.new(@user).accounting_plans
   end
 end
 

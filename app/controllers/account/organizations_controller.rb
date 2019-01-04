@@ -36,6 +36,8 @@ class Account::OrganizationsController < Account::OrganizationController
                           'Export csv personnalisé'
                         when 'ibiza'
                           'Ibiza'
+                        when 'exact_online'
+                          'Exact Online'
                         else
                           ''
                       end
@@ -52,7 +54,9 @@ class Account::OrganizationsController < Account::OrganizationController
       elsif software == 'quadratus'
         softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
       elsif software == 'ibiza'
-        softwares_params = { is_ibiza_used: software_users.include?(customer.to_s) }
+        softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact_online?) }
+      elsif software == 'exact_online'
+        softwares_params = { is_exact_online_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
       end
@@ -186,7 +190,9 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_operation_value_date_needed,
         :is_duplicate_blocker_activated,
         :preseizure_date_option,
-        :subject_to_vat
+        :subject_to_vat,
+        :is_exact_online_used,
+        :is_exact_online_auto_deliver
       )
     else
       params.require(:organization).permit(
@@ -203,7 +209,9 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
         :is_duplicate_blocker_activated,
-        :preseizure_date_option
+        :preseizure_date_option,
+        :is_exact_online_used,
+        :is_exact_online_auto_deliver
       )
     end
   end

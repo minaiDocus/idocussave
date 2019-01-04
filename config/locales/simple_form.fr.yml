@@ -91,6 +91,7 @@ fr:
       softwares:
         is_ibiza_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
         is_ibiza_compta_analysis_activated: Souhaitez-vous activer la compta analytique ?
+        is_exact_online_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
         is_coala_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
         is_quadratus_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
         use_own_csv_descriptor_format: Utilise son propre format de CSV ?
@@ -113,6 +114,8 @@ fr:
         is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
         subject_to_vat: Est assujetti à la tva ?
         preseizure_date_option: Date de l'écriture des opérations bancaires
+        is_exact_online_used: Utilise Exact Online?
+        is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
       organization_group:
         name: Nom du groupe
         organizations: Organisations membre du groupe
@@ -249,6 +252,9 @@ fr:
         description_separator: Séparateur du champ description
         piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
         piece_name_format_sep: Séparateur du format de nom de la pièce
+      exact_online:
+        client_id: Client ID
+        client_secret : Client Secret
       account_number_rule:
         name: Nom de la règle
         rule_type: Type de règle

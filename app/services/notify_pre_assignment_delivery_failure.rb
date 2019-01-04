@@ -33,7 +33,7 @@ class NotifyPreAssignmentDeliveryFailure
       return if list.empty?
 
       list.map(&:notifiable).group_by(&:organization).each do |organization, deliveries|
-        notification = Notification.new
+        notification             = Notification.new
         notification.user        = user
         notification.notice_type = 'pre_assignment_delivery_failure'
         notification.title       = deliveries.size == 1 ? 'Livraison de pré-affectation échouée' : 'Livraisons de pré-affectation échouées'

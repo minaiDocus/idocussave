@@ -42,20 +42,28 @@ module Account::Organization::ConfigurationSteps
                                                    'ibiza'
                                                  elsif @customer.uses_csv_descriptor?
                                                    'use_csv_descriptor'
-                                                 else
+                                                 elsif !@customer.uses_api_softwares?
                                                    'accounting_plans'
+                                                 else
+                                                   'journals'
                                                  end
                                                else
                                                  'journals'
                                                end
                                              when 'use_csv_descriptor'
-                                               if @customer.softwares.use_own_csv_descriptor_format
-                                                 'csv_descriptor'
-                                               else
-                                                 'accounting_plans'
-                                               end
+                                                if @customer.softwares.use_own_csv_descriptor_format
+                                                  'csv_descriptor'
+                                                elsif !@customer.uses_api_softwares?
+                                                  'accounting_plans'
+                                                else
+                                                  'journals'
+                                                end
                                              when 'csv_descriptor'
-                                               'accounting_plans'
+                                                if !@customer.uses_api_softwares?
+                                                  'accounting_plans'
+                                                else
+                                                  'journals'
+                                                end
                                              when 'accounting_plans'
                                                'vat_accounts'
                                              when 'vat_accounts'
@@ -140,8 +148,16 @@ module Account::Organization::ConfigurationSteps
                                              if @customer.subscription.is_pre_assignment_active
                                                if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
-                                               else
+                                               elsif !@customer.uses_api_softwares?
                                                  'exercises'
+                                               elsif @customer.options.is_upload_authorized
+                                                 'period_options'
+                                               elsif @organization.uses_softwares?
+                                                 'softwares_selection'
+                                               elsif @customer.subscription.is_pre_assignment_active
+                                                 'compta_options'
+                                               else
+                                                 'subscription'
                                                end
                                              elsif @customer.options.is_upload_authorized
                                                'period_options'

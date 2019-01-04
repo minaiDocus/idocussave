@@ -9,9 +9,9 @@ class Account::PreseizuresController < Account::OrganizationController
       if report
         @preseizures = report.preseizures
         if params[:view] == 'delivered'
-          @preseizures = @preseizures.where(is_delivered: true)
+          @preseizures = Pack::Report::Preseizure.delivered
         elsif params[:view] == 'not_delivered'
-          @preseizures = @preseizures.where(is_delivered: false)
+          @preseizures = Pack::Report::Preseizure.not_delivered
         end
         @preseizures = @preseizures.by_position.page(params[:page]).per(params[:per_page])
       else
@@ -32,7 +32,7 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    CreatePreAssignmentDeliveryService.new(@preseizure).execute
+    CreatePreAssignmentDeliveryService.new(@preseizure, ['ibiza', 'exact_online']).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end

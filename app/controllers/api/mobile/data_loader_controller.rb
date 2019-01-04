@@ -176,8 +176,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def search_packs_with_error
-    if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
-      customers = @user.is_admin ? @user.organization.customers.using_ibiza : @user.customers.using_ibiza
+    if @user.is_prescriber
+      customers = @user.is_admin ? @user.organization.customers : @user.customers
       errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
       loaded = errors.each_with_index.map do |err, index|
         {

@@ -24,4 +24,24 @@ node :delivery_message do |report|
   report.delivery_message
 end
 
-attributes :is_delivered, :type, :is_locked
+node :user_software do |report|
+  if report.user.uses_ibiza?
+    'Ibiza'
+  elsif report.user.uses_exact_online? && report.user.exact_online.try(:fully_configured?)
+    'Exact Online'
+  else
+    nil
+  end
+end
+
+node :is_delivered_to do |preseizure|
+  if preseizure.user.uses_ibiza? && preseizure.is_delivered_to?('ibiza')
+    'ibiza'
+  elsif preseizure.user.uses_exact_online? && preseizure.user.exact_online.try(:fully_configured?) && preseizure.is_delivered_to?('exact_online')
+    'exact_online'
+  else
+    ''
+  end
+end
+
+attributes :type, :is_locked

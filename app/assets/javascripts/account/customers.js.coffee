@@ -61,3 +61,10 @@ jQuery ->
         $('.checkbox').prop('checked', true)
       else
         $('.checkbox').prop('checked', false)
+
+  if $('#customer.edit_softwares_selection').length > 0
+    $('#customer.edit_softwares_selection .softwares_setting').on 'click', ->
+      if($(this).attr('id') == 'user_softwares_attributes_is_ibiza_used' && $(this).is(':checked'))
+        $('#user_softwares_attributes_is_exact_online_used').removeAttr('checked')
+      else if($(this).attr('id') == 'user_softwares_attributes_is_exact_online_used' && $(this).is(':checked'))
+        $('#user_softwares_attributes_is_ibiza_used').removeAttr('checked')
