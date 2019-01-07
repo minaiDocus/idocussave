@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190107062044) do
+ActiveRecord::Schema.define(version: 20190107065644) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1498,6 +1498,7 @@ ActiveRecord::Schema.define(version: 20190107062044) do
 
   add_index "pack_report_preseizures", ["duplicate_unblocked_by_user_id"], name: "index_pack_report_preseizures_on_duplicate_unblocked_by_user_id", using: :btree
   add_index "pack_report_preseizures", ["is_blocked_for_duplication"], name: "index_pack_report_preseizures_on_is_blocked_for_duplication", using: :btree
+  add_index "pack_report_preseizures", ["is_delivered_to"], name: "index_pack_report_preseizures_on_is_delivered_to", using: :btree
   add_index "pack_report_preseizures", ["marked_as_duplicate_by_user_id"], name: "index_pack_report_preseizures_on_marked_as_duplicate_by_user_id", using: :btree
   add_index "pack_report_preseizures", ["mongo_id"], name: "index_pack_report_preseizures_on_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["operation_id"], name: "operation_id", using: :btree
@@ -1550,6 +1551,7 @@ ActiveRecord::Schema.define(version: 20190107062044) do
 
   add_index "pack_reports", ["document_id"], name: "document_id", using: :btree
   add_index "pack_reports", ["document_id_mongo_id"], name: "document_id_mongo_id", using: :btree
+  add_index "pack_reports", ["is_delivered_to"], name: "index_pack_reports_on_is_delivered_to", using: :btree
   add_index "pack_reports", ["mongo_id"], name: "index_pack_reports_on_mongo_id", using: :btree
   add_index "pack_reports", ["organization_id"], name: "organization_id", using: :btree
   add_index "pack_reports", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
