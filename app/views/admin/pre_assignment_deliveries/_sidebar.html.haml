@@ -51,4 +51,4 @@
 
       %br
       = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-      = link_to t('filters.reset'), admin_pre_assignment_deliveries_path, class: 'btn'
+      = link_to t('filters.reset'), admin_pre_assignment_deliveries_path(software: params[:software]), class: 'btn'

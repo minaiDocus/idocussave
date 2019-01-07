@@ -7,6 +7,8 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
         ibiza_deliveries
       when 'exact_online'
         exact_online_deliveries
+      else
+        ibiza_deliveries
     end
 
     @pre_assignment_deliveries_count = @pre_assignment_deliveries.count
