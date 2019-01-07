@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181221135108) do
+ActiveRecord::Schema.define(version: 20190107062044) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1931,7 +1931,7 @@ ActiveRecord::Schema.define(version: 20181221135108) do
     t.string   "error_message",              limit: 255
     t.string   "budgea_state",               limit: 255
     t.text     "budgea_additionnal_fields",  limit: 65535
-    t.string   "budgea_error_message",       limit: 255
+    t.text     "budgea_error_message",       limit: 65535
     t.string   "fiduceo_state",              limit: 255
     t.text     "fiduceo_additionnal_fields", limit: 65535
     t.string   "fiduceo_error_message",      limit: 255
