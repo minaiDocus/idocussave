@@ -128,6 +128,7 @@ lock_light_package = ->
 update_price = ->
   price_list = {
     'subscription':        [10,   30,   null],
+    'subscription_plus':   [1,    3,    null],
     'pre_assignment':      [9,    15,   null],
     'return_paper':        [10,   10,   null],
     'stamp':               [5,    5,    null],
@@ -157,11 +158,11 @@ update_price = ->
 
 
     if $('#subscription_is_basic_package_active').is(':checked')
-      options.push 'subscription', 'pre_assignment'
+      options.push 'subscription', 'subscription_plus', 'pre_assignment'
     if $('#subscription_is_mail_package_active').is(':checked')
-      options.push 'subscription', 'pre_assignment', 'return_paper', 'stamp'
+      options.push 'subscription', 'subscription_plus', 'pre_assignment', 'return_paper', 'stamp'
     if $('#subscription_is_scan_box_package_active').is(':checked')
-      options.push 'subscription', 'pre_assignment'
+      options.push 'subscription', 'subscription_plus', 'pre_assignment'
     if $('#subscription_is_retriever_package_active').is(':checked')
       options.push $('#subscription_is_retriever_package_active').data('retriever-price-option')
     if $('#subscription_is_micro_package_active').is(':checked')

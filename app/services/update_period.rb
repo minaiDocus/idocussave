@@ -73,7 +73,7 @@ class UpdatePeriod
       if @subscription.is_basic_package_active
         is_base_package_priced = true
 
-        price = package_options_price([:subscription, :pre_assignment], type)
+        price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
 
         option = ProductOptionOrder.new
 
@@ -130,7 +130,7 @@ class UpdatePeriod
         else
           is_base_package_priced = true
 
-          price = package_options_price([:subscription, :pre_assignment, :return_paper], type)
+          price = package_options_price([:subscription, :subscription_plus, :pre_assignment, :return_paper], type)
         end
 
         option = ProductOptionOrder.new
@@ -164,7 +164,7 @@ class UpdatePeriod
         if is_base_package_priced
           price = 0.0
         else
-          price = package_options_price([:subscription, :pre_assignment], type)
+          price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
         end
 
         option = ProductOptionOrder.new
@@ -335,12 +335,13 @@ class UpdatePeriod
 
   def prices_list
     @prices_list ||= {
-      stamp:    [5,  5],
-      retriever: [5,  15],
-      reduced_retriever: [3, 9],
-      subscription:    [10, 30],
-      return_paper:   [10, 10],
-      pre_assignment: [9,  15]
+      stamp:              [5,  5],
+      retriever:          [5,  15],
+      reduced_retriever:  [3, 9],
+      subscription:       [10, 30],
+      subscription_plus:  [1, 3],
+      return_paper:       [10, 10],
+      pre_assignment:     [9,  15]
     }
   end
 
