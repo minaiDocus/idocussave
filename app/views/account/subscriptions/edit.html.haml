@@ -86,6 +86,7 @@
                     %i Supprimez un journal comptable avant de baisser cette option.
             %tr.pre_assignment{ style: 'display:none' }
               %td.question Souhaitez-vous la pré-affectation comptable ?
+              = hidden_field_tag 'is_pre_assignment_active_hidden', ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0)
               %td
                 .choice
                   %label{ for: 'subscription_is_pre_assignment_active_true' }

@@ -29,7 +29,7 @@ class AccountingWorkflow::RetrievePreAssignments
       UpdatePeriodPriceService.new(period).execute
       next unless is_preseizure?
 
-      if report.preseizures.not_delivered.not_locked.count > 0
+      if Pack::Report::Preseizure.not_delivered_from(report.preseizures.not_locked).size > 0
         report.update_attribute(:is_delivered, false)
       end
 

@@ -49,7 +49,8 @@ update_form = ->
     if selected_options.indexOf(option) != -1
       $('.'+option).show()
       if (option == 'pre_assignment')
-        $('#subscription_is_pre_assignment_active_true').prop('checked', true)
+        if $('#is_pre_assignment_active_hidden').val() > 0
+          $('#subscription_is_pre_assignment_active_true').prop('checked', true)
     else
       $('.'+option).hide()
 

@@ -59,12 +59,32 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     preseizures
   end
 
-  def self.delivered
-    self.where(id: self.all.select{ |s| s.is_delivered? }.collect(&:id))
+  def self.delivered_from(lists)
+    # user = lists.try(:first).try(:user)
+    # result = []
+
+    # if user && user.uses_ibiza?
+    #   result = lists.ibiza_delivered
+    # elsif user && user.uses_exact_online?
+    #   result = lists.exact_online_delivered
+    # end
+
+    # result
+    lists.where.not(is_delivered_to: [nil, ''])
   end
 
-  def self.not_delivered
-    self.where(id: self.all.select{ |s| s.is_not_delivered? }.collect(&:id))
+  def self.not_delivered_from(lists)
+    # user = lists.try(:first).try(:user)
+    # result = []
+
+    # if user && user.uses_ibiza?
+    #   result = lists.not_ibiza_delivered
+    # elsif user && user.uses_exact_online?
+    #   result = lists.not_exact_online_delivered
+    # end
+
+    # result
+    lists.where(is_delivered_to: [nil, ''])
   end
 
   def piece_name

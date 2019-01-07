@@ -31,5 +31,5 @@ $(document).ready(function() {
 
   load_resources(resources);
 
-  var interval_id = setInterval(function(){ load_resources(resources); }, 15000);
+  var interval_id = setInterval(function(){ load_resources(resources); }, 30000);
 });

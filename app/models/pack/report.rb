@@ -21,12 +21,14 @@ class Pack::Report < ActiveRecord::Base
   scope :not_locked,                -> { where(is_locked: false) }
   scope :preseizures,               -> { where.not(type: ['NDF']) }
 
-  def self.delivered
-    self.where(id: self.all.select{ |s| s.is_delivered? }.collect(&:id))
+  def self.delivered_from(lists)
+    # self.where(id: lists.select{ |s| s.is_delivered? }.collect(&:id))
+    lists.where.not(is_delivered_to: [nil, ''])
   end
 
-  def self.not_delivered
-    self.where(id: self.all.select{ |s| s.is_not_delivered? }.collect(&:id))
+  def self.not_delivered_from(lists)
+    # self.where(id: lists.select{ |s| s.is_not_delivered? }.collect(&:id))
+    lists.where(is_delivered_to: [nil, ''])
   end
 
   def journal
@@ -53,7 +55,8 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def self.failed_delivery(user_ids = [], limit = 50)
-    return [] unless user_ids.present? || user_ids.nil?
+    return []
+    # return [] unless user_ids.present? || user_ids.nil?
 
     ids = self.failed_ibiza_delivery(user_ids) + self.failed_exact_online_delivery(user_ids)
 
@@ -62,7 +65,8 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def self.failed_ibiza_delivery(user_ids=[])
-    return [] unless user_ids.present? || user_ids.nil?
+    return []
+    # return [] unless user_ids.present? || user_ids.nil?
 
     collection_ids = []
     if user_ids.present?
@@ -79,7 +83,8 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def self.failed_exact_online_delivery(user_ids=[])
-    return [] unless user_ids.present? || user_ids.nil?
+    return []
+    # return [] unless user_ids.present? || user_ids.nil?
 
     collection_ids = []
     if user_ids.present?
