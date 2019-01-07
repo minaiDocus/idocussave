@@ -490,18 +490,18 @@
                     %tr
                       %th Etat :
                       %td
-                        - if @organization.debit_mandate.pending?
+                        - if @organization.try(:debit_mandate).try(:pending?)
                           %span.label Non configuré
-                        - elsif @organization.debit_mandate.configured?
+                        - elsif @organization.try(:debit_mandate).try(:configured?)
                           %span.label.label-success OK
                         - else
                           %span.label.label-important Information non valide
                     %tr
                       %th Banque :
-                      %td= @organization.debit_mandate.bic
+                      %td= @organization.try(:debit_mandate).try(:bic)
                 %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
                   %input{ name: :email, type: 'hidden', value: (@user.leader? ? @user.email : @organization.admins.first&.email) }
-                  %input{ name: :client_reference, type: 'hidden', value: @organization.debit_mandate.clientReference }
+                  %input{ name: :client_reference, type: 'hidden', value: @organization.try(:debit_mandate).try(:clientReference) }
                   %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
             - if @user.is_admin
               #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
