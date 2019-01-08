@@ -107,6 +107,16 @@ class Pack::Report < ActiveRecord::Base
     save
   end
 
+  def remove_delivered_to
+    temp_delivered_to = self.is_delivered_to
+    temp_delivered_to = temp_delivered_to.gsub('ibiza', '') if self.user.uses_ibiza?
+    temp_delivered_to = temp_delivered_to.gsub('exact_online', '') if self.user.uses_exact_online?
+    temp_delivered_to = temp_delivered_to.gsub(/^[,]+/, '')
+    temp_delivered_to = temp_delivered_to.gsub(/[,]+$/, '')
+    temp_delivered_to = temp_delivered_to.gsub(/(,)+/, ',')
+    update_attribute(:is_delivered_to, temp_delivered_to)
+  end
+
   def is_delivered_to?(software='ibiza')
     softwares = self.is_delivered_to.split(',') || []
     softwares.include? software

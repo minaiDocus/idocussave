@@ -30,7 +30,8 @@ class UpdatePreseizureAccountNumbers
 
 
   def preseizure_ids
-    @preseizure_ids ||= Pack::Report::Preseizure.unscoped.where(operation_id: operation_ids, is_delivered: false).pluck(:id)
+    # TO DO: check is_delivered_to
+    @preseizure_ids ||= Pack::Report::Preseizure.unscoped.where(operation_id: operation_ids, is_delivered_to: nil).pluck(:id)
   end
 
 

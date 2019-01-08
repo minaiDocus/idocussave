@@ -152,9 +152,9 @@ class PreAssignmentDeliveryService
 
     case @delivery.deliver_to
       when 'ibiza'
-        @report.delivered_to('ibiza') if @delivery.preseizures.not_ibiza_delivered.count == 0
+        @report.delivered_to('ibiza') if @report.preseizures(true).not_ibiza_delivered.count == 0
       when 'exact_online'
-        @report.delivered_to('exact_online') if @delivery.preseizures.not_exact_online_delivered.count == 0
+        @report.delivered_to('exact_online') if @report.preseizures(true).not_exact_online_delivered.count == 0
     end
 
     @report.set_delivery_message_for(@delivery.deliver_to, '')

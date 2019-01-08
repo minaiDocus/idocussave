@@ -86,7 +86,7 @@ class ProcessOperation
             operation.update_attribute(:processed_at, Time.now)
           end
           if Pack::Report::Preseizure.not_delivered_from(pack_report.preseizures.not_locked).size > 0
-            pack_report.update_attribute(:is_delivered, false)
+            pack_report.remove_delivered_to
           end
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
             CreatePreAssignmentDeliveryService.new(pres, ['ibiza', 'exact_online'], is_auto: true).execute

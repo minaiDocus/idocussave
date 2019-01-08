@@ -30,7 +30,7 @@ class AccountingWorkflow::RetrievePreAssignments
       next unless is_preseizure?
 
       if Pack::Report::Preseizure.not_delivered_from(report.preseizures.not_locked).size > 0
-        report.update_attribute(:is_delivered, false)
+        report.remove_delivered_to
       end
 
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
