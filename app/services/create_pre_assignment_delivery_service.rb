@@ -13,7 +13,7 @@ class CreatePreAssignmentDeliveryService
   end
 
   def valid_ibiza?
-    ibiza.try(:configured?) &&
+    @preseizures.any? && ibiza.try(:configured?) &&
     (!@is_auto || @report.user.softwares.ibiza_auto_deliver?) &&
     @report.user.try(:ibiza_id).present? && @report.user.uses_ibiza? &&
     !@preseizures.select(&:is_locked).first
@@ -21,7 +21,7 @@ class CreatePreAssignmentDeliveryService
   end
 
   def valid_exact_online?
-    @report.try(:organization).try(:is_exact_online_used) &&
+    @preseizures.any? && @report.try(:organization).try(:is_exact_online_used) &&
     (!@is_auto || @report.user.softwares.exact_online_auto_deliver?) &&
     @report.user.exact_online.try(:fully_configured?) && @report.user.uses_exact_online? &&
     !@preseizures.select(&:is_locked).first
@@ -32,7 +32,7 @@ class CreatePreAssignmentDeliveryService
     exact_online_deliveries = @deliver_to.include?('exact_online') ? deliver_to_exact_online : []
 
     @deliveries = ibiza_deliveries + exact_online_deliveries
-    @report.update_attribute(:is_locked, (@report.preseizures(true).not_locked.count == 0))
+    @report.update_attribute(:is_locked, (@report.preseizures(true).not_locked.count == 0)) if @preseizures.any?
 
     if @deliveries.any?
       @deliveries
