@@ -39,8 +39,10 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
 
   def load_someone
     if params[:collaborator_id].present?
-      @someone = @organization.collaborators.find params[:collaborator_id]
+      @member = @organization.members.find params[:collaborator_id]
+      @someone = @member.user
     else
+      @member = nil
       @someone = @organization.customers.find params[:customer_id]
     end
   end
@@ -54,8 +56,8 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
 
   def load_url_path
     if @someone.is_prescriber
-      @put_url_path = account_organization_collaborator_file_storage_authorizations_path(@organization, @someone)
-      @url_path     = account_organization_collaborator_path(@organization, @someone, tab: 'file_storages')
+      @put_url_path = account_organization_collaborator_file_storage_authorizations_path(@organization, @member)
+      @url_path     = account_organization_collaborator_path(@organization, @member, tab: 'file_storages')
     else
       @put_url_path = account_organization_customer_file_storage_authorizations_path(@organization, @someone)
       @url_path     = account_organization_customer_path(@organization, @someone, tab: 'file_storages')
