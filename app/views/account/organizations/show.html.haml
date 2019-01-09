@@ -310,6 +310,12 @@
                         - value = @organization.ibiza.piece_name_format['number']['is_used'] rescue false
                         = value ? t('yes_value') : t('no_value')
                       %td.position= @organization.ibiza.piece_name_format['number']['position'] rescue 1
+                    %tr
+                      %td{ colspan: 3 }
+                        %i
+                          ( EXEMPLE:&nbsp;
+                          %strong= IbizaAPI::Utils.piece_name('CAB%DOC AC 201901 001', @organization.ibiza.piece_name_format, @organization.ibiza.piece_name_format_sep)
+                          &nbsp;)
                 %h4.margin2top.margin1bottom Format de l'écriture comptable dans iBiza
                 %table.table.table-condensed.table-striped
                   %thead
@@ -387,6 +393,17 @@
                         = value ? t('yes_value') : t('no_value')
                       %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
                       %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
+                    %tr
+                      %td{ colspan: 3 }
+                        - preseizure = OpenStruct.new({ journal_name: 'AC', piece: OpenStruct.new(name: 'CAB%DOC AC 201901 001'), piece_number: 'FACT001', date: Time.new(2019,1,2), third_party: 'tiers' })
+                        - preseizure['amount'] = '100,00'
+                        - preseizure['currency'] = 'USD'
+                        - preseizure['conversion_rate'] = 'Taux_Conv'
+                        - preseizure['observation'] = 'remarque'
+                        %i
+                          ( EXEMPLE:&nbsp;
+                          %strong= IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
+                          &nbsp;)
               - if @user.leader?
                 .alignright
                   -if @organization.try(:ibiza).try(:used?)
