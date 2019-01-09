@@ -27,4 +27,4 @@
                   \-
               %td.name= object.name
               %td.count= object.document_count
-              %td.message= object.message == false ? '-' : object.message
+              %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))

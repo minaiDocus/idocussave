@@ -45,65 +45,88 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def is_delivered?
-    ( self.user.uses_ibiza? && self.is_delivered_to.match(/ibiza/) ) ||
-    ( self.user.uses_exact_online? && self.is_delivered_to.match(/exact_online/) )
+    ( self.user.uses_ibiza? && is_delivered_to?('ibiza') ) ||
+    ( self.user.uses_exact_online? && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.uses_ibiza? && !self.is_delivered_to.match(/ibiza/) ) ||
-    ( self.user.uses_exact_online? && !self.is_delivered_to.match(/exact_online/) )
+    ( self.user.uses_ibiza? && !is_delivered_to?('ibiza') ) ||
+    ( self.user.uses_exact_online? && !is_delivered_to?('exact_online') )
   end
 
   def self.failed_delivery(user_ids = [], limit = 50)
-    return []
-    # return [] unless user_ids.present? || user_ids.nil?
+    return [] unless user_ids.present? || user_ids.nil?
 
-    ids = self.failed_ibiza_delivery(user_ids) + self.failed_exact_online_delivery(user_ids)
+    collections = self.failed_ibiza_delivery(user_ids) + self.failed_exact_online_delivery(user_ids)
 
-    fields = "max(pack_report_preseizures.delivery_tried_at) as date, count(*) as document_count, pack_reports.name as name, pack_report_preseizures.delivery_message as message"
-    Pack::Report::Preseizure.where(id: ids).joins(:report).group(:delivery_message, :name).select(fields).order("date desc").limit(limit).to_a
+    result = []
+    if collections.any?
+      reports_name = Rails.cache.fetch ['reports_failed_name', user_ids.presence || 'all'], expires_in: 20.minutes do
+        reports_ids = collections.collect(&:report_id).uniq
+        reports = Pack::Report.where(id: reports_ids).select(:id, :name).to_a
+        res = {}
+        reports.each{ |r| res["#{r.id.to_s}"] = r.name }
+        res
+      end
+
+      collections.sort_by(&:delivery_tried_at).reverse.group_by(&:report_id).each do |report_id, preseizures_by_report|
+        report_name = reports_name[report_id.to_s]
+
+        preseizures_by_report.group_by(&:delivery_message).each do |message, preseizures|
+          preseizures_count     = preseizures.size
+          max_date              = preseizures.first.delivery_tried_at
+          message_ibiza         = preseizures.first.get_delivery_message_of('ibiza')
+          message_exact_online  = preseizures.first.get_delivery_message_of('exact_online')
+
+          if message_ibiza.present? && message_exact_online.present?
+            full_message = "-iBiza : #{message_ibiza} <br> -ExactOnline : #{message_exact_online}"
+          else
+            full_message = message_ibiza.presence || message_exact_online.presence
+          end
+          result << OpenStruct.new({date: max_date, document_count: preseizures_count, name: report_name, message: full_message})
+        end
+      end
+    end
+
+    result.take(limit)
   end
 
   def self.failed_ibiza_delivery(user_ids=[])
-    return []
-    # return [] unless user_ids.present? || user_ids.nil?
+    return [] unless user_ids.present? || user_ids.nil?
 
-    collection_ids = []
-    if user_ids.present?
-      User.where(id: user_ids).each do |user|
-        collection_ids += Pack::Report::Preseizure.not_ibiza_delivered.where(user_id: user.id).where.not(delivery_tried_at: nil).pluck(:id).to_a if user.uses_ibiza?
+    Rails.cache.fetch ['failed_ibiza_delivery', user_ids.presence || 'all'], expires_in: 20.minutes do
+      collections = []
+      if user_ids.present?
+        collections = Pack::Report::Preseizure.failed_ibiza_delivery.where(user_id: user_ids).select(:id, :delivery_tried_at, :delivery_message, :report_id).to_a
+      else
+        collections = Pack::Report::Preseizure.failed_ibiza_delivery.select(:id, :delivery_tried_at, :delivery_message, :report_id).to_a
       end
-    else
-      User.customers.active.each do |user|
-        collection_ids += Pack::Report::Preseizure.not_ibiza_delivered.failed_ibiza_delivery.where(user_id: user.id).pluck(:id).to_a if user.uses_ibiza?
-      end
+
+      collections
     end
-
-    collection_ids
   end
 
   def self.failed_exact_online_delivery(user_ids=[])
-    return []
-    # return [] unless user_ids.present? || user_ids.nil?
+    return [] unless user_ids.present? || user_ids.nil?
 
-    collection_ids = []
-    if user_ids.present?
-      User.where(id: user_ids).each do |user|
-        collection_ids += Pack::Report::Preseizure.not_exact_online_delivered.where(user_id: user.id).where.not(delivery_tried_at: nil).pluck(:id).to_a if user.uses_exact_online?
+    Rails.cache.fetch ['failed_exact_online_delivery', user_ids.presence || 'all'], expires_in: 20.minutes do
+      collections = []
+      if user_ids.present?
+        collections = Pack::Report::Preseizure.failed_exact_online_delivery.where(user_id: user_ids).select(:id, :delivery_tried_at, :delivery_message, :report_id).to_a
+      else
+        collections = Pack::Report::Preseizure.failed_exact_online_delivery.select(:id, :delivery_tried_at, :delivery_message, :report_id).to_a
       end
-    else
-      User.customers.active.each do |user|
-        collection_ids += Pack::Report::Preseizure.not_exact_online_delivered.failed_exact_online_delivery.where(user_id: user.id).pluck(:id).to_a if user.uses_exact_online?
-      end
+
+      collections
     end
-
-    collection_ids
   end
 
   def delivered_to(software)
+    return true if is_delivered_to?(software)
+
     softwares = self.is_delivered_to.split(',') || []
-    softwares << software unless softwares.include? software
-    self.is_delivered_to = softwares.join(',')
+    softwares << software
+    self.is_delivered_to = softwares.sort.join(',')
     save
   end
 
@@ -118,8 +141,7 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def is_delivered_to?(software='ibiza')
-    softwares = self.is_delivered_to.split(',') || []
-    softwares.include? software
+    self.is_delivered_to.match(/#{software}/)
   end
 
   def set_delivery_message_for(software='ibiza', message)

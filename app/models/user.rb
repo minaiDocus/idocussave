@@ -103,6 +103,8 @@ class User < ActiveRecord::Base
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
+  scope :using_ibiza,                 -> { joins(:softwares).where(softwares_settings: { is_ibiza_used: true } ) }
+  scope :using_exact_online,          -> { joins(:softwares).where(softwares_settings: { is_exact_online_used: true } ) }
 
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :softwares

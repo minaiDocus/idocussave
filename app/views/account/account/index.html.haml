@@ -126,6 +126,6 @@
                         \-
                     %td.name= link_to object.name, account_organization_pre_assignment_delivery_errors_path(@user.organization)
                     %td.count= object.document_count
-                    %td.message= object.message == false ? '-' : object.message
+                    %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
             .pull-right
               = link_to 'Toutes les erreurs', account_organization_pre_assignment_delivery_errors_path(@user.organization)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190107065644) do
+ActiveRecord::Schema.define(version: 20190108123711) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -2083,6 +2083,12 @@ ActiveRecord::Schema.define(version: 20190107065644) do
     t.boolean "is_exact_online_used",                         default: false
     t.integer "is_exact_online_auto_deliver",       limit: 4, default: -1,    null: false
   end
+
+  add_index "softwares_settings", ["is_coala_used"], name: "index_softwares_settings_on_is_coala_used", using: :btree
+  add_index "softwares_settings", ["is_csv_descriptor_used"], name: "index_softwares_settings_on_is_csv_descriptor_used", using: :btree
+  add_index "softwares_settings", ["is_exact_online_used"], name: "index_softwares_settings_on_is_exact_online_used", using: :btree
+  add_index "softwares_settings", ["is_ibiza_used"], name: "index_softwares_settings_on_is_ibiza_used", using: :btree
+  add_index "softwares_settings", ["is_quadratus_used"], name: "index_softwares_settings_on_is_quadratus_used", using: :btree
 
   create_table "statistics", force: :cascade do |t|
     t.datetime "created_at"

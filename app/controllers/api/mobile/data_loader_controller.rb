@@ -188,7 +188,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
           updated_at:  err.date,
           owner_id:    0,
           page_number: err.document_count,
-          message:     err.message == false ? '-' : err.message,
+          message:     err.message == false ? '-' : err.message.gsub('<br>', "\n"),
           type:        'error'
         }
       end

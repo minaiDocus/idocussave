@@ -20,11 +20,9 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
   scope :locked,                        -> { where(is_locked: true) }
   scope :ibiza_delivered,               -> { where('is_delivered_to LIKE "%ibiza%"') }
-  scope :not_ibiza_delivered,           -> { where.not('is_delivered_to LIKE "%ibiza%"') }
+  scope :not_ibiza_delivered,           -> { joins(user: :softwares).where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to NOT LIKE "%ibiza%"') }
   scope :exact_online_delivered,        -> { where('is_delivered_to LIKE "%exact_online%"') }
-  scope :not_exact_online_delivered,    -> { where.not('is_delivered_to LIKE "%exact_online%"') }
-  scope :failed_ibiza_delivery,         -> { where('delivery_message LIKE "%ibiza%"') }
-  scope :failed_exact_online_delivery,  -> { where('delivery_message LIKE "%exact_online%"') }
+  scope :not_exact_online_delivered,    -> { joins(user: :softwares).where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to NOT LIKE "%exact_online%"') }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
 
@@ -57,6 +55,14 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
 
     preseizures
+  end
+
+  def self.failed_ibiza_delivery
+    not_ibiza_delivered.where('delivery_message LIKE "%ibiza%"').where.not(delivery_tried_at: nil)
+  end
+
+  def self.failed_exact_online_delivery
+    not_exact_online_delivered.where('delivery_message LIKE "%exact_online%"').where.not(delivery_tried_at: nil)
   end
 
   def self.delivered_from(lists)
@@ -219,13 +225,13 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def is_delivered?
-    ( self.user.uses_ibiza? && self.is_delivered_to.match(/ibiza/) ) ||
-    ( self.user.uses_exact_online? && self.is_delivered_to.match(/exact_online/) )
+    ( self.user.uses_ibiza? && is_delivered_to?('ibiza') ) ||
+    ( self.user.uses_exact_online? && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.uses_ibiza? && !self.is_delivered_to.match(/ibiza/) ) ||
-    ( self.user.uses_exact_online? && !self.is_delivered_to.match(/exact_online/) )
+    ( self.user.uses_ibiza? && !is_delivered_to?('ibiza') ) ||
+    ( self.user.uses_exact_online? && !is_delivered_to?('exact_online') )
   end
 
   def is_not_blocked_for_duplication
@@ -241,15 +247,16 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def delivered_to(software)
+    return true if is_delivered_to?(software)
+
     softwares = self.is_delivered_to.split(',') || []
-    softwares << software unless softwares.include? software
-    self.is_delivered_to = softwares.join(',')
+    softwares << software
+    self.is_delivered_to = softwares.sort.join(',')
     save
   end
 
   def is_delivered_to?(software='ibiza')
-    softwares = self.is_delivered_to.split(',') || []
-    softwares.include? software
+    self.is_delivered_to.match(/#{software}/)
   end
 
   def set_delivery_message_for(software='ibiza', message)
