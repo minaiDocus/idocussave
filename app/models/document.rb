@@ -164,9 +164,10 @@ class Document < ActiveRecord::Base
 
       Pdftk.new.merge([self.content.path, file_path], merged_file_path)
 
-      self.content = open(merged_file_path)
-
-      save
+      if DocumentTools.modifiable?(merged_file_path)
+        self.content = open(merged_file_path)
+        save
+      end
     end
   end
 
@@ -177,9 +178,10 @@ class Document < ActiveRecord::Base
 
       Pdftk.new.merge([file_path, self.content.path], merged_file_path)
 
-      self.content = open(merged_file_path)
-
-      save
+      if DocumentTools.modifiable?(merged_file_path)
+        self.content = open(merged_file_path)
+        save
+      end
     end
   end
 
