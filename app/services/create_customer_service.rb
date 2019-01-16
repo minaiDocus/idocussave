@@ -12,6 +12,7 @@ class CreateCustomerService
     @customer.organization = @organization
     @customer.set_random_password
     @customer.is_group_required = @requester.not_leader?
+    @customer.build_softwares if @customer.softwares.nil?
 
     if @customer.save
       token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
