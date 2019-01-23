@@ -1,0 +1,39 @@
+#analytic_fields.control-group
+  %label.control-label Compta analytique :
+  #analytic.controls
+    %span.no_compta_analysis.label Aucune analytique pour ce dossier.
+    .analytic_loading.hide
+      .feedback.active
+    %span.help-block
+      %span.label.label-warning{ style: "margin: 0 5px 0 0" }
+        Attention :
+      Ventilation à 100% par Analyse.
+      %i{ id: "actual_ventilation_rate" }
+    .fields.hide
+      - 3.times do |e|
+        - i = e+1
+        .box.analytic_group{ id: "analytic_#{i}_group" }
+          .analytic_title.section_map{ data: { group_number:"#{i}" } }= "Analyse #{i}"
+          .analytic_parent_box{ id: "analytic_parent_box#{i}", class: (i != 1 ? "analytic_box hide" : "") }
+            .analytic_name_box{ id: "analytic_#{i}_name_box" }
+              = label_tag "h_analytic_#{i}_name", "Analyse :"
+              = select_tag "h_analytic_#{i}_name", nil, class: 'analytic_select analytic_name', data: { analytic_number: i, target: "analytic_#{i}_name" }
+              %span.analytic_total_ventilation.red{ id: "total_ventilation_#{i}" } Total Ventilation: 0%
+            .row-fluid.analytic_name_sections.clearfix
+              - 3.times do |a|
+                - j = a+1
+                .span4.analytic_section_group{ id: "analytic_#{i}#{j}_section-group" }
+                  .analytic_title= "Axes"
+                  .section_group_box{ id: "section_group_#{i}#{j}" }
+                    .analytic_ventilation_group{ id:"analytic_ventilation_#{i}#{j}-group" }
+                      = label_tag "h_analytic[#{i}#{j}][ventilation]", 'Ventilation (%) : '
+                      = number_field_tag "h_analytic[#{i}#{j}][ventilation]", 0, min: 0, max: 100, class: "analytic_ventilation analytic_ventilation_group_#{i}", step: 0.25, data: {ventilation_number: i, target: "analytic_#{i}#{j}_ventilation"}
+                    .analytic_axis_group{ id: "analytic_#{i}#{j}_axis1-group" }
+                      = label_tag "h_analytic_#{i}#{j}_axis1", 'Axe:'
+                      = select_tag "h_analytic_#{i}#{j}_axis1", nil, class: 'analytic_select analytic_axis', data: { target: "analytic_#{i}#{j}_axis1" }
+                    .analytic_axis_group.hide{ id: "analytic_#{i}#{j}_axis2-group" }
+                      = label_tag "h_analytic_#{i}#{j}_axis2", 'Axe:'
+                      = select_tag "h_analytic_#{i}#{j}_axis2", nil, class: 'analytic_select analytic_axis', data: { target: "analytic_#{i}#{j}_axis2" }
+                    .analytic_axis_group.hide{ id: "analytic_#{i}#{j}_axis3-group" }
+                      = label_tag "h_analytic_#{i}#{j}_axis3", 'Axe:'
+                      = select_tag "h_analytic_#{i}#{j}_axis3", nil, class: 'analytic_select analytic_axis', data: { target: "analytic_#{i}#{j}_axis3" }

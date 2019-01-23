@@ -14,11 +14,14 @@ class AccountingWorkflow::TempPackProcessor
                                rescue
                                  1
                                end
-    current_page_position = begin
-                                pack.pages.by_position.last.position + 2
-                              rescue
-                                1
-                              end
+    if pack.has_documents?
+      current_page_position = begin
+                                  pack.pages.by_position.last.position + 2
+                                rescue
+                                  1
+                                end
+    end
+
     added_pieces = []
     published_temp_documents = []
 
@@ -107,48 +110,37 @@ class AccountingWorkflow::TempPackProcessor
 
           ## Original document
           if pack.original_document.present?
-            if pack.original_document.content_file_size < 400.megabytes
+            if pack.original_document.content_file_size.to_i < 400.megabytes
               if is_a_cover
-                pack.original_document.prepend piece_file_path
+                pack.prepend piece_file_path
               else
-                pack.original_document.append piece_file_path
+                pack.append piece_file_path
               end
             end
-          else
-            new_file_name = pack.name.tr(' ', '_') + '.pdf'
-            new_file_path = File.join(dir, new_file_name)
-            FileUtils.copy piece_file_path, new_file_path
-
-            document                = Document.new
-            document.pack           = pack
-            document.content        = open(new_file_path)
-            document.origin         = 'mixed'
-            document.is_a_cover     = false
-            document.position       = nil
-
-            document.save
           end
           ## Pages
-          suffix = is_a_cover ? 'cover_page' : 'page'
-          Pdftk.new.burst piece_file_path, dir, suffix, POSITION_SIZE
+          if pack.has_documents?
+            suffix = is_a_cover ? 'cover_page' : 'page'
+            Pdftk.new.burst piece_file_path, dir, suffix, POSITION_SIZE
 
-          Dir.glob("#{dir}/#{suffix}_*.pdf").sort.each_with_index do |file_path, index|
-            position = is_a_cover ? (index + 1) : current_page_position
-            page_name = DocumentTools.name_with_position(basename + " #{suffix}", position, POSITION_SIZE)
-            page_file_name = DocumentTools.file_name(page_name)
-            page_file_path = File.join(dir, page_file_name)
-            FileUtils.mv file_path, page_file_path
+            Dir.glob("#{dir}/#{suffix}_*.pdf").sort.each_with_index do |file_path, index|
+              position = is_a_cover ? (index + 1) : current_page_position
+              page_name = DocumentTools.name_with_position(basename + " #{suffix}", position, POSITION_SIZE)
+              page_file_name = DocumentTools.file_name(page_name)
+              page_file_path = File.join(dir, page_file_name)
+              FileUtils.mv file_path, page_file_path
 
-            page                = Document.new
-            page.pack           = pack
-            page.position       = is_a_cover ? (index - 2) : (current_page_position - 1)
-            page.content        = open(page_file_path)
-            page.origin         = temp_document.delivery_type
-            page.is_a_cover     = is_a_cover
-            page.save
-            DocumentTools.sign_pdf(page_file_path, page.content.path)
+              page                = Document.new
+              page.pack           = pack
+              page.position       = is_a_cover ? (index - 2) : (current_page_position - 1)
+              page.content        = open(page_file_path)
+              page.origin         = temp_document.delivery_type
+              page.is_a_cover     = is_a_cover
+              page.save
+              DocumentTools.sign_pdf(page_file_path, page.content.path)
 
-            current_page_position += 1 unless is_a_cover
+              current_page_position += 1 unless is_a_cover
+            end
           end
           current_piece_position += 1 unless is_a_cover
         end
@@ -177,9 +169,25 @@ class AccountingWorkflow::TempPackProcessor
       DocumentTools.archive(pack.archive_file_path, group)
     end
 
+    pieces_to_pre_assigned = []
+
     if temp_pack.is_pre_assignment_needed?
-      AccountingWorkflow::SendPieceToPreAssignment.execute(added_pieces)
+      if user.validate_ibiza_analyitcs?
+        added_pieces.each do |piece|
+          if piece.from_web? || piece.from_mobile?
+            pieces_to_pre_assigned << piece
+          else
+            piece.waiting_analytics_pre_assignment
+          end
+        end
+      else
+        pieces_to_pre_assigned << added_pieces
+      end
+
+      pieces_to_pre_assigned.flatten!
+      AccountingWorkflow::SendPieceToPreAssignment.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
     end
+
     FileDelivery.prepare(pack)
 
     published_temp_documents.each do |temp_document|

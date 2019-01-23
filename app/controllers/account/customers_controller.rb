@@ -382,7 +382,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated])
+    params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated, :is_ibiza_analysis_to_validate])
   end
 
   def exact_online_params

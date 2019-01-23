@@ -403,6 +403,10 @@
                       %tr
                         %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_compta_analysis_activated')
                         %td= @customer.try(:softwares).try(:ibiza_compta_analysis_activated?) ? t('yes_value') : t('no_value')
+                      - if @customer.try(:softwares).try(:ibiza_compta_analysis_activated?)
+                        %tr
+                          %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_analysis_to_validate')
+                          %td= @customer.try(:softwares).try(:ibiza_analysis_to_validate?) ? t('yes_value') : t('no_value')
                   .row-fluid
                     .span12
                       - if @organization.ibiza.configured?

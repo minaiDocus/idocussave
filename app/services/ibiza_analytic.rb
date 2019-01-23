@@ -1,7 +1,7 @@
 # TODO : handle failures
 class IbizaAnalytic
 
-  def initialize(id, access_token, expires_in=15.minutes)
+  def initialize(id, access_token, expires_in=2.minutes)
     @id = id
     @access_token = access_token
     @expires_in = expires_in
@@ -66,12 +66,16 @@ class IbizaAnalytic
       if data[i][:name].present?
         analytic = list.select { |analytic| analytic[:name] == data[i][:name] }.first
         return false unless analytic
-        [:axis1, :axis2, :axis3].each do |axis|
-          if data[i][axis].present?
-            if analytic[axis].present?
-              return false unless analytic[axis][:sections].map { |s| s[:code] }.include?(data[i][axis])
-            else
-              return false
+
+        3.times do |a|
+          j = (a+1).to_s
+          [:axis1, :axis2, :axis3].each do |axis|
+            if data["#{i}#{j}"][axis].present?
+              if analytic[axis].present?
+                return false unless analytic[axis][:sections].map { |s| s[:code] }.include?(data["#{i}#{j}"][axis])
+              else
+                return false
+              end
             end
           end
         end
@@ -80,25 +84,83 @@ class IbizaAnalytic
     true
   end
 
+  def self.analytic_attributes(analytic)
+    analytics = {}
+
+    3.times do |e|
+      i = (e+1).to_s
+      analytics["a#{i}_name"] = analytic[i][:name].presence
+      references = []
+      3.times do |a|
+        j = (a+1).to_s
+        references << {
+                        ventilation: analytic["#{i}#{j}"][:ventilation].presence,
+                        axis1:       analytic["#{i}#{j}"][:axis1].presence,
+                        axis2:       analytic["#{i}#{j}"][:axis2].presence,
+                        axis3:       analytic["#{i}#{j}"][:axis3].presence,
+                      }
+      end
+      analytics["a#{i}_references"] = references.to_json.to_s
+    end
+
+    analytics.with_indifferent_access
+  end
+
   def self.add_analytic_to_temp_document(analytic, temp_document)
-    analytic_reference = AnalyticReference.create(
-      a1_name:         analytic['1'][:name].presence,
-      a1_ventilation:  analytic['1'][:ventilation].presence,
-      a1_axis1:        analytic['1'][:axis1].presence,
-      a1_axis2:        analytic['1'][:axis2].presence,
-      a1_axis3:        analytic['1'][:axis3].presence,
-      a2_name:         analytic['2'][:name].presence,
-      a2_ventilation:  analytic['2'][:ventilation].presence,
-      a2_axis1:        analytic['2'][:axis1].presence,
-      a2_axis2:        analytic['2'][:axis2].presence,
-      a2_axis3:        analytic['2'][:axis3].presence,
-      a3_name:         analytic['3'][:name].presence,
-      a3_ventilation:  analytic['3'][:ventilation].presence,
-      a3_axis1:        analytic['3'][:axis1].presence,
-      a3_axis2:        analytic['3'][:axis2].presence,
-      a3_axis3:        analytic['3'][:axis3].presence
-    )
-    temp_document.update(analytic_reference: analytic_reference)
+    current_analytic = temp_document.analytic_reference
+
+    if current_analytic
+      if current_analytic.is_used_by_other_than?({ temp_documents: [temp_document.id] })
+        new_analytic = AnalyticReference.create(analytic_attributes(analytic))
+      else
+        current_analytic.update_attributes(analytic_attributes(analytic))
+        new_analytic = current_analytic
+      end
+    else
+      new_analytic = AnalyticReference.create(analytic_attributes(analytic))
+    end
+
+    temp_document.update(analytic_reference: new_analytic)
+  end
+
+  def self.add_analytic_to_journal(analytic, journal)
+    journal_analytic = journal.analytic_reference
+    if journal_analytic
+      journal_analytic.assign_attributes(analytic_attributes(analytic))
+      journal_analytic.save
+    else
+      journal.update(analytic_reference: AnalyticReference.create(analytic_attributes(analytic)))
+    end
+  end
+
+  def self.add_analytic_to_pieces(analytic, _pieces)
+    pieces = Array(_pieces)
+    pieces_ids = pieces.collect(&:id)
+    analytic_to_delete = []
+    piece_not_modifiable_count = 0
+
+    new_analytic = nil
+    new_analytic = AnalyticReference.create(analytic_attributes(analytic)) if analytic.present?
+
+    pieces.each do |pi|
+      if pi.preseizures.ibiza_delivered.count.to_i > 0
+        piece_not_modifiable_count += 1
+        next
+      end
+
+      current_analytic = pi.analytic_reference
+
+      if current_analytic && !current_analytic.is_used_by_other_than?({ pieces: pieces_ids })
+        analytic_to_delete << current_analytic
+      end
+      
+      pi.update(analytic_reference: new_analytic)
+    end
+
+    analytic_to_delete.uniq!
+    analytic_to_delete.each(&:destroy)
+
+    piece_not_modifiable_count
   end
 
   private
@@ -131,18 +193,22 @@ class IbizaAnalytic
 
     def valid_analytic_ventilation?
       if analytic_params_present?
-        total_ventilation = 0
-
         3.times do |e|
           i = (e+1).to_s
-          analytic_exist = @analytic.try(:[], i).try(:[], :name).present? && (@analytic[i][:axis1].present? || @analytic[i][:axis2].present? || @analytic[i][:axis3].present?)
+          total_ventilation = 0
+          with_analytics = false
+          3.times do |a|
+            j = (a+1).to_s
+            analytic_exist = @analytic.try(:[], i).try(:[], :name).present? && (@analytic.try(:[], "#{i}#{j}").try(:[], :axis1).present? || @analytic.try(:[], "#{i}#{j}").try(:[], :axis2).present? || @analytic.try(:[], "#{i}#{j}").try(:[], :axis3).present?)
 
-          total_ventilation += @analytic[i][:ventilation].to_f || 0 if analytic_exist
+            total_ventilation += @analytic["#{i}#{j}"][:ventilation].to_f || 0 if analytic_exist
 
-          return false if @analytic[i][:ventilation].to_f == 0 && analytic_exist
+            with_analytics ||= analytic_exist
+            return false if @analytic["#{i}#{j}"][:ventilation].to_f == 0 && analytic_exist
+          end
+          return false if total_ventilation != 100 && with_analytics
         end
-
-        total_ventilation == 100
+        true
       elsif !@params_valid
         false
       else
@@ -157,11 +223,14 @@ class IbizaAnalytic
 
       3.times do |e|
         i = (e+1).to_s
-        @params_exist ||= @analytic.try(:[], i).try(:[], :name).present? && (@analytic[i][:axis1].present? || @analytic[i][:axis2].present? || @analytic[i][:axis3].present?)
+        counter_false = 0
+        3.times do |a|
+          j = (a+1).to_s
+          @params_exist ||= @analytic.try(:[], i).try(:[], :name).present? && (@analytic.try(:[], "#{i}#{j}").try(:[], :axis1).present? || @analytic.try(:[], "#{i}#{j}").try(:[], :axis2).present? || @analytic.try(:[], "#{i}#{j}").try(:[], :axis3).present?)
 
-        if @analytic.try(:[], i).try(:[], :name).present? && !@analytic[i][:axis1].present? && !@analytic[i][:axis2].present? && !@analytic[i][:axis3].present?
-          @params_valid = false
+          counter_false += 1 if @analytic.try(:[], i).try(:[], :name).present? && !@analytic.try(:[], "#{i}#{j}").try(:[], :axis1).present? && !@analytic.try(:[], "#{i}#{j}").try(:[], :axis2).present? && !@analytic.try(:[], "#{i}#{j}").try(:[], :axis3).present?
         end
+        @params_valid = false if counter_false >= 3
       end
     end
 

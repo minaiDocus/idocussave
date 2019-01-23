@@ -75,13 +75,14 @@
                 Retour
             .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
               %a.do-prevPage{:href => "#"}
-                page précédente
+                pièce précédente
               \-
               %span.page_number
               \-
               %a.do-nextPage{:href => "#"}
-                page suivante
+                pièce suivante
             .actiongroup.span4.alignright{ style: 'margin-top:4px' }
+              %span.stamp.hide{ id: 'stamp_box' }= image_tag('', alt: 'tampon', class: 'img_stamp')
               %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
                 %span.label.label-info
                   tags
@@ -118,14 +119,18 @@
             .header
               %h3.pull-left
                 Sélections
-              .actiongroup.pull-right
-                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
-                  %i.icon-tag
-                %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
-                  %i.icon-remove
-                |
-                %a{ "data-toggle"=>"modal", :href => "#compositionDialog" }
-                  Composer
+              .actiongroup
+                .icon_actions.pull-left
+                  %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
+                    %i.icon-tag
+                  %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
+                    %i.icon-remove
+                .button_actions.pull-left
+                  %a{ "data-toggle"=>"modal", :href => "#compositionDialog", class: "btn btn-primary" }
+                    Composer
+                  - if @user.organization.ibiza.try(:configured?)
+                    %a.compta_analysis_edition{ "data-toggle"=>"modal", :href => "#comptaAnalysisEdition", class: "btn btn-primary" }
+                      Editer compta analytique
             .content.pages.margin3top
               %ul.list
                 - @is_composition = true

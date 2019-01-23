@@ -5,7 +5,7 @@ describe PreAssignmentDelivery do
   def delivery_exact_online
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_exact_online?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
-    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id
+    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
     accounts = Pack::Report::Preseizure::Account.create([
                                                           { type: 1, number: '0000001', preseizure_id: preseizure.id },
                                                           { type: 2, number: '101000', preseizure_id: preseizure.id },
@@ -22,9 +22,9 @@ describe PreAssignmentDelivery do
   def delivery_ibiza
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_ibiza?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
-    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id, analytic_reference: @analytic
+    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
     accounts = Pack::Report::Preseizure::Account.create([
-                                                          { type: 1, number: '0ZZCHQ', preseizure_id: preseizure.id },
+                                                          { type: 1, number: '601109', preseizure_id: preseizure.id },
                                                           { type: 2, number: '471000', preseizure_id: preseizure.id },
                                                           { type: 3, number: '471001', preseizure_id: preseizure.id },
                                                         ])
@@ -38,11 +38,31 @@ describe PreAssignmentDelivery do
 
   before(:all) do
     DatabaseCleaner.start
-    Timecop.freeze(Time.local(2018,12,12))
+    Timecop.freeze(Time.local(2018,12,19))
+
+    analytic = AnalyticReference.create(
+                                          a1_name:"CASH",
+                                          a1_references: '[{"ventilation":"100","axis1":"AACE","axis2":"ABCD","axis3":null},{"ventilation":"0","axis1":null,"axis2":null,"axis3":null},{"ventilation":"0","axis1":null,"axis2":null,"axis3":null}]',
+                                          a2_name:"SAISON",
+                                          a2_references: '[{"ventilation":"50","axis1":"AH11","axis2":null,"axis3":null},{"ventilation":"50","axis1":"PE09","axis2":null,"axis3":null},{"ventilation":"0","axis1":null,"axis2":null,"axis3":null}]'
+                                        )
 
     @organization = FactoryGirl.create :organization, code: 'IDO'
     @user         = FactoryGirl.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
-    @report       = FactoryGirl.create :report, user: @user, organization: @organization
+    @report       = FactoryGirl.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
+    pack          = FactoryGirl.create :pack, owner: @user, name: (@report.name + ' all')
+    @piece        = FactoryGirl.create :piece, pack: pack, name: (@report.name + ' 001'), analytic_reference: analytic
+    # pack = Pack.new
+    # pack.owner = @user
+    # pack.name = @report.name + ' all'
+    # pack.save
+    # @piece = Pack::Piece.new
+    # @piece.pack = pack
+    # @piece.name = @report.name + ' 001'
+    # @piece.origin = 'upload'
+    # @piece.position = 1
+    # @piece.analytic_reference = nil
+    # @piece.save
 
     ibiza = Ibiza.create(
                           state: 'valid',
@@ -59,18 +79,6 @@ describe PreAssignmentDelivery do
                         )
     ibiza.update(state: 'valid')
 
-    @analytic = AnalyticReference.create(
-                                          a1_name:"CASH",
-                                          a1_ventilation:"50.0",
-                                          a1_axis1:"AG",
-                                          a1_axis2:"ASS",
-                                          a3_name:"CASH",
-                                          a3_ventilation:"50.0",
-                                          a3_axis1:"AACE",
-                                          a2_name:"SAISON",
-                                          a2_ventilation:"100.0",
-                                          a2_axis1:"PE10"
-                                        )
 
     exact_online = ExactOnline.create(
                                       user_name: "support.idocus",

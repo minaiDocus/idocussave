@@ -63,7 +63,7 @@ FactoryGirl.define do
     end
 
     factory :pack do
-      name 'AC0000 AC 201804 ALL'
+      name 'AC0000 AC 201812 ALL'
       original_document_id "1550058"
       content_url "/account/documents/1550058/download/original?15238"
       pages_count 2
@@ -74,15 +74,15 @@ FactoryGirl.define do
       organization factory: :organization
       user factory: :user
       type 'FLUX'
-      name 'AC0000 AC 201804'
+      name 'AC0000 AC 201812'
     end
 
     factory :piece, :class => Pack::Piece  do
-      sequence(:name)   { |n| "AC0000 AC 201804 0#{n}" }
+      sequence(:name)   { |n| "AC0000 AC 201812 0#{n}" }
       sequence(:number) { |n| "#{'%04d' % n}" }
       is_a_cover false
       origin "upload"
-      sequence(:position) {|n| n }
+      sequence(:position) {|n| n + 1 }
       content_file_name "test.pdf"
       content_content_type "application/pdf"
       content_file_size 33928

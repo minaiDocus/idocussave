@@ -1,26 +1,92 @@
 class AnalyticReference < ActiveRecord::Base
   has_many :temp_documents
   has_many :pieces, class_name: 'Pack::Piece'
+  has_many :journals, class_name: 'AccountBookType'
 
   validate :presence_of_one_analysis
-  # validate :total_ventilation_rate
+
+  def is_used_by_other_than?(options)
+    has_temp_documents  = temp_documents
+    has_journals        = journals
+    has_pieces          = pieces
+
+    if options[:temp_documents]
+      has_temp_documents = has_temp_documents.where.not(id: options[:temp_documents])
+    end
+
+    if options[:journals]
+      has_journals = has_journals.where.not(id: options[:journals])
+    end
+
+    if options[:pieces]
+      has_pieces = has_pieces.where.not(id: options[:pieces])
+    end
+
+    has_temp_documents.count > 0 || has_pieces.count > 0 || has_journals.count > 0
+  end
+
+  def is_used?(option={})
+    is_used_by_other_than?({})
+  end
 
   private
 
   def presence_of_one_analysis
-    if a1_name.blank? && a1_axis1.blank? && a1_axis2.blank? && a1_axis3.blank? && a2_name.blank? && a2_axis1.blank? && a2_axis2.blank? && a2_axis3.blank? && a3_name.blank? && a3_axis1.blank? && a3_axis2.blank? && a3_axis3.blank?
+    unless valid_presence?
       errors.add(:a1_name, :blank)
-      errors.add(:a1_axis1, :blank)
+      errors.add(:a1_references, :invalid)
     end
+    errors.any?
+  end
+
+  def valid_presence?
+    a1_valid = a2_valid = a3_valid = true
+
+    3.times do |e|
+      i = e+1
+
+      axis = send("a#{i}_name")
+      references = send("a#{i}_references")
+
+      valid = false
+      if axis.present? && references.present?
+        ref = JSON.parse(references)
+        ref.each do |r|
+          valid ||= r['axis1'].present? || r['axis2'].present? || r['axis3'].present?
+        end
+      end
+
+      case i
+        when 1 
+          a1_valid = valid
+        when 2
+          a2_valid = valid
+        when 3
+          a3_valid = valid
+      end
+    end
+
+    a1_valid || a2_valid || a3_valid
   end
 
   def total_ventilation_rate
-    total_ventilation = a1_ventilation + a2_ventilation + a3_ventilation
+    3.times do |e|
+      i = e+1
 
-    invalid = (a1_name.present? && a1_ventilation == 0 && (a1_axis1.present? || a1_axis2.present? || a1_axis3.present?))
-    invalid ||= (a2_name.present? && a2_ventilation == 0 && (a2_axis1.present? || a2_axis2.present? || a2_axis3.present?))
-    invalid ||= (a3_name.present? && a3_ventilation == 0 && (a3_axis1.present? || a3_axis2.present? || a3_axis3.present?))
+      axis = send("a#{i}_name")
+      ref = send("a#{i}_references")
 
-    errors.add(:a1_ventilation, 'invalid ventilation') if total_ventilation != 100 || invalid
+      if axis.present? && ref.present?
+        references = JSON.parse(ref)
+        total_ventilation = 0
+
+        references.each do |ref|
+          total_ventilation += ref['ventilation'].to_f || 0
+        end
+
+        errors.add("a#{i}_references".to_sym, 'invalid ventilation') unless total_ventilation == 100
+      end
+    end
+    errors.any?
   end
 end

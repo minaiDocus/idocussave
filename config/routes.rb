@@ -17,7 +17,8 @@ Idocus::Application.routes.draw do
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
   get '/account/documents/processing/:id/download/:style', controller: 'account/documents', action: 'download_processing'
-  get '/account/documents/pieces/:id/download',            controller: 'account/documents', action: 'piece'
+  get '/account/documents/pieces/:id/download(/:style)',     controller: 'account/documents', action: 'piece'
+  get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
 
   resources :compta
@@ -201,8 +202,11 @@ Idocus::Application.routes.draw do
         resources :exercises
 
         resources :journals, except: %w(index show) do
-          post 'copy',   on: :collection
-          get  'select', on: :collection
+          post    'copy',              on: :collection
+          get     'select',            on: :collection
+          get     'edit_analytics',    on: :collection
+          post    'update_analytics',  on: :collection
+          post    'sync_analytics',    on: :collection
         end
 
         resources :ibizabox_folders, only: %w(update) do
@@ -316,6 +320,9 @@ Idocus::Application.routes.draw do
 
     namespace :documents do
       resource :tags do
+        post 'update_multiple', on: :collection
+      end
+      resource :compta_analytics do
         post 'update_multiple', on: :collection
       end
       resource :upload
@@ -473,6 +480,7 @@ Idocus::Application.routes.draw do
         post 'load_file_upload_params', on: :collection
         post 'load_file_upload_users', on: :collection
         post 'load_user_analytics', on: :collection
+        post 'set_pieces_analytics', on: :collection
       end
 
       resources :firebase_notification do

@@ -32,8 +32,8 @@
     toogleSelectionBox();
   }
 
-  // showing all pages of the document given by link
-  function showPages(link) {
+  // showing all pieces of the pack given by link
+  function showPieces(link) {
     var document_id = link.parents("li").attr("id").split("_")[2];
 
     var filter = $("#filter").val();
@@ -44,7 +44,22 @@
     $("#panel2").hide();
     $("#panel3").hide();
     $("#panel1").show();
-    getPages(url,link.text());
+    getPieces(url,link.text());
+  }
+
+  //get user softwares parameteres
+  function initParameters(link) {
+    $("a.removeAllSelection").click()
+
+    window.analytic_target_form = '#compta_analytic_form_modal';
+    window.uses_ibiza_analytics = link.data('uses-ibiza-analytics');
+    window.user_code            = link.data('user-code');
+    window.pack_journal         = link.data('pack-journal');
+
+    if(window.uses_ibiza_analytics > 0)
+      $('#selectionsBox .compta_analysis_edition').removeClass('hide');
+    else
+      $('#selectionsBox .compta_analysis_edition').addClass('hide');
   }
 
   // show the preview of page given by link
@@ -76,6 +91,12 @@
     $(panel + " .showPage").attr("id",id);
     $(panel + " .showPage").attr("src",url);
     $("#pageInformation").attr("data-content",tags);
+
+    $(panel + ' #stamp_box').addClass('hide')
+    if(link.attr("data-stamp-url") != '/assets/'){
+      $(panel + ' #stamp_box img').attr("src", link.attr("data-stamp-url"))
+      $(panel + ' #stamp_box').removeClass('hide')
+    }
 
     $(panel + " .header h3").text(name);
     $(panel + " .header .actiongroup .page_number").text(page_number);
@@ -128,8 +149,8 @@
     getPacks(page);
   }
 
-  // fecth all pages of the documents
-  function getPages(url,title) {
+  // fecth all pieces of the pack
+  function getPieces(url,title) {
     $.ajax({
       url: encodeURI(url),
       data: "",
@@ -170,7 +191,7 @@
         var piecesCount = $("#show_pieces >ul > li").length;
 
         viewTitle.text(vTitle);
-        pagesTitle.text(pagesCount + " page(s)");
+        pagesTitle.text(pagesCount + " piece(s)");
         piecesTitle.text(piecesCount + " piece(s) en cours de traitement");
       },
       error: function(data){
@@ -232,8 +253,8 @@
   }
 
   // submit tag
-  function postTags(tags,document_ids) {
-    var hsh = {"document_ids": document_ids, "tags": tags};
+  function postTags(tags,document_ids,type) {
+    var hsh = {"document_ids": document_ids, "tags": tags, type: type};
     $.ajax({
       url: "/account/documents/tags/update_multiple",
       data: hsh,
@@ -252,7 +273,8 @@
   function initEventOnClickOnLinkButton() {
     $("a.do-show").unbind("click");
     $("a.do-show").bind("click",function() {
-      showPages($(this));
+      showPieces($(this));
+      initParameters($(this));
       return false;
     });
 
@@ -317,7 +339,7 @@
       if (document_ids.length > 0 && $documentsTags.val().length > 0) {
         var tags = $documentsTags.val();
         $documentsTags.val("");
-        postTags(tags,document_ids);
+        postTags(tags,document_ids,'pack');
         aTags = tags.split(" ");
         $("#documentslist > .content > ul > li.selected").each(function(i,li) {
           var $link = $(li).children(".action").children(".do-popover");
@@ -364,7 +386,7 @@
         $("#pagesTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
 
       if (document_ids.length > 0 && $pagesTags.val().length > 0) {
-        postTags($pagesTags.val(),document_ids);
+        postTags($pagesTags.val(),document_ids,'piece');
         var aTags = $pagesTags.val().split(' ');
         for(var k=0; k<$documents.length; k++ ) {
           var $document = $($documents[k]);
@@ -409,7 +431,7 @@
         $("#selectionTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
 
       if (document_ids.length > 0 && $selectionsTags.val().length > 0) {
-        postTags($selectionsTags.val(),document_ids);
+        postTags($selectionsTags.val(),document_ids,'piece');
         var aTags = $selectionsTags.val().split(' ');
         for(var k=0; k<$documents.length; k++ ) {
           var $document = $($documents[k]);
@@ -470,6 +492,52 @@
       }
       return false;
     });
+
+    $('#analysis_validate').on('click', function(){
+      var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+      if (document_ids.length <= 0)
+      {
+        $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+      }
+      else 
+      {
+        var data = $('#comptaAnalysisEdition #compta_analytic_form_modal').serialize()
+        data += '&document_ids='+document_ids
+        $.ajax({
+          url: "/account/documents/compta_analytics/update_multiple",
+          data: data,
+          dataType: "json",
+          type: "POST",
+          beforeSend: function() {
+            logBeforeAction("Traitement en cours");
+            $('#comptaAnalysisEdition .analytic_validation_loading').removeClass('hide');
+          },
+          success: function(data){
+            logAfterAction();
+            $('#comptaAnalysisEdition .analytic_validation_loading').addClass('hide');
+
+            full_message = ""
+
+            if(data.sending_message.length > 0){
+              full_message += "<div class='alert alert-success'><a class='close' data-dismiss='alert'> × </a><span>" + data.sending_message + "</span></div>"
+            }
+
+            if(data.error_message.length > 0) {
+              full_message += "<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>" + data.error_message + "</span></div>";
+            } else {
+              setTimeout(function(){ $('#comptaAnalysisEdition').modal('hide') }, 2000)
+            }
+
+            $("#comptaAnalysisEdition .length_alert").html(full_message)
+          },
+          error: function(data){
+            logAfterAction();
+            $('#comptaAnalysisEdition .analytic_validation_loading').addClass('hide');
+            $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div>");
+          }
+        });
+      }
+    })
 
     $("#compositionDialog").on("hidden",function() {
       $("#compositionDialog .length_alert").html("");
@@ -693,109 +761,8 @@
           $('.prev_period_offset .help-block').hide();
         }
 
-        setAnalytics(code, file_upload_params[code]['is_analytic_used']);
+        window.setAnalytics(code, $('#h_file_account_book_type').val(), 'journal', file_upload_params[code]['is_analytic_used']);
       }
-
-      function byAnalyticId(element) {
-        return element['name'] == this.val();
-      }
-
-      function cleanAnalytics() {
-        analytics = null;
-
-        $('.analytic_axis_group').addClass('hide');
-        $('.analytic_ventilation_group').addClass('hide');
-
-        $('.analytic_select').html('');
-        $('.analytic_ventilation').val(0);
-        $('.hidden_analytic_input').val('');
-      }
-
-      function setAnalytics(code, isUsed) {
-        if($('.analytic_name').length > 0) {
-          cleanAnalytics();
-
-          if(isUsed) {
-            $.ajax({
-              url: '/account/analytics',
-              data: { code: code },
-              dataType: 'json',
-              type: 'GET',
-              beforeSend: function() {
-                $('#analytic .no_analytic, #analytic .fields').hide();
-                $('#analytic .loading').show();
-              },
-              success: function(data) {
-                analytics = data;
-                if(analytics != null && analytics.length > 0) {
-                  var analytic_options = '<option selected value>Sélectionnez une analyse</option>';
-                  for (var i=0; i<analytics.length; i++) {
-                    analytic_options = analytic_options + "<option value=" + analytics[i]['name'] + ">" + analytics[i]['name'] + "</option>";
-                  }
-                  $('.analytic_name').html(analytic_options);
-                  $('#analytic .fields').show();
-                } else {
-                  $('#analytic .no_analytic').show();
-                }
-
-                $('#analytic .loading').hide();
-              },
-              error: function(data) {
-                // TODO : handle failures
-                $('#analytic .loading, #analytic .fields').hide();
-                $('#analytic .no_analytic').show();
-              }
-            });
-          } else {
-            $('#analytic .loading, #analytic .fields').hide();
-            $('#analytic .no_analytic').show();
-          }
-        }
-      }
-
-      $('.analytic_name').on('change', function() {
-        window.analytic = $(this);
-        var current_analytic = $(this);
-        var number = current_analytic.data('analytic-number');
-
-        $('#analytic_'+number+'_group .analytic_axis').html('');
-        $('#analytic_'+number+'_group .hidden_analytic_axis').val('');
-        $('#analytic_'+number+'_group .analytic_axis_group').addClass('hide');
-        $('#analytic_'+number+'_group .analytic_ventilation_group').addClass('hide');
-
-        if(current_analytic.val() != '') {
-          var analytic = analytics.find(byAnalyticId, current_analytic);
-          $('#analytic_'+number+'_group .analytic_ventilation_group').removeClass('hide');
-
-          for (var i=1; i<4; i++) {
-            var axis_name   = 'axis' + i;
-            var axis        = $('#h_analytic_'+number+'_'+axis_name);
-            var axis_group  = $('#analytic_'+number+'_'+axis_name+'-group');
-            var hidden_axis = $('#analytic_'+number+'_'+axis_name);
-
-            if(analytic[axis_name] != undefined) {
-              var sections = analytic[axis_name]['sections'];
-              var axis_options = '<option selected value>Sélectionnez une section</option>';
-              for (var s=0; s<sections.length; s++) {
-                axis_options = axis_options + "<option value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>";
-              }
-
-              axis.html(axis_options);
-              axis_group.find('label').html('Axe ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
-              axis_group.removeClass('hide');
-
-              axis.chosen({
-                search_contains: true,
-                allow_single_deselect: true,
-                no_results_text: 'Aucun résultat correspondant à'
-              });
-              axis.trigger('chosen:updated');
-
-              hidden_axis.val(axis.val());
-            }
-          }
-        }
-      });
 
       $('#h_file_code').on('change', function() {
         if ($(this).val() != '') {
@@ -809,7 +776,7 @@
           $('#file_prev_period_offset').val('');
           $('#h_file_account_book_type').html('');
           $('#h_file_prev_period_offset').html('');
-          cleanAnalytics();
+          window.cleanAnalytics();
         }
       });
     }
@@ -818,27 +785,19 @@
     $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
 
     $('#h_file_account_book_type').on('change', function() {
+      code = $('#h_file_code').val();
       $('#file_account_book_type').val($(this).val());
+
+      var use_analytics = true;
+      if(file_upload_params[code] != undefined)
+        use_analytics = file_upload_params[code]['is_analytic_used'];
+
+      window.setAnalytics(code, $(this).val(), 'journal', use_analytics);
     });
 
     $('#h_file_prev_period_offset').on('change', function() {
       $('#file_prev_period_offset').val($(this).val());
     });
-
-    $('.analytic_select').on('change', function() {
-      $(this).siblings('.hidden_analytic_input').val($(this).val());
-    });
-
-    $('.analytic_ventilation').on('change', function(){
-      var total_ventilation = 0
-      $('.analytic_ventilation:visible').each(function(){ total_ventilation += parseFloat($(this).val()) })
-      $('#actual_ventilation_rate').html(`(Total ventilation actuelle : ${total_ventilation} %)`)
-
-      if(total_ventilation == 100)
-        $('#actual_ventilation_rate').addClass('green')
-      else
-        $('#actual_ventilation_rate').removeClass('green')
-    })
 
     function lock_file_upload_params() {
       var title = null;
@@ -892,12 +851,15 @@
     var lock_or_unlock_file_upload_params_interval = null;
 
     $('#uploadDialog').on('show', function() {
+      window.analytic_target_form = '#fileupload'
       lock_or_unlock_file_upload_params_interval = setInterval(lock_or_unlock_file_upload_params, 500);
     })
 
     $('#uploadDialog').on('shown', function() {
+      var ready = false
+
       if( $('#h_file_code').val() != '' && ( $('#fileupload').data('params') == 'undefined' || jQuery.isEmptyObject($('#fileupload').data('params')) ) ) {
-        setAnalytics($('#h_file_code').val(), true);
+        ready = true
       } else {
         $('#h_file_code').chosen({
           search_contains: true,
@@ -905,10 +867,33 @@
           no_results_text: 'Aucun résultat correspondant à'
         })
       }
+
+      if ( ready || ( ($('#h_file_code').val() != '' && $('#h_file_code').val() != undefined ) && ($('#h_file_account_book_type').val() != '' && $('#h_file_account_book_type').val() != undefined) ) )
+        window.setAnalytics($('#h_file_code').val(), $('#h_file_account_book_type').val(), 'journal', true);
     })
 
     $('#uploadDialog').on('hide', function() {
+      window.analytic_target_form = null
       clearInterval(lock_or_unlock_file_upload_params_interval);
+    })
+
+    $('#comptaAnalysisEdition').on('show', function() {
+      if(window.analytic_target_form != '#fileupload')
+      {
+        $('#analysis_validate').removeClass('hide');
+        var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+        window.setAnalytics(window.user_code, document_ids, 'piece', true);
+      }
+      else
+      {
+        $('#analysis_validate').addClass('hide');
+      }
+    })
+
+    $('#comptaAnalysisEdition').on('hide', function() {
+      $("#comptaAnalysisEdition .length_alert").html('')
+      if(window.analytic_target_form == '#fileupload')
+        $("#uploadDialog .analytic_resume_box").html(window.getAnalyticsResume());
     })
 
     $('#document_owner_list').chosen({
@@ -922,7 +907,7 @@
       $("#panel2").hide();
       $("#panel3").hide();
       $("#panel1").show();
-      getPages(url, $('#pack').data('name'));
+      getPieces(url, $('#pack').data('name'));
     }
   });
 

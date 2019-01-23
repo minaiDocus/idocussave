@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Documents::TagsController < Account::AccountController
   def update_multiple
-    UpdateMultipleTags.execute(@user, params[:tags], params[:document_ids])
+    UpdateMultipleTags.execute(@user, params[:tags], params[:document_ids], params[:type])
 
     respond_to do |format|
       format.json { render json: {}, status: :ok }

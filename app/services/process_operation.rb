@@ -85,7 +85,7 @@ class ProcessOperation
             to_deliver_preseizures << preseizure
             operation.update_attribute(:processed_at, Time.now)
           end
-          if Pack::Report::Preseizure.not_delivered_from(pack_report.preseizures.not_locked).size > 0
+          if pack_report.preseizures.not_locked.not_delivered.size > 0
             pack_report.remove_delivered_to
           end
           to_deliver_preseizures.group_by(&:report).each do |_, pres|

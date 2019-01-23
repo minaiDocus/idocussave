@@ -333,7 +333,7 @@ fr:
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
             already_exist: existe déjà
             invalid_analytic_params: paramètres analytiques invalides
-            invalid_analytic_ventilation: la ventilation analytique doit être répartie sur un total de 100%
+            invalid_analytic_ventilation: la ventilation analytique doit être répartie sur un total de 100% par analyse
         bank_account:
           attributes:
             journal:
@@ -612,6 +612,7 @@ fr:
         attributes:
           is_auto_deliver: Livrer automatiquement les écritures ?
           is_analysis_activated: Activer la compta analytique ?
+          is_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
           access_token: Jeton d'accès Scan et OCR
           state: Etat
           access_token_2: Jeton d'accès iDo'FacBanque
@@ -1033,6 +1034,7 @@ fr:
           is_ibiza_auto_deliver: Livrer automatiquement les écritures ?
           is_ibiza_compta_analysis_activated: Activer la compta analytique ?
           is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+          is_ibiza_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
           is_coala_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
           is_quadratus_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
           use_own_csv_descriptor_format: Utilise son propre format de CSV ?

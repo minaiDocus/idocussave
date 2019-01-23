@@ -17,6 +17,7 @@
           = o.hidden_field :id
           = o.input :is_ibiza_auto_deliver, collection: auto_deliver_options, include_blank: false
           = o.input :is_ibiza_compta_analysis_activated, collection: activate_compta_analytic_options, include_blank: false
+          = o.input :is_ibiza_analysis_to_validate, collection: activate_compta_analytic_options, include_blank: false, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées"
         .form-actions.margin0bottom
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary', disabled: true

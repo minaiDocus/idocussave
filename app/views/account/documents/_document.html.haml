@@ -1,7 +1,14 @@
+- ### TODO : HANDLE COMPOSITION DOCUMENTS OR PIECES
+- Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
+
+- stamp_url = document.get_state_to :image
+
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages" }
-  %input{ type: :hidden, name: :page_number, value: calculate_page_number(document) }
-  %input{ type: :hidden, name: :tags, value: document.tags.join(' ') }
-  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page' unless @is_composition
+  %input{ type: :hidden, name: :page_number, value: document.position }
+  %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }
+  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}") } unless @is_composition
+  %span.label.label-warning.piece_number
+    = sprintf '%03d', document.position
   .toolbar
     %ul.margin0
       %li.download= link_to '', document.content.url, class: 'download', title: 'Télécharger', target: '_blank'
@@ -15,5 +22,7 @@
     .handle{ title: 'Déplacer' }
   .pagethumb
     .thumb= image_tag document_thumb_url(document)
+    - if stamp_url.present?
+      .stamp= image_tag(stamp_url, alt: 'tampon', class: 'img_stamp')
   .foot
     %span

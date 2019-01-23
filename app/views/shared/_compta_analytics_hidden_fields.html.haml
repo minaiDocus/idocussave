@@ -1,0 +1,12 @@
+.analytics_hidden_fields.hide
+  - 3.times do |e|
+    - i = e+1
+    .analytic_hidden_group{ class: "analytic_hidden_group_#{i}" }
+      = hidden_field_tag "analytic[#{i}][name]", nil, class: "hidden_analytic_input hidden_analytic_name analytic_#{i}_name", id: nil
+      - 3.times do |a|
+        - j = a+1
+        .hidden_section_group{ class: "hidden_section_group_#{i}#{j}" }
+          = hidden_field_tag "analytic[#{i}#{j}][ventilation]", 0, class: "hidden_ventilation_analytic_input analytic_#{i}#{j}_ventilation", id: nil
+          = hidden_field_tag "analytic[#{i}#{j}][axis1]", nil, class: "hidden_analytic_input hidden_analytic_axis analytic_#{i}#{j}_axis1", id: nil
+          = hidden_field_tag "analytic[#{i}#{j}][axis2]", nil, class: "hidden_analytic_input hidden_analytic_axis analytic_#{i}#{j}_axis2", id: nil
+          = hidden_field_tag "analytic[#{i}#{j}][axis3]", nil, class: "hidden_analytic_input hidden_analytic_axis analytic_#{i}#{j}_axis3", id: nil

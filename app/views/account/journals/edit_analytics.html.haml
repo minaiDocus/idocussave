@@ -1,0 +1,29 @@
+#customers.journal.analytics
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3
+          Edition d'analyse par défaut : #{@journal.name}
+          - if @customer
+            ( #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')} )
+      .pull-right
+        = link_to 'Retour', edit_account_organization_customer_journal_path(@organization, @customer, @journal), class: 'btn'
+  .row-fluid
+    .span12.box
+      - if @customer.uses_ibiza_analytics?
+        %h4 Edition Compta Analytique par défaut du journal
+        %span.label.label-warning Configurer une analyse comptable par défaut sur un journal permet d'attribuer automatiquement l'analyse sur les futures pièces du journal
+        %br
+        %br
+        = simple_form_for 'compta_analytics', url: update_analytics_account_organization_customer_journals_path(@organization, @customer), html: { class: 'form form-horizontal margin0', id: 'compta_analytics_journal' } do |f|
+          = hidden_field_tag 'id', @journal.id
+          = hidden_field_tag 'journal_name', @journal.name
+          = hidden_field_tag 'customer_code', @customer.code
+          = render 'shared/compta_analytics_hidden_fields'
+          = render 'shared/compta_analytics'
+          = f.submit 'Valider les modifications', class: 'btn btn-primary'
+
+          =#Not used from now link_to "Synchroniser avec l'analytique Ibiza", sync_analytics_account_organization_customer_journals_path(@organization, @customer, id: @journal), method: 'post', data: {confirm: 'Etes-vous sûr?'}, class: 'btn'
+      - else
+        #analytic.controls
+          %span.no_analytic.label Aucune analytique pour ce dossier.

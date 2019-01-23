@@ -47,6 +47,11 @@ class TempDocument < ActiveRecord::Base
     end
   end
 
+  before_destroy do |temp_document|
+    current_analytic = temp_document.analytic_reference
+    current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ temp_documents: [temp_document.id] })
+  end
+
   scope :scan,              -> { where(delivery_type: 'scan') }
   scope :valid,             -> { where(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }
   scope :ready,             -> { where(state: 'ready', is_locked: false) }

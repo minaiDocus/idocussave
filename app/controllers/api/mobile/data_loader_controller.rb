@@ -81,20 +81,21 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
   def render_image_documents
     style = params[:style].presence || 'medium'
-    begin
-      document = Document.find(params[:id])
-      owner    = document.pack.owner
-      filepath = document.content.path(style)
-    rescue
-      document = TempDocument.find(params[:id])
-      owner    = document.temp_pack.user
-      filepath = document.content.path(style)
-    end
 
     if params[:force_temp_document] == 'true'
       document = TempDocument.find(params[:id])
       owner    = document.temp_pack.user
-      filepath = document.content.path
+      filepath = document.content.path(style)
+    else
+      begin
+        document = Pack::Piece.find(params[:id])
+        owner    = document.user
+        filepath = document.content.path(style)
+      rescue
+        document = TempDocument.find(params[:id])
+        owner    = document.temp_pack.user
+        filepath = document.content.path(style)
+      end
     end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
@@ -197,29 +198,27 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def documents_collection
-    documents = Document.search(params[:filter],
+    documents = Pack::Piece.search(params[:filter],
       pack_id:  params[:id],
       page:     params[:page],
       per_page: 20,
       sort:     true
-    ).not_mixed.order(position: :asc).includes(:pack)
+    ).order(position: :asc).includes(:pack)
 
     data_collected = documents.collect do |document|
-        if File.exist?(document.content.path(:medium))
-          thumb = { id: document.id, style: 'medium',   filter: document.content_file_name }
-          large = { id: document.id, style: 'original', filter: document.content_file_name }
-        else
-          thumb = large = false
-        end
+        thumb = File.exist?(document.content.path(:medium)) ? { id: document.id, style: 'medium', filter: document.content_file_name } : false
 
         {
-          id:    document.id,
-          thumb: thumb,
-          large: large
+          id:       document.id,
+          thumb:    thumb,
+          large:    { id: document.id, style: 'original', filter: document.content_file_name },
+          position: document.position,
+          state:    document.get_state_to(:text),
+          actionOnSelect:  document.user.uses_ibiza_analytics? ? 'ibiza_analytics' : ''
         }
     end
 
-    { datas: data_collected, nb_pages: documents.total_pages, total: documents.total_count }
+    { datas: data_collected, nb_pages: documents.try(:total_pages).to_i, total: documents.try(:total_count).to_i }
   end
 
   def temp_documents_collection
@@ -231,20 +230,19 @@ class Api::Mobile::DataLoaderController < MobileApiController
       temp_documents = temp_pack.temp_documents.not_published.page(params[:page] || 1).per(20)
     end
 
-    data_collected = temp_documents.collect do |temp_document|
-      if File.exist?(temp_document.content.path(:medium))
-        thumb = { id: temp_document.id, style: 'medium', filter: temp_document.content_file_name }
-      else
-        thumb = false
-      end
+    data_collected = temp_documents.collect do |temp_document|      
+      thumb = File.exist?(temp_document.content.path(:medium)) ? { id: temp_document.id, style: 'medium', filter: temp_document.content_file_name } : false
 
       {
-        id:    temp_document.id,
-        thumb: thumb,
-        large: { id: temp_document.id, style: 'large', filter: temp_document.content_file_name }
+        id:              temp_document.id,
+        thumb:           thumb,
+        large:           { id: temp_document.id, style: 'original', filter: temp_document.content_file_name },
+        position:        '',
+        state:           'none',
+        actionOnSelect:  ''
       }
     end
 
-    { datas: data_collected, nb_pages: temp_documents.try(:total_pages) || 0, total: temp_documents.try(:total_count) || 0 }
+    { datas: data_collected, nb_pages: temp_documents.try(:total_pages).to_i, total: temp_documents.try(:total_count).to_i }
   end
 end

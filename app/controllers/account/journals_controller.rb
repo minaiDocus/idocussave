@@ -4,7 +4,7 @@ class Account::JournalsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :verify_if_customer_is_active
   before_filter :redirect_to_current_step
-  before_filter :load_journal, only: %w(edit update destroy)
+  before_filter :load_journal, only: %w(edit update destroy edit_analytics update_analytics delete_analytics sync_analytics)
   before_filter :verify_max_number, only: %w(new create select copy)
 
 
@@ -44,6 +44,45 @@ class Account::JournalsController < Account::OrganizationController
       end
     else
       render :new
+    end
+  end
+  
+  # GET /account/organizations/:organization_id/journals/edit_analytics
+  def edit_analytics
+    unless @customer
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_journals_path(@organization)
+    end
+  end
+
+  # PUT /account/organizations/:organization_id/journals/:journal_id/edit_analytics
+  def update_analytics
+    if @customer
+      analytic_reference = JournalAnalyticReferences.new(@journal)
+      if analytic_reference.add(params[:analytic])
+        flash[:success] = 'Modifié avec succès.'
+      else
+        flash[:error] = analytic_reference.error_messages
+      end
+      redirect_to edit_analytics_account_organization_customer_journals_path(@organization, @customer, id: @journal)
+    else
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_journals_path(@organization)
+    end
+  end
+
+  def sync_analytics
+    if @customer
+      analytic_reference = JournalAnalyticReferences.new(@journal)
+      if analytic_reference.synchronize
+        flash[:success] = 'Synchronisé avec succès.'
+      else
+        flash[:error]   = "Erreur de synchronisation - #{analytic_reference.error_messages}"
+      end
+      redirect_to edit_analytics_account_organization_customer_journals_path(@organization, @customer, id: @journal)
+    else
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_journals_path(@organization)
     end
   end
 

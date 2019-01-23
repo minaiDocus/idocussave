@@ -41,6 +41,15 @@ class AddTempDocumentToTempPack
 
       temp_document.save
 
+      if user.uses_ibiza_analytics?
+        if options[:analytic].present?
+          IbizaAnalytic.add_analytic_to_temp_document options[:analytic], temp_document
+        elsif temp_pack.journal && temp_pack.journal.analytic_reference.present?
+          temp_document.analytic_reference = temp_pack.journal.analytic_reference
+          temp_document.save
+        end
+      end
+
       if temp_document.metadata.present?
         metadata2 = temp_document.metadata2 || temp_document.build_metadata2
         metadata2.date   = temp_document.metadata['date']

@@ -102,18 +102,24 @@ class IbizaAPI::Utils
                   xml.importAnalyticalEntries do
                     3.times do |e|
                       i = e+1
-                      if preseizure.analytic_reference.send("a#{i}_name").present?
-                        ventilation_rate = preseizure.analytic_reference.send("a#{i}_ventilation") || 0
+                      if preseizure.analytic_reference.send("a#{i}_name").present? && preseizure.analytic_reference.send("a#{i}_references").present?
+                        references = JSON.parse(preseizure.analytic_reference.send("a#{i}_references"))
 
-                        xml.importAnalyticalEntry do
-                          xml.analysis preseizure.analytic_reference.send("a#{i}_name")
-                          xml.axis1 preseizure.analytic_reference.send("a#{i}_axis1")
-                          xml.axis2 preseizure.analytic_reference.send("a#{i}_axis2")
-                          xml.axis3 preseizure.analytic_reference.send("a#{i}_axis3")
-                          if entry.type == Pack::Report::Preseizure::Entry::DEBIT
-                            xml.debit entry.amount * (ventilation_rate / 100)
-                          else
-                            xml.credit entry.amount * (ventilation_rate / 100)
+                        3.times do |j|
+                          next if !references[j]['axis1'].present? && !references[j]['axis2'].present? && !references[j]['axis3'].present?
+
+                          ventilation_rate = references[j]['ventilation'].to_f || 0
+
+                          xml.importAnalyticalEntry do
+                            xml.analysis preseizure.analytic_reference.send("a#{i}_name")
+                            xml.axis1    references[j]['axis1'].presence
+                            xml.axis2    references[j]['axis2'].presence
+                            xml.axis3    references[j]['axis3'].presence
+                            if entry.type == Pack::Report::Preseizure::Entry::DEBIT
+                              xml.debit entry.amount * (ventilation_rate / 100)
+                            else
+                              xml.credit entry.amount * (ventilation_rate / 100)
+                            end
                           end
                         end
                       end

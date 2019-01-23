@@ -12,12 +12,24 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def load_user_analytics
-    user = User.find params[:user_id]
-    result = {}
-    if user && user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.softwares.ibiza_compta_analysis_activated?
-      result = IbizaAnalytic.new(user.ibiza_id, user.organization.ibiza.access_token).list
+    if(params[:user_id].present?)
+      @customer = User.find params[:user_id]
+    elsif params[:pieces].present?
+      load_default_analytic_by_params params[:pieces], 'piece'
     end
-    render json: { data: result.to_json.to_s }, status: 200
+
+    result = journal_analytic_references = pieces_analytic_references = {}
+
+    if @customer && @customer.organization.ibiza.try(:configured?) && @customer.ibiza_id.present? && @customer.softwares.ibiza_compta_analysis_activated?
+      load_default_analytic_by_params params[:journal], 'journal' if params[:journal].present?
+
+      result = IbizaAnalytic.new(@customer.ibiza_id, @customer.organization.ibiza.access_token).list
+      journal_analytic_references = @journal? JournalAnalyticReferences.new(@journal).get_analytic_references : {}
+      pieces_analytic_references  = @pieces?  get_pieces_analytic_references : {}
+    end
+
+    defaults = pieces_analytic_references.presence || journal_analytic_references.presence || ''
+    render json: { data: result.to_json.to_s, defaults: defaults.to_json.to_s  }, status: 200
   end
 
   def create
@@ -59,6 +71,14 @@ class Api::Mobile::FileUploaderController < MobileApiController
     end
   end
 
+  def set_pieces_analytics
+    pieces    = Pack::Piece.where(id: params[:pieces].presence || 0).where("pre_assignment_state != 'ready'")
+
+    messages = PiecesAnalyticReferences.new(pieces, parse_analytic_params).update_analytics
+
+    render json: { success: true, error_message: messages[:error_message], sending_message: messages[:sending_message] }, status: 200
+  end
+
   private
 
   def file_upload_params_mobile
@@ -85,14 +105,72 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def parse_analytic_params
+    # return nil # NOT USED UNTIL MEP MOBILE
     return nil unless params[:file_compta_analysis]
 
-    analytic_parsed = JSON.parse(params[:file_compta_analysis])
-    analysis = {}
-    analytic_parsed.each_with_index do |a, i|
-      analysis[(i+1).to_s] = {name: a['section'].presence, ventilation: a['ventilation'].presence, axis1: a['axis1'].presence, axis2: a['axis2'].presence, axis3: a['axis3'].presence}
+    begin
+      analytic_parsed = JSON.parse(params[:file_compta_analysis])
+    rescue
+      analytic_parsed = params[:file_compta_analysis]
     end
 
-    analysis.any? ? analysis : nil
+    analysis = {}
+    exist = false
+
+    analytic_parsed.each_with_index do |a, l|
+      i = l+1
+      exist = true if a['analysis'].present?
+
+      analysis["#{i.to_s}"] = { 'name' => a['analysis'].presence || '' }
+      references = a['references']
+
+      references.each_with_index do |r, t|
+        j = t+1
+        analysis["#{i.to_s}#{j.to_s}"] =  {
+                                            'ventilation' => r['ventilation'].presence || 0,
+                                            'axis1'       => r['axis1'].presence || '',
+                                            'axis2'       => r['axis2'].presence || '',
+                                            'axis3'       => r['axis3'].presence || ''
+                                          }
+      end
+    end
+
+    exist ? analysis.with_indifferent_access : nil
+  end
+
+  def load_default_analytic_by_params(param, type='journal')
+    @journal  = (param.present? && type == 'journal') ? @customer.account_book_types.where(name: param).first : nil
+    @pieces   = (param.present? && type == 'piece') ? Pack::Piece.where(id: param) : nil
+
+    if @pieces
+      @customer = @pieces.first.user
+      journal_name = @pieces.collect(&:journal).uniq || []
+
+      if journal_name.size == 1 && !@journal
+        @journal  = @customer.account_book_types.where(name: journal_name.first).first || nil
+      end
+    end
+  end
+
+  def get_pieces_analytic_references
+    analytic_refs = @pieces.collect(&:analytic_reference_id).compact
+    analytic_refs.uniq!
+    result = nil
+
+    if analytic_refs.size == 1
+      analytic = @pieces.first.analytic_reference || nil
+
+      if analytic
+        result =  {
+                    a1_name:       analytic['a1_name'].presence,
+                    a1_references: JSON.parse(analytic['a1_references']),
+                    a2_name:       analytic['a2_name'].presence,
+                    a2_references: JSON.parse(analytic['a2_references']),
+                    a3_name:       analytic['a3_name'].presence,
+                    a3_references: JSON.parse(analytic['a3_references']),
+                  }.with_indifferent_access
+      end
+    end
+    result
   end
 end

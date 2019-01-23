@@ -13,20 +13,20 @@ module Reporting
         period_document = find_or_create_period_document(pack, period)
         if period_document
           current_pages = pack.pages.of_period(time, period.duration)
-          period_document.pages  = current_pages.count
+          period_document.pages  = Pack.count_pages_of current_pages
           period_document.pieces = current_dividers.pieces.count
 
-          period_document.retrieved_pages  = current_pages.retrieved.count
+          period_document.retrieved_pages  = Pack.count_pages_of current_pages.retrieved
           period_document.retrieved_pieces = current_dividers.retrieved.pieces.count
 
-          period_document.scanned_pages  = current_pages.scanned.count
+          period_document.scanned_pages  = Pack.count_pages_of current_pages.scanned
           period_document.scanned_pieces = current_dividers.scanned.pieces.count
           period_document.scanned_sheets = current_dividers.scanned.sheets.count
 
-          period_document.uploaded_pages  = current_pages.uploaded.count
+          period_document.uploaded_pages  = Pack.count_pages_of current_pages.uploaded
           period_document.uploaded_pieces = current_dividers.uploaded.pieces.count
 
-          period_document.dematbox_scanned_pages  = current_pages.dematbox_scanned.count
+          period_document.dematbox_scanned_pages  = Pack.count_pages_of current_pages.dematbox_scanned
           period_document.dematbox_scanned_pieces = current_dividers.dematbox_scanned.pieces.count
 
           period_document.save

@@ -21,14 +21,14 @@ class Pack::Report < ActiveRecord::Base
   scope :not_locked,                -> { where(is_locked: false) }
   scope :preseizures,               -> { where.not(type: ['NDF']) }
 
-  def self.delivered_from(lists)
+  def self.delivered
     # self.where(id: lists.select{ |s| s.is_delivered? }.collect(&:id))
-    lists.where.not(is_delivered_to: [nil, ''])
+    where.not(is_delivered_to: [nil, ''])
   end
 
-  def self.not_delivered_from(lists)
+  def self.not_delivered
     # self.where(id: lists.select{ |s| s.is_not_delivered? }.collect(&:id))
-    lists.where(is_delivered_to: [nil, ''])
+    where(is_delivered_to: [nil, ''])
   end
 
   def journal
@@ -141,7 +141,7 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def is_delivered_to?(software='ibiza')
-    self.is_delivered_to.match(/#{software}/)
+    self.is_delivered_to.match(/#{software}/) ? true : false
   end
 
   def set_delivery_message_for(software='ibiza', message)

@@ -21,5 +21,19 @@ class SoftwareMigration
     def get_software_of(user)
       SoftwaresSetting.find_by_user_id(user.id) || SoftwaresSetting.new
     end
+
+
+    def migrate_pieces
+      # pieces = Pack::Piece.all
+      # pieces.each do |pi|
+      #   pi.init_tags
+      #   pi.save
+      #   Pack::Piece.delay_for(10.seconds, queue: :low).generate_thumbs(pi.id)
+      #   Pack::Piece.delay_for(10.seconds, queue: :low).extract_content(pi.id)
+      # end
+    end
+
+    def migrate_packs
+    end
   end
 end

@@ -29,6 +29,17 @@ class SoftwaresSetting < ActiveRecord::Base
   end
 
   # -1 means we refer to organization
+  # 0 means not to validate
+  # 1 means to validate
+  def ibiza_analysis_to_validate?
+    if is_ibiza_analysis_to_validate == -1
+      user.organization.try(:ibiza).try(:is_analysis_to_validate)
+    else
+      is_ibiza_analysis_to_validate == 1
+    end
+  end
+
+  # -1 means we refer to organization
   # 0 means manuel deliver
   # 1 means auto deliver
   def coala_auto_deliver?

@@ -16,8 +16,8 @@ class Composition < ActiveRecord::Base
     user = Collaborator.new(user) if user.collaborator?
 
     accounts = [user] + user.accounts
-    documents = Document.find(document_ids).select do |document|
-      document.pack.owner == accounts || (user.collaborator? && user.customers.include?(document.pack.owner)) || user.is_admin
+    documents = Pack::Piece.find(document_ids).select do |document|
+      document.user == accounts || (user.collaborator? && user.customers.include?(document.user)) || user.is_admin
     end.sort_by do |x|
       document_ids.index(x.id.to_s)
     end

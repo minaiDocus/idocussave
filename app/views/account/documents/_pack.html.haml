@@ -10,7 +10,7 @@
     %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }
       %i.icon-download
   %span.name
-    %a.do-show{ :href => "#" }= pack.name.sub('all','')
+    %a.do-show.pack_name_selection{ :href => "#", data: { user_code: pack.owner.code, pack_journal: (pack.journal.try(:name) || pack.name.split[1]), uses_ibiza_analytics: pack.owner.uses_ibiza_analytics? ? 1 : 0 } }= pack.name.sub('all','')
     - unless pack.is_fully_processed
       %a.do-tooltip{ :title => "document en cours de traitement"}
         %icon.icon-cog

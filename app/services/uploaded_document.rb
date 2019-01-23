@@ -41,9 +41,11 @@ class UploadedDocument
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:already_exist, nil]                                   unless unique?
 
-      analytic_validator = IbizaAnalytic::Validator.new(@user, analytic)
-      @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
-      @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
+      if @errors.empty?
+        analytic_validator = IbizaAnalytic::Validator.new(@user, analytic)
+        @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
+        @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
+      end
     end
 
     if @errors.empty?
@@ -57,11 +59,11 @@ class UploadedDocument
         api_name:              api_name,
         original_file_name:    @original_file_name,
         is_content_file_valid: true,
-        original_fingerprint:  fingerprint
+        original_fingerprint:  fingerprint,
+        analytic:              analytic_validator.analytic_params_present? ? analytic : nil
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
-      IbizaAnalytic.add_analytic_to_temp_document analytic, @temp_document if analytic_validator.analytic_params_present?
     end
 
     clean_tmp

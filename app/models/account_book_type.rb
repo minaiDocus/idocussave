@@ -33,6 +33,7 @@ class AccountBookType < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :organization
+  belongs_to :analytic_reference, inverse_of: :journals
 
 
   accepts_nested_attributes_for :expense_categories, allow_destroy: true
@@ -53,6 +54,12 @@ class AccountBookType < ActiveRecord::Base
   validates_inclusion_of :domain, in: DOMAINS
   validates_inclusion_of :entry_type, in: 0..3
 
+
+
+  before_destroy do |journal|
+    current_analytic = journal.analytic_reference
+    current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ journals: [journal.id] })
+  end
 
   scope :default,                    -> { where(is_default: true) }
   scope :by_position,                -> { order(position: :asc) }

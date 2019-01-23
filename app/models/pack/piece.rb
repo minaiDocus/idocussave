@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Pack::Piece < ActiveRecord::Base
+  serialize :tags
+
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
   before_validation :set_number
-
-
 
   has_one    :expense, class_name: 'Pack::Report::Expense', inverse_of: :piece
   has_one    :temp_document, inverse_of: :piece
@@ -18,13 +18,24 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :organization
   belongs_to :analytic_reference, inverse_of: :pieces
 
-  has_attached_file :content,
-                            path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
-                            url: '/account/documents/pieces/:id/download'
+  has_attached_file :content, styles: { medium: ['92x133', :png] },
+                              path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
+                              url: '/account/documents/pieces/:id/download/:style'
   do_not_validate_attachment_file_type :content
 
   Paperclip.interpolates :mongo_id_or_id do |attachment, style|
     attachment.instance.mongo_id || attachment.instance.id
+  end
+
+  after_create do |piece|
+    unless Rails.env.test?
+      Pack::Piece.delay_for(10.seconds, queue: :low).finalize_piece(piece.id)
+    end
+  end
+
+  before_destroy do |piece|
+    current_analytic = piece.analytic_reference
+    current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ pieces: [piece.id] })
   end
 
   scope :covers,                 -> { where(is_a_cover: true) }
@@ -37,9 +48,25 @@ class Pack::Piece < ActiveRecord::Base
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
 
+  scope :of_period, lambda { |time, duration|
+    case duration
+    when 1
+      start_at = time.beginning_of_month
+      end_at   = time.end_of_month
+    when 3
+      start_at = time.beginning_of_quarter
+      end_at   = time.end_of_quarter
+    when 12
+      start_at = time.beginning_of_year
+      end_at   = time.end_of_year
+    end
+    where('created_at >= ? AND created_at <= ?', start_at, end_at)
+  }
+
   state_machine :pre_assignment_state, initial: :ready, namespace: :pre_assignment do
     state :ready
     state :processing
+    state :waiting_analytics
     state :force_processing
     state :processed
     state :ignored
@@ -49,12 +76,16 @@ class Pack::Piece < ActiveRecord::Base
       transition any => :ready
     end
 
+    event :waiting_analytics do
+      transition :ready => :waiting_analytics
+    end
+
     event :processing do
-      transition :ready => :processing
+      transition [:ready, :waiting_analytics] => :processing
     end
 
     event :force_processing do
-      transition [:ready, :ignored] => :force_processing
+      transition [:ready, :waiting_analytics, :ignored] => :force_processing
     end
 
     event :processed do
@@ -70,6 +101,83 @@ class Pack::Piece < ActiveRecord::Base
     end
   end
 
+  def self.search(text, options = {})
+    page = options[:page] || 1
+    per_page = options[:per_page] || default_per_page
+
+    query = self.joins(:pack)
+
+    query = query.where(id: options[:id]) if options[:id].present?
+    query = query.where(id: options[:ids]) if options[:ids].present?
+    query = query.where('packs.id = ?', options[:pack_id] )  if options[:pack_id].present?
+    query = query.where('packs.id IN (?)', options[:pack_ids]) if options[:pack_ids].present?
+    query = query.where('pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?', "%#{text}%", "%#{text}%", "%#{text}%") if text.present?
+
+    query.order(position: :asc) if options[:sort] == true
+
+    query.page(page).per(per_page)
+  end
+
+  def self.finalize_piece(id)
+    piece = Pack::Piece.find(id)
+
+    unless piece.tags.present?
+      piece.init_tags
+      piece.save
+    end
+
+    return true if piece.is_finalized
+
+    self.extract_content(piece)
+    self.generate_thumbs(piece)
+
+    piece.update(is_finalized: true)
+  end
+
+  def self.generate_thumbs(piece)
+    begin
+      piece.content.reprocess!
+      piece.save
+    rescue => e
+      true
+    end
+  end
+
+  def self.extract_content(piece)
+    begin
+      path = if piece.content.queued_for_write[:original]
+               piece.content.queued_for_write[:original].path
+             else
+               piece.content.path
+             end
+
+      POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
+
+      dirname  = File.dirname(path)
+      filename = File.basename(path, '.pdf') + '.txt'
+      filepath = File.join(dirname, filename)
+
+      if File.exist?(filepath)
+        text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
+        # remove special character, which will not be used on search anyway
+        text = text.each_char.select { |c| c.bytes.size < 4 }.join
+        piece.content_text = text
+      end
+
+      piece.content_text = ' ' unless piece.content_text.present?
+
+      piece.save
+    rescue => e
+      true
+    end
+  end
+
+  def init_tags
+    self.tags = pack.name.downcase.sub(' all', '').split
+
+    tags << position if position
+  end
+
   def get_token
     if token.present?
       token
@@ -81,8 +189,8 @@ class Pack::Piece < ActiveRecord::Base
   end
 
 
-  def get_access_url
-    content.url + '&token=' + get_token
+  def get_access_url(style = :original)
+    content.url(style) + '&token=' + get_token
   end
 
 
@@ -110,9 +218,50 @@ class Pack::Piece < ActiveRecord::Base
     origin == 'retriever'
   end
 
+  def from_web?
+    temp_document.try(:api_name) == 'web'
+  end
+
+  def from_mobile?
+    temp_document.try(:api_name) == 'mobile'
+  end
+
+  def from_mcf?
+    temp_document.try(:api_name) == 'mcf'
+  end
+
+  def pages_number
+    self.temp_document.try(:pages_number) || 0
+  end
+
   def is_already_pre_assigned_with?(process='preseizure')
     return true unless is_awaiting_pre_assignment?
     process == 'preseizure' ? preseizures.any? : expense.present?
+  end
+
+  def get_state_to(type='image')
+    text    = 'none'
+    img_url = ''
+
+    if self.pre_assignment_waiting_analytics?
+      text     = 'awaiting_analytics'
+      img_url  = 'application/compta_analytics.png'
+    elsif self.is_awaiting_pre_assignment
+      text     = 'awaiting_pre_assignment'
+      img_url  = 'application/preaff_pending.png'
+    elsif self.preseizures.failed_ibiza_delivery.count > 0 || self.preseizures.failed_exact_online_delivery.count > 0
+      text    = 'delivery_failed'
+      img_url = 'application/preaff_err.png'
+    elsif self.preseizures.delivered.count > 0
+      text    = 'delivered'
+      img_url = 'application/preaff_deliv.png'
+    elsif self.preseizures.not_delivered.where(delivery_tried_at: [nil, '']).count > 0 && self.user.uses_api_softwares?
+      text    = 'delivery_pending'
+      img_url = 'application/preaff_deliv_pending.png'
+    end
+
+    return text if type.to_s == 'text'
+    return img_url
   end
 
 

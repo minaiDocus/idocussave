@@ -8,7 +8,7 @@ module FileDelivery::RemoteReport
 
         remote_file.receiver     = receiver
         remote_file.remotable    = self
-        remote_file.pack         = pack
+        remote_file.pack         = self.is_a?(Pack) ? self : pack
         remote_file.service_name = service_name
         remote_file.temp_path    = generate_csv_files(receiver, service_name, not_delivered)
         remote_file.preseizures  = not_delivered

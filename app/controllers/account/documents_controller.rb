@@ -15,7 +15,12 @@ class Account::DocumentsController < Account::AccountController
 
     @packs            = Pack.search(params[:filter], options)
     @last_composition = @user.composition
-    @composition      = Document.where(id: @last_composition.document_ids) if @last_composition
+
+    ### TODO : GET DOCUMENTS COMPOSITION FROM PIECES INSTEAD OF DOCUMENTS FOR COMPOSITION CREATED AFTER 23/01/2019
+    @composition      = nil #TEMP FIX
+    # @composition      = Document.where(id: @last_composition.document_ids) if @last_composition
+    ######################
+
     @period_service   = PeriodService.new user: @user
 
     @pack = Pack.where(owner_id: options[:owner_ids], name: params[:pack_name]).first if params[:pack_name].present?
@@ -25,11 +30,11 @@ class Account::DocumentsController < Account::AccountController
   def show
     @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
 
-    @documents = Document.search(params[:filter],
+    @documents = Pack::Piece.search(params[:filter],
       pack_id:  params[:id],
       per_page: 10_000,
       sort:     true
-    ).where.not(origin: ['mixed']).order(position: :asc).includes(:pack)
+    ).order(position: :asc).includes(:pack)
 
     unless @pack.is_fully_processed || params[:filter].presence
       @temp_pack      = TempPack.find_by_name(@pack.name)
@@ -175,9 +180,24 @@ class Account::DocumentsController < Account::AccountController
   def piece
     # NOTE : support old MongoDB id for pieces uploaded to iBiZa, in CSV export or others
     @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.find(params[:id])
-    if File.exist?(@piece.content.path) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
-      type = @piece.content_content_type || 'application/pdf'
-      send_file(@piece.content.path, type: type, filename: @piece.content_file_name, x_sendfile: true, disposition: 'inline')
+    filepath = @piece.content.path(params[:style].presence || :original)
+
+    if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
+      mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
+      send_file(filepath, type: mime_type, filename: @piece.content_file_name, x_sendfile: true, disposition: 'inline')
+    else
+      render nothing: true, status: 404
+    end
+  end
+
+  # GET /account/documents/pack/:id/download
+  def pack
+    @pack = Pack.find params[:id]
+    filepath = @pack.content.path
+
+    if File.exist?(filepath) && (@pack.owner.in?(accounts) || current_user.try(:is_admin))
+      mime_type = 'application/pdf'
+      send_file(filepath, type: mime_type, filename: @pack.content_file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end

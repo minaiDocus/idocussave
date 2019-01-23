@@ -9,9 +9,9 @@ class Account::PreseizuresController < Account::OrganizationController
       if report
         @preseizures = report.preseizures
         if params[:view] == 'delivered'
-          @preseizures = Pack::Report::Preseizure.delivered_from(@preseizures)
+          @preseizures = @preseizures.delivered
         elsif params[:view] == 'not_delivered'
-          @preseizures = Pack::Report::Preseizure.not_delivered_from(@preseizures)
+          @preseizures = @preseizures.not_delivered
         end
         @preseizures = @preseizures.by_position.page(params[:page]).per(params[:per_page])
       else

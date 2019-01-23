@@ -67,7 +67,7 @@ module FileDelivery::RemoteFile
     if remote_file.nil?
       remote_file              = ::RemoteFile.new
       remote_file.receiver     = object
-      remote_file.pack         = pack
+      remote_file.pack         = self.is_a?(Pack) ? self : pack #remote file can be document or pack itself
       remote_file.service_name = service_name
       remote_file.remotable    = self
 

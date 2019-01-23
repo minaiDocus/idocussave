@@ -6,7 +6,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   belongs_to :report,    class_name: 'Pack::Report', inverse_of: :preseizures
   belongs_to :operation, class_name: 'Operation',    inverse_of: :preseizure
   belongs_to :organization,                          inverse_of: :preseizures
-  has_one :analytic_reference, through: :piece
+  has_one    :analytic_reference, through: :piece
 
   has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :destroy
@@ -65,7 +65,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     not_exact_online_delivered.where('delivery_message LIKE "%exact_online%"').where.not(delivery_tried_at: nil)
   end
 
-  def self.delivered_from(lists)
+  def self.delivered
     # user = lists.try(:first).try(:user)
     # result = []
 
@@ -76,10 +76,10 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     # end
 
     # result
-    lists.where.not(is_delivered_to: [nil, ''])
+    where.not(is_delivered_to: [nil, ''])
   end
 
-  def self.not_delivered_from(lists)
+  def self.not_delivered
     # user = lists.try(:first).try(:user)
     # result = []
 
@@ -90,7 +90,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     # end
 
     # result
-    lists.where(is_delivered_to: [nil, ''])
+    where(is_delivered_to: [nil, ''])
   end
 
   def piece_name
@@ -256,7 +256,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def is_delivered_to?(software='ibiza')
-    self.is_delivered_to.match(/#{software}/)
+    self.is_delivered_to.match(/#{software}/) ? true : false
   end
 
   def set_delivery_message_for(software='ibiza', message)

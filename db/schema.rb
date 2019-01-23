@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190108123711) do
+ActiveRecord::Schema.define(version: 20190114104503) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.string   "organization_id_mongo_id",       limit: 255
     t.integer  "user_id",                        limit: 4
     t.string   "user_id_mongo_id",               limit: 255
+    t.integer  "analytic_reference_id",          limit: 4
   end
 
   add_index "account_book_types", ["mongo_id"], name: "index_account_book_types_on_mongo_id", using: :btree
@@ -170,17 +171,20 @@ ActiveRecord::Schema.define(version: 20190108123711) do
 
   create_table "analytic_references", force: :cascade do |t|
     t.string  "a1_name",        limit: 255
-    t.decimal "a1_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.text    "a1_references",  limit: 65535
+    t.decimal "a1_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string  "a1_axis1",       limit: 255
     t.string  "a1_axis2",       limit: 255
     t.string  "a1_axis3",       limit: 255
     t.string  "a2_name",        limit: 255
-    t.decimal "a2_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.text    "a2_references",  limit: 65535
+    t.decimal "a2_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string  "a2_axis1",       limit: 255
     t.string  "a2_axis2",       limit: 255
     t.string  "a2_axis3",       limit: 255
     t.string  "a3_name",        limit: 255
-    t.decimal "a3_ventilation",             precision: 5, scale: 2, default: 0.0
+    t.text    "a3_references",  limit: 65535
+    t.decimal "a3_ventilation",               precision: 5, scale: 2, default: 0.0
     t.string  "a3_axis1",       limit: 255
     t.string  "a3_axis2",       limit: 255
     t.string  "a3_axis3",       limit: 255
@@ -877,6 +881,7 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.text     "encrypted_access_token",   limit: 65535
     t.text     "encrypted_access_token_2", limit: 65535
     t.boolean  "is_analysis_activated",                  default: false
+    t.boolean  "is_analysis_to_validate",                default: false
   end
 
   add_index "ibizas", ["mongo_id"], name: "index_ibizas_on_mongo_id", using: :btree
@@ -1326,12 +1331,12 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.datetime "updated_at"
     t.string   "name",                       limit: 255
     t.integer  "number",                     limit: 4
-    t.boolean  "is_a_cover",                             default: false,   null: false
+    t.boolean  "is_a_cover",                                    default: false,   null: false
     t.string   "origin",                     limit: 255
     t.integer  "position",                   limit: 4
     t.string   "token",                      limit: 255
-    t.boolean  "is_awaiting_pre_assignment",             default: false,   null: false
-    t.string   "pre_assignment_state",       limit: 255, default: "ready"
+    t.boolean  "is_awaiting_pre_assignment",                    default: false,   null: false
+    t.string   "pre_assignment_state",       limit: 255,        default: "ready"
     t.string   "pre_assignment_comment",     limit: 255
     t.string   "content_file_name",          limit: 255
     t.string   "content_content_type",       limit: 255
@@ -1350,9 +1355,13 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.integer  "pack_id",                    limit: 4
     t.string   "pack_id_mongo_id",           limit: 255
     t.integer  "analytic_reference_id",      limit: 4
+    t.text     "content_text",               limit: 4294967295
+    t.text     "tags",                       limit: 4294967295
+    t.boolean  "is_finalized",                                  default: false
   end
 
   add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
+  add_index "pack_pieces", ["is_finalized"], name: "index_pack_pieces_on_is_finalized", using: :btree
   add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
   add_index "pack_pieces", ["name"], name: "index_pack_pieces_on_name", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
@@ -1581,6 +1590,11 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.string   "owner_id_mongo_id",        limit: 255
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
+    t.string   "content_file_name",        limit: 255
+    t.string   "content_content_type",     limit: 255
+    t.integer  "content_file_size",        limit: 4
+    t.datetime "content_updated_at"
+    t.string   "content_fingerprint",      limit: 255
   end
 
   add_index "packs", ["mongo_id"], name: "index_packs_on_mongo_id", using: :btree
@@ -2073,6 +2087,7 @@ ActiveRecord::Schema.define(version: 20190108123711) do
     t.boolean "is_ibiza_used",                                default: false
     t.integer "is_ibiza_auto_deliver",              limit: 4, default: -1,    null: false
     t.integer "is_ibiza_compta_analysis_activated", limit: 4, default: -1,    null: false
+    t.integer "is_ibiza_analysis_to_validate",      limit: 4, default: -1,    null: false
     t.boolean "is_coala_used",                                default: false
     t.integer "is_coala_auto_deliver",              limit: 4, default: -1,    null: false
     t.boolean "is_quadratus_used",                            default: false

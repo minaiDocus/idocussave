@@ -386,6 +386,19 @@ class User < ActiveRecord::Base
     self.try(:softwares).try(:is_csv_descriptor_used) && self.organization.is_csv_descriptor_used
   end
 
+  def uses_ibiza_analytics?
+    uses_ibiza? && self.ibiza_id.present? && self.try(:softwares).try(:ibiza_compta_analysis_activated?)
+  end
+
+  def validate_ibiza_analyitcs?
+    uses_ibiza? && self.ibiza_id.present? && self.try(:softwares).try(:ibiza_compta_analysis_activated?) && self.try(:softwares).try(:ibiza_analysis_to_validate?)
+  end
+
+  def uses_manual_delivery?
+    ( uses_ibiza? && !self.try(:softwares).try(:ibiza_auto_deliver?) ) ||
+    ( uses_exact_online? && !self.try(:softwares).try(:exact_online_auto_deliver?) )
+  end
+
   private
 
   def belonging_of_manager
