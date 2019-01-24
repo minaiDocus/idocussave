@@ -14,22 +14,14 @@ class Pack::Report < ActiveRecord::Base
   belongs_to :document, class_name: 'PeriodDocument',           inverse_of: :report, foreign_key: :document_id
   belongs_to :organization
 
-  scope :ibiza_delivered,           -> { where('is_delivered_to LIKE "%ibiza%"') }
-  scope :exact_online_delivered,    -> { where('is_delivered_to LIKE "%exact_online%"') }
+  scope :delivered,                 -> { where.not(is_delivered_to: [nil, '']) }
+  scope :not_delivered,             -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_reports.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']) }
+  scope :ibiza_delivered,           -> { where('is_delivered_to = "ibiza"') }
+  scope :exact_online_delivered,    -> { where('is_delivered_to = "exact_online"') }
   scope :locked,                    -> { where(is_locked: true) }
   scope :expenses,                  -> { where(type: 'NDF') }
   scope :not_locked,                -> { where(is_locked: false) }
   scope :preseizures,               -> { where.not(type: ['NDF']) }
-
-  def self.delivered
-    # self.where(id: lists.select{ |s| s.is_delivered? }.collect(&:id))
-    where.not(is_delivered_to: [nil, ''])
-  end
-
-  def self.not_delivered
-    # self.where(id: lists.select{ |s| s.is_not_delivered? }.collect(&:id))
-    where(is_delivered_to: [nil, ''])
-  end
 
   def journal
     result = name.split[1]
@@ -124,9 +116,10 @@ class Pack::Report < ActiveRecord::Base
   def delivered_to(software)
     return true if is_delivered_to?(software)
 
-    softwares = self.is_delivered_to.split(',') || []
-    softwares << software
-    self.is_delivered_to = softwares.sort.join(',')
+    # softwares = self.is_delivered_to.split(',') || []
+    # softwares << software
+    # self.is_delivered_to = softwares.sort.join(',')
+    self.is_delivered_to = software
     save
   end
 

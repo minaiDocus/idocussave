@@ -62,7 +62,7 @@
                       .pull-left Format d’export (.csv)
                       - if @customer.uses_csv_descriptor?
                         %i.icon-ok.pull-right
-            - unless @organization.uses_api_softwares?
+            - unless @customer.uses_api_softwares?
               %li{ class: ('active' if params[:tab] == 'accounting_plan') }
                 %a{ href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
             - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
@@ -554,7 +554,7 @@
                   - if @customer.active?
                     = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
                     = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
-                  = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
+                  =#NOT USED link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
             - if @organization.knowings.try(:ready?)
               #ged.tab-pane{ class: ('active' if params[:tab] == 'ged') }
                 %table.table.table-striped.table-condensed

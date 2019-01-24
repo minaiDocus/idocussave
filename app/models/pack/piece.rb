@@ -244,11 +244,11 @@ class Pack::Piece < ActiveRecord::Base
     img_url = ''
 
     if self.pre_assignment_waiting_analytics?
-      text     = 'awaiting_analytics'
-      img_url  = 'application/compta_analytics.png'
+      text    = 'awaiting_analytics'
+      img_url = 'application/compta_analytics.png'
     elsif self.is_awaiting_pre_assignment
-      text     = 'awaiting_pre_assignment'
-      img_url  = 'application/preaff_pending.png'
+      text    = 'awaiting_pre_assignment'
+      img_url = 'application/preaff_pending.png'
     elsif self.preseizures.failed_ibiza_delivery.count > 0 || self.preseizures.failed_exact_online_delivery.count > 0
       text    = 'delivery_failed'
       img_url = 'application/preaff_err.png'

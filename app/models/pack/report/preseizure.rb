@@ -19,10 +19,13 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure'
 
   scope :locked,                        -> { where(is_locked: true) }
-  scope :ibiza_delivered,               -> { where('is_delivered_to LIKE "%ibiza%"') }
-  scope :not_ibiza_delivered,           -> { joins(user: :softwares).where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to NOT LIKE "%ibiza%"') }
-  scope :exact_online_delivered,        -> { where('is_delivered_to LIKE "%exact_online%"') }
-  scope :not_exact_online_delivered,    -> { joins(user: :softwares).where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to NOT LIKE "%exact_online%"') }
+  scope :delivered,                     -> { where.not(is_delivered_to: [nil, '']) }
+  scope :not_delivered,                 -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']) }
+  scope :ibiza_delivered,               -> { where('is_delivered_to = "ibiza"') }
+  scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"') }
+  scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
+  scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"') }
+  scope :failed_delivery,               -> { where.not(delivery_message: [nil, '']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
 
@@ -58,39 +61,11 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def self.failed_ibiza_delivery
-    not_ibiza_delivered.where('delivery_message LIKE "%ibiza%"').where.not(delivery_tried_at: nil)
+    not_ibiza_delivered.failed_delivery
   end
 
   def self.failed_exact_online_delivery
-    not_exact_online_delivered.where('delivery_message LIKE "%exact_online%"').where.not(delivery_tried_at: nil)
-  end
-
-  def self.delivered
-    # user = lists.try(:first).try(:user)
-    # result = []
-
-    # if user && user.uses_ibiza?
-    #   result = lists.ibiza_delivered
-    # elsif user && user.uses_exact_online?
-    #   result = lists.exact_online_delivered
-    # end
-
-    # result
-    where.not(is_delivered_to: [nil, ''])
-  end
-
-  def self.not_delivered
-    # user = lists.try(:first).try(:user)
-    # result = []
-
-    # if user && user.uses_ibiza?
-    #   result = lists.not_ibiza_delivered
-    # elsif user && user.uses_exact_online?
-    #   result = lists.not_exact_online_delivered
-    # end
-
-    # result
-    where(is_delivered_to: [nil, ''])
+    not_exact_online_delivered.failed_delivery
   end
 
   def piece_name
@@ -249,9 +224,10 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   def delivered_to(software)
     return true if is_delivered_to?(software)
 
-    softwares = self.is_delivered_to.split(',') || []
-    softwares << software
-    self.is_delivered_to = softwares.sort.join(',')
+    # softwares = self.is_delivered_to.split(',') || []
+    # softwares << software
+    # self.is_delivered_to = softwares.sort.join(',')
+    self.is_delivered_to = software
     save
   end
 

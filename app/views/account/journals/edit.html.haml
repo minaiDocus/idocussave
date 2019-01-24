@@ -6,7 +6,7 @@
           Edition du journal : #{@journal.name}
           - if @customer
             ( #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')} )
-      - if @customer.uses_ibiza_analytics?
+      - if @customer.try(:uses_ibiza_analytics?)
         .pull-right
           = link_to 'Edition Compta Analytique', edit_analytics_account_organization_customer_journals_path(@organization, @customer, id: @journal), class: 'btn btn-primary'
   .row-fluid
