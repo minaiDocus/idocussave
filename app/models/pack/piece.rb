@@ -258,6 +258,12 @@ class Pack::Piece < ActiveRecord::Base
     elsif self.preseizures.not_delivered.where(delivery_tried_at: [nil, '']).count > 0 && self.user.uses_api_softwares?
       text    = 'delivery_pending'
       img_url = 'application/preaff_deliv_pending.png'
+    elsif Pack::Report::Preseizure.unscoped.where(piece_id: self.id, is_blocked_for_duplication: true).count > 0
+      text    = 'duplication'
+      img_url = 'application/preaff_dupl.png'
+    elsif self.pre_assignment_ignored?
+      text    = 'piece_ignored'
+      img_url = 'application/preaff_ignored.png'
     end
 
     return text if type.to_s == 'text'
