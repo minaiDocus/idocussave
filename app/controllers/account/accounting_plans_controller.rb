@@ -2,7 +2,6 @@
 class Account::AccountingPlansController < Account::OrganizationController
   before_filter :load_customer
   before_filter :verify_rights
-  before_filter :verify_access
   before_filter :verify_if_customer_is_active
   before_filter :redirect_to_current_step
   before_filter :load_accounting_plan
@@ -86,15 +85,6 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   private
 
-  def verify_access
-    if @customer.uses_ibiza?
-      flash[:error] = t('authorization.unessessary_rights')
-
-      redirect_to account_organization_path(@organization)
-    end
-  end
-
-
   def load_customer
     @customer = customers.find params[:customer_id]
   end
@@ -115,7 +105,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
 
   def verify_rights
-    unless @user.leader? || @user.manage_customers
+    unless (@user.leader? || @user.manage_customers) && !@customer.uses_api_softwares?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

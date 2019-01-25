@@ -19,7 +19,9 @@ class Account::VatAccountsController < Account::OrganizationController
 
   # /account/organizations/:organization_id/customers/:customer_id/accounting_plan/update_multiple
   def update_multiple
-    if @accounting_plan.update(accounting_plan_params)
+    modified = params[:accounting_plan].present? ? @accounting_plan.update(accounting_plan_params) : true
+
+    if modified
       flash[:success] = 'Modifié avec succès.'
 
       redirect_to account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)
@@ -50,7 +52,7 @@ class Account::VatAccountsController < Account::OrganizationController
 
 
   def verify_rights
-    unless @user.leader? || @user.manage_customers
+    unless (@user.leader? || @user.manage_customers) && !@customer.uses_api_softwares?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
