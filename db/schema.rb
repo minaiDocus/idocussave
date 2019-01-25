@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190114104503) do
+ActiveRecord::Schema.define(version: 20190125083303) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1334,6 +1334,7 @@ ActiveRecord::Schema.define(version: 20190114104503) do
     t.boolean  "is_a_cover",                                    default: false,   null: false
     t.string   "origin",                     limit: 255
     t.integer  "position",                   limit: 4
+    t.integer  "pages_number",               limit: 4,          default: 0
     t.string   "token",                      limit: 255
     t.boolean  "is_awaiting_pre_assignment",                    default: false,   null: false
     t.string   "pre_assignment_state",       limit: 255,        default: "ready"

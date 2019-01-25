@@ -25,7 +25,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"') }
   scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
   scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"') }
-  scope :failed_delivery,               -> { where.not(delivery_message: [nil, '']).where.not(delivery_tried_at: nil) }
+  scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
 
@@ -58,14 +58,6 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
 
     preseizures
-  end
-
-  def self.failed_ibiza_delivery
-    not_ibiza_delivered.failed_delivery
-  end
-
-  def self.failed_exact_online_delivery
-    not_exact_online_delivered.failed_delivery
   end
 
   def piece_name

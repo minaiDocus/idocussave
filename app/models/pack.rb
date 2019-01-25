@@ -72,7 +72,7 @@ class Pack < ActiveRecord::Base
     if documents.first.is_a? Document
       documents.size
     else
-      documents.inject(0){ |memo, piece| memo + piece.pages_number }
+      documents.inject(0){ |memo, piece| memo + piece.get_pages_number }
     end
   end
 
@@ -98,9 +98,9 @@ class Pack < ActiveRecord::Base
 
       self.pages_count = pages.size
     else
-      self.scanned_pages_count = pages.scanned.inject(0){ |memo, piece| memo + piece.pages_number }
+      self.scanned_pages_count = pages.scanned.inject(0){ |memo, piece| memo + piece.get_pages_number }
 
-      self.pages_count = pages.inject(0){ |memo, piece| memo + piece.pages_number }
+      self.pages_count = pages.inject(0){ |memo, piece| memo + piece.get_pages_number }
     end
   end
 

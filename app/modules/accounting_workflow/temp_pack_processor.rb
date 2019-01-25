@@ -60,6 +60,7 @@ class AccountingWorkflow::TempPackProcessor
           piece.temp_document         = temp_document
           piece.is_a_cover            = is_a_cover
           piece.position              = piece_position
+          piece.pages_number          = pages_number
           piece.analytic_reference_id = temp_document.analytic_reference_id
           piece.save
           added_pieces << piece

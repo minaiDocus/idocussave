@@ -230,8 +230,16 @@ class Pack::Piece < ActiveRecord::Base
     temp_document.try(:api_name) == 'mcf'
   end
 
-  def pages_number
-    self.temp_document.try(:pages_number) || 0
+  def get_pages_number
+    return self.pages_number if self.pages_number > 0
+
+    begin
+      self.pages_number = DocumentTools.pages_number(self.content.path)
+      save
+    rescue
+      0
+    end
+    return self.pages_number
   end
 
   def is_already_pre_assigned_with?(process='preseizure')
@@ -249,15 +257,15 @@ class Pack::Piece < ActiveRecord::Base
     elsif self.is_awaiting_pre_assignment
       text    = 'awaiting_pre_assignment'
       img_url = 'application/preaff_pending.png'
-    elsif self.preseizures.failed_ibiza_delivery.count > 0 || self.preseizures.failed_exact_online_delivery.count > 0
-      text    = 'delivery_failed'
-      img_url = 'application/preaff_err.png'
     elsif self.preseizures.delivered.count > 0
       text    = 'delivered'
       img_url = 'application/preaff_deliv.png'
-    elsif self.preseizures.not_delivered.where(delivery_tried_at: [nil, '']).count > 0 && self.user.uses_api_softwares?
+    elsif self.preseizures.where(is_delivered_to: [nil, ''], delivery_tried_at: [nil, '']).count > 0 && self.user.uses_api_softwares?
       text    = 'delivery_pending'
       img_url = 'application/preaff_deliv_pending.png'
+    elsif self.preseizures.failed_delivery.count > 0
+      text    = 'delivery_failed'
+      img_url = 'application/preaff_err.png'
     elsif Pack::Report::Preseizure.unscoped.where(piece_id: self.id, is_blocked_for_duplication: true).count > 0
       text    = 'duplication'
       img_url = 'application/preaff_dupl.png'

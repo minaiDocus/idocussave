@@ -19,14 +19,16 @@ class Account::AnalyticsController < Account::AccountController
   end
 
   def load_default_analytic_by_pattern
-    @journal  = (params[:pattern].present? && params[:type] == 'journal') ? @customer.account_book_types.where(name: params[:pattern]).first : nil
-    @pieces   = (params[:pattern].present? && params[:type] == 'piece') ? Pack::Piece.where(id: params[:pattern]) : nil
+    if @customer
+      @journal  = (params[:pattern].present? && params[:type] == 'journal') ? @customer.account_book_types.where(name: params[:pattern]).first : nil
+      @pieces   = (params[:pattern].present? && params[:type] == 'piece') ? Pack::Piece.where(id: params[:pattern]) : nil
 
-    if @pieces
-      journal_name = @pieces.collect(&:journal).uniq || []
+      if @pieces
+        journal_name = @pieces.collect(&:journal).uniq || []
 
-      if journal_name.size == 1 && !@journal
-        @journal  = @customer.account_book_types.where(name: journal_name.first).first || nil
+        if journal_name.size == 1 && !@journal
+          @journal  = @customer.account_book_types.where(name: journal_name.first).first || nil
+        end
       end
     end
   end
