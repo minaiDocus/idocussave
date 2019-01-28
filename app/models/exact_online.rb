@@ -70,11 +70,15 @@ class ExactOnline < ActiveRecord::Base
   def refresh_session
     self.with_lock(timeout: 60, retries: 120, retry_sleep: 0.5) do
       if self.token_expires_at <= 10.seconds.from_now
-        session.refresh_tokens
-        self.refresh_token     = session.refresh_token
-        self.access_token      = session.access_token
-        self.token_expires_at  = session.expires_at
-        self.save
+        begin
+          session.refresh_tokens
+          self.refresh_token     = session.refresh_token
+          self.access_token      = session.access_token
+          self.token_expires_at  = session.expires_at
+          self.save
+        rescue ExactOnlineSdk::AuthError
+          @session = nil
+        end
       else
         @session = nil
       end

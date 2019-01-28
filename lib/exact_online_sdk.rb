@@ -56,10 +56,8 @@ class ExactOnlineSdk
         @refresh_token = data['refresh_token']
         @access_token  = data['access_token']
         @expires_at    = Time.now + data['expires_in'].to_i.seconds
-      elsif @response.code == 401
-        raise AuthError
       else
-        @response.code
+        raise AuthError
       end
     end
 
@@ -78,10 +76,8 @@ class ExactOnlineSdk
         @refresh_token = data['refresh_token']
         @access_token  = data['access_token']
         @expires_at    = Time.now + data['expires_in'].to_i.seconds
-      elsif @response.code == 401
-        raise AuthError
       else
-        @response.code
+        raise AuthError
       end
     end
   end
@@ -206,10 +202,8 @@ class ExactOnlineSdk
           end
           hsh.with_indifferent_access
         end
-      elsif @response.code == 401
-        raise AuthError
       else
-        @response.code
+        raise AuthError
       end
     end
   end
