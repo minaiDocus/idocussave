@@ -243,6 +243,15 @@ class Account::CustomersController < Account::OrganizationController
   def edit_mcf
   end
 
+  def upload_email_infos
+    if @customer.options.try(:is_upload_authorized) && @customer.active?
+      render :upload_by_email
+    else
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_customer_path(@organization, @customer)
+    end
+  end
+
   def show_mcf_errors
     order_by = params[:sort] || 'created_at'
     direction = params[:direction] || 'desc'

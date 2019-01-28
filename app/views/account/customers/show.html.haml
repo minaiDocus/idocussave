@@ -123,6 +123,11 @@
                             %br
                         - else
                           %i{ style: 'color:gray' } Aucun
+                    %tr
+                      %th Information d'envoi de document par mail
+                      %td
+                        = "#{@customer.email_code}@fw.idocus.com - "
+                        = link_to "détails", upload_email_infos_account_organization_customer_path(@organization, @customer)
               - if @customer.active?
                 .row-fluid
                   .span12
