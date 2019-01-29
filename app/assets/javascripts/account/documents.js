@@ -891,9 +891,12 @@
     })
 
     $('#comptaAnalysisEdition').on('hide', function() {
-      $("#comptaAnalysisEdition .length_alert").html('')
-      if(window.analytic_target_form == '#fileupload')
+      $("#comptaAnalysisEdition .length_alert").html('');
+
+      if(window.analytic_target_form == '#fileupload'){
         $("#uploadDialog .analytic_resume_box").html(window.getAnalyticsResume());
+        $('#analytic_user_fields .with_default_analysis').hide();
+      }
     })
 
     $('#document_owner_list').chosen({

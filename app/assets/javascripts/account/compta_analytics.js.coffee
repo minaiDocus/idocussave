@@ -36,9 +36,11 @@ getAnalyticsResume = () ->
       html += '</div>'
 
   if axis_option_name == ''
-    html += "<div class='analytic_groups clearfix'> <div class='analytic_axis_name'>Aucune analyse définie</div> </div>"
+    html = ''
+  else
+    html += '</div>'
 
-  html += '</div>'
+  html
 
 setDefaultAnalytics = (defaults) ->
   window.defaults = defaults
