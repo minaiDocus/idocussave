@@ -235,7 +235,6 @@ class Pack < ActiveRecord::Base
     info
   end
 
-
   def append(file_path)
     Dir.mktmpdir do |dir|
       if File.exist? original_document.content.path.to_s
@@ -270,6 +269,18 @@ class Pack < ActiveRecord::Base
         original_document.content = open(merged_file_path)
         original_document.save
       end
+    end
+  end
+
+  private
+
+  def recreate_original_document
+    FileUtils.rm original_document.content.path.to_s, force: true
+    original_document.content = nil
+    original_document.save
+
+    self.pieces.by_position.each do |piece|
+      append piece.content.path
     end
   end
 end
