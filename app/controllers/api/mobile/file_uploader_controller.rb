@@ -99,13 +99,12 @@ class Api::Mobile::FileUploaderController < MobileApiController
         }
       end
 
-      result[:compta_analysis] = (user.organization.ibiza.try(:configured?) && user.ibiza_id.present? && user.softwares.ibiza_compta_analysis_activated?) ? true : false
+      result[:compta_analysis] = user.uses_ibiza_analytics? ? true : false
     end
     result
   end
 
   def parse_analytic_params
-    # return nil # NOT USED UNTIL MEP MOBILE
     return nil unless params[:file_compta_analysis]
 
     begin
@@ -124,14 +123,16 @@ class Api::Mobile::FileUploaderController < MobileApiController
       analysis["#{i.to_s}"] = { 'name' => a['analysis'].presence || '' }
       references = a['references']
 
-      references.each_with_index do |r, t|
-        j = t+1
-        analysis["#{i.to_s}#{j.to_s}"] =  {
-                                            'ventilation' => r['ventilation'].presence || 0,
-                                            'axis1'       => r['axis1'].presence || '',
-                                            'axis2'       => r['axis2'].presence || '',
-                                            'axis3'       => r['axis3'].presence || ''
-                                          }
+      if references.any?
+        references.each_with_index do |r, t|
+          j = t+1
+          analysis["#{i.to_s}#{j.to_s}"] =  {
+                                              'ventilation' => r['ventilation'].presence || 0,
+                                              'axis1'       => r['axis1'].presence || '',
+                                              'axis2'       => r['axis2'].presence || '',
+                                              'axis3'       => r['axis3'].presence || ''
+                                            }
+        end
       end
     end
 

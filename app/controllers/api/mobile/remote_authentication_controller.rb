@@ -14,7 +14,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     message = 'Ping success'
 
     #(code 500 for automatically logout app mobile)
-      if (build_code.to_i < 4 || build_code.nil?)
+      if (build_code.to_i < 5 || build_code.nil?)
         code = 500 
         message = "Le service iDocus actuel nécessite une version plus récente de l'application; Veuillez mettre à jour votre application iDocus s'il vous plaît. Merci."
       end

@@ -391,7 +391,7 @@ class User < ActiveRecord::Base
   end
 
   def validate_ibiza_analyitcs?
-    uses_ibiza? && self.ibiza_id.present? && self.try(:softwares).try(:ibiza_compta_analysis_activated?) && self.try(:softwares).try(:ibiza_analysis_to_validate?)
+    uses_ibiza_analytics? && self.try(:softwares).try(:ibiza_analysis_to_validate?)
   end
 
   def uses_manual_delivery?
