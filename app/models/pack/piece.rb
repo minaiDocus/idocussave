@@ -70,6 +70,7 @@ class Pack::Piece < ActiveRecord::Base
     state :force_processing
     state :processed
     state :ignored
+    state :truly_ignored
     state :not_processed
 
     event :ready do
@@ -96,6 +97,10 @@ class Pack::Piece < ActiveRecord::Base
       transition processing: :ignored
     end
 
+    event :confirm_ignorance do
+      transition ignored: :truly_ignored
+    end
+
     event :not_processed do
       transition [:processing, :force_processing] => :not_processed
     end
@@ -107,10 +112,21 @@ class Pack::Piece < ActiveRecord::Base
 
     query = self.joins(:pack)
 
-    query = query.where(id: options[:id]) if options[:id].present?
-    query = query.where(id: options[:ids]) if options[:ids].present?
-    query = query.where('packs.id = ?', options[:pack_id] )  if options[:pack_id].present?
-    query = query.where('packs.id IN (?)', options[:pack_ids]) if options[:pack_ids].present?
+    query = query.where(id: options[:id])                                                        if options[:id].present?
+    query = query.where(id: options[:ids])                                                       if options[:ids].present?
+    query = query.where('packs.id = ?', options[:pack_id] )                                      if options[:pack_id].present?
+    query = query.where('packs.id IN (?)', options[:pack_ids])                                   if options[:pack_ids].present?
+    query = query.where('packs.name LIKE ?', "%#{options[:pack_name]}%")                         if options[:pack_name].present?
+    query = query.where('pack_pieces.name LIKE ?', "%#{options[:piece_name]}%")                  if options[:piece_name].present?
+    query = query.where('pack_pieces.number LIKE ?', "%#{options[:piece_number]}%")              if options[:piece_number].present?
+    query = query.where('pack_pieces.pre_assignment_state = ?', options[:pre_assignment_state])  if options[:pre_assignment_state].present?
+
+    if options[:created_at]
+      options[:created_at].each do |operator, value|
+        query = query.where("pack_pieces.created_at #{operator} ?", value) if operator.in?(['>=', '<='])
+      end
+    end
+
     query = query.where('pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?', "%#{text}%", "%#{text}%", "%#{text}%") if text.present?
 
     query.order(position: :asc) if options[:sort] == true
@@ -269,7 +285,7 @@ class Pack::Piece < ActiveRecord::Base
     elsif Pack::Report::Preseizure.unscoped.where(piece_id: self.id, is_blocked_for_duplication: true).count > 0
       text    = 'duplication'
       img_url = 'application/preaff_dupl.png'
-    elsif self.pre_assignment_ignored?
+    elsif self.pre_assignment_ignored? || self.pre_assignment_truly_ignored?
       text    = 'piece_ignored'
       img_url = 'application/preaff_ignored.png'
     end

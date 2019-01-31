@@ -275,8 +275,9 @@ Idocus::Application.routes.draw do
       resources :mcf_users,                         only: :index
       resources :pre_assignments,                   only: :index
       resources :pre_assignment_delivery_errors,    only: :index
+
       resources :pre_assignment_ignored,            only: :index do
-        post :force_pre_assignment, on: :collection
+        post :update_ignored_pieces, on: :collection
       end
       resources :pre_assignment_blocked_duplicates, only: :index do
         post :update_multiple, on: :collection

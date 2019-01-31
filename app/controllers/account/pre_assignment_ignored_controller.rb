@@ -4,10 +4,23 @@ class Account::PreAssignmentIgnoredController < Account::OrganizationController
   def index
     @ignored_list = Pack::Piece.pre_assignment_ignored
       .where(user_id: customer_ids)
+      .search(nil, search_terms(params[:filter_contains]))
       .order("#{sort_column} #{sort_direction}")
       .page(params[:page])
       .per(params[:per_page])
   end
+
+  def update_ignored_pieces
+    if params[:confirm_ignorance].present?
+      confirm_ignored_pieces
+    elsif params[:force_pre_assignment].present?
+      force_pre_assignment
+    end
+
+    redirect_to account_organization_pre_assignment_ignored_index_path(@organization)
+  end
+
+  private
 
   def force_pre_assignment
     pieces = Pack::Piece.pre_assignment_ignored.where(user_id: customer_ids, id: params[:ignored_ids])
@@ -20,11 +33,19 @@ class Account::PreAssignmentIgnoredController < Account::OrganizationController
     else
       flash[:error] = 'Vous devez sélectionner au moins une pièce.'
     end
-
-    redirect_to account_organization_pre_assignment_ignored_index_path(@organization)
   end
 
-  private
+  def confirm_ignored_pieces
+    pieces = Pack::Piece.where(pre_assignment_state: 'ignored', user_id: customer_ids, id: params[:ignored_ids])
+
+    if pieces.size > 0
+      pieces.each(&:confirm_ignorance_pre_assignment)
+
+      flash[:success] = "Modifié avec succès."
+    else
+      flash[:error] = 'Impossible de traiter la demande.'
+    end
+  end
 
   def sort_column
     if params[:sort].in? %w(created_at name number pre_assignment_state)
