@@ -7,7 +7,11 @@ class Account::PreseizuresController < Account::OrganizationController
       report = Pack::Report.preseizures.where(user_id: customer_ids, id: params[:pack_report_id]).first
 
       if report
-        @preseizures = report.preseizures
+        @preseizures = []
+        @preseizures = report.preseizures.where("third_party LIKE ?", "%#{params[:filter]}%") if params[:filter].present?
+
+        @preseizures = report.preseizures if @preseizures.size == 0
+
         if params[:view] == 'delivered'
           @preseizures = @preseizures.delivered
         elsif params[:view] == 'not_delivered'

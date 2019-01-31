@@ -12,6 +12,7 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
     @query = null
     @page = options.page || 1
     @view = options.view || 'all'
+    @query = options.query || ''
 
     _.bindAll(this, "selectPackReport")
     Idocus.vent.bind("selectPackReport", @selectPackReport)
@@ -22,6 +23,7 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
 
   render: ->
     @$el.html(@template(@collection))
+    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     @setPackReports()
     @$el.find('select[name=view]').val(@view)
     this
@@ -33,16 +35,17 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
     this
 
   addOne: (item) ->
-    view = new Idocus.Views.PackReportsShow(model: item, view: @view)
+    view = new Idocus.Views.PackReportsShow(model: item, view: @view, query: @query)
     @$el.children('ul').append(view.render().el)
     this
 
   paginate: ->
     @$el.find('.pagination').remove()
-    if @query != null
+    if @query != ''
       prefix = "#{@view}/search/#{@query}/"
     else
       prefix = "#{@view}/"
+
     if @collection.total > @collection.perPage
       @$el.append(@paginator(collection: @collection, prefix: prefix))
     this
@@ -54,11 +57,14 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
 
   update: (view, query, page) ->
     @view = view || 'all'
-    @query = query || null
+    @query = query || ''
     @page = page || 1
     data = { view: @view, page: @page }
-    if @query != null
-      data['name'] = @query
+    @$el.children('ul').html('')
+    @$el.find('.pagination').remove()
+    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
+    if @query != ''
+      data['filter'] = @query
       @collection
     @collection.fetch(data: data)
     this

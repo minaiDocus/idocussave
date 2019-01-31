@@ -5,6 +5,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
 
   initialize: (options) ->
     @view = options.view || 'all'
+    @query = options.query || ''
     @pack_report_id = options.pack_report_id
     @page = options.page || 1
 
@@ -12,19 +13,20 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
     Idocus.vent.bind("selectPreseizure", @selectPreseizure)
 
     @collection = new Idocus.Collections.Preseizures()
-    @collection.on 'reset', @render, this
-    @collection.fetch(data: { pack_report_id: @pack_report_id, page: @page, view: @view })
+    @collection.on 'reset', @setPreseizures, this
+    @collection.fetch(data: { pack_report_id: @pack_report_id, page: @page, view: @view, filter: @query })
     this
 
   render: ->
     @$el.html(@template(@collection))
-    @setPreseizures()
-    if @collection.total > @collection.perPage
-      @paginate()
+    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     this
 
   setPreseizures: ->
+    @$el.children('ul').html('')
     @collection.forEach(@addOne, this)
+    if @collection.total > @collection.perPage
+      @paginate()
     this
 
   addOne: (item) ->
@@ -33,7 +35,10 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
     this
 
   paginate: ->
-    prefix = "#{@view}/#{@pack_report_id}/"
+    if @query != ''
+      prefix = "#{@view}/#{@pack_report_id}/search/#{@query}/"
+    else
+      prefix = "#{@view}/#{@pack_report_id}/"
     @$el.append(@paginator(collection: @collection, prefix: prefix))
     this
 

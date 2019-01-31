@@ -15,10 +15,11 @@ class Idocus.Views.PackReportsShow extends Backbone.View
 
   initialize: (options) ->
     @view = options.view || 'all'
+    @query = options.query || ''
     this
 
   render: ->
-    @$el.html(@template(view: @view, model: @model, details: @details()))
+    @$el.html(@template(view: @view, query: @query, model: @model, details: @details()))
     this
 
   select: ->

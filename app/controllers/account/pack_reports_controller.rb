@@ -4,8 +4,8 @@ class Account::PackReportsController < Account::OrganizationController
 
   # GET /account/organizations/:organization_id/pack_reports
   def index
-    @pack_reports = Pack::Report.preseizures.where(user_id: customer_ids)
-    @pack_reports = @pack_reports.where("name LIKE ?", "%#{params[:name]}%") if params[:name].present?
+    @pack_reports = Pack::Report.preseizures.where(user_id: customer_ids).uniq
+    @pack_reports = @pack_reports.joins(:preseizures).where("pack_reports.name LIKE ? OR pack_report_preseizures.third_party LIKE ?", "%#{params[:filter]}%", "%#{params[:filter]}%").uniq if params[:filter].present?
 
     if params[:view] == 'delivered'
       @pack_reports = @pack_reports.delivered
