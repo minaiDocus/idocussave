@@ -1,18 +1,18 @@
-class Account::PreAssignmentBlockedDuplicatesController < Account::OrganizationController
-  # GET /account/organizations/:organization_id/pre_assignment_blocked_duplicates
+class Account::PreAssignmentBlockedDuplicatesController < Account::AccountController
+  # GET /account/pre_assignment_blocked_duplicates
   def index
     @duplicates = Pack::Report::Preseizure
       .blocked_duplicates
-      .where(user_id: customer_ids)
+      .where(user_id: account_ids)
       .search(search_terms(params[:duplicate_contains]))
       .order("#{sort_real_column} #{sort_direction}")
       .page(params[:page])
       .per(params[:per_page])
   end
 
-  # POST /account/organizations/:organization_id/pre_assignment_blocked_duplicates/update_multiple
+  # POST /account/pre_assignment_blocked_duplicates/update_multiple
   def update_multiple
-    preseizures = Pack::Report::Preseizure.blocked_duplicates.where(user_id: customer_ids, id: params[:duplicate_ids])
+    preseizures = Pack::Report::Preseizure.blocked_duplicates.where(user_id: account_ids, id: params[:duplicate_ids])
 
     if preseizures.size > 0
       if params.keys.include?('unblock') && !params.keys.include?('approve_block')
@@ -30,7 +30,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::OrganizationC
       flash[:error] = 'Vous devez sélectionner au moins une pré-affectation.'
     end
 
-    redirect_to account_organization_pre_assignment_blocked_duplicates_path(@organization)
+    redirect_to account_pre_assignment_blocked_duplicates_path
   end
 
   private

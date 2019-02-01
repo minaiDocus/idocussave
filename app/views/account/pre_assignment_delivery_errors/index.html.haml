@@ -1,12 +1,13 @@
-#pre_assignment_delivery_errors
+#pre_assignment_delivery_errors.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
+
   .row-fluid
-    .span12.box
+    .span12.well
       .pull-left
         %h3 Liste des livraisons de pré-affectation en erreurs (#{@errors.count})
-      .pull-right
-        = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
   .row-fluid
-    .span12.box
+    .span12.well
       %table.table.table-striped.table-condensed.margin0bottom
         %thead
           %tr

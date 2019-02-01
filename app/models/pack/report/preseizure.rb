@@ -299,5 +299,23 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
       save
     end
+
+  def get_state_to(type='image')
+    text    = 'none'
+    img_url = ''
+
+    if is_delivered?
+      text    = 'delivered'
+      img_url = 'application/preaff_deliv.png'
+    elsif is_not_delivered? && !self.delivery_tried_at.present?
+      text    = 'delivery_pending'
+      img_url = 'application/preaff_deliv_pending.png'
+    elsif is_not_delivered? && self.delivery_tried_at.present? && self.delivery_message.present? && self.delivery_message != '{}'
+      text    = 'delivery_failed'
+      img_url = 'application/preaff_err.png'
+    end
+
+    return text if type.to_s == 'text'
+    return img_url
   end
 end

@@ -1,0 +1,42 @@
+.preseizure{ id: preseizure.id, style: 'display: none' }
+  - stamp_url = preseizure.get_state_to :image
+
+  .name.row-fluid
+    .span9.title.padding1
+      %a.label.label-warning.piece_number.do-goToPiece{ title: "Voir la pièce", data: { id: preseizure.piece_id } }
+        = sprintf '%03d', preseizure.piece.try(:position) || preseizure.position || 0
+      %span.preseizure_label
+        %a.tip_details{href: '#', data: {id: preseizure.id}}
+          - if @ibiza
+            = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
+          - else
+            = preseizure.piece_name
+    .span3.actionbox.padding1
+      - if stamp_url.present?
+        .stamp= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
+      %a.tip_details.pull-right{href: '#', title: "Détails", data: {id: preseizure.id}}
+        %i.icon-eye-open
+      %a.tip_edit.pull-right{href: '#', title: "Edition", data: {id: preseizure.id}}
+        %i.icon-edit
+      - if (@software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
+        %a.tip_deliver.pull-right{href: '#', title: "Livraison écriture comptable (#{@software_human_name})", data: {id: preseizure.id}}
+          %i.icon-refresh
+      %a.tip_selection.pull-right{href: '#', title: "Sélection", data: {id: preseizure.id}}
+        %i.icon-ok
+  .informations.row-fluid
+    .span12
+      %table.table.table-striped.table-condensed.margin0bottom
+        %thead
+          %tr
+            %th.date Date de création
+            %th.date Date de modification
+            %th.date= "Date de dernière envoi #{@software_human_name}"
+            %th= "Message d'erreur d'envoi #{@software_human_name}"
+        %tbody
+          %tr
+            %td.date= preseizure.created_at.try(:to_formatted_s, :db) 
+            %td.date= preseizure.updated_at.try(:to_formatted_s, :db)
+            %td.date= preseizure.delivery_tried_at.try(:to_formatted_s, :db)
+            %td= @software != '' ? preseizure.get_delivery_message_of(@software) : ''
+
+  .content_details{style: 'display: none'}

@@ -1,14 +1,15 @@
-#pre_assignment_ignored
+#pre_assignment_ignored.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
+
   .row-fluid
-    .span12.box
+    .span12.well
       .pull-left
         %h3 Liste des pièces ignorées à la pré-affectation (#{@ignored_list.total_count})
-      .pull-right
-        = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
   .row-fluid
-    .span9.box
+    .span9.well
       = render partial: 'shared/list_options', locals: { collection: @ignored_list }
-      = form_tag update_ignored_pieces_account_organization_pre_assignment_ignored_index_path, method: :post, class: 'form form-vertical margin0bottom' do
+      = form_tag '/account/pre_assignment_ignored/update_ignored_pieces', method: :post, class: 'form form-vertical margin0bottom' do
         %table.table.table-striped.table-condensed
           %thead
             %tr
@@ -51,7 +52,7 @@
         = submit_tag 'Marquer la séléction comme vu', name: 'confirm_ignorance', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
 
       = render partial: 'shared/list_options', locals: { collection: @ignored_list }
-    .span3.box
+    .span3.well
       = render partial: 'sidebar'
   #showPieces.modal.hide.fade
     .modal-header

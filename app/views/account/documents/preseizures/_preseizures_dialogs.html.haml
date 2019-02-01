@@ -1,0 +1,76 @@
+.modal.fade{ :id=>"preseizureEdition" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Edition écriture comptable
+  .modal-body
+  .modal-footer
+    .feedback.inactive.pull-left
+      %span.out.pull-left
+        Aucun traitement.
+    %a{ :class=>"modal-close btn" } Fermer
+    %input#editPreseizureSubmit.btn.btn-primary{ :type => "submit", :value => "Valider" }
+
+.modal.fade{ :id=>"preseizureAccountEdition" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Edition Compte
+  .modal-body
+  .modal-footer
+    .feedback.inactive.pull-left
+      %span.out.pull-left
+        Aucun traitement.
+    %a{ :class=>"modal-close btn" } Fermer
+    %input#editPreseizureAccountSubmit.btn.btn-primary{ :type => "submit", :value => "Valider" }
+
+.modal.fade{ :id=>"preseizureEntryEdition" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Edition Montant
+  .modal-body
+  .modal-footer
+    .feedback.inactive.pull-left
+      %span.out.pull-left
+        Aucun traitement.
+    %a{ :class=>"modal-close btn" } Fermer
+    %input#editPreseizureEntrySubmit.btn.btn-primary{ :type => "submit", :value => "Valider" }
+
+.modal.fade{ :id=>"editSelectedPreseizures" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Edition multiple de la séléction
+  .modal-body
+    .label.label-warning{style: 'margin-bottom: 15px'}
+      Laissez un champ vide pour ne pas le modifier.
+    %form#preseizuresEditionForm.simple_form.form.form-horizontal.margin0
+      .control-group.date.datepicker
+        = label_tag 'date', t('simple_form.labels.pack_report_preseizure.date'), class: 'control-label'
+        .controls
+          = text_field_tag 'date', nil, placeholder: Time.now.to_date
+          %span.add-on{style: 'width: 0px; height:35px'}
+      .control-group.date.datepicker
+        = label_tag 'deadline_date', t('simple_form.labels.pack_report_preseizure.deadline_date'), class: 'control-label'
+        .controls
+          = text_field_tag 'deadline_date', nil, placeholder: Time.now.to_date
+          %span.add-on{style: 'width: 0px; height:35px'}
+      .control-group
+        = label_tag 'third_party', t('simple_form.labels.pack_report_preseizure.third_party'), class: 'control-label'
+        .controls
+          = text_field_tag 'third_party'
+      .control-group
+        = label_tag 'currency', t('simple_form.labels.pack_report_preseizure.currency'), class: 'control-label'
+        .controls
+          = text_field_tag 'currency'
+      .control-group
+        = label_tag 'conversion_rate', t('simple_form.labels.pack_report_preseizure.conversion_rate'), class: 'control-label'
+        .controls
+          = text_field_tag 'conversion_rate'
+      .control-group
+        = label_tag 'observation', t('simple_form.labels.pack_report_preseizure.observation'), class: 'control-label'
+        .controls
+          = text_area_tag 'observation'
+  .modal-footer
+    .feedback.inactive.pull-left
+      %span.out.pull-left
+        Aucun traitement.
+    %a{ :class=>"modal-close btn" } Fermer
+    %input#validatePreseizuresEdition.btn.btn-primary{ :type => "submit", :value => "Valider" }

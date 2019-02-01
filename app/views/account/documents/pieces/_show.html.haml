@@ -1,0 +1,29 @@
+#show_pieces.clearfix.well
+  %h4
+  %ul.margin0{ style: "clear:both;", :id => "pieces" }
+    = render :partial => "/account/documents/pieces/temp_document", :collection => @temp_documents
+
+- if @documents.present?
+  #show_pages.well
+    .head.margin1bottom.clearfix
+      %h4.pull-left
+      %span.pieces_total_count.hide= @documents.total_count
+      - if @user.active?
+        .actiongroup.pull-right
+          %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
+            %i.icon-tag
+          |
+          %a.do-selectAllPages.do-tooltip{:href => "#", :title => "Tous"}
+            %i.icon-ok
+          %a.do-unselectAllPages.do-tooltip{:href => "#", :title => "Aucun"}
+            %i.icon-ban-circle
+    #lists_pieces
+      #lists_pieces_content.clearfix
+        %ul.margin0.margin2bottom{ style: "clear:both;", :id => "pages" }
+          = render :partial => "/account/documents/pieces/document", :collection => @documents
+    .actionGroup.clearfix
+      .loader.margin1top.pull-left
+        .feedback.inactive
+          %span.out Aucun traitement
+      .showALLPieces.margin1top.pull-right.hide
+        %a{ href:'#', id: 'do-showAllPieces' } Afficher tout
