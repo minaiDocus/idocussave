@@ -268,6 +268,7 @@
 
 #documentslist, #pageslist
   overflow: auto
+  min-height: 350px
 
 /*** Action bar ***/
 
@@ -328,10 +329,12 @@
 /*** Global ***/
 #documentslist .header, #pageslist .header
   margin-bottom: 5px
-#documentslist h3, #pageslist h3, #selectionlist h3
+#documentslist h3, #pageslist h3, #selectionlist h3, #preseizureslist h3
   font-size: 16px
 
 #pageslist
+  #do-showAllPieces
+    font-weight: bold
   #panel2
     .stamp
       margin-top: -19px
@@ -342,8 +345,42 @@
 
 /*** Documents ***/
 
+#documents_view
+  text-align: center
+  #pieces_view
+    border-radius: 10px 0px 0px 10px
+  #preseizures_view
+    border-radius: 0px 10px 10px 0px
+  .block_view
+    color: #aaa
+    cursor: pointer
+    display: inline-block
+    font-weight: bold
+    margin: 0px auto
+    border: 1px solid #aaa
+    width: 48%
+    min-height: 25px
+    padding-top: 5px
+    text-align: center
+    background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
+    box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.3)
+  .block_view.active
+    color: #444
+    background-color: #fff
+    box-shadow: 0px 3px 13px -2px rgba(0, 0, 0, 0.3) inset
+
 #document_owner_list, #document_owner_list_chosen
-  max-width: 350px
+  max-width: 290px
+
+#documentslist
+  .actionfilter
+    border-bottom: 1px solid #aaa
+    margin-bottom: 5px
+  #per_page
+    border-radius: 3px
+    height: 25px
+    border: 1px solid #aaa
+    background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
 
 #documentslist .content ul
   list-style: none
@@ -376,6 +413,9 @@
   border-left-width: 0
 
 /*** Pages ***/
+#show_pages, #show_pieces
+  background-color: #E1E1E1
+
 .pages
   height: 100%
   ul li
@@ -383,7 +423,7 @@
     display: block
     position: relative
     float: left
-    width: 124px
+    width: 121px
     height: 163px
     text-align: center
     .toolbar
@@ -436,11 +476,13 @@
             background-position: -76px 0px
     .piece_number
       z-index: 11
-      display: none
       position: absolute
       float: left
       left: 6px
       top: 5px
+      cursor: pointer
+    a.label:hover
+      color: #c9dd03 !important
     a.zoom
       z-index: 11
       display: none
@@ -520,8 +562,6 @@
       display: block
     .toolbar
       display: block !important
-    .piece_number
-      display: block
     .pagethumb
       padding: 2px
       width: 116px
@@ -612,6 +652,75 @@
     overflow-y: auto
     ul.list
       margin: 0 0 0 25px
+
+/*** Preseizures ***/
+#preseizureslist
+  display: none
+  #do-showAllPreseizures
+    font-weight: bold
+  #presPanel1
+    .header
+      .actiongroup
+        a
+          margin: 3px
+  #show_preseizures
+    #lists_preseizures
+      margin-top: 10px
+      .selected
+        border: 3px solid #B1D837!important
+      .preseizure
+        background-color: #FFF
+        border: 1px solid rgb(221,221,221)
+        margin: 10px 25px
+        padding: 10px
+        .piece_number
+          cursor: pointer
+        a.label:hover
+          color: #c9dd03 !important
+        .name
+          margin-bottom: 10px
+          .actionbox
+            .stamp
+              float: left
+              width: 55px
+            .stamp:hover
+              position: absolute
+              width: 135px
+            a
+              padding: 3px
+          .preseizure_label
+            margin-left: 10px
+            font-weight: bold
+        .informations
+          margin-bottom: 10px
+          .date
+            width: 20%
+        .content_details
+          border-top: 1px solid rgb(221,221,221)
+          padding: 10px
+  #presPanel2
+    #preseizuresFilterForm
+      .control-group
+        clear: both !important
+        .control-label
+          width: 80px !important
+        .controls
+          margin-left: 5px !important
+          float: left
+          input, select
+            width: 180px
+          .select_operation
+            width: 50px !important
+          .input_with_operation
+            width: 130px !important
+      .buttons-group
+        width: 100%
+        text-align: center
+        a, input
+          margin: auto
+
+
+
 
 /*** Payment Management ***/
 #payment_management

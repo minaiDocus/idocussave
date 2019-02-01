@@ -29,19 +29,57 @@ class Account::DocumentsController < Account::AccountController
   # GET /account/documents/:id
   def show
     @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
+    @data_type = params[:fetch] || 'pieces'
 
-    piece_ids = @pack.preseizures.filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
+    if  @data_type == 'preseizures'
+      if(params[:piece_id].present?)
+        @preseizures = Pack::Report::Preseizure.where(piece_id: params[:piece_id]).order(position: :desc).distinct.page(params[:page]).per(10)
+      else
+        @preseizures = Pack::Report::Preseizure.where(report_id: @pack.reports.collect(&:id))
 
-    @documents = Pack::Piece.search(  params[:text],
-                                      pack_id:  params[:id]
-                                    )
-    @documents = @documents.where(id: piece_ids) unless piece_ids.nil?
+        @preseizures = @preseizures.delivered         if params[:is_delivered].present? && params[:is_delivered].to_i == 1
+        @preseizures = @preseizures.not_delivered     if params[:is_delivered].present? && params[:is_delivered].to_i == 2
+        @preseizures = @preseizures.failed_delivery   if params[:is_delivered].present? && params[:is_delivered].to_i == 3
 
-    @documents = @documents.order(position: :asc).includes(:pack).per(10_000)
+        @preseizures = @preseizures.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:created_at_operation].tr('012', ' ><')}= ?", params[:created_at])                       if params[:created_at].present?
+        @preseizures = @preseizures.where("DATE_FORMAT(delivery_tried_at, '%Y-%m-%d') #{params[:delivery_tried_at_operation].tr('012', ' ><')}= ?", params[:delivery_tried_at])  if params[:delivery_tried_at].present?
+        @preseizures = @preseizures.where("amount #{params[:amount_operation].tr('012', ' ><')}= ?", params[:amount])                                                            if params[:amount].present?
+        @preseizures = @preseizures.where("position #{params[:position_operation].tr('012', ' ><')}= ?", params[:position])                                                      if params[:position].present?
 
-    unless @pack.is_fully_processed || params[:text].presence
-      @temp_pack      = TempPack.find_by_name(@pack.name)
-      @temp_documents = @temp_pack.temp_documents.not_published
+        @preseizures = @preseizures.where(piece_number: params[:piece_number])  if params[:piece_number].present?
+        @preseizures = @preseizures.where(third_party: params[:third_party])    if params[:third_party].present?
+
+        @preseizures = @preseizures.order(position: :desc).distinct.page(params[:page]).per(10)
+      end
+
+      user = @preseizures.first.try(:user)
+      @ibiza = @preseizures.first.try(:organization).try(:ibiza)
+
+      @software = @software_human_name = ''
+      if user.try(:uses_ibiza?)
+        @software = 'ibiza'
+        @software_human_name = 'Ibiza'
+      elsif user.try(:uses_exact_online?)
+        @software = 'exact_online'
+        @software_human_name = 'Exact Online'
+      end
+
+      @need_delivery = @pack.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no' if params[:page].to_i == 1
+    else
+      if params[:piece_id].present?
+        @documents = Pack::Piece.where(id: params[:piece_id]).includes(:pack).order(position: :desc).page(params[:page]).per(20)
+      else
+        @documents = Pack::Piece.search(params[:filter],
+          pack_id:  params[:id]
+        ).order(position: :desc).includes(:pack).page(params[:page]).per(20)
+      end
+
+      if params[:page].to_i == 1
+        unless @pack.is_fully_processed || params[:filter].presence
+          @temp_pack      = TempPack.find_by_name(@pack.name)
+          @temp_documents = @temp_pack.temp_documents.not_published
+        end
+      end
     end
   end
 
@@ -72,6 +110,110 @@ class Account::DocumentsController < Account::AccountController
       @packs = Pack.search(params[:text], options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
     end
   end
+
+  #GET /account/documents/preseizure_account/:id
+  def preseizure_account
+    preseizure = Pack::Report::Preseizure.find params[:id]
+    @unit = preseizure.try(:unit) || 'EUR'
+    @preseizure_entries = preseizure.entries
+    @pre_tax_amount = @preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
+    
+    analytics = preseizure.analytic_reference
+    @data_analytics = []
+    if analytics 
+      3.times do |i|
+        j = i + 1
+        references = analytics.send("a#{j}_references")
+        name       = analytics.send("a#{j}_name")
+        if references.present?
+          references = JSON.parse(references)
+          references.each do |ref|
+            @data_analytics << { name: name, ventilation: ref['ventilation'], axis1: ref['axis1'], axis2: ref['axis2'], axis3: ref['axis3'] } if name.present? && ref['ventilation'].present? && (ref['axis1'].present? || ref['axis2'].present? || ref['axis3'].present?)
+          end
+        end
+      end
+    end
+
+    render partial: 'account/documents/preseizures/preseizure_account'
+  end
+
+  def edit_preseizure
+    @preseizure = Pack::Report::Preseizure.find params[:id]
+
+    render partial: 'account/documents/preseizures/edit'
+  end
+
+  def update_preseizure
+    preseizure = Pack::Report::Preseizure.find params[:id]
+
+    error = ''
+    error = preseizure.errors.full_messages unless preseizure.update_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
+
+    render json: { error: error }, status: 200
+  end
+
+  def update_multiple_preseizures
+    preseizures = Pack::Report::Preseizure.where(id: params[:ids])
+
+    real_params = update_multiple_preseizures_params
+    begin
+      error = ''
+      preseizures.update_all(real_params) if real_params.present?
+    rescue => e
+      error = 'Impossible de modifier la séléction'
+    end
+
+    render json: { error: error }, status: 200
+  end
+
+  def deliver_preseizures
+    if params[:ids].present?
+      preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
+    elsif params[:pack_id]
+      reports = Pack.find(params[:pack_id]).try(:reports)
+      preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
+    end
+
+    if preseizures.present?
+      preseizures.group_by(&:report_id).each do |report_id, preseizures_by_report|
+        CreatePreAssignmentDeliveryService.new(preseizures_by_report, ['ibiza', 'exact_online']).execute
+      end
+    end
+
+    render json: { success: true }, status: :ok
+  end
+
+  def edit_preseizure_account
+    @account = Pack::Report::Preseizure::Account.find params[:id]
+
+    render partial: 'account/documents/preseizures/edit_account'
+  end
+
+  def update_preseizure_account
+    account = Pack::Report::Preseizure::Account.find params[:id]
+
+    error = ''
+    error = account.errors.full_messages unless account.update_attributes params[:pack_report_preseizure_account].permit(:number, :lettering)
+
+    render json: { error: error }, status: 200
+  end
+
+  def edit_preseizure_entry
+    @entry = Pack::Report::Preseizure::Entry.find params[:id]
+
+    render partial: 'account/documents/preseizures/edit_entry'
+  end
+
+  def update_preseizure_entry
+    entry = Pack::Report::Preseizure::Entry.find params[:id]
+
+    error = ''
+    error = entry.errors.full_messages unless entry.update_attributes params[:pack_report_preseizure_entry].permit(:type, :amount)
+
+    render json: { error: error }, status: 200
+  end
+
+
 
   # GET /account/documents/:id/archive
   def archive
@@ -214,5 +356,17 @@ protected
 
   def current_layout
     action_name == 'index' ? 'inner' : false
+  end
+
+private
+  def update_multiple_preseizures_params
+    {
+      date:               params[:preseizures_attributes][:date].presence,
+      deadline_date:      params[:preseizures_attributes][:deadline_date].presence,
+      third_party:        params[:preseizures_attributes][:third_party].presence,
+      currency:           params[:preseizures_attributes][:currency].presence,
+      conversion_rate:    params[:preseizures_attributes][:conversion_rate].presence,
+      observation:        params[:preseizures_attributes][:observation].presence,
+    }.compact
   end
 end

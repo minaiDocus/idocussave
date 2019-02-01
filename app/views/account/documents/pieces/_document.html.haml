@@ -3,11 +3,11 @@
 
 - stamp_url = document.get_state_to :image
 
-%li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages" }
+%li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
   %input{ type: :hidden, name: :page_number, value: document.position }
   %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }
-  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}") } unless @is_composition
-  %span.label.label-warning.piece_number
+  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}"), piece_id: document.preseizures.count > 0 ? document.id : 0 } unless @is_composition
+  %a.label.label-warning.piece_number.do-goToPreseizure{ title: "Voir l'écriture comptable", data: { id: document.preseizures.count > 0 ? document.id : 0 } }
     = sprintf '%03d', document.position
   .toolbar
     %ul.margin0

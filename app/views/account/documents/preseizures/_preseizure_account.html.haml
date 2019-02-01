@@ -1,0 +1,55 @@
+%p
+  Unité monétaire:
+  %strong= @unit
+.row-fluid
+  .entries{ class: (@data_analytics.any? ? 'span6' : 'span12') }
+    - if @data_analytics.any?
+      %strong Ecritures
+    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %thead
+        %tr
+          %th.account Numéro de compte
+          %th.account
+          %th.entry Débit
+          %th.entry Crédit
+          %th.entry
+      %tbody.entries
+        - @preseizure_entries.each do |entry|
+          %tr
+            %td.account= entry.account.number
+            %td.account
+              %a.tip_edit_account{href: '#', data: {id: entry.account.id}}
+                %i.icon-edit
+            %td.entry
+              - if entry.type == 1
+                = entry.amount
+            %td.entry
+              - if entry.type == 2
+                = entry.amount
+            %td.entry
+              %a.tip_edit_entry{href: '#', data: {id: entry.id}}
+                %i.icon-edit
+  - if @data_analytics.any?
+    .analytics.span6
+      %strong Analyse comptable
+      %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+        %thead
+          %tr
+            %th Analyse
+            %th Axe
+            %th Ventilation
+            %th Montant ventilé
+        %tbody.entries
+          - @data_analytics.each do |analysis|
+            %tr
+              %td= analysis[:name]
+              %td
+                %ul
+                  -if analysis[:axis1].present?
+                    %li= analysis[:axis1]
+                  -if analysis[:axis2].present?
+                    %li= analysis[:axis2]
+                  -if analysis[:axis3].present?
+                    %li= analysis[:axis3]
+              %td= analysis[:ventilation] + " %"
+              %td= @pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)

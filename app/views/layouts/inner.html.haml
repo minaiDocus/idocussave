@@ -14,6 +14,8 @@
     = stylesheet_link_tag 'account/suspended' if controller_name == 'suspended'
     = stylesheet_link_tag 'account/addresses' if controller_name == 'addresses'
     = stylesheet_link_tag 'account/group_organizations' if controller_name == 'group_organizations'
+    - if controller_name.in?(%w(pre_assignment_blocked_duplicates pre_assignment_ignored pre_assignment_delivery_errors))
+      = stylesheet_link_tag "account/#{controller_name}"
 
   %body
     #wrap
@@ -63,5 +65,7 @@
       = javascript_include_tag 'account/addresses'
     - elsif controller_name == 'group_organizations'
       = javascript_include_tag 'account/group_organizations'
+    - elsif controller_name.in?(%w(pre_assignment_blocked_duplicates pre_assignment_ignored))
+      = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'

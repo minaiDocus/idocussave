@@ -24,12 +24,29 @@
 // Lola LAI KAM <lailol@directmada.com>
 //
 jQuery(function () {
+  //For serializing Form to object
+  $.fn.serializeObject = function() {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name]) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+          } else {
+            o[this.name] = this.value || '';
+          }
+      });
+      return o;
+  };
+
   $.fn.datepicker.dates['fr'] = {
     days: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
     daysShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
     daysMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"],
     months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-    monthsShort: ["Jan", "Feb", "Mar", "Avr", "Mai", "Jui", "Jul", "Aoû", "Sep", "Oct", "Nov", "Dec"]
+    monthsShort: ["Jan", "Fev", "Mar", "Avr", "Mai", "Jui", "Jul", "Aoû", "Sep", "Oct", "Nov", "Dec"]
   };
 
   $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation: 'bottom auto' });
@@ -63,3 +80,20 @@ jQuery(function () {
   // Bind event listener
   $(window).resize(dynamicTopPadding);
 });
+
+function _require(script) {
+    var src = ''
+    $.ajax({
+        url: script,
+        dataType: "script",
+        async: false,
+        success: function (data) {
+          src = data
+        },
+        error: function (e) {
+          console.error(e)
+          throw new Error("Could not load script " + script);
+        }
+    });
+    return src;
+}

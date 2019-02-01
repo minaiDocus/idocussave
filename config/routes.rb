@@ -17,9 +17,27 @@ Idocus::Application.routes.draw do
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
   get '/account/documents/processing/:id/download/:style', controller: 'account/documents', action: 'download_processing'
-  get '/account/documents/pieces/:id/download(/:style)',     controller: 'account/documents', action: 'piece'
+  get '/account/documents/pieces/:id/download(/:style)',   controller: 'account/documents', action: 'piece'
   get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
+  get '/account/documents/preseizure_account/:id',         controller: 'account/documents', action: 'preseizure_account'
+
+  get '/account/documents/preseizure/:id/edit',            controller: 'account/documents', action: 'edit_preseizure'
+  post '/account/documents/preseizure/:id/update',         controller: 'account/documents', action: 'update_preseizure'
+  get '/account/documents/preseizure/account/:id/edit',    controller: 'account/documents', action: 'edit_preseizure_account'
+  post '/account/documents/preseizure/account/:id/update', controller: 'account/documents', action: 'update_preseizure_account'
+  get '/account/documents/preseizure/entry/:id/edit',      controller: 'account/documents', action: 'edit_preseizure_entry'
+  post '/account/documents/preseizure/entry/:id/update',   controller: 'account/documents', action: 'update_preseizure_entry'
+  post '/account/documents/deliver_preseizures',           controller: 'account/documents', action: 'deliver_preseizures'
+  post '/account/documents/update_multiple_preseizures',   controller: 'account/documents', action: 'update_multiple_preseizures'
+
+  get '/account/pre_assignment_delivery_errors',  controller: 'account/pre_assignment_delivery_errors', action: 'index'
+
+  get '/account/pre_assignment_blocked_duplicates',  controller: 'account/pre_assignment_blocked_duplicates', action: 'index'
+  post '/account/pre_assignment_blocked_duplicates/update_multiple',  controller: 'account/pre_assignment_blocked_duplicates', action: 'update_multiple'
+
+  get '/account/pre_assignment_ignored',  controller: 'account/pre_assignment_ignored', action: 'index'
+  post '/account/pre_assignment_ignored/update_ignored_pieces',  controller: 'account/pre_assignment_ignored', action: 'update_ignored_pieces'
 
   resources :compta
 
@@ -277,14 +295,14 @@ Idocus::Application.routes.draw do
       resources :exact_online_users,                       only: :index
       resources :mcf_users,                         only: :index
       resources :pre_assignments,                   only: :index
-      resources :pre_assignment_delivery_errors,    only: :index
+      # resources :pre_assignment_delivery_errors,    only: :index
 
-      resources :pre_assignment_ignored,            only: :index do
-        post :update_ignored_pieces, on: :collection
-      end
-      resources :pre_assignment_blocked_duplicates, only: :index do
-        post :update_multiple, on: :collection
-      end
+      # resources :pre_assignment_ignored,            only: :index do
+      #   post :update_ignored_pieces, on: :collection
+      # end
+      # resources :pre_assignment_blocked_duplicates, only: :index do
+      #   post :update_multiple, on: :collection
+      # end
 
       resources :pack_reports, only: :index do
         post 'deliver',            on: :member
