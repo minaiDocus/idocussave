@@ -1,14 +1,15 @@
-#pre_assignment_blocked_duplicates
+#pre_assignment_blocked_duplicates.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
+
   .row-fluid
-    .span12.box
+    .span12.well
       .pull-left
         %h3 Liste des doublons de pré-affectation (#{@duplicates.total_count})
-      .pull-right
-        = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
   .row-fluid
-    .span9.box
+    .span9.well
       = render partial: 'shared/list_options', locals: { collection: @duplicates }
-      = form_tag update_multiple_account_organization_pre_assignment_blocked_duplicates_path, method: :post, class: 'form form-vertical margin0bottom' do
+      = form_tag '/account/pre_assignment_blocked_duplicates/update_multiple', method: :post, class: 'form form-vertical margin0bottom' do
         %table.table.table-striped.table-condensed
           %thead
             %tr
@@ -74,7 +75,7 @@
         = submit_tag 'Marquer comme duplication ceux sélectionnés', name: 'approve_block', class: 'btn btn-primary'
 
       = render partial: 'shared/list_options', locals: { collection: @duplicates }
-    .span3.box
+    .span3.well
       = render partial: 'sidebar'
   #showPieces.modal.hide.fade
     .modal-header

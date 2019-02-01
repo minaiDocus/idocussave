@@ -3,22 +3,17 @@
     = render partial: 'shared/messages'
 
   .row-fluid
-    .span12
-      .actionbar.well.padding1top.margin1bottom
+    .span3
+      #documents_view.actionview.well.clearfix
+        .block_view.active#pieces_view
+          %span Vue par pieces
+        .block_view#preseizures_view
+          %span Vue par écritures comptables
+    .span9
+      .actionbar.well.clearfix{style: 'padding: 14px 10px 5px 10px'}
         .feedback.inactive.pull-left
           %span.out
             Aucun traitement
-
-        = label_tag :document_owner_list, "Afficher les documents :", :class => "pull-left margin1left"
-        = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option,["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
-
-        = label_tag :per_page, "par :", :class => "pull-left margin1left"
-        = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
-
-        %a{ href:'#packFilterModal', title:'plus de filtre', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-left', data: {toggle: :modal} }
-          %span.icon.icon-filter
-          Plus de filtre
-
         - if @user.active?
           .pull-right
             - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
@@ -30,7 +25,12 @@
   .row-fluid
     .span3
       #documentslist.well.qtip-target
-        .header
+        .header.clearfix
+          .actionfilter.clearfix
+            = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option,["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
+
+            = label_tag :per_page, "par :", :class => "pull-left margin1left"
+            = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
           %h3.pull-left
             #{@packs.total_count} document(s)
           - if @user.active?
@@ -48,98 +48,25 @@
               %a.do-unselectAll.do-tooltip{:href => "#", :title => "Aucun"}
                 %i.icon-ban-circle
         .content
-          %ul.margin3top.margin0left
+          %ul.margin0left
             = render :partial => "/account/documents/pack", :collection => @packs
           .aligncenter
             = paginate @packs
 
     .span9
       #pageslist.well
-        #panel1
-          .header.span12.margin0left
-            %h3.pull-left
-              Pages
-            - if @user.active?
-              .actiongroup.pull-right
-                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
-                  %i.icon-tag
-                |
-                %a.do-selectAllPages.do-tooltip{:href => "#", :title => "Tous"}
-                  %i.icon-ok
-                %a.do-unselectAllPages.do-tooltip{:href => "#", :title => "Aucun"}
-                  %i.icon-ban-circle
-          .content.pages
-        #panel2{ :style => "display: none" }
-          .header.row-fluid
-            .actiongroup.span4.alignleft
-              %a{ href: '#', class: 'backToPanel1 btn' }
-                %i.icon-arrow-left
-                Retour
-            .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
-              %a.do-prevPage{:href => "#"}
-                pièce précédente
-              \-
-              %span.page_number
-              \-
-              %a.do-nextPage{:href => "#"}
-                pièce suivante
-            .actiongroup.span4.alignright{ style: 'margin-top:4px' }
-              %span.stamp.hide{ id: 'stamp_box' }= image_tag('', alt: 'tampon', class: 'img_stamp')
-              %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
-                %span.label.label-info
-                  tags
-              - if @user.active?
-                |
-                %a.do-selectSinglePage.do-tooltip{:href => "#", :title => "Sélectionner"}
-                  %i.icon-ok
-                %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
-                  %i.icon-ban-circle
-          .content
-            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:550px;"}
-        #panel3{ :style => "display: none" }
-          .header.row-fluid
-            .actiongroup.span4.alignleft
-              %a{ href: '#', class: 'backToPanel1 btn' }
-                %i.icon-arrow-left
-                Retour
-            .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
-              %a.do-prevPage{:href => "#"}
-                piece précédente
-              \-
-              %span.page_number
-              \-
-              %a.do-nextPage{:href => "#"}
-                piece suivante
-          .content
-            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:550px;"}
+        = render partial: '/account/documents/pieces/index'
+      #preseizureslist
+        = render partial: '/account/documents/preseizures/index'
 
   - if @user.active?
     #selectionsBox.selection-fixed-bottom.hide
-      .row-fluid
-        .span12
-          #selectionlist.well
-            .header
-              %h3.pull-left
-                Sélections
-              .actiongroup
-                .icon_actions.pull-left
-                  %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
-                    %i.icon-tag
-                  %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
-                    %i.icon-remove
-                .button_actions.pull-left
-                  %a{ "data-toggle"=>"modal", :href => "#compositionDialog", class: "btn btn-primary" }
-                    Composer
-                  - if @user.organization.ibiza.try(:configured?)
-                    %a.compta_analysis_edition{ "data-toggle"=>"modal", :href => "#comptaAnalysisEdition", class: "btn btn-primary" }
-                      Editer compta analytique
-            .content.pages.margin3top
-              %ul.list
-                - @is_composition = true
-                != render :partial => "/account/documents/document", :collection => @composition
+      = render partial: '/account/documents/pieces/selection_box'
+
 - if @pack
   #pack{ data: { name: @pack.name.sub(' all', ''), id: @pack.id } }
 
 - if @user.active?
   = render :partial => "/account/documents/dialog_box"
+
 = render "help"

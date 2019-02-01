@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class Account::PreAssignmentIgnoredController < Account::OrganizationController
-  # GET /account/organizations/:organization_id/pre_assignment_ignored
+class Account::PreAssignmentIgnoredController < Account::AccountController
+  # GET /account/pre_assignment_ignored
   def index
     @ignored_list = Pack::Piece.pre_assignment_ignored
-      .where(user_id: customer_ids)
+      .where(user_id: account_ids)
       .search(nil, search_terms(params[:filter_contains]))
       .order("#{sort_column} #{sort_direction}")
       .page(params[:page])
@@ -17,13 +17,13 @@ class Account::PreAssignmentIgnoredController < Account::OrganizationController
       force_pre_assignment
     end
 
-    redirect_to account_organization_pre_assignment_ignored_index_path(@organization)
+    redirect_to account_pre_assignment_ignored_path
   end
 
   private
 
   def force_pre_assignment
-    pieces = Pack::Piece.pre_assignment_ignored.where(user_id: customer_ids, id: params[:ignored_ids])
+    pieces = Pack::Piece.pre_assignment_ignored.where(user_id: account_ids, id: params[:ignored_ids])
 
     if pieces.size > 0
       pieces.each(&:force_processing_pre_assignment)
@@ -36,7 +36,7 @@ class Account::PreAssignmentIgnoredController < Account::OrganizationController
   end
 
   def confirm_ignored_pieces
-    pieces = Pack::Piece.where(pre_assignment_state: 'ignored', user_id: customer_ids, id: params[:ignored_ids])
+    pieces = Pack::Piece.where(pre_assignment_state: 'ignored', user_id: account_ids, id: params[:ignored_ids])
 
     if pieces.size > 0
       pieces.each(&:confirm_ignorance_pre_assignment)

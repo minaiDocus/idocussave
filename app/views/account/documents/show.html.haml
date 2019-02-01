@@ -1,13 +1,6 @@
-- if @documents.any?
-	#show_pages
-		%h4.pull-left
-		%ul.margin0.margin2bottom{ style: "clear:both;", :id => "pages" }
-			= render :partial => "/account/documents/document", :collection => @documents
-
-- if @temp_documents
-	#show_pieces
-		-if @documents.any?
-			%hr{ style: "clear:both;" }
-		%h4.pull-left
-		%ul.margin0{ style: "clear:both;", :id => "pieces" }
-			= render :partial => "/account/documents/temp_document", :collection => @temp_documents
+- if @data_type == 'preseizures' && @preseizures.present?
+  = render partial: '/account/documents/preseizures/show'
+- elsif @data_type == 'pieces' && (@documents.present? || @temp_documents.present?)
+  = render partial: '/account/documents/pieces/show'
+- else
+  none

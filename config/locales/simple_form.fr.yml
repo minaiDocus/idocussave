@@ -312,3 +312,21 @@ fr:
       mcf_settings:
         delivery_path_pattern: Chemin de livraison
         is_delivery_activated: Activer la livraison ?
+      pack_report_preseizure:
+        date: Date
+        deadline_date: Date d'échéance
+        third_party: Nom de tiers
+        operation_label: Libelé de l'opérations
+        piece_number: Numéro de pièces
+        amount: Montant
+        cached_amount: Montant
+        currency: Devise
+        conversion_rate: Taux de conversion
+        observation: Remarque
+      pack_report_preseizure_entry:
+        type: Type
+        amount: Montant
+      pack_report_preseizure_account:
+        number: Numéro
+        lettering: Lettrage
+
