@@ -176,7 +176,7 @@ class CreateInvoicePdf
         [
           "IDOCUS\n17, rue Galilée\n75116 Paris.",
           "SAS au capital de 50 000 €\nRCS PARIS: 804 067 726\nTVA FR12804067726",
-          "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
+          "contact@idocus.com\nwww.idocus.com\nTél : 01 84 250 251"
         ]
       ]
 
