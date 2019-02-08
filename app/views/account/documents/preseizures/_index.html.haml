@@ -1,57 +1,19 @@
 .row-fluid
-  .span9
+  .span12
     #presPanel1.well
-      .header.span12.margin0left
+      .header.span12.margin0left{style: "border-bottom: 1px solid #ddd; margin-bottom: 10px"}
         %h3.pull-left
           Ecritures comptables
         - if @user.active?
           .actiongroup.pull-right
-            %a.do-editSelectedPreseizures.hide{href: '#editSelectedPreseizures', title: 'Edition', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
+            %a.do-exportSelectedPreseizures.do-tooltip{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
+              %i.icon-download-alt
+            %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
               %i.icon-edit
             |
-            %a.do-selectAllPreseizures{ :href => "#", :title => "Tous" }
+            %a.do-selectAllPreseizures.do-tooltip{ :href => "#", :title => "Tous" }
               %i.icon-ok
-            %a.do-unselectAllPreseizures{ :href => "#", :title => "Aucun" }
+            %a.do-unselectAllPreseizures.do-tooltip{ :href => "#", :title => "Aucun" }
               %i.icon-ban-circle
       .content.preseizures
-  .span3
-    #presPanel2.well
-      %form#preseizuresFilterForm.simple_form.form.form-horizontal.margin0
-        .control-group
-          = label_tag 'is_delivered', 'Livraison', class: 'control-label'
-          .controls
-            = select_tag 'is_delivered', options_for_select([['Tous', 0], ['Livrée', 1], ['Non livrée', 2], ['Avec erreur', 3]]), include_blank: false
-        .control-group.date.datepicker
-          = label_tag 'created_at', 'Date création', class: 'control-label'
-          .controls
-            = select_tag 'created_at_operation', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'created_at', nil, class: 'input_with_operation', placeholder: Time.now.to_date
-            %span.add-on{style: 'width: 0px; height:35px'}
-        .control-group.date.datepicker
-          = label_tag 'delivery_tried_at', 'Date livraison', class: 'control-label'
-          .controls
-            = select_tag 'delivery_tried_at_operation', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'delivery_tried_at', nil, class: 'input_with_operation', placeholder: Time.now.to_date
-            %span.add-on{style: 'width: 0px; height:35px'}
-        .control-group
-          = label_tag 'third_name', 'Nom de tiers', class: 'control-label'
-          .controls
-            = text_field_tag 'third_party'
-        .control-group
-          = label_tag 'piece_number', 'N° de pièce', class: 'control-label'
-          .controls
-            = text_field_tag 'piece_number'
-        .control-group
-          = label_tag 'amount', 'Montant', class: 'control-label'
-          .controls
-            = select_tag 'amount_operation', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'amount', nil, class: 'input_with_operation', placeholder: 100.00
-        .control-group
-          = label_tag 'position', 'Position', class: 'control-label'
-          .controls
-            = select_tag 'position_operation', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'position', nil, class: 'input_with_operation', placeholder: 1
-        .buttons-group
-          %a#validatePreseizuresFilter{ href:'#', :class=>'btn btn-primary'} Filtrer
-          %input#initPreseizuresFilter.btn{ :type => "reset", :value => "Réinitialiser" }
         

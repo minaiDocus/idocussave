@@ -1,0 +1,6 @@
+%ul.margin0left
+  = render partial: 'report', collection: @reports
+
+.aligncenter
+  = paginate @reports
+  %input{ type: :hidden, name: :reports_count, value: @reports.total_count }

@@ -1,25 +1,25 @@
 // fecth all preseizures of the pack
-function getPreseizures(link, page=1, by_piece=null, with_filter=true){
+function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
   if(page < 1 || window.preseizuresLoaderLocked)
     return false
 
   window.preseizuresLoaderLocked = true;
 
   var document_id = link.parents("li").attr("id").split("_")[2];
+  var source = (link.parents("li").hasClass('report'))? 'report' : 'pack'
   var document_name = link.text();
-
-  var filter = '';
-  if(with_filter)
-  {
-    filter = '&' + $('#preseizuresFilterForm').serialize();
-  }
 
   if(by_piece !== null)
   {
-    filter = "&piece_id="+by_piece
+    var filter = "&piece_id="+by_piece
+  }
+  else
+  {
+    var filter = '&'+window.getParamsFromFilter();
+    window.setParamsFilterText();
   }
 
-  var url = "/account/documents/"+document_id+"?fetch=preseizures&page="+page+filter;
+  var url = "/account/documents/"+document_id+"?source="+source+"&fetch=preseizures&page="+page+filter;
 
   $.ajax({
     url: encodeURI(url),
@@ -49,6 +49,8 @@ function getPreseizures(link, page=1, by_piece=null, with_filter=true){
         $('#presPanel1 #show_preseizures h4').text($('#presPanel1 #show_preseizures .total_preseizures_count').text() + ' écriture(s) comptable(s)');
 
         window.preseizuresSelected = [];
+        $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', '');
+        $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', '');
 
         var software_used = $('#show_preseizures .software_used').text() || '';
         var need_delivery = $('#show_preseizures .need_delivery').text() || 'no';
@@ -61,7 +63,7 @@ function getPreseizures(link, page=1, by_piece=null, with_filter=true){
         $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
         $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').remove();
         if(software_used != '' && need_delivery != 'no')
-          $('#presPanel1 .header .actiongroup').prepend('<a href="#" title="Livraison écriture comptable ('+software_used+')" class="do-deliverAllPreseizure"><i class="icon-refresh" /></a>');          
+          $('#presPanel1 .header .actiongroup').prepend('<a href="#" title="Livraison écriture comptable ('+software_used+')" class="do-deliverAllPreseizure do-tooltip"><i class="icon-refresh" /></a>');
       }
       else if(data != 'none' && page > 1)
       {
@@ -89,7 +91,7 @@ function getPreseizures(link, page=1, by_piece=null, with_filter=true){
       if(lists_preseizures_height >= lists_preseizures_content_height && window.preseizuresPage > 0)
       { 
         window.preseizuresLoaderLocked = false;
-        setTimeout(getPreseizures(window.currentLink, window.preseizuresPage, by_piece, with_filter), 1000);
+        setTimeout(getPreseizures(window.currentLink, window.preseizuresPage, by_piece), 1000);
       }
       else
       {
@@ -98,12 +100,20 @@ function getPreseizures(link, page=1, by_piece=null, with_filter=true){
         window.handleView();
       }
 
-      setTimeout(function(){ window.preseizuresLoaderLocked = false }, 1000);
+      setTimeout(function(){
+        window.preseizuresLoaderLocked = false;
+        if(then_pieces)
+          showPieces(window.currentLink, 1);
+      }, 1000);
     },
     error: function(data){
       logAfterAction();
       $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
-      setTimeout(function(){ window.preseizuresLoaderLocked = false }, 1000);
+      setTimeout(function(){
+        window.preseizuresLoaderLocked = false;
+        if(then_pieces)
+          showPieces(window.currentLink, 1);
+      }, 1000);
     }
   });
 }
@@ -224,7 +234,8 @@ function deliverPreseizures(link='all'){
   if(link === 'all')
   {
     id = window.currentLink.parents("li").attr("id").split("_")[2];
-    data = { pack_id: id };
+    type = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack';
+    data = { type: type, id: id };
     $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').remove();
     $('#show_preseizures #lists_preseizures .preseizure a.tip_deliver').remove();
   }
@@ -262,11 +273,9 @@ function deliverPreseizures(link='all'){
 }
 
 function handlePreseizureSelection(id, type='toggle'){
-  var found = false;
-  if(type == 'toggle')
-    found = window.preseizuresSelected.find(function(elem){ return elem == id });
+  var found = window.preseizuresSelected.find(function(elem){ return elem == id });
 
-  if( type == 'unselect' || (type == 'toggle' && found) )
+  if( found && (type == 'unselect' || type == 'toggle') )
   {//already selected
     window.preseizuresSelected = window.preseizuresSelected.filter(function(elem){ return elem != id});
     $('#lists_preseizures .preseizure#'+id).removeClass('selected');
@@ -274,7 +283,7 @@ function handlePreseizureSelection(id, type='toggle'){
     $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').addClass('icon-ok');
     $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').removeClass('icon-ban-circle');
   }
-  else if( type == 'select' || (type == 'toggle' && !found) )
+  else if( !found && (type == 'select' || type == 'toggle') )
   {//not selected
     window.preseizuresSelected.push(id);
     $('#lists_preseizures .preseizure#'+id).addClass('selected');
@@ -283,10 +292,14 @@ function handlePreseizureSelection(id, type='toggle'){
     $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').removeClass('icon-ok');
   }
 
-  if(window.preseizuresSelected.length > 0)
+  if(window.preseizuresSelected.length > 0){
     $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', 'border: 2px solid #B1D837; padding: 5px');
-  else
+    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px');
+  }
+  else{
     $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', '');
+    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', '');
+  }
 
   if(window.preseizuresSelected.length > 1)
     $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').removeClass('hide');
