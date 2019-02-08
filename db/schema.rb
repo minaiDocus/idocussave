@@ -12,7 +12,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20190731112641) do
-
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
     t.datetime "created_at"
@@ -241,7 +240,7 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.boolean  "is_used",                             default: false
     t.string   "type_name",             limit: 255
     t.boolean  "lock_old_operation",                  default: true
-    t.integer  "permitted_late_days",   limit: 4,     default: 30
+    t.integer  "permitted_late_days",   limit: 4,     default: 7
   end
 
   add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree
@@ -516,6 +515,7 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.string   "content_fingerprint",        limit: 255
     t.integer  "pack_id",                    limit: 4
     t.string   "pack_id_mongo_id",           limit: 255
+    t.integer  "pack_piece_id",              limit: 4
   end
 
   add_index "documents", ["dirty"], name: "index_documents_on_dirty", using: :btree
@@ -524,6 +524,7 @@ ActiveRecord::Schema.define(version: 20190731112641) do
   add_index "documents", ["origin"], name: "index_documents_on_origin", using: :btree
   add_index "documents", ["pack_id"], name: "pack_id", using: :btree
   add_index "documents", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "documents", ["pack_piece_id"], name: "index_documents_on_pack_piece_id", using: :btree
 
   create_table "dropbox_basics", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
@@ -1029,7 +1030,6 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.text     "encrypted_description", limit: 65535
     t.text     "encrypted_message",     limit: 65535
     t.string   "encrypted_email",       limit: 255
-    t.string   "encrypted_password",    limit: 255
     t.string   "encrypted_types",       limit: 255
   end
 
@@ -1775,7 +1775,6 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.datetime "delivery_created_at"
     t.datetime "delivery_updated_at"
     t.string   "delivery_state",                           limit: 255,   default: "wait", null: false
-    t.boolean  "is_paper_quota_reached_notified",                        default: false
   end
 
   add_index "periods", ["mongo_id"], name: "index_periods_on_mongo_id", using: :btree
@@ -1789,21 +1788,25 @@ ActiveRecord::Schema.define(version: 20190731112641) do
   create_table "pre_assignment_deliveries", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "pack_name",       limit: 255
-    t.string   "state",           limit: 255
+    t.string   "pack_name",                limit: 255
+    t.string   "state",                    limit: 255
     t.boolean  "is_auto"
-    t.integer  "total_item",      limit: 4
+    t.integer  "total_item",               limit: 4
     t.date     "grouped_date"
-    t.text     "data_to_deliver", limit: 4294967295
-    t.text     "error_message",   limit: 65535
+    t.text     "data_to_deliver",          limit: 4294967295
+    t.text     "error_message",            limit: 65535
     t.boolean  "is_to_notify"
     t.boolean  "is_notified"
     t.datetime "notified_at"
-    t.integer  "organization_id", limit: 4
-    t.integer  "report_id",       limit: 4
-    t.integer  "user_id",         limit: 4
-    t.string   "software_id",     limit: 255
-    t.string   "deliver_to",      limit: 255,        default: "ibiza"
+    t.integer  "organization_id",          limit: 4
+    t.integer  "report_id",                limit: 4
+    t.integer  "user_id",                  limit: 4
+    t.string   "software_id",              limit: 255
+    t.string   "mongo_id",                 limit: 255
+    t.string   "organization_id_mongo_id", limit: 255
+    t.string   "report_id_mongo_id",       limit: 255
+    t.string   "user_id_mongo_id",         limit: 255
+    t.string   "deliver_to",               limit: 255,        default: "ibiza"
   end
 
   add_index "pre_assignment_deliveries", ["deliver_to"], name: "index_pre_assignment_deliveries_on_deliver_to", using: :btree
@@ -1937,10 +1940,7 @@ ActiveRecord::Schema.define(version: 20190731112641) do
 
   create_table "retrievers", force: :cascade do |t|
     t.integer  "budgea_id",                  limit: 4
-    t.string   "fiduceo_id",                 limit: 255
-    t.string   "fiduceo_transaction_id",     limit: 255
     t.string   "name",                       limit: 255
-    t.text     "additionnal_fields",         limit: 65535
     t.string   "journal_name",               limit: 255
     t.datetime "sync_at"
     t.boolean  "is_sane",                                  default: true
@@ -1949,27 +1949,30 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.string   "state",                      limit: 255
     t.text     "error_message",              limit: 65535
     t.string   "budgea_state",               limit: 255
-    t.text     "budgea_additionnal_fields",  limit: 65535
     t.text     "budgea_error_message",       limit: 65535
-    t.string   "fiduceo_state",              limit: 255
-    t.text     "fiduceo_additionnal_fields", limit: 65535
-    t.string   "fiduceo_error_message",      limit: 255
     t.datetime "created_at",                                               null: false
     t.datetime "updated_at",                                               null: false
     t.integer  "user_id",                    limit: 4
     t.integer  "journal_id",                 limit: 4
-    t.integer  "connector_id",               limit: 4
+    t.integer  "budgea_connector_id",        limit: 4
     t.string   "service_name",               limit: 255
     t.text     "capabilities",               limit: 65535
-    t.text     "encrypted_param1",           limit: 65535
-    t.text     "encrypted_param2",           limit: 65535
-    t.text     "encrypted_param3",           limit: 65535
-    t.text     "encrypted_param4",           limit: 65535
-    t.text     "encrypted_param5",           limit: 65535
     t.text     "encrypted_answers",          limit: 65535
+    t.text     "encrypted_param5",           limit: 65535
+    t.text     "encrypted_param4",           limit: 65535
+    t.text     "encrypted_param3",           limit: 65535
+    t.text     "encrypted_param2",           limit: 65535
+    t.text     "encrypted_param1",           limit: 65535
+    t.integer  "connector_id",               limit: 4
+    t.string   "fiduceo_error_message",      limit: 255
+    t.text     "fiduceo_additionnal_fields", limit: 65535
+    t.string   "fiduceo_state",              limit: 255
+    t.text     "budgea_additionnal_fields",  limit: 65535
+    t.text     "additionnal_fields",         limit: 65535
+    t.string   "fiduceo_transaction_id",     limit: 255
+    t.string   "fiduceo_id",                 limit: 255
   end
 
-  add_index "retrievers", ["connector_id"], name: "index_retrievers_on_connector_id", using: :btree
   add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree
   add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
   add_index "retrievers", ["user_id"], name: "index_retrievers_on_user_id", using: :btree

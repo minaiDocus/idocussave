@@ -15,9 +15,9 @@
       - if @user.active?
         - if @is_composition
           %li.delete_composition
-            %a.delete.do-removePageFromSelection{ href: '#', title: 'Supprimer' }
+            %a.delete.do-removePageFromSelection{ href: '#', title: 'Sélection' }
         - else
-          %li.selector= link_to '', '#', class: 'select do-selectPage', title: 'Sélectionner pour la composition'
+          %li.selector= link_to '', '#', class: 'select do-selectPage', title: 'Sélection'
   - if @is_composition
     .handle{ title: 'Déplacer' }
   .pagethumb

@@ -13,7 +13,9 @@ class Account::DocumentsController < Account::AccountController
       sort:      true
     }
 
-    @packs            = Pack.search(params[:text], options)
+    @packs   = Pack.search(nil, options)
+    @reports = Pack::Report.where(user_id: options[:owner_ids], pack_id: nil).page(options[:page]).per(options[:per_page])
+
     @last_composition = @user.composition
 
     ### TODO : GET DOCUMENTS COMPOSITION FROM PIECES INSTEAD OF DOCUMENTS FOR COMPOSITION CREATED AFTER 23/01/2019
@@ -24,32 +26,42 @@ class Account::DocumentsController < Account::AccountController
     @period_service   = PeriodService.new user: @user
 
     @pack = Pack.where(owner_id: options[:owner_ids], name: params[:pack_name]).first if params[:pack_name].present?
+    @reports = @pack.reports.page(options[:page]).per(options[:per_page]) if params[:pack_name].present?
   end
 
   # GET /account/documents/:id
   def show
-    @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
     @data_type = params[:fetch] || 'pieces'
+    @data_source = params[:source] || 'pack'
+
+    if @data_source == 'report'
+      source = Pack::Report.where(user_id: account_ids, id: params[:id]).first!
+    else
+      source = Pack.where(owner_id: account_ids, id: params[:id]).first!
+    end
+
+    if params[:by_all].present?
+      params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
+      params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
+    end
 
     if  @data_type == 'preseizures'
       if(params[:piece_id].present?)
-        @preseizures = Pack::Report::Preseizure.where(piece_id: params[:piece_id]).order(position: :desc).distinct.page(params[:page]).per(10)
+        @preseizures = source.preseizures.where(piece_id: params[:piece_id]).order(position: :desc).distinct.page(params[:page]).per(10)
       else
-        @preseizures = Pack::Report::Preseizure.where(report_id: @pack.reports.collect(&:id))
+        if params[:by_piece].present? && @data_source == 'pack'
+          pieces = source.pieces
+          pieces = pieces.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
+          pieces = pieces.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
+          pieces = pieces.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
+          piece_ids = pieces.distinct.pluck(:id).presence || [0]
+        end
+        
+        @preseizures = source.preseizures
 
-        @preseizures = @preseizures.delivered         if params[:is_delivered].present? && params[:is_delivered].to_i == 1
-        @preseizures = @preseizures.not_delivered     if params[:is_delivered].present? && params[:is_delivered].to_i == 2
-        @preseizures = @preseizures.failed_delivery   if params[:is_delivered].present? && params[:is_delivered].to_i == 3
+        @preseizures = @preseizures.where(piece_id: piece_ids) if piece_ids.present?
 
-        @preseizures = @preseizures.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:created_at_operation].tr('012', ' ><')}= ?", params[:created_at])                       if params[:created_at].present?
-        @preseizures = @preseizures.where("DATE_FORMAT(delivery_tried_at, '%Y-%m-%d') #{params[:delivery_tried_at_operation].tr('012', ' ><')}= ?", params[:delivery_tried_at])  if params[:delivery_tried_at].present?
-        @preseizures = @preseizures.where("amount #{params[:amount_operation].tr('012', ' ><')}= ?", params[:amount])                                                            if params[:amount].present?
-        @preseizures = @preseizures.where("position #{params[:position_operation].tr('012', ' ><')}= ?", params[:position])                                                      if params[:position].present?
-
-        @preseizures = @preseizures.where(piece_number: params[:piece_number])  if params[:piece_number].present?
-        @preseizures = @preseizures.where(third_party: params[:third_party])    if params[:third_party].present?
-
-        @preseizures = @preseizures.order(position: :desc).distinct.page(params[:page]).per(10)
+        @preseizures = @preseizures.filter_by(params[:by_preseizure]).order(position: :desc).distinct.page(params[:page]).per(10)
       end
 
       user = @preseizures.first.try(:user)
@@ -64,19 +76,30 @@ class Account::DocumentsController < Account::AccountController
         @software_human_name = 'Exact Online'
       end
 
-      @need_delivery = @pack.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no' if params[:page].to_i == 1
-    else
-      if params[:piece_id].present?
-        @documents = Pack::Piece.where(id: params[:piece_id]).includes(:pack).order(position: :desc).page(params[:page]).per(20)
+      if @data_source == 'pack'
+        @need_delivery = source.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no' if params[:page].to_i == 1
       else
-        @documents = Pack::Piece.search(params[:filter],
-          pack_id:  params[:id]
-        ).order(position: :desc).includes(:pack).page(params[:page]).per(20)
+        @need_delivery = (source.is_not_delivered? && !source.is_locked)? 'yes' : 'no' if params[:page].to_i == 1
+      end
+    elsif @data_source == 'pack'
+      if params[:piece_id].present?
+        @documents = source.pieces.where(id: params[:piece_id]).includes(:pack).order(position: :desc).page(params[:page]).per(20)
+      else
+        piece_ids = source.preseizures.filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
+
+        @documents = source.pieces
+
+        @documents = @documents.where(id: piece_ids) if piece_ids.present?
+        @documents = @documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
+        @documents = @documents.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
+        @documents = @documents.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
+
+        @documents = @documents.order(position: :desc).includes(:pack).page(params[:page]).per(20)
       end
 
       if params[:page].to_i == 1
-        unless @pack.is_fully_processed || params[:filter].presence
-          @temp_pack      = TempPack.find_by_name(@pack.name)
+        unless source.is_fully_processed || params[:filter].presence
+          @temp_pack      = TempPack.find_by_name(source.name)
           @temp_documents = @temp_pack.temp_documents.not_published
         end
       end
@@ -93,8 +116,22 @@ class Account::DocumentsController < Account::AccountController
         per(params[:per_page])
       @remaining_files = @user.remote_files.not_processed.count
     else
+      if params[:by_all].present?
+        params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
+        params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
+      end
+
       options = { page: params[:page], per_page: params[:per_page] }
       options[:sort] = true
+
+      options[:piece_created_at] = params[:by_piece].try(:[], :created_at)
+      options[:piece_created_at_operation] = params[:by_piece].try(:[], :created_at_operation)
+
+      options[:piece_position] = params[:by_piece].try(:[], :position)
+      options[:piece_position_operation] = params[:by_piece].try(:[], :position_operation)
+
+      options[:name] = params[:by_pack].try(:[], :pack_name)
+      options[:tags] = params[:by_piece].try(:[], :tags)
 
       options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
         _user = accounts.find(params[:view])
@@ -107,7 +144,34 @@ class Account::DocumentsController < Account::AccountController
 
       options[:piece_ids] = piece_ids if piece_ids.present?
 
-      @packs = Pack.search(params[:text], options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
+      @packs = Pack.search(nil, options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
+    end
+  end
+
+  def reports
+    if params[:view] == 'current_delivery'
+      #send empty ActiveRelation
+      @reports = Pack::Report.where(id: 0).page(params[:page] || 1).per(params[:per_page] || 20)
+    else
+      options = {}
+
+      options[:user_ids] = if params[:view].present? && params[:view] != 'all'
+        _user = accounts.find(params[:view])
+        _user ? [_user.id] : []
+      else
+        account_ids
+      end
+
+      if params[:by_all].present?
+        params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
+      end
+
+      options[:name] = params[:by_pack].try(:[], :pack_name)
+
+      reports_ids = Pack::Report::Preseizure.where(user_id: options[:user_ids]).where('operation_id > 0').filter_by(params[:by_preseizure]).distinct.pluck(:report_id).presence || [0] if params[:by_preseizure].present?
+      options[:ids] = reports_ids if reports_ids.present?
+
+      @reports = Pack::Report.where(pack_id: nil).search(options).order(updated_at: :desc).page(params[:page] || 1).per(params[:per_page] || 20)
     end
   end
 
@@ -169,8 +233,13 @@ class Account::DocumentsController < Account::AccountController
   def deliver_preseizures
     if params[:ids].present?
       preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
-    elsif params[:pack_id]
-      reports = Pack.find(params[:pack_id]).try(:reports)
+    elsif params[:id]
+      if params[:type] == 'report'
+        reports = Pack::Report.where(id: params[:id])
+      else
+        reports = Pack.find(params[:id]).try(:reports)
+      end
+
       preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
     end
 
@@ -213,7 +282,112 @@ class Account::DocumentsController < Account::AccountController
     render json: { error: error }, status: 200
   end
 
+  def select_to_export
+    if params[:ids]
+      obj = Pack::Report::Preseizure.where(id: params[:ids]).limit(1).first
+    elsif params[:id]
+      obj = if params[:type] == 'report'
+              Pack::Report.find params[:id]
+            else
+              Pack.find params[:id]
+            end
+    end
 
+    user = obj.user
+
+    options = []
+    options << ['CSV', 'csv']                       if user.uses_csv_descriptor?
+    options << ['XML (Ibiza)', 'xml_ibiza']         if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
+    options << ['ZIP (Quadratus)', 'zip_quadratus'] if user.uses_quadratus?
+    options << ['ZIP (Coala)', 'zip_coala']         if user.uses_coala?
+    options << ['XLS (Coala)', 'xls_coala']         if user.uses_coala?
+
+    render json: { options: options }, status: 200
+  end
+
+  def export_preseizures
+    params64 = Base64.decode64(params[:params64])
+    params64 = params64.split('&')
+
+    export_type = params64[0].presence
+    export_ids = params64[1].presence
+    export_format = params64[2].presence
+
+    if export_ids && export_type == 'preseizure'
+      preseizures = Pack::Report::Preseizure.where("id IN (#{export_ids})")
+    elsif export_ids && export_type == 'report'
+      preseizures = Pack::Report.where(id: export_ids).first.preseizures
+    elsif export_ids && export_type == 'pack'
+      reports     = Pack.where(id: export_ids).first.reports
+      preseizures = Pack::Report::Preseizure.where(report_id: reports.collect(&:id))
+    end
+
+    preseizures = preseizures.by_position
+    report      = preseizures.first.try(:report)
+    user        = preseizures.first.try(:user)
+
+    case export_format
+      when 'csv'
+        if preseizures.any? && user.try(:uses_csv_descriptor?)
+          data = PreseizuresToCsv.new(user, preseizures).execute
+
+          send_data(data, type: 'text/csv', filename: "#{report.name.tr(' ', '_')}.csv")
+        else
+          render text: 'Aucun résultat'
+        end
+      when 'xml_ibiza'
+        if current_user.is_admin
+          if preseizures.any?
+            file_name = "#{report.name.tr(' ', '_')}.xml"
+
+            ibiza = user.organization.ibiza
+
+            if ibiza.try(:configured?) && user.try(:ibiza_id) && user.try(:uses_ibiza?)
+              date = DocumentTools.to_period(report.name)
+
+              exercise = IbizaExerciseFinder.new(user, date, ibiza).execute
+              if exercise
+                data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
+
+                send_data(data, type: 'application/xml', filename: file_name)
+              else
+                render text: 'Traitement impossible'
+              end
+            else
+              render text: 'Traitement impossible'
+            end
+          else
+            render text: 'Aucun résultat'
+          end
+        end
+      when 'zip_quadratus'
+        if preseizures.any? && user.try(:uses_quadratus?)
+          file_path = QuadratusZipService.new(preseizures).execute
+
+          logger.info(file_path.inspect)
+
+          send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
+        else
+          render text: 'Aucun résultat'
+        end
+      when 'zip_coala'
+        if preseizures.any? && user.try(:uses_coala?)
+          file_path = CoalaZipService.new(user, preseizures, {to_xls: true}).execute
+          send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
+        else
+          render text: 'Aucun résultat'
+        end
+      when 'xls_coala'
+        if preseizures.any? && user.organization.is_coala_used && user.try(:uses_coala?)
+          file_path = CoalaZipService.new(user, preseizures, {preseizures_only: true, to_xls: true}).execute
+          send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
+        else
+          render text: 'Aucun résultat'
+        end
+      else
+        render text: 'Traitement impossible'
+    end
+  end
 
   # GET /account/documents/:id/archive
   def archive
