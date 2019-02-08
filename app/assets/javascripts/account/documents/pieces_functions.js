@@ -5,19 +5,19 @@ function showPieces(link, page=1, by_preseizure=null) {
 
   window.piecesLoaderLocked = true;
   var document_id = link.parents("li").attr("id").split("_")[2];
+  var source = (link.parents("li").hasClass('report'))? 'report' : 'pack'
 
   if(by_preseizure === null)
   {
-    var filter = $("#filter").val();
-    if (filter != "")
-      filter = "&filter="+filter;
+    var filter = '&'+window.getParamsFromFilter();
+    window.setParamsFilterText();
   }
   else
   {
     var filter = '&piece_id='+by_preseizure;
   }
 
-  var url = "/account/documents/"+document_id+"?fetch=pieces&page="+page+filter;
+  var url = "/account/documents/"+document_id+"?source="+source+"&fetch=pieces&page="+page+filter;
 
   window.piecesPage = page + 1;
 
@@ -37,15 +37,25 @@ function getPieces(url,title,by_preseizure=null) {
     type: "GET",
     beforeSend: function() {
       logBeforeAction("Traitement en cours");
+
+      var vTitle = "";
+      if (title)
+        vTitle = title;
+      else
+        vTitle = "Résultat : ";
+      $("#panel1 .header h3").text(vTitle);
     },
     success: function(data){
       data = data.trim();
 
       logAfterAction();
 
-      if(window.piecesPage == 2 && data != 'none')
+      if(window.piecesPage == 2)
       {
-        $("#panel1 > .content").html(data);
+        if(data != 'none')
+          $("#panel1 > .content").html(data);
+        else
+          $("#panel1 > .content").html('Aucun résultat');
 
         if(by_preseizure === null)
           $('#show_pages .showALLPieces').addClass('hide');
@@ -106,14 +116,6 @@ function getPieces(url,title,by_preseizure=null) {
         synchroniseSelected();
         window.handleView();
 
-        var vTitle = "";
-
-        if (title)
-          vTitle = title;
-        else
-          vTitle = "Résultat : ";
-
-        $("#panel1 .header h3").text(vTitle);
         $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
         $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
       }

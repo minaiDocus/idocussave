@@ -124,7 +124,7 @@
                           = l(object.date, format: '%d %B %Y %H:%M')
                       - else
                         \-
-                    %td.name= link_to object.name, account_organization_pre_assignment_delivery_errors_path(@user.organization)
+                    %td.name= link_to object.name, account_pre_assignment_delivery_errors_path
                     %td.count= object.document_count
                     %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
             .pull-right

@@ -27,19 +27,113 @@
     }
   }
 
-  function initEventOnPackRefresh(){
-    $("a.do-show").unbind("click");
-    $("a.do-show").bind("click",function() {
+  window.getParamsFromFilter = function(){
+    window.filterText = '';
+
+    $('#packFilterModal #packFilterForm .input_with_operation').each(function(){
+      if( $(this).val() === '' || $(this).val() === undefined || $(this).val() === null )
+      {
+        $(this).attr('disabled', 'disabled');
+        $(this).parent().find('.select_operation').attr('disabled', 'disabled');
+      }
+    });
+
+    var params_array = $('#packFilterModal #packFilterForm').serializeArray();
+    var params_filtered = [];
+
+    params_array.forEach(function(elem){
+      if(elem.value !== '' && elem.value !== null && elem.value !== undefined)
+      {
+        var lbl_for = elem.name.replace('[', '_').replace(']', '');
+        var value = $('#packFilterModal #packFilterForm').find('select[name="'+elem.name+'"] option:selected').text() || null;
+        var label = $('#packFilterModal #packFilterForm').find("label[for='"+lbl_for+"']").text() || null;
+
+        if(label !== null)
+        {
+          var operation = $('#packFilterModal #packFilterForm').find('select[id="'+lbl_for+'_operation"] option:selected').text() || '=';
+          window.filterText += label + ' ' + operation + ' <i>' + (value || elem.value) + '</i> ; ';
+        }
+
+        params_filtered.push(elem.name + '=' + elem.value);
+      }
+    });
+
+
+    $('#packFilterModal #packFilterForm .input_with_operation').removeAttr('disabled');
+    $('#packFilterModal #packFilterForm .select_operation').removeAttr('disabled');
+
+    return params_filtered.join('&') || '';
+  }
+
+  window.setParamsFilterText = function(){
+    if(window.filterText != '')
+    {
+      bdColor = '#aaa';
+      if(window.currentTargetFilter == 'all')
+        bdColor = '#CB413B';
+
+      $('#documents_actions .filter_indication').attr('style', 'display: inline-block; border: 1px solid '+bdColor);
+      $('#documents_actions .filter_indication_text').html('<strong>Filtre active : </strong>' + window.filterText.trim().substring(0, 140));
+    }
+    else
+    {
+      $('#documents_actions .filter_indication').attr('style', 'display: none');
+      $('#documents_actions .filter_indication_text').html('');
+    }
+  }
+
+  function initEventOnPackOrReportRefresh(){
+    $("a.do-show-pack").unbind("click");
+    $("a.do-show-pack").bind("click",function() {
+      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+        return false;
+
+      $('#documentslist .content > ul > li').removeClass('activated');
+      $(this).parents('li').addClass('activated');
+
       window.currentLink = $(this);
-
-      $('#presPanel2 #preseizuresFilterForm')[0].reset();
-
-      showPieces(window.currentLink);
-      initParameters(window.currentLink);
-      getPreseizures(window.currentLink, 1, null, false);
 
       $("#panel1 > .content").html("");
       $("#presPanel1 > .content").html("");
+
+      var href_download = $(this).parents('li').find('.action .download').attr('href') || '#';
+      var href_zip_download = $(this).parents('li').find('.action .zip_download').attr('href') || '#';
+      if(href_download != '#')
+        $('#panel1 > .header .actiongroup .download').attr('href', href_download);
+      else
+        $('#panel1 > .header .actiongroup .download').removeAttr('href');
+
+      if(href_zip_download != '#')
+        $('#panel1 > .header .actiongroup .zip_download').attr('href', href_zip_download);
+      else
+        $('#panel1 > .header .actiongroup .zip_download').removeAttr('href');
+
+      showPieces(window.currentLink);
+      initParameters(window.currentLink);
+      getPreseizures(window.currentLink, 1, null);
+
+      return false;
+    });
+
+    $("a.do-show-report").unbind("click");
+    $("a.do-show-report").bind("click",function() {
+      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+        return false;
+
+      window.currentView = 'preseizures';
+      $("#panel1 .header h3").text('Pieces');
+
+      $('#documentslist .content > ul > li').removeClass('activated');
+      $(this).parents('li').addClass('activated');
+
+      window.currentLink = $(this);
+
+      $('#panel1 > .header .actiongroup .download').removeAttr('href');
+      $('#panel1 > .header .actiongroup .zip_download').removeAttr('href');
+      $("#panel1 > .content").html("");
+      $("#presPanel1 > .content").html("");
+
+      getPreseizures(window.currentLink, 1, null);
 
       return false;
     });
@@ -47,16 +141,28 @@
     $("a.do-select").unbind("click");
     $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); return false; });
 
-    $(".pagination a").unbind('click');
-    $(".pagination a").bind('click',function() {
+    $(".packsList .pagination a").unbind('click');
+    $(".packsList .pagination a").bind('click',function(e) {
+      e.preventDefault();
+
       if(!$(this).parents('li').hasClass('disabled') && !$(this).parents('li').hasClass('active'))
-        showPacks($(this));
+        showPacksOrReports($(this), 'pack');
+      return false;
+    });
+
+    $(".reportsList .pagination a").unbind('click');
+    $(".reportsList .pagination a").bind('click',function(e) {
+      e.preventDefault();
+
+      if(!$(this).parents('li').hasClass('disabled') && !$(this).parents('li').hasClass('active'))
+        showPacksOrReports($(this), 'report');
       return false;
     });
   }
 
+
   // get packs of page given by link
-  function showPacks(link) {
+  function showPacksOrReports(link, type='pack') {
     var page = 1;
     var regexp = new RegExp("page=[0-9]+");
     var regexp2 = new RegExp("[0-9]+");
@@ -64,17 +170,36 @@
     if (result != null)
       page = result[0];
 
-    $('#documentslist .content').html('');
-    getPacks(page);
+    if(type == 'pack')
+      getPacks(page);
+    else
+      getReports(page);
   }
 
-  // fetch list of packs
-  function getPacks(PAGE) {
-    var filter = getFilterParams();
+  // fetch lists of packs
+  function getPacks(page = 1, then_reports = false) {
+    if(window.datasLoaderLocked)
+      return false;
+
+    window.datasLoaderLocked = true;
+
+    $('#documentslist .packsList .content').html('');
+    $("#documentslist .packsList h3").text("... lot(s)");
+    if(then_reports)
+    {
+      $('#documentslist .reportsList .content').html('');
+      $("#documentslist .reportsList h3").text("... lot(s)");
+    }
+
+    var filter = ''
+    if(window.currentTargetFilter == 'all')
+    {
+      filter = window.getParamsFromFilter();
+      window.setParamsFilterText();
+    }
 
     var view = $("select[name=document_owner_list]").val();
     var per_page = $("select[name=per_page]").val();
-    var page = typeof(PAGE) != 'undefined' ? PAGE : 1;
 
     if (view == 'current_delivery') {
       $('a.delivery').hide();
@@ -88,7 +213,8 @@
     $("#presPanel1 .header h3").text('Ecritures comptables')
     $("#presPanel1 > .content").html("")
 
-    var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
+    var Url = "/account/documents/packs?page="+page+"&view="+view+"&per_page="+per_page+'&'+filter;
+    window.currentLink = null;
 
     $.ajax({
       url: encodeURI(Url),
@@ -100,24 +226,98 @@
       },
       success: function(data) {
         logAfterAction();
-        var list = $("#documentslist .content");
+        var list = $("#documentslist .packsList .content");
         list.children("*").remove();
         list.append(data);
 
         packs_count = $("input[name=packs_count]").val();
         
-        $("#documentslist > .header > h3").text(packs_count + " document(s)");
+        $("#documentslist .packsList h3").text(packs_count + " lot(s)");
 
         $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
         $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
 
         window.handleView();
-        initEventOnPackRefresh();
+        initEventOnPackOrReportRefresh();
         window.initEventOnHoverOnInformation();
+
+        setTimeout(function(){ 
+          window.datasLoaderLocked = false; 
+          if(then_reports)
+            getReports();
+        }, 1000);
       },
       error: function(data){
         logAfterAction();
         $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+        setTimeout(function(){ 
+          window.datasLoaderLocked = false;
+          if(thenReports)
+            getReports();
+         }, 1000);
+      }
+    });
+  }
+
+  //fetch lists of report (operation reports)
+  function getReports(page = 1){
+    if(window.datasLoaderLocked)
+      return false;
+
+    window.datasLoaderLocked = true;
+    $('#documentslist .reportsList .content').html('');
+    $("#documentslist .reportsList h3").text("... lot(s)");
+
+    var filter = ''
+    if(window.currentTargetFilter == 'all')
+    {
+      filter = window.getParamsFromFilter();
+      window.setParamsFilterText();
+    }
+
+    var view = $("select[name=document_owner_list]").val();
+    var per_page = $("select[name=per_page]").val();
+
+    $("#panel1 .header h3").text('Pieces');
+    $("#panel1 > .content").html("");
+
+    $("#presPanel1 .header h3").text('Ecritures comptables');
+    $("#presPanel1 > .content").html("")
+
+    var Url = "/account/documents/reports?page="+page+"&view="+view+"&per_page="+per_page+'&'+filter;
+    window.currentLink = null;
+
+    $.ajax({
+      url: encodeURI(Url),
+      data: "",
+      dataType: "html",
+      type: "GET",
+      beforeSend: function() {
+        logBeforeAction("Traitement en cours");
+      },
+      success: function(data) {
+        logAfterAction();
+        var list = $("#documentslist .reportsList .content");
+        list.children("*").remove();
+        list.append(data);
+
+        reports_count = $("input[name=reports_count]").val();
+        
+        $("#documentslist .reportsList h3").text(reports_count + " lot(s)");
+
+        $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+        $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+
+        window.handleView();
+        initEventOnPackOrReportRefresh();
+        window.initEventOnHoverOnInformation();
+
+        setTimeout(function(){ window.datasLoaderLocked = false; }, 1000);
+      },
+      error: function(data){
+        logAfterAction();
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+        setTimeout(function(){ window.datasLoaderLocked = false; }, 1000);
       }
     });
   }
@@ -215,10 +415,10 @@
     });
 
     $("#deliverButton").click(function() {
-      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      var pack_ids = $.map($("#documentslist .packsList .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       var view = $("select[name=document_owner_list]").val();
       var delivery_type = $("input[name=delivery_type]:checked").val();
-      var hsh = { "filter": $("#filter").val(), "pack_ids": pack_ids, "view": view, "type": delivery_type };
+      var hsh = { "pack_ids": pack_ids, "view": view, "type": delivery_type };
       $.ajax({
         url: "/account/documents/sync_with_external_file_storage",
         data: hsh,
@@ -249,15 +449,9 @@
       inherit_select_classes: true
     });
 
-    $("#filter").change(function(){
-      $("#panel1 .header h4").text("");
-      $("#panel1 .content ul").html("");
-      getPacks();
-    });
-
     $("#documentsTaggingButton").click(function(e) {
       e.preventDefault();
-      var document_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[1] });
+      var document_ids = $.map($("#documentslist .packsList .content > ul > li.selected"), function(li){ return li.id.split("_")[1] });
       var $documentsTags = $("#documentsTags");
 
       if (document_ids.length <= 0)
@@ -270,7 +464,7 @@
         $documentsTags.val("");
         postTags(tags,document_ids,'pack');
         aTags = tags.split(" ");
-        $("#documentslist > .content > ul > li.selected").each(function(i,li) {
+        $("#documentslist .packsList .content > ul > li.selected").each(function(i,li) {
           var $link = $(li).children(".action").children(".do-popover");
           var $content = $($link.attr("data-content"));
           var oTags = $content.find('.tags').text();
@@ -304,7 +498,7 @@
     });
 
     $("#shareDialog").on('show',function(){
-      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      var pack_ids = $.map($("#documentslist .packsList .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       if(pack_ids.length > 0) {
         $(".warn_selected_file").show();
         $(".warn_all_file_selected").hide();
@@ -316,15 +510,15 @@
 
     $("#download_multi_pack").click(function(){
       $(".alerts").html('')
-      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      var pack_ids = $.map($("#documentslist .packsList .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       if(pack_ids != "")
         window.location = "/account/documents/multi_pack_download?pack_ids=" + pack_ids.join('_')
       else
         $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez selectionner au moins un document.</span></div></div>");
     });
 
-    $(".do-selectAll").click(function(e){ e.preventDefault(); $("#documentslist > .content > ul > li").addClass("selected"); });
-    $(".do-unselectAll").click(function(e){ e.preventDefault(); $("#documentslist > .content > ul > li").removeClass("selected"); });
+    $(".do-selectAll").click(function(e){ e.preventDefault(); $("#documentslist .packsList .content > ul > li").addClass("selected"); });
+    $(".do-unselectAll").click(function(e){ e.preventDefault(); $("#documentslist .packsList .content > ul > li").removeClass("selected"); });
 
     $(".modal-close").click(function(){ $(".modal").modal("hide"); });
     $(".close").click(function(){ $(this).parents("li").remove(); });
@@ -334,11 +528,11 @@
     });
 
     $(".view_for").change(function() {
-      getPacks();
+      getPacks(1, true);
     });
 
     $(".per_page").change(function() {
-      getPacks();
+      getPacks(1, true);
     });
 
     if ($('#h_file_code').length > 0) {
@@ -417,6 +611,47 @@
       $('#file_prev_period_offset').val($(this).val());
     });
 
+    $("#packFilterModal #validatePackFilterModal").click(function(e) {
+      e.preventDefault();
+      $("#packFilterModal").modal('hide');
+      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+        return false;
+
+      if(window.currentTargetFilter == 'all')
+        getPacks(1, true);
+      else if (window.currentLink != null && window.currentLink != undefined)
+        getPreseizures(window.currentLink, 1, null, true);
+      else
+        alert('Vous devez selectionner un lot pour ce type de filtre!');
+    });
+
+    $('#documents_actions #initPackFilter, #packFilterModal #initPackFilterModal').click(function(){
+      $("#packFilterModal").modal('hide');
+      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+        return false;
+
+      $('#packFilterModal #packFilterForm')[0].reset();
+      if(window.currentTargetFilter == 'selected' && window.currentLink != null && window.currentLink != undefined)
+        getPreseizures(window.currentLink, 1, null, true);
+      else
+        getPacks(1, true);
+    });
+
+    $('#documentslist .subView #view_packs').click(function(){
+      $('#documentslist .subView .tab-nav').removeClass('selected');
+      $(this).addClass('selected');
+
+      $('#documentslist .packsList').removeClass('hide');
+      $('#documentslist .reportsList').addClass('hide');
+    });
+
+    $('#documentslist .subView #view_reports').click(function(){
+      $('#documentslist .subView .tab-nav').removeClass('selected');
+      $(this).addClass('selected');
+
+      $('#documentslist .packsList').addClass('hide');
+      $('#documentslist .reportsList').removeClass('hide');
+    });
 
     $('#documents_view #pieces_view').click(function(){
       window.currentView = 'pieces';
@@ -435,6 +670,22 @@
       $('#documents_view #preseizures_view ').addClass('active');
     });
 
+    $('#packFilterModal #target_filter').on('change', function(){
+      var value = $(this).val()
+
+      if(value == 1)
+      {
+        window.currentTargetFilter = 'selected';
+        $('#packFilterForm #by_pack_pack_name').attr('disabled', 'disabled');
+        $('#packFilterModal .target_filter .full_search').addClass('hide');
+      }
+      else
+      {
+        window.currentTargetFilter = 'all'
+        $('#packFilterForm #by_pack_pack_name').removeAttr('disabled');
+        $('#packFilterModal .target_filter .full_search').removeClass('hide');
+      }
+    });
 
     $(window).resize(function() {
       $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
@@ -472,10 +723,15 @@
     window.currentView = 'pieces';
     window.preseizuresPage = 1;
     window.piecesPage = 1;
+    window.currentTargetFilter = 'all'
     window.currentLink = null;
     window.preseizuresSelected = [];
+
+    window.datasLoaderLocked = false;
     window.piecesLoaderLocked = false;
     window.preseizuresLoaderLocked = false;
+
+    window.filterText = '';
 
     _require('/assets/account/documents/pieces_event_handler.js');
     _require('/assets/account/documents/preseizures_event_handler.js');
@@ -483,7 +739,7 @@
     //View Initializers
     initManager();
 
-    initEventOnPackRefresh();
+    initEventOnPackOrReportRefresh();
     window.initEventOnHoverOnInformation();
 
     $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");

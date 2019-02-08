@@ -17,12 +17,14 @@ module UpdateMultipleTags
     document_ids.each do |document_id|
       if type == 'piece'
         document = Pack::Piece.where(id: document_id).first
+        doc_user = document.try(:user)
       else
         document = Document.where(id: document_id).first
+        doc_user = document.try(:pack).try(:owner)
       end
 
-      next unless document && (document.user == user ||
-                  (user.is_prescriber && user.customers.include?(document.user)) || user.is_admin)
+      next unless document && (doc_user == user ||
+                  (user.is_prescriber && user.customers.include?(doc_user)) || user.is_admin)
 
       sub.each do |s|
         tags = document.tags || []

@@ -1,7 +1,13 @@
 #panel1
-  .header.span12.margin0left{style: "float:none!important"}
-    %h3
+  .header.span12.margin0left{style: "float:none!important; border-bottom: 1px solid #ddd; margin-bottom: 10px"}
+    %h3.pull-left
       Pieces
+    - if @user.active?
+      .actiongroup.pull-right
+        %a.download{ :title => "Télécharger", :target => "_blank", style: 'margin: 3px' }
+          %i.icon-download-alt
+        %a.zip_download{ :title => "Télécharger une archive zip", :target => "_blank", style: 'margin: 3px' }
+          %i.icon-download
   .content.pages
 #panel2{ :style => "display: none" }
   .header.row-fluid

@@ -319,8 +319,8 @@ fr:
         third_party: Nom de tiers
         operation_label: Libelé de l'opérations
         piece_number: Numéro de pièces
-        amount: Montant
-        cached_amount: Montant
+        amount: Montant d'origine
+        cached_amount: Montant d'origine
         currency: Devise
         conversion_rate: Taux de conversion
         observation: Remarque

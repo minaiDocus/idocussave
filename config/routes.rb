@@ -20,6 +20,8 @@ Idocus::Application.routes.draw do
   get '/account/documents/pieces/:id/download(/:style)',   controller: 'account/documents', action: 'piece'
   get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
+  post '/account/documents/select_to_export',              controller: 'account/documents', action: 'select_to_export'
+  get '/account/documents/export_preseizures/:params64',   controller: 'account/documents', action: 'export_preseizures'
   get '/account/documents/preseizure_account/:id',         controller: 'account/documents', action: 'preseizure_account'
 
   get '/account/documents/preseizure/:id/edit',            controller: 'account/documents', action: 'edit_preseizure'
@@ -337,6 +339,7 @@ Idocus::Application.routes.draw do
 
     resources :documents do
       get  'packs',                           on: :collection
+      get  'reports',                         on: :collection
       get  'archive',                         on: :member
       post 'sync_with_external_file_storage', on: :collection
     end

@@ -1,16 +1,19 @@
-%li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => (pack.owner == @user ? 'own' : 'shared') }
+%li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => (pack.owner == @user ? 'pack own' : 'pack shared') }
   %span.action
     %a.do-popover{ :href => "#", "data-content" => html_pack_info(pack) }
       %i.icon-info-sign
     - if @user.active?
       %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
         %i.icon-ok
-    %a.do-tooltip{ :href => pack.content_url, :class => "download", :title => "Télécharger", :target => "_blank" }
+    %a.do-tooltip.download.hide{ :href => pack.content_url, :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
-    %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }
+    %a.do-tooltip.zip_download.hide{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :target => "_blank"}
       %i.icon-download
   %span.name
-    %a.do-show.pack_name_selection{ :href => "#", data: { user_code: pack.owner.code, pack_journal: (pack.journal.try(:name) || pack.name.split[1]), uses_ibiza_analytics: pack.owner.uses_ibiza_analytics? ? 1 : 0 } }= pack.name.sub('all','')
+    %a.do-show-pack.pack_name_selection{ :href => "#", data: { user_code: pack.owner.code, pack_journal: (pack.journal.try(:name) || pack.name.split[1]), uses_ibiza_analytics: pack.owner.uses_ibiza_analytics? ? 1 : 0 } }= pack.name.sub('all','')
     - unless pack.is_fully_processed
       %a.do-tooltip{ :title => "document en cours de traitement"}
         %icon.icon-cog
+    - if pack.reports.not_delivered.not_locked.count > 0
+      %a.do-tooltip{ :title => "Ecritures comptable non livrées"}
+        %icon.icon-pause

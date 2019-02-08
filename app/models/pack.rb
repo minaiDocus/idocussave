@@ -60,11 +60,20 @@ class Pack < ActiveRecord::Base
     per_page = options[:per_page].present? ? options[:per_page].to_i : default_per_page
 
     query = self
-    query = query.where(id: options[:ids]) if options[:ids].present?
+    query = query.where(id: options[:ids]) if options[:ids].present?    
     # WARN : do not change "unless..nil?" to "if..present?, an empty owner_ids must be passed to the query
     query = query.where(owner_id: options[:owner_ids]) unless options[:owner_ids].nil?
     query = query.joins(:pieces).where(pack_pieces: { id: options[:piece_ids] }) unless options[:piece_ids].nil?
+
     query = query.joins(:pieces).where('packs.name LIKE ? OR packs.tags LIKE ? OR pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?' , "%#{text}%", "%#{text}%", "%#{text}%",  "%#{text}%", "%#{text}%") if text.present?
+
+    query = query.where('packs.name LIKE ?', "%#{options[:name]}%") if options[:name].present?
+    query = query.joins(:pieces).where("packs.tags LIKE ? OR pack_pieces.tags LIKE ?", "%#{options[:tags]}%", "%#{options[:tags]}%") if options[:tags].present?
+
+    query = query.joins(:pieces).where("DATE_FORMAT(pack_pieces.created_at, '%Y-%m-%d') #{options[:piece_created_at_operation].tr('012', ' ><')}= ?", options[:piece_created_at]) if options[:piece_created_at]
+    query = query.joins(:pieces).where("pack_pieces.position #{options[:piece_position_operation].tr('012', ' ><')}= ?", options[:piece_position]) if options[:piece_position].present?
+    query = query.joins(:pieces).where('packs.tags LIKE ? OR pack_pieces.tags LIKE ?' , "%#{options[:tags]}%", "%#{options[:tags]}%") if options[:tags].present?
+    query = query.joins(:pieces).where(pack_pieces: {id: options[:piece_ids]}) if options[:piece_ids].present?
     query = query.order(updated_at: :desc) if options[:sort] == true
 
     query.distinct.page(page).per(per_page)
@@ -76,6 +85,10 @@ class Pack < ActiveRecord::Base
     else
       documents.inject(0){ |memo, piece| memo + piece.get_pages_number }
     end
+  end
+
+  def user
+    owner
   end
 
   def journal
@@ -272,6 +285,17 @@ class Pack < ActiveRecord::Base
         original_document.save
       end
     end
+  end
+
+  def get_delivery_message_of(software='ibiza')
+    message = ''
+
+    self.reports.each do |report|
+      message = report.get_delivery_message_of(software)
+      return message if message.present?
+    end
+
+    message
   end
 
   private

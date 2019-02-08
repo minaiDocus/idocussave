@@ -23,6 +23,16 @@ class Pack::Report < ActiveRecord::Base
   scope :not_locked,                -> { where(is_locked: false) }
   scope :preseizures,               -> { where.not(type: ['NDF']) }
 
+  def self.search(options)
+    reports = self.all
+
+    reports = reports.where(id: options[:ids])                                if options[:ids].present?
+    reports = reports.where(user_id: options[:user_ids])                      if options[:user_ids].present?
+    reports = reports.where('pack_reports.name LIKE ?', "%#{options[:name]}%")  if options[:name].present?
+
+    reports
+  end
+
   def journal(options={ name_only: true })
     #TODO : separate journal and journal name
     result = name.split[1]
@@ -108,7 +118,7 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def is_delivered_to?(software='ibiza')
-    self.is_delivered_to.match(/#{software}/) ? true : false
+    self.is_delivered_to.to_s.match(/#{software}/) ? true : false
   end
 
   def set_delivery_message_for(software='ibiza', message)

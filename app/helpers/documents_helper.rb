@@ -124,17 +124,55 @@ module DocumentsHelper
     end
   end
 
+  def preseizures_informations(pack_or_report, content_width)
+    software =  if pack_or_report.user.try(:uses_ibiza?)
+                  { human_name: 'Ibiza', name: 'ibiza' }
+                elsif pack_or_report.user.try(:uses_exact_online?)
+                  { human_name: 'Exact Online', name: 'exact_online' }
+                else
+                  { human_name: '', name: '' }
+                end
+
+    first_created_at       = pack_or_report.preseizures.select('MIN(pack_report_preseizures.created_at) as min_created_at').first.try(:min_created_at)
+    last_created_at        = pack_or_report.preseizures.select('MAX(pack_report_preseizures.created_at) as max_created_at').first.try(:max_created_at)
+    last_delivery_tried_at = pack_or_report.preseizures.select('MAX(pack_report_preseizures.delivery_tried_at) as max_delivery_tried_at').first.try(:max_delivery_tried_at)
+
+    content_tag :table, class: 'table table-condensed' do
+      content_tag :tbody do
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Date d'ajout de la première écriture"), width: content_width) + content_tag(:td, first_created_at ? l(first_created_at).to_s : '')
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Date d'ajout de la dernière écriture"), width: content_width) + content_tag(:td, last_created_at ? l(last_created_at).to_s : '')
+
+        if software[:name].present?
+          concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de dernière envoi [#{software[:human_name]}]"),  width: content_width) + content_tag(:td, last_delivery_tried_at ? l(last_delivery_tried_at).to_s : '')
+          concat content_tag :tr, content_tag(:td, content_tag(:b, "Message d'erreur d'envoi [#{software[:human_name]}]") + content_tag(:span, pack_or_report.get_delivery_message_of(software[:name]).to_s, style: 'display:block'), colspan: 2)
+        end
+      end
+    end
+  end
+
   def html_pack_info(pack)
     columns = ['N°', 'Date', 'Télév.', 'Num.', "iDocus'Box", 'Auto.']
 
     contents = ''
     contents += content_tag :h4, 'Informations'
     contents += content_tag :div, tinformations(pack, 120)
+
+    if pack.preseizures.any?
+      contents += content_tag :h4, 'Ecritures Comptables'
+      contents += content_tag :div, preseizures_informations(pack, 220)
+    end
+
     contents += content_tag :h4, 'Historique des ajouts de pages'
     contents += content_tag :div, custom_table_for(columns, pack.content_historic)
     content_tag :div, contents
   end
 
+  def html_report_info(report)
+    contents = ''
+    contents += content_tag :h4, 'Ecritures Comptables'
+    contents += content_tag :div, preseizures_informations(report, 220)
+    content_tag :div, contents
+  end
 
   def quarterly_of_month(month)
     if month < 4

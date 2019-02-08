@@ -257,7 +257,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def is_delivered_to?(software='ibiza')
-    self.is_delivered_to.match(/#{software}/) ? true : false
+    self.is_delivered_to.to_s.match(/#{software}/) ? true : false
   end
 
   def set_delivery_message_for(software='ibiza', message)
@@ -299,6 +299,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
       save
     end
+  end
 
   def get_state_to(type='image')
     text    = 'none'

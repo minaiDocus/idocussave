@@ -78,6 +78,17 @@
     select
       font-size: 11px
 
+#packFilterModal
+  .target_filter
+    display: inline-block
+    margin: 0px 20px
+
+#exportSelectedPreseizures
+  .text_title
+    margin-bottom: 10px
+    span
+      font-size: 14px
+
 //Used by document upload and Default analytics journal
 #analytic_fields
   .control-label
@@ -344,7 +355,16 @@
         width: 130px
 
 /*** Documents ***/
-
+#documents_actions
+  .filter_indication
+    margin-top: -3px
+    color: #584528
+    font-size: 12px
+    display: none
+    overflow: hidden
+    border-radius: 5px
+    .filter_indication_text
+      padding: 0px 5px
 #documents_view
   text-align: center
   #pieces_view
@@ -370,17 +390,35 @@
     box-shadow: 0px 3px 13px -2px rgba(0, 0, 0, 0.3) inset
 
 #document_owner_list, #document_owner_list_chosen
-  max-width: 290px
+  max-width: 400px
 
 #documentslist
   .actionfilter
-    border-bottom: 1px solid #aaa
+    border-bottom: 1px solid #ddd
     margin-bottom: 5px
+    padding-bottom: 5px
   #per_page
     border-radius: 3px
     height: 25px
     border: 1px solid #aaa
     background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
+  .subView
+    margin-bottom: -1px
+    .tab-nav
+      padding: 5px
+      cursor: pointer
+      display: inline-block
+      width: 100px
+      text-align: center
+      border: 1px solid #aaa
+      border-bottom: none
+      border-radius: 2px
+    .tab-nav.selected
+      background-color: #FFF
+  .packsList, .reportsList
+    background-color: #FFF
+    padding: 5px
+    border-top: 1px solid #aaa
 
 #documentslist .content ul
   list-style: none
@@ -391,6 +429,8 @@
       width: 130px
   li:hover
     background-color: #eeeeee
+  li.activated
+    border: 1px solid #cccccc
   li.selected
     background-color: #dddddd
   li.selected:hover
