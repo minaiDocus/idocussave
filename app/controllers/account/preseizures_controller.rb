@@ -7,16 +7,24 @@ class Account::PreseizuresController < Account::OrganizationController
       report = Pack::Report.preseizures.where(user_id: customer_ids, id: params[:pack_report_id]).first
 
       if report
-        @preseizures = []
-        @preseizures = report.preseizures.where("third_party LIKE ?", "%#{params[:filter]}%") if params[:filter].present?
+        options = {}
 
-        @preseizures = report.preseizures if @preseizures.size == 0
+        if params[:filter].present?
+          options[:third_party] = params[:filter] unless report.name.match(/#{params[:filter]}/)
+        end
 
         if params[:view] == 'delivered'
-          @preseizures = @preseizures.delivered
+          options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:delivered]
         elsif params[:view] == 'not_delivered'
-          @preseizures = @preseizures.not_delivered
+          options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:not_delivered]
         end
+
+        if options.present?
+          @preseizures = AdvancedPreseizure.search('preseizures', options, report)
+        else
+          @preseizures = report.preseizures
+        end
+
         @preseizures = @preseizures.by_position.page(params[:page]).per(params[:per_page])
       else
         @preseizures = []

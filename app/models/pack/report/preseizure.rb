@@ -192,13 +192,17 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def is_delivered?
-    ( self.user.uses_ibiza? && is_delivered_to?('ibiza') ) ||
-    ( self.user.uses_exact_online? && is_delivered_to?('exact_online') )
+    ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.uses_ibiza? && !is_delivered_to?('ibiza') ) ||
-    ( self.user.uses_exact_online? && !is_delivered_to?('exact_online') )
+    ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
+  end
+
+  def delivery_failed?
+    is_not_delivered? && delivery_message != '' && delivery_message != '{}'
   end
 
   def is_not_blocked_for_duplication

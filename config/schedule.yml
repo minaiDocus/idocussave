@@ -42,6 +42,9 @@ NotifyPreAssignmentExportWorker:
 ClearCurrencyRateWorker:
   queue: default
   cron: '0 1 1 */6 *'
+UpdateAdvancedTablesWorker:
+  queue: default
+  cron: '*/10 * * * *'
 
 ## Budgea retrievers workers
 

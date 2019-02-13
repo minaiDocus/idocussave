@@ -37,26 +37,25 @@ class Pack::Report < ActiveRecord::Base
   end
 
   def is_delivered?
-    ( self.user.uses_ibiza? && is_delivered_to?('ibiza') ) ||
-    ( self.user.uses_exact_online? && is_delivered_to?('exact_online') )
+    ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.uses_ibiza? && !is_delivered_to?('ibiza') ) ||
-    ( self.user.uses_exact_online? && !is_delivered_to?('exact_online') )
+    ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
   end
 
   def self.failed_delivery(user_ids = [], limit = 50)
     return [] unless user_ids.present? || user_ids.nil?
 
-    _result = Rails.cache.fetch ['report.failed_delivery', user_ids.presence || 'all'], expires_in: 20.minutes do
+    _result = Rails.cache.fetch ['report.failed_delivery', user_ids.presence || 'all'], expires_in: 5.minutes do
       collections = []
 
-      if user_ids.present?
-        collections = Pack::Report::Preseizure.failed_delivery.joins(:report).where(user_id: user_ids).where("pack_report_preseizures.created_at >= ?", 6.month.ago ).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
-      else
-        collections = Pack::Report::Preseizure.failed_delivery.joins(:report).where("pack_report_preseizures.created_at >= ?", 6.month.ago ).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
-      end
+      options = { is_delivered: AdvancedPreseizure::DELIVERY_STATE[:failed] }
+      options[:user_ids] = user_ids if user_ids.present?
+
+      collections = AdvancedPreseizure.search('preseizures', options).joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
 
       result = []
       if collections.any?

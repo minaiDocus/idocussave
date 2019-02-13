@@ -5,17 +5,28 @@ class Account::PackReportsController < Account::OrganizationController
   # GET /account/organizations/:organization_id/pack_reports
   def index
     @pack_reports = Pack::Report.preseizures.where(user_id: customer_ids).uniq
-    @pack_reports = @pack_reports.joins(:preseizures).where("pack_reports.name LIKE ? OR pack_report_preseizures.third_party LIKE ?", "%#{params[:filter]}%", "%#{params[:filter]}%").uniq if params[:filter].present?
 
-    if params[:view] == 'delivered'
-      @pack_reports = @pack_reports.delivered
-    elsif params[:view] == 'not_delivered'
-      @pack_reports = @pack_reports.not_delivered
+    options = {}
+    if params[:filter].present?
+      tmp_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter]}%")
+      if tmp_reports.count == 0
+        options[:third_party] = params[:filter]
+      else
+        @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter]}%")
+      end
     end
 
-    @pack_reports_count = @pack_reports.count
+    if params[:view] == 'delivered'
+      options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:delivered]
+    elsif params[:view] == 'not_delivered'
+      options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:not_delivered]
+    end
 
-    @pack_reports = @pack_reports.order(updated_at: :desc).limit(20).page(params[:page]).per(params[:per_page])
+    @pack_reports = AdvancedPreseizure.search('reports', options, @pack_reports)
+
+    @pack_reports = @pack_reports.order(updated_at: :desc).page(params[:page]).per(params[:per_page])
+
+    @pack_reports_count = @pack_reports.total_count
   end
 
 
