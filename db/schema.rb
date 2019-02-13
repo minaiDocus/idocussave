@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125083303) do
+ActiveRecord::Schema.define(version: 20190213142124) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -168,6 +168,33 @@ ActiveRecord::Schema.define(version: 20190125083303) do
   add_index "addresses", ["locatable_id_mongo_id"], name: "locatable_id_mongo_id", using: :btree
   add_index "addresses", ["locatable_type"], name: "locatable_type", using: :btree
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
+
+  create_table "advanced_preseizures", force: :cascade do |t|
+    t.integer  "user_id",           limit: 4
+    t.integer  "organization_id",   limit: 4
+    t.integer  "report_id",         limit: 4
+    t.integer  "piece_id",          limit: 4
+    t.integer  "pack_id",           limit: 4
+    t.integer  "operation_id",      limit: 4
+    t.integer  "position",          limit: 4
+    t.datetime "date"
+    t.datetime "deadline_date"
+    t.datetime "delivery_tried_at"
+    t.text     "delivery_message",  limit: 65535
+    t.string   "name",              limit: 255
+    t.string   "piece_number",      limit: 255
+    t.string   "third_party",       limit: 255
+    t.decimal  "cached_amount",                   precision: 11, scale: 2
+    t.string   "delivery_state",    limit: 20
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "advanced_preseizures", ["delivery_state"], name: "index_advanced_preseizures_on_delivery_state", using: :btree
+  add_index "advanced_preseizures", ["name"], name: "index_advanced_preseizures_on_name", using: :btree
+  add_index "advanced_preseizures", ["position"], name: "index_advanced_preseizures_on_position", using: :btree
+  add_index "advanced_preseizures", ["third_party"], name: "index_advanced_preseizures_on_third_party", using: :btree
+  add_index "advanced_preseizures", ["updated_at"], name: "index_advanced_preseizures_on_updated_at", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
     t.string  "a1_name",        limit: 255
@@ -1357,21 +1384,19 @@ ActiveRecord::Schema.define(version: 20190125083303) do
     t.string   "pack_id_mongo_id",           limit: 255
     t.integer  "analytic_reference_id",      limit: 4
     t.text     "content_text",               limit: 4294967295
-    t.text     "tags",                       limit: 4294967295
+    t.text     "tags",                       limit: 65535
     t.boolean  "is_finalized",                                  default: false
   end
 
   add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
   add_index "pack_pieces", ["is_finalized"], name: "index_pack_pieces_on_is_finalized", using: :btree
-  add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
   add_index "pack_pieces", ["name"], name: "index_pack_pieces_on_name", using: :btree
   add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
   add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pack_pieces", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
   add_index "pack_pieces", ["pack_id"], name: "pack_id", using: :btree
-  add_index "pack_pieces", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "pack_pieces", ["position"], name: "index_pack_pieces_on_position", using: :btree
+  add_index "pack_pieces", ["updated_at"], name: "index_pack_pieces_on_updated_at", using: :btree
   add_index "pack_pieces", ["user_id"], name: "user_id", using: :btree
-  add_index "pack_pieces", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "pack_report_expenses", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -1469,21 +1494,21 @@ ActiveRecord::Schema.define(version: 20190125083303) do
     t.string   "type",                           limit: 255
     t.datetime "date"
     t.datetime "deadline_date"
-    t.text     "operation_label",                limit: 4294967295
+    t.text     "operation_label",                limit: 65535
     t.string   "observation",                    limit: 255
     t.integer  "position",                       limit: 4
     t.string   "piece_number",                   limit: 255
-    t.decimal  "amount",                                            precision: 11, scale: 2
+    t.decimal  "amount",                                       precision: 11, scale: 2
     t.string   "currency",                       limit: 255
-    t.string   "unit",                           limit: 5,                                   default: "EUR"
+    t.string   "unit",                           limit: 5,                              default: "EUR"
     t.float    "conversion_rate",                limit: 24
     t.string   "third_party",                    limit: 255
     t.integer  "category_id",                    limit: 4
-    t.boolean  "is_made_by_abbyy",                                                           default: false, null: false
-    t.boolean  "is_delivered",                                                               default: false, null: false
+    t.boolean  "is_made_by_abbyy",                                                      default: false, null: false
+    t.boolean  "is_delivered",                                                          default: false, null: false
     t.datetime "delivery_tried_at"
     t.text     "delivery_message",               limit: 65535
-    t.boolean  "is_locked",                                                                  default: false, null: false
+    t.boolean  "is_locked",                                                             default: false, null: false
     t.integer  "organization_id",                limit: 4
     t.string   "organization_id_mongo_id",       limit: 255
     t.integer  "user_id",                        limit: 4
@@ -1496,13 +1521,13 @@ ActiveRecord::Schema.define(version: 20190125083303) do
     t.string   "operation_id_mongo_id",          limit: 255
     t.integer  "similar_preseizure_id",          limit: 4
     t.datetime "duplicate_detected_at"
-    t.boolean  "is_blocked_for_duplication",                                                 default: false
+    t.boolean  "is_blocked_for_duplication",                                            default: false
     t.datetime "marked_as_duplicate_at"
     t.integer  "marked_as_duplicate_by_user_id", limit: 4
     t.datetime "duplicate_unblocked_at"
     t.integer  "duplicate_unblocked_by_user_id", limit: 4
-    t.decimal  "cached_amount",                                     precision: 11, scale: 2
-    t.string   "is_delivered_to",                limit: 255,                                 default: ""
+    t.decimal  "cached_amount",                                precision: 11, scale: 2
+    t.string   "is_delivered_to",                limit: 255,                            default: ""
     t.string   "exact_online_id",                limit: 255
   end
 
@@ -1510,18 +1535,15 @@ ActiveRecord::Schema.define(version: 20190125083303) do
   add_index "pack_report_preseizures", ["is_blocked_for_duplication"], name: "index_pack_report_preseizures_on_is_blocked_for_duplication", using: :btree
   add_index "pack_report_preseizures", ["is_delivered_to"], name: "index_pack_report_preseizures_on_is_delivered_to", using: :btree
   add_index "pack_report_preseizures", ["marked_as_duplicate_by_user_id"], name: "index_pack_report_preseizures_on_marked_as_duplicate_by_user_id", using: :btree
-  add_index "pack_report_preseizures", ["mongo_id"], name: "index_pack_report_preseizures_on_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["operation_id"], name: "operation_id", using: :btree
-  add_index "pack_report_preseizures", ["operation_id_mongo_id"], name: "operation_id_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pack_report_preseizures", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["piece_id"], name: "piece_id", using: :btree
-  add_index "pack_report_preseizures", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["position"], name: "index_pack_report_preseizures_on_position", using: :btree
   add_index "pack_report_preseizures", ["report_id"], name: "report_id", using: :btree
-  add_index "pack_report_preseizures", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["similar_preseizure_id"], name: "index_pack_report_preseizures_on_similar_preseizure_id", using: :btree
+  add_index "pack_report_preseizures", ["third_party"], name: "index_pack_report_preseizures_on_third_party", using: :btree
+  add_index "pack_report_preseizures", ["updated_at"], name: "index_pack_report_preseizures_on_updated_at", using: :btree
   add_index "pack_report_preseizures", ["user_id"], name: "user_id", using: :btree
-  add_index "pack_report_preseizures", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "pack_report_preseizures_pre_assignment_deliveries", force: :cascade do |t|
     t.integer "pre_assignment_delivery_id", limit: 4
