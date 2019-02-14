@@ -41,12 +41,24 @@ class Api::Mobile::FileUploaderController < MobileApiController
       customer = @user
     end
 
-    errors = []
+    @uploaded_files = params[:files]
+    @errors = []
+
     if customer.try(:options).try(:is_upload_authorized)
-      params[:files].each do |file|
+      @dir = Dir.mktmpdir
+      final_file_name = "composed_mobile_img_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+      @final_file_path = File.join(@dir, final_file_name)
+
+      @uploaded_files.each do |p_file|
+        merge_img_file p_file.tempfile, p_file.original_filename
+      end
+
+      if File.exist? @final_file_path
+        final_file = File.open(@final_file_path, 'r')
+
         uploaded_document = UploadedDocument.new(
-          file.tempfile,
-          file.original_filename,
+          final_file,
+          final_file_name,
           customer,
           params[:file_account_book_type],
           params[:file_prev_period_offset],
@@ -56,18 +68,22 @@ class Api::Mobile::FileUploaderController < MobileApiController
         )
 
         data = present(uploaded_document).to_json
-        
-        errors << { filename: file.original_filename, errors: uploaded_document.full_error_messages } unless uploaded_document.errors.empty?
+
+        set_errors_to_files(uploaded_document.full_error_messages) if uploaded_document.errors.any?
+      else
+        set_errors_to_files("Une erreur inatendue s'est produite, veuillez relancer l'upload svp")
       end
+
+      FileUtils.remove_entry @dir if @dir
     else
       render json: { error: true, message: 'Accès non autorisé.' }, status: 401
       return
     end
 
-    if errors.empty?
+    if @errors.empty?
       render json: { success: true, message: 'Upload terminé avec succès.' }, status: 200
     else
-      render json: { error: true, message: errors }, status: 200
+      render json: { error: true, message: @errors }, status: 200
     end
   end
 
@@ -173,5 +189,53 @@ class Api::Mobile::FileUploaderController < MobileApiController
       end
     end
     result
+  end
+
+  def merge_img_file(file, original_filename)
+    create_pdf_file_from file, original_filename
+    append_img_pdf_to_final_file
+  end
+
+  def create_pdf_file_from(file, original_filename)
+    @img_file_path = File.join(@dir, "tmp_img.pdf")
+    tmp_file_path = file.path
+
+    begin
+      geometry = Paperclip::Geometry.from_file file.path
+      if geometry.height > 2000 || geometry.width > 2000
+        tmp_file_path = File.join(@dir, "resized_#{original_filename}")
+        DocumentTools.resize_img(file.path, tmp_file_path)
+      end
+    rescue => e
+      tmp_file_path = file.path
+    end
+
+    DocumentTools.to_pdf(tmp_file_path, @img_file_path)
+
+    @errors << { filename: original_filename, errors: 'Image non supportée' } unless File.exist? @img_file_path
+  end
+
+  def append_img_pdf_to_final_file
+    return false unless File.exist? @img_file_path
+
+    if File.exist? @final_file_path
+      merged_file_path = File.join(@dir, 'tmp_merge.pdf')
+      Pdftk.new.merge([@final_file_path, @img_file_path], merged_file_path)
+
+      FileUtils.rm @final_file_path
+      FileUtils.mv merged_file_path, @final_file_path
+    else
+      FileUtils.copy @img_file_path, @final_file_path
+    end
+
+    FileUtils.rm @img_file_path
+  end
+
+  def set_errors_to_files(message)
+    @errors = [] #reset @errors
+
+    @uploaded_files.each do |file|
+      @errors << { filename: file.original_filename, errors: message }
+    end
   end
 end
