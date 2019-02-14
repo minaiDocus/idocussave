@@ -21,7 +21,6 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     this
 
   render: ->
-    console.log(@model)
     @$el.html(@template(model: @model, view: @view, pack_report_id: @pack_report_id, details: @details()))
     this
 

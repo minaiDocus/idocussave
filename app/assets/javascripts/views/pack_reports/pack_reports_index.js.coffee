@@ -78,12 +78,12 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
   search: (e) ->
     if e == undefined || (e != undefined && e.keyCode == 13)
       view = @$el.find('select[name=view]').val() || 'all'
-      query = @$el.find('input[name=pack_reports_search]').val()
+      query = @$el.find('input[name=pack_reports_search]').val().replace(/[ ]/g, '+')
       Backbone.history.navigate("#{view}/search/#{query}", true)
       this
 
   filter_by_view: ->
     view = @$el.find('select[name=view]').val()
-    query = @$el.find('input[name=pack_reports_search]').val()
+    query = @$el.find('input[name=pack_reports_search]').val().replace(/[ ]/g, '+')
     Backbone.history.navigate("#{view}/search/#{query}", true)
     this

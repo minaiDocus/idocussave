@@ -8,11 +8,11 @@ class Account::PackReportsController < Account::OrganizationController
 
     options = {}
     if params[:filter].present?
-      tmp_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter]}%")
+      tmp_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
       if tmp_reports.count == 0
-        options[:third_party] = params[:filter]
+        options[:third_party] = params[:filter].gsub('+', ' ')
       else
-        @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter]}%")
+        @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
       end
     end
 

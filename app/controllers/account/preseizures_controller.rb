@@ -10,7 +10,7 @@ class Account::PreseizuresController < Account::OrganizationController
         options = {}
 
         if params[:filter].present?
-          options[:third_party] = params[:filter] unless report.name.match(/#{params[:filter]}/)
+          options[:third_party] = params[:filter].gsub('+', ' ') unless report.name.match(/#{params[:filter].gsub('+', ' ')}/)
         end
 
         if params[:view] == 'delivered'
