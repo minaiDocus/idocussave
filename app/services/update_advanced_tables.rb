@@ -2,7 +2,12 @@
 class UpdateAdvancedTables
   class Preseizures
     def self.execute
-      self.partial
+      checked_date = AdvancedPreseizure.select('min(checked_at) as checked_date').first.try(:checked_date)
+      if checked_date <= 1.hours.ago
+        self.for_all
+      else
+        self.partial
+      end
     end
 
     def self.for_all
@@ -17,8 +22,6 @@ class UpdateAdvancedTables
       if for_all
         @sql_preseizures = Pack::Report::Preseizure.where("DATE_FORMAT(pack_report_preseizures.updated_at, '%Y%m%d') >= '#{2.years.ago.strftime('%Y%m%d')}'")
       else
-        # max_id = AdvancedPreseizure.select('max(id) as max_id').first.try(:max_id).to_i
-        # @sql_preseizures = Pack::Report::Preseizure.where("id > #{max_id}") if max_id > 0
         @sql_preseizures = Pack::Report::Preseizure.where("DATE_FORMAT(pack_report_preseizures.updated_at, '%Y%m%d%H%i') >= '#{30.minutes.ago.strftime('%Y%m%d%H%M')}'")
       end
     end
@@ -26,14 +29,19 @@ class UpdateAdvancedTables
     def execute
       return false unless @sql_preseizures.any?
 
+      #don't Use Time.now OR NOW() Mysql to avoid time difference rails, mysql and server
+      time_now = 1.seconds.ago.strftime('%Y-%m-%d %H:%M:%S')
+
       field_lists = [
                       'pack_report_preseizures.id',
                       'pack_report_preseizures.user_id',
                       'pack_report_preseizures.organization_id',
                       'pack_report_preseizures.report_id',
+                      'pack_report_preseizures.piece_id',
                       'pack_reports.pack_id',
                       'pack_report_preseizures.operation_id',
                       'pack_report_preseizures.position',
+                      'pack_report_preseizures.date',
                       'pack_report_preseizures.deadline_date',
                       'pack_report_preseizures.delivery_tried_at',
                       'pack_report_preseizures.delivery_message',
@@ -56,7 +64,8 @@ class UpdateAdvancedTables
                           END"
 
       @sql_preseizures = @sql_preseizures.joins(:report).joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').select(
-        field_lists.join(','), 
+        field_lists.join(','),
+        "'#{time_now}'",
         delivery_state + " as p_delivery_state"
       )
 
@@ -64,10 +73,11 @@ class UpdateAdvancedTables
 
       field_update = field_lists.map { |field| field.gsub(/pack_report_preseizures[.]|pack_reports[.]/, '') + '=' + field if field != 'pack_report_preseizures.id' }.compact
 
-      p sql_insertion = " INSERT INTO advanced_preseizures ( #{field_insert.join(',')}, delivery_state )
+      p sql_insertion = " INSERT INTO advanced_preseizures ( #{field_insert.join(',')}, checked_at, delivery_state )
                           #{@sql_preseizures.to_sql}
                           ON DUPLICATE KEY UPDATE
                           #{field_update.join(',')},
+                          checked_at = '#{time_now}',
                           delivery_state = #{delivery_state};
                         "
       AdvancedPreseizure.connection.execute(sql_insertion)

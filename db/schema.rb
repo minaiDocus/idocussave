@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190213142124) do
+ActiveRecord::Schema.define(version: 20190214061408) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -188,8 +188,10 @@ ActiveRecord::Schema.define(version: 20190213142124) do
     t.string   "delivery_state",    limit: 20
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "checked_at"
   end
 
+  add_index "advanced_preseizures", ["checked_at"], name: "index_advanced_preseizures_on_checked_at", using: :btree
   add_index "advanced_preseizures", ["delivery_state"], name: "index_advanced_preseizures_on_delivery_state", using: :btree
   add_index "advanced_preseizures", ["name"], name: "index_advanced_preseizures_on_name", using: :btree
   add_index "advanced_preseizures", ["position"], name: "index_advanced_preseizures_on_position", using: :btree
