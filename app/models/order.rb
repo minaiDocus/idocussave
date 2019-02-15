@@ -25,7 +25,7 @@ class Order < ActiveRecord::Base
   validates_presence_of  :price_in_cents_wo_vat
 
   validates_inclusion_of :type, in: %w(dematbox paper_set)
-  validates_inclusion_of :dematbox_count, in: [1, 2], if: proc { |o| o.dematbox? }
+  validates_inclusion_of :dematbox_count, in: [1, 2, 10], if: proc { |o| o.dematbox? }
   validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: proc { |o| o.paper_set? }
   validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
 

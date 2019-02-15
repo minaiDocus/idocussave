@@ -12,7 +12,11 @@ class OrderDematbox
   def execute
     @order.user ||= @user
     @order.organization ||= @user.organization
-    @order.price_in_cents_wo_vat = 35_900 * @order.dematbox_count
+    if @user.organization.code == 'DC' && @order.dematbox_count == 10
+      @order.price_in_cents_wo_vat = 300_000
+    else
+      @order.price_in_cents_wo_vat = 35_900 * @order.dematbox_count
+    end
     @order.address.is_for_dematbox_shipping = true if @order.address
 
     if @order.save
