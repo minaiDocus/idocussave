@@ -6,23 +6,24 @@ class Account::PackReportsController < Account::OrganizationController
   def index
     @pack_reports = Pack::Report.preseizures.where(user_id: customer_ids).uniq
 
-    options = {}
     if params[:filter].present?
       tmp_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
       if tmp_reports.count == 0
-        options[:third_party] = params[:filter].gsub('+', ' ')
+        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
+        preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
       else
         @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
+        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
       end
+    else
+      preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
     end
 
     if params[:view] == 'delivered'
-      options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:delivered]
+      @pack_reports = @pack_reports.where(id: preseizures.delivered.distinct.pluck(:report_id).presence || [0])
     elsif params[:view] == 'not_delivered'
-      options[:is_delivered] = AdvancedPreseizure::DELIVERY_STATE[:not_delivered]
+      @pack_reports = @pack_reports.where(id: preseizures.not_delivered.distinct.pluck(:report_id).presence || [0])
     end
-
-    @pack_reports = AdvancedPreseizure.search('reports', options, @pack_reports)
 
     @pack_reports = @pack_reports.order(updated_at: :desc).page(params[:page]).per(params[:per_page])
 

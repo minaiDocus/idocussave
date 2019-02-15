@@ -22,9 +22,9 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   scope :delivered,                     -> { where.not(is_delivered_to: [nil, '']) }
   scope :not_delivered,                 -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']) }
   scope :ibiza_delivered,               -> { where('is_delivered_to = "ibiza"') }
-  scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"') }
+  # scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"') }
   scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
-  scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"') }
+  # scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"') }
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }

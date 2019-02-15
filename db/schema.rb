@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190214061408) do
+ActiveRecord::Schema.define(version: 20190215110935) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -168,35 +168,6 @@ ActiveRecord::Schema.define(version: 20190214061408) do
   add_index "addresses", ["locatable_id_mongo_id"], name: "locatable_id_mongo_id", using: :btree
   add_index "addresses", ["locatable_type"], name: "locatable_type", using: :btree
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
-
-  create_table "advanced_preseizures", force: :cascade do |t|
-    t.integer  "user_id",           limit: 4
-    t.integer  "organization_id",   limit: 4
-    t.integer  "report_id",         limit: 4
-    t.integer  "piece_id",          limit: 4
-    t.integer  "pack_id",           limit: 4
-    t.integer  "operation_id",      limit: 4
-    t.integer  "position",          limit: 4
-    t.datetime "date"
-    t.datetime "deadline_date"
-    t.datetime "delivery_tried_at"
-    t.text     "delivery_message",  limit: 65535
-    t.string   "name",              limit: 255
-    t.string   "piece_number",      limit: 255
-    t.string   "third_party",       limit: 255
-    t.decimal  "cached_amount",                   precision: 11, scale: 2
-    t.string   "delivery_state",    limit: 20
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "checked_at"
-  end
-
-  add_index "advanced_preseizures", ["checked_at"], name: "index_advanced_preseizures_on_checked_at", using: :btree
-  add_index "advanced_preseizures", ["delivery_state"], name: "index_advanced_preseizures_on_delivery_state", using: :btree
-  add_index "advanced_preseizures", ["name"], name: "index_advanced_preseizures_on_name", using: :btree
-  add_index "advanced_preseizures", ["position"], name: "index_advanced_preseizures_on_position", using: :btree
-  add_index "advanced_preseizures", ["third_party"], name: "index_advanced_preseizures_on_third_party", using: :btree
-  add_index "advanced_preseizures", ["updated_at"], name: "index_advanced_preseizures_on_updated_at", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
     t.string  "a1_name",        limit: 255
@@ -1397,7 +1368,6 @@ ActiveRecord::Schema.define(version: 20190214061408) do
   add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
   add_index "pack_pieces", ["pack_id"], name: "pack_id", using: :btree
   add_index "pack_pieces", ["position"], name: "index_pack_pieces_on_position", using: :btree
-  add_index "pack_pieces", ["updated_at"], name: "index_pack_pieces_on_updated_at", using: :btree
   add_index "pack_pieces", ["user_id"], name: "user_id", using: :btree
 
   create_table "pack_report_expenses", force: :cascade do |t|
@@ -1544,7 +1514,6 @@ ActiveRecord::Schema.define(version: 20190214061408) do
   add_index "pack_report_preseizures", ["report_id"], name: "report_id", using: :btree
   add_index "pack_report_preseizures", ["similar_preseizure_id"], name: "index_pack_report_preseizures_on_similar_preseizure_id", using: :btree
   add_index "pack_report_preseizures", ["third_party"], name: "index_pack_report_preseizures_on_third_party", using: :btree
-  add_index "pack_report_preseizures", ["updated_at"], name: "index_pack_report_preseizures_on_updated_at", using: :btree
   add_index "pack_report_preseizures", ["user_id"], name: "user_id", using: :btree
 
   create_table "pack_report_preseizures_pre_assignment_deliveries", force: :cascade do |t|
@@ -2129,6 +2098,7 @@ ActiveRecord::Schema.define(version: 20190214061408) do
   add_index "softwares_settings", ["is_exact_online_used"], name: "index_softwares_settings_on_is_exact_online_used", using: :btree
   add_index "softwares_settings", ["is_ibiza_used"], name: "index_softwares_settings_on_is_ibiza_used", using: :btree
   add_index "softwares_settings", ["is_quadratus_used"], name: "index_softwares_settings_on_is_quadratus_used", using: :btree
+  add_index "softwares_settings", ["user_id"], name: "index_softwares_settings_on_user_id", using: :btree
 
   create_table "statistics", force: :cascade do |t|
     t.datetime "created_at"

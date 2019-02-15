@@ -52,10 +52,11 @@ class Pack::Report < ActiveRecord::Base
     _result = Rails.cache.fetch ['report.failed_delivery', user_ids.presence || 'all'], expires_in: 5.minutes do
       collections = []
 
-      options = { is_delivered: AdvancedPreseizure::DELIVERY_STATE[:failed] }
-      options[:user_ids] = user_ids if user_ids.present?
-
-      collections = AdvancedPreseizure.search('preseizures', options).joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
+      if user_ids.present?
+        collections = Pack::Report::Preseizure.failed_delivery.where(user_id: user_ids).joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
+      else
+        collections = Pack::Report::Preseizure.failed_delivery.joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
+      end
 
       result = []
       if collections.any?
