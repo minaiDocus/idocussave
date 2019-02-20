@@ -24,7 +24,7 @@ class DematboxApi
   def self.services
     Rails.cache.fetch([:dematbox, :services], expires_in: 5.minutes) do
       begin
-        response = client.call :get_service_list, message: { 'ser:operatorId' => DematboxConfig::OPERATOR_ID }
+        response = client.call :get_service_list, message: { 'ser:operatorId' => DematboxConfig::OPERATOR_ID }, soap_action: ''
         response.body[:get_service_list_response][:service_list][:service]
       rescue => e
         "[#{e.class}] #{e.message}"
@@ -43,7 +43,7 @@ class DematboxApi
 
     message['ser:pairingCode'] = pairing_code if pairing_code.present?
 
-    response = client.call :put_service_subscribe, message: message
+    response = client.call :put_service_subscribe, message: message, soap_action: ''
 
     response.body[:put_service_subscribe_response][:error_return]
   rescue => e
@@ -58,7 +58,7 @@ class DematboxApi
       'ser:virtualBoxId' => code
     }
 
-    response = client.call :service_unsubscribe, message: message
+    response = client.call :service_unsubscribe, message: message, soap_action: ''
 
     response.body[:service_unsubscribe_response][:error_return]
   rescue => e
@@ -73,7 +73,7 @@ class DematboxApi
       'ser:virtualBoxId' => code
     }
 
-    response = client.call :get_service_subscribed, message: message
+    response = client.call :get_service_subscribed, message: message, soap_action: ''
 
     response.body[:get_service_subscribed_response][:services][:service]
   rescue => e
@@ -91,7 +91,7 @@ class DematboxApi
       'ser:messageDuration' => 5
     }
 
-    response = client.call :upload_notification, message: message
+    response = client.call :upload_notification, message: message, soap_action: ''
 
     response.body[:upload_notification_response][:error_return]
   end
