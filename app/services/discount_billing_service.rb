@@ -26,10 +26,10 @@ class DiscountBillingService
     discount_title = []
 
     if is_iDoMini_discount?
-      discount_title << "iDoMini : #{unit_amount(:iDoMini)} € x #{quantity_of(:iDoMini)}"
+      discount_title << "iDoMini : #{unit_amount(:iDoMini)} € x #{classic_quantity_of(:iDoMini)}"
     else
-      discount_title << "Abo. mensuels : #{unit_amount(:subscription)} € x #{quantity_of(:subscription)}" if unit_amount(:subscription) < 0
-      discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{quantity_of(:retriever)}" if unit_amount(:retriever) < 0
+      discount_title << "Abo. mensuels : #{unit_amount(:subscription)} € x #{classic_quantity_of(:subscription)}" if unit_amount(:subscription) < 0
+      discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{classic_quantity_of(:retriever)}" if unit_amount(:retriever) < 0
     end
 
     discount_title << '-50 dossiers' if discount_title.empty?
@@ -48,18 +48,14 @@ class DiscountBillingService
   end
 
   def amount_in_cents_of(option)
-    unit_amount(option.to_sym) * quantity_of(option.to_sym) * 100.0
+    unit_amount(option.to_sym) * classic_quantity_of(option.to_sym) * 100.0
   end
 
   def quantity_of(option)
-    case option.to_s
-      when 'subscription'
-        concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
-      when 'retriever'
-        concerned_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
-      when 'iDoMini'
-        concerned_subscriptions.where("subscriptions.is_mini_package_active" => true).size
-      else 0
+    if extentis_group.include? @organization.code
+      special_extentis_quantity_of option
+    else
+      classic_quantity_of option
     end
   end
 
@@ -74,10 +70,23 @@ class DiscountBillingService
   end
 
   def apply_special_policy?
-    %w(GMBA).include? @organization.code
+    groups = extentis_group + ['GMBA']
+    groups.include? @organization.code
   end
 
   private
+
+  def classic_quantity_of(option)
+    case option.to_s
+      when 'subscription'
+        concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
+      when 'retriever'
+        concerned_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
+      when 'iDoMini'
+        concerned_subscriptions.where("subscriptions.is_mini_package_active" => true).size
+      else 0
+    end
+  end
 
   def is_iDoMini_discount?
     unit_amount(:iDoMini) < 0
@@ -125,6 +134,35 @@ class DiscountBillingService
           {subscription: -4, retriever: -1.5}
       end
     end
+  end
+
+
+  def extentis_group
+    # ['FBC','FIDA','FIDC', 'EG']
+    return @extentis_group if @extentis_group.present?
+
+    group = OrganizationGroup.find 2
+    @extentis_group = group.organizations.collect(&:code)
+  end
+
+  def special_extentis_quantity_of(option)
+    case option.to_s
+      when 'subscription'
+        extentis_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
+      when 'retriever'
+        extentis_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
+      when 'iDoMini'
+        extentis_subscriptions.where("subscriptions.is_mini_package_active" => true).size
+      else 0
+    end
+  end
+
+  def extentis_customers
+    User.customers.active.where(organization_id: Organization.billed.where(code: extentis_group).collect(&:id))
+  end
+
+  def extentis_subscriptions
+    @extentis_subscriptions ||= extentis_customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
   end
 
 end
