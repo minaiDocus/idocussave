@@ -9,14 +9,16 @@ class Account::PackReportsController < Account::OrganizationController
     if params[:filter].present?
       tmp_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
       if tmp_reports.count == 0
-        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
+        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id).presence || [0])
         preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
+
+        @pack_reports = @pack_reports.where(id: preseizures.pluck(:report_id).presence || [0]) unless params[:view] == 'delivered' || params[:view] == 'not_delivered'
       else
         @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
-        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
+        preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id).presence || [0])
       end
     else
-      preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id))
+      preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id).presence || [0])
     end
 
     if params[:view] == 'delivered'

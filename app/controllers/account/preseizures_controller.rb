@@ -10,7 +10,7 @@ class Account::PreseizuresController < Account::OrganizationController
         @preseizures = report.preseizures
 
         if params[:filter].present?
-          @preseizures = @preseizures.where('third_party LIKE ?', "#{params[:filter].gsub('+', ' ')}") unless report.name.match(/#{params[:filter].gsub('+', ' ')}/)
+          @preseizures = @preseizures.where('third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%") unless Pack::Report.preseizures.where(id: params[:pack_report_id]).where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%").count > 0
         end
 
         if params[:view] == 'delivered'
