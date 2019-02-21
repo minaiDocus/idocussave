@@ -98,5 +98,9 @@ module Idocus
 
     config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
     config.middleware.swap Rails::Rack::Logger, CustomLogger, alternative: ['/account/notifications/latest']
+
+    Raven.configure do |config|
+      config.dsn = 'https://8a88cb7b80654dc5bd2bc9bfd8b160a0:b79bb42c43bc4c918442ebd04f5f61b9@sentry.idocus.com/2'
+    end
   end
 end

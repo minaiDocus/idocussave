@@ -24,6 +24,7 @@ gem 'devise'
 
 # Error handling
 gem 'airbrake', '4.3.8'
+gem 'sentry-raven'
 
 
 # Image / File processing
