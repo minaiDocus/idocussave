@@ -36,9 +36,10 @@
   function showPieces(link) {
     var document_id = link.parents("li").attr("id").split("_")[2];
 
-    var filter = $("#filter").val();
-    if (filter != "")
-      filter = "?filter="+filter;
+    var filter = getFilterParams();
+    if(filter != '')
+      filter = '?' + filter.replace(/;/, '');
+
     var url = "/account/documents/"+document_id+filter;
 
     $("#panel2").hide();
@@ -146,6 +147,8 @@
     result = regexp2.exec(regexp.exec(link.attr("href").replace(/per_page=\d/,"")));
     if (result != null)
       page = result[0];
+
+    $('#documentslist .content').html('');
     getPacks(page);
   }
 
@@ -203,9 +206,8 @@
 
   // fetch list of packs
   function getPacks(PAGE) {
-    var filter = $("#filter").val();
-    if (filter != "")
-      filter = ";filter="+filter;
+    var filter = getFilterParams();
+
     var view = $("select[name=document_owner_list]").val();
     var per_page = $("select[name=per_page]").val();
     var page = typeof(PAGE) != 'undefined' ? PAGE : 1;
@@ -250,6 +252,34 @@
         $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
       }
     });
+  }
+
+  function getFilterParams(){
+    var filter = '';
+
+    var text_filter = $("#packFilterModal #packFilterForm #text").val();
+    if (text_filter != "")
+      filter += ";text="+text_filter;
+
+    var delivery_filter = $("#packFilterModal #packFilterForm #by_preseizure_is_delivered").val();
+    if (delivery_filter != "")
+      filter += ";by_preseizure[is_delivered]="+delivery_filter;
+
+    var third_party_filter = $("#packFilterModal #packFilterForm #by_preseizure_third_party").val();
+    if (third_party_filter != "")
+      filter += ";by_preseizure[third_party]="+third_party_filter;
+
+    var piece_number_filter = $("#packFilterModal #packFilterForm #by_preseizure_piece_number").val();
+    if (piece_number_filter != "")
+      filter += ";by_preseizure[piece_number]="+piece_number_filter;
+
+
+    if(filter != '')
+      $('.btn-filter > span').attr('style', 'background-color: #E78484');
+    else
+      $('.btn-filter > span').attr('style', '');
+
+    return filter;
   }
 
   // submit tag
@@ -320,11 +350,24 @@
 
   // initialize once
   function initManager() {
-    $("#filter").change(function(){
+    $('#packFilterModal #validatePackFilterModal').click(function(e){
+      e.preventDefault();
+      $('#documentslist .content').html('');
+      $('#packFilterModal').modal('hide');
       $("#panel1 .header h4").text("");
       $("#panel1 .content ul").html("");
       getPacks();
     });
+
+    $('#packFilterModal #initPackFilterModal').click(function(e){
+      e.preventDefault();
+      $('#documentslist .content').html('');
+      $('#packFilterModal').modal('hide');
+      $("#panel1 .header h4").text("");
+      $("#panel1 .content ul").html("");
+      $('#packFilterModal #packFilterForm').get(0).reset();
+      getPacks();
+    })
 
     $("#documentsTaggingButton").click(function(e) {
       e.preventDefault();
@@ -612,10 +655,12 @@
     });
 
     $(".view_for").change(function() {
+      $('#documentslist .content').html('');
       getPacks();
     });
 
     $(".per_page").change(function() {
+      $('#documentslist .content').html('');
       getPacks();
     });
 

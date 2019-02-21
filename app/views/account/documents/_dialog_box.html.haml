@@ -261,3 +261,36 @@
         Traitement en cours ...
     %a#analysis_validate.btn.btn-primary.hide{ :href => "#" }
       Valider
+
+.modal.fade{ :id=>"packFilterModal" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Filtre
+  .modal-body
+    %form#packFilterForm.simple_form.form.form-horizontal.margin0
+      .general_filter.box
+        .control-group
+          = label_tag 'text', "Contenu :", class: 'control-label'
+          .controls
+            = text_field_tag 'text'
+      .by_preseizure_filter.box
+        %span.label.label-warning
+          Attention :
+        %span{style: 'display: inline-block; margin-bottom: 20px; font-weight: bold'}
+          &nbsp; Filtre lié à la pré-affectation.
+        .control-group
+          = label_tag 'by_preseizure[is_delivered]', 'Livraison écriture comptable', class: 'control-label'
+          .controls
+            = select_tag 'by_preseizure[is_delivered]', options_for_select([['Tous', ''], ['Livrée', 1], ['Non livrée', 2]]), include_blank: false
+        .control-group
+          = label_tag 'by_preseizure[third_party]', 'Nom de tiers', class: 'control-label'
+          .controls
+            = text_field_tag 'by_preseizure[third_party]'
+        .control-group
+          = label_tag 'by_preseizure[piece_number]', "N° de pièce d'origine", class: 'control-label'
+          .controls
+            = text_field_tag 'by_preseizure[piece_number]'
+  .modal-footer
+    %a{ href: '#', :class=>"btn btn-primary", id: 'validatePackFilterModal' } Valider
+    %a{ href: '#', :class=>"btn btn-danger", id: 'initPackFilterModal' } Ré-initialiser
+    %a{ href: '#', :class=>"modal-close btn", style: 'margin-left: 10px' } Fermer

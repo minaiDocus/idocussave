@@ -60,6 +60,27 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     preseizures
   end
 
+  def self.filter_by(options)
+    preseizures = self.all
+
+    return preseizures unless options.present?
+
+    preseizures = preseizures.delivered         if options[:is_delivered].present? && options[:is_delivered].to_i == 1
+    preseizures = preseizures.not_delivered     if options[:is_delivered].present? && options[:is_delivered].to_i == 2
+    preseizures = preseizures.failed_delivery   if options[:is_delivered].present? && options[:is_delivered].to_i == 3
+
+    preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.created_at, '%Y-%m-%d') #{options[:created_at_operation].tr('012', ' ><')}= ?", options[:created_at])                        if options[:created_at].present?
+    preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.date, '%Y-%m-%d') #{options[:date_operation].tr('012', ' ><')}= ?", options[:date])                                          if options[:date].present?
+    preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.delivery_tried_at, '%Y-%m-%d') #{options[:delivery_tried_at_operation].tr('012', ' ><')}= ?", options[:delivery_tried_at])   if options[:delivery_tried_at].present?
+    preseizures = preseizures.where("pack_report_preseizures.cached_amount #{options[:amount_operation].tr('012', ' ><')}= ?", options[:amount])                                                      if options[:amount].present?
+    preseizures = preseizures.where("pack_report_preseizures.position #{options[:position_operation].tr('012', ' ><')}= ?", options[:position])                                                       if options[:position].present?
+
+    preseizures = preseizures.where(piece_number: options[:piece_number])  if options[:piece_number].present?
+    preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{options[:third_party]}%")    if options[:third_party].present?
+
+    preseizures
+  end
+
   def piece_name
     piece.try(:name) || report.name
   end

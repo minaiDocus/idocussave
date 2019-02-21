@@ -13,7 +13,7 @@ class Account::DocumentsController < Account::AccountController
       sort:      true
     }
 
-    @packs            = Pack.search(params[:filter], options)
+    @packs            = Pack.search(params[:text], options)
     @last_composition = @user.composition
 
     ### TODO : GET DOCUMENTS COMPOSITION FROM PIECES INSTEAD OF DOCUMENTS FOR COMPOSITION CREATED AFTER 23/01/2019
@@ -30,13 +30,16 @@ class Account::DocumentsController < Account::AccountController
   def show
     @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
 
-    @documents = Pack::Piece.search(params[:filter],
-      pack_id:  params[:id],
-      per_page: 10_000,
-      sort:     true
-    ).order(position: :asc).includes(:pack)
+    piece_ids = @pack.preseizures.filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
 
-    unless @pack.is_fully_processed || params[:filter].presence
+    @documents = Pack::Piece.search(  params[:text],
+                                      pack_id:  params[:id]
+                                    )
+    @documents = @documents.where(id: piece_ids) unless piece_ids.nil?
+
+    @documents = @documents.order(position: :asc).includes(:pack).per(10_000)
+
+    unless @pack.is_fully_processed || params[:text].presence
       @temp_pack      = TempPack.find_by_name(@pack.name)
       @temp_documents = @temp_pack.temp_documents.not_published
     end
@@ -53,7 +56,7 @@ class Account::DocumentsController < Account::AccountController
       @remaining_files = @user.remote_files.not_processed.count
     else
       options = { page: params[:page], per_page: params[:per_page] }
-      options[:sort] = true unless params[:filter].present?
+      options[:sort] = true
 
       options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
         _user = accounts.find(params[:view])
@@ -62,7 +65,11 @@ class Account::DocumentsController < Account::AccountController
         account_ids
       end
 
-      @packs = Pack.search(params[:filter], options)
+      piece_ids = Pack::Report::Preseizure.where(user_id: options[:owner_ids], operation_id: ['', nil]).filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
+
+      options[:piece_ids] = piece_ids if piece_ids.present?
+
+      @packs = Pack.search(params[:text], options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
     end
   end
 

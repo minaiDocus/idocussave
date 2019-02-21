@@ -26,6 +26,7 @@ class Pack < ActiveRecord::Base
   has_many :period_documents
   has_many :self_remote_files, class_name: 'RemoteFile', as: :remotable, dependent: :destroy
   has_many :remote_files, dependent: :destroy
+  has_many :preseizures, through: :reports
 
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pack/:id/download'
@@ -62,6 +63,7 @@ class Pack < ActiveRecord::Base
     query = query.where(id: options[:ids]) if options[:ids].present?
     # WARN : do not change "unless..nil?" to "if..present?, an empty owner_ids must be passed to the query
     query = query.where(owner_id: options[:owner_ids]) unless options[:owner_ids].nil?
+    query = query.joins(:pieces).where(pack_pieces: { id: options[:piece_ids] }) unless options[:piece_ids].nil?
     query = query.joins(:pieces).where('packs.name LIKE ? OR packs.tags LIKE ? OR pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?' , "%#{text}%", "%#{text}%", "%#{text}%",  "%#{text}%", "%#{text}%") if text.present?
     query = query.order(updated_at: :desc) if options[:sort] == true
 
