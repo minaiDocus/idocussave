@@ -67,8 +67,6 @@ module Account::Organization::ConfigurationSteps
                                              when 'accounting_plans'
                                                'vat_accounts'
                                              when 'vat_accounts'
-                                               'exercises'
-                                             when 'exercises'
                                                'journals'
                                              when 'ibiza'
                                                'journals'
@@ -149,7 +147,7 @@ module Account::Organization::ConfigurationSteps
                                                if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
                                                elsif !@customer.uses_api_softwares?
-                                                 'exercises'
+                                                 'vat_accounts'
                                                elsif @customer.options.is_upload_authorized
                                                  'period_options'
                                                elsif @organization.uses_softwares?
@@ -170,8 +168,6 @@ module Account::Organization::ConfigurationSteps
                                              end
                                            when 'ibiza'
                                              'period_options'
-                                           when 'exercises'
-                                             'vat_accounts'
                                            when 'vat_accounts'
                                              'accounting_plans'
                                            when 'accounting_plans'
@@ -233,8 +229,6 @@ module Account::Organization::ConfigurationSteps
         controller_name == 'accounting_plans'
       when 'vat_accounts'
         controller_name == 'vat_accounts'
-      when 'exercises'
-        controller_name == 'exercises'
       when 'journals'
         controller_name.in?(%w(journals list_journals))
       when 'order_paper_set'
@@ -293,8 +287,6 @@ module Account::Organization::ConfigurationSteps
       account_organization_customer_accounting_plan_path(@organization, @customer)
     when 'vat_accounts'
       account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)
-    when 'exercises'
-      account_organization_customer_exercises_path(@organization, @customer)
     when 'journals'
       account_organization_customer_list_journals_path(@organization, @customer)
     when 'order_paper_set'
