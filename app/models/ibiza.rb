@@ -12,6 +12,7 @@ class Ibiza < ActiveRecord::Base
 
 
   validates_inclusion_of :state, :state_2, in: %w(none waiting valid invalid)
+  validates_inclusion_of :voucher_ref_target, in: %w(piece_number piece_name)
 
 
   before_save :update_states

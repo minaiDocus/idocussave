@@ -23,7 +23,7 @@ class PreAssignmentDeliveryXmlBuilder
     @delivery.building_data
 
     if ibiza_exercise
-      @delivery.data_to_deliver = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software.description, @software.description_separator, @software.piece_name_format, @software.piece_name_format_sep)
+      @delivery.data_to_deliver = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
       @delivery.save
       @delivery.data_built
     else

@@ -150,6 +150,14 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
   end
 
+  def computed_deadline_date(exercise=nil)
+    return nil unless self.deadline_date.present?
+
+    date = computed_date exercise
+    result = self.deadline_date < date ? date : self.deadline_date
+    result.to_date
+  end
+
   def period_start_date
     period_date.to_date
   end

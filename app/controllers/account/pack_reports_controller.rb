@@ -78,7 +78,7 @@ class Account::PackReportsController < Account::OrganizationController
 
             exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute
             if exercise
-              data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
+              data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza)
 
               send_data(data, type: 'application/xml', filename: file_name)
             else

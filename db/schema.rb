@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190215110935) do
+ActiveRecord::Schema.define(version: 20190225072847) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -869,13 +869,14 @@ ActiveRecord::Schema.define(version: 20190215110935) do
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state",                    limit: 255,   default: "none", null: false
-    t.string   "state_2",                  limit: 255,   default: "none", null: false
+    t.string   "state",                    limit: 255,   default: "none",         null: false
+    t.string   "state_2",                  limit: 255,   default: "none",         null: false
     t.text     "description",              limit: 65535
-    t.string   "description_separator",    limit: 255,   default: " - ",  null: false
+    t.string   "description_separator",    limit: 255,   default: " - ",          null: false
     t.text     "piece_name_format",        limit: 65535
-    t.string   "piece_name_format_sep",    limit: 255,   default: " ",    null: false
-    t.boolean  "is_auto_deliver",                        default: false,  null: false
+    t.string   "piece_name_format_sep",    limit: 255,   default: " ",            null: false
+    t.string   "voucher_ref_target",       limit: 255,   default: "piece_number"
+    t.boolean  "is_auto_deliver",                        default: false,          null: false
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
     t.text     "encrypted_access_token",   limit: 65535

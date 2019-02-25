@@ -49,7 +49,13 @@ class IbizaAPI::Utils
   end
 
 
-  def self.to_import_xml(exercise, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
+  def self.to_import_xml(exercise, preseizures, ibiza=nil)
+    fields                = ibiza.try(:description).presence || {}
+    separator             = ibiza.try(:description_separator).presence || ' - '
+    piece_name_format     = ibiza.try(:piece_name_format).presence || {}
+    piece_name_format_sep = ibiza.try(:piece_name_format_sep).presence || ' '
+    voucher_ref_target    = ibiza.try(:voucher_ref_target).presence || 'piece_number'
+
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.importEntryRequest do
         xml.importDate exercise.end_date
@@ -58,10 +64,17 @@ class IbizaAPI::Utils
             preseizure.accounts.each do |account|
               xml.importEntry do
                 xml.journalRef preseizure.journal_name
-                xml.date computed_date(preseizure, exercise)
+                xml.date preseizure.computed_date exercise
 
                 if preseizure.piece
-                  xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
+                  case voucher_ref_target
+                    when 'piece_name'
+                      xml.piece preseizure.piece_number
+                      xml.voucherRef piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
+                    else
+                      xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
+                      xml.voucherRef preseizure.piece_number
+                  end
 
                   _temp_document = preseizure.piece.temp_document
                   if _temp_document.try(:delivered_by) == 'ibiza' && _temp_document.try(:api_id).present?
@@ -69,15 +82,18 @@ class IbizaAPI::Utils
                   else
                     xml.voucherID "https://my.idocus.com"+ preseizure.piece.get_access_url
                   end
-
-                  xml.voucherRef preseizure.piece_number
                 else
-                  xml.piece preseizure.operation_name
+                  case voucher_ref_target
+                    when 'piece_name'
+                      xml.voucherRef preseizure.operation_name
+                    else
+                      xml.piece preseizure.operation_name
+                  end
                 end
 
                 xml.accountNumber account.number
                 xml.accountName account.number
-                xml.term computed_deadline_date(preseizure, exercise) if preseizure.deadline_date.present?
+                xml.term preseizure.computed_deadline_date(exercise) if preseizure.deadline_date.present?
 
                 info = description(preseizure, fields, separator)
                 begin
@@ -134,41 +150,5 @@ class IbizaAPI::Utils
     end
 
     builder.to_xml
-  end
-
-
-  def self.computed_date(preseizure, exercise)
-    date = preseizure.date.try(:to_date)
-
-    if preseizure.is_period_range_used
-      out_of_period_range = begin
-                              date < preseizure.period_start_date || preseizure.period_end_date < date
-                            rescue
-                              true
-                            end
-    end
-
-    result = if (preseizure.is_period_range_used && out_of_period_range) || date.nil?
-               preseizure.period_start_date
-             else
-               date
-             end
-
-    if result < exercise.start_date && result.beginning_of_month == exercise.start_date.beginning_of_month
-      exercise.start_date
-    elsif exercise.next.nil? && result > exercise.end_date && result.beginning_of_month == exercise.end_date.beginning_of_month
-      exercise.end_date
-    else
-      result
-    end
-  end
-
-
-  def self.computed_deadline_date(preseizure, exercise)
-    if preseizure.deadline_date.present?
-      date = computed_date(preseizure, exercise)
-      result = preseizure.deadline_date < date ? date : preseizure.deadline_date
-      result.to_date
-    end
   end
 end

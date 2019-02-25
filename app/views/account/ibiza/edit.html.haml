@@ -13,7 +13,7 @@
           = f.input :is_analysis_activated, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
           = f.input :is_analysis_to_validate, as: :boolean, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées (peut être ré-écrite au niveau de chaque dossier)."
         %fieldset
-          %legend Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
+          %legend Format de nom de la pièce iDocus dans iBiza (par défaut: colonne "Pièce" dans iBiza)
           %table.table.table-condensed
             %thead
               %tr
@@ -129,8 +129,35 @@
                     = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
                     %span.text Numéro de pièce d'origine
                 %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
-                %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
+                %td
           = f.input :description_separator
+        %fieldset
+          %legend Référence de colonne "Ref. pièce" et "Piece" dans Ibiza
+          %table.table.table-condensed
+            %thead
+              %tr
+                %th Format
+            %tbody
+              %tr
+                %td
+                  = radio_button_tag "ibiza[voucher_ref_target]", 'piece_number', (@ibiza.try(:voucher_ref_target) == 'piece_number' ? true : false), class: "voucher_ref_radio piece_number"
+                  %span
+                    Format n°1 :
+                    %strong Ref. pièce =
+                    %i Numéro de pièce d'origine
+                    et
+                    %strong Pièce =
+                    %i Nom de la pièce (iDocus)
+              %tr
+                %td
+                  = radio_button_tag "ibiza[voucher_ref_target]", 'piece_name', (@ibiza.try(:voucher_ref_target) == 'piece_name' ? true : false), class: "voucher_ref_radio piece_name"
+                  %span
+                    Format n°2 :
+                    %strong Ref. pièce =
+                    %i Nom de la pièce (iDocus)
+                    et
+                    %strong Pièce =
+                    %i Numéro de pièce d'origine
         .form-actions.margin0bottom
           = f.submit 'Valider', class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'ibiza'), class: 'btn'

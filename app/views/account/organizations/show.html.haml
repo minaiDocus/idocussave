@@ -276,7 +276,7 @@
                       %th= t('activerecord.models.ibiza.attributes.is_analysis_to_validate')
                       %td= @organization.ibiza.try(:is_analysis_to_validate) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
-                %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
+                %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (par défaut: colonne "Pièce" dans iBiza)
                 %table.table.table-condensed.table-striped
                   %thead
                     %tr
@@ -396,9 +396,9 @@
                         - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
                         = value ? t('yes_value') : t('no_value')
                       %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
-                      %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
+                      %td
                     %tr
-                      %td{ colspan: 3 }
+                      %td{ colspan: 4 }
                         - preseizure = OpenStruct.new({ journal_name: 'AC', piece: OpenStruct.new(name: 'CAB%DOC AC 201901 001'), piece_number: 'FACT001', date: Time.new(2019,1,2), third_party: 'tiers' })
                         - preseizure['amount'] = '100,00'
                         - preseizure['currency'] = 'USD'
@@ -408,6 +408,19 @@
                           ( EXEMPLE:&nbsp;
                           %strong= IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
                           &nbsp;)
+                %h4.margin2top.margin1bottom Référence de colonne "Ref. pièce" et "Piece" dans Ibiza
+                %table.table.table-condensed.table-striped
+                  %thead
+                    %tr
+                      %th.name Colonne
+                      %th.is_used Référence
+                  %tbody
+                    %tr
+                      %td.name Ref. pièce
+                      %td= @organization.ibiza.try(:voucher_ref_target) == 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
+                    %tr
+                      %td.name Pièce
+                      %td= @organization.ibiza.try(:voucher_ref_target) != 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
               - if @user.leader?
                 .alignright
                   -if @organization.try(:ibiza).try(:used?)
