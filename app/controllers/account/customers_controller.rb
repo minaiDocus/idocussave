@@ -361,8 +361,8 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def verify_if_account_can_be_closed
-    if !@customer.commitment_end? && !params[:close_now]
-      flash[:error] = "Ce dossier est souscrit à un forfait avec un engagement minimum de un an"
+    if !@customer.subscription.commitment_end?(false) && !params[:close_now]
+      flash[:error] = "Ce dossier est souscrit à un forfait avec un engagement de 12 mois"
 
       redirect_to account_organization_customer_path(@organization, @customer)
     end

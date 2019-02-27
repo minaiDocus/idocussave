@@ -20,9 +20,15 @@ class EvaluateSubscription
       else
         unauthorize_upload
       end
+
+      if @subscription.is_retriever_package_active || @subscription.is_micro_package_active
+        authorize_retriever
+      else
+        unauthorize_retriever
+      end
+
       @subscription.set_start_date_and_end_date
       @subscription.is_scan_box_package_active  ? authorize_dematbox       : unauthorize_dematbox
-      @subscription.is_retriever_package_active ? authorize_retriever      : unauthorize_retriever
       @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
     end
     AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester

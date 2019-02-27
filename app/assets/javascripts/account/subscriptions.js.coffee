@@ -25,6 +25,7 @@ update_form = ->
   if $('#subscription_is_retriever_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals'
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+    $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
   else
     $('.retriever_package_warning').hide()
 
@@ -34,6 +35,7 @@ update_form = ->
   if $('#subscription_is_micro_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
     lock_light_package()
+    $('#subscription_is_retriever_package_active').attr('disabled', 'disabled')
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
     $('#subscription_is_mini_package_active').attr('disabled', 'disabled')
     $('.micro_package_warning').show()
@@ -127,14 +129,16 @@ lock_light_package = ->
 
 update_price = ->
   price_list = {
+    #standard prices
     'subscription':        [10,   30,   null],
-    'subscription_plus':   [1,    3,    null],
     'pre_assignment':      [9,    15,   null],
     'return_paper':        [10,   10,   null],
     'stamp':               [5,    5,    null],
     'retriever':           [5,    15,   null],
     'reduced_retriever':   [3,    9,    null],
-    'annual_subscription': [null, null, 199]
+    'annual_subscription': [null, null, 199],
+     #special prices
+    'subscription_plus':   [1, 3, null],
   }
   selected_options = []
   price = 0

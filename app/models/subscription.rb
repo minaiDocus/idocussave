@@ -122,7 +122,7 @@ class Subscription < ActiveRecord::Base
     max_authorized_value = self.send(max_value.to_sym)
 
     if cumulative_value > max_authorized_value
-      current_period.send(value.to_sym)
+      current_value
     elsif cumulative_value + current_value > max_authorized_value
       cumulative_value + current_value - max_authorized_value
     else
@@ -133,5 +133,13 @@ class Subscription < ActiveRecord::Base
   def retriever_price_option
     organization_code = organization.try(:code) || user.organization.code
     %w(ADV).include?(organization_code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
+  end
+
+  def commitment_end?(check_micro_package = true)
+    if self.is_mini_package_active || ( check_micro_package && self.is_micro_package_active )
+      self.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
+    else
+      true
+    end
   end
 end

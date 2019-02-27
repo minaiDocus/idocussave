@@ -226,6 +226,18 @@ class Period < ActiveRecord::Base
     end
   end
 
+  def total_documents
+    total_pieces + total_operations
+  end
+
+  def total_pieces
+    pieces
+  end
+
+  def total_operations
+    self.user.operations.where('created_at >= ? AND created_at <= ?', self.start_date, self.end_date).count
+  end
+
 private
 
 

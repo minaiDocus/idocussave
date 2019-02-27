@@ -172,16 +172,13 @@ class User < ActiveRecord::Base
     User.where(authentication_token: token).first
   end
 
-
   def active?
     !inactive?
   end
 
-
   def inactive?
     inactive_at.present?
   end
-
 
   def find_or_create_subscription
     self.subscription ||= Subscription.create(user_id: id)
@@ -308,11 +305,6 @@ class User < ActiveRecord::Base
 
   def admin?
     is_admin
-  end
-
-  def commitment_end?
-    return true unless self.subscription && (self.subscription.is_micro_package_active || self.subscription.is_mini_package_active) 
-    self.subscription.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
   end
 
   # TODO : need a test

@@ -34,8 +34,6 @@ class StopSubscriptionService
     @user.account_number_rules   = []
     @user.save
 
-    @user.subscription.update_attributes(start_date: nil, end_date: nil)
-
     # Revoke authorizations stored in options
     @user.options.is_retriever_authorized     = false
     @user.options.max_number_of_journals      = 0

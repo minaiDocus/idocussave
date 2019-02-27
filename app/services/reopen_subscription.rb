@@ -12,9 +12,14 @@ class ReopenSubscription
   def execute
     @user.inactive_at = nil
     @user.options.max_number_of_journals = 5
+    @user.save
+
+    @subscription.update_attributes(start_date: nil, end_date: nil)
+    @subscription.reload
+
+    EvaluateSubscription.new(@subscription, @requester, @request).execute
 
     UpdatePeriod.new(@subscription.current_period).execute
-    EvaluateSubscription.new(@subscription, @requester, @request).execute
 
     @user.find_or_create_external_file_storage
 

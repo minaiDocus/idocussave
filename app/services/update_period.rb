@@ -26,7 +26,6 @@ class UpdatePeriod
 
   private
 
-
   def copyable_keys
     [
       :max_sheets_authorized,
@@ -95,7 +94,7 @@ class UpdatePeriod
 
         option = ProductOptionOrder.new
 
-        option.title    = 'Téléchargement + Pré-saisie comptable + Engagement 12 mois'
+        option.title    = "Téléchargement + iDo'FacBanque + Pré-saisie comptable + Engagement 12 mois"
         option.name     = 'micro_package_subscription'
         option.duration = 0
         option.quantity = 1
@@ -104,6 +103,8 @@ class UpdatePeriod
         option.price_in_cents_wo_vat = price
 
         selected_options << option
+
+        selected_options << micro_remaining_months_option if micro_remaining_months_option.present?
       end
 
       if @subscription.is_mini_package_active
@@ -243,6 +244,30 @@ class UpdatePeriod
     option
   end
 
+  def micro_remaining_months_option
+    return @micro_remaining_months_option unless @micro_remaining_months_option.nil?
+
+    @micro_remaining_months_option = ''
+    months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
+
+    if @subscription.user.inactive? && months_remaining > 0
+      price = package_options_price([:subscription], 0) * months_remaining
+
+      option = ProductOptionOrder.new
+
+      option.title       = "iDo'Micro : engagement #{months_remaining} mois restant(s)"
+      option.name        = 'extra_option'
+      option.duration    = 1
+      option.group_title = 'Autres'
+      option.is_an_extra = true
+      option.price_in_cents_wo_vat = price
+
+      @micro_remaining_months_option = option
+    end
+
+    @micro_remaining_months_option
+  end
+
 
   def journals_option
     additionnal_journals = @subscription.number_of_journals - 5
@@ -335,13 +360,15 @@ class UpdatePeriod
 
   def prices_list
     @prices_list ||= {
+      #standard prices
       stamp:              [5,  5],
       retriever:          [5,  15],
       reduced_retriever:  [3, 9],
       subscription:       [10, 30],
-      subscription_plus:  [1, 3],
       return_paper:       [10, 10],
-      pre_assignment:     [9,  15]
+      pre_assignment:     [9,  15],
+      #special prices
+      subscription_plus:  [1, 3],
     }
   end
 
@@ -354,5 +381,11 @@ class UpdatePeriod
     end
 
     price
+  end
+
+  def difference_in_months(date1, date2)
+    month_count = (date2.year == date1.year) ? (date2.month - date1.month) : (12 - date1.month + date2.month)
+    month_count = (date2.year == date1.year) ? (month_count + 1) : (((date2.year - date1.year - 1 ) * 12) + (month_count + 1))
+    month_count
   end
 end
