@@ -70,8 +70,8 @@
                   %br
                   Original
         = content_tag :i, '', class: 'icon-arrow-up'
-        = submit_tag 'Débloquer la séléction', name: 'unblock', class: 'btn btn-primary margin1right'
-        = submit_tag 'Marquer la séléction comme vu', name: 'approve_block', class: 'btn btn-primary'
+        = submit_tag 'Débloquer ceux sélectionnés', name: 'unblock', class: 'btn btn-primary margin1right'
+        = submit_tag 'Marquer comme duplication ceux sélectionnés', name: 'approve_block', class: 'btn btn-primary'
 
       = render partial: 'shared/list_options', locals: { collection: @duplicates }
     .span3.box
