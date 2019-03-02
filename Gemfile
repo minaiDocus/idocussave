@@ -27,6 +27,10 @@ gem 'airbrake', '4.3.8'
 gem 'sentry-raven'
 
 
+# APM
+gem 'elastic-apm'
+
+
 # Image / File processing
 gem 'barby'
 gem 'prawn', '1.0.0rc1'
@@ -110,7 +114,7 @@ gem 'd3_rails'
 
 
 # DB Adapter
-gem 'mysql2'
+gem 'mysql2', '~> 0.4.10'
 
 
 # Scheduling Jobs

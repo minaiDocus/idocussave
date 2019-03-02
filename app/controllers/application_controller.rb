@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :format_price, :format_price_00
 
+  before_action :set_raven_context
   before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
   around_filter :log_visit
@@ -115,6 +116,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def set_raven_context
+    Raven.user_context(id: session[:current_user_id]) # or anything else in session
+    Raven.extra_context(params: params.to_unsafe_h, url: request.url)
+  end
 
   def search_terms(search_terms_from_parameters)
     @contains ||= {}

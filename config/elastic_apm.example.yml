@@ -1,0 +1,16 @@
+# config/elastic_apm.yml:
+
+# Set service name - allowed characters: a-z, A-Z, 0-9, -, _ and space
+# Defaults to the name of your Rails app
+# service_name: 'my-service'
+
+# Use if APM Server requires a token
+# secret_token: ''
+
+# Set custom APM Server URL (default: http://localhost:8200)
+# server_url: 'http://localhost:8200'
+
+
+service_name: 'idocus-main'
+secret_token: 'S3ntry@1d02019!'
+server_url: 'https://apm.idocus.com'
