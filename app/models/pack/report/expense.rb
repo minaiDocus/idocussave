@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report::Expense < ActiveRecord::Base
+class Pack::Report::Expense < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   has_one    :observation, class_name: 'Pack::Report::Observation', inverse_of: :expense, dependent: :destroy

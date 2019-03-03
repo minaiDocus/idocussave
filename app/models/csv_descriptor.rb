@@ -1,4 +1,4 @@
-class CsvDescriptor < ActiveRecord::Base
+class CsvDescriptor < ApplicationRecord
   belongs_to :user
   belongs_to :organization
 

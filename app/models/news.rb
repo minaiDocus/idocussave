@@ -1,4 +1,4 @@
-class News < ActiveRecord::Base
+class News < ApplicationRecord
   TARGET_AUDIENCES = %w(everyone collaborators customers).freeze
 
   validates_presence_of :title, :body

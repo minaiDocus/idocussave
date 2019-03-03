@@ -1,4 +1,4 @@
-class Pack::Report::Preseizure < ActiveRecord::Base
+class Pack::Report::Preseizure < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   belongs_to :user,                                  inverse_of: :preseizures

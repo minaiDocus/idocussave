@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   include ::CodeFormatValidation
 
   devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable

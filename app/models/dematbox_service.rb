@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DematboxService < ActiveRecord::Base
+class DematboxService < ApplicationRecord
   validates_presence_of :name, :pid, :type, :state
 
   self.inheritance_column = :_type_disabled

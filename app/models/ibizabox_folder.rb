@@ -1,4 +1,4 @@
-class IbizaboxFolder < ActiveRecord::Base
+class IbizaboxFolder < ApplicationRecord
 
   belongs_to :user
   belongs_to :journal, class_name: 'AccountBookType'

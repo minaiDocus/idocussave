@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class UserOptions < ActiveRecord::Base
+class UserOptions < ApplicationRecord
   belongs_to :user
 
   PRESEIZURE_DATE_OPTIONS = ['operation_date', 'operation_value_date'].freeze

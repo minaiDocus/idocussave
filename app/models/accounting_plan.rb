@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountingPlan < ActiveRecord::Base
+class AccountingPlan < ApplicationRecord
   # IBIZA     = 'ibiza'.freeze
   # COALA     = 'coala'.freeze
   # QUADRATUS = 'quadratus'.freeze

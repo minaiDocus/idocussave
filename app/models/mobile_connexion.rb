@@ -1,4 +1,4 @@
-class MobileConnexion < ActiveRecord::Base
+class MobileConnexion < ApplicationRecord
   belongs_to :user
 
   scope :ios,     -> { where("platform = 'iOS'") }

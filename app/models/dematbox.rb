@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Dematbox < ActiveRecord::Base
+class Dematbox < ApplicationRecord
   belongs_to :user
   has_many :services, class_name: 'DematboxSubscribedService', inverse_of: :dematbox
 

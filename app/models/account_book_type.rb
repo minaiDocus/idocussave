@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountBookType < ActiveRecord::Base
+class AccountBookType < ApplicationRecord
   DOMAINS    = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais'].freeze
   ENTRY_TYPE = %w(no expense buying selling).freeze
   TYPES_NAME = %w(AC VT NDF).freeze

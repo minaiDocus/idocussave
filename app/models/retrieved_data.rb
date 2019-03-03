@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RetrievedData < ActiveRecord::Base
+class RetrievedData < ApplicationRecord
   belongs_to :user
 
   serialize :processed_connection_ids, Array

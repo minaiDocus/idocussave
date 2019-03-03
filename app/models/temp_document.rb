@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class TempDocument < ActiveRecord::Base
+class TempDocument < ApplicationRecord
   serialize :scan_bundling_document_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)

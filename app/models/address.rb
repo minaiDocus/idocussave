@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Address < ActiveRecord::Base
+class Address < ApplicationRecord
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :building, :place_called_or_postal_box, :door_code, :other, :phone, :phone_mobile, within: 0..50, allow_nil: true
   validates_presence_of :city, :zip
   validates_presence_of :company, :company_number, :phone, if: proc { |a| a.is_for_dematbox_shipping }

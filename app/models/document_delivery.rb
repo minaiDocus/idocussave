@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DocumentDelivery < ActiveRecord::Base
+class DocumentDelivery < ApplicationRecord
   has_many :temp_packs
   has_many :temp_documents
 

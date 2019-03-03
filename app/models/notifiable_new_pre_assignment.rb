@@ -1,5 +1,5 @@
 # TODO : remove this after migration
-class NotifiableNewPreAssignment < ActiveRecord::Base
+class NotifiableNewPreAssignment < ApplicationRecord
   self.table_name = 'notifies_preseizures'
 
   belongs_to :notify

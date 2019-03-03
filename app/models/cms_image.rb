@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CmsImage < ActiveRecord::Base
+class CmsImage < ApplicationRecord
   has_attached_file :content,
                             styles: {
                               thumb: ['96x96>', :png]

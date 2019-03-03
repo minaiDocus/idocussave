@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report < ActiveRecord::Base
+class Pack::Report < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   has_many   :expenses,     class_name: 'Pack::Report::Expense',    inverse_of: :report, dependent: :destroy

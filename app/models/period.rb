@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Period < ActiveRecord::Base
+class Period < ApplicationRecord
   serialize :documents_name_tags
 
   audited

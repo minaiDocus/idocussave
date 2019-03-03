@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SandboxBankAccount < ActiveRecord::Base
+class SandboxBankAccount < ApplicationRecord
   belongs_to :user
   belongs_to :retriever
   has_many :sandbox_operations, dependent: :nullify

@@ -1,4 +1,4 @@
-class OrganizationGroup < ActiveRecord::Base
+class OrganizationGroup < ApplicationRecord
   has_many :organizations
 
   validates :name, presence: true, uniqueness: true

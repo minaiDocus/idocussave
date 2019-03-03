@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Retriever < ActiveRecord::Base
+class Retriever < ApplicationRecord
   attr_accessor :confirm_dyn_params, :check_journal
 
   belongs_to :user

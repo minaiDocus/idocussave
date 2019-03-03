@@ -1,5 +1,5 @@
 # TODO : remove this after migration
-class NotifiablePublishedDocument < ActiveRecord::Base
+class NotifiablePublishedDocument < ApplicationRecord
   self.table_name = 'notifies_temp_documents'
 
   belongs_to :notify

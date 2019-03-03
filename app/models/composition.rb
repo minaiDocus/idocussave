@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Composition < ActiveRecord::Base
+class Composition < ApplicationRecord
   belongs_to :user
 
   serialize :document_ids, Array

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Email < ActiveRecord::Base
+class Email < ApplicationRecord
   serialize :errors_list
   serialize :attachment_names
 

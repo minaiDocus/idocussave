@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Invoice < ActiveRecord::Base
+class Invoice < ApplicationRecord
   has_attached_file :content,
                             styles: {
                               thumb: ['46x67>', :png]

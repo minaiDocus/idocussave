@@ -1,4 +1,4 @@
-class McfSettings < ActiveRecord::Base
+class McfSettings < ApplicationRecord
   attr_encrypted :access_token,            random_iv: true
   attr_encrypted :refresh_token,           random_iv: true
   attr_encrypted :access_token_expires_at, random_iv: true, type: :datetime
