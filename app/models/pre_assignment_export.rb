@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PreAssignmentExport < ActiveRecord::Base
+class PreAssignmentExport < ApplicationRecord
   belongs_to :user
   belongs_to :report, class_name: 'Pack::Report'
   belongs_to :organization

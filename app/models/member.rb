@@ -1,4 +1,4 @@
-class Member < ActiveRecord::Base
+class Member < ApplicationRecord
   include ::CodeFormatValidation
 
   ADMIN        = 'admin'.freeze

@@ -1,4 +1,4 @@
-class CurrencyRate < ActiveRecord::Base
+class CurrencyRate < ApplicationRecord
   validates_presence_of :exchange_from, :exchange_to, :exchange_rate, :date
 
   def create!(params)

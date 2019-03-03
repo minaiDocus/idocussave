@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Piece < ActiveRecord::Base
+class Pack::Piece < ApplicationRecord
   serialize :tags
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)

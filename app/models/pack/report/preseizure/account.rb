@@ -1,4 +1,4 @@
-class Pack::Report::Preseizure::Account < ActiveRecord::Base
+class Pack::Report::Preseizure::Account < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   TTC = 1

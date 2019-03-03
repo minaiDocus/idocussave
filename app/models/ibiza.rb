@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Ibiza < ActiveRecord::Base
+class Ibiza < ApplicationRecord
   audited
 
   serialize :description, Hash

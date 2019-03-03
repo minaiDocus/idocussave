@@ -1,4 +1,4 @@
-class SubscriptionStatistic < ActiveRecord::Base
+class SubscriptionStatistic < ApplicationRecord
   serialize :options, Hash
   serialize :consumption, Hash
   serialize :customers, Array

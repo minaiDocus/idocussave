@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SubscriptionOption < ActiveRecord::Base
+class SubscriptionOption < ApplicationRecord
   has_and_belongs_to_many :subscribers, class_name: 'Subscription', inverse_of: :extra_options
 
 

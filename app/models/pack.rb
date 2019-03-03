@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack < ActiveRecord::Base
+class Pack < ApplicationRecord
   serialize :delivered_user_ids, Hash
   serialize :processed_user_ids, Hash
   serialize :content_historic, Array

@@ -1,4 +1,4 @@
-class PaperProcess < ActiveRecord::Base
+class PaperProcess < ApplicationRecord
   belongs_to :organization
   belongs_to :user
   belongs_to :period_document

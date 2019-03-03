@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Box < ActiveRecord::Base
+class Box < ApplicationRecord
   belongs_to :external_file_storage
 
   attr_encrypted :refresh_token, random_iv: true

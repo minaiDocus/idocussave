@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Event < ActiveRecord::Base
+class Event < ApplicationRecord
   serialize :target_attributes
 
   belongs_to :user

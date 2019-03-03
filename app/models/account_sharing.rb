@@ -1,4 +1,4 @@
-class AccountSharing < ActiveRecord::Base
+class AccountSharing < ApplicationRecord
   belongs_to :organization
   belongs_to :collaborator,  class_name: 'User'
   belongs_to :account,       class_name: 'User'

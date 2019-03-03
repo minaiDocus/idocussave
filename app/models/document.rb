@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
   serialize :tags
 
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Operation < ActiveRecord::Base
+class Operation < ApplicationRecord
   serialize :currency, Hash
 
   belongs_to :organization

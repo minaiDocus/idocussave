@@ -12,6 +12,8 @@ module Idocus
   class Application < Rails::Application
     # load all files in lib directory
 
+    config.load_defaults 5.0
+
     # development files
     Dir.glob("#{Rails.root}/app/workers/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/*.{rb}").each { |file| require file }
@@ -96,7 +98,6 @@ module Idocus
 
     ActionMailer::Base.default from: 'iDocus <notification@idocus.com>', reply_to: 'Support iDocus <support@idocus.com>'
 
-    config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
     config.middleware.swap Rails::Rack::Logger, CustomLogger, alternative: ['/account/notifications/latest']
 
     Raven.configure do |config|

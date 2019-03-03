@@ -1,7 +1,7 @@
 require 'sidekiq/web'
 require 'sidekiq-scheduler/web'
 
-Idocus::Application.routes.draw do
+Rails.application.routes.draw do
   mount Ckeditor::Engine => '/ckeditor'
   root to: 'account/account#index'
 

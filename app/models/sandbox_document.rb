@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SandboxDocument < ActiveRecord::Base
+class SandboxDocument < ApplicationRecord
   belongs_to :user
   belongs_to :retriever
 

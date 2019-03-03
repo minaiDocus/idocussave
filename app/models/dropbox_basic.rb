@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DropboxBasic < ActiveRecord::Base
+class DropboxBasic < ApplicationRecord
   serialize :attachment_names
   serialize :import_folder_paths
 

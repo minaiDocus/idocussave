@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord
   attr_accessor :address_required
   self.inheritance_column = :_type_disabled
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DematboxSubscribedService < ActiveRecord::Base
+class DematboxSubscribedService < ApplicationRecord
   belongs_to :dematbox, inverse_of: :services
 
   validates_presence_of :name, :pid

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RemoteFile < ActiveRecord::Base
+class RemoteFile < ApplicationRecord
   DROPBOX          = 'Dropbox'.freeze
   DROPBOX_EXTENDED = 'Dropbox Extended'.freeze
   GOOGLE_DRIVE     = 'Google Drive'.freeze

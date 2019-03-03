@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class FileNamingPolicy < ActiveRecord::Base
+class FileNamingPolicy < ApplicationRecord
   belongs_to :organization
 
 

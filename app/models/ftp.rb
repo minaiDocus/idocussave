@@ -1,4 +1,4 @@
-class Ftp < ActiveRecord::Base
+class Ftp < ApplicationRecord
   belongs_to :organization
   belongs_to :external_file_storage
 

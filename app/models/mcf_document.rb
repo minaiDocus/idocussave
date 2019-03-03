@@ -1,4 +1,4 @@
-class McfDocument < ActiveRecord::Base
+class McfDocument < ApplicationRecord
   RETAKE_RETRY = 3
   RETAKE_TIME  = 10.minutes 
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Subscription < ActiveRecord::Base
+class Subscription < ApplicationRecord
   belongs_to :user
   belongs_to :organization
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodDelivery < ActiveRecord::Base
+class PeriodDelivery < ApplicationRecord
   STATES = [%w(rien nothing), %w(attendus wait), %w(réceptionnés received), %w(traités delivered)].freeze
 
   belongs_to :period, inverse_of: :delivery

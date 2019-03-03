@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'rails', '4.2.7.1'
+gem 'rails', '5.2.2'
 
 
 # Object state management
@@ -23,7 +23,6 @@ gem 'devise'
 
 
 # Error handling
-gem 'airbrake', '4.3.8'
 gem 'sentry-raven'
 
 
@@ -33,8 +32,8 @@ gem 'elastic-apm'
 
 # Image / File processing
 gem 'barby'
-gem 'prawn', '1.0.0rc1'
-gem 'paperclip', '~> 4.2.2'
+gem 'prawn'
+gem 'paperclip'
 gem 'chunky_png'  # required by barby
 gem 'haml'
 gem 'prawn-qrcode'
@@ -48,11 +47,11 @@ gem 'nested_form'
 # System libraries binding
 gem 'gio2'
 gem 'poppler'
-gem 'gobject-introspection', '~> 3.0.0'
+gem 'gobject-introspection'
 
 
 # Object renderer
-gem 'rabl', '0.11.6'
+gem 'rabl'
 
 
 # Query & Network management
@@ -85,23 +84,23 @@ gem 'hirb', require: false
 
 # Assets management
 gem 'therubyracer'
-gem 'uglifier', '>= 1.3.0'
-gem 'sprockets', '2.12.3'
-gem 'sprockets-rails', '2.3.1'
+gem 'uglifier'
+gem 'sprockets'
+gem 'sprockets-rails'
 
 
 # CSS Libraries and CSS Processors
-gem 'sass-rails', '4.0.5'
+gem 'sass-rails'
 gem 'compass-rails'
-gem 'bootstrap-sass', '2.0.4.2'
+gem 'bootstrap-sass'
 
 
 # JS Libraries and JS processors
 gem 'eco'
 gem 'coffee-rails'
-gem 'jquery-rails', '2.0.2'
-gem 'jquery-ui-rails', '1.1.0'
-gem 'backbone-on-rails', '0.9.9.0'
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'backbone-on-rails'
 
 
 # Frontend tools
@@ -114,12 +113,12 @@ gem 'd3_rails'
 
 
 # DB Adapter
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2'
 
 
 # Scheduling Jobs
 gem 'sidekiq'
-gem 'sidekiq-scheduler', '~> 2.0'
+gem 'sidekiq-scheduler'
 gem 'sidekiq-unique-jobs'
 
 
@@ -130,14 +129,14 @@ gem 'ansi', require: false
 gem 'axlsx'
 gem 'to_xls'
 gem 'hpricot'
-gem 'nokogiri', '~> 1.7'
+gem 'nokogiri'
 
 
 # External services
 gem 'ruby-box'
 gem 'dropbox_api'
-gem 'google_drive', '1.0.1'
-gem 'google-api-client', '0.8.2'
+gem 'google_drive'
+gem 'google-api-client'
 
 
 # Lock mechanism
@@ -152,7 +151,7 @@ gem 'symmetric-encryption'
 gem 'redcarpet'
 
 # Audit
-gem 'audited', '~> 4.5'
+gem 'audited'
 
 gem 'ruby-progressbar', require: false
 
@@ -160,7 +159,6 @@ group :development, :test do
   gem 'byebug'
   gem 'thin'
   gem 'rspec-rails'
-  gem 'quiet_assets'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'

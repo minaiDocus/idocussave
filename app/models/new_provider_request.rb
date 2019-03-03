@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class NewProviderRequest < ActiveRecord::Base
+class NewProviderRequest < ApplicationRecord
   belongs_to :user
 
   attr_accessor :edited_by_customer

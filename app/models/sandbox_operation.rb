@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SandboxOperation < ActiveRecord::Base
+class SandboxOperation < ApplicationRecord
   belongs_to :organization
   belongs_to :user
   belongs_to :sandbox_bank_account

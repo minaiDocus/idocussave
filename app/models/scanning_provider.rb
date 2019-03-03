@@ -1,4 +1,4 @@
-class ScanningProvider < ActiveRecord::Base
+class ScanningProvider < ApplicationRecord
   attr_reader :customer_tokens
 
   validates_presence_of :name

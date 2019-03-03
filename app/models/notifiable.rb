@@ -1,4 +1,4 @@
-class Notifiable < ActiveRecord::Base
+class Notifiable < ApplicationRecord
   self.table_name = 'notifiables_notifies'
 
   belongs_to :notifiable, polymorphic: true
