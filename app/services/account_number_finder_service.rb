@@ -9,11 +9,13 @@ class AccountNumberFinderService
   end
 
 
-  def execute(label)
+  def execute(operation)
     number = nil
+    label  = operation.label
+    target = operation.amount < 0 ? 'credit' : 'debit'
 
-    number =  self.class.find_with_rules(@rules, label) if @rules.any?
-    number ||= self.class.find_with_accounting_plan(accounting_plan, label, @rules) unless accounting_plan.empty?
+    number =  self.class.find_with_rules(@rules, label, target) if @rules.any?
+    number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty?
     number ||= @temporary_account
 
     number
@@ -63,10 +65,11 @@ class AccountNumberFinderService
   end
 
 
-  def self.find_with_rules(rules, label)
+  def self.find_with_rules(rules, label, target)
     number = nil
 
-    match_rules = rules.select { |rule| rule.rule_type == 'match' }
+    match_rules = rules.select { |rule| rule.rule_target == 'both' || rule.rule_target == target }
+    match_rules = match_rules.select { |rule| rule.rule_type == 'match' }
     match_rules = match_rules.select { |rule| label.match /#{Regexp.quote(rule.content.delete('*'))}/i }
 
     name = get_the_highest_match(label, match_rules.map(&:content))
@@ -78,9 +81,11 @@ class AccountNumberFinderService
   end
 
 
-  def self.find_with_accounting_plan(accounting_plan, label, rules = [])
+  def self.find_with_accounting_plan(accounting_plan, label, target, rules = [])
     number = nil
-    truncate_rules = rules.select { |rule| rule.rule_type == 'truncate' }
+
+    truncate_rules = rules.select { |rule| rule.rule_target == 'both' || rule.rule_target == target }
+    truncate_rules = truncate_rules.select { |rule| rule.rule_type == 'truncate' }
 
     matches = truncate_rules.flat_map do |rule|
       accounting_plan.select do |account|

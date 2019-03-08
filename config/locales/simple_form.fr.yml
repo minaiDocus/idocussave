@@ -258,6 +258,7 @@ fr:
         client_id: Client ID
         client_secret : Client Secret
       account_number_rule:
+        rule_target: Appliqué à
         name: Nom de la règle
         rule_type: Type de règle
         affect: Affecté à

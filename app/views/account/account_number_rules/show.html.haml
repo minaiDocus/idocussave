@@ -14,6 +14,9 @@
       %table.table.table-striped.table-condensed.margin0bottom
         %tbody
           %tr
+            %th= t('activerecord.models.account_number_rule.attributes.rule_target')
+            %td= t('activerecord.models.account_number_rule.attributes.rule_target_values.' + @account_number_rule.rule_target)
+          %tr
             %th= t('activerecord.models.account_number_rule.attributes.affect')
             %td= t('activerecord.models.account_number_rule.attributes.affect_values.' + @account_number_rule.affect)
           %tr

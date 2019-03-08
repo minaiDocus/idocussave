@@ -7,6 +7,8 @@
   = hidden_field_tag :per_page, per_page
   = label_tag 'account_number_rule_contains[name]', t('activerecord.models.account_number_rule.attributes.name')
   = text_field_tag 'account_number_rule_contains[name]', (params[:account_number_rule_contains][:name] rescue ''), class: 'span12'
+  = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.rule_target')
+  = select_tag 'account_number_rule_contains[rule_target]', options_for_select(rule_target_options_for_select, (params[:account_number_rule_contains][:rule_target] rescue nil)), include_blank: true, class: 'span12'
   = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.affect')
   = select_tag 'account_number_rule_contains[affect]', options_for_select(affect_options_for_select, (params[:account_number_rule_contains][:affect] rescue nil)), include_blank: true, class: 'span12'
   = label_tag 'account_number_rule_contains[rule_type]', t('activerecord.models.account_number_rule.attributes.rule_type')

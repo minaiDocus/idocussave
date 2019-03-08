@@ -25,6 +25,7 @@
                 %tr
                   %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
                   %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
+                  %th= t('activerecord.models.account_number_rule.attributes.rule_target')
                   %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
                   %th= t('activerecord.models.account_number_rule.attributes.rule_type')
                   %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
@@ -35,6 +36,7 @@
                   %tr
                     %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
                     %td= rule.name
+                    %td= t('activerecord.models.account_number_rule.attributes.rule_target_values.' + rule.rule_target)
                     %td
                       = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
                       - if rule.affect == 'user'

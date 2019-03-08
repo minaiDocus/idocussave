@@ -4,12 +4,15 @@ class AccountNumberRule < ActiveRecord::Base
 
 
   validate :uniqueness_of_name
-  validates_presence_of  :name, :rule_type, :affect, :content, :priority
+  validates_presence_of  :name, :rule_type, :affect, :content, :priority, :rule_target
   validates_presence_of  :third_party_account, if: Proc.new { |r| r.rule_type == 'match' }
   validates_inclusion_of :rule_type, in: %w(truncate match)
   validates_inclusion_of :affect, in: %w(organization user)
+  validates_inclusion_of :rule_target, in: %w(debit credit both)
 
 
+  scope :credit,    -> { where(rule_target: 'credit') }
+  scope :debit,    -> { where(rule_target: 'debit') }
   scope :global,    -> { where(affect: 'organization') }
   scope :customers, -> { where(affect: 'user') }
 
@@ -68,6 +71,14 @@ class AccountNumberRule < ActiveRecord::Base
         attrs[:user_ids]            = account_number_rule_params[:user_ids] if account_number_rule_params[:affect] == 'user'
         attrs[:third_party_account] = nil if attrs[:rule_type] == 'truncate'
 
+        attrs[:rule_target] = if encoded_hash['CIBLE'].try(:downcase).to_s == 'credit'
+                                'credit'
+                              elsif encoded_hash['CIBLE'].try(:downcase).to_s == 'debit'
+                                'debit'
+                              else
+                                'both'
+                              end
+
         template     = organization.account_number_rules.where(name: attrs[:name]).first
         attrs[:name] = template.name_pattern + " (#{template.similar_name.size + 1})" if template
 
@@ -75,7 +86,7 @@ class AccountNumberRule < ActiveRecord::Base
       end
 
       true
-    rescue
+    rescue => e
       false
     end
   end
@@ -88,6 +99,7 @@ class AccountNumberRule < ActiveRecord::Base
     collection = collection.where("name LIKE ?", "%#{contains[:name]}%") if contains[:name].present?
     collection = collection.where(affect:    contains[:affect])      if contains[:affect].present?
     collection = collection.where(rule_type: contains[:rule_type])   if contains[:rule_type].present?
+    collection = collection.where(rule_target: contains[:rule_target])   if contains[:rule_target].present?
     collection = collection.where("content LIKE ?", "%#{contains[:content]}%") if contains[:content].present?
     collection = collection.where("categorization LIKE ?", "%#{contains[:categorization]}%")           if contains[:categorization].present?
     collection = collection.where("third_party_account LIKE ?", "%#{contains[:third_party_account]}%") if contains[:third_party_account].present?

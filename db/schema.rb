@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190225072847) do
+ActiveRecord::Schema.define(version: 20190305064104) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -56,10 +56,11 @@ ActiveRecord::Schema.define(version: 20190225072847) do
     t.datetime "updated_at"
     t.string   "name",                     limit: 255
     t.string   "rule_type",                limit: 255
+    t.string   "rule_target",              limit: 255,   default: "both"
     t.string   "affect",                   limit: 255
     t.text     "content",                  limit: 65535
     t.string   "third_party_account",      limit: 255
-    t.integer  "priority",                 limit: 4,     default: 0, null: false
+    t.integer  "priority",                 limit: 4,     default: 0,      null: false
     t.string   "categorization",           limit: 255
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255

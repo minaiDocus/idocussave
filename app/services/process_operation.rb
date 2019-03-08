@@ -66,7 +66,7 @@ class ProcessOperation
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = account_number_finder.execute(operation.label)
+            account.number     = account_number_finder.execute(operation)
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new

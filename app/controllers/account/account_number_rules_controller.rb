@@ -108,9 +108,10 @@ class Account::AccountNumberRulesController < Account::OrganizationController
   # GET /account/organizations/:organization_id/account_number_rules/import_model
   def import_model
     data = [
-      ['PRIORITE;NOM;TYPE;CATEGORISATION;CONTENU_RECHERCHE;NUMERO_COMPTE'],
-      ['0;AYM GAN;RECHERCHE;BANQUE;PRLV SEPA GAN;0GAN'],
-      ['0;EXO;CORRECTION;IMPOT;EXO;']
+      ['PRIORITE;NOM;TYPE;CIBLE;CATEGORISATION;CONTENU_RECHERCHE;NUMERO_COMPTE'],
+      ['0;AYM GAN;RECHERCHE;CREDIT;BANQUE;PRLV SEPA GAN;0GAN'],
+      ['0;ORG;RECHERCHE;DEBIT;BANQUE;PRLV ORG;0RG'],
+      ['0;EXO;CORRECTION;TOUS;IMPOT;EXO;']
     ]
 
     send_data(data.join("\n"), type: 'plain/text', filename: "modèle d'import.csv")
@@ -156,6 +157,7 @@ private
   def account_number_rule_params
     attributes = [
       :name,
+      :rule_target,
       :rule_type,
       :content,
       :priority,

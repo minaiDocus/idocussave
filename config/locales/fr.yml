@@ -931,6 +931,7 @@ fr:
         other: '%{count} règles de plan de compte'
         name: Règle de plan de compte
         attributes:
+          rule_target: Appliqué à
           name: Nom de la règle
           affect: Affecté à
           rule_type: Type de règle
@@ -946,6 +947,10 @@ fr:
           rule_type_values:
             match: Recherche
             truncate: Correction
+          rule_target_values:
+            debit: Débit
+            credit: Crédit
+            both: Tous
       file_naming_policy:
         zero: 0 charte de nommage
         one: 1 charte de nommage
