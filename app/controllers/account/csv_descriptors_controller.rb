@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::CsvDescriptorsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
-  before_filter :load_csv_descriptor
+  before_action :verify_rights
+  before_action :load_customer
+  before_action :redirect_to_current_step
+  before_action :load_csv_descriptor
 
   # GET /account/organizations/:organization_id/csv_descriptor/edit
   def edit

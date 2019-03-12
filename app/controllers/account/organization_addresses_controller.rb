@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::OrganizationAddressesController < Account::OrganizationController
-  before_filter :load_address, only: %w(edit update destroy)
+  before_action :load_address, only: %w(edit update destroy)
 
 
   # GET /account/organizations/:organization_id/addresses

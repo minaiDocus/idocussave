@@ -1,7 +1,7 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::OrganizationSubscriptionsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_subscription
+  before_action :verify_rights
+  before_action :load_subscription
 
   # GET /account/organizations/:organization_id/organization_subscription/edit
   def edit

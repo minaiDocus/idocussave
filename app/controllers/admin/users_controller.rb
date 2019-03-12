@@ -2,7 +2,7 @@
 class Admin::UsersController < Admin::AdminController
   helper_method :sort_column, :sort_direction
 
-  before_filter :load_user, only: %w(show update send_reset_password_instructions)
+  before_action :load_user, only: %w(show update send_reset_password_instructions)
 
   # GET /admin/users
   def index

@@ -1,7 +1,7 @@
 class Account::IbizaboxFoldersController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_rights
-  before_filter :verify_if_customer_is_active
+  before_action :load_customer
+  before_action :verify_rights
+  before_action :verify_if_customer_is_active
 
   def update
     @folder = @customer.ibizabox_folders.find params[:id]

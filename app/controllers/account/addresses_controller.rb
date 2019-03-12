@@ -1,7 +1,7 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::AddressesController < Account::AccountController
-  before_filter :verify_access
-  before_filter :load_address, only: %w(edit update destroy)
+  before_action :verify_access
+  before_action :load_address, only: %w(edit update destroy)
 
   # GET /account/addresses
   def index

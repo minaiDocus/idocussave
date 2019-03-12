@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_ibiza, except: :create
+  before_action :verify_rights
+  before_action :load_ibiza, except: :create
 
 
   # POST /account/organizations/:organization_id/ibiza

@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::DematboxController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_access
-  before_filter :load_dematbox
+  before_action :load_customer
+  before_action :verify_access
+  before_action :load_dematbox
 
 
   # POST /account/organizations/:organization_id/customers/:customer_id/dematbox

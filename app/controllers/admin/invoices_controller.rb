@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::InvoicesController < Admin::AdminController
-  before_filter :load_invoice, only: %w(show update)
+  before_action :load_invoice, only: %w(show update)
 
   # GET /admin/invoices
   def index

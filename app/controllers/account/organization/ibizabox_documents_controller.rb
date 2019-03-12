@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::IbizaboxDocumentsController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :load_document, except: %w(index select validate)
+  before_action :load_customer
+  before_action :load_document, except: %w(index select validate)
 
   def index
     collection = @customer.temp_documents.from_ibizabox.joins([ibizabox_folder: :journal]).select("temp_documents.*, account_book_types.name as journal")

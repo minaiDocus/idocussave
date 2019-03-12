@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index info new create search)
-  before_filter :verify_rights, except: 'index'
-  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
-  before_filter :redirect_to_current_step
-  before_filter :verify_if_account_can_be_closed, only: %w(account_close_confirm close_account)
+  before_action :load_customer, except: %w(index info new create search)
+  before_action :verify_rights, except: 'index'
+  before_action :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
+  before_action :redirect_to_current_step
+  before_action :verify_if_account_can_be_closed, only: %w(account_close_confirm close_account)
 
 
   # GET /account/organizations/:organization_id/customers

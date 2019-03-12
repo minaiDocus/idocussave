@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::NewProviderRequestsController < Account::Organization::RetrieverController
-  before_filter :load_new_provider_request, only: %w(edit update)
-  before_filter :verify_if_modifiable
+  before_action :load_new_provider_request, only: %w(edit update)
+  before_action :verify_if_modifiable
 
   def index
     @new_provider_requests =  @customer.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])

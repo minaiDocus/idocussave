@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::SetupsController < Account::OrganizationController
-  before_filter :load_customer
+  before_action :load_customer
 
   ######### NE PAS TOUCHER / BOL DE SPAGHETTI / OU ALORS PASSER LA JOURNÉE A TESTER ##########
 

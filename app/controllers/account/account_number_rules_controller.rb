@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::AccountNumberRulesController < Account::OrganizationController
-  before_filter :load_account_number_rule, only: %w(show edit update destroy)
+  before_action :load_account_number_rule, only: %w(show edit update destroy)
 
 
   # GET /account/organizations/:organization_id/account_number_rules

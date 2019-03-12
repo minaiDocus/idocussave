@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::KnowingsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :verify_existant, only: %w(new create)
-  before_filter :load_knowings, only: %w(edit update)
+  before_action :verify_rights
+  before_action :verify_existant, only: %w(new create)
+  before_action :load_knowings, only: %w(edit update)
 
 
   # GET /account/organizations/:organization_id/knowings/new

@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::UseCsvDescriptorsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
+  before_action :verify_rights
+  before_action :load_customer
+  before_action :redirect_to_current_step
 
   # FIXME : check if needed
   def edit

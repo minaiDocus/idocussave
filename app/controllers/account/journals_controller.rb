@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::JournalsController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index)
-  before_filter :verify_rights
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_journal, only: %w(edit update destroy edit_analytics update_analytics delete_analytics sync_analytics)
-  before_filter :verify_max_number, only: %w(new create select copy)
+  before_action :load_customer, except: %w(index)
+  before_action :verify_rights
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_journal, only: %w(edit update destroy edit_analytics update_analytics delete_analytics sync_analytics)
+  before_action :verify_max_number, only: %w(new create select copy)
 
 
   # GET /account/organizations/:organization_id/journals

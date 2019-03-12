@@ -1,6 +1,6 @@
 class Account::CollaboratorsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_member, except: %w(index new create)
+  before_action :verify_rights
+  before_action :load_member, except: %w(index new create)
 
   # GET /account/organizations/:organization_id/collaborators
   def index

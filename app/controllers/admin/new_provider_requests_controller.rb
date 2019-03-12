@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::NewProviderRequestsController < Admin::AdminController
-  before_filter :load_new_provider_request, except: :index
+  before_action :load_new_provider_request, except: :index
 
   def index
     @new_provider_requests = NewProviderRequest.search(search_terms(params[:new_provider_request_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])

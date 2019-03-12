@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::DematboxServicesController < Admin::AdminController
-  before_filter :load_dematbox_service, only: 'destroy'
+  before_action :load_dematbox_service, only: 'destroy'
 
 
   # GET /admin/dematbox_services

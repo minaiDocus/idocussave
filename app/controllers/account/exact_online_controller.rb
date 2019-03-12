@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::ExactOnlineController < Account::AccountController
-  before_filter :load_customer, except: [:subscribe, :unsubscribe]
-  before_filter :verify_rights
-  before_filter :load_session_customer, only: :subscribe
-  before_filter :load_unsubscribing_customer, only: :unsubscribe
-  before_filter :load_exact_online
-  before_filter :load_organization
+  before_action :load_customer, except: [:subscribe, :unsubscribe]
+  before_action :verify_rights
+  before_action :load_session_customer, only: :subscribe
+  before_action :load_unsubscribing_customer, only: :unsubscribe
+  before_action :load_exact_online
+  before_action :load_organization
 
   def authenticate
     session[:customer_id] = @customer.id

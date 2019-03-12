@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::DematboxesController < Admin::AdminController
-  before_filter :load_dematbox, except: :index
+  before_action :load_dematbox, except: :index
 
 
   # GET /admin/dematboxes

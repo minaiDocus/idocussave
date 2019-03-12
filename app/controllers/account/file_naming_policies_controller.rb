@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::FileNamingPoliciesController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_file_naming_policy
+  before_action :verify_rights
+  before_action :load_file_naming_policy
 
 
   # GET /account/organizations/:organization_id/file_naming_policy/edit

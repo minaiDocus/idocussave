@@ -1,5 +1,5 @@
 class Account::PaperProcessesController < Account::AccountController
-  before_filter :verify_rights
+  before_action :verify_rights
 
   # GET /account/paper_processes
   def index

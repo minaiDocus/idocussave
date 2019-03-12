@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::NewProviderRequestsController < Account::RetrieverController
-  before_filter :load_budgea_config
+  before_action :load_budgea_config
 
   def index
     @new_provider_requests = @account.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])

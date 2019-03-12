@@ -1,9 +1,9 @@
 class Account::SubscriptionsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_subscription
+  before_action :verify_rights
+  before_action :load_customer
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_subscription
 
   # /account/organizations/:organization_id/organization_subscription/edit
   def edit

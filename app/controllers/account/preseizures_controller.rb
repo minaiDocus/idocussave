@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::PreseizuresController < Account::OrganizationController
-  before_filter :load_preseizure, except: :index
+  before_action :load_preseizure, except: :index
 
   def index
     if params[:pack_report_id].present?

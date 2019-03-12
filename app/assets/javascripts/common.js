@@ -1,7 +1,7 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.all
-//= require bootstrap
+//= require jquery-ui
+//= require bootstrap-sprockets
 //= require chart.min
 //= require jquery.qtip.min
 //= require help

@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::VatAccountsController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_accounting_plan
-  before_filter :verify_rights
+  before_action :load_customer
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_accounting_plan
+  before_action :verify_rights
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/vat_accounts
   def index

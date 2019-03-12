@@ -1,6 +1,6 @@
 class Account::GroupsController < Account::OrganizationController
-  before_filter :verify_rights, except: %w(index show)
-  before_filter :load_group, except: %w(index new create)
+  before_action :verify_rights, except: %w(index show)
+  before_action :load_group, except: %w(index new create)
 
   # GET /account/organizations/:organization_id/groups
   def index

@@ -1,7 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::PreseizureAccountsController < Account::OrganizationController
-  before_filter :account_params, only: :udpate
-  skip_before_filter :load_organization, only: :accounts_list
+  before_action :account_params, only: :udpate
+  skip_before_action :load_organization, only: :accounts_list
+
 
   def index
     if params[:pack_report_id].present?

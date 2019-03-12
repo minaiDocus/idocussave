@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::SubscriptionsController < Admin::AdminController
-  before_filter :load_accounts_ids
+  before_action :load_accounts_ids
   # GET /admin/subscriptions
   def index
     @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mail_package_active:      true).count }

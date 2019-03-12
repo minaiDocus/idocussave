@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrievedDocumentsController < Account::Organization::RetrieverController
-  before_filter :load_document, except: %w(index select validate)
+  before_action :load_document, except: %w(index select validate)
 
   def index
     @documents = TempDocument.search_for_collection(

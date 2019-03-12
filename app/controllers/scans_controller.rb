@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ScansController < PaperProcessesController
-  before_filter :load_scanned_by
-  before_filter :load_resource, only: :index
+  before_action :load_scanned_by
+  before_action :load_resource, only: :index
 
   # GET /scans
   def index

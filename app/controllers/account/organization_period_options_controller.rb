@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::OrganizationPeriodOptionsController < Account::OrganizationController
-  before_filter :verify_rights
+  before_action :verify_rights
 
   # GET /account/organizations/:organization_id/period_options/edit
   def edit

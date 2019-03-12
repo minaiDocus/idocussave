@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::FileSendingKitsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_file_sending_kit
+  before_action :verify_rights
+  before_action :load_file_sending_kit
 
 
   # GET /account/organizations/:organization_id/file_sending_kit/edit

@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrieverController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
-  before_filter :verify_rights
+  before_action :load_customer
+  before_action :redirect_to_current_step
+  before_action :verify_rights
 
 
   private

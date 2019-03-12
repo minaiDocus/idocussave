@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrieversController < Account::RetrieverController
-  before_filter :load_budgea_config
-  before_filter :load_retriever, except: %w(index list new)
-  before_filter :verify_retriever_state, except: %w(index list new)
-  before_filter :load_retriever_edition, only: %w(new edit)
+  before_action :load_budgea_config
+  before_action :load_retriever, except: %w(index list new)
+  before_action :verify_retriever_state, except: %w(index list new)
+  before_action :load_retriever_edition, only: %w(new edit)
+
 
   def index
     if @account

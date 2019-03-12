@@ -1,5 +1,5 @@
 class Account::ExternalFileStoragesController < Account::AccountController
-  before_filter :load_external_file_storage
+  before_action :load_external_file_storage
 
   def use
     service   = params[:service].to_i

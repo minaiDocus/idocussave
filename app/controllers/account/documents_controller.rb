@@ -2,7 +2,7 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  skip_before_filter :login_user!, only: %w(download piece)
+  skip_before_action :login_user!, only: %w(download piece)
 
   # GET /account/documents
   def index
