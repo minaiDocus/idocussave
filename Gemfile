@@ -155,6 +155,9 @@ gem 'audited'
 
 gem 'ruby-progressbar', require: false
 
+# Boot
+gem 'bootsnap'
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'

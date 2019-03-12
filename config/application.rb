@@ -98,8 +98,6 @@ module Idocus
 
     ActionMailer::Base.default from: 'iDocus <notification@idocus.com>', reply_to: 'Support iDocus <support@idocus.com>'
 
-    config.middleware.swap Rails::Rack::Logger, CustomLogger, alternative: ['/account/notifications/latest']
-
     Raven.configure do |config|
       config.dsn = 'https://8a88cb7b80654dc5bd2bc9bfd8b160a0:b79bb42c43bc4c918442ebd04f5f61b9@sentry.idocus.com/2'
       config.environments = ['sandbox', 'staging', 'production']
