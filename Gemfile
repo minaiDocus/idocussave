@@ -151,6 +151,8 @@ gem 'audited'
 
 gem 'ruby-progressbar', require: false
 
+# Boot
+gem 'bootsnap'
 
 group :production do
   # APM
