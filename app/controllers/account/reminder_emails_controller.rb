@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::ReminderEmailsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_reminder_email, except: %w(new create)
+  before_action :verify_rights
+  before_action :load_reminder_email, except: %w(new create)
 
 
   # GET /account/organizations/:organization_id/reminder_emails/:id

@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class RetrieversController < ApiController
-  before_filter :load_retriever, only: [:destroy, :trigger, :get_retriever_infos]
-  before_filter :authenticate_current_user, except: [:callback, :webauth_callback, :destroy, :trigger, :get_retriever_infos]
-  skip_before_filter :verify_authenticity_token
-  skip_before_filter :verify_rights
+  before_action :load_retriever, only: [:destroy, :trigger, :get_retriever_infos]
+  before_action :authenticate_current_user, except: [:callback, :destroy, :trigger, :get_retriever_infos]
+  skip_before_action :verify_authenticity_token
+  skip_before_action :verify_rights
 
   def callback
     authorization = request.headers['Authorization']

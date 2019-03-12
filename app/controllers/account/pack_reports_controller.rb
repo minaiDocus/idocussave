@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::PackReportsController < Account::OrganizationController
-  before_filter :load_report, except: :index
+  before_action :load_report, except: :index
 
   # GET /account/organizations/:organization_id/pack_reports
   def index

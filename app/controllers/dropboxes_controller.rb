@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class DropboxesController < ApplicationController
-  skip_before_filter :verify_authenticity_token
+  skip_before_action :verify_authenticity_token
 
   def webhook
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), Rails.application.secrets.dropbox_api['secret'], request.body.read)

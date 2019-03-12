@@ -4,9 +4,9 @@ class ApplicationController < ActionController::Base
   helper_method :format_price, :format_price_00
 
   before_action :set_raven_context
-  before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
-  around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
-  around_filter :log_visit
+  before_action :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
+  around_action :catch_error if %w(staging sandbox production test).include?(Rails.env)
+  around_action :log_visit
 
   def after_sign_in_path_for(resource_or_scope)
     # TODO : reactivate when paths are sanitized

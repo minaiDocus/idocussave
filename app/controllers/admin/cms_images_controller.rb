@@ -1,5 +1,5 @@
 class Admin::CmsImagesController < Admin::AdminController
-  skip_before_filter :verify_authenticity_token, only: %w(create)
+  skip_before_action :verify_authenticity_token, only: %w(create)
 
 
   # GET /admin/cms_images

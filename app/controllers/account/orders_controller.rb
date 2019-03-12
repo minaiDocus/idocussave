@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::OrdersController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_rights
-  before_filter :redirect_to_current_step
-  before_filter :load_order, only: %w(edit update destroy)
-  before_filter :verify_editability, only: %w(edit update destroy)
+  before_action :load_customer
+  before_action :verify_rights
+  before_action :redirect_to_current_step
+  before_action :load_order, only: %w(edit update destroy)
+  before_action :verify_editability, only: %w(edit update destroy)
 
   # GET /account/organizations/:organization_id/customers/:customer_id/orders/new
   def new

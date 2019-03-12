@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaUsersController < Account::OrganizationController
-  before_filter :load_ibiza
-  before_filter :verify_rights
+  before_action :load_ibiza
+  before_action :verify_rights
 
   # GET /account/organizations/:organization_id/ibiza_users
   def index

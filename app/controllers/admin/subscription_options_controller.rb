@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::SubscriptionOptionsController < Admin::AdminController
-  before_filter :load_subscription_option, except: %w(new create index)
+  before_action :load_subscription_option, except: %w(new create index)
 
   # GET /admin/subscription_options
   def index

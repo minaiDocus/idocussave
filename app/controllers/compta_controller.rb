@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ComptaController < ApplicationController
-  before_filter :authenticate
-  before_filter :load_users
+  before_action :authenticate
+  before_action :load_users
 
   # GET /compta
   def index

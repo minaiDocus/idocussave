@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DematboxController < ApplicationController
-  before_filter :authenticate if %w(staging sandbox production).include?(Rails.env)
-  #skip_before_filter :verify_authenticity_token
+  before_action :authenticate if %w(staging sandbox production).include?(Rails.env)
+  #skip_before_action :verify_authenticity_token
 
 
   include WashOut::SOAP

@@ -1,6 +1,6 @@
 class ApiController < ApplicationController
-  before_filter :authenticate_current_user
-  before_filter :verify_rights
+  before_action :authenticate_current_user
+  before_action :verify_rights
 
   attr_reader :current_user
 

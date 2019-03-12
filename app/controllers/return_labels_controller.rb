@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class ReturnLabelsController < ApplicationController
-  before_filter :authenticate
+  before_action :authenticate
 
 
   # GET /scans/return_labels

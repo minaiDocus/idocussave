@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::AdminController < ApplicationController
-  before_filter :login_user!
-  before_filter :verify_admin_rights
+  before_action :login_user!
+  before_action :verify_admin_rights
 
 
   layout 'admin'

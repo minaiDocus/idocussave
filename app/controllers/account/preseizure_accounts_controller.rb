@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::PreseizureAccountsController < Account::OrganizationController
-  before_filter :account_params, only: :udpate
+  before_action :account_params, only: :udpate
 
   def index
     if params[:pack_report_id].present?

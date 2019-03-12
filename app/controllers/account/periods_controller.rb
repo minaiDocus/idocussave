@@ -2,7 +2,7 @@
 class Account::PeriodsController < Account::AccountController
   layout false
 
-  before_filter :load_period, :verify_rights
+  before_action :load_period, :verify_rights
 
   # GET /account/periods
   def show

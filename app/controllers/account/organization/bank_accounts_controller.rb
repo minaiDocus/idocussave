@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::BankAccountsController < Account::Organization::RetrieverController
-  before_filter :load_bank_account, except: %w(index update_multiple)
+  before_action :load_bank_account, except: %w(index update_multiple)
 
   def index
     fetch_remote_accounts

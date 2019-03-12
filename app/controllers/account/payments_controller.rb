@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
-  skip_before_filter :login_user!,               only: :debit_mandate_notify
-  skip_before_filter :load_user_and_role,        only: :debit_mandate_notify
-  skip_before_filter :verify_suspension,         only: :debit_mandate_notify
-  skip_before_filter :verify_authenticity_token, only: :debit_mandate_notify
+  skip_before_action :login_user!,               only: :debit_mandate_notify
+  skip_before_action :load_user_and_role,        only: :debit_mandate_notify
+  skip_before_action :verify_suspension,         only: :debit_mandate_notify
+  skip_before_action :verify_authenticity_token, only: :debit_mandate_notify
 
   # GET /account/payment/use_debit_mandate
   def use_debit_mandate

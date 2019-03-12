@@ -1,8 +1,8 @@
 class Account::AccountController < ApplicationController
-  before_filter :login_user!
-  before_filter :load_user_and_role
-  before_filter :verify_suspension
-  before_filter :verify_if_active
+  before_action :login_user!
+  before_action :load_user_and_role
+  before_action :verify_suspension
+  before_action :verify_if_active
 
   layout 'inner'
 
@@ -93,7 +93,7 @@ class Account::AccountController < ApplicationController
 
   def get_key_for(name)
     timestamps = user_ids.map do |user_id|
-      Rails.cache.fetch ['user', user_id, name, 'last_updated_at'] { Time.now.to_i }
+      #Rails.cache.fetch ['user', user_id, name, 'last_updated_at'] { Time.now.to_i }
     end
     Digest::MD5.hexdigest timestamps.join('-')
   end

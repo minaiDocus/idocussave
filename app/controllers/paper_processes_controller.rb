@@ -2,8 +2,8 @@
 class PaperProcessesController < ApplicationController
   layout 'paper_process'
 
-  before_filter :authenticate
-  before_filter :load_current_time
+  before_action :authenticate
+  before_action :load_current_time
 
   private
 

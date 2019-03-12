@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrievedDocumentsController < Account::RetrieverController
-  before_filter :load_document, only: %w(show piece)
+  before_action :load_document, only: %w(show piece)
 
   def index
     @documents = TempDocument.search_for_collection(

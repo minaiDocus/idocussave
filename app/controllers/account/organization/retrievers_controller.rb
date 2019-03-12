@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrieversController < Account::Organization::RetrieverController
-  before_filter :load_retriever, except: %w(index list new create)
-  before_filter :verify_rights, except: %w(index list new create)
-  before_filter :load_connectors, only: %w(list new create edit update)
+  before_action :load_retriever, except: %w(index list new create)
+  before_action :verify_rights, except: %w(index list new create)
+  before_action :load_connectors, only: %w(list new create edit update)
 
   def index
     @retrievers = Retriever.search_for_collection(@customer.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])

@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomerAddressesController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_address, only: %w(edit update destroy)
+  before_action :load_customer
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_address, only: %w(edit update destroy)
 
 
   # GET /account/organizations/:organization_id/customers/:customer_id/addresses

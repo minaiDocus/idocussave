@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaperSetOrdersController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_order_and_customer, only: %w(edit update destroy)
-  before_filter :verify_if_customer_can_order_paper_sets, only: %w(edit update)
-  before_filter :verify_editability, only: %w(edit update destroy)
+  before_action :verify_rights
+  before_action :load_order_and_customer, only: %w(edit update destroy)
+  before_action :verify_if_customer_can_order_paper_sets, only: %w(edit update)
+  before_action :verify_editability, only: %w(edit update destroy)
 
   # GET /account/organizations/:organization_id/paper_set_orders
   def index

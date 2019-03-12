@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::ScanningProvidersController < Admin::AdminController
-  before_filter :load_scanning_provider, except: %w(index new create)
+  before_action :load_scanning_provider, except: %w(index new create)
 
   # GET /admin/scanning_providers
   def index
