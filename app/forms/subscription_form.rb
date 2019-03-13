@@ -138,6 +138,8 @@ class SubscriptionForm
       @subscription.assign_attributes(_params)
     end
 
+    set_special_excess_values
+
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
       EvaluateSubscription.new(@subscription, @requester, @request).execute
       PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
@@ -145,6 +147,20 @@ class SubscriptionForm
       true
     else
       false
+    end
+  end
+
+  private
+
+  def set_special_excess_values
+    if @subscription.is_mini_package_active
+      values =  {
+                  max_upload_pages_authorized: 600,
+                  max_preseizure_pieces_authorized: 300,
+                  max_expense_pieces_authorized: 300
+                }
+
+      @subscription.assign_attributes(values)
     end
   end
 end

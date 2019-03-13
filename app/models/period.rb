@@ -244,11 +244,12 @@ private
   def excess_of(value, max_value=nil)
     max_value ||= "max_#{value.to_s}_authorized"
     return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
-    unless subscription.try(:is_micro_package_active)
+
+    if excess_duration == 1
       excess = self.send(value.to_sym) - self.send(max_value.to_sym)
       excess > 0 ? excess : 0
     else
-      subscription.excess_of(value, max_value)
+      subscription.excess_of(self, value, max_value, excess_duration)
     end
   end
 
@@ -269,5 +270,16 @@ private
 
   def add_one_delivery
     self.delivery = PeriodDelivery.new
+  end
+
+
+  def excess_duration
+    if subscription.try(:is_micro_package_active)
+      12
+    elsif subscription.try(:is_mini_package_active)
+      3
+    else
+      1
+    end
   end
 end

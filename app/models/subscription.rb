@@ -108,17 +108,34 @@ class Subscription < ActiveRecord::Base
     end
   end
 
-  def current_preceeding_periods
-    return [] unless is_micro_package_active
-    periods.where("start_date >= ? AND start_date < ?", self.start_date, current_period.start_date)
+  def current_preceeding_periods(period, excess_duration=12)
+    if excess_duration == 12
+      periods.where("start_date >= ? AND start_date < ?", self.start_date, period.start_date)
+    elsif excess_duration == 3
+      quarter1 = periods.where("start_date >= ? AND start_date < ?", self.start_date, self.start_date + 3.months)
+      return quarter1 - [period] if quarter1.include? period
+
+      quarter2 = periods.where("start_date >= ? AND start_date < ?", self.start_date + 3.months, self.start_date + 6.months)
+      return quarter2 - [period] if quarter2.include? period
+
+      quarter3 = periods.where("start_date >= ? AND start_date < ?", self.start_date + 6.months, self.start_date + 9.months)
+      return quarter3 - [period] if quarter3.include? period
+
+      quarter4 = periods.where("start_date >= ? AND start_date < ?", self.start_date + 9.months, self.start_date + 12.months)
+      return quarter4 - [period] if quarter4.include? period
+
+      return []
+    else
+      []
+    end
   end
 
-  def excess_of(value, max_value=nil)
-    return 0 unless is_micro_package_active && self.start_date.present? && self.end_date.present? && current_period.start_date.between?(self.start_date, self.end_date)
+  def excess_of(period, value, max_value=nil, excess_duration=12)
+    return 0 unless self.start_date.present? && self.end_date.present? && period.start_date.between?(self.start_date, self.end_date)
 
     max_value ||= "max_#{value.to_s}_authorized"
-    current_value        = current_period.send(value.to_sym)
-    cumulative_value     = current_preceeding_periods.map(&value.to_sym).sum
+    current_value        = period.send(value.to_sym)
+    cumulative_value     = current_preceeding_periods(period, excess_duration).map(&value.to_sym).sum
     max_authorized_value = self.send(max_value.to_sym)
 
     if cumulative_value > max_authorized_value

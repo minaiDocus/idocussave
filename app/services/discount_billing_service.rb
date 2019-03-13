@@ -61,7 +61,7 @@ class DiscountBillingService
 
   def unit_amount(option)
     if option.to_s == 'iDoMini'
-      quantity_of(option) > 75 ? -4 : 0
+      quantity_of(option) > 50 ? -4 : 0
     else
       amount = get_amount_policy option
       amount[:retriever] = 0.0 if @organization.subscription.retriever_price_option.to_s == 'reduced_retriever'
@@ -141,8 +141,9 @@ class DiscountBillingService
     # ['FBC','FIDA','FIDC', 'EG']
     return @extentis_group if @extentis_group.present?
 
-    group = OrganizationGroup.find 2
-    @extentis_group = group.organizations.collect(&:code)
+    group = OrganizationGroup.where(id: 2, name: 'Extentis').first
+    @extentis_group = group.present? ? group.organizations.collect(&:code) : ["FIDA", "FIDC", "FBC", "EG"]
+    @extentis_group
   end
 
   def special_extentis_quantity_of(option)
