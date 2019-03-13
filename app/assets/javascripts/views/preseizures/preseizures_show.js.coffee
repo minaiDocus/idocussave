@@ -39,6 +39,9 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
         this.preventClose()
       else
         form.model.save()
+        if $('#preseizure_accounts #tab_accounts').is(':visible')
+          Backbone.history.stop()
+          Backbone.history.start()
     bootstrapModal.open()
     this
 

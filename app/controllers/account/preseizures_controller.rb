@@ -31,7 +31,10 @@ class Account::PreseizuresController < Account::OrganizationController
   def update
     respond_to do |format|
       begin
-        @preseizure.update(preseizure_params)
+        @preseizure.assign_attributes(preseizure_params)
+        @preseizure.update_entries_amount if @preseizure.conversion_rate_changed? || @preseizure.amount_changed?
+        @preseizure.save
+
         format.json { render json: { status: :ok } }
       end
     end

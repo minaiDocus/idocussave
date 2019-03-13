@@ -284,4 +284,20 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     end
     mess
   end
+
+  def update_entries_amount
+    if self.conversion_rate.present? && self.conversion_rate > 0 && self.amount.present? && self.amount > 0
+      self.cached_amount = (self.amount / self.conversion_rate).round(2)
+
+      self.accounts.each do |account|
+        if account.type == Pack::Report::Preseizure::Account::TTC || account.type == Pack::Report::Preseizure::Account::HT
+          account.entries.first.update(amount: self.cached_amount)
+        elsif account.type == Pack::Report::Preseizure::Account::TVA
+          account.entries.first.update(amount: 0)
+        end
+      end
+
+      save
+    end
+  end
 end
