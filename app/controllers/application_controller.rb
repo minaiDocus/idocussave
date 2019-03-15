@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :format_price, :format_price_00
 
+  before_action :configure_permitted_parameters, only: [:login_user!]
   before_action :set_raven_context
   before_action :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
   around_action :catch_error if %w(staging sandbox production test).include?(Rails.env)
@@ -235,5 +236,9 @@ class ApplicationController < ActionController::Base
         redirect_to account_suspended_path
       end
     end
+  end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
   end
 end

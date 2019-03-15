@@ -4,20 +4,21 @@
 
 - if flash[:alert].present?
   - error_class = 'error'
-  .alert.alert-error
+  .alert.alert-danger
     %a.close{ data: { dismiss: 'alert' } } ×
     = flash[:alert].capitalize
 - else
   - error_class = ''
 
-= simple_form_for resource, url: session_path(resource_name), html: { class: 'form form-horizontal' } do |f|
+= simple_form_for resource, url: session_path(resource_name) do |f|
   = f.input :email, label: 'Identifiant (E-mail) :', wrapper_html: { class: error_class }
   = f.input :password, label: 'Mot de passe :', wrapper_html: { class: error_class }, required: true
-  .control-group
-    .controls
-      = f.check_box :remember_me, class: 'pull-left'
-      = f.label :remember_me, 'Rester connecté ?', class: 'control-label', style: 'padding:0;padding-top:1px;margin-left:5px;text-align:left;width:180px;'
-  .form-actions.padding0bottom
-    = f.submit 'Connexion', class: 'btn btn-primary pull-left'
-    %div{ style: 'margin-top:6px;' }
-      = link_to 'Mot de passe oublié ?', new_user_password_path, style: 'margin-left:10px;'
+  .form-actions.margin3top.clearfix
+    .row
+      .col-sm-6
+        = f.check_box :remember_me, class: 'pull-left'
+        = f.label :remember_me, 'Rester connecté ?', class: 'control-label', style: 'padding:0;padding-top:1px;margin-left:5px;text-align:left;width:180px;'
+      .col-sm-6
+        = f.submit 'Connexion', class: 'btn btn-primary pull-right'
+        .pull-right{ style: 'margin-top:6px;margin-right:6px' }
+          = link_to 'Mot de passe oublié ?', new_user_password_path, style: 'margin-left:10px;'
