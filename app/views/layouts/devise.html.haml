@@ -4,25 +4,24 @@
     %title
       Connexion
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type' }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1"}
+
     %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = stylesheet_link_tag 'application'
 
   %body
     #wrap
-      .navbar.navbar-fixed-top
-        .navbar-inner
-          .container
-            %a{ class: 'btn btn-navbar', data: { toggle: 'collapse', target: '.nav-collapse' } }
-              %span.icon-bar
-              %span.icon-bar
-              %span.icon-bar
-            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
-      .container.padding6top.dynamic_padding
+      %nav.navbar.navbar-expand-md.navbar-inner.navbar-static-top
+        %ul.navbar-nav
+          %li.nav-item
+            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'nav-link logo'
+      .container
         .row
-          .span3{ style: 'height:1px;' }
-          .span6
-            .well
+          .col-md-3
+          .col-md-6
+            .well.small-shadow.clearfix
               != yield
+          .col-md-3
       #push
 
     = render 'layouts/footer'

@@ -171,6 +171,7 @@ group :development, :test do
   gem 'spring-commands-rspec'
   gem 'libnotify'
   gem 'rack-mini-profiler'
+  gem 'rails-i18n'
 end
 
 group :test do

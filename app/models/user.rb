@@ -65,10 +65,10 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :ibizabox_folders, dependent: :destroy
 
-  belongs_to :manager, class_name: 'Member', inverse_of: :managed_users
+  belongs_to :manager, class_name: 'Member', inverse_of: :managed_users, optional: true
 
-  belongs_to :organization,      inverse_of: 'members'
-  belongs_to :scanning_provider, inverse_of: 'customers'
+  belongs_to :organization,      inverse_of: 'members', optional: true
+  belongs_to :scanning_provider, inverse_of: 'customers', optional: true
 
   has_one  :budgea_account,                                                                     dependent: :destroy
   has_many :retrievers,                                                                         dependent: :destroy
