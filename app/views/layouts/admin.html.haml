@@ -25,15 +25,12 @@
     = javascript_include_tag 'admin/subscriptions' if params[:controller] == 'admin/subscriptions'
     = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          = render 'layouts/admin/navigation'
-    .container-fluid.wrapper.ad_dynamic_padding
+    = render 'layouts/admin/navigation'
+
+    .container-fluid.wrapper.ad_dynamic_padding.mt-5
       .content
-        .row-fluid
-          .span12
-            = render 'layouts/messages'
+        .row
+          = render 'layouts/messages'
         = yield
       .push
     %footer.footer

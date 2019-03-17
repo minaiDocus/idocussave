@@ -1,5 +1,4 @@
 @import compass/css3
-@import bootstrap-sprockets
 @import bootstrap
 @import margin-padding-control
 @import jquery-ui
@@ -30,71 +29,17 @@ h2
 .container  a, .container-fluid a
   :text-decoration none
 
-.navbar-inner
+nav.navbar
   :background-color #3e2f24
   :background-image none
-.navbar a, footer a
+nav.navbar a, footer a
   :color #c9dd03 !important
   :text-decoration none !important
-.navbar a:hover, footer a:hover
+nav.navbar a:hover, footer a:hover
   :text-decoration underline
-.navbar .logo
-  :width 76px
-  :height 36px
-  :float left
-  :display block
-  :padding 0
-  :margin 0 20px 4px 0
-  :background-color white
-  +border-radius(0 0 6px 6px)
-  +box-shadow(#ffffff 0 1px 0px inset)
-.navbar .logo img
-  :position relative
-  :top 7px
-  :left 11px
-.navbar p
-  :font-size 11px
-.navbar .dropdown-menu
+
+nav.navbar .dropdown-menu
   background-color: #3e2f24
-
-.subnav
-  :display block
-  :margin-left 0
-  :margin-bottom 18px
-  :list-style none
-.subnav > li > a
-  :display block
-.subnav > li > ahover
-  :text-decoration none
-  :background-color #eeeeee
-
-.navbar .subnav
-  :position relative
-  :left 0
-  :display block
-  :float left
-  :margin 0 10px 0 0
-.navbar .subnav.pull-right
-  :float right
-.navbar .subnav > li
-  :display block
-  :float left
-.navbar .subnav > li > a
-  :float none
-  :padding 10px 10px 11px
-  :line-height 19px
-  :color #999999
-  :text-decoration none
-  :text-shadow 0 -1px 0 rgba(0, 0, 0, 0.25)
-.navbar .subnav > li > ahover
-  :background-color transparent
-  :color #ffffff
-  :text-decoration none
-.navbar .subnav .active > a, .navbar .subnav .active > ahover
-  :color #ffffff
-  :text-decoration none
-  :background-color #222222
-  :background-color rgba(0, 0, 0, 0.5)
 
 // WorkingClass
 .pull-none

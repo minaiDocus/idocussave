@@ -1,13 +1,12 @@
 #users
   .row-fluid.margin1bottom
-    .span12
-      .pull-left
-        %h3 Liste des utilisateurs (#{@users_count})
-      .pull-right
-        = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: @user_contains), class: 'btn btn-primary'
+    .float-left
+      %h3 Liste des utilisateurs (#{@users_count})
+    .float-right
+      = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: @user_contains), class: 'btn btn-primary'
 
   .row-fluid
-    .span9
+    .col-8
       = render partial: 'shared/list_options', locals: { collection: @users }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
@@ -26,5 +25,5 @@
               %td= user.info
               %td= link_to icon_show, admin_user_path(user), alt: t('actions.show'), title: t('actions.show')
       = render partial: 'shared/list_options', locals: { collection: @users }
-    .span3.well
+    .col-3
       = render partial: 'sidebar'

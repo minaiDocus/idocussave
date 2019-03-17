@@ -166,7 +166,7 @@ module ApplicationHelper
 
     options = params.merge(contains)
 
-    link_to icon + title, options.merge(sort: column, direction: direction)
+    link_to icon + title, options.permit.merge(sort: column, direction: direction)
   end
 
 
@@ -188,7 +188,7 @@ module ApplicationHelper
 
     temp_options = options.merge(class: temp_class)
 
-    link_to number, params.merge(per_page: number), temp_options
+    link_to number, params.permit.merge(per_page: number), temp_options
   end
 
 
