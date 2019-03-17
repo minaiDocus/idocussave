@@ -93,13 +93,13 @@
     height: 0;
     vertical-align: middle;
     border-top: 4px solid #000;
-    border-right: 4px solid transparent;
-    border-left: 4px solid transparent;
+    border-right: 4px solid rgba(255, 255, 255, .4);
+    border-left: 4px solid rgba(255, 255, 255, .4);
 }
 
 .sol-input-container input[type="text"] {
     border: 0;
-    background: transparent;
+    background: rgba(255, 255, 255, .4);
     box-shadow: none;
     color: #555;
     padding: 0 7px;
@@ -183,7 +183,7 @@
     line-height: 1em;
     text-decoration: none;
     color: #0088cc;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, .4);
 }
 
 .sol-action-buttons a:hover {

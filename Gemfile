@@ -79,7 +79,7 @@ gem 'hirb', require: false
 
 
 # Assets management
-gem 'therubyracer'
+gem 'mini_racer'
 gem 'uglifier'
 gem 'sprockets'
 gem 'sprockets-rails'
@@ -88,8 +88,7 @@ gem 'sprockets-rails'
 # CSS Libraries and CSS Processors
 gem 'sass-rails'
 gem 'compass-rails'
-gem 'bootstrap-sass'
-
+gem 'bootstrap'
 
 # JS Libraries and JS processors
 gem 'eco'

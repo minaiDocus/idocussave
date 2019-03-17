@@ -1,6 +1,6 @@
 #dashboard
   .row-fluid
-    .span8
+    .col-8
       .panel
         .panel-header
           %h3 Flux de traitement
@@ -59,10 +59,10 @@
               #awaiting_pre_assignments.tab-pane
               #reports_delivery.tab-pane
               #failed_reports_delivery.tab-pane
-    .span4
+    .col-4
       - cache 'admin_right_panels', expires_in: 5.minutes do
         .row-fluid
-          .span6
+          .col-6
             %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
@@ -87,7 +87,7 @@
                 %tr
                   %th Traités
                   %td= StatisticsManager.get_statistic('processed_temp_documents_count')
-          .span6
+          .col-6
             %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
             %table.table.table-striped.table-condensed.table-bordered
               %thead
@@ -121,7 +121,7 @@
                   %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_remote_files_count')
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
         .row-fluid
-          .span6
+          .col-6
             %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
@@ -147,7 +147,7 @@
                   %td
                     = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
                     (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
-          .span6
+          .col-6
             %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
@@ -175,10 +175,10 @@
                   %th Extractions rest.
                   %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
         .row-fluid
-          .span12
+          .col-12
             %h3.label{ style: 'padding:3px 5px 3px;' } Opérations bancaires
             .row-fluid
-              .span6
+              .col-6
                 %table.table.table-striped.table-condensed.table-bordered
                   %tbody
                     %tr
@@ -190,7 +190,7 @@
                     %tr
                       %th Import
                       %td= StatisticsManager.get_statistic('other_operations_count')
-              .span6
+              .col-6
                 %table.table.table-striped.table-condensed.table-bordered
                   %tbody
                     %tr
@@ -203,7 +203,7 @@
                       %th Bloqués
                       %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
       .row-fluid
-        .span12
+        .col-12
           %h3.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs en cours
           %table.table.table-striped.table-condensed.table-bordered
             %thead
@@ -219,7 +219,7 @@
                   %td= new_provider_request.name
                   %td= new_provider_request_state(new_provider_request)
       .row-fluid
-        .span12
+        .col-12
           %h3.label{ style: 'padding:3px 5px 3px;' } Organisations facturées n'ayant pas d'adresse de facturation
           .well
             - @unbillable_organizations.each do |organization|
