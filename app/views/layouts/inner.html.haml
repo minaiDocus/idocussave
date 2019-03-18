@@ -21,25 +21,23 @@
 
   %body
     #wrap
-      .navbar.navbar-fixed-top
-        .navbar-inner
-          .container-fluid
-            %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
-              %span{ :class=>"icon-bar" }
-              %span{ :class=>"icon-bar" }
-              %span{ :class=>"icon-bar" }
-            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
-            - if current_user
-              .nav-collapse.collapse
-                = render partial: 'layouts/navigation'
-                = render partial: 'layouts/user'
-                = render partial: 'layouts/notifications'
+      %nav.navbar.navbar-expand-md.navbar-static-top
+        = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo navbar-brand'
+        - if current_user
+          = render partial: 'layouts/navigation'
+          - if current_user.try(:is_admin) && controller_name != 'organizations'
+            %ul.as_user_view.ml-auto
+              %li
+                %a#as_user_view
+                  Vue
+                  %span.glyphicon.glyphicon-bell
+          = render partial: 'layouts/notifications'
+          = render partial: 'layouts/user'
 
-      .padding6top.dynamic_padding
-        - if current_user.try(:is_admin) && controller_name != 'organizations'
-          .container-fluid
-            = render 'shared/as_user'
-        != content_for?(:content) ? yield(:content) : yield
+      - if current_user.try(:is_admin) && controller_name != 'organizations'
+        #as_user_view_box.container-fluid{ class: (session[:user_code].present? ? '' : 'hide')}
+          = render 'shared/as_user'
+      != content_for?(:content) ? yield(:content) : yield
 
       #push
 
