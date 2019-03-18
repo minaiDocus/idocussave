@@ -74,6 +74,16 @@ jQuery(function () {
     }
   }
 
+  $('#as_user_view').click(function(e){
+    e.preventDefault();
+
+    var as_user_view_box = $('#as_user_view_box')
+    if(as_user_view_box.is(':visible'))
+      as_user_view_box.slideUp('fast');
+    else
+      as_user_view_box.slideDown('fast');
+  })
+
   // Execute on load
   dynamicTopPadding();
 

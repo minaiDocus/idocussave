@@ -1,7 +1,7 @@
-%ul#notifications.nav.pull-right
+%ul#notifications{ class: (current_user.try(:is_admin) && controller_name != 'organizations') ? '' : 'ml-auto'}
   %li.dropdown.dropdown-notifications
     %a.dropdown-toggle{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
-      %i.icon-bell.icon-white{ class: (@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled'), data: { count: @user.notifications.not_read.count } }
+      %i.glyphicon.glyphicon-bell{ class: (@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled'), data: { count: @user.notifications.not_read.count }, aria: { hidden: 'true' } }
     .dropdown-container.dropdown-position-bottomright
       .dropdown-toolbar
         .dropdown-toolbar-actions

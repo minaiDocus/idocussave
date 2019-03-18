@@ -1,4 +1,4 @@
-%h2.aligncenter Connexion au compte iDocus
+%h2.aligncenter.font-weight-bold Connexion au compte iDocus
 
 %hr
 
@@ -16,9 +16,9 @@
   .form-actions.margin3top.clearfix
     .row
       .col-sm-6
-        = f.check_box :remember_me, class: 'pull-left'
+        = f.check_box :remember_me, class: 'float-left'
         = f.label :remember_me, 'Rester connecté ?', class: 'control-label', style: 'padding:0;padding-top:1px;margin-left:5px;text-align:left;width:180px;'
       .col-sm-6
-        = f.submit 'Connexion', class: 'btn btn-primary pull-right'
-        .pull-right{ style: 'margin-top:6px;margin-right:6px' }
+        = f.submit 'Connexion', class: 'btn btn-primary float-right'
+        .float-right{ style: 'margin-top:6px;margin-right:6px' }
           = link_to 'Mot de passe oublié ?', new_user_password_path, style: 'margin-left:10px;'

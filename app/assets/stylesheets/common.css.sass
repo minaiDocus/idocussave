@@ -28,18 +28,53 @@ h2
   :color #584528
 .container  a, .container-fluid a
   :text-decoration none
+a
+  :cursor pointer
 
 nav.navbar
   :background-color #3e2f24
   :background-image none
+  :margin-bottom 20px
+  ul
+    list-style: none
+    margin-top: 0 !important
+    margin-bottom: 0 !important
+  .navbar-nav
+    .nav-link, .dropdown-item
+      text-decoration: none
+    .nav-item
+      :margin 0 5px
+    .nav-item.active
+      :background-color #c9dd03
+      :border-radius: 5px
+      .nav-link
+        :color #3e2f24 !important
+    .nav-item:hover
+      :background-color #FFF
+  :text-decoration none !important
 nav.navbar a, footer a
   :color #c9dd03 !important
-  :text-decoration none !important
 nav.navbar a:hover, footer a:hover
   :text-decoration underline
 
 nav.navbar .dropdown-menu
   background-color: #3e2f24
+
+//logo
+.navbar
+  .logo
+    width: 76px
+    height: 36px
+    float: left
+    display: block
+    padding: 0 !important
+    background-color: white
+    border-radius: (0 0 6px 6px)
+    box-shadow: (#ffffff 0 1px 0px inset)
+    img
+      position: relative
+      top: 7px
+      left: 11px
 
 // WorkingClass
 .pull-none

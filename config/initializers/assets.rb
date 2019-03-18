@@ -15,6 +15,8 @@ Rails.application.config.assets.precompile += %w( admin.css admin/events.css adm
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
                                                   admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js )
 
+Rails.application.config.assets.precompile += %w( inner.js welcome.js account/reporting.js )
+
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
