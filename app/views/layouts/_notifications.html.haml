@@ -1,14 +1,14 @@
 %ul#notifications{ class: (current_user.try(:is_admin) && controller_name != 'organizations') ? '' : 'ml-auto'}
   %li.dropdown.dropdown-notifications
-    %a.dropdown-toggle{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
-      %i.glyphicon.glyphicon-bell{ class: (@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled'), data: { count: @user.notifications.not_read.count }, aria: { hidden: 'true' } }
-    .dropdown-container.dropdown-position-bottomright
+    %a.dropdown-itm{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
+      = content_tag 'span', '', class: "oi icon-bell text-white #{(@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled')}", title: "bell", 'aria-hidden' => "true", 'data-glyph' => "bell", style: "font-size:14px", 'data-count' => @user.notifications.not_read.count
+    .dropdown-menu.dropdown-position-bottomright.bg-transparent.small-shadow
       .dropdown-toolbar
         .dropdown-toolbar-actions
         %h3 Notifications
-      %ul.dropdown-menu.items
+      %ul.dropdown-notif-items.items
         - # notification items will be dynamically inserted here
       .dropdown-footer
         %a{ href: account_notifications_path }
-          %i.icon-search
+          = glyphicon("eye", { size: "14px" })
           Voir tout

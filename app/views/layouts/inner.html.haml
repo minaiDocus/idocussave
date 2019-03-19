@@ -21,7 +21,7 @@
 
   %body
     #wrap
-      %nav.navbar.navbar-expand-md.navbar-static-top
+      %nav.navbar.navbar-expand-md.navbar-static-top.medium-shadow
         = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo navbar-brand'
         - if current_user
           = render partial: 'layouts/navigation'
@@ -29,10 +29,10 @@
             %ul.as_user_view.ml-auto
               %li
                 %a#as_user_view
-                  Vue
-                  %span.glyphicon.glyphicon-bell
+                  = glyphicon('people', { size: "14px", class: 'text-white' })
           = render partial: 'layouts/notifications'
           = render partial: 'layouts/user'
+      #next-nav-wrapper
 
       - if current_user.try(:is_admin) && controller_name != 'organizations'
         #as_user_view_box.container-fluid{ class: (session[:user_code].present? ? '' : 'hide')}

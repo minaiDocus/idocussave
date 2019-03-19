@@ -1,6 +1,6 @@
 %footer
   .row.centered
-    .col-md-3.contact-number
+    .contact-number
       .commercial-contact
         %span.contact-label Service Commercial :
         %span.contact-tel 01 84 250 251
@@ -8,7 +8,9 @@
         %span.contact-label Support Client :
         = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
 
-    .col-md-4.copyright
+    .col-md-3
+
+    .col-md-3.copyright
       Tous droits réservés iDocus © #{Time.now.year}
 
     .col-md-3.footer-logo
@@ -29,7 +31,7 @@
         = link_to 'https://www.idocus.com', target: '_blank' do
           = image_tag('logo/tiny_logo.png', alt: 'logo', class: 'logo')
 
-    .col-md-2
+    .col-md-3
     / .footer-contact
     /   %h3
     /     %a{ href: '#' } CONTACT

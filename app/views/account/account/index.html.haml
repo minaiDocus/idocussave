@@ -39,18 +39,22 @@
       .box.mt-sm-5.small-shadow.bg-light
         %ul.nav.nav-tabs
           - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
-            %li.nav-item{ class: ('active' if @dashboard_summary == 'last_scans') }
-              = link_to "iDo'Courrier",  '#last_scans',          class: 'last_scans nav-link',          data: { toggle: 'tab' }
-            %li.nav-item{ class: ('active' if @dashboard_summary == 'last_uploads') }
-              = link_to "iDo'Basique",   '#last_uploads',        class: 'last_uploads nav-link',        data: { toggle: 'tab' }
+            - active = @dashboard_summary == 'last_scans' ? 'active' : ''
+            %li.nav-item{ class: active }
+              = link_to "iDo'Courrier",  '#last_scans', class: "last_scans nav-link #{active}", data: { toggle: 'tab' }
+            - active = @dashboard_summary == 'last_uploads' ? 'active' : ''
+            %li.nav-item{ class: active }
+              = link_to "iDo'Basique",   '#last_uploads', class: "last_uploads nav-link #{active}", data: { toggle: 'tab' }
           - if @user.is_prescriber || @user.is_dematbox_authorized
-            %li.nav-item{ class: ('active' if @dashboard_summary == 'last_dematbox_scans') }
-              = link_to "iDo'Box",       '#last_dematbox_scans', class: 'last_dematbox_scans nav-link', data: { toggle: 'tab' }
+            - active = @dashboard_summary == 'last_dematbox_scans' ? 'active' : ''
+            %li.nav-item{ class: active }
+              = link_to "iDo'Box",       '#last_dematbox_scans', class: "last_dematbox_scans nav-link #{active}", data: { toggle: 'tab' }
           - if @user.is_prescriber || @user.options.try(:is_retriever_authorized)
-            %li.nav-item{ class: ('active' if @dashboard_summary == 'last_retrieved') }
-              = link_to "iDo'FacBanque", '#last_retrieved',      class: 'last_retrieved nav-link',      data: { toggle: 'tab' }
+            - active = @dashboard_summary == 'last_retrieved' ? 'active' : ''
+            %li.nav-item{ class: active }
+              = link_to "iDo'FacBanque", '#last_retrieved', class: "last_retrieved nav-link #{active}", data: { toggle: 'tab' }
 
-        .tab-content.clearfix.border-right.border-left.border-bottom.bg-white.pb-sm-3
+        .tab-content.clearfix.border-right.border-left.border-bottom.bg-white.pb-sm-3{ style: "min-height: 400px" }
           - ['last_scans', 'last_uploads', 'last_dematbox_scans', 'last_retrieved'].each do |view_name|
             - if @user.is_prescriber || (view_name.in?(%w(last_scans last_uploads)) && @user.options.try(:is_upload_authorized)) || (view_name == 'last_dematbox_scans' && @user.is_dematbox_authorized) || (view_name == 'last_retrieved' && @user.options.try(:is_retriever_authorized))
               .tab-pane{ id: view_name, class: ('active' if @dashboard_summary == view_name)}

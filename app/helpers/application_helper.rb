@@ -31,6 +31,23 @@ module ApplicationHelper
     end
   end
 
+  def user_login_tag
+    label = glyphicon("person", { class: "mr-sm-2" })
+    label += 'Identifiant (E-mail)'
+  end
+
+  def user_password_tag
+    label = glyphicon("lock-locked", { class: "mr-sm-2" })
+    label += 'Mot de passe'
+  end
+
+  def glyphicon(icon, options={})
+    style = ''
+    style += options[:size].present? ? "font-size:#{options[:size]};" : ''
+    klass = options[:class].to_s
+
+    content_tag 'span', '', class: "oi #{klass}", title: "#{icon}", 'aria-hidden' => "true", 'data-glyph' => "#{icon}", style: style
+  end
 
   def icon_ban_circle
     content_tag :i, '', class: 'icon-ban-circle'
@@ -130,9 +147,9 @@ module ApplicationHelper
   def twitterized_type(type)
     case type
     when 'alert'
-      'alert-block'
+      'alert-warning'
     when 'error'
-      'alert-error'
+      'alert-danger'
     when 'notice'
       'alert-info'
     when 'success'

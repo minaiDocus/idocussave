@@ -12,10 +12,12 @@ Rails.application.config.assets.precompile += %w( admin.css admin/events.css adm
                                                   admin/notification_settings.css admin/pre_assignment_blocked_duplicates.css admin/pre_assignment_delivery.css
                                                   admin/process_reporting.css admin/retrievers.css admin/reporting.css admin/scanning_providers.css admin/subscriptions.css)
 
+Rails.application.config.assets.precompile += %w( account/profiles.css account/addresses.css )
+
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
                                                   admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js )
 
-Rails.application.config.assets.precompile += %w( inner.js welcome.js account/reporting.js )
+Rails.application.config.assets.precompile += %w( inner.js welcome.js account/reporting.js account/profile.js account/addresses.js )
 
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets

@@ -1,6 +1,8 @@
 @import "common"
 
-//logo
+//Navigation
+#next-nav-wrapper
+  padding-top: 50px
 .navbar
   .logo
     width: 76px
@@ -15,13 +17,33 @@
       position: relative
       top: 7px
       left: 11px
+.navbar.navbar-static-top
+  position: fixed
+  z-index: 100
+  margin: 0
+  width: 100%
+  height: 30px
+#user_logged_in
+  padding: 0 0 0 20px
+#notifications
+  padding: 0 0 0 20px
+
+.sidebar-nav
+  .nav
+    .nav-item:hover
+      background-color: #E9EAEB
+    .nav-item.active
+      background-color: #3E2F24
+      .nav-link
+        color: #c9dd03
+
 
 
 
 // Welcome
 #welcome
   h2
-    font-size: 30px
+    font-size: 20px
     color: #C9DD03
   .ie-message
     display: none
@@ -45,12 +67,6 @@
     background: url('/assets/application/spinner_gray_alpha.gif')
     background-repeat: no-repeat
     background-position: center center
-
-// Application
-#uploadDialog.modal, #packTaggingDialog.modal, #pageTaggingDialog.modal, #compositionDialog.modal, #invoiceDialog.modal, #returnLabelsDialog.modal, #news.modal
-  top: 50%
-  left: 50%
-  display: none
 
 #uploadDialog.modal
   width: 830px
@@ -178,9 +194,6 @@
   margin: -250px 0 0 -439px !important
 
 #news.modal
-  width: 830px
-  height: 491px
-  margin: -246px 0 0 -415px !important
   .title
     h4
       float: left
@@ -273,11 +286,6 @@
 .w200
   width: 200px
 
-.well
-  padding: 10px
-.tab-content
-  min-height: 300px
-
 .padding05
   padding: 5px
 .margin05left
@@ -289,13 +297,16 @@
 .small-shadow
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12) !important
 
+.medium-shadow
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15) !important;
+
+.large-shadow
+  box-shadow: 0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19) !important;
+
 .popover-inner
   width: 400px
 .popover-content
   width: 372px
-
-.modal.fade
-  top: -75%
 
 #documentslist, #pageslist
   overflow: auto
@@ -791,12 +802,6 @@
     th
       width: 50px
 
-/*** Change password ***/
-.change_pass_parent
-  padding-right: 30px !important
-.change_pass .alert-container, .change_pass input[type="password"]
-  width: 100% !important
-
 /***** Reporting *****/
 
 /*** Global ***/
@@ -1124,6 +1129,11 @@ table.historic
   .dropdown-menu::before, .dropdown-menu::after
     border: none
     content: none
+  .dropdown-notif-items
+    padding: 0px
+    max-height: 330px
+    overflow-y: scroll
+    background-color: #FFF
   h3
     font-size: 14px
   ul.dropdown-menu
@@ -1136,7 +1146,7 @@ table.historic
     color: #0088cc !important
   .notification-icon
     position: relative
-    top: 5px
+    top: 0px
     margin-right: 0
   .dropdown-footer
     text-align: center
@@ -1172,10 +1182,10 @@ footer
     padding: 5px 0
     text-align: center
     .copyright
-      text-align: center
+      text-align: right
       font-size: .8em
       text-transform: uppercase
-      margin: 17px auto
+      margin: auto
     .footer-logo
       margin: auto
       .logo-container
@@ -1183,14 +1193,19 @@ footer
         text-align: center
         float: right
       img.logo
-        margin: 7px
+        margin: 0 7px
         padding: 7px
-        max-width: 100%
+        max-width: 70%
         +border-radius(6px 6px 6px 6px)
         +box-shadow(#ffffff 0 1px 0px inset)
         background-color: white
     .contact-number
-      margin: 3px auto
+      margin: -21px 14px
+      padding: 0 10px
+      position: absolute
+      background-color: #3e2f24
+      border-top-right-radius: 33px
+      z-index: 200
       text-align: left
       img
         width: 190px
@@ -1224,7 +1239,7 @@ footer
   .bottom-bar
     position: relative
     background: #000
-    padding: 6px 0
+    padding: 4px 0
 
 /* Responsive Tablet Sizes */
 @media only screen and (max-width: 749px)
@@ -1302,12 +1317,12 @@ footer
   .social
     float: right
     text-align: center
-    margin: 7px
+    margin: 0 7px
     a
       display: inline-block
       padding: 7px
-      width: 30px
-      height: 30px
+      width: 27px
+      height: 27px
       margin: 0 2px
       background: #fff
       border-radius: 50%
