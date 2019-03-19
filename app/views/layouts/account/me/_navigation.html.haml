@@ -1,27 +1,27 @@
-.well.sidebar-nav
-  %ul.nav.nav-list.dlink
+.box.small-shadow.bg-light.sidebar-nav
+  %ul.nav.flex-column.nav-list.dlink
     - unless organizations_suspended? && @user.active?
-      %li{ class: ('active' if @active_panel == 'change_password') }
-        = link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
+      %li.nav-item{ class: ('active' if @active_panel == 'change_password') }
+        = link_to 'Changer mon mot de passe', '#change_password', class: 'do-show nav-link'
       - if @user.active? && !@user.collaborator? && @user.organization.is_active
-        %li{ class: ('active' if @active_panel == 'account_sharing') }
-          = link_to 'Partage de compte', '#account_sharing', class: 'do-show'
+        %li.nav-item{ class: ('active' if @active_panel == 'account_sharing') }
+          = link_to 'Partage de compte', '#account_sharing', class: 'do-show nav-link'
         - unless @user.is_guest
-          %li{ class: ('active' if @active_panel == 'addresses_management') }
-            = link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
+          %li.nav-item{ class: ('active' if @active_panel == 'addresses_management') }
+            = link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show nav-link'
     - if @user.active?
       - if @user.organization.is_active
         - unless organizations_suspended?
-          %li{ class: ('active' if @active_panel == 'efs_management') }
-            = link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'
-          %li{ class: ('active' if @active_panel == 'subscription_options') }
-            = link_to "Notifications et remontées d'alertes", '#subscription_options', class: 'do-show'
+          %li.nav-item{ class: ('active' if @active_panel == 'efs_management') }
+            = link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show nav-link'
+          %li.nav-item{ class: ('active' if @active_panel == 'subscription_options') }
+            = link_to "Notifications et remontées d'alertes", '#subscription_options', class: 'do-show nav-link'
           - if @user.is_dematbox_authorized
-            %li{ class: ('active' if @active_panel == 'idocus_box') }
-              = link_to "iDocus'Box", '#idocus_box', class: 'do-show'
+            %li.nav-item{ class: ('active' if @active_panel == 'idocus_box') }
+              = link_to "iDocus'Box", '#idocus_box', class: 'do-show nav-link'
           - if @user.options&.is_upload_authorized && !(@user.admin? || @user.collaborator?)
-            %li{ class: ('active' if @active_panel == 'emailed_documents') }
-              = link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
+            %li.nav-item{ class: ('active' if @active_panel == 'emailed_documents') }
+              = link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show nav-link'
       - if !@user.organization.is_active && @user.can_unsuspend?
-        %li{ class: ('active' if @active_panel == 'active_organization') }
-          = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
+        %li.nav-item{ class: ('active' if @active_panel == 'active_organization') }
+          = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show nav-link'

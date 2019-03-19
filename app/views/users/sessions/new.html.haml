@@ -11,8 +11,8 @@
   - error_class = ''
 
 = simple_form_for resource, url: session_path(resource_name) do |f|
-  = f.input :email, label: 'Identifiant (E-mail) :', wrapper_html: { class: error_class }
-  = f.input :password, label: 'Mot de passe :', wrapper_html: { class: error_class }, required: true
+  = f.input :email, wrapper_html: { class: error_class }, label: user_login_tag
+  = f.input :password, wrapper_html: { class: error_class }, required: true, label: user_password_tag
   .form-actions.margin3top.clearfix
     .row
       .col-sm-6

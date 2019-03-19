@@ -12,6 +12,8 @@
 @import searchable-option-list
 @import chosen
 @import custom_popover
+@import open-iconic
+
 // Defaults
 
 html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
@@ -30,11 +32,17 @@ h2
   :text-decoration none
 a
   :cursor pointer
+  :color #0088cc
+
+input[type="radio"], input[type="checkbox"]
+  margin-right: 5px
 
 nav.navbar
   :background-color #3e2f24
   :background-image none
   :margin-bottom 20px
+  :padding-top: 0.1rem !important
+  :padding-bottom: 0.1rem !important
   ul
     list-style: none
     margin-top: 0 !important
@@ -45,14 +53,13 @@ nav.navbar
     .nav-item
       :margin 0 5px
     .nav-item.active
-      :background-color #c9dd03
-      :border-radius: 5px
-      .nav-link
+      :background-color #fff
+      .nav-link, .dropdown-item
         :color #3e2f24 !important
     .nav-item:hover
       :background-color #FFF
   :text-decoration none !important
-nav.navbar a, footer a
+nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
   :color #c9dd03 !important
 nav.navbar a:hover, footer a:hover
   :text-decoration underline
@@ -75,6 +82,14 @@ nav.navbar .dropdown-menu
       position: relative
       top: 7px
       left: 11px
+
+//form horizontal
+.form-horizontal
+  label
+    width: 260px
+  .form-control
+    width: calc(100% - 270px)
+    display: inline-block
 
 // WorkingClass
 .pull-none
