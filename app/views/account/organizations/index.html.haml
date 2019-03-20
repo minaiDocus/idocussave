@@ -1,93 +1,128 @@
 #organizations.container-fluid
   .alerts
     = render partial: 'shared/messages'
-  .row-fluid
-    .span12.box
-      .pull-left
-        %h3 Liste des organisations (#{@organizations.total_count})
-      .pull-right
-        = #link_to icon_edit + ' ' + 'Options globales', edit_options_account_organizations_path, class: 'btn btn-primary'
-        = link_to "Groupes d'organisation", account_group_organizations_path, class: 'btn'
-        = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Liste des organisations 
+            %span.badge.badge-info= @organizations.total_count
+        .float-right
+          = #link_to icon_edit + ' ' + 'Options globales', edit_options_account_organizations_path, class: 'btn btn-primary'
+          = link_to "Groupes d'organisation", account_group_organizations_path, class: 'btn btn-secondary'
+          = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
 
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span1
-          %h4.padding2top Filtres :
-        .span11.filter
-          = form_tag account_organizations_path, method: :get, class: 'form margin0bottom' do
-            %table.table-condensed
+  .row
+    .col-md-10
+      .box.clearfix
+        = render partial: 'shared/list_options', locals: { collection: @organizations }
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom
               %thead
                 %tr
-                  %th= label_tag 'organization_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-                  %th= label_tag 'organization_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
-                  %th= label_tag 'organization_contains[is_test]', t('activerecord.models.organization.attributes.is_test') + " (#{Organization.not_billed.count})"
-                  %th= label_tag 'organization_contains[is_for_admin]', 'Est client ?' + " (#{Organization.client.count})"
-                  %th= label_tag 'organization_contains[is_active]', 'Est inactif ?' + " (#{Organization.inactive.count})"
-                  %th= label_tag 'organization_contains[is_suspended]', t('activerecord.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
-                  %th= label_tag 'organization_contains[is_without_address]', "Sans adresse ? (#{@without_address_count})"
-                  %th= label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ? (#{@debit_mandate_not_configured_count})"
-                  %th= label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
-                  %th
+                  %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                  %th.aligncenter= sortable :is_test, t('activerecord.models.organization.attributes.is_test')
+                  %th.aligncenter= sortable :is_for_admin, 'Est client ?'
+                  %th.aligncenter= sortable :is_active, 'Est inactif ?'
+                  %th.aligncenter= sortable :is_suspended, t('activerecord.models.organization.attributes.is_suspended')
+                  %th.aligncenter Sans adresse ?
+                  %th.aligncenter Prélèvement non configuré ?
+                  %th= sortable :name, t('activerecord.models.organization.attributes.name')
+                  %th= t('activerecord.models.organization.attributes.leader')
+                  %th Action
               %tbody
-                %tr
-                  %td
-                    .input-append.date.datepicker
-                      = text_field_tag 'organization_contains[created_at][>=]', (params[:organization_contains][:created_at]['>='] rescue ''), class: 'input-small', placeholder: 'Début'
-                      %span.add-on
-                        %i.icon-th
-                  %td
-                    .input-append.date.datepicker
-                      = text_field_tag 'organization_contains[created_at][<=]', (params[:organization_contains][:created_at]['<='] rescue ''), class: 'input-small', placeholder: 'Fin'
-                      %span.add-on
-                        %i.icon-th
-                  %td= select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue 0)), include_blank: true
-                  %td= select_tag 'organization_contains[is_for_admin]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_for_admin] rescue 0)), include_blank: true
-                  %td= select_tag 'organization_contains[is_active]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_active] rescue 1)), include_blank: true
-                  %td= select_tag 'organization_contains[is_suspended]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_suspended] rescue nil)), include_blank: true
-                  %td= select_tag 'organization_contains[is_without_address]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_without_address] rescue nil)), include_blank: true
-                  %td= select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true
-                  %td= text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
-                  %td
-                    = submit_tag t('filters.action'), class: 'btn btn-primary'
-                    = link_to icon(icon: 'remove'), account_organizations_path, class: 'btn', title: t('filters.reset')
+                - @organizations.each do |organization|
+                  %tr
+                    %td= l(organization.created_at)
+                    %td.aligncenter= organization.is_test ? glyphicon('check') : ''
+                    %td.aligncenter= organization.is_for_admin ? '' : glyphicon('check')
+                    %td.aligncenter= organization.is_active ? '' : glyphicon('check')
+                    %td.aligncenter= organization.is_suspended ? glyphicon('check') : ''
+                    %td.aligncenter= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? glyphicon('check') : ''
+                    %td.aligncenter= organization.try(:debit_mandate).try(:configured?) ? '' : glyphicon('check')
+                    %td= link_to organization.name, account_organization_path(organization)
+                    %td
+                      - if (admin_member = organization.admin_members.first)
+                        = link_to admin_member.info, account_organization_collaborator_path(organization, admin_member)
+                    %td
+                      - if organization.is_suspended
+                        = link_to 'Reprendre', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-warning'
+                      - else
+                        = link_to 'Suspendre', suspend_account_organization_path(organization), method: 'patch', class: 'btn btn-light'
+        = render partial: 'shared/list_options', locals: { collection: @organizations }
 
-  .row-fluid
-    .span12.box
-      = render partial: 'shared/list_options', locals: { collection: @organizations }
-      .row-fluid
-        .span12
-          %table.table.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
-              %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th= sortable :is_test, t('activerecord.models.organization.attributes.is_test')
-                %th= sortable :is_for_admin, 'Est client ?'
-                %th= sortable :is_active, 'Est inactif ?'
-                %th= sortable :is_suspended, t('activerecord.models.organization.attributes.is_suspended')
-                %th Sans adresse ?
-                %th Prélèvement non configuré ?
-                %th= sortable :name, t('activerecord.models.organization.attributes.name')
-                %th= t('activerecord.models.organization.attributes.leader')
-                %th Action
-            %tbody
-              - @organizations.each do |organization|
-                %tr
-                  %td= l(organization.created_at)
-                  %td= organization.is_test ? icon_ok : ''
-                  %td= organization.is_for_admin ? '' : icon_ok
-                  %td= organization.is_active ? '' : icon_ok
-                  %td= organization.is_suspended ? icon_ok : ''
-                  %td= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? icon_ok : ''
-                  %td= organization.try(:debit_mandate).try(:configured?) ? '' : icon_ok
-                  %td= link_to organization.name, account_organization_path(organization)
-                  %td
-                    - if (admin_member = organization.admin_members.first)
-                      = link_to admin_member.info, account_organization_collaborator_path(organization, admin_member)
-                  %td
-                    - if organization.is_suspended
-                      = link_to 'Reprendre', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
-                    - else
-                      = link_to 'Suspendre', suspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
-      = render partial: 'shared/list_options', locals: { collection: @organizations }
+    .col-md-2
+      = form_tag account_organizations_path, method: :get, class: 'form-filter' do
+        .card
+          .card-header
+            %h4.aligncenter Filtres
+          .card-body
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+              .control-section
+                .input-append.date.datepicker
+                  = text_field_tag 'organization_contains[created_at][>=]', (params[:organization_contains][:created_at]['>='] rescue ''), class: 'input-small', placeholder: 'Début'
+                  %span.add-on
+                    %i.icon-th
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
+              .control-section
+                .input-append.date.datepicker
+                  = text_field_tag 'organization_contains[created_at][<=]', (params[:organization_contains][:created_at]['<='] rescue ''), class: 'input-small', placeholder: 'Fin'
+                  %span.add-on
+                    %i.icon-th
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_test]', t('activerecord.models.organization.attributes.is_test')
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = Organization.not_billed.count
+              .control-section
+                = select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue 0)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_for_admin]', 'Est client ?'
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = Organization.client.count
+              .control-section
+                = select_tag 'organization_contains[is_for_admin]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_for_admin] rescue 0)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_active]', 'Est inactif ?'
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = Organization.inactive.count
+              .control-section
+                = select_tag 'organization_contains[is_active]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_active] rescue 1)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_suspended]', t('activerecord.models.organization.attributes.is_suspended')
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = Organization.suspended.count
+              .control-section
+                = select_tag 'organization_contains[is_suspended]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_suspended] rescue nil)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_without_address]', "Sans adresse ?"
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = @without_address_count
+              .control-section
+                = select_tag 'organization_contains[is_without_address]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_without_address] rescue nil)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ?"
+                %span.badge.badge-info.ml-md-2{ style: "font-size: 10px" }
+                  = @debit_mandate_not_configured_count
+              .control-section
+                = select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
+              .control-section
+                = text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), account_organizations_path, class: 'btn btn-light', title: t('filters.reset')

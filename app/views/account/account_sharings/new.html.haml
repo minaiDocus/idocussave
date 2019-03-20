@@ -1,12 +1,16 @@
 #account_sharing.new.container-fluid
-  .row-fluid
-    .span12.well
-      %h2.padding16left Partager mon compte avec un contact
-      = simple_form_for @contact, url: account_account_sharings_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
-        = f.input :email, placeholder: 'john.doe@example.com', hint: 'Si le contact existe déjà, les champs ci-dessous seront ignorés'
-        = f.input :company
-        = f.input :first_name
-        = f.input :last_name
-        .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_profile_path(panel: :account_sharing), class: 'btn'
+  .row
+    .col-md-12
+      = simple_form_for @contact, url: account_account_sharings_path, html: { class: 'form-horizontal' } do |f|
+        .card
+          .card-header
+            %h2.aligncenter Partager mon compte avec un contact
+          .card-body
+            = f.input :email, placeholder: 'john.doe@example.com', hint: 'Si le contact existe déjà, les champs ci-dessous seront ignorés'
+            = f.input :company
+            = f.input :first_name
+            = f.input :last_name
+          .card-footer
+            .form-actions
+              = f.submit t('actions.submit'), class: 'btn btn-primary'
+              = link_to t('actions.cancel'), account_profile_path(panel: :account_sharing), class: 'btn btn-light'

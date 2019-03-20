@@ -1,39 +1,43 @@
 #paper_processes.container-fluid
-  .row-fluid
-    .span12.box
-      %h3 Suivi (#{@paper_processes.total_count})
-  .row-fluid
-    .span9.box
-      = render 'shared/list_options', collection: @paper_processes
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-        %thead
-          %tr
-            %th= sortable :created_at,      'Date'
-            %th= sortable :type,            'Type'
-            - if @user.is_prescriber && @user.organization
-              %th= sortable :customer_code, 'Code client'
-              %th Société
-            %th= sortable :tracking_number, 'N° de suivi'
-            %th= sortable :pack_name,       'Nom du lot'
-        %tbody
-          - @paper_processes.each do |paper_process|
+  .row
+    .col-md-12
+      .box.small-shadow
+        %h3
+          Suivi 
+          %span.badge.badge-info.fs-origin= @paper_processes.total_count
+  .row
+    .col-md-10
+      .box
+        = render 'shared/list_options', collection: @paper_processes
+        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+          %thead
             %tr
-              %td= l paper_process.created_at, format: '%d %B %Y'
-              %td= paper_process_type paper_process.type
+              %th= sortable :created_at,      'Date'
+              %th= sortable :type,            'Type'
               - if @user.is_prescriber && @user.organization
+                %th= sortable :customer_code, 'Code client'
+                %th Société
+              %th= sortable :tracking_number, 'N° de suivi'
+              %th= sortable :pack_name,       'Nom du lot'
+          %tbody
+            - @paper_processes.each do |paper_process|
+              %tr
+                %td= l paper_process.created_at, format: '%d %B %Y'
+                %td= paper_process_type paper_process.type
+                - if @user.is_prescriber && @user.organization
+                  %td
+                    - if paper_process.user && paper_process.user.organization
+                      = link_to paper_process.customer_code, account_organization_customer_path(paper_process.user.organization, paper_process.user)
+                    - else
+                      = paper_process.customer_code
+                  %td= paper_process.user.try(:company)
                 %td
-                  - if paper_process.user && paper_process.user.organization
-                    = link_to paper_process.customer_code, account_organization_customer_path(paper_process.user.organization, paper_process.user)
+                  = link_to_paper_tracking(paper_process) if paper_process.tracking_number.present?
+                %td
+                  - if paper_process.period_document && paper_process.period_document.pack
+                    = link_to paper_process.pack_name, account_documents_path(pack_name: paper_process.pack_name), target: '_blank'
                   - else
-                    = paper_process.customer_code
-                %td= paper_process.user.try(:company)
-              %td
-                = link_to_paper_tracking(paper_process) if paper_process.tracking_number.present?
-              %td
-                - if paper_process.period_document && paper_process.period_document.pack
-                  = link_to paper_process.pack_name, account_documents_path(pack_name: paper_process.pack_name), target: '_blank'
-                - else
-                  = paper_process.pack_name
-      = render 'shared/list_options', collection: @paper_processes
-    .span3.box
+                    = paper_process.pack_name
+        = render 'shared/list_options', collection: @paper_processes
+    .col-md-2
       = render 'sidebar'

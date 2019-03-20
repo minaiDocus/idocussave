@@ -51,6 +51,9 @@ jQuery(function () {
 
   $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation: 'bottom auto' });
 
+  //TODO: find a better way to remove form-control class from simple-form on sol-container object
+  setTimeout(function(){ $('.sol-container').removeClass('form-control'); }, 1000);
+
   $("a[rel=popover]").popover();
   $(".tooltip").tooltip();
   $("a[rel=tooltip]").tooltip();

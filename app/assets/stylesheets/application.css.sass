@@ -1247,13 +1247,6 @@ table td.second
     position: relative
     top: 4px
 
-#user_filter, #user_filter_chosen
-  width: auto
-  max-width: 350px
-  position: relative
-  top: -4px
-  margin-left: 10px
-
 /*** Month ***/
 .month
   margin-bottom: 5px
@@ -1373,19 +1366,25 @@ input.error:focus, select.error:focus, textarea.error:focus
   table
     thead tr th.month
       width: 7%
-      text-align: right
       padding-right: 7px
     tbody tr td.align-middle
       vertical-align: middle
+    .month
+      background-color: #000
+      border-radius: 0
+      text-align: center
+    tr.user
+      td:first-child
+        background-color: #000 !important
   .period
     text-align: right
-    height: 13px
+    height: 24px
     border: 3px solid #BBBBBB
     margin: 0
     padding: 2px 3px 3px
     font-size: 9px
     font-weight: normal
-    color: black
+    color: white
     text-transform: uppercase
     +border-radius(3px)
   td.block
@@ -1407,6 +1406,11 @@ input.error:focus, select.error:focus, textarea.error:focus
       padding: 3px
   .badge-important
     background-color: red
+  .legend
+    .delivery_state
+      display: inline-block !important
+      float: none !important
+      margin-left: 15px
   .delivery_state
     +border-radius(7px)
     margin-top: 2px
@@ -1431,7 +1435,6 @@ input.error:focus, select.error:focus, textarea.error:focus
       top: -2px
       .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         float: left
-        width: 45px
       .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         margin-left: 37.58px
   .table tbody tr:hover td, .table tbody tr:hover th
@@ -1450,11 +1453,10 @@ input.error:focus, select.error:focus, textarea.error:focus
     margin-top: 5px
 
 #periodModal
-  margin: -310px 0 0 -500px
-  height: 464px
-  width: 1080px
+  .modal-dialog
+    max-height: 500px
+    max-width: 1080px !important
   .modal-header
-    padding-bottom: 40px
     table
       float: left
     .user
@@ -1463,27 +1465,25 @@ input.error:focus, select.error:focus, textarea.error:focus
       width: 450px
   .modal-body
     clear: both
-    height: 330px
+    overflow: scroll
+    min-height: 200px
   .modal-footer
-    text-align: center
-    height: 24px
-    .legend
-      position: relative
-      top: 4px
+    text-align: left
+    .actions
+      width: 100%
   .documentslist
-    height: 330px
     width: 695px
     float: left
-  .separator
-    height: 330px
-    border-left: 1px solid #EEE
-    margin-left: 5px
-    width: 1px
-    float: left
+    table
+      th
+        background-color: rgba(0, 0, 0, 0.08)
   .optionslist
-    height: 330px
     width: 325px
     float: right
+    table
+      .header
+        font-weight: bold
+        border-bottom: 1px solid #666
   table
     tr
       td.center, th.center
@@ -1596,6 +1596,7 @@ footer
   width: 100%
   position: fixed
   bottom: 0
+  z-index: 200
   .centered
     /* max-width: 1200px */
     padding: 5px 0
