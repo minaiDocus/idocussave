@@ -46,7 +46,7 @@ module ApplicationHelper
     style += options[:size].present? ? "font-size:#{options[:size]};" : ''
     klass = options[:class].to_s
 
-    content_tag 'span', '', class: "oi #{klass}", title: "#{icon}", 'aria-hidden' => "true", 'data-glyph' => "#{icon}", style: style
+    content_tag 'span', '', class: "oi #{klass}", 'aria-hidden' => "true", 'data-glyph' => "#{icon}", style: style
   end
 
   def icon_ban_circle
@@ -199,8 +199,9 @@ module ApplicationHelper
 
   def per_page_link(number, options = {})
     temp_class = (options['class'] || options[:class] || '').split
-    temp_class << 'label'
-    temp_class << 'label-info' if per_page == number
+    temp_class << 'page-link-badge'
+    temp_class << 'badge'
+    temp_class << 'badge-info' if per_page == number
     temp_class.uniq!
 
     temp_options = options.merge(class: temp_class)

@@ -45,16 +45,20 @@ SimpleForm.setup do |config|
     b.use :error, wrap_with: { tag: :span, class: :error }
   end
 
-  config.wrappers :bootstrap, tag: 'div', class: 'form-group', error_class: 'error' do |b|
+  config.wrappers :bootstrap, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
-    b.use :label
-    b.use :error, wrap_with: { tag: 'i', class: 'help-inline' }
-    b.use :input, class: 'form-control'
-    b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    b.wrapper tag: 'div', class: 'label-section' do |ba|
+      ba.use :label
+      ba.use :error, wrap_with: { tag: 'i', class: 'help-inline' }
+    end
+    b.wrapper tag: 'div', class: 'control-section' do |ba|
+      ba.use :input, class: 'form-control'
+      ba.use :hint,  wrap_with: { tag: 'i', class: 'help-block' }
+    end
   end
 
-  config.wrappers :prepend, tag: 'div', class: 'form-group', error_class: 'error' do |b|
+  config.wrappers :prepend, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label
@@ -65,7 +69,7 @@ SimpleForm.setup do |config|
     b.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
   end
 
-  config.wrappers :append, tag: 'div', class: 'form-group', error_class: 'error' do |b|
+  config.wrappers :append, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label
@@ -76,7 +80,7 @@ SimpleForm.setup do |config|
     b.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
   end
 
-  config.wrappers :inline_checkbox, tag: 'div', class: 'form-group', error_class: 'error' do |b|
+  config.wrappers :inline_checkbox, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label_input, wrap_with: { class: 'checkbox inline' }

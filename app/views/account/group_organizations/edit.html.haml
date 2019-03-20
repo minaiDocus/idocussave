@@ -1,9 +1,12 @@
 #group_organizations.container-fluid
   .edit
-    .row-fluid
-      .span12.box
-        %h3 Édition du groupe d'organisation : #{@organization_group.name}
+    .row
+      .col-md-12
+        .box.small-shadow
+          %h3
+            Édition du groupe d'organisation : 
+            %span.text-info.fs-origin.font-weight-bold= @organization_group.name
 
-    .row-fluid
-      .span12.box
+    .row
+      .col-md-12
         = render partial: 'form'

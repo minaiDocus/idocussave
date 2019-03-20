@@ -54,7 +54,7 @@ nav.navbar
       :margin 0 5px
     .nav-item.active
       :background-color #fff
-      .nav-link, .dropdown-item
+      .nav-link
         :color #3e2f24 !important
     .nav-item:hover
       :background-color #FFF
@@ -83,13 +83,64 @@ nav.navbar .dropdown-menu
       top: 7px
       left: 11px
 
-//form horizontal
-.form-horizontal
-  label
-    width: 260px
-  .form-control
-    width: calc(100% - 270px)
-    display: inline-block
+//form
+form
+  .label-section
+    .help-inline
+      text-decoration: underline
+  .control-section
+    margin-left : 10px
+    input, select, textarea, .sol-inner-container
+      width: 100%
+      max-width: 400px
+    .sol-selection
+      .sol-option
+        input, select, textarea
+          width: auto
+    .help-block
+      color: #666
+form.form-horizontal
+  .form-group
+    .label-section
+      width: 260px
+      float: left
+    .control-section
+      margin-left: 0px
+      float: left
+      width: calc(100% - 270px)
+form.form-filter
+  .form-actions
+    text-align: right
+
+//pagination (overide bootstrap wich is not working)
+.pagination
+  .page-item
+    height: 19px
+    cursor: pointer
+    .page-link
+      border-radius: 3px
+      padding: 0 7px
+      color: #0088cc
+      font-weight: bold
+  .page-item:hover
+    border: 1px solid #dee2e6
+    background-color: #dee2e6
+    .page-link
+      background-color: #dee2e6 !important
+  .page-item.active
+    .page-link
+      background-color: #17a2b8!important
+      color: #fff
+.page-link-badge
+  :font-size inherit !important
+
+
+//datepicker
+.datepicker
+  .add-on
+    display: inline
+    margin-top: 20px
+
 
 // WorkingClass
 .pull-none
@@ -101,6 +152,9 @@ nav.navbar .dropdown-menu
   :text-align right !important
 .tac, .aligncenter
   :text-align center !important
+
+.fs-origin
+  font-size: inherit
 
 .setredbg
   :background-color red !important

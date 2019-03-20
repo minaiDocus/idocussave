@@ -43,7 +43,7 @@
           = link_to "Erreur livraison d'écritures comptables", account_pre_assignment_delivery_errors_path, class: 'dropdown-item'
     - if @user.active? && @user.organization.is_active
       - if @user.collaborator? && !@user.has_one_organization?
-        %li.nav-item.dropdown
+        %li.nav-item.dropdown{ class: ('active' if controller_name == 'reporting') }
           %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
             Mon reporting
             %b.caret
