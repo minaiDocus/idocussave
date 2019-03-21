@@ -5,11 +5,11 @@
         %h3
           Suivi 
           %span.badge.badge-info.fs-origin= @paper_processes.total_count
-  .row
-    .col-md-10
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
       .box
         = render 'shared/list_options', collection: @paper_processes
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom
           %thead
             %tr
               %th= sortable :created_at,      'Date'
@@ -39,5 +39,4 @@
                   - else
                     = paper_process.pack_name
         = render 'shared/list_options', collection: @paper_processes
-    .col-md-2
-      = render 'sidebar'
+    = render 'sidebar'

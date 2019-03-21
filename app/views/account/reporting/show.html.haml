@@ -32,10 +32,10 @@
   - 12.times do
     - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
 
-  .row
-    .col-md-10
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
       .card
-        .card-header
+        .card-header.py-md-3
           = label_tag :value_filter, "Affichage par : "
           - options = []
           - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
@@ -88,7 +88,7 @@
                               - if period.documents_name_tags && period.documents_name_tags.is_a?(Array)
                                 - period.documents_name_tags.each do |tags|
                                   %span{ :class => tags }
-                              .value
+                              .value{ class: "duration-#{period.duration}" }
                                 %span{ :class => "hide pieces value_1" }
                                   - period.duration.times do |i|
                                     %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_pieces, i+1)
@@ -290,11 +290,14 @@
                   - months.each do |month|
                     %th.month{ :style => "width:7%;padding-right:7px;" }
                       #{month}
-    .col-md-2
-      .card
-        %form#filter.form-filter
-          .card-header
+    .card.retractable-filter
+      %form#filter.form-filter
+        .card-header.clearfix
+          .float-left
             %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
           .card-body
             #filter_results{ :style => "color:green;" }
             .form-group
