@@ -28,3 +28,7 @@ config/budgea.yml
 config/fiduceo.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
+config/elastic_apm.yml
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
