@@ -9,7 +9,7 @@
     .col-md-12.retractable-content
       .box
         = render 'shared/list_options', collection: @paper_processes
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
           %thead
             %tr
               %th= sortable :created_at,      'Date'

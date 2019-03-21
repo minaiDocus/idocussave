@@ -19,7 +19,7 @@
         = render partial: 'shared/list_options', locals: { collection: @organizations }
         .row
           .col-md-12
-            %table.table.table-condensed.table-striped.margin1top.margin0bottom
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
               %thead
                 %tr
                   %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
