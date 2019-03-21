@@ -57,9 +57,9 @@ class Box < ApplicationRecord
     attr_accessor :client_id, :client_secret, :callback_url
 
     def initialize
-      @client_id     = Rails.application.secrets.box_api['client_id']
-      @client_secret = Rails.application.secrets.box_api['client_secret']
-      @callback_url  = Rails.application.secrets.box_api['callback_url']
+      Rails.application.credentials[Rails.env.to_sym][:box_api][:client_id]
+      Rails.application.credentials[Rails.env.to_sym][:box_api][:client_secret]
+      Rails.application.credentials[Rails.env.to_sym][:box_api][:callback_url]
     end
   end
 end
