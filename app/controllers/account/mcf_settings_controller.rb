@@ -25,10 +25,10 @@ class Account::McfSettingsController < Account::OrganizationController
   end
 
   def authorize
-    url = Rails.application.secrets.my_company_files_api['authorize_url'] + '?'
+    url = Rails.application.credentials[Rails.env.to_sym][:my_company_files_api][:authorize_url] + '?'
     url += {
       client_id:    @user.id,
-      client_name:  Rails.application.secrets.my_company_files_api['client_name'],
+      client_name:  Rails.application.credentials[Rails.env.to_sym][:my_company_files_api][:client_name],
       redirect_uri: callback_account_organization_mcf_settings_url(@organization),
       state:        state
     }.to_param
