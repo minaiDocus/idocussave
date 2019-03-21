@@ -83,3 +83,16 @@ $menuPositionLeft: -200px;
   max-height: 600px;
   overflow-y: scroll;
 }
+
+//detachable table head
+table.table-detachable-head thead.detached{
+  display:none;
+  position: fixed;
+  z-index: 50;
+  background-color: #3e2f24;
+  color: #fff;
+  top: 30px;
+}
+table.table-detachable-head thead.detached a{
+  color: #c9dd03;
+}

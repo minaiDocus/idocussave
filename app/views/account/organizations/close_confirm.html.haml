@@ -1,9 +1,10 @@
 #organizations.close_confirm
-  .row-fluid
-    .span12.box.aligncenter
-      .warning.margin1top.margin2bottom
-        Voulez-vous réellement clôturer l'organisation "#{@organization.name}" ?
-      = form_tag deactivate_account_organization_path(@organization), method: 'patch', class: 'form form-horizontal'  do
-        - label = "Clôturer l'organization"
-        = submit_tag label, class: 'btn btn-danger', data: { confirm: t('actions.confirm') }
-        = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
+  .row
+    .col-md-12
+      .box.warning.clearfix
+        .my-md-2
+          %h4 Voulez-vous réellement clôturer l'organisation "#{@organization.name}" ?
+        = form_tag deactivate_account_organization_path(@organization), method: 'patch'  do
+          - label = "Clôturer l'organization"
+          = submit_tag label, class: 'btn btn-danger', data: { confirm: t('actions.confirm') }
+          = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn btn-light'

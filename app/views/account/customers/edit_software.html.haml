@@ -1,17 +1,17 @@
 #customer.edit.softwares
   - if @customer.configured?
-    .row-fluid
-      .span12.box
+    .row
+      .col-md-12.box
         %h3 Edition des options #{@software} du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: @software)}
   - else
     = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
+    .row
+      .col-md-12.box
         %h3 Configuration #{@software} pour le dossier : #{@customer}
 
-  .rwo-fluid
-    .span12.box
-      = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |c|
+  .row
+    .col-md-12.box
+      = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |c|
         = hidden_field_tag :software, @software
         = c.simple_fields_for :softwares do |f|
           -if @software == 'coala'
@@ -29,8 +29,8 @@
         .form-actions.margin0bottom
           - if @customer.configured?
             = c.submit t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: @software), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: @software), class: 'btn btn-light'
           - else
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
             = c.submit t('actions.next_step'), class: 'btn btn-primary'

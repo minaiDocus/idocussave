@@ -67,6 +67,8 @@ nav.navbar a:hover, footer a:hover
 
 nav.navbar .dropdown-menu
   background-color: #3e2f24
+.dropdown-item.active
+  background-color: rgba(0, 0, 0, 0.3);
 
 //logo
 .navbar
@@ -94,6 +96,8 @@ form
     input, select, textarea, .sol-inner-container
       width: 100%
       max-width: 400px
+    input[type="checkbox"], input[type="radio"]
+      width: auto !important
     .sol-selection
       .sol-option
         input, select, textarea
@@ -109,6 +113,11 @@ form.form-horizontal
       margin-left: 0px
       float: left
       width: calc(100% - 270px)
+form.form-horizontal.label-auto
+  .form-group
+    .label-section
+      width: auto
+      margin-right: 10px
 form.form-filter
   .form-actions
     text-align: right

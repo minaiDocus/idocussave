@@ -1,6 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require popper
 //= require bootstrap
 //= require chart.min
 //= require jquery.qtip.min
@@ -54,6 +55,16 @@ jQuery(function () {
 
   //TODO: find a better way to remove form-control class from simple-form on sol-container object
   setTimeout(function(){ $('.sol-container').removeClass('form-control'); }, 1000);
+
+  //workaround : bug Nav-tabs and Dropdowns menu Bootstrap
+  $('.nav-tabs .dropdown').on('shown.bs.tab', 'a', function (e) {
+      if(e.relatedTarget)
+          $(e.relatedTarget).removeClass('active');
+
+      $(e.delegateTarget).find('.dropdown-toggle:first-child').addClass('active');
+      $('.nav-tabs .dropdown .dropdown-menu a').removeClass('active');
+      $(e.currentTarget).addClass('active');
+  });
 
   $("a[rel=popover]").popover();
   $(".tooltip").tooltip();

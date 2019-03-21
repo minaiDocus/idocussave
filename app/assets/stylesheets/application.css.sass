@@ -5,6 +5,7 @@
   padding-top: 50px
 .navbar
   .logo
+    z-index: 100
     width: 76px
     height: 36px
     float: left
@@ -36,7 +37,9 @@
       background-color: #3E2F24
       .nav-link
         color: #c9dd03
-
+.nav-tabs
+  .nav-link.active
+    background-color: #f8f9fa !important
 
 
 
@@ -939,8 +942,8 @@ input.error:focus, select.error:focus, textarea.error:focus
     +box-shadow(#d59392 0 0 6px)
 
 .with_custom_controls
-  .control-group
-    margin-bottom: 0px!important
+  .form-group
+    margin-bottom: 0px !important
 
 /***** Reporting *****/
 #reporting
@@ -1378,6 +1381,7 @@ footer
 
 html, body
   height: 100%
+  background-color: #f2f2f2
   /* The html and body elements cannot have any padding or margin. */
 
 /* Wrapper for page content to push down footer */

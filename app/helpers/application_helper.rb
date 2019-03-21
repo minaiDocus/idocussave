@@ -177,8 +177,8 @@ module ApplicationHelper
 
     if column.to_s == sort_column
       direction = sort_direction == 'asc' ? 'desc' : 'asc'
-      icon_direction = sort_direction == 'asc' ? 'down' : 'up'
-      icon = content_tag(:i, '', class: 'icon-chevron-' + icon_direction)
+      icon_direction = sort_direction == 'asc' ? 'bottom' : 'top'
+      icon = glyphicon('chevron-'+icon_direction) + " "
     end
 
     options = params.merge(contains)
