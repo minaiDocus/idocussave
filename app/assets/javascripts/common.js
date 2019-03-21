@@ -19,6 +19,7 @@
 //= require chosen.jquery
 //= require bootstrap-filestyle.min
 //= require bootstrap-datepicker/core
+//= require retractable
 //
 // French translation for bootstrap-datepicker
 // Lola LAI KAM <lailol@directmada.com>

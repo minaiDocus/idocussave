@@ -2,13 +2,13 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row
-    .col-md-3
+  .row.retractable.with-menu
+    .retractable-menu
       .row
         .col-md-12
           = render partial: 'layouts/account/me/navigation'
 
-    .col-md-9
+    .col-md-12.retractable-content
       - unless organizations_suspended? && @user.active?
         #change_password.row.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
           .col-md-12

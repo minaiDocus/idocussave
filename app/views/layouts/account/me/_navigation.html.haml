@@ -1,4 +1,7 @@
-.box.small-shadow.bg-light.sidebar-nav
+.box.medium-shadow.bg-light.sidebar-nav
+  %span.retractable-caret
+    %span.title Mon compte&nbsp;
+    %span.icon= glyphicon('caret-right')
   %ul.nav.flex-column.nav-list.dlink
     - unless organizations_suspended? && @user.active?
       %li.nav-item{ class: ('active' if @active_panel == 'change_password') }

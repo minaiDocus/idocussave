@@ -13,8 +13,8 @@
           = link_to "Groupes d'organisation", account_group_organizations_path, class: 'btn btn-secondary'
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
 
-  .row
-    .col-md-10
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
       .box.clearfix
         = render partial: 'shared/list_options', locals: { collection: @organizations }
         .row
@@ -53,11 +53,14 @@
                         = link_to 'Suspendre', suspend_account_organization_path(organization), method: 'patch', class: 'btn btn-light'
         = render partial: 'shared/list_options', locals: { collection: @organizations }
 
-    .col-md-2
-      = form_tag account_organizations_path, method: :get, class: 'form-filter' do
-        .card
-          .card-header
-            %h4.aligncenter Filtres
+    = form_tag account_organizations_path, method: :get, class: 'form-filter' do
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
           .card-body
             .form-group
               .label-section

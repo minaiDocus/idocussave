@@ -1,0 +1,85 @@
+//Retractable CSS
+$menuPositionLeft: -200px;
+
+//Animations
+//menu-showup frames
+@-moz-keyframes menuShow {
+  from {left: $menuPositionLeft;}
+  to {left: 0;}
+}
+@-webkit-keyframes menuShow {
+  from {left: $menuPositionLeft;}
+  to {left: 0;}
+}
+@keyframes menuShow {
+  from {left: $menuPositionLeft;}
+  to {left: 0;}
+}
+
+@-moz-keyframes menuHide {
+  from {left: 0;}
+  to {left: $menuPositionLeft;}
+}
+@-webkit-keyframes menuHide {
+  from {left: 0;}
+  to {left: $menuPositionLeft;}
+}
+@keyframes menuHide {
+  from {left: 0;}
+  to {left: $menuPositionLeft;}
+}
+
+.retractable.with-menu {
+  padding-left: 50px;
+}
+
+.retractable.with-filter{
+  padding-right: 290px; 
+}
+
+//retractable menu
+.retractable .retractable-menu {
+    position: fixed;
+    width: 250px;
+    z-index: 300;
+    left: $menuPositionLeft;
+    animation-name: menuHide;
+    animation-duration: 0.2s;
+}
+.retractable .retractable-menu:hover {
+    left: 0px;
+    animation-name: menuShow;
+    animation-duration: 0.2s;
+}
+.retractable .retractable-menu .retractable-caret{
+  text-align: right;
+  width: 100%;
+  display: inline-block;
+  border-bottom: 1px solid #000;
+  margin-bottom: 8px;
+}
+.retractable .retractable-menu .retractable-caret .title{
+  display: inline-block;
+  text-align: left;
+  width: 90%;
+}
+
+//retractable-filter
+.retractable .retractable-filter{
+  position: fixed;
+  z-index: 300;
+  margin-right: 15px;
+  right: 0;
+  width: 270px;
+}
+.retractable .retractable-filter .locker{
+  padding: 2px;
+}
+.retractable .retractable-filter.close{
+  position: absolute;
+  width: auto;
+}
+.retractable .retractable-filter-content .card-body{
+  max-height: 600px;
+  overflow-y: scroll;
+}
