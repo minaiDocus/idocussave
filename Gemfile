@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.6.1'
+
 gem 'rake'
 gem 'rails', '5.2.2'
 
@@ -174,7 +176,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'factory_bot'
   gem 'simplecov', require: false
   gem 'capybara'
   gem 'guard-rspec', require: false
