@@ -6,11 +6,11 @@ module Account::ProfileHelper
   def ibiza_state_label(state)
     case state
     when 'waiting'
-      'label-warning'
+      'badge-warning'
     when 'valid'
-      'label-success'
+      'badge-success'
     when 'invalid'
-      'label-important'
+      'badge-danger'
     else
       ''
     end

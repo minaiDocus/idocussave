@@ -19,9 +19,9 @@
         = render partial: 'shared/list_options', locals: { collection: @organizations }
         .row
           .col-md-12
-            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
               %thead
-                %tr
+                %tr.bg-brown.text-white
                   %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
                   %th.aligncenter= sortable :is_test, t('activerecord.models.organization.attributes.is_test')
                   %th.aligncenter= sortable :is_for_admin, 'Est client ?'

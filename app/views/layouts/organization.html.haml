@@ -46,36 +46,58 @@
           .retractable-menu
             .row
               .col-md-12
-                .box.medium-shadow.bg-light.sidebar-nav
+                .box.medium-shadow.bg-menu
                   %span.retractable-caret
                     %span.title= @organization.name
                     %span.icon= glyphicon('caret-right')
                   %ul.nav.flex-column.nav-list.dlink
                     %li.nav-item{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps mcf_settings)) && !request.path.match(/customers/)) ? 'active' : '') }
-                      = link_to 'Paramètres', account_organization_path(@organization), class: 'nav-link'
+                      %a{ href: account_organization_path(@organization), class: 'nav-link' }
+                        Paramètres
+                        = glyphicon('cog',{ class: 'float-right' })
                     %li.nav-item{ class: (controller_name == 'groups' ? 'active' : '') }
-                      = link_to 'Groupes', account_organization_groups_path(@organization), class: 'nav-link'
+                      %a{ href: account_organization_groups_path(@organization), class: 'nav-link' }
+                        Groupes
+                        = glyphicon('people', { class: 'float-right' })
                     - if @user.leader? || @user.manage_collaborators
                       %li.nav-item{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
-                        = link_to 'Collaborateurs', account_organization_collaborators_path(@organization), class: 'nav-link'
+                        %a{ href: account_organization_collaborators_path(@organization), class: 'nav-link' }
+                          Collaborateurs
+                          = glyphicon('person', { class: 'float-right' })
                     - if @organization.is_active
                       - if @user.leader? || @user.manage_journals
                         %li.nav-item{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
-                          = link_to 'Journaux comptables partagés', account_organization_journals_path(@organization), class: 'nav-link'
+                          %a{ href: account_organization_journals_path(@organization), class: 'nav-link' }
+                            Journaux comptables partagés
+                            = glyphicon('book', { class: 'float-right' })
                     %li.nav-item{ class: (request.path.match(/customers/) ? 'active' : '') }
-                      = link_to 'Clients', account_organization_customers_path(@organization), class: 'nav-link'
+                      %a{ href: account_organization_customers_path(@organization), class: 'nav-link' }
+                        Clients
+                        = glyphicon('briefcase', { class: 'float-right' })
                     - if @organization.is_active
                       %li.nav-item{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
-                        = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization), class: 'nav-link'
+                        %a{ href: account_organization_account_number_rules_path(@organization), class: 'nav-link' }
+                          Affectations bancaires
+                          %br
+                          (iDo'FacBanque)
+                          = glyphicon('list', { class: 'float-right', style: 'margin-top: -8px' })
                     %li.nav-item{ class: (controller_name.in?(%w(pre_assignments pre_assignment_ignored pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
-                      = link_to 'Pré-affectations', account_documents_path, class: 'nav-link'
+                      %a{ href: account_documents_path, class: 'nav-link' }
+                        Pré-affectations
+                        = glyphicon('file', { class: 'float-right' })
                     %li.nav-item{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
-                      = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization), class: 'nav-link'
+                      %a{ href: account_organization_paper_set_orders_path(@organization), class: 'nav-link' }
+                        Commande Kit Courriers
+                        = glyphicon('envelope-closed', { class: 'float-right' })
                     %li.nav-item{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
-                      = link_to 'Accès clients multi-dossiers', account_organization_account_sharings_path(@organization), class: 'nav-link'
+                      %a{ href: account_organization_account_sharings_path(@organization), class: 'nav-link' }
+                        Accès clients multi-dossiers
+                        = glyphicon('folder', { class: 'float-right' })
                     - if @user.leader? && !@organization.try(:is_suspended?)
                       %li.nav-item{ class: (controller_name.in?(%w(invoices)) ? 'active' : '') }
-                        = link_to 'Factures', account_organization_invoices_path(@organization), class: 'nav-link'
+                        %a{ href: account_organization_invoices_path(@organization), class: 'nav-link' }
+                          Factures
+                          = glyphicon('spreadsheet', { class: 'float-right' })
           .col-md-12
             != yield
       #push

@@ -34,12 +34,14 @@ h2
 a
   :cursor pointer
   :color #0088cc
+a:hover
+  :color #35bdff
 
 input[type="radio"], input[type="checkbox"]
   margin-right: 5px
 
 nav.navbar
-  :background-color #3e2f24
+  :background-color: #3e2f24
   :background-image none
   :margin-bottom 20px
   :padding-top: 0.1rem !important
@@ -53,12 +55,6 @@ nav.navbar
       text-decoration: none
     .nav-item
       :margin 0 5px
-    .nav-item.active
-      :background-color #fff
-      .nav-link
-        :color #3e2f24 !important
-    .nav-item:hover
-      :background-color #FFF
   :text-decoration none !important
 nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
   :color #c9dd03 !important
@@ -87,6 +83,36 @@ nav.navbar .dropdown-menu
       left: 11px
 
 //form
+/***** Form *****/
+/*** Global ***/
+select
+  width: auto
+/*** Error ***/
+label.error
+  color: #b94a48
+input.error, select.error, textarea.error
+  color: #b94a48
+  border-color: #b94a48
+input.error:focus, select.error:focus, textarea.error:focus
+  border-color: #953b39
+  +box-shadow(#d59392 0 0 6px)
+
+.form-group.error
+  label, .help-inline
+    color: #b94a48
+  .help-inline
+    margin: 0 5px
+  input, select, textarea
+    color: #b94a48
+    border-color: #b94a48
+  input:focus, select:focus, textarea:focus
+    border-color: #953b39
+    +box-shadow(#d59392 0 0 6px)
+
+.with_custom_controls
+  .form-group
+    margin-bottom: 0px !important
+
 form
   .label-section
     .help-inline
@@ -104,6 +130,7 @@ form
           width: auto
     .help-block
       color: #666
+
 form.form-horizontal
   .form-group
     .label-section
@@ -121,6 +148,12 @@ form.form-horizontal.label-auto
 form.form-filter
   .form-actions
     text-align: right
+
+//datepicker
+.datepicker
+  .add-on
+    display: inline
+    margin-top: 20px
 
 //pagination (overide bootstrap wich is not working)
 .pagination
@@ -143,13 +176,6 @@ form.form-filter
       color: #fff
 .page-link-badge
   :font-size inherit !important
-
-
-//datepicker
-.datepicker
-  .add-on
-    display: inline
-    margin-top: 20px
 
 
 // WorkingClass
@@ -189,3 +215,30 @@ form.form-filter
   :background-color transparent !important
 .nobrd
   :border-width 0px !important
+
+.table-bordered-inner
+  th, td
+    border: 1px solid #dee2e6
+  tr
+    th:first-child, td:first-child
+      border-left: none !important
+    th:last-child, td:last-child
+      border-right: none !important
+  tr:first-child
+    th, td
+      border-top: none !important
+  tr:last-child
+    th, td
+      border-bottom: none !important
+
+.bg-brown
+  background-color: #3e2f24
+.bg-brown-light
+  background-color: #5C4D42
+
+.bg-dark, .table-dark, .bg-brown, .bg-brown-light
+  a
+    color: #c9dd03
+  a:hover
+    color: #7D9106
+

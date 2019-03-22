@@ -9,9 +9,9 @@
     .col-md-12.retractable-content
       .box
         = render 'shared/list_options', collection: @paper_processes
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
-            %tr
+            %tr.bg-brown.text-white
               %th= sortable :created_at,      'Date'
               %th= sortable :type,            'Type'
               - if @user.is_prescriber && @user.organization

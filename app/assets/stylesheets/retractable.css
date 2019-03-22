@@ -1,5 +1,5 @@
 //Retractable CSS
-$menuPositionLeft: -200px;
+$menuPositionLeft: -210px;
 
 //Animations
 //menu-showup frames
@@ -40,7 +40,7 @@ $menuPositionLeft: -200px;
 //retractable menu
 .retractable .retractable-menu {
     position: fixed;
-    width: 250px;
+    width: 260px;
     z-index: 300;
     left: $menuPositionLeft;
     animation-name: menuHide;
@@ -55,7 +55,7 @@ $menuPositionLeft: -200px;
   text-align: right;
   width: 100%;
   display: inline-block;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #fff;
   margin-bottom: 8px;
 }
 .retractable .retractable-menu .retractable-caret .title{
