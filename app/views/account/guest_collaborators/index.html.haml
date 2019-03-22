@@ -1,34 +1,38 @@
 #guest_collaborators
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
+  .row.retractable.with-filter
+    .col-md-12
+      .card
+        .card-header
+          %h3
+            Contacts
+            %span.badge.badge-info= @guest_collaborators.count
+        .card-body
           = render partial: 'account/organization/account_sharings/navigation'
-      .row-fluid
-        .span9
-          = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
-              %tr
-                %th= sortable :created_at, 'Date de création'
-                %th= sortable :email,      'Email'
-                %th= sortable :company,    'Société'
-                %th Nom
-                %th Nb. de dossiers
-                %th Actions
-            %tbody
-              - @guest_collaborators.each do |guest_collaborator|
-                %tr
-                  %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')
-                  %td= guest_collaborator.email
-                  %td= guest_collaborator.company
-                  %td= guest_collaborator.name
-                  %td= guest_collaborator.accounts.size
-                  %td
-                    = link_to icon_edit, edit_account_organization_guest_collaborator_path(@organization, guest_collaborator)
-                    = link_to icon_destroy, account_organization_guest_collaborator_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le contact \"#{guest_collaborator.info}\" ?" }
-          = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
-        .span3
-          .alignright.margin1bottom
-            = link_to icon_new + ' Ajouter un contact', new_account_organization_guest_collaborator_path(@organization), class: 'btn btn-primary'
-          = render partial: 'sidebar'
+          .row
+            .col-md-12
+              .box.border-top-0.bg-light
+                = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
+                %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+                  %thead
+                    %tr.bg-brown.text-white
+                      %th= sortable :created_at, 'Date de création'
+                      %th= sortable :email,      'Email'
+                      %th= sortable :company,    'Société'
+                      %th Nom
+                      %th Nb. de dossiers
+                      %th Actions
+                  %tbody
+                    - @guest_collaborators.each do |guest_collaborator|
+                      %tr
+                        %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')
+                        %td= guest_collaborator.email
+                        %td= guest_collaborator.company
+                        %td= guest_collaborator.name
+                        %td= guest_collaborator.accounts.size
+                        %td
+                          = link_to icon_edit, edit_account_organization_guest_collaborator_path(@organization, guest_collaborator)
+                          = link_to icon_destroy, account_organization_guest_collaborator_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le contact \"#{guest_collaborator.info}\" ?" }
+                = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
+                .alignright.margin1bottom
+                  = link_to 'Ajouter un contact', new_account_organization_guest_collaborator_path(@organization), class: 'btn btn-primary'
+    = render partial: 'sidebar'

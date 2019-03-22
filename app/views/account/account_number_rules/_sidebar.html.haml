@@ -1,26 +1,51 @@
-%h3 Filtres
-
-%br
-= form_tag account_organization_account_number_rules_path, method: :get, class: 'form form-vertical margin0bottom' do
-  = hidden_field_tag :direction, sort_direction
-  = hidden_field_tag :sort, sort_column
-  = hidden_field_tag :per_page, per_page
-  = label_tag 'account_number_rule_contains[name]', t('activerecord.models.account_number_rule.attributes.name')
-  = text_field_tag 'account_number_rule_contains[name]', (params[:account_number_rule_contains][:name] rescue ''), class: 'span12'
-  = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.rule_target')
-  = select_tag 'account_number_rule_contains[rule_target]', options_for_select(rule_target_options_for_select, (params[:account_number_rule_contains][:rule_target] rescue nil)), include_blank: true, class: 'span12'
-  = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.affect')
-  = select_tag 'account_number_rule_contains[affect]', options_for_select(affect_options_for_select, (params[:account_number_rule_contains][:affect] rescue nil)), include_blank: true, class: 'span12'
-  = label_tag 'account_number_rule_contains[rule_type]', t('activerecord.models.account_number_rule.attributes.rule_type')
-  = select_tag 'account_number_rule_contains[rule_type]', options_for_select(rule_type_options_for_select, (params[:account_number_rule_contains][:rule_type] rescue nil)), include_blank: true, class: 'span12'
-  = label_tag 'account_number_rule_contains[categorization]', t('activerecord.models.account_number_rule.attributes.categorization')
-  = select_tag 'account_number_rule_contains[categorization]', options_for_select(@organization.account_number_rules.map(&:categorization).uniq, (params[:account_number_rule_contains][:categorization] rescue '')), include_blank: true, class: 'span12'
-  = label_tag 'account_number_rule_contains[customer_code]', t('activerecord.models.account_number_rule.attributes.customer_code')
-  = text_field_tag 'account_number_rule_contains[customer_code]', (params[:account_number_rule_contains][:customer_code] rescue ''), class: 'span12'
-  = label_tag 'account_number_rule_contains[content]', t('activerecord.models.account_number_rule.attributes.content')
-  = text_field_tag 'account_number_rule_contains[content]', (params[:account_number_rule_contains][:content] rescue ''), class: 'span12'
-  = label_tag 'account_number_rule_contains[third_party_account]', t('activerecord.models.account_number_rule.attributes.third_party_account')
-  = text_field_tag 'account_number_rule_contains[third_party_account]', (params[:account_number_rule_contains][:third_party_account] rescue ''), class: 'span12'
-  %br
-  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-  = link_to t('filters.reset'), account_organization_account_number_rules_path, class: 'btn'
+.card.retractable-filter
+  = form_tag account_organization_account_number_rules_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[name]', t('activerecord.models.account_number_rule.attributes.name')
+          .control-section  
+            = text_field_tag 'account_number_rule_contains[name]', (params[:account_number_rule_contains][:name] rescue '')
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[affect]', t('activerecord.models.account_number_rule.attributes.affect')
+          .control-section  
+            = select_tag 'account_number_rule_contains[affect]', options_for_select(affect_options_for_select, (params[:account_number_rule_contains][:affect] rescue nil)), include_blank: true
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[rule_type]', t('activerecord.models.account_number_rule.attributes.rule_type')
+          .control-section  
+            = select_tag 'account_number_rule_contains[rule_type]', options_for_select(rule_type_options_for_select, (params[:account_number_rule_contains][:rule_type] rescue nil)), include_blank: true
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[categorization]', t('activerecord.models.account_number_rule.attributes.categorization')
+          .control-section  
+            = select_tag 'account_number_rule_contains[categorization]', options_for_select(@organization.account_number_rules.map(&:categorization).uniq, (params[:account_number_rule_contains][:categorization] rescue '')), include_blank: true
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[customer_code]', t('activerecord.models.account_number_rule.attributes.customer_code')
+          .control-section  
+            = text_field_tag 'account_number_rule_contains[customer_code]', (params[:account_number_rule_contains][:customer_code] rescue '')
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[content]', t('activerecord.models.account_number_rule.attributes.content')
+          .control-section  
+            = text_field_tag 'account_number_rule_contains[content]', (params[:account_number_rule_contains][:content] rescue '')
+        .form-group
+          .label-section
+            = label_tag 'account_number_rule_contains[third_party_account]', t('activerecord.models.account_number_rule.attributes.third_party_account')
+          .control-section  
+            = text_field_tag 'account_number_rule_contains[third_party_account]', (params[:account_number_rule_contains][:third_party_account] rescue '')
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), account_organization_account_number_rules_path, class: 'btn btn-light'

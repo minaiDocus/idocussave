@@ -1,62 +1,61 @@
 #account_number_rules.select_to_download
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .row-fluid
-            .span5
-              %h3 Liste des règles d'affectations bancaires - iDo'FacBanque (#{@account_number_rules_count})
-            .span7.alignright
-              = link_to icon_new + ' Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
-              = link_to icon_new + ' Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
-  .row-fluid
-    .span9.box
-      = form_tag(export_or_destroy_account_organization_account_number_rules_path(@organization), method: :post) do
-        %p Les règles ci-dessous s'appliquent aux opérations récupérées depuis les automates. Vous pouvez exporter les règles sélectionnées ou les supprimer.
-        %button(type="submit" name="export_or_destroy" value="export" class="btn btn-primary")
-          = icon_download + ' Exporter sur Excel '
-        %button(type="submit" name="export_or_destroy" value="destroy" class="btn btn-danger" data-confirm="Etes-vous sûr de vouloir supprimer les règles sélectionnées ?")
-          = icon_not_ok + ' Supprimer les règles '
-        %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
-          = icon_refresh + ' Paramètres avancés '
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des règles d'affectations bancaires - iDo'FacBanque
+            %span.badge.badge-info= @account_number_rules_count
+        .float-right
+          = link_to glyphicon('plus') + ' Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
+          = link_to glyphicon('plus') + ' Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = form_tag(export_or_destroy_account_organization_account_number_rules_path(@organization), method: :post) do
+          .head.clearfix
+            .float-left
+              %p Les règles ci-dessous s'appliquent aux opérations récupérées depuis les automates. Vous pouvez exporter les règles sélectionnées ou les supprimer.
+            .float-right
+              %button(type="submit" name="export_or_destroy" value="export" class="btn btn-primary")
+                = glyphicon('data-transfer-upload') + ' Exporter sur Excel '
+              %button(type="submit" name="export_or_destroy" value="destroy" class="btn btn-danger" data-confirm="Etes-vous sûr de vouloir supprimer les règles sélectionnées ?")
+                = glyphicon('x') + ' Supprimer les règles '
+              %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
+                = icon_refresh + ' Paramètres avancés '
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
-        .row-fluid
-          .span12
-            %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-              %thead
-                %tr
-                  %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
-                  %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
-                  %th= t('activerecord.models.account_number_rule.attributes.rule_target')
-                  %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
-                  %th= t('activerecord.models.account_number_rule.attributes.rule_type')
-                  %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
-                  %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
-                  %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
-              %tbody
-                - @account_number_rules.each do |rule|
-                  %tr
-                    %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
-                    %td= rule.name
-                    %td= t('activerecord.models.account_number_rule.attributes.rule_target_values.' + rule.rule_target)
-                    %td
-                      = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
-                      - if rule.affect == 'user'
-                        - if rule.users.size == 1
-                          (#{rule.users.first.code})
-                        - else
-                          (#{rule.users.size})
-                    %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
-                    %td= rule.categorization
-                    %td= rule.content
-                    %td= rule.third_party_account
-                    %td
-                      = link_to icon(icon: 'plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-mini', title: 'Créer une règle en se basant sur cette règle'
-                      = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
-                      = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
-                      = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
-          = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
-    .span3.box
-      .row-fluid
-        = render partial: 'sidebar'
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
+              %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
+              %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
+              %th= t('activerecord.models.account_number_rule.attributes.rule_type')
+              %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
+              %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
+              %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
+              %th Actions
+          %tbody
+            - @account_number_rules.each do |rule|
+              %tr
+                %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
+                %td= rule.name
+                %td
+                  = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                  - if rule.affect == 'user'
+                    - if rule.users.size == 1
+                      (#{rule.users.first.code})
+                    - else
+                      (#{rule.users.size})
+                %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
+                %td= rule.categorization
+                %td= rule.content
+                %td= rule.third_party_account
+                %td
+                  = link_to glyphicon('plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-light', title: 'Créer une règle en se basant sur cette règle'
+                  = link_to glyphicon('eye'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Voir'
+                  = link_to glyphicon('pencil'), edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Editer'
+                  = link_to glyphicon('x'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+        = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
+    = render partial: 'sidebar'
   = render partial: 'modal_form_skip_accounting_plan'

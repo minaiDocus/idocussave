@@ -24,22 +24,42 @@
   margin: 0
   width: 100%
   height: 30px
+
 #user_logged_in
   padding: 0 0 0 20px
 #notifications
   padding: 0 0 0 20px
 
-.sidebar-nav
-  .nav
-    .nav-item:hover
-      background-color: #E9EAEB
+.bg-menu
+  background-color: #3e2f24 !important
+  color: #fff
+  .nav-link
+    color: #c9dd03 !important
+  .nav-item:hover
+    background-color: #f8f9fa !important
+    .nav-link
+      color: #3e2f24 !important
+  .dropdown-menu .dropdown-item:hover
+    background-color: #f8f9fa !important
+    color: #3e2f24 !important
+  .nav-item.active
+    background-color: #fff !important
+    .nav-link
+      color: #3e2f24 !important
+  .dropdown-menu
     .nav-item.active
-      background-color: #3E2F24
-      .nav-link
-        color: #c9dd03
+      .dropdown-link
+        color: #3e2f24 !important
+
 .nav-tabs
+  .dropdown
+    .dropdown-menu
+      .dropdown-item:hover
+        background-color: #3e2f24 !important
+        color: #fff !important
   .nav-link.active
     background-color: #f8f9fa !important
+
 
 
 
@@ -915,36 +935,6 @@ table td.second
       text-align: center
       width: 168px
 
-/***** Form *****/
-/*** Global ***/
-select
-  width: auto
-/*** Error ***/
-label.error
-  color: #b94a48
-input.error, select.error, textarea.error
-  color: #b94a48
-  border-color: #b94a48
-input.error:focus, select.error:focus, textarea.error:focus
-  border-color: #953b39
-  +box-shadow(#d59392 0 0 6px)
-
-.form-group.error
-  label, .help-inline
-    color: #b94a48
-  .help-inline
-    margin: 0 5px
-  input, select, textarea
-    color: #b94a48
-    border-color: #b94a48
-  input:focus, select:focus, textarea:focus
-    border-color: #953b39
-    +box-shadow(#d59392 0 0 6px)
-
-.with_custom_controls
-  .form-group
-    margin-bottom: 0px !important
-
 /***** Reporting *****/
 #reporting
   table
@@ -1169,6 +1159,8 @@ table.historic
   .media-body
     ul
       margin-left: 10px
+      padding-left: 10px
+      list-style: disclosure-closed
 .notification
   .media-body
     padding-top: 0

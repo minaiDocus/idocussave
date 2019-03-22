@@ -1,39 +1,43 @@
 #invoices
-  .row-fluid
-    .span12.box
-      .pull-left
-        %h3 Factures
-  .row-fluid
-    .span12.box
-      %table.table.table-bordered.table-striped
-        %thead
-          %tr
-            %th Numéro
-            %th Montant
-            %th Actions
-        %tbody
-        - if !@user.leader?
-          %tr
-            %td{ colspan: 3 }
-              .label.label-important Vous n'avez pas le droit necessaire pour acceder à cette page
-        - elsif @organization.try(:is_suspended)
-          %tr
-            %td{ colspan:3 }
-              .label.label-important Cette organization a été suspendue
-        - else
-          - @invoices.each do |invoice|
-            %tr
-              %td= invoice.number
-              %td.price
-                - if invoice.amount_in_cents_w_vat
-                  = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
-              %td.actions
-                = link_to icon_show, organization_invoice_path(invoice.id), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                = icon_link_to organization_invoice_path(invoice.id), { icon: 'download' }, { target: '_blank' }
-        = paginate @invoices, params: { panel: 'invoices' }
-  #showInvoice.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3
-    .modal-body
-      %iframe{ src: '' }
+  .row
+    .col-md-12
+      .card
+        .card-header
+          %h3 Factures
+        .card-body
+          %table.table.table-striped.table-detachable-head.table-border-inner
+            %thead
+              %tr.bg-brown.text-white
+                %th Numéro
+                %th.alignright Montant
+                %th.alignright Actions
+            %tbody
+            - if !@user.leader?
+              %tr
+                %td{ colspan: 3 }
+                  .badge.badge-warning.fs-origin Vous n'avez pas le droit necessaire pour acceder à cette page
+            - elsif @organization.try(:is_suspended)
+              %tr
+                %td{ colspan:3 }
+                  .badge.badge-warning.fs-origin Cette organization a été suspendue
+            - else
+              - @invoices.each do |invoice|
+                %tr
+                  %td= invoice.number
+                  %td.price
+                    - if invoice.amount_in_cents_w_vat
+                      = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                  %td.actions
+                    = link_to glyphicon('eye'), organization_invoice_path(invoice.id), class: 'do-showInvoice mx-md-3', title: "#{invoice.number}.pdf"
+                    = link_to glyphicon('data-transfer-download'), organization_invoice_path(invoice.id), target: '_blank'
+          .float-right
+            = paginate @invoices, params: { panel: 'invoices' }
+
+  #showInvoice.modal.fade
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3
+          %a.close{ data: { dismiss: :modal } } ×
+        .modal-body
+          %iframe{ src: '' }

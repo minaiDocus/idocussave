@@ -9,7 +9,7 @@
             Liste des groupes d'organisation &nbsp;
             %span.badge.badge-info= @organization_groups.total_count
         .float-right
-          = link_to icon_new + ' ' + t('actions.new'), new_account_group_organization_path, class: 'btn btn-primary'
+          = link_to t('actions.new'), new_account_group_organization_path, class: 'btn btn-primary'
 
   .row
     .col-md-12
@@ -17,9 +17,9 @@
         = render partial: 'shared/list_options', locals: { collection: @organization_groups }
         .row
           .col-md-12
-            %table.table.table-condensed.table-striped.margin1top.margin0bottom
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
               %thead
-                %tr
+                %tr.bg-brown.text-white
                   %th= t('activerecord.models.common.attributes.created_at')
                   %th= t('activerecord.models.common.attributes.updated_at')
                   %th Nom
@@ -36,6 +36,6 @@
                         = ',' if index != 0
                         = link_to organization.name, account_organization_path(organization)
                     %td
-                      = link_to icon_edit + 'Éditer', edit_account_group_organization_path(group), class: 'btn btn-secondary'
-                      = link_to icon_destroy + 'Supprimer', account_group_organization_path(group), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-secondary'
+                      = link_to 'Éditer', edit_account_group_organization_path(group), class: 'btn btn-light'
+                      = link_to 'Supprimer', account_group_organization_path(group), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
         = render partial: 'shared/list_options', locals: { collection: @organization_groups }

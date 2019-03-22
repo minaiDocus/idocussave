@@ -1,4 +1,4 @@
-%ul.navbar-nav
+%ul.navbar-nav.bg-menu
   - unless organizations_suspended? && @user.active?
     %li.nav-item{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path, class: 'nav-link'
@@ -14,19 +14,19 @@
         %li.nav-item{ class: (inside_organization? ? 'active' : '') }
           = link_to 'Mon organisation', path, class: 'nav-link'
     - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
-      %li.nav-item.dropdown
+      %li.nav-item.dropdown{ class: (inside_organization? ? 'active' : '') }
         %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
           Mon organisation
           %b.caret
         %ul.dropdown-menu
           - @user.organizations.each do |organization|
-            %li{ class: ((inside_organization? && organization == @organization) ? 'active' : '') }
+            %li.nav-item{ class: ((inside_organization? && organization == @organization) ? 'active' : '') }
               - if organization.is_suspended
-                = link_to account_organization_path(organization, tab: 'payments'), class: 'dropdown-item' do
+                = link_to account_organization_path(organization, tab: 'payments'), class: 'dropdown-item dropdown-link' do
                   = organization.name
                   %i (Suspendu)
               - else
-                = link_to organization.name, account_organization_path(organization), class: 'dropdown-item'
+                = link_to organization.name, account_organization_path(organization), class: 'dropdown-item dropdown-link'
   - unless organizations_suspended? && @user.active?
     %li.nav-item.dropdown{ class: ('active' if ['documents, pre_assignment_ignored, pre_assignment_blocked_duplicates, pre_assignment_delivery_errors'].include? controller_name) }
       %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
@@ -49,8 +49,8 @@
             %b.caret
           %ul.dropdown-menu
             - @user.organizations.each do |organization|
-              %li{ class: ('active' if controller_name == 'reporting' && organization.id.to_s == params[:organization_id]) }
-                = link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id), class: 'dropdown-item'
+              %li.nav-item{ class: ('active' if controller_name == 'reporting' && organization.id.to_s == params[:organization_id]) }
+                = link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id), class: 'dropdown-item dropdown-link'
       - else
         %li.nav-item{ class: ('active' if controller_name == 'reporting') }
           = link_to 'Mon reporting', account_reporting_path, class: 'nav-link'

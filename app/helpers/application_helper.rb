@@ -44,6 +44,7 @@ module ApplicationHelper
   def glyphicon(icon, options={})
     style = ''
     style += options[:size].present? ? "font-size:#{options[:size]};" : ''
+    style = options[:style] if options[:style].present?
     klass = options[:class].to_s
 
     content_tag 'span', '', class: "oi #{klass}", 'aria-hidden' => "true", 'data-glyph' => "#{icon}", style: style

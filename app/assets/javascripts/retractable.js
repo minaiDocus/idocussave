@@ -33,13 +33,13 @@ $(document).ready(function(){
     if($('.retractable-filter .retractable-filter-content').is(':visible')){
       $('.retractable-filter .retractable-filter-content').slideUp('fast');
       $('.retractable-filter').addClass('close');
-      $('.retractable').removeClass('with-filter');
+      $('.retractable.with-filter').attr('style', 'padding-right: 0px !important');
       $(this).attr('title', 'Afficher le filtre');
     }
     else
     {
       $('.retractable-filter .retractable-filter-content').slideDown('fast');
-      $('.retractable').addClass('with-filter');
+      $('.retractable.with-filter').removeAttr('style');
       $('.retractable-filter').removeClass('close');
       $(this).attr('title', 'Cacher le filtre');
     }
@@ -54,7 +54,7 @@ $(document).ready(function(){
     {
       setWidth();
       tableHead.addClass('detached');
-      tableHead.slideDown('fast');
+      tableHead.slideDown(130);
     }
     else if( windowTop <= tableTop && tableHead.hasClass('detached'))
     {
