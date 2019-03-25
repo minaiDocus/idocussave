@@ -33,8 +33,8 @@
                         %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
                         %td
                           - unless account_sharing.is_approved?
-                            = link_to icon_ok, accept_account_organization_account_sharing_path(@organization, account_sharing), method: :post, data: { confirm: "Êtes-vous sûr de vouloir partager le dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: 'Accepter la demande de partage'
-                          = link_to icon_destroy, account_organization_account_sharing_path(@organization, account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage du dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: (account_sharing.is_approved? ? 'Supprimer' : 'Refuser la demande de partage')
+                            = link_to glyphicon('share'), accept_account_organization_account_sharing_path(@organization, account_sharing), method: :post, data: { confirm: "Êtes-vous sûr de vouloir partager le dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: 'Accepter la demande de partage', class: 'btn btn-light'
+                          = link_to glyphicon('x'), account_organization_account_sharing_path(@organization, account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage du dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: (account_sharing.is_approved? ? 'Supprimer' : 'Refuser la demande de partage'), class: 'btn btn-light'
                 = render partial: 'shared/list_options', locals: { collection: @account_sharings }
                 .alignright.margin1bottom
                   = link_to 'Partager un dossier', new_account_organization_account_sharing_path(@organization), class: 'btn btn-primary'

@@ -101,7 +101,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
           redirect_to account_organization_account_number_rules_path(@organization)
       end
     else
-      flash[:warning] = "Veuillez sélectionner les règles d'affectations à exporter ou à supprimer."
+      flash[:alert] = "Veuillez sélectionner les règles d'affectations à exporter ou à supprimer."
 
       redirect_to account_organization_account_number_rules_path(@organization)
     end

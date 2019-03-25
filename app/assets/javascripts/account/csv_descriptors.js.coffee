@@ -61,5 +61,5 @@ jQuery ->
         else
           part = field
         directive.push(part)
-      $('#csv_descriptor_directive').val(directive.join('|'))
+      $('#csv_descriptor_directive').val(directive.join('|separator|'))
       true

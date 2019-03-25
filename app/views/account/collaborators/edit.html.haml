@@ -1,7 +1,8 @@
 #collaborator
-  .row-fluid
-    .span12.box
-      %h3 Édition du collaborateur : #{ link_to @member.name, account_organization_collaborator_path(@organization, @member) }
-  .row-fluid
-    .span12.box
-      = render partial: 'form'
+  .card
+    .card-header
+      %h3
+        Édition du collaborateur : 
+        = link_to @member.name, account_organization_collaborator_path(@organization, @member), class: 'fs-origin'
+
+    = render partial: 'form'

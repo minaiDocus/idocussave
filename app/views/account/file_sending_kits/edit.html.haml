@@ -5,35 +5,35 @@
     .card-body
       .row
         .col-md-6
-          .card{ style: 'min-height: 240px; margin-bottom: 10px;' }
-            .card-header
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
               %h4= t('common.details')
-            .card-body
+              %hr
               = f.input :title
               = f.input :position
               = f.input :instruction, as: :text
         .col-md-6
-          .card{ style: 'min-height: 240px; margin-bottom: 10px;' }
-            .card-header
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.center')
-            .card-body
+              %hr
               = f.input :logo_path, input_html: { class: 'span12' }
               = f.input :logo_height
               = f.input :logo_width
       .row
         .col-md-6
-          .card{ style: 'min-height: 240px; margin-bottom: 10px;' }
-            .card-header
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.left')
-            .card-body
+              %hr
               = f.input :left_logo_path, input_html: { class: 'span12' }
               = f.input :left_logo_height
               = f.input :left_logo_width
         .col-md-6
-          .card{ style: 'min-height: 240px; margin-bottom: 10px;' }
-            .card-header
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.right')
-            .card-body
+              %hr
               = f.input :right_logo_path, input_html: { class: 'span12' }
               = f.input :right_logo_height
               = f.input :right_logo_width

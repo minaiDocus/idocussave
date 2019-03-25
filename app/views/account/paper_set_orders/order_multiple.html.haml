@@ -1,20 +1,18 @@
 #paper_set_orders.order_multiple
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .row-fluid
-            .span5
-              %h3 Commande multiple de Kit Courriers (#{@orders.count})
-            .span7.alignright
-              = link_to t('actions.return'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn'
-  .row-fluid
-    .span12.box
-      %p Veuillez choisir les options pour chaque commande.
-      = form_tag create_multiple_account_organization_paper_set_orders_path(@organization) do |f|
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom
+  .card
+    .card-header
+      .float-left
+        %h3 
+          Commande multiple de Kit Courriers 
+          %span.badge.badge-info= @orders.count
+      .float-right
+        = link_to t('actions.return'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'
+    = form_tag create_multiple_account_organization_paper_set_orders_path(@organization) do |f|
+      .card-body
+        %p Veuillez choisir les options pour chaque commande.
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
           %thead
-            %tr
+            %tr.bg-brown.text-white
               %th code
               %th société
               %th dern. envel. retour
@@ -45,6 +43,7 @@
         .aligncenter
           %h4 Total de la commande :
           %b.total_price{ style: 'font-size:20px' }
+      .card-footer
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn'
+          = link_to t('actions.cancel'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'

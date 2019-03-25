@@ -1,14 +1,12 @@
 #journal.edit
-  .row-fluid
-    .span12.box
-      .pull-left
+  .card
+    .card-header.clearfix
+      .float-left
         %h3
           Edition du journal : #{@journal.name}
           - if @customer
-            ( #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')} )
+            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'fs-origin'
       - if @customer.try(:uses_ibiza_analytics?)
-        .pull-right
+        .float-right
           = link_to 'Edition Compta Analytique', edit_analytics_account_organization_customer_journals_path(@organization, @customer, id: @journal), class: 'btn btn-primary'
-  .row-fluid
-    .span12.box
-      = render partial: 'form'
+    = render partial: 'form'

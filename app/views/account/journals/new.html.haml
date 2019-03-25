@@ -1,18 +1,19 @@
 #journal.new
   - if @customer && !@customer.configured?
     = render 'account/customers/steps'
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3
         Nouveau journal comptable
         - if @customer && @customer.configured?
-          pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')}
-  .row-fluid
-    .span12.box
-      - is_disabled = !is_preassignment_authorized?
-      = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
-        %fieldset
-          %legend Codes journaux
+          pour le client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'fs-origin'
+    = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form-horizontal' } do |f|
+      .card-body
+        - is_disabled = !is_preassignment_authorized?
+        .box.step.bg-light
+          %h4 Codes journaux
+          %hr
           = f.input :name, label: 'Attribuez un nom de code journal iDocus', hint: 'Ce code doit si possible être similaire à celui utilisé dans votre outil comptable. La modification de ce code journal n’est possible que pendant 24 heures.'
           = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
           - if @customer && @customer.uses_ibiza? && @organization.ibiza.try(:configured?)
@@ -25,13 +26,15 @@
               = render 'shared/ibiza_not_configured_warning'
 
         - if @organization.knowings.try(:is_configured?)
-          %fieldset{ style: 'display:none' }
-            %legend Knowings
+          .box.bg-light{ style: 'display:none' }
+            %h4 Knowings
+            %hr
             = f.input :domain, label: 'A quel domaine Knowings souhaitez-vous rattacher le journal comptable iDocus ?', collection: journal_domain_for_select, include_blank: false
 
         - if !@customer || is_preassignment_authorized?
-          %fieldset{ style: 'display:none' }
-            %legend Pré-saisie comptable
+          .box.step.bg-light{ style: 'display:none' }
+            %h4 Pré-saisie comptable
+            %hr
             = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
 
             .pre-assignment-attributes{ style: 'display:none;' }
@@ -60,15 +63,20 @@
               = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie ?', input_html: { disabled: is_disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
 
         - if !@customer || @customer.subscription.is_mail_package_active
-          %fieldset{ style: 'display:none' }
-            %legend Instructions pour iDo'Courrier
+          .box.step.bg-light{ style: 'display:none' }
+            %h4 Instructions pour iDo'Courrier
+            %hr
             = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
         - unless @customer
-          %fieldset{ style: 'display:none' }
-            %legend Option
+          .box.step.bg-light{ style: 'display:none' }
+            %h4 Option
+            %hr
             = f.input :is_default, as: :boolean
-        .form-actions.margin0bottom{ style: 'display:none' }
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
+      .card-footer
+        .form-actions
+          = f.submit t('actions.submit'), class: 'btn btn-primary', disable: 'disable'
           - unless @customer
-            = link_to t('actions.cancel'), account_organization_journals_path(@organization), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_journals_path(@organization), class: 'btn btn-light'
+          - else
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn btn-light'

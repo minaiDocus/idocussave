@@ -1,19 +1,20 @@
 #journals.select
-  .row-fluid
-    .span12.box
-      %h3 Copier des journaux pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')}
-  .row-fluid
-    .span12.box
-      = form_tag copy_account_organization_customer_journals_path(@organization, @customer), method: 'POST', class: 'form form-horizontal margin0bottom' do
-        %table.table.table-striped.table-condensed.table-bordered.margin0
+  .card
+    .card-header
+      %h3 
+        Copier des journaux pour le client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'fs-origin'
+    = form_tag copy_account_organization_customer_journals_path(@organization, @customer), method: 'POST', class: 'form-horizontal' do
+      .card-body
+        %table.table.table-striped.table-condensed.table-bordered-inner.margin0
           %thead
-            %tr
+            %tr.bg-brown.text-white
               %th.check_box{ rowspan: 2, style: 'vertical-align:middle' }
               %th.aligncenter{ rowspan: 2, style: 'vertical-align:middle' } Par defaut ?
               %th{ rowspan: 2, style: 'vertical-align:middle' } Code journal iDocus
               %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
               %th.aligncenter{ colspan: 4 } Pré-saisie comptable
-            %tr
+            %tr.bg-brown-light.text-white
               %th Type de pré-saisie
               %th Type de compte
               %th Compte tiers
@@ -29,6 +30,7 @@
                 %td= label_tag "journals_ids_#{journal.id}", (journal.is_pre_assignment_processable? ? (journal.default_account? ? 'compte par défaut' : "compte d'attente") : '')
                 %td= label_tag "journals_ids_#{journal.id}", journal.meta_account_number || ''
                 %td= label_tag "journals_ids_#{journal.id}", journal.meta_charge_account || ''
+      .card-footer
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn btn-light'

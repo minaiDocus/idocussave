@@ -321,7 +321,6 @@ module ApplicationHelper
       [t('activerecord.models.csv_descriptor.attributes.piece_url'), :piece_url],
       [t('activerecord.models.csv_descriptor.attributes.remark'), :remark],
       [t('activerecord.models.csv_descriptor.attributes.third_party'), :third_party],
-      ['Separateur', :separator],
       ['Autre', :other]
     ]
   end

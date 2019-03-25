@@ -1,16 +1,18 @@
-= simple_form_for @member, url: collaborator_form_url(@organization, @member), html: { class: 'form form-horizontal margin0bottom' } do |f|
-  = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
-  - if @user.leader?
-    = f.input :role, collection: organization_role_options, required: true, include_blank: false, prompt: ''
-  = f.input :group_ids, collection: @organization.groups, as: :check_boxes, required: (not @user.leader?), label: t('activerecord.models.group.name').pluralize
-  = f.simple_fields_for :user do |uf|
-    = uf.input :company
-    = uf.input :first_name
-    = uf.input :last_name
-    = uf.input :email, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @member.user.admin?
-  .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - if action_name.in?(%w(new create))
-      = link_to t('actions.cancel'), account_organization_collaborators_path(@organization), class: 'btn'
-    - else
-      = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @member), class: 'btn'
+= simple_form_for @member, url: collaborator_form_url(@organization, @member), html: { class: 'form-horizontal' } do |f|
+  .card-body
+    = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
+    - if @user.leader?
+      = f.input :role, collection: organization_role_options, required: true, prompt: ''
+    = f.input :group_ids, collection: @organization.groups, as: :check_boxes, required: (not @user.leader?), label: t('activerecord.models.group.name').pluralize
+    = f.simple_fields_for :user do |uf|
+      = uf.input :company
+      = uf.input :first_name
+      = uf.input :last_name
+      = uf.input :email, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @member.user.admin?
+  .card-footer
+    .form-actions.margin0bottom
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
+      - if action_name.in?(%w(new create))
+        = link_to t('actions.cancel'), account_organization_collaborators_path(@organization), class: 'btn btn-light'
+      - else
+        = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @member), class: 'btn btn-light'

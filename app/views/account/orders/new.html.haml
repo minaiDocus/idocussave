@@ -1,19 +1,20 @@
 #order.new
   - unless @customer.configured?
     = render 'account/customers/steps'
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3
         - if @order.dematbox?
           Commande du scanner iDocus’Box
         - else
           Commande de Kit envoi courrier
-        - if @customer.configured?
-          pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders')}
-        - else
-          pour le dossier : #{@customer}
 
-  .row-fluid
-    .span12.box
-      = simple_form_for @order, url: account_organization_customer_orders_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
-        = render partial: 'form', locals: { f: f }
+        - if @customer.configured?
+          pour le client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'fs-origin'
+        - else
+          pour le dossier : 
+          %span.text-info.fs-origin= @customer
+
+    = simple_form_for @order, url: account_organization_customer_orders_path(@organization, @customer), html: { class: 'form-horizontal' } do |f|
+      = render partial: 'form', locals: { f: f }
