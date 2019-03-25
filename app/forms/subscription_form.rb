@@ -70,7 +70,7 @@ class SubscriptionForm
         @subscription.is_basic_package_active     = false
         @subscription.is_mail_package_active      = false
         @subscription.is_scan_box_package_active  = false
-        @subscription.is_retriever_package_active = params[:is_retriever_package_active] == '1'
+        @subscription.is_retriever_package_active = false
         @subscription.period_duration             = params[:period_duration]
       elsif params[:is_mini_package_active] == '1'
         @subscription.is_mini_package_active      = true

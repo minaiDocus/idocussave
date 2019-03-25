@@ -201,6 +201,7 @@ class PeriodPresenter
       excess_scan:                   format_price(@period.price_in_cents_of_excess_scan),
       excess_dematbox_scanned_pages: format_price(@period.price_in_cents_of_excess_dematbox_scanned_pages),
       excess_compta_pieces:          format_price(@period.price_in_cents_of_excess_compta_pieces),
+      excess_paperclips:             format_price(@period.price_in_cents_of_excess_paperclips),
       total:                         format_price(@period.price_in_cents_wo_vat),
       invoices:                      _invoices
     }

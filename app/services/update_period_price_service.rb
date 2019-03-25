@@ -55,7 +55,8 @@ private
     @period.price_in_cents_of_excess_scan +
     @period.price_in_cents_of_excess_compta_pieces  +
     @period.price_in_cents_of_excess_uploaded_pages +
-    @period.price_in_cents_of_excess_dematbox_scanned_pages
+    @period.price_in_cents_of_excess_dematbox_scanned_pages +
+    @period.price_in_cents_of_excess_paperclips
   end
 
   def total_price

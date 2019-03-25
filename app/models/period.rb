@@ -118,7 +118,7 @@ class Period < ActiveRecord::Base
 
 
   def price_in_cents_of_excess_scan
-    price_in_cents_of_excess_sheets + price_in_cents_of_excess_paperclips + price_in_cents_of_excess_oversized
+    price_in_cents_of_excess_sheets + price_in_cents_of_excess_oversized
   end
 
 
