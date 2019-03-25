@@ -38,6 +38,7 @@ a:hover
   :color #35bdff
 
 input[type="radio"], input[type="checkbox"]
+  cursor: pointer
   margin-right: 5px
 
 nav.navbar
@@ -124,17 +125,41 @@ form
       max-width: 400px
     input[type="checkbox"], input[type="radio"]
       width: auto !important
+    .radio
+      label
+        border: 1px solid #ddd
+        padding: 0 3px
+        border-radius: 3px
+        cursor: pointer
+        input[type="radio"]
+          display: none
+      label.checked
+        background-color: #007bff !important
+        border: 1px solid #007bff
+        color: #fff
+      label:hover
+        background-color: #eee
+    .checkbox
+      display: inline-block
+      cursor: pointer
+      input[type="checkbox"]
+        display: inline-block
     .sol-selection
       .sol-option
         input, select, textarea
           width: auto
     .help-block
       color: #666
+  .radio_buttons, .boolean
+    .help-block
+      margin-left: 10px
 
 form.form-horizontal
+  line-height: 25px
   .form-group
     .label-section
-      width: 260px
+      width: 250px
+      margin-right: 10px
       float: left
     .control-section
       margin-left: 0px
@@ -144,7 +169,14 @@ form.form-horizontal.label-auto
   .form-group
     .label-section
       width: auto
-      margin-right: 10px
+    .control-section
+      width: auto
+form.form-horizontal.label-large
+  .form-group
+    .label-section
+      width: 550px
+    .control-section
+      width: calc(100% - 570px)
 form.form-filter
   .form-actions
     text-align: right

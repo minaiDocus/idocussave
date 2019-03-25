@@ -1,34 +1,32 @@
 .edit
-  .row
-    .col-md-12
-      .box
-        %h3 Édition de l'organisation
+  .card
+    .card-header
+      %h3 Édition de l'organisation
 
-  .row-fluid
-    .col-md-12
-      .box
-        = simple_form_for [:account, @organization], html: { class: 'form-horizontal' } do |f|
-          = hidden_field_tag :part, params[:part]
+    = simple_form_for [:account, @organization], html: { class: 'form-horizontal' } do |f|
+      .card-body
+        = hidden_field_tag :part, params[:part]
+        - if params[:part] != 'other_software'
+          = f.input :name
+          - if @user.is_admin
+            = f.input :is_detail_authorized, as: :boolean
+            = f.input :is_test,              as: :boolean
+          = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]
+          = f.input :is_operation_processing_forced, as: :boolean, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques)."
+          = f.input :is_operation_value_date_needed, as: :boolean, hint: "La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation."
+          = f.input :preseizure_date_option, as: :radio_buttons, collection: preseizure_date_options, hint: "Cette option permet de choisir la date d'écriture de l'opération qui sera exportée."
+          = f.input :is_duplicate_blocker_activated, as: :boolean
+          = f.input :invoice_mails, hint: 'Doit être séparé par une virgule (",") si plusieurs'
+          - if @user.is_admin
+            = f.input :subject_to_vat, as: :boolean
+        - else
+          = f.input :is_quadratus_used, as: 'boolean'
+          = f.input :is_coala_used, as: 'boolean'
+          = f.input :is_csv_descriptor_used, as: 'boolean'
+      .card-footer
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
           - if params[:part] != 'other_software'
-            = f.input :name
-            - if @user.is_admin
-              = f.input :is_detail_authorized, as: :boolean
-              = f.input :is_test,              as: :boolean
-            = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]
-            = f.input :is_operation_processing_forced, as: :boolean, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques)."
-            = f.input :is_operation_value_date_needed, as: :boolean, hint: "La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation."
-            = f.input :preseizure_date_option, as: :radio_buttons, collection: preseizure_date_options, hint: "Cette option permet de choisir la date d'écriture de l'opération qui sera exportée."
-            = f.input :is_duplicate_blocker_activated, as: :boolean
-            = f.input :invoice_mails, hint: 'Doit être séparé par une virgule (",") si plusieurs'
-            - if @user.is_admin
-              = f.input :subject_to_vat, as: :boolean
+            = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn btn-light'
           - else
-            = f.input :is_quadratus_used, as: 'boolean'
-            = f.input :is_coala_used, as: 'boolean'
-            = f.input :is_csv_descriptor_used, as: 'boolean'
-          .form-actions.margin0bottom
-            = f.submit t('actions.submit'), class: 'btn btn-primary'
-            - if params[:part] != 'other_software'
-              = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
-            - else
-              = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'other_software'), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'other_software'), class: 'btn btn-light'

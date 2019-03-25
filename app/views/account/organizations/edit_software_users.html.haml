@@ -1,40 +1,34 @@
-#organizations.container-fluid
+#organizations
   .edit_software_users
-    .row
-      .col-md-12.box
+    .card
+      .card-header
         %h3 Edition des utilisateurs : #{@software_name}
-
-    .row
-      .col-md-12.px-0
-        = form_tag update_software_users_account_organization_path(@organization), method: 'patch', multipart: true, class: 'form form-horizontal margin0' do |f|
+      = form_tag update_software_users_account_organization_path(@organization), method: 'patch', multipart: true, class: 'form-horizontal' do |f|
+        .card-body.clearfix
           = hidden_field_tag :software, @software
-          .card
-            .card-header
-              %h3 Assignation des dossiers
-            .card-body
-              .form-group
-                .label-section
-                  = label_tag 'software_account_list', "Liste des clients assignés à l'option : #{@software_name}", class: 'select control-label'
-                .control-section
-                  -list_options  = @organization.customers.active.order(:code)
-                  -list_selected = []
-                  -if @software == 'coala'
-                    -list_selected = list_options.select{ |c| c.uses_coala? }
-                  -elsif @software == 'quadratus'
-                    -list_selected = list_options.select{ |c| c.uses_quadratus? }
-                  -elsif @software == 'cegid'
-                    -list_selected = list_options.select{ |c| c.uses_cegid? }
-                  -elsif @software == 'csv_descriptor'
-                    -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
-                  -elsif @software == 'ibiza'
-                    -list_selected = list_options.select{ |c| c.uses_ibiza? }
-                  -elsif @software == 'exact_online'
-                    -list_selected = list_options.select{ |c| c.uses_exact_online? }
-                  -elsif @software == 'fec_agiris'
-                    -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
+          .form-group
+            .label-section
+              = label_tag 'software_account_list', "Liste des clients assignés à l'option : #{@software_name}", class: 'select control-label'
+            .control-section
+              -list_options  = @organization.customers.active.order(:code)
+              -list_selected = []
+              -if @software == 'coala'
+                -list_selected = list_options.select{ |c| c.uses_coala? }
+              -elsif @software == 'quadratus'
+                -list_selected = list_options.select{ |c| c.uses_quadratus? }
+              -elsif @software == 'cegid'
+                -list_selected = list_options.select{ |c| c.uses_cegid? }
+              -elsif @software == 'csv_descriptor'
+                -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
+              -elsif @software == 'ibiza'
+                -list_selected = list_options.select{ |c| c.uses_ibiza? }
+              -elsif @software == 'exact_online'
+                -list_selected = list_options.select{ |c| c.uses_exact_online? }
+              -elsif @software == 'fec_agiris'
+                -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
 
-                  = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
-            .card-footer
-              .form-actions
-                = submit_tag t('actions.submit'), class: 'btn btn-primary'
-                = link_to t('actions.cancel'), account_organization_path(@organization, tab: @software), class: 'btn btn-light'
+              = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
+        .card-footer
+          .form-actions
+            = submit_tag t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: @software), class: 'btn btn-light'

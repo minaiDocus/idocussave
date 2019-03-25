@@ -18,7 +18,7 @@
       = stylesheet_link_tag 'account/addresses'
     - elsif controller_name.in?(%w(invoices))
       = stylesheet_link_tag 'account/invoices'
-    - elsif !controller_name.in?(%w(accounting_plans vat_accounts knowings pack_reports reminder_emails organization_period_options file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharings account_sharing_groups guest_collaborators ibizabox_documents ftps))
+    - elsif !controller_name.in?(%w(accounting_plans vat_accounts knowings pack_reports reminder_emails file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharings account_sharing_groups guest_collaborators ibizabox_documents ftps))
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body
@@ -81,10 +81,10 @@
                           %br
                           (iDo'FacBanque)
                           = glyphicon('list', { class: 'float-right', style: 'margin-top: -8px' })
-                    %li.nav-item{ class: (controller_name.in?(%w(pre_assignments pre_assignment_ignored pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
-                      %a{ href: account_documents_path, class: 'nav-link' }
-                        Pré-affectations
-                        = glyphicon('file', { class: 'float-right' })
+                    - # %li.nav-item{ class: (controller_name.in?(%w(pre_assignments pre_assignment_ignored pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
+                    - # %a{ href: account_documents_path, class: 'nav-link' }
+                    - # Pré-affectations
+                    - # glyphicon('file', { class: 'float-right' })
                     %li.nav-item{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
                       %a{ href: account_organization_paper_set_orders_path(@organization), class: 'nav-link' }
                         Commande Kit Courriers

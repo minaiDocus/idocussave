@@ -66,6 +66,21 @@ jQuery(function () {
       $(e.currentTarget).addClass('active');
   });
 
+  //Custom Radio buttons
+  $('form .radio_buttons .control-section').each(function(e){
+    var label_parent = $(this).find('input[type="radio"]:checked').parent();
+    label_parent.addClass('checked');
+  });
+
+  $('form .radio_buttons .control-section .radio label').unbind('click');
+  $('form .radio_buttons .control-section .radio label').bind('click', function(e) {
+    var section = $(this).parent().parent();
+    section.find('label.checked').removeClass('checked');
+    $(this).addClass('checked');
+  });
+  //end custom radio buttons
+
+
   $("a[rel=popover]").popover();
   $(".tooltip").tooltip();
   $("a[rel=tooltip]").tooltip();

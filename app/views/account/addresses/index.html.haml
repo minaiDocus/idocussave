@@ -2,13 +2,13 @@
   .alerts
     = render 'shared/messages'
 
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       = render partial: 'navigation'
   - grouped_addresses = @addresses.in_groups_of(3)
   - grouped_addresses.each_with_index do |addresses, index|
-    .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+    .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
       - addresses.each do |address|
         - if address
-          .span4
+          .col-md-4
             = render partial: 'address', locals: { address: address, single: false }

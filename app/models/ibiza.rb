@@ -2,8 +2,9 @@
 class Ibiza < ApplicationRecord
   audited
 
-  serialize :description, Hash
-  serialize :piece_name_format, Hash
+  # TODO: revew serialization
+  # serialize :description, Hash
+  # serialize :piece_name_format, Hash
 
   attr_encrypted :access_token,   random_iv: true
   attr_encrypted :access_token_2, random_iv: true
@@ -17,6 +18,15 @@ class Ibiza < ApplicationRecord
 
   before_save :update_states
 
+  #TODO: remove those methods when serializations of :description and :piece_name_fromat are fixed
+  def description
+    {}
+  end
+
+  def piece_name_format
+    {}
+  end
+  #TODO: end
 
   def configured?
     state == 'valid' || state_2 == 'valid'
