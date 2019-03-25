@@ -1,15 +1,15 @@
-.row-fluid
-  .span3
-    .pull-left.padding1top
+.row
+  .col-md-3
+    .float-left.padding1top
       Afficher par :
       = per_page_link 20
       = per_page_link 50
       = per_page_link 100
-  .span5.padding1top
+  .col-md-5.padding1top
     - if params[:with_details].nil? || params[:with_details] == "true"
-      = link_to "Cacher les détails", params.merge({ with_details: false }), class: 'btn btn-mini'
+      = link_to "Cacher les détails", params.to_unsafe_h.merge({ with_details: false }), class: 'btn btn-light'
     - else
-      = link_to "Afficher les détails", params.merge({ with_details: true }), class: 'btn btn-mini'
-  .span4
-    .pull-right
+      = link_to "Afficher les détails", params.to_unsafe_h.merge({ with_details: true }), class: 'btn btn-light'
+  .col-md-4
+    .float-right
       = paginate @customers

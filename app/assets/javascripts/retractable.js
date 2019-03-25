@@ -46,21 +46,24 @@ $(document).ready(function(){
   });
 
   $(window).scroll(function(e){
-    var tableTop = $('table.table-detachable-head').offset().top;
-    var tableHead = $('table.table-detachable-head thead');
-    var windowTop = $(window).scrollTop();
+    if($('table.table-detachable-head').length > 0)
+    {
+      var tableTop = $('table.table-detachable-head').offset().top;
+      var tableHead = $('table.table-detachable-head thead');
+      var windowTop = $(window).scrollTop();
 
-    if(windowTop > tableTop && !tableHead.hasClass('detached'))
-    {
-      setWidth();
-      tableHead.addClass('detached');
-      tableHead.slideDown(130);
-    }
-    else if( windowTop <= tableTop && tableHead.hasClass('detached'))
-    {
-      removeWidth();
-      tableHead.removeClass('detached');
-      tableHead.slideUp('fast', function(e){ tableHead.removeAttr('style'); });
+      if(windowTop > tableTop && !tableHead.hasClass('detached'))
+      {
+        setWidth();
+        tableHead.addClass('detached');
+        tableHead.slideDown(130);
+      }
+      else if( windowTop <= tableTop && tableHead.hasClass('detached'))
+      {
+        removeWidth();
+        tableHead.removeClass('detached');
+        tableHead.slideUp('fast', function(e){ tableHead.removeAttr('style'); });
+      }
     }
   });
 });

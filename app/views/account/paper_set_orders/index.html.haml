@@ -37,8 +37,8 @@
                 %td= Order.state_machine.states[order.state].human_name
                 %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
                 %td
-                  = link_to icon(icon: 'plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-mini', title: 'Recommander le même kit'
-                  = link_to icon_edit, edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-mini', title: 'Editer'
-                  = link_to icon_destroy, account_organization_paper_set_order_path(@organization, order), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+                  = link_to glyphicon('plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-light', title: 'Recommander le même kit'
+                  = link_to glyphicon('pencil'), edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', title: 'Editer'
+                  = link_to glyphicon('x'), account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
         = render partial: 'shared/list_options', locals: { collection: @orders }
     = render partial: 'sidebar'

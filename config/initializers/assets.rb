@@ -14,14 +14,14 @@ Rails.application.config.assets.precompile += %w( admin.css admin/events.css adm
 
 Rails.application.config.assets.precompile += %w( account/profiles.css account/addresses.css account/organizations.css account/group_organizations.css account/ibiza.css account/paper_processes.css
                                                   account/subscriptions.css account/groups.css account/collaborators.css account/journals.css account/account_number_rules.css account/paper_set_orders.css
-                                                  account/invoices.css )
+                                                  account/invoices.css account/customers.css account/file_naming_policies.css account/organization_addresses.css account/organization_period_options.css )
 
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
                                                   admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js )
 
 Rails.application.config.assets.precompile += %w( inner.js welcome.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js
                                                   account/subscriptions.js account/organization_subscriptions.js account/groups.js account/journals.js account/account_number_rules.js account/paper_set_orders.js 
-                                                  account/account_sharings.js account/invoices.js)
+                                                  account/account_sharings.js account/invoices.js account/customers.js account/file_naming_policies.js account/organization_period_options.js )
 
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets

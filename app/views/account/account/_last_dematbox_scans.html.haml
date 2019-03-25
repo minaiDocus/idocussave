@@ -1,9 +1,9 @@
 .row-fluid
   .col-sm-12
     %h4 Derniers documents scannés via la Demat'Box
-    %table.table.table-striped.table-condensed.table-bordered.margin1top.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin1top.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           %th Nom iDocus
           - if @user.is_prescriber

@@ -1,9 +1,9 @@
 .row-fluid
   .col-sm-12
     %h4 Derniers kits envoyés
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client
@@ -27,9 +27,9 @@
 .row-fluid.margin3top
   .col-sm-12
     %h4 Dernières enveloppes reçues
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client
@@ -53,9 +53,9 @@
 .row-fluid.margin3top
   .col-sm-12
     %h4 Derniers documents numérisés
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           %th Nom
       %tbody
@@ -72,9 +72,9 @@
 .row-fluid.margin3top
   .col-sm-12
     %h4 Dernières enveloppes retournées
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client

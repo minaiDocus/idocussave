@@ -1,56 +1,72 @@
 #organization_subscriptions.select_options
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3 Propager les quotas
-
-  .row-fluid
-    .span12.box
-      = simple_form_for @subscription, url: propagate_options_account_organization_organization_subscription_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
-        .row-fluid
-          .span6
-            %h4.aligncenter Feuilles
-            %br
-            = f.input :max_sheets_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_sheet, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Pages téléversées
-            %br
-            = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Pages iDocus'Box
-            %br
-            = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Pièces presaisies
-            %br
-            = f.input :max_preseizure_pieces_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_preseizure, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Pièces notes de frais
-            %br
-            = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Attaches
-            %br
-            = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            %hr
-            %h4.aligncenter Hors format
-            %br
-            = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
-            = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-          .span6
-            %h4.aligncenter Clients
-            %br
-            = check_box_tag 'master_checkbox', 0, false, class: 'pull-left', style: 'top:0px'
-            %label.margin2left{ for: 'master_checkbox' } Tous/Aucun
-            - @organization.customers.active.order(code: :asc).each do |customer|
-              = check_box_tag 'subscription[customer_ids][]', customer.id, false, id: "subscription_customer_id_#{customer.id}", class: 'checkbox pull-left', style: 'top:0px'
-              %label.margin2left{ for: "subscription_customer_id_#{customer.id}" }= customer.info
-            = hidden_field_tag 'subscription[customer_ids][]', ''
+    = simple_form_for @subscription, url: propagate_options_account_organization_organization_subscription_path(@organization), html: { class: 'form-horizontal' } do |f|
+      .card-body
+        .row
+          .col-md-6
+            .card
+              .card-header
+                %h4 Feuilles
+              .card-body
+                = f.input :max_sheets_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_sheet, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Pages téléversées
+              .card-body
+                = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Pages iDocus'Box
+              .card-body
+                = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Pièces presaisies
+              .card-body
+                = f.input :max_preseizure_pieces_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_preseizure, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Pièces notes de frais
+              .card-body
+                = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Attaches
+              .card-body
+                = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            .card
+              .card-header
+                %h4 Hors format
+              .card-body
+                = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
+                = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+          .col-md-6
+            .card
+              .card-header
+                %h4 Clients
+              .card-body
+                %table.table.table-condensed.table-striped.table-bordered-inner
+                  %thead
+                    %tr
+                      %th{ style: 'width: 20px' }= check_box_tag 'master_checkbox', 0, false
+                      %th
+                        %label{ for: 'master_checkbox' } Tous/Aucun
+                  %tbody
+                    - @organization.customers.active.order(code: :asc).each do |customer|
+                      %tr
+                        %td= check_box_tag 'subscription[customer_ids][]', customer.id, false, id: "subscription_customer_id_#{customer.id}", class: 'checkbox'
+                        %td
+                          %label{ for: "subscription_customer_id_#{customer.id}" }= customer.info
+                = hidden_field_tag 'subscription[customer_ids][]', ''
+      .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.propagate'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'subscription'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'subscription'), class: 'btn btn-light'

@@ -1,19 +1,18 @@
 ﻿#organization_subscriptions.edit
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3 Quelle(s) option(s) ajouter à la facture de l'organisation ?
-
-  .row-fluid
-    .span12.box
-      = simple_form_for @subscription, url: account_organization_organization_subscription_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
+    = simple_form_for @subscription, url: account_organization_organization_subscription_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
+      .card-body
         = hidden_field_tag 'subscription[option_ids][]'
-        %table.table.table-condensed.table-striped.table-bordered
+        %table.table.table-condensed.table-striped.table-bordered-inner
           %tbody
             - SubscriptionOption.by_position.each do |option|
               %tr
-                %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
+                %td{style: 'width: 66px'}= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
                 %td= label_tag "subscription_option_ids_#{option.id}", option.name
                 %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
+      .card-footer 
         .form-actions.margin0bottom
           = f.submit 'Valider', class: 'btn btn-primary'
-          = link_to 'Annuler', account_organization_path(@organization, tab: 'subscription'), class: 'btn'
+          = link_to 'Annuler', account_organization_path(@organization, tab: 'subscription'), class: 'btn btn-light'

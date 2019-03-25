@@ -80,7 +80,7 @@ $menuPositionLeft: -210px;
   width: auto;
 }
 .retractable .retractable-filter-content .card-body{
-  max-height: 600px;
+  max-height: 560px;
   overflow-y: scroll;
 }
 
