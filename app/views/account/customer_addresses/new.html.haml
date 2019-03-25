@@ -1,11 +1,7 @@
-#address.new.row-fluid
-  .span12
-    .row-fluid
-      .span12.box
-        .row-fluid
-          .span12
-            .pull-left
-              %h3 Nouvelle adresse pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses')}
-    .row-fluid
-      .span12.box
-        = render partial: 'form'
+#address.new
+  .card
+    .card-header
+      %h3 
+        Nouvelle adresse pour le client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses'), class: 'fs-origin'
+    = render partial: 'form'

@@ -1,16 +1,19 @@
 #customer.edit
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition des options de comptabilité du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta')}
-  - else
-    = render 'steps'
-    .row-fluid
-      .span12.box
-        %h3 Options pour le dossier : #{@customer}
-  .row-fluid
-    .span12.box
-      = simple_form_for @customer, url: update_compta_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3 
+          Edition des options de comptabilité du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'fs-origin'
+      - else
+        .float-left
+          %h3
+            Options pour le dossier : 
+            %span.text-info.fs-origin= @customer
+        .float-right
+          = render 'steps'
+    = simple_form_for @customer, url: update_compta_options_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |f|
+      .card-body
         = f.simple_fields_for :options do |o|
           = o.hidden_field :id
           = o.input :is_taxable, collection: [['Oui', true], ['Non (aucune TVA ne sera reportée en pré-saisie)', false]], as: :radio_buttons
@@ -18,11 +21,12 @@
           = o.input :is_operation_processing_forced, collection: operation_processing_options, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques).", as: :radio_buttons
           = o.input :is_operation_value_date_needed, collection: operation_value_date_options, hint: "La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation.", as: :radio_buttons
           = o.input :preseizure_date_option, as: :radio_buttons, collection: preseizure_date_options(true), hint: "Cette option permet de choisir la date d'écriture de l'opération qui sera exportée."
+      .card-footer
         .form-actions.margin0bottom
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn btn-light'
           - else
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
             = f.submit t('actions.next_step'), class: 'btn btn-primary'

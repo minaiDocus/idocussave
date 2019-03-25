@@ -1,83 +1,91 @@
-= simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
-  = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
-  - if @customer && @customer.uses_ibiza?
-    - if @organization.ibiza.configured?
-      .block_input.clearfix
-        = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
-        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
-          %i.icon-chevron-down
-      .controls{style: 'margin-bottom: 18px'}
-        .block_selection_journals
-          %strong.help-block{style: 'margin-top: 2px'} Journaux Ibiza :
-          = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
-        %p.help-block si différent de "Code journal" ci-dessus
-    - else
-      .control-group
-        %label.control-label= t('simple_form.labels.account_book_type.pseudonym')
-        .controls
-          %select.select.disabled{ disabled: 'disabled' }
-          %p
-            = render 'shared/ibiza_not_configured_warning'
-  - elsif @customer && @customer.uses_exact_online?
-    - if @customer.exact_online.try(:fully_configured?)
-      .block_input.clearfix
-        = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
-        %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
-          %i.icon-chevron-down
-      .controls{style: 'margin-bottom: 18px'}
-        .block_selection_journals
-          %strong.help-block{style: 'margin-top: 2px'} Journaux Exact Online :
-          = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
-        %p.help-block si différent de "Code journal" ci-dessus
-  - else
-    = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
-  = f.input :description
-  - if @organization.knowings.try(:is_configured?)
-    = f.input :domain, collection: journal_domain_for_select, include_blank: false
-  - if !@customer || is_preassignment_authorized?
-    = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false
-    .pre-assignment-attributes{ style: 'display:none;' }
-      = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@journal.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
-      = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
-      .account_type_help.margin2bottom
-        %i
-          %u Compte d’attente:
-        la pré-saisie comptable sera effectuée avec les informations issues du plan comptable de votre outil comptable. Si il n’y a pas d’informations dans ce plan de compte, iDocus saisira les écritures dans les comptes d’attente paramétrés ici.
-        %br
-        %i
-          %u Compte par défaut:
-        iDocus saisira
-        %b systématiquement
-        toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable.
-      = f.input :meta_account_number, required: true
-      = f.input :meta_charge_account, required: true
-      - if !@customer || @customer.options.is_taxable
-        - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
-        = f.input :vat_account, required: @customer.present?, hint: hint
-        = f.input :vat_account_10
-        = f.input :vat_account_8_5
-        = f.input :vat_account_5_5
-        = f.input :vat_account_2_1
-      = f.input :anomaly_account, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
-      - # Disabled for now
-      - if false && @user.is_admin
-        = f.input :is_expense_categories_editable, as: :boolean
-      - if false && @journal.persisted? && @journal.is_expense_categories_editable && is_preassignment_authorized?
-        .control-group
-          %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
-          .controls
-            = f.fields_for :expense_categories do |category|
-              .well
-                = category.link_to_remove icon_destroy, class: 'btn btn-mini'
-                = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
-                = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
-            = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
-  - if !@customer || @customer.subscription.is_mail_package_active
-    = f.input :instructions, as: :text, input_html: { maxlength: 400 }
-  = f.input :is_default, as: :boolean unless @customer
-  .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - if @customer
-      = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn'
-    - else
-      = link_to t('actions.cancel'), account_organization_journals_path(@organization), class: 'btn'
+= simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form-horizontal' } do |f|
+  .card-body
+    .row
+      .col-md-5
+        = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
+        - if @customer && @customer.uses_ibiza?
+          - if @organization.ibiza.configured?
+            .block_input.clearfix
+              = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
+              %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
+                %i.icon-chevron-down
+            .controls{style: 'margin-bottom: 18px'}
+              .block_selection_journals
+                %strong.help-block{style: 'margin-top: 2px'} Journaux Ibiza :
+                = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
+              %p.help-block si différent de "Code journal" ci-dessus
+          - else
+            .control-group
+              %label.control-label= t('simple_form.labels.account_book_type.pseudonym')
+              .controls
+                %select.select.disabled{ disabled: 'disabled' }
+                %p
+                  = render 'shared/ibiza_not_configured_warning'
+        - elsif @customer && @customer.uses_exact_online?
+          - if @customer.exact_online.try(:fully_configured?)
+            .block_input.clearfix
+              = f.input :pseudonym, wrapper_html: { class: "external_account_book_type pull-left" }
+              %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
+                %i.icon-chevron-down
+            .controls{style: 'margin-bottom: 18px'}
+              .block_selection_journals
+                %strong.help-block{style: 'margin-top: 2px'} Journaux Exact Online :
+                = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "width: 300px"
+              %p.help-block si différent de "Code journal" ci-dessus
+        - else
+          = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
+        = f.input :description
+        - if @organization.knowings.try(:is_configured?)
+          = f.input :domain, collection: journal_domain_for_select, include_blank: false
+        - if !@customer || is_preassignment_authorized?
+          = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false
+        - if !@customer || @customer.subscription.is_mail_package_active
+          = f.input :instructions, as: :text, input_html: { maxlength: 400 }
+        = f.input :is_default, as: :boolean unless @customer
+      .col-md-7
+        .pre-assignment-attributes{ style: 'display:none;' }
+          .box.bg-light
+            %h4 Pré-saisie comptable
+            %hr
+            = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@journal.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
+            = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
+            .account_type_help.margin2bottom
+              %i
+                %u Compte d’attente:
+              la pré-saisie comptable sera effectuée avec les informations issues du plan comptable de votre outil comptable. Si il n’y a pas d’informations dans ce plan de compte, iDocus saisira les écritures dans les comptes d’attente paramétrés ici.
+              %br
+              %i
+                %u Compte par défaut:
+              iDocus saisira
+              %b systématiquement
+              toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable.
+            = f.input :meta_account_number, required: true
+            = f.input :meta_charge_account, required: true
+            - if !@customer || @customer.options.is_taxable
+              - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
+              = f.input :vat_account, required: @customer.present?, hint: hint
+              = f.input :vat_account_10
+              = f.input :vat_account_8_5
+              = f.input :vat_account_5_5
+              = f.input :vat_account_2_1
+            = f.input :anomaly_account, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+            - # Disabled for now
+            - if false && @user.is_admin
+              = f.input :is_expense_categories_editable, as: :boolean
+            - if false && @journal.persisted? && @journal.is_expense_categories_editable && is_preassignment_authorized?
+              .control-group
+                %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
+                .controls
+                  = f.fields_for :expense_categories do |category|
+                    .well
+                      = category.link_to_remove icon_destroy, class: 'btn btn-mini'
+                      = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
+                      = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
+                  = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
+  .card-footer
+    .form-actions.margin0bottom
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
+      - if @customer
+        = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn btn-light'
+      - else
+        = link_to t('actions.cancel'), account_organization_journals_path(@organization), class: 'btn btn-light'

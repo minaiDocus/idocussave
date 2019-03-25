@@ -1,81 +1,79 @@
-%div{ class: (@order.dematbox? ? 'dematbox_form' : 'paper_set_form') }
-  = f.hidden_field :type
-  - if @order.dematbox?
-    - if @user.organization.code == 'DC'
-      = f.input :dematbox_count, collection: [['1 (359€HT – frais de port inclus)', 1], ['2 (718€HT – frais de port inclus)', 2], ['10 (2.990€HT + frais de port 10€)', 10]], include_blank: false, label_html: { style: 'font-weight:bold;' }
-    -else
-      = f.input :dematbox_count, collection: [['1 (359€HT – frais de port inclus)', 1], ['2 (718€HT – frais de port inclus)', 2]], include_blank: false, label_html: { style: 'font-weight:bold;' }
-    %hr
-    .aligncenter
+.card-body
+  %div{ class: (@order.dematbox? ? 'dematbox_form' : 'paper_set_form') }
+    = f.hidden_field :type
+    - if @order.dematbox?
+      - if @user.organization.code == 'DC'
+        = f.input :dematbox_count, collection: [['1 (359€HT – frais de port inclus)', 1], ['2 (718€HT – frais de port inclus)', 2], ['10 (2.990€HT + frais de port 10€)', 10]], include_blank: false, label_html: { style: 'font-weight:bold;' }
+      -else
+        = f.input :dematbox_count, collection: [['1 (359€HT – frais de port inclus)', 1], ['2 (718€HT – frais de port inclus)', 2]], include_blank: false, label_html: { style: 'font-weight:bold;' }
+      %hr
       %b Merci de remplir l’intégralité des champs afin d’assurer une parfaite livraison de la part de Sagemcom
-    %br
-    %br
-    = f.simple_fields_for :address do |builder|
-      .row-fluid
-        .span6
-          = builder.input :last_name, label: 'Nom du contact', required: true
-          = builder.input :first_name, label: 'Prénom du contact', required: true
-          = builder.input :phone, label: 'Numéro de téléphone direct (fixe ou mobile)', required: true
-          = builder.input :company, label: 'Nom de la société', required: true
-          = builder.input :company_number, label: 'N° de Siret', required: true
-        .span6
-          = builder.input :address_1, label: 'N° et libellé de la voie', required: true
-          = builder.input :place_called_or_postal_box, label: 'Lieu-dit ou BP'
-          = builder.input :zip, label: 'Code postal', required: true
-          = builder.input :city, label: 'Ville', required: true
-          = builder.input :building, label: 'Bâtiment et appartement'
-          = builder.input :door_code, label: 'Digicode'
-          = builder.input :other, label: 'Autre (sonnerie, concierge...)'
-  - else
-    .aligncenter.margin2bottom
-      %b Commande d’un kit complet pour envoi du courrier à iDocus
-    - if @order.period_duration == 3
-      .row-fluid
-        .span12
-          %span.label.label-warning{style: 'font-size: 14px'} La commande de kit courrier pour les dossiers en abonnement trimestriel n'est plus valide pour l'année prochaine (2020)
-    .row-fluid
-      .span4
-        = f.hidden_field :period_duration
-        = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
-        = f.input :paper_set_casing_count, collection: [], include_blank: true
-        = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
-        = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
-        = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
-        = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
-      .span4
-        .address_title
-          %b Adresse de livraison du kit envoi courrier
-        = f.simple_fields_for :address do |builder|
-          = builder.input :company, label: 'Nom de la société'
-          = builder.input :last_name, label: 'Nom', required: true
-          = builder.input :first_name, label: 'Prénom', required: true
-          = builder.input :address_1, label: 'Adresse', required: true
-          = builder.input :address_2, label: 'Adresse (suite)'
-          = builder.input :city, label: 'Ville', required: true
-          = builder.input :zip, label: 'Code postal', required: true
-      .span4
-        .address_title
-          %b Adresse de retour des papiers numérisés
-        = f.simple_fields_for :paper_return_address do |builder|
-          = builder.input :company, label: 'Nom de la société'
-          = builder.input :last_name, label: 'Nom', required: true
-          = builder.input :first_name, label: 'Prénom', required: true
-          = builder.input :address_1, label: 'Adresse', required: true
-          = builder.input :address_2, label: 'Adresse (suite)'
-          = builder.input :city, label: 'Ville', required: true
-          = builder.input :zip, label: 'Code postal', required: true
-        = link_to "Copier l'adresse livraison de kit", '#', class: 'copy_address btn'
-    %hr
-    .aligncenter
-      %h4 Total de la commande :
-      %b.total_price{ style: 'font-size:20px' }
+      %br
+      %br
+      = f.simple_fields_for :address do |builder|
+        .row
+          .col-md-6
+            = builder.input :last_name, label: 'Nom du contact', required: true
+            = builder.input :first_name, label: 'Prénom du contact', required: true
+            = builder.input :phone, label: 'Numéro de téléphone direct (fixe ou mobile)', required: true
+            = builder.input :company, label: 'Nom de la société', required: true
+            = builder.input :company_number, label: 'N° de Siret', required: true
+          .col-md-6
+            = builder.input :address_1, label: 'N° et libellé de la voie', required: true
+            = builder.input :place_called_or_postal_box, label: 'Lieu-dit ou BP'
+            = builder.input :zip, label: 'Code postal', required: true
+            = builder.input :city, label: 'Ville', required: true
+            = builder.input :building, label: 'Bâtiment et appartement'
+            = builder.input :door_code, label: 'Digicode'
+            = builder.input :other, label: 'Autre (sonnerie, concierge...)'
+    - else
+      %h4 Commande d’un kit complet pour envoi du courrier à iDocus
+      %hr
+      .row
+        .col-md-4
+          .box.bg-light.height_groups.groups_1
+            = f.hidden_field :period_duration
+            = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
+            = f.input :paper_set_casing_count, collection: [], include_blank: true
+            = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
+            = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
+            = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
+            = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
+        .col-md-4
+          .box.bg-light.height_groups.groups_1
+            %h4 Adresse de livraison du kit envoi courrier
+            %hr
+            = f.simple_fields_for :address do |builder|
+              = builder.input :company, label: 'Nom de la société'
+              = builder.input :last_name, label: 'Nom', required: true
+              = builder.input :first_name, label: 'Prénom', required: true
+              = builder.input :address_1, label: 'Adresse', required: true
+              = builder.input :address_2, label: 'Adresse (suite)'
+              = builder.input :city, label: 'Ville', required: true
+              = builder.input :zip, label: 'Code postal', required: true
+        .col-md-4
+          .box.bg-light.height_groups.groups_1.clearfix
+            %h4 Adresse de retour des papiers numérisés
+            %hr
+            = f.simple_fields_for :paper_return_address do |builder|
+              = builder.input :company, label: 'Nom de la société'
+              = builder.input :last_name, label: 'Nom', required: true
+              = builder.input :first_name, label: 'Prénom', required: true
+              = builder.input :address_1, label: 'Adresse', required: true
+              = builder.input :address_2, label: 'Adresse (suite)'
+              = builder.input :city, label: 'Ville', required: true
+              = builder.input :zip, label: 'Code postal', required: true
+            = link_to "Copier l'adresse livraison de kit", '#', class: 'copy_address btn btn-secondary'
+      .aligncenter
+        %h4 Total de la commande :
+        %b.total_price{ style: 'font-size:20px' }
+.card-footer
   .form-actions.margin0bottom
     - if @customer.configured?
-      -if @order.period_duration != 3
-        = f.submit 'Commander', class: 'btn btn-primary'
-      = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'btn'
+      = f.submit 'Commander', class: 'btn btn-primary'
+      = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'btn btn-light'
     - else
-      = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+      = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
       - unless last_step?
-        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
       = f.submit t('actions.' + (last_step? ? 'finish' : 'next_step')), class: 'btn btn-primary'

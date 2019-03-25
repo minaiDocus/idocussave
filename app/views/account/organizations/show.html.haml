@@ -71,7 +71,7 @@
                 %a{ class: "nav-link #{(params[:tab] == 'subscription') ? 'active' : ''}", href: '#subscription', data: { toggle: 'tab' } } Abonnement
 
           .tab-content.box.border-top-0.bg-light
-            #information.tab-pane.fade.show{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+            #information.tab-pane.fade{ class: ('active show' if params[:tab] == 'information' || params[:tab].blank?) }
               .row
                 .col-md-8
                   %table.table.table-condensed.table-striped
@@ -128,7 +128,7 @@
                       %td= @organization.customers.active.count
               - if @user.leader?
                 = link_to t('actions.edit'), edit_account_organization_path(@organization), class: 'btn btn-primary'
-            #file_naming_policy.tab-pane.fade{ class: ('active' if params[:tab] == 'file_naming_policy') }
+            #file_naming_policy.tab-pane.fade{ class: ('active show' if params[:tab] == 'file_naming_policy') }
               %p Configuration actuelle du nom de vos fichiers en sortie vers les stockages externes.
               %table.table.table-condensed.table-striped
                 %tbody
@@ -144,7 +144,7 @@
                     %td= CustomFileNameService.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
               - if @user.leader?
                 = link_to t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
-            #addresses.tab-pane.fade{ class: ('active' if params[:tab] == 'addresses') }
+            #addresses.tab-pane.fade{ class: ('active show' if params[:tab] == 'addresses') }
               .row.margin1bottom
                 .col-md-4= render partial: 'account/organization_addresses/address', locals: { address: @organization.billing_address,  single: true, type: 'billing' }
                 .col-md-4= render partial: 'account/organization_addresses/address', locals: { address: @organization.paper_return_address, single: true, type: 'paper_return' }
@@ -152,7 +152,7 @@
               .row
                 .col-md-12.aligncenter
                   = link_to 'Configurer', account_organization_addresses_path(@organization), class: 'btn btn-primary'
-            #period_options.tab-pane.fade{ class: ('active' if params[:tab] == 'period_options') }
+            #period_options.tab-pane.fade{ class: ('active show' if params[:tab] == 'period_options') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
@@ -169,7 +169,7 @@
                 = link_to t('actions.edit'), edit_account_organization_period_options_path(@organization), class: 'btn btn-primary'
                 - if @user.is_admin
                   = link_to 'Propager', select_propagation_options_account_organization_period_options_path(@organization), class: 'btn btn-primary'
-            #knowings.tab-pane.fade{ class: ('active' if params[:tab] == 'knowings') }
+            #knowings.tab-pane.fade{ class: ('active show' if params[:tab] == 'knowings') }
               - if @organization.knowings
                 %table.table.table-condensed.table-striped
                   %tbody
@@ -193,7 +193,7 @@
                   = link_to t('actions.edit'), edit_account_organization_knowings_path(@organization), class: 'btn btn-primary'
                 - else
                   = link_to 'Configurer', new_account_organization_knowings_path(@organization), class: 'btn btn-primary'
-            #ftp.tab-pane.fade{ class: ('active' if params[:tab] == 'ftp') }
+            #ftp.tab-pane.fade{ class: ('active show' if params[:tab] == 'ftp') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
@@ -223,7 +223,7 @@
                 - if @organization.ftp.try(:configured?)
                   = link_to 'Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn btn-secondary', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
                   = link_to 'Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
-            #mcf.clearfix.tab-pane.fade{ class: ('active' if params[:tab] == 'mcf') }
+            #mcf.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'mcf') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
@@ -249,7 +249,7 @@
                 = link_to 'Editer', edit_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary'
               - else
                 = link_to 'Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary', method: :post
-            #ibiza.tab-pane.fade{ class: ('active' if params[:tab] == 'ibiza') }
+            #ibiza.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza') }
               .aligncenter
                 %h4.margin2bottom Configuration Ibiza
               %table.table.table-condensed.table-striped
@@ -432,7 +432,7 @@
                   -if @organization.try(:ibiza).try(:used?)
                     = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'ibiza'), class: 'btn btn-secondary'
                   = link_to t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
-            #coala.tab-pane.fade{ class: ('active' if params[:tab] == 'coala') }
+            #coala.tab-pane.fade{ class: ('active show' if params[:tab] == 'coala') }
               .aligncenter
                 %h4.margin1bottom Configuration Coala
               = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
@@ -452,7 +452,7 @@
                     -if @organization.is_coala_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #exact_online.tab-pane.fade{ class: ('active' if params[:tab] == 'exact_online') }
+            #exact_online.tab-pane.fade{ class: ('active show' if params[:tab] == 'exact_online') }
               .aligncenter
                 %h4.margin1bottom Configuration Exact Online
               = simple_form_for [:account, @organization], html: { id: 'form_exact_online', class: 'form-horizontal label-auto' } do |f|
@@ -472,7 +472,7 @@
                     - if @organization.is_exact_online_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #quadratus.tab-pane.fade{ class: ('active' if params[:tab] == 'quadratus') }
+            #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
               .aligncenter
                 %h4.margin1bottom Configuration Quadratus
               = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
@@ -492,7 +492,7 @@
                     -if @organization.is_quadratus_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'quadratus'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #cegid.tab-pane.fade{ class: ('active' if params[:tab] == 'cegid') }
+            #cegid.tab-pane.fade{ class: ('active show' if params[:tab] == 'cegid') }
               .aligncenter
                 %h4.margin1bottom Configuration Cegid
               = simple_form_for [:account, @organization], html: { id: 'form_cegid', class: 'form form-horizontal margin0' } do |f|
@@ -532,7 +532,7 @@
                     -if @organization.is_fec_agiris_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_agiris'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #csv_descriptor.tab-pane.fade{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
+            #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               .aligncenter
                 %h4.margin1bottom Configuration d'export .csv
               = simple_form_for [:account, @organization], html: { id: 'form_csv_descriptor', class: 'form-horizontal label-auto' } do |f|
@@ -593,7 +593,7 @@
                   Verification de votre configuration en cours ... Veuillez patienter svp.
 
             - if @user.is_admin
-              #file_sending_kit.tab-pane.fade{ class: ('active' if params[:tab] == 'file_sending_kit') }
+              #file_sending_kit.tab-pane.fade{ class: ('active show' if params[:tab] == 'file_sending_kit') }
                 %table.table.table-striped.table-condensed
                   %tr
                     %th= t('activerecord.models.file_sending_kit.attributes.folders')
@@ -617,7 +617,7 @@
                         = link_to 'workshop_labels.pdf', workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
                 = link_to t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
                 = link_to 'Générer', select_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
-            #reminder_emails.clearfix.tab-pane.fade{ class: ('active' if params[:tab] == 'reminder_emails') }
+            #reminder_emails.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'reminder_emails') }
               %p Configurez ici un nouvel e-mail de rappel qui sera envoyé à vos clients afin qu'ils n'oublient pas d'envoyer leurs documents.
               %table.table.table-striped.table-condensed
                 %thead
@@ -651,7 +651,7 @@
                         = link_to glyphicon('x'), account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
                         = link_to glyphicon('envelope-open'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', data: { confirm: t('activerecord.models.reminder_email.actions.send_confirmation') }, method: :post, title: 'Envoyer'
               = link_to t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary'
-            #subscription.tab-pane.fade{ class: ('active' if params[:tab] == 'subscription') }
+            #subscription.tab-pane.fade{ class: ('active show' if params[:tab] == 'subscription') }
               %table.table.table-striped.table-condensed
                 %tr
                   %th Option

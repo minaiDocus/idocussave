@@ -1,12 +1,13 @@
 - part ||= [':date','']
 - field = part[0]
 - format = part[1]
-%li.field.pull-left
-  .input-prepend.input-append
-    %span.add-on.pull-left
-      = link_to icon_move, '#'
-    = select_tag :directive, options_for_select(csv_descriptor_directive_options,field), id: 'select_directive', class: 'pull-left'
-    = text_field_tag :format, format, id: 'text_format', class: 'pull-left'
-    = select_tag :format, options_for_select(csv_descriptor_format_options,format), id: 'select_format', class: 'pull-left'
-    %span.add-on.pull-left
-      = link_to icon_destroy, '#', id: '', class: 'remove_field'
+%li.field.float-left
+  .input-prepend.input-append.clearfix
+    %span.action.float-left
+      = link_to glyphicon('move', { size: '16px' }), '#'
+    = select_tag :directive, options_for_select(csv_descriptor_directive_options,field), id: 'select_directive', class: 'float-left'
+    = text_field_tag :format, format, id: 'text_format', class: 'float-left'
+    = select_tag :format, options_for_select(csv_descriptor_format_options,format), id: 'select_format', class: 'float-left'
+    %span.action.float-left
+      = link_to glyphicon('x', { size: '12px' }), '#', id: '', class: 'remove_field'
+    %span.separator ;

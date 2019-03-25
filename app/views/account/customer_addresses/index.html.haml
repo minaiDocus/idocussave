@@ -1,19 +1,19 @@
-#addresses.row-fluid
-  .span12
-    .row-fluid
-      .span12.box
-        .row-fluid
-          .span12
-            .pull-left
-              %h3 Liste des adresses du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses')}
-            .pull-right
-              = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@organization, @customer), class: 'btn btn-primary'
-    .row-fluid
-      .span12.box
-        - grouped_addresses = @addresses.in_groups_of(3)
-        - grouped_addresses.each_with_index do |addresses, index|
-          .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
-            - addresses.each do |address|
-              - if address
-                .span4
-                  = render partial: 'address', locals: { address: address, single: false }
+#addresses.row
+  .col-md-12
+    .box.clearfix
+      .float-left
+        %h3
+          Liste des adresses du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses'), class: 'fs-origin'
+      .float-right
+        = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@organization, @customer), class: 'btn btn-primary'
+    .row
+      .col-md-12
+        .box
+          - grouped_addresses = @addresses.in_groups_of(3)
+          - grouped_addresses.each_with_index do |addresses, index|
+            .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+              - addresses.each do |address|
+                - if address
+                  .col-md-4
+                    = render partial: 'address', locals: { address: address, single: false }

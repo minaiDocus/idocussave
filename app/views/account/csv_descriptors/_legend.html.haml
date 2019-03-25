@@ -1,88 +1,92 @@
-%h4 Liste des champs disponibles
-%br
-.row-fluid
-  .span12
-    %table.table-condensed.table-striped
-      %tbody
-        %tr
-          %th.name Code client
-          %th.hint Code client iDocus de type XXX%XXX
-        %tr
-          %th.name Journal
-          %th.hint journal comptable de la pièce
-        %tr
-          %th.name Période iDocus
-          %th.hint période iDocus sous la forme AAAAMM
-        %tr
-          %th.name Numéro de pièce iDocus
-          %th.hint numéro de la pièce dans iDocus
-        %tr
-          %th.name Numéro de pièce d’origine
-          %th.hint numéro original de la pièce
-        %tr
-          %th.name Date réelle
-          %th.hint date de l’opération + format de date*
-        %tr
-          %th.name 1er ou date réelle
-          %th.hint date de début de la période ou date de l’opération + format de date*
-        %tr
-          %th.name Échéance
-          %th.hint date de fin de l’opération + format de date*
-        %tr
-          %th.name Libellé
-          %th.hint libellé de l'opération bancaire ou comptable
-        %tr
-          %th.name Nom de la pièce
-          %th.hint nom de la pièce dans iDocus
-        %tr
-          %th.name URL pièce
-          %th.hint URL de la pièce dans iDocus
-        %tr
-          %th.name Numéro de compte
-          %th.hint
-        %tr
-          %th.name Tiers
-          %th.hint numéro de compte tiers
-        %tr
-          %th.name Montant
-          %th.hint montant de l'opération
-        %tr
-          %th.name Crédit
-          %th.hint montant crédité
-        %tr
-          %th.name Débit
-          %th.hint montant débité
-        %tr
-          %th.name Unité monétaire (Complète)
-          %th.hint Unité monétaire composée de 3 lettres (ex: EUR)
-        %tr
-          %th.name Unité monétaire (Partielle)
-          %th.hint Unité monétaire composée d'une lettre (ex: E pour EUR)
-        %tr
-          %th.name Devise
-          %th.hint devise d’origine
-        %tr
-          %th.name Taux de conversion
-          %th.hint taux de conversion monétaire utilisé par iDocus
-        %tr
-          %th.name Lettrage
-          %th.hint lettrage dans iDocus
-        %tr
-          %th.name Remarque
-          %th.hint remarque iDocus lors de la pré-affectation
-        %tr
-          %th.name Autre
-          %th.hint texte libre
-.row-fluid
-  .span12
-    * Le format de date se compose avec les données suivante :
-    %br
-    %span.margin1right
-      %span.label.label-info AAAA/AA
-      \: Année
-    %span.margin1right
-      %span.label.label-info MM
-      \: Mois
-    %span.margin1right
-      %span.label.label-info JJ
-      \: Jour
+.box.bg-light
+  %h4 Liste des champs disponibles
+  %hr
+  .row
+    .col-md-6
+      %table.table.table-condensed.table-striped
+        %tbody
+          %tr
+            %th.name Code client
+            %th.hint Code client iDocus de type XXX%XXX
+          %tr
+            %th.name Journal
+            %th.hint journal comptable de la pièce
+          %tr
+            %th.name Période iDocus
+            %th.hint période iDocus sous la forme AAAAMM
+          %tr
+            %th.name Numéro de pièce iDocus
+            %th.hint numéro de la pièce dans iDocus
+          %tr
+            %th.name Numéro de pièce d’origine
+            %th.hint numéro original de la pièce
+          %tr
+            %th.name Date réelle
+            %th.hint date de l’opération + format de date*
+          %tr
+            %th.name 1er ou date réelle
+            %th.hint date de début de la période ou date de l’opération + format de date*
+          %tr
+            %th.name Échéance
+            %th.hint date de fin de l’opération + format de date*
+          %tr
+            %th.name Libellé
+            %th.hint libellé de l'opération bancaire ou comptable
+          %tr
+            %th.name Nom de la pièce
+            %th.hint nom de la pièce dans iDocus
+          %tr
+            %th.name URL pièce
+            %th.hint URL de la pièce dans iDocus
+    .col-md-6
+      %table.table.table-condensed.table-striped
+        %tbody
+          %tr
+            %th.name Numéro de compte
+            %th.hint
+          %tr
+            %th.name Tiers
+            %th.hint numéro de compte tiers
+          %tr
+            %th.name Montant
+            %th.hint montant de l'opération
+          %tr
+            %th.name Crédit
+            %th.hint montant crédité
+          %tr
+            %th.name Débit
+            %th.hint montant débité
+          %tr
+            %th.name Unité monétaire (Complète)
+            %th.hint Unité monétaire composée de 3 lettres (ex: EUR)
+          %tr
+            %th.name Unité monétaire (Partielle)
+            %th.hint Unité monétaire composée d'une lettre (ex: E pour EUR)
+          %tr
+            %th.name Devise
+            %th.hint devise d’origine
+          %tr
+            %th.name Taux de conversion
+            %th.hint taux de conversion monétaire utilisé par iDocus
+          %tr
+            %th.name Lettrage
+            %th.hint lettrage dans iDocus
+          %tr
+            %th.name Remarque
+            %th.hint remarque iDocus lors de la pré-affectation
+          %tr
+            %th.name Autre
+            %th.hint texte libre
+  .row
+    .col-md-12
+      * Le format de date se compose avec les données suivante :
+      %br
+      %span.margin1right
+        %span.badge.badge-info.fs-origin AAAA/AA
+        \: Année
+      %span.margin1right
+        %span.badge.badge-info.fs-origin MM
+        \: Mois
+      %span.margin1right
+        %span.badge.badge-info.fs-origin JJ
+        \: Jour

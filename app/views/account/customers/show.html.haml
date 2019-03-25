@@ -92,7 +92,7 @@
               %a.nav-link{ class: ('active' if params[:tab] == 'file_storages'), href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
         .tab-content.box.border-top-0.bg-light
-          #information.tab-pane.fade.show{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+          #information.tab-pane.fade{ class: ('active show' if params[:tab] == 'information' || params[:tab].blank?) }
             %table.table.table-striped.table-condensed
               %thead
                 %tbody
@@ -145,7 +145,7 @@
               .row
                 .col-md-12
                   = link_to t('actions.edit'), edit_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-          #addresses.tab-pane.fade{ class: ('active' if params[:tab] == 'addresses') }
+          #addresses.tab-pane.fade{ class: ('active show' if params[:tab] == 'addresses') }
             .row.margin1bottom
               .col-md-4
                 = render partial: 'account/customer_addresses/address', locals: { address: @customer.paper_return_address,  single: true, type: 'paper_return' }
@@ -158,7 +158,7 @@
                 .col-md-12.aligncenter
                   = link_to 'Configurer', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
           - if @customer.active?
-            #subscription.tab-pane.fade{ class: ('active' if params[:tab] == 'subscription') }
+            #subscription.tab-pane.fade{ class: ('active show' if params[:tab] == 'subscription') }
               %h4.margin2bottom
                 Périodicité
                 - if @subscription.period_duration == 1
@@ -171,7 +171,7 @@
               .row.margin1top
                 .col-md-12
                   = link_to t('actions.edit'), edit_account_organization_customer_subscription_path(@organization, @customer), class: 'btn btn-primary'
-            #orders.tab-pane.fade{ class: ('active' if params[:tab] == 'orders') }
+            #orders.tab-pane.fade{ class: ('active show' if params[:tab] == 'orders') }
               %table.table.table-condensed.table-striped.table-bordered-inner.margin2bottom.table-detachable-head
                 %thead
                   %tr.bg-brown.text-white
@@ -214,7 +214,7 @@
               - if @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
                 = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary'
             - if @customer.options.is_upload_authorized
-              #period_options.tab-pane.fade{ class: ('active' if params[:tab] == 'period_options') }
+              #period_options.tab-pane.fade{ class: ('active show' if params[:tab] == 'period_options') }
                 %table.table.table-striped.table-condensed
                   %tbody
                     %tr
@@ -230,7 +230,7 @@
                 .row
                   .col-md-12
                     = link_to t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-          #journals.tab-pane.fade{ class: ('active' if params[:tab] == 'journals') }
+          #journals.tab-pane.fade{ class: ('active show' if params[:tab] == 'journals') }
             - if @pending_journals.present?
               .alert
                 %strong Attention!
@@ -298,7 +298,7 @@
                   - elsif @customer.active?
                     = link_to 'Ajouter nouveau', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
                     = link_to 'Copier depuis base existante', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
-          #bank_accounts.tab-pane.fade{ class: ('active' if params[:tab] == 'bank_accounts') }
+          #bank_accounts.tab-pane.fade{ class: ('active show' if params[:tab] == 'bank_accounts') }
             %table.table.table-striped.table-condensed.margin0bottom.table-bordered-inner.table-detachable-head
               %thead
                 %tr.bg-brown.text-white
@@ -319,7 +319,7 @@
                     %td= bank_account.accounting_number
                     %td= bank_account.start_date
                     %td= link_to t('actions.edit'), edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), class: 'btn btn-light'
-          #compta.tab-pane.fade{ class: ('active' if params[:tab] == 'compta') }
+          #compta.tab-pane.fade{ class: ('active show' if params[:tab] == 'compta') }
             %table.table.table-striped.table-condensed
               %tbody
                 %tr
@@ -341,13 +341,13 @@
               .col-md-12
                 = link_to t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
           - if @customer.uses_ibiza?
-            #ibiza_box.tab-pane.fade{ class: ('active' if params[:tab] == 'ibiza_box') }
+            #ibiza_box.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza_box') }
               - if @organization.ibiza.first_configured?
                 = render 'ibiza_box'
               - else
                 = render 'shared/ibiza_not_configured_warning'
           - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
-            #mcf.tab-pane.fade{ class: ('active' if params[:tab] == 'mcf') }
+            #mcf.tab-pane.fade{ class: ('active show' if params[:tab] == 'mcf') }
               - if @organization.mcf_settings.try(:access_token).present?
                 %h4 Paramètre de compte
                 %table.table.table-striped.table-condensed
@@ -379,7 +379,7 @@
                   .col-md-12
                     = link_to 'Détails des erreurs', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
           - if @organization.ibiza.try(:used?)
-            #ibiza.tab-pane.fade{ class: ('active' if params[:tab] == 'ibiza') }
+            #ibiza.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza') }
               %h4.margin1bottom Activation Ibiza
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_ibiza', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'ibiza'
@@ -434,7 +434,7 @@
                     - else
                       = link_to t('actions.edit'), '#', class: 'btn btn-primary float-right', disabled: true
           - if @organization.is_exact_online_used
-            #exact_online.tab-pane.fade{ class: ('active' if params[:tab] == 'exact_online') }
+            #exact_online.tab-pane.fade{ class: ('active show' if params[:tab] == 'exact_online') }
               %h4.margin1bottom Activation Exact Online
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_exact_online', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'exact_online'
@@ -479,7 +479,7 @@
                   .col-md-12
                     = link_to t('actions.edit'), edit_exact_online_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
           - if @organization.is_coala_used
-            #coala.tab-pane.fade{ class: ('active' if params[:tab] == 'coala') }
+            #coala.tab-pane.fade{ class: ('active show' if params[:tab] == 'coala') }
               %h4.margin1bottom Activation Coala
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_coala', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'coala'
@@ -504,7 +504,7 @@
                   .col-md-12
                     = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'coala'), class: 'btn btn-primary float-right'
           - if @organization.is_quadratus_used
-            #quadratus.tab-pane.fade{ class: ('active' if params[:tab] == 'quadratus') }
+            #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
               %h4.margin1bottom Activation Quadratus
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'quadratus'
@@ -580,7 +580,7 @@
                       .span12
                         = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_agiris'), class: 'btn btn-primary pull-right'
           - if @organization.is_csv_descriptor_used
-            #csv_descriptor.tab-pane.fade{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
+            #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               %h4.margin1bottom Activation Fichier d'export personnalisé (.csv)
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'csv_descriptor'
@@ -619,13 +619,13 @@
                               = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
                             - else
                               = link_to 'Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
-          #accounting_plan.tab-pane.fade{ class: ('active' if params[:tab] == 'accounting_plan') }
+          #accounting_plan.tab-pane.fade{ class: ('active show' if params[:tab] == 'accounting_plan') }
             - if @customer.active?
               = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary'
               = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-secondary'
             =#NOT USED link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn btn-secondary'
           - if @organization.knowings.try(:ready?)
-            #ged.tab-pane.fade{ class: ('active' if params[:tab] == 'ged') }
+            #ged.tab-pane.fade{ class: ('active show' if params[:tab] == 'ged') }
               %table.table.table-striped.table-condensed
                 %thead
                   %tbody
@@ -639,7 +639,7 @@
                 .col-md-12
                   = link_to t('actions.edit'), edit_knowings_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
           - if @customer.is_dematbox_authorized
-            #idocus_box.tab-pane.fade{ class: ('active' if params[:tab] == 'idocus_box') }
+            #idocus_box.tab-pane.fade{ class: ('active show' if params[:tab] == 'idocus_box') }
               - if @customer.dematbox.try(:is_configured)
                 %h4.margin1bottom Liste des services
                 - if @customer.dematbox.try(:services).try(:any?)
@@ -667,8 +667,8 @@
                 fournit lors de la livraison.
                 %br
                 Merci d'inscrire le code d'appairage dans le champ ci-dessous :
-                = form_tag account_organization_customer_dematbox_path(@organization, @customer), method: :post, class: 'margin2top' do
-                  .form-group
+                = form_tag account_organization_customer_dematbox_path(@organization, @customer), method: :post, class: 'margin2top form-horizontal label-small' do
+                  .form-group.clearfix
                     .label-section
                       = label_tag :pairing_code, 'Code appairage'
                     .control-section
@@ -676,6 +676,6 @@
                   .form-actions
                     = submit_tag t('actions.submit'), class: 'btn btn-primary'
           - if @user.is_admin && @customer.active?
-            #file_storages.tab-pane.fade{ class: ('active' if params[:tab] == 'file_storages') }
+            #file_storages.tab-pane.fade{ class: ('active show' if params[:tab] == 'file_storages') }
               = render partial: 'account/customers/file_storages', locals: { user: @customer }
               = link_to t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'

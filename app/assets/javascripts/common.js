@@ -25,6 +25,58 @@
 // French translation for bootstrap-datepicker
 // Lola LAI KAM <lailol@directmada.com>
 //
+
+function custom_radio_buttons(){
+  $('form .radio_buttons .control-section').each(function(e){
+    $(this).find('.radio label').each(function(e){
+      var text = $(this).text();
+      $(this).attr('title', text);
+    });
+
+    var label_parent = $(this).find('input[type="radio"]:checked').parent();
+    label_parent.addClass('checked');
+  });
+
+  $('form .radio_buttons .control-section .radio label').unbind('click');
+  $('form .radio_buttons .control-section .radio label').bind('click', function(e) {
+    var section = $(this).parent().parent();
+    section.find('label.checked').removeClass('checked');
+    $(this).addClass('checked');
+  });
+}
+
+function custom_checkbox_buttons(){
+  $('form .check_boxes .control-section').each(function(e){
+    $(this).find('.checkbox label').each(function(e){
+      var text = $(this).text();
+      $(this).attr('title', text);
+    });
+
+    var label_parent = $(this).find('input[type="checkbox"]:checked').parent();
+    label_parent.addClass('checked');
+  });
+
+  $('form .check_boxes .control-section .checkbox label').unbind('click');
+  $('form .check_boxes .control-section .checkbox label').bind('click', function(e) {
+    if($(this).find('input[type="checkbox"]').is(':checked'))
+      $(this).addClass('checked');
+    else
+      $(this).removeClass('checked');
+  });
+}
+
+function custom_dynamic_height(){
+  for(var i=1; i <= 5; i++) {
+    var max_height = 0;
+    if($('.height_groups.groups_'+i).length > 0){
+      $('.height_groups.groups_'+i).each(function(e){
+        if( max_height < $(this).innerHeight() ) max_height = $(this).innerHeight()
+      });
+      $('.height_groups.groups_'+i).attr('style', 'height:'+max_height+'px');
+    }
+  }
+}
+
 jQuery(function () {
   //For serializing Form to object
   $.fn.serializeObject = function() {
@@ -66,43 +118,11 @@ jQuery(function () {
       $(e.currentTarget).addClass('active');
   });
 
-  //Custom Radio buttons
-  $('form .radio_buttons .control-section').each(function(e){
-    var label_parent = $(this).find('input[type="radio"]:checked').parent();
-    label_parent.addClass('checked');
-  });
-
-  $('form .radio_buttons .control-section .radio label').unbind('click');
-  $('form .radio_buttons .control-section .radio label').bind('click', function(e) {
-    var section = $(this).parent().parent();
-    section.find('label.checked').removeClass('checked');
-    $(this).addClass('checked');
-  });
-  //end custom radio buttons
-
-
   $("a[rel=popover]").popover();
   $(".tooltip").tooltip();
   $("a[rel=tooltip]").tooltip();
 
   $('input[type="checkbox"]').shiftSelectable();
-
-  // Add a top padding when necessary
-
-  $menu = $('.navbar-fixed-top');
-
-  function dynamicTopPadding() {
-    if ($menu.height() < 45) {
-      $('.ad_dynamic_padding').css('padding-top', '0px');
-      $('.dynamic_padding').css('padding-top', '60px');
-    } else if ($menu.height() < 55) {
-      $('.ad_dynamic_padding').css('padding-top', '0px');
-      $('.dynamic_padding').css('padding-top', '0px');
-    } else {
-      $('.ad_dynamic_padding').css('padding-top', '40px');
-      $('.dynamic_padding').css('padding-top', '100px');
-    }
-  }
 
   $('#as_user_view').click(function(e){
     e.preventDefault();
@@ -112,13 +132,37 @@ jQuery(function () {
       as_user_view_box.slideUp('fast');
     else
       as_user_view_box.slideDown('fast');
-  })
+  });
+
+  // Add a top padding when necessary
+
+  // $menu = $('.navbar-fixed-top');
+
+  // function dynamicTopPadding() {
+  //   if ($menu.height() < 45) {
+  //     $('.ad_dynamic_padding').css('padding-top', '0px');
+  //     $('.dynamic_padding').css('padding-top', '60px');
+  //   } else if ($menu.height() < 55) {
+  //     $('.ad_dynamic_padding').css('padding-top', '0px');
+  //     $('.dynamic_padding').css('padding-top', '0px');
+  //   } else {
+  //     $('.ad_dynamic_padding').css('padding-top', '40px');
+  //     $('.dynamic_padding').css('padding-top', '100px');
+  //   }
+  // }
 
   // Execute on load
-  dynamicTopPadding();
+  // dynamicTopPadding();
 
   // Bind event listener
-  $(window).resize(dynamicTopPadding);
+  // $(window).resize(dynamicTopPadding);
+
+  //Custom Radio / Checkbox buttons
+  custom_radio_buttons();
+  custom_checkbox_buttons();
+
+  //Custom dynamic height groups
+  setTimeout(custom_dynamic_height, 1000);
 });
 
 function _require(script) {

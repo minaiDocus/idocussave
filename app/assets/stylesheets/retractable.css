@@ -51,6 +51,10 @@ $menuPositionLeft: -210px;
     animation-name: menuShow;
     animation-duration: 0.2s;
 }
+.retractable .retractable-menu .side-menu {
+  padding-left: 11px !important;
+  padding-right: 11px !important;
+}
 .retractable .retractable-menu .retractable-caret{
   text-align: right;
   width: 100%;

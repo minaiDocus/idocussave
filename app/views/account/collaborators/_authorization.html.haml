@@ -1,4 +1,4 @@
-#authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
+#authorization.tab-pane.fade{ class: ('active show' if params[:tab] == 'authorization') }
   %table.table.table-striped.table-condensed
     %tr
       %th= t('activerecord.models.organization_rights.names.collaborators_management')
@@ -36,6 +36,5 @@
         - else
           = @member.manage_customer_journals ? t('yes_value') : t('no_value')
   - unless @member.user.is_admin
-    .alignright
-      - if @organization.is_active
-        = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @member), class: 'btn btn-primary'
+    - if @organization.is_active
+      = link_to t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @member), class: 'btn btn-primary'

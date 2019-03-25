@@ -7,8 +7,8 @@
             Liste des règles d'affectations bancaires - iDo'FacBanque
             %span.badge.badge-info= @account_number_rules_count
         .float-right
-          = link_to glyphicon('plus') + ' Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
-          = link_to glyphicon('plus') + ' Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
+          = link_to 'Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
+          = link_to 'Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
   .row.retractable.with-filter
     .col-md-12.retractable-content
       .box
@@ -18,11 +18,11 @@
               %p Les règles ci-dessous s'appliquent aux opérations récupérées depuis les automates. Vous pouvez exporter les règles sélectionnées ou les supprimer.
             .float-right
               %button(type="submit" name="export_or_destroy" value="export" class="btn btn-primary")
-                = glyphicon('data-transfer-upload') + ' Exporter sur Excel '
+                = 'Exporter sur Excel'
               %button(type="submit" name="export_or_destroy" value="destroy" class="btn btn-danger" data-confirm="Etes-vous sûr de vouloir supprimer les règles sélectionnées ?")
-                = glyphicon('x') + ' Supprimer les règles '
+                = 'Supprimer les règles'
               %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
-                = icon_refresh + ' Paramètres avancés '
+                = 'Paramètres avancés'
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
