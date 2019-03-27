@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'csv'
 require 'rails/all'
@@ -12,7 +12,7 @@ module Idocus
   class Application < Rails::Application
     # load all files in lib directory
 
-    config.load_defaults 5.0
+    config.load_defaults 5.2
 
     # development files
     Dir.glob("#{Rails.root}/app/workers/*.{rb}").each { |file| require file }
