@@ -21,7 +21,7 @@ class DropboxImport
         end
 
         next unless dropbox.is_used? && dropbox.is_configured?
-        next unless dropbox.user.collaborator? || ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
+        next unless dropbox.user.try(:collaborator?) || ([dropbox.user] + dropbox.user.try(:accounts).to_a).compact.detect { |e| e.options.try(:upload_authorized?) }
         next unless dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
 
         begin
