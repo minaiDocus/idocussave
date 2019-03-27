@@ -115,6 +115,8 @@ input.error:focus, select.error:focus, textarea.error:focus
     margin-bottom: 0px !important
 
 form
+  .form-group
+    margin-bottom: 1.5rem
   .form-group.radio_buttons, .form-group.check_boxes
     .control-section
       .help-block
@@ -122,19 +124,23 @@ form
         margin-top: -14px
       .checkbox
         margin: 5px
-      span.checkbox:first-of-type
+      .radio
+        margin: 1px
+      span.checkbox:first-of-type, span.radio:first-of-type
         margin-left: 0px
-      span.checkbox:last-of-type
+      span.checkbox:last-of-type, span.radio:last-of-type
         margin-right: 0px
       .radio, .checkbox
         label
           border: 1px solid #ddd
-          padding: 0 3px
+          padding: 0 5px
           border-radius: 3px
           cursor: pointer
           width: 100px
           height: 28px
           overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
           text-align: center
           input[type="radio"], input[type="checkbox"]
             display: none
@@ -147,6 +153,8 @@ form
   .label-section
     .help-inline
       text-decoration: underline
+      display: inline-block
+      line-height: 20px
   .control-section
     margin-left : 10px
     input, select, textarea, .sol-inner-container
@@ -174,8 +182,16 @@ form
       .sol-option
         input, select, textarea
           width: auto
+    .bootstrap-filestyle
+      input[type="text"]
+        width: 210px !important
+        height: 25px !important
+      label
+        cursor: pointer
     .help-block
       color: #666
+      display: inline-block;
+      line-height: 20px;
   .radio_buttons, .boolean
     .help-block
       margin-left: 10px

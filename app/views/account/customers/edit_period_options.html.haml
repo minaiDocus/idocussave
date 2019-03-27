@@ -1,17 +1,17 @@
 #customer.edit_period_options
+  - unless @customer.configured?
+    .box
+      = render 'steps'
   .card
-    .card-header.clearfix
+    .card-header
       - if @customer.configured?
         %h3 
           Edition des options des périodes du client : 
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'period_options'), class: 'fs-origin'
       - else
-        .float-left
-          %h3
-            Paramètres de téléversement des pièces pour le dossier : 
-            %span.badge.badge-info= @customer
-        .float-right
-          = render 'steps'
+        %h3
+          Paramètres de téléversement des pièces pour le dossier : 
+          %span.badge.badge-info= @customer
     = simple_form_for @customer, url: update_period_options_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-large' } do |f|
       .card-body
         = f.input :authd_prev_period,            as: :integer, input_html: { min: 0 }

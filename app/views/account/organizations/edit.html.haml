@@ -3,7 +3,7 @@
     .card-header
       %h3 Édition de l'organisation
 
-    = simple_form_for [:account, @organization], html: { class: 'form-horizontal' } do |f|
+    = simple_form_for [:account, @organization], html: { class: 'form-horizontal label-medium' } do |f|
       .card-body
         = hidden_field_tag :part, params[:part]
         - if params[:part] != 'other_software'

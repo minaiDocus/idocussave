@@ -32,7 +32,7 @@
               %a.nav-link{ class: ('active' if params[:tab] == 'ibiza_box'), href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
           %li.nav-item.dropdown
             %a.nav-link.dropdown-toggle{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact-online'].include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
-            %ul.dropdown-menu{ style: "min-width: 187px" }
+            %ul.dropdown-menu{ style: "min-width: 195px" }
               -if @organization.try(:ibiza).try(:used?) && !@customer.uses_exact_online?
                 %li
                   %a.dropdown-item{ class: ('active' if params[:tab] == 'ibiza'), href: '#ibiza', data: { toggle: 'tab' } }
@@ -667,7 +667,7 @@
                 fournit lors de la livraison.
                 %br
                 Merci d'inscrire le code d'appairage dans le champ ci-dessous :
-                = form_tag account_organization_customer_dematbox_path(@organization, @customer), method: :post, class: 'margin2top form-horizontal label-small' do
+                = form_tag account_organization_customer_dematbox_path(@organization, @customer), method: :post, class: 'margin2top form-horizontal label-auto' do
                   .form-group.clearfix
                     .label-section
                       = label_tag :pairing_code, 'Code appairage'

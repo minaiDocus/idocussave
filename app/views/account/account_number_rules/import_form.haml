@@ -13,12 +13,19 @@
               .control-section
                 = file_field_tag :file, class: 'filestyle', data: { classButton: 'btn btn-secondary pointer', input: true, buttonText: (glyphicon('file') + ' CSV') }
                 = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_account_number_rules_path(@organization)
-            .form-group.clearfix
+            .form-group.clearfix.radio_buttons
               .label-section
                 = label_tag 'account_number_rule[affect]', t('activerecord.models.account_number_rule.attributes.affect')
               .control-section
-                = select_tag 'account_number_rule[affect]', options_for_select(affect_options_for_select), include_blank: false
-                %p.help-block Ne pourra plus être changé par la suite. 
+                %span.radio
+                  %label
+                    = radio_button_tag 'account_number_rule[affect]', 'organization', true
+                    Organization
+                %span.radio
+                  %label
+                    = radio_button_tag 'account_number_rule[affect]', 'user'
+                    Client
+                %i.help-block Ne pourra plus être changé par la suite. 
           .col-md-6.affect_to{ style: 'display:none'}
             = render partial: 'affect_to_form'
       .card-footer

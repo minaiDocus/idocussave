@@ -1,24 +1,27 @@
 #customer.edit.softwares
-  - if @customer.configured?
-    .row
-      .col-md-12.box
-        %h3 Edition des options #{@software} du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: @software)}
-  - else
-    = render 'account/customers/steps'
-    .row
-      .col-md-12.box
-        %h3 Configuration #{@software} pour le dossier : #{@customer}
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3
+          Edition des options #{@software} du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: @software), class: 'fs-origin'
+      - else
+        %h3
+          Configuration #{@software} pour le dossier : 
+          %span.text-info.fs-origin= @customer
 
-  .row
-    .col-md-12.box
-      = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |c|
+    = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |c|
+      .card-body
         = hidden_field_tag :software, @software
         = c.simple_fields_for :softwares do |f|
           -if @software == 'coala'
-            = f.input :is_coala_auto_deliver, collection: auto_deliver_options, include_blank: false
+            = f.input :is_coala_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
           -if @software == 'quadratus'
-            = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, include_blank: false
+            = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
           -if @software == 'cegid'
             = f.input :is_cegid_auto_deliver, collection: auto_deliver_options, include_blank: false
@@ -27,9 +30,9 @@
             = f.input :is_fec_agiris_auto_deliver, collection: auto_deliver_options, include_blank: false
 
           -if @software == 'csv_descriptor'
-            = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, include_blank: false
-
-        .form-actions.margin0bottom
+            = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+      .card-footer      
+        .form-actions
           - if @customer.configured?
             = c.submit t('actions.submit'), class: 'btn btn-primary'
             = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: @software), class: 'btn btn-light'

@@ -2,13 +2,17 @@
   .alerts
     = render 'shared/messages'
 
-  .row
-    .col-md-12
+  .card
+    .card-header
+      %h3 Gestion des Adresses
+    .card-body
       = render partial: 'navigation'
-  - grouped_addresses = @addresses.in_groups_of(3)
-  - grouped_addresses.each_with_index do |addresses, index|
-    .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
-      - addresses.each do |address|
-        - if address
-          .col-md-4
-            = render partial: 'address', locals: { address: address, single: false }
+      - grouped_addresses = @addresses.in_groups_of(3)
+      .tab-content
+        .box.border-top-0.bg-light
+          - grouped_addresses.each_with_index do |addresses, index|
+            .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+              - addresses.each do |address|
+                - if address
+                  .col-md-4
+                    = render partial: 'address', locals: { address: address, single: false }

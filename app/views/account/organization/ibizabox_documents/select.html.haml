@@ -1,31 +1,35 @@
 #ibizabox_documents.select
-  .row-fluid
-    .span12.box
-      %h3 Sélection de documents ibiza box restant à intégrer du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')} (#{@documents.size})
-  .row-fluid
-    .span9.box{ style: 'padding-bottom:0;' }
-      = form_tag validate_account_organization_customer_ibizabox_documents_path, method: 'patch', class: 'form form-horizontal' do
-        = hidden_field_tag 'document_contains[name]',    (params[:document_contains][:name] rescue '')
-        = hidden_field_tag 'document_contains[journal]', (params[:document_contains][:journal] rescue '')
-        = render 'shared/list_options', collection: @documents
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-          %thead
-            %tr
-              %th= check_box_tag 'master_checkbox', 0, false
-              %th= sortable :created_at,              'Date de la récupération'
-              %th= sortable :journal,                 'Journal'
-              %th= sortable :original_file_name,       'Nom original'
-              %th.pages= sortable :pages_number,      'Nb. pages'
-          %tbody
-            - @documents.each do |document|
-              %tr
-                %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox'
-                %td= l(document.created_at)
-                %td= document.journal
-                %td= link_to document.original_file_name, account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
-                %td.pages= document.pages_number
-        = render 'shared/list_options', collection: @documents
-        .form-actions
-          = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
-    .span3.box
-      = render 'sidebar'
+  .row
+    .col-md-12
+      .box
+        %h3
+          Sélection de documents ibiza box restant à intégrer du client 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza_box'), class: 'fs-origin'
+          %span.badge.badge-info.fs-origin= @documents.size
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = form_tag validate_account_organization_customer_ibizabox_documents_path, method: 'patch', class: 'form form-horizontal' do
+          = hidden_field_tag 'document_contains[name]',    (params[:document_contains][:name] rescue '')
+          = hidden_field_tag 'document_contains[journal]', (params[:document_contains][:journal] rescue '')
+          = render 'shared/list_options', collection: @documents
+          %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= sortable :created_at,              'Date de la récupération'
+                %th= sortable :journal,                 'Journal'
+                %th= sortable :original_file_name,       'Nom original'
+                %th.pages= sortable :pages_number,      'Nb. pages'
+            %tbody
+              - @documents.each do |document|
+                %tr
+                  %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox'
+                  %td= l(document.created_at)
+                  %td= document.journal
+                  %td= link_to document.original_file_name, account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
+                  %td.pages= document.pages_number
+          = render 'shared/list_options', collection: @documents
+          .form-actions.margin1top
+            = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
+    = render 'sidebar'
