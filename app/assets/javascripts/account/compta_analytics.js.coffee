@@ -187,9 +187,9 @@ handleAnalaysisVentilation = (elem) ->
 toogleSectionGroup = () ->
   number = $(this).data('group-number')
   if ($("#analytic_parent_box#{number}").is(":visible"))
-    $("#analytic_parent_box#{number}").addClass('hide')
+    $("#analytic_parent_box#{number}").slideUp('fast')
   else
-    $("#analytic_parent_box#{number}").removeClass('hide')
+    $("#analytic_parent_box#{number}").slideDown('fast')
 
 jQuery ->
   window.analytic_target_form = null

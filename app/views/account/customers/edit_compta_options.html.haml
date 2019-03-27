@@ -1,4 +1,7 @@
 #customer.edit
+  - unless @customer.configured?
+    .box
+      = render 'steps'
   .card
     .card-header
       - if @customer.configured?
@@ -6,12 +9,10 @@
           Edition des options de comptabilité du client : 
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'fs-origin'
       - else
-        .float-left
-          %h3
-            Options pour le dossier : 
-            %span.text-info.fs-origin= @customer
-        .float-right
-          = render 'steps'
+        %h3
+          Options pour le dossier : 
+          %span.text-info.fs-origin= @customer
+          
     = simple_form_for @customer, url: update_compta_options_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |f|
       .card-body
         = f.simple_fields_for :options do |o|

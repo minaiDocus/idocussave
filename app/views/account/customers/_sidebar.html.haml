@@ -42,15 +42,16 @@
               = label_tag 'user_contains[collaborator_id]', 'Collaborateur'
             .control-section
               = select_tag 'user_contains[collaborator_id]', options_from_collection_for_select(@organization.collaborators.order(code: :asc), :id, :code, (params[:user_contains][:collaborator_id] rescue '')), include_blank: true
-        .form-group
+        .form-group.check_boxes
           .label-section
             = label_tag 'group_ids[]', t('activerecord.models.group.name').pluralize
           .control-section
             - if @groups.size > 0
               - @groups.each do |group|
-                .group
-                  = check_box_tag 'group_ids[]', group.id, (params[:group_ids].include?(group.id) rescue false), id: "group_ids_#{group.id}", class: 'no-relative', style: 'margin:0 5px 0 0'
-                  %label{ for: "group_ids_#{group.id}" }= group
+                %span.checkbox
+                  %label{ id: "label_group_ids_#{group.id}" }
+                    = check_box_tag 'group_ids[]', group.id, (params[:group_ids].include?(group.id) rescue false), id: "group_ids_#{group.id}", class: 'no-relative', style: 'margin:0 5px 0 0'
+                    = group
             - else
               %i [Aucun groupe]
         .form-group

@@ -212,6 +212,12 @@ jQuery ->
     update_warning()
     update_price()
 
+    $('#subscriptions #admin_options_button').on 'click', ->
+      if $('#subscriptions .admin_options').is(':visible')
+        $('#subscriptions .admin_options').fadeOut('fast')
+      else
+        $('#subscriptions .admin_options').fadeIn('fast')
+
     $('.package input').on 'change', ->
       update_form()
 

@@ -1,12 +1,8 @@
 #group_organizations.container-fluid
   .edit
-    .row
-      .col-md-12
-        .box.small-shadow
-          %h3
-            Édition du groupe d'organisation : 
-            %span.text-info.fs-origin.font-weight-bold= @organization_group.name
-
-    .row
-      .col-md-12
-        = render partial: 'form'
+    .card
+      .card-header
+        %h3
+          Édition du groupe d'organisation : 
+          %span.text-info.fs-origin.font-weight-bold= @organization_group.name
+      = render partial: 'form'

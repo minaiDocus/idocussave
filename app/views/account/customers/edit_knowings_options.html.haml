@@ -1,21 +1,24 @@
 #customer.edit.knowings
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition des options Knowings du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ged')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        %h3 Configuration de la GED pour le dossier : #{@customer}
-  .row-fluid
-    .span12.box
-      = simple_form_for @customer, url: update_knowings_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+  - unless @customer.configured?
+    .box
+      = render 'steps'
+  .card
+    .card-header
+      - if @customer.configured?
+          %h3
+            Edition des options Knowings du client : 
+            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'fs-origin'
+      - else
+          %h3 Configuration de la GED pour le dossier : #{@customer}
+
+    = simple_form_for @customer, url: update_knowings_options_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |f|
+      .card-body
         = f.input :knowings_code
         = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
-        .form-actions.margin0bottom
+      .card-footer  
+        .form-actions
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'btn btn-primary'
           - else
             = f.submit t('actions.finish'), class: 'btn btn-primary'

@@ -1,23 +1,37 @@
+- content_for :form do
+  = simple_nested_form_for @accounting_plan, url: update_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), html: { class: 'form-horizontal' }, wrapper: false do |f|
+    .card-body
+      .clearfix
+        = f.fields_for :vat_accounts do |vat_account|
+          .box.clearfix.bg-light.float-left.margin2right{ style: 'width: 48.5%; min-width:600px' }
+            .float-right
+              = vat_account.link_to_remove glyphicon('x'), class: 'btn btn-light'
+            .float-left{ style: "width: 93%" }
+              = vat_account.input :code, label: t('activerecord.models.vat_account.attributes.code')
+              = vat_account.input :nature, label: t('activerecord.models.vat_account.attributes.nature')
+              = vat_account.input :account_number, label: t('activerecord.models.vat_account.attributes.account_number')
+        = f.link_to_add 'Ajouter un compte de TVA', :vat_accounts, class: 'btn btn-secondary'
+    .card-footer
+      .form-actions
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        = link_to t('actions.cancel'), account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-light'
+
 #accounting_plan.edit
   - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition des #{link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)} du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
+    .card
+      .card-header
+        %h3
+          Edition des 
+          = link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'fs-origin'
+          du client : 
+          = link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
+      = content_for :form
   - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
+    .box
+      = render 'account/customers/steps'
+    .card
+      .card-header
         %h3 Comptes de TVA
+      = content_for :form
 
-  .row-fluid
-    .span12.box
-      = simple_nested_form_for @accounting_plan, url: update_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
-        = f.fields_for :vat_accounts do |vat_account|
-          = vat_account.link_to_remove icon_destroy, class: 'btn btn-mini'
-          = vat_account.input :code, label: t('activerecord.models.vat_account.attributes.code')
-          = vat_account.input :nature, label: t('activerecord.models.vat_account.attributes.nature')
-          = vat_account.input :account_number, label: t('activerecord.models.vat_account.attributes.account_number')
-        = f.link_to_add 'Ajouter un compte de TVA', :vat_accounts, class: 'btn margin2bottom'
-        .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
+

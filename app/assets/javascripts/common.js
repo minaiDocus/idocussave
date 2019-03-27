@@ -30,7 +30,10 @@ function custom_radio_buttons(){
   $('form .radio_buttons .control-section').each(function(e){
     $(this).find('.radio label').each(function(e){
       var text = $(this).text();
-      $(this).attr('title', text);
+      if(text.length > 13) {
+        $(this).attr('title', text);
+        $(this).tooltip({placement: 'bottom', trigger: 'hover'});
+      }
     });
 
     var label_parent = $(this).find('input[type="radio"]:checked').parent();
@@ -49,7 +52,10 @@ function custom_checkbox_buttons(){
   $('form .check_boxes .control-section').each(function(e){
     $(this).find('.checkbox label').each(function(e){
       var text = $(this).text();
-      $(this).attr('title', text);
+      if(text.length > 13){
+        $(this).attr('title', text);
+        $(this).tooltip({placement: 'bottom', trigger: 'hover'});
+      }
     });
 
     var label_parent = $(this).find('input[type="checkbox"]:checked').parent();

@@ -1,10 +1,6 @@
 #group_organizations.container-fluid
   .new
-    .row
-      .col-md-12
-        .box.small-shadow
-          %h3 Création d'un nouveau groupe d'organisation
-
-    .row
-      .col-md-12
-        = render partial: 'form'
+    .card
+      .card-header
+        %h3 Création d'un nouveau groupe d'organisation
+      = render partial: 'form'

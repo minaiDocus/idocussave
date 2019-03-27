@@ -1,7 +1,5 @@
-.navbar
-  .navbar-inner
-    %ul.nav
-      %li{ class: (action_name == 'index' ? 'active' : '')}
-        = link_to 'Liste des adresses', account_addresses_path
-      %li{ class: (action_name == 'new' ? 'active' : '')}
-        = link_to 'Nouvelle adresse', new_account_address_path
+%ul.nav.nav-tabs
+  %li.nav-item
+    = link_to 'Liste des adresses', account_addresses_path, class: (action_name == 'index' ? 'active nav-link' : 'nav-link')
+  %li.nav-item
+    = link_to 'Nouvelle adresse', new_account_address_path, class: (action_name == 'new' ? 'active nav-link' : 'nav-link')

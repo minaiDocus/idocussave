@@ -15,7 +15,7 @@
             = form_for true_user, url: account_profile_path do |f|
               .card
                 .card-header
-                  %h3.aligncenter Changer mon mot de passe
+                  %h3 Changer mon mot de passe
                 .card-body
                   - if flash[:alert].present?
                     .alert-container
@@ -25,17 +25,17 @@
                           %ul
                             %li
                               Mots de passe invalides
-                  .form-group
+                  .form-group.clearfix
                     .label-section
                       = f.label 'Mot de passe actuel :'
                     .control-section
                       = f.password_field :current_password, label: 'Ancien mot de passe', class: 'form-control'
-                  .form-group
+                  .form-group.clearfix
                     .label-section
                       = f.label 'Nouveau mot de passe :'
                     .control-section
                       = f.password_field :password, label: 'Nouveau mot de passe', class: 'form-control'
-                  .form-group
+                  .form-group.clearfix
                     .label-section
                       = f.label 'Confirmation du mot de passe :'
                     .control-section
@@ -48,7 +48,7 @@
             .col-md-12
               .card
                 .card-header
-                  %h3.aligncenter Partage de compte
+                  %h3 Partage de compte
                 .card-body
                   - unless @user.is_guest
                     %h4 Liste des contacts avec qui je partage mon compte :
@@ -91,7 +91,7 @@
               .col-md-12
                 .card
                   .card-header
-                    %h3.aligncenter Gestion des adresses
+                    %h3 Gestion des adresses
                   .card-body
                     .row
                       .col-md-4
@@ -111,7 +111,7 @@
               .col-md-12
                 .card
                   .card-header
-                    %h3.aligncenter Stockage externe des documents
+                    %h3 Stockage externe des documents
                   .card-body
                     Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
                     %br
@@ -278,7 +278,7 @@
                 = simple_form_for true_user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
                   .card
                     .card-header
-                      %h3.aligncenter Notifications et remontées d'alertes
+                      %h3 Notifications et remontées d'alertes
                     .card-body
                       = f.simple_fields_for :notify do |o|
                         %ul.nav.nav-tabs
@@ -348,7 +348,7 @@
                 .col-md-12
                   .card
                     .card-header
-                      %h3.aligncenter Adresse email d'envoi de documents
+                      %h3 Adresse email d'envoi de documents
                     .card-body
                       .row
                         .col-md-6
@@ -394,7 +394,7 @@
             .col-md-12
               .card
                 .card-header
-                  %h3.aligncenter Réactiver mon compte client
+                  %h3 Réactiver mon compte client
                 .card-body
                   Pour réactiver votre compte client veuillez envoyer un courriel à
                   = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
