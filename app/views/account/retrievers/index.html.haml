@@ -1,52 +1,70 @@
 = hidden_field_tag :retriever_budgea_config, @bi_config
-.row-fluid
-  .span12
-    .box
-      .row-fluid
-        .span6
-          %h3 Mes automates (#{@retrievers.total_count})
-        .span6
-          %a{ href: '#', class: 'btn pull-right toggle_filter' }
-            %i.icon-filter
-            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
-          / Information obsolète
-          / = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }
-    .filter.box{ style: ('display: none' if @is_filter_empty) }
-      = form_tag account_retrievers_path, method: :get, class: 'retriever_search form form-inline margin0bottom' do
-        = label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name') + ' :'
-        = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
-        = label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state') + ' :'
-        = select_tag 'retriever_contains[state]', options_for_select( retriever_states, (params[:retriever_contains][:state] rescue '') )
-        = submit_tag t('filters.action'), class: 'btn btn-primary'
-        = link_to icon(icon: 'remove'), account_retrievers_path, class: 'btn reset_filter', title: t('filters.reset')
+.box
+  .row
+    .col-md-12
+      %h3
+        Liste de mes automates 
+        %span.text-info.fs-origin= 0 #@retrievers.total_count
+      / Information obsolète
+      / .col-md-6
+      / = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
+      / = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }
+
+.row.retractable.with-filter
+  .col-md-12.retractable-content
     .retrievers_list.box
+  .card.retractable-filter
+    = form_tag account_retrievers_path, method: :get, class: 'retriever_search form-filter' do
+      .card-header.clearfix
+        .float-left
+          %h3 Filtres
+        .float-right.margin1left
+          %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+      .retractable-filter-content
+        .card-body
+          .form-group.clearfix
+            .label-section
+              = label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name') + ' :'
+            .control-section
+              = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
+          .form-group.clearfix
+            .label-section
+              = label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state') + ' :'
+            .control-section
+              = select_tag 'retriever_contains[state]', options_for_select( retriever_states, (params[:retriever_contains][:state] rescue '') )
+        .card-footer
+          .form-actions
+            = submit_tag t('filters.action'), class: 'btn btn-primary'
+            = link_to glyphicon('x'), account_retrievers_path, class: 'btn btn-light'
 
 #retrievers_security_informations.modal.fade
-  .modal-header
-    %a{ class: 'close', 'data-dismiss' => 'modal' } ×
-    %h3 INFORMATIONS DE SECURITE
-  %form
-    .modal-body
-      %p
-        Toutes vos informations de connexion (identifiants, mots de passe…) sont gérées de façon très sécurisée en utilisant un cryptage extrêmement puissant (RSA 4096) et un stockage géographiquement distinct de celui des informations de déchiffrage.
-        %br
-        En d’autres termes, personne chez iDocus n’est en mesure, à un instant T, de lire ces informations sensibles.
-        %br
-        %br
-        Les téléchargements que nous effectuons sur les sites bancaires sont en lecture seule.
-        %b Aucune opération bancaire ne peut être réalisée !
-        %br
-        %br
-        Les serveurs utilisés pour les transactions d’import automatique sont tous dédiés et hébergés dans des datacenters ultra sécurisés, situés sur le territoire français et évidemment backupés en permanence.
-        %br
-        %br
-        Toutes ces opérations effectuées par internet sont sécurisées par le protocole SSL (Secure Socket Layer), utilisé par la quasi-totalité des banques.
-        %br
-        Cela signifie que nos différents serveurs et votre navigateur créent à chaque connexion un canal crypté spécifique empêchant que l'information puisse être « détournée » en cours de navigation.
-        %br
-        Pour ce faire, serveurs et navigateur s'identifient à chaque fois à l'aide d'un certificat SSL.
-        %br
-        %br
-        Nos outils sont bien sûr également protégés par des firewalls.
-    .modal-footer
-      %a{ class: 'btn', 'data-dismiss' => 'modal' } Fermer
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %a{ class: 'close', 'data-dismiss' => 'modal' } ×
+        %h3 INFORMATIONS DE SECURITE
+      %form
+        .modal-body
+          %p
+            Toutes vos informations de connexion (identifiants, mots de passe…) sont gérées de façon très sécurisée en utilisant un cryptage extrêmement puissant (RSA 4096) et un stockage géographiquement distinct de celui des informations de déchiffrage.
+            %br
+            En d’autres termes, personne chez iDocus n’est en mesure, à un instant T, de lire ces informations sensibles.
+            %br
+            %br
+            Les téléchargements que nous effectuons sur les sites bancaires sont en lecture seule.
+            %b Aucune opération bancaire ne peut être réalisée !
+            %br
+            %br
+            Les serveurs utilisés pour les transactions d’import automatique sont tous dédiés et hébergés dans des datacenters ultra sécurisés, situés sur le territoire français et évidemment backupés en permanence.
+            %br
+            %br
+            Toutes ces opérations effectuées par internet sont sécurisées par le protocole SSL (Secure Socket Layer), utilisé par la quasi-totalité des banques.
+            %br
+            Cela signifie que nos différents serveurs et votre navigateur créent à chaque connexion un canal crypté spécifique empêchant que l'information puisse être « détournée » en cours de navigation.
+            %br
+            Pour ce faire, serveurs et navigateur s'identifient à chaque fois à l'aide d'un certificat SSL.
+            %br
+            %br
+            Nos outils sont bien sûr également protégés par des firewalls.
+        .modal-footer
+          %a{ class: 'btn btn-light', 'data-dismiss' => 'modal' } Fermer

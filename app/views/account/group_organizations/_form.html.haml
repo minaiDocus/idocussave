@@ -1,4 +1,4 @@
-= simple_form_for @organization_group, url: (@organization_group.persisted? ? account_group_organization_path : account_group_organizations_path), html: { class: 'form-horizontal' } do |f|
+= simple_form_for @organization_group, url: (@organization_group.persisted? ? account_group_organization_path : account_group_organizations_path), html: { class: 'form-horizontal label-medium' } do |f|
   .card-body
     = f.input :name
     = f.association :organizations, collection: Organization.all.order(:name), input_html: { class: 'searchable-option-list' }, required: true, hint: "Une organisation ne peut être membre que d'un seul groupe à la fois."
