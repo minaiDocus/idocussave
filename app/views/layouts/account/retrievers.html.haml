@@ -1,24 +1,26 @@
 - content_for :content do
   #retrievers.container-fluid
+    .box.clearfix
+      .float-left
+        %h3 Mes Automates
     - if has_multiple_accounts?
-      .row-fluid
-        .span12.box
-          - if action_name == 'edit' && current_user.collaborator?
-            = "Dossier : "
-            = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
-            = hidden_field_tag :account_id, @account.try(:id)
-          - else
-            - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
-            %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
-              = label_tag :retrievers_account_id, 'Dossier :'
-              = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
-              -if @account.try(:id) && current_user.collaborator?
+      .float-right
+        - if action_name == 'edit'
+          = "Dossier : "
+          = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
+          = hidden_field_tag :account_id, @account.try(:id)
+        - else
+          - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
+          %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
+            = label_tag :retrievers_account_id, 'Dossier :'
+            = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
+            -if @account.try(:id) && current_user.collaborator?
                 %span.icon-arrow-left
                 = link_to 'Voir la fiche cliente', account_organization_customer_path(@account.organization, @account)
     - else
       = hidden_field_tag :account_id, @account.try(:id)
-    .row-fluid
-      .span3
+    .row.retractable.with-menu
+      .col-md-3
         .box.sidebar-nav
           %ul.nav.nav-list
             %li.nav-header Automates
@@ -44,7 +46,7 @@
               = link_to 'Sélection des comptes bancaires', @account.try(:id)? account_bank_accounts_path : '#', link_retriever_options(@account)
             %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
               = link_to 'Sélection de documents restant à récupérer', @account.try(:id)? select_account_retrieved_documents_path : '#', link_retriever_options(@account)
-      .span9
+      .col-md-9
         .alerts
           = render partial: 'shared/messages'
         = yield
