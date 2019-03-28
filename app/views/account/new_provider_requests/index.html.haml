@@ -1,12 +1,14 @@
-#new_provider_requests_list.row-fluid
-  .span12
+#new_provider_requests_list.row
+  .col-md-12
     .box
-      %h3 Mes demandes (#{@new_provider_requests.size})
+      %h3
+        Mes demandes 
+        %span.badge.badge-info= @new_provider_requests.size
     .box
       = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
             %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at')
             %th= sortable :state,      t('activerecord.models.new_provider_request.attributes.state')
@@ -27,36 +29,38 @@
               %td.hide.types= new_provider_request.types
               %td.hide.description= new_provider_request.description
               %td
-                = link_to content_tag(:i, '', class: 'icon-eye-open'), '#', title: 'Afficher les détails', data: {id: new_provider_request.id}, class: 'show_provider_request'
+                = link_to glyphicon('eye'), '#', title: 'Afficher les détails', data: {id: new_provider_request.id}, class: 'show_provider_request btn btn-light'
       = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
 
 #showProviderRequest.modal.hide.fade
-  .modal-header
-    %a.close{ data: { dismiss: :modal } } ×
-    %h3 Détails de la demande
-  .modal-body
-    %div.clearfix
-      %label.head.pull-left.margin1right= t('activerecord.models.common.attributes.created_at') + ':'
-      .pull-left.created_at
-    %div.clearfix
-      %label.head.pull-left.margin7right= t('activerecord.models.new_provider_request.attributes.state') + ':'
-      .pull-left._state
-    %div.margin1top.margin1bottom
-      %table.table.table-bordered.table-condensed.table-striped{style: "min-width:500px"}
-        %thead
-          %tr
-            %th= t('activerecord.models.new_provider_request.attributes.name')
-            %th= t('activerecord.models.new_provider_request.attributes.url')
-            %th= t('activerecord.models.new_provider_request.attributes.email')
-            %th= t('activerecord.models.new_provider_request.attributes.login')
-            %th= t('activerecord.models.new_provider_request.attributes.types')
-        %tbody
-          %tr
-            %td.name
-            %td.url
-            %td.email
-            %td.login
-            %td.types
-    %div
-      %label.head= t('activerecord.models.new_provider_request.attributes.description') + ':'
-      %p.padding1left.description
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Détails de la demande
+        %a.close{ data: { dismiss: :modal } } ×
+      .modal-body
+        %div.clearfix
+          %label.head.float-left.margin1right= t('activerecord.models.common.attributes.created_at') + ':'
+          .float-left.created_at
+        %div.clearfix
+          %label.head.float-left.margin7right= t('activerecord.models.new_provider_request.attributes.state') + ':'
+          .float-left._state
+        %div.margin1top.margin1bottom
+          %table.table.table-bordered-inner.table-condensed.table-striped{style: "min-width:500px"}
+            %thead
+              %tr.bg-brown.text-white
+                %th= t('activerecord.models.new_provider_request.attributes.name')
+                %th= t('activerecord.models.new_provider_request.attributes.url')
+                %th= t('activerecord.models.new_provider_request.attributes.email')
+                %th= t('activerecord.models.new_provider_request.attributes.login')
+                %th= t('activerecord.models.new_provider_request.attributes.types')
+            %tbody
+              %tr
+                %td.name
+                %td.url
+                %td.email
+                %td.login
+                %td.types
+        %div
+          %label.head= t('activerecord.models.new_provider_request.attributes.description') + ':'
+          %p.padding1left.description

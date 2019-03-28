@@ -21,7 +21,7 @@ html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym,
 del, dfn, em, img, ins, kbd, q, samp, small, strike, strong tt, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td
   :font-size 11px
-  :font-family Arial, Helvetica, sans-serif !important
+  :font-family Arial, Helvetica, sans-serif  !important
 
 h1, h2, h3, h4
   :color #584528
@@ -133,11 +133,10 @@ form
       .radio, .checkbox
         label
           border: 1px solid #ddd
-          padding: 0 5px
+          padding: 3px 5px
           border-radius: 3px
           cursor: pointer
           width: 100px
-          height: 28px
           overflow: hidden
           text-overflow: ellipsis
           white-space: nowrap
@@ -232,6 +231,9 @@ form.form-horizontal.label-large
     .control-section
       width: calc(100% - 570px)
 form.form-filter
+  .filter-date
+    input
+      width: 86.7%
   .form-actions
     text-align: right
 
@@ -263,6 +265,10 @@ form.form-filter
 .page-link-badge
   :font-size inherit !important
 
+
+//modal
+.modal-dialog
+  max-width: 750px
 
 // WorkingClass
 .pull-none

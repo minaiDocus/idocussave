@@ -3,7 +3,7 @@
   <strong id='info_selection'>Séléctionnez vos comptes bancaires parmis la liste suivante:</strong>
   <table class='table table-bordered table-condensed table-striped margin1top margin0bottom'>
     <thead>
-      <tr>
+      <tr class="bg-brown text-white">
         <th><input type='checkbox' name='' id='master_checkbox' /> </th>
         <th>Nom du compte</th>
         <th>Numéro de compte</th>
@@ -27,6 +27,7 @@
       <% end %>
     </tbody>
   </table>
+  <hr />
   <div class="form-actions">
     <div class="actions">
       <input name="commit_selection" value="Valider" class="btn btn-primary" id="retriever_selection_commit" type="button">

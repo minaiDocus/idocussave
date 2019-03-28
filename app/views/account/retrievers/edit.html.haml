@@ -1,9 +1,7 @@
-.row-fluid
-  .span12
-    .box
-      .row-fluid
-        .span8.padding1top
-          %h3 Modification du récupérateur : #{@retriever.name}
-        .span4
-          = image_tag('application/budgealogo.png', alt: 'Budget Insight', class: 'budgea_logo pull-right')
-    = render partial: 'form'
+.box
+  .row
+    .col-md-8.padding1top
+      %h3 Modification du récupérateur : #{@retriever.name}
+    .col-md-4
+      = image_tag('application/budgealogo.png', alt: 'Budget Insight', class: 'budgea_logo float-right')
+= render partial: 'form'

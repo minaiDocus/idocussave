@@ -1,5 +1,13 @@
 @import "common"
 
+html, body
+  height: 100%
+  background-color: #736E75
+  /* background-image: url('application/background.jpg') */
+  /* background-repeat: repeat */
+  /* background-attachment: fixed */
+  /* The html and body elements cannot have any padding or margin. */
+
 //Navigation
 #next-nav-wrapper
   padding-top: 50px
@@ -34,7 +42,13 @@
   background-color: #3e2f24 !important
   color: #fff
   .nav-link
-    color: #c9dd03 !important
+    color: #c9dd03
+  // disable: allow link to be clickable
+  .nav-link.disable
+    color: #6c757d
+  // disabled: disallow link to be clickable
+  .nav-link.disabled
+    color: #6c757d
   .nav-item:hover
     background-color: #f8f9fa !important
     .nav-link
@@ -46,6 +60,10 @@
     background-color: #fff !important
     .nav-link
       color: #3e2f24 !important
+  .nav-header
+    border-bottom: 1px solid #fff
+    font-size: 12px
+    margin-top: 5px
   .dropdown-menu
     .nav-item.active
       .dropdown-link
@@ -1662,6 +1680,7 @@ footer
           -webkit-transition: max-height .5s
           transition: max-height .5s
   .bottom-bar
+    text-align: center
     position: relative
     background: #000
     padding: 4px 0
@@ -1788,12 +1807,6 @@ footer
       width: 0
       height: 0
       clear: both
-
-
-html, body
-  height: 100%
-  background-color: #736E75
-  /* The html and body elements cannot have any padding or margin. */
 
 /* Wrapper for page content to push down footer */
 #wrap

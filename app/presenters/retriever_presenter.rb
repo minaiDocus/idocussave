@@ -7,46 +7,46 @@ class RetrieverPresenter < BasePresenter
     if retriever.waiting_selection?
       if retriever.provider? || retriever.provider_and_bank?
         if scope == :account
-          h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: retriever }), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :collaborator
-          h.link_to 'Sélectionnez les documents', h.select_account_organization_customer_retrieved_documents_path(user.organization, user, document_contains: { retriever_id: retriever }), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez les documents', h.select_account_organization_customer_retrieved_documents_path(user.organization, user, document_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :admin
-          h.content_tag :span, 'Sélection des documents', class: 'label'
+          h.content_tag :span, 'Sélection des documents', class: 'badge fs-origin badge-secondary'
         end
       else
         if scope == :account
-          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: retriever }), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :collaborator
-          h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: retriever }), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :admin
-          h.content_tag :span, 'Sélection des comptes', class: 'label'
+          h.content_tag :span, 'Sélection des comptes', class: 'badge fs-origin badge-secondary'
         end
       end
     elsif retriever.waiting_additionnal_info?
-      h.content_tag :span, "Inforamtion de connexion manquante", class: 'label'
+      h.content_tag :span, "Inforamtion de connexion manquante", class: 'badge fs-origin badge-secondary'
     elsif retriever.configuring? || retriever.running?
-      h.content_tag :span, 'Synchronisation en cours', class: 'label'
+      h.content_tag :span, 'Synchronisation en cours', class: 'badge fs-origin badge-secondary'
     elsif retriever.destroying?
-      h.content_tag :span, 'Suppression en cours', class: 'label'
+      h.content_tag :span, 'Suppression en cours', class: 'badge fs-origin badge-secondary'
     elsif retriever.unavailable?
-      content = formatted_state({class: 'label'})
+      content = formatted_state({class: 'badge fs-origin badge-secondary'})
       if scope == :account
-        content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-mini')
+        content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-light')
       elsif scope == :collaborator
-        content + h.link_to("Demander la création d'un automate", h.new_account_organization_customer_new_provider_request_path(user.organization, user), class: 'btn btn-mini')
+        content + h.link_to("Demander la création d'un automate", h.new_account_organization_customer_new_provider_request_path(user.organization, user), class: 'btn btn-light')
       elsif scope == :admin
-        content + h.content_tag(:span, "Demander la création d'un automate", class: 'label')
+        content + h.content_tag(:span, "Demander la création d'un automate", class: 'badge fs-origin badge-secondary')
       end
     else
       label_type = 'success'   if retriever.ready?
-      label_type = 'important' if retriever.error?
-      formatted_state({class: "label label-#{label_type}"})
+      label_type = 'danger' if retriever.error?
+      formatted_state({class: "badge fs-origin badge-#{label_type}"})
     end
   end
 
   def action_link(organization=nil, customer=nil)
     if retriever.ready? or retriever.error?
-      h.link_to icon(icon: 'refresh'), '#', class: "trigger_retriever trigger_retriever_#{retriever.id}", data: { id: retriever.id }, title: "Synchroniser", rel: 'tooltip'
+      h.link_to glyphicon('loop-circular'), '#', class: "trigger_retriever trigger_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: "Synchroniser", rel: 'tooltip'
     else
       ''
     end
