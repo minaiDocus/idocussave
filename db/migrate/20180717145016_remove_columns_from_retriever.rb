@@ -1,4 +1,4 @@
-class RemoveColumnsFromRetriever < ActiveRecord::Migration
+class RemoveColumnsFromRetriever < ActiveRecord::Migration[5.2]
   def change
     remove_column :retrievers, :fiduceo_id, :string
     remove_column :retrievers, :fiduceo_transaction_id, :string
