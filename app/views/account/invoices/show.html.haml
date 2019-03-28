@@ -28,8 +28,8 @@
                     - if invoice.amount_in_cents_w_vat
                       = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
                   %td.actions
-                    = link_to glyphicon('eye'), organization_invoice_path(invoice.id), class: 'do-showInvoice mx-md-3', title: "#{invoice.number}.pdf"
-                    = link_to glyphicon('data-transfer-download'), organization_invoice_path(invoice.id), target: '_blank'
+                    = link_to glyphicon('eye'), organization_invoice_path(invoice.id), class: 'do-showInvoice mx-md-3 btn btn-light', title: "#{invoice.number}.pdf"
+                    = link_to glyphicon('data-transfer-download'), organization_invoice_path(invoice.id), target: '_blank', class: 'btn btn-light'
           .float-right
             = paginate @invoices, params: { panel: 'invoices' }
 

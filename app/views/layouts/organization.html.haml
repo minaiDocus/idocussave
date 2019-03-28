@@ -82,10 +82,6 @@
                           %br
                           (iDo'FacBanque)
                           = glyphicon('list', { class: 'float-right', style: 'margin-top: -8px' })
-                    - # %li.nav-item{ class: (controller_name.in?(%w(pre_assignments pre_assignment_ignored pre_assignment_delivery_errors pack_reports pre_assignment_blocked_duplicates)) ? 'active' : '') }
-                    - # %a{ href: account_organization_pre_assignments_path(@organization), class: 'nav-link' }
-                    - # Pré-affectations
-                    - # glyphicon('file', { class: 'float-right' })
                     %li.nav-item{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
                       %a{ href: account_organization_paper_set_orders_path(@organization), class: 'nav-link' }
                         Commande Kit Courriers

@@ -223,9 +223,11 @@ module ApplicationHelper
 
 
   def new_provider_request_state(new_provider_request)
-    klass = 'label'
-    klass += ' label-success'   if new_provider_request.accepted?
-    klass += ' label-important' if new_provider_request.rejected?
+    klass = 'badge fs-origin'
+    klass_plus = ' badge-secondary'
+    klass_plus = ' badge-success'   if new_provider_request.accepted?
+    klass_plus = ' badge-danger' if new_provider_request.rejected?
+    klass += klass_plus
     content_tag :span, NewProviderRequest.state_machine.states[new_provider_request.state].human_name, class: klass
   end
 

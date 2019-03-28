@@ -31,7 +31,7 @@ module Account::RetrieverHelper
     accounts.active.map { |u| [u, u.id] } || []
   end
 
-  def link_retriever_options(account)
-    { class: account.try(:id)? '' : 'disabled', title: account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-  end
+  # def link_retriever_options(account)
+  #   { class: account.try(:id)? '' : 'disabled', title: account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+  # end
 end

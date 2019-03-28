@@ -8,11 +8,11 @@
   = label_tag 'order_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
   .filter_date
     .input-prepend.date.datepicker
-      %span.add-on
+      %span.add-on.badge.badge-secondary.fs-origin.mr-md-1
         >=
       = text_field_tag 'order_contains[created_at][>=]', (params[:order_contains][:created_at]['>='] rescue ''), class: 'input-medium'
     .input-prepend.date.datepicker
-      %span.add-on
+      %span.add-on.badge.badge-secondary.fs-origin.mr-md-1
         <=
       = text_field_tag 'order_contains[created_at][<=]', (params[:order_contains][:created_at]['<='] rescue ''), class: 'input-medium'
   = label_tag 'order_contains[user_code]', t('activerecord.models.user.attributes.code')

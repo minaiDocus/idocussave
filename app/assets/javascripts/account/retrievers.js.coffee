@@ -88,13 +88,13 @@ jQuery ->
             if confirm('Voulez-vous vraiment supprimer cette automate?')
               id = $(this).attr('data-id')
               releaseRetrieversTimer(id)
-              $('.state_field_'+id).html('<span class="label">Suppression en cours</span>')
+              $('.state_field_'+id).html('<span class="badge fs-origin badge-secondary">Suppression en cours</span>')
               budgeaApi.delete_connection(id).then(
                 ()->
                   refreshRetrievers(id)
                 ()->
                   refreshRetrievers(id)
-                  $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
+                  $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur de suppression</span>')
               )
 
           $('.trigger_retriever').bind 'click', (e)->
@@ -102,13 +102,13 @@ jQuery ->
             if confirm('Voulez-vous vraiment synchroniser cette automate?')
               id = $(this).attr('data-id')
               releaseRetrieversTimer(id)
-              $('.state_field_'+id).html('<span class="label">Synchronisation en cours</span>')
+              $('.state_field_'+id).html('<span class="badge fs-origin badge-secondary">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
                 ()->
                   refreshRetrievers(id)
                 ()->
                   refreshRetrievers(id)
-                  $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
+                  $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur de synchronisation</span>')
               )
 
     releaseRetrieversTimer()
@@ -134,16 +134,6 @@ jQuery ->
       window.retriever_contains_name = ''
       window.retriever_contains_state = ''
       load_retrievers_list()
-
-  if $('#retrievers .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
-    $('a.toggle_filter').click (e) ->
-      e.preventDefault()
-      if $('.filter').is(':visible')
-        $('.filter').slideUp('fast')
-        $(this).find('span').text('Afficher le filtre')
-      else
-        $('.filter').slideDown('fast')
-        $(this).find('span').text('Cacher le filtre')
 
   if $('#new_provider_requests_list').length > 0
     $('.show_provider_request').on 'click', (e)->
@@ -299,8 +289,8 @@ jQuery ->
   $('select#account_id').on 'change', (e)->
     $('#retrievers #account_id_form').submit()
 
-  $('#retrievers a.disabled').on 'click', (e)->
+  $('#retrievers a.disable').on 'click', (e)->
     $('#retrievers .hint_selection').remove()
     text = $(this).attr('title')
-    $('#retrievers #account_id_form #account_id_chosen').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
+    $('#retrievers #account_id_form').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
     $('#retrievers .hint_selection').delay(2500).fadeOut('fast')

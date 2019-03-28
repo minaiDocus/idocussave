@@ -4,7 +4,7 @@
     .col-md-12
       %h3
         Liste de mes automates 
-        %span.text-info.fs-origin= 0 #@retrievers.total_count
+        %span.badge.badge-info.fs-origin= 0 #@retrievers.total_count
       / Information obsolète
       / .col-md-6
       / = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
@@ -41,8 +41,8 @@
   .modal-dialog
     .modal-content
       .modal-header
-        %a{ class: 'close', 'data-dismiss' => 'modal' } ×
         %h3 INFORMATIONS DE SECURITE
+        %a{ class: 'close', 'data-dismiss' => 'modal' } ×
       %form
         .modal-body
           %p

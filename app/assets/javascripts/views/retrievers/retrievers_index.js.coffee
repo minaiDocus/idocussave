@@ -16,6 +16,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
 
   render: ->
     @$el.html(@template(loading: @loading, list_url: "#{location.protocol}//#{location.host}/account/retrievers/list", new_connector: Idocus.new_connector))
+    custom_checkbox_buttons()
     this
 
   fetch_connectors: ->
