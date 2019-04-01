@@ -180,6 +180,10 @@ class User < ActiveRecord::Base
     inactive_at.present?
   end
 
+  def still_active?
+    active? || inactive_at.to_date > Date.today.end_of_month
+  end
+
   def find_or_create_subscription
     self.subscription ||= Subscription.create(user_id: id)
   end

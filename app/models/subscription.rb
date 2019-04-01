@@ -27,6 +27,8 @@ class Subscription < ActiveRecord::Base
   end
 
   def create_period(date)
+    return nil unless (self.user && self.user.still_active?) || self.organization
+
     period = Period.new(start_date: date, duration: period_duration)
     period.subscription = self
 

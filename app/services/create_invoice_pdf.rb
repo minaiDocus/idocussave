@@ -12,7 +12,7 @@ class CreateInvoicePdf
 
       Organization.billed.order(created_at: :asc).each do |organization|
         organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
-        periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+        periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
 
         next if organization_period.nil?
         next if organization_period.invoices.present?
@@ -68,7 +68,7 @@ class CreateInvoicePdf
 
     time = @invoice.created_at - 1.month
 
-    customer_ids = @invoice.organization.customers.map(&:id)
+    customer_ids = @invoice.organization.customers.active_at(time.to_date).map(&:id)
 
     periods = Period.where(user_id: customer_ids).where("start_date <= ? AND end_date >= ?", time.to_date, time.to_date)
 
