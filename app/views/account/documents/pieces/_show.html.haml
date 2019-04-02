@@ -1,16 +1,16 @@
-#show_pieces.clearfix.well
+#show_pieces.clearfix.box.bg-light
   %h4
-  %ul.margin0{ style: "clear:both;", :id => "pieces" }
+  %ul.clearfix.padding0.margin0{ :id => "pieces" }
     = render :partial => "/account/documents/pieces/temp_document", :collection => @temp_documents
 - if @documents.present?
-  #show_pages.well   
+  #show_pages.clearfix.box.bg-light
     .head.margin1bottom.clearfix
-      %h4.pull-left
+      %h4.float-left
       %span.pieces_total_count.hide= @documents.total_count
       - if @user.active?
-        .actiongroup.pull-right
+        .actiongroup.float-right
           %a.do-tooltip.piece_tag{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
-            %i.icon-tag 
+            = glyphicon('tag')
           %a.delete_piece_composition.margin3.do-tooltip.hide{href: '#', title: 'Supprimer les pièces' }
             %i.icon-trash
           %a.composer.margin3.do-tooltip.hide{"data-toggle" => "modal", :href => "#compositionDialog", :title => "Composer"}
@@ -31,14 +31,14 @@
             %i.icon-share-alt          
           |                        
           %a.do-selectAllPages.do-tooltip.margin3{:href => "#", :title => "Tous"}
-            %i.icon-ok
+            = glyphicon('check')
           %a.do-unselectAllPages.do-tooltip.margin3{:href => "#", :title => "Aucun"}
-            %i.icon-ban-circle
+            = glyphicon('ban')
     #lists_pieces
       #lists_pieces_content.clearfix
-        %ul.margin0.margin2bottom{ style: "clear:both;", :id => "pages" }
+        %ul.clearfix.padding0.margin0.margin2bottom{ :id => "pages" }
           = render :partial => "/account/documents/pieces/document", :collection => @documents
     .actionGroup.clearfix
-      .loader.margin1top.pull-left
+      .loader.margin1top.float-left
         .feedback.inactive
           %span.out Aucun traitement

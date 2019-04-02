@@ -1,0 +1,22 @@
+.row
+  .col-md-12
+    #selectionlist.box
+      .header.clearfix
+        %h3.float-left
+          Sélections
+        .actiongroup
+          .icon_actions.float-left
+            %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
+              = glyphicon('tag')
+            %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
+              = glyphicon('x')
+          .button_actions.float-left
+            %a{ "data-toggle"=>"modal", :href => "#compositionDialog", class: "btn btn-primary" }
+              Composer
+            - if @user.organization.ibiza.try(:configured?)
+              %a.compta_analysis_edition{ "data-toggle"=>"modal", :href => "#comptaAnalysisEdition", class: "btn btn-primary" }
+                Editer compta analytique
+      .content.pages.clearfix.margin1top
+        %ul.list
+          - @is_composition = true
+          != render :partial => "/account/documents/pieces/document", :collection => @composition

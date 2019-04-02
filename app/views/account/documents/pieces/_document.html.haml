@@ -6,18 +6,18 @@
 
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
   .piece_head
-    %span.position_label.label.label-warning.piece_number
+    %span.position_label.badge.badge-warning.piece_number
       = sprintf '%03d', document.position
     %span.preseizure_label.tip_details.each.do-tooltip
       = document.name
     = document_delivery_label(document) if preseizures.count > 0
 
     %span.choose_action_piece     
-      %a.pull-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
+      %a.float-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
         %i.icon-trash       
-      %a.pull-right.margin3.do-tooltip{href: document.content.url, title: 'Télécharger', target: '_blank'}
+      %a.float-right.margin3.do-tooltip{href: document.content.url, title: 'Télécharger', target: '_blank'}
         %i.icon-download-alt 
-      %a.pull-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
+      %a.float-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
         %i.icon-ok         
      
   .piece_body

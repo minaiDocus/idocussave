@@ -134,7 +134,7 @@ var initEventOnPiecesSelection = function(){
       },
       error: function(data){
         logAfterAction();
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été informé.</span></div></div>");
+        $(".alerts").html("<div class='row'><div class='col-md-12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été informé.</span></div></div>");
       }
     });
   });
@@ -144,12 +144,12 @@ $('#file_account_book_type').val($('#h_file_account_book_type').val());
 $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
 
 var lock_or_unlock_file_upload_params_interval = null;
-$('#uploadDialog').on('show', function() {
+$('#uploadDialog').on('show.bs.modal', function() {
   window.analytic_target_form = '#fileupload'
   lock_or_unlock_file_upload_params_interval = setInterval(lock_or_unlock_file_upload_params, 500);
 });
 
-$('#uploadDialog').on('shown', function() {
+$('#uploadDialog').on('shown.bs.modal', function() {
   var ready = false
 
   if( $('#h_file_code').val() != '' && ( $('#fileupload').data('params') == 'undefined' || jQuery.isEmptyObject($('#fileupload').data('params')) ) ) {
@@ -171,7 +171,7 @@ $('#uploadDialog').on('hide', function() {
   clearInterval(lock_or_unlock_file_upload_params_interval);
 });
 
-$('#comptaAnalysisEdition').on('show', function() {
+$('#comptaAnalysisEdition').on('show.bs.modal', function() {
   if(window.analytic_target_form != '#fileupload')
   {
     $('#analysis_validate').removeClass('hide');
@@ -201,7 +201,7 @@ $('#analysis_validate').on('click', function(){
 
   if (document_ids.length <= 0)
   {
-    $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+    $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
   }
   else 
   {
@@ -227,7 +227,7 @@ $('#analysis_validate').on('click', function(){
         }
 
         if(data.error_message.length > 0) {
-          full_message += "<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>" + data.error_message + "</span></div>";
+          full_message += "<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>" + data.error_message + "</span></div>";
         } else {
           setTimeout(function(){ $('#comptaAnalysisEdition').modal('hide') }, 2000)
         }
@@ -237,13 +237,13 @@ $('#analysis_validate').on('click', function(){
       error: function(data){
         logAfterAction();
         $('#comptaAnalysisEdition .analytic_validation_loading').addClass('hide');
-        $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div>");
+        $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div>");
       }
     });
   }
 });
 
-$("#compositionDialog").on("hidden",function() {
+$("#compositionDialog").on("hidden.bs.modal",function() {
   $("#compositionDialog .length_alert").html("");
   $("#compositionDialog .names_alert").html("");
   $("#composition_name").val("");
@@ -261,9 +261,9 @@ $("#compositionButton").click(function() {
   var $composition_name = $("#composition_name");
 
   if (document_ids.length <= 0)
-    $("#compositionDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+    $("#compositionDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
   if ($composition_name.val().length <= 0)
-    $("#compositionDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer le nom de la composition.</span></div>");
+    $("#compositionDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer le nom de la composition.</span></div>");
 
   if (document_ids.length > 0 && $composition_name.val().length > 0) {
     var hsh = {"composition[document_ids]": document_ids, "composition[name]": $composition_name.val()};

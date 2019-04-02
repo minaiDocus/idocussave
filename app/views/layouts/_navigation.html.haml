@@ -28,19 +28,19 @@
               - else
                 = link_to organization.name, account_organization_path(organization), class: 'dropdown-item dropdown-link'
   - unless organizations_suspended? && @user.active?
-    %li.nav-item.dropdown{ class: ('active' if ['documents, pre_assignment_ignored, pre_assignment_blocked_duplicates, pre_assignment_delivery_errors'].include? controller_name) }
+    %li.nav-item.dropdown{ class: ('active' if ['documents', 'pre_assignment_ignored', 'pre_assignment_blocked_duplicates', 'pre_assignment_delivery_errors'].include? controller_name) }
       %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
         Mes documents
         %b.caret
       %ul.dropdown-menu
-        %li{ class: ('active' if controller_name == 'documents') }
-          = link_to 'Pièces / Ecritures comptables', account_documents_path, class: 'dropdown-item'
-        %li{ class: ('active' if controller_name == 'pre_assignment_ignored') }
-          = link_to 'Pièces ignorées à la pré-affectation', account_pre_assignment_ignored_path, class: 'dropdown-item'
-        %li{ class: ('active' if controller_name == 'pre_assignment_blocked_duplicates') }
-          = link_to 'Ecritures comptables en doublon', account_pre_assignment_blocked_duplicates_path, class: 'dropdown-item'
-        %li{ class: ('active' if controller_name == 'pre_assignment_delivery_errors') }
-          = link_to "Erreur livraison d'écritures comptables", account_pre_assignment_delivery_errors_path, class: 'dropdown-item'
+        %li.nav-item{ class: ('active' if controller_name == 'documents') }
+          = link_to 'Pièces / Ecritures comptables', account_documents_path, class: 'dropdown-link dropdown-item'
+        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_ignored') }
+          = link_to 'Pièces ignorées à la pré-affectation', account_pre_assignment_ignored_path, class: 'dropdown-link dropdown-item'
+        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_blocked_duplicates') }
+          = link_to 'Ecritures comptables en doublon', account_pre_assignment_blocked_duplicates_path, class: 'dropdown-link dropdown-item'
+        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_delivery_errors') }
+          = link_to "Erreur livraison d'écritures comptables", account_pre_assignment_delivery_errors_path, class: 'dropdown-link dropdown-item'
     - if @user.active? && @user.organization.is_active
       - if @user.collaborator? && !@user.has_one_organization?
         %li.nav-item.dropdown{ class: ('active' if controller_name == 'reporting') }

@@ -64,7 +64,7 @@
   %input.delivered_preseizure{type: :hidden, value: "#{@preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{@preseizure.id}"}
   - irregular_debit_credit_somme = verif_debit_credit_somme_of @preseizure_entries
 .row-fluid
-  .entries{ class: (@data_analytics.any? ? 'span6' : 'span12') }
+  .entries{ class: (@data_analytics.any? ? 'col-md-6' : 'col-md-12') }
     - if @data_analytics.any?
       %strong 
         Ecritures
@@ -75,9 +75,9 @@
     %table.table.table-striped.table-condensed.table-bordered.margin0bottom
       %thead
         %tr
-          %th.account Numéro de compte                 
+          %th.account Numéro de compte
           %th.entry.text-center Débit
-          %th.entry.text-center Crédit
+          %th.entry.text-center Crédit          
       %tbody.entries
         - @preseizure_entries.each do |entry|
           %tr
@@ -119,11 +119,11 @@
             - if @user.collaborator?
               %input.entry_id_hidden{type: :hidden, value: entry.id}
   - if @data_analytics.any?
-    .analytics.span6
+    .analytics.col-md-6
       %strong Analyse comptable
-      %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th.text-center Analyse
             %th.text-center Axe
             %th.text-center Ventilation

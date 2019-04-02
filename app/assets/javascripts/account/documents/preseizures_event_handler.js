@@ -327,7 +327,7 @@ var initEventOnPreseizuresAccountRefresh = function(){
   });
 }
 
-$('#preseizuresModals #exportSelectedPreseizures').on('show', function(){
+$('#preseizuresModals #exportSelectedPreseizures').on('show.bs.modal', function(){
   var id = 0;
   var ids = 0;
   var export_ids = 0;
@@ -383,7 +383,7 @@ $('#preseizuresModals #exportSelectedPreseizures').on('show', function(){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #exportSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #exportSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 });
@@ -426,11 +426,11 @@ $('#preseizuresModals #preseizureEdition #editPreseizureSubmit').click(function(
       if(data.error == '')
         $('#preseizuresModals #preseizureEdition').modal('hide');
       else
-        $('#preseizuresModals #preseizureEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
+        $('#preseizuresModals #preseizureEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 });
@@ -460,12 +460,12 @@ $('#preseizuresModals #preseizureAccountEdition #editPreseizureAccountSubmit').c
         $('#preseizuresModals #preseizureAccountEdition').modal('hide');        
       }
       else{
-        $('#preseizuresModals #preseizureAccountEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
+        $('#preseizuresModals #preseizureAccountEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
       }
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureAccountEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureAccountEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 });
@@ -488,12 +488,12 @@ $('#preseizuresModals #preseizureEntryEdition #editPreseizureEntrySubmit').click
         $('#preseizuresModals #preseizureEntryEdition').modal('hide');
       }
       else{
-        $('#preseizuresModals #preseizureEntryEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
+        $('#preseizuresModals #preseizureEntryEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
       }
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEntryEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEntryEdition .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 });
@@ -523,12 +523,12 @@ $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").cli
       }
       else
       {
-        $('#preseizuresModals #editSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
+        $('#preseizuresModals #editSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>"+data.error+"</span></div></div>");
       }
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #editSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #editSelectedPreseizures .modal-body').prepend("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 });

@@ -23,7 +23,7 @@ Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/
 Rails.application.config.assets.precompile += %w( inner.js welcome.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js
                                                   account/subscriptions.js account/organization_subscriptions.js account/groups.js account/journals.js account/account_number_rules.js account/paper_set_orders.js 
                                                   account/account_sharings.js account/invoices.js account/customers.js account/file_naming_policies.js account/organization_period_options.js account/csv_descriptors.js 
-                                                  account/orders.js account/organization_retrievers.js account/ibizabox_documents.js account/compta_analytics.js account/retrievers.js )
+                                                  account/orders.js account/organization_retrievers.js account/ibizabox_documents.js account/compta_analytics.js account/retrievers.js account/documents.js )
 
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets

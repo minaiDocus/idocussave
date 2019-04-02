@@ -76,7 +76,7 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
     },
     error: function(data){
       logAfterAction();
-      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
       setTimeout(function(){
         window.preseizuresLoaderLocked = false;
       }, 1000);
@@ -149,7 +149,6 @@ function getPreseizureAccount(manual_id=[]){
       }
 
       $.each(tab_id, function( index, id ){        
-
         var elem = $(".preseizure_description #div_"+id);
 
         var exist = (elem.html() != '' && elem.html() != null && elem.html() != undefined) ? true : false;  
@@ -194,12 +193,12 @@ function getPreseizureAccount(manual_id=[]){
             error: function(data){
               logAfterAction();
               elem.html('');
-              $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+              $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
             }
           });
         }
       });
-    });  
+    });
 }
 
 function editPreseizure(id){
@@ -223,7 +222,7 @@ function editPreseizure(id){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -246,7 +245,7 @@ function editPreseizureAccount(id){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureAccountEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureAccountEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -268,7 +267,7 @@ function editPreseizureEntry(id){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEntryEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEntryEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -313,7 +312,7 @@ function deliverPreseizures(link='all'){
     },
     error: function(data){
       logAfterAction();
-      $('.alerts').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('.alerts').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
