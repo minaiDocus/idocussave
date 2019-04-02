@@ -8,8 +8,8 @@
       #lists_preseizures_content
         = render :partial => "/account/documents/preseizures/preseizure", :collection => @preseizures
     .actionGroup.clearfix
-      .loader.margin1top.pull-left
+      .loader.margin1top.float-left
         .feedback.inactive
           %span.out Aucun traitement
-      .showALLPreseizures.margin1top.pull-right.hide
+      .showALLPreseizures.margin1top.float-right.hide
         %a{ href:'#', id: 'do-showAllPreseizures', style: 'font-size: 16px' } Afficher tout

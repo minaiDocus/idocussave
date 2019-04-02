@@ -133,7 +133,7 @@ function getPieces(url,title,by_preseizure=null) {
     },
     error: function(data){
       logAfterAction();
-      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
       setTimeout(function(){ window.piecesLoaderLocked = false }, 1000);
     }
   });

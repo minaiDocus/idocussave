@@ -4,71 +4,83 @@
   = render partial: '/account/documents/preseizures/preseizures_dialogs'
 
 .modal.fade{ :id=>"packFilterModal" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3{style: "display: inline-block; float: left"} Filtre :
-    .target_filter
-      = select_tag 'target_filter', options_for_select([["Filtrer sur l'ensemble", 0], ['Filtrer sur le lot en cours', 1]]), include_blank: false, style: 'margin: 0px'
-      .full_search
-        %span.label.label-warning
-          Attention :
-        %span{style: 'display: inline-block; font-weight: bold'}
-          &nbsp; Filtrer sur l'ensemble peut prendre du temps.
-  .modal-body{style: 'min-height: 450px'}
-    %form#packFilterForm.simple_form.form.form-horizontal.margin0
-      .general_filter.box
-        .control-group
-          = label_tag 'by_piece[content]', "Contenu :", class: 'control-label'
-          .controls
-            = text_field_tag 'by_piece[content]'
-        .control-group
-          = label_tag 'by_pack[pack_name]', "Nom du lot :", class: 'control-label'
-          .controls
-            = text_field_tag 'by_pack[pack_name]'
-        .control-group
-          = label_tag 'by_all[position]', 'Position', class: 'control-label'
-          .controls
-            = select_tag 'by_all[position_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'by_all[position]', nil, class: 'input_with_operation', placeholder: 1
-        .control-group
-          = label_tag 'by_piece[tags]', "Tags", class: 'control-label'
-          .controls
-            = text_field_tag 'by_piece[tags]'
-      .by_preseizure_filter.box
-        %span.label.label-warning
-          Attention :
-        %span{style: 'display: inline-block; margin-bottom: 20px; font-weight: bold'}
-          &nbsp; Filtre lié à la pré-affectation.
-        .control-group
-          = label_tag 'by_preseizure[is_delivered]', 'Livraison écriture comptable', class: 'control-label'
-          .controls
-            = select_tag 'by_preseizure[is_delivered]', options_for_select([['Tous', ''], ['Livrée', 1], ['Non livrée', 2], ['Avec erreur', 3]]), include_blank: false
-        .control-group.date.datepicker
-          = label_tag 'by_preseizure[delivery_tried_at]', 'Date livraison', class: 'control-label'
-          .controls
-            = select_tag 'by_preseizure[delivery_tried_at_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'by_preseizure[delivery_tried_at]', nil, class: 'input_with_operation', placeholder: Time.now.to_date
-            %span.add-on{style: 'width: 0px; height:35px'}
-        .control-group.date.datepicker
-          = label_tag 'by_preseizure[date]', 'Date facture', class: 'control-label'
-          .controls
-            = select_tag 'by_preseizure[date_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'by_preseizure[date]', nil, class: 'input_with_operation', placeholder: Time.now.to_date
-            %span.add-on{style: 'width: 0px; height:35px'}
-        .control-group
-          = label_tag 'by_preseizure[third_party]', 'Nom de tiers', class: 'control-label'
-          .controls
-            = text_field_tag 'by_preseizure[third_party]'
-        .control-group
-          = label_tag 'by_preseizure[piece_number]', 'N° de pièce', class: 'control-label'
-          .controls
-            = text_field_tag 'by_preseizure[piece_number]'
-        .control-group
-          = label_tag 'by_preseizure[amount]', 'Montant', class: 'control-label'
-          .controls
-            = select_tag 'by_preseizure[amount_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
-            = text_field_tag 'by_preseizure[amount]', nil, class: 'input_with_operation', placeholder: 100.00
-  .modal-footer
-    %a{ href: '#', :class=>"btn btn-primary", id: 'validatePackFilterModal' } Valider
-    %a{ href: '#', :class=>"btn btn-danger", id: 'initPackFilterModal' } Ré-initialiser
-    %a{ href: '#', :class=>"modal-close btn", style: 'margin-left: 10px' } Fermer
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h3{style: "display: inline-block; float: left"} Filtre :
+        .target_filter
+          = select_tag 'target_filter', options_for_select([["Filtrer sur l'ensemble", 0], ['Filtrer sur le lot en cours', 1]]), include_blank: false, style: 'margin: 0px'
+          .full_search.margin1top
+            %span.badge.badge-warning.fs-origin
+              Attention :
+            %span{style: 'display: inline-block; font-weight: bold'}
+              &nbsp; Filtrer sur l'ensemble peut prendre du temps.
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      .modal-body{style: 'min-height: 450px'}
+        %form#packFilterForm.simple_form.form-horizontal
+          .general_filter.box.clearfix
+            .form-group.clearfix.hide
+              .label-section
+                = label_tag 'by_piece[content]', "Contenu", class: 'control-label'
+              .control-section
+                = text_field_tag 'by_piece[content]'
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_pack[pack_name]', "Nom du lot", class: 'control-label'
+              .control-section
+                = text_field_tag 'by_pack[pack_name]'
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_all[position]', 'Numéro de pièce iDocus', class: 'control-label'
+              .control-section
+                = select_tag 'by_all[position_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
+                = text_field_tag 'by_all[position]', nil, class: 'input_with_operation', placeholder: 1
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_piece[tags]', "Tags", class: 'control-label'
+              .control-section
+                = text_field_tag 'by_piece[tags]'
+          .by_preseizure_filter.box.clearfix
+            %span.badge.badge-warning.fs-origin
+              Attention :
+            %span{style: 'display: inline-block; margin-bottom: 20px; font-weight: bold'}
+              &nbsp; Filtre lié à la pré-affectation.
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[is_delivered]', 'Livraison écriture comptable', class: 'control-label'
+              .control-section
+                = select_tag 'by_preseizure[is_delivered]', options_for_select([['Tous', ''], ['Livrée', 1], ['Non livrée', 2], ['Avec erreur', 3]]), include_blank: false
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[delivery_tried_at]', 'Date livraison', class: 'control-label'
+              .control-section.date.datepicker
+                = select_tag 'by_preseizure[delivery_tried_at_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
+                = text_field_tag 'by_preseizure[delivery_tried_at]', nil, class: 'input_with_operation', placeholder: Time.now.to_date
+                %span.add-on{style: 'width: 0px; height:35px'}
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[date]', 'Date facture', class: 'control-label'
+              .control-section.date.datepicker
+                = select_tag 'by_preseizure[date_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
+                = text_field_tag 'by_preseizure[date]', nil, class: 'input_with_operation', placeholder: Time.now.to_date
+                %span.add-on{style: 'width: 0px; height:35px'}
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[third_party]', 'Nom de tiers', class: 'control-label'
+              .control-section
+                = text_field_tag 'by_preseizure[third_party]'
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[piece_number]', 'N° de pièce', class: 'control-label'
+              .control-section
+                = text_field_tag 'by_preseizure[piece_number]'
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_preseizure[amount]', 'Montant', class: 'control-label'
+              .control-section
+                = select_tag 'by_preseizure[amount_operation]', options_for_select([['=', 0], ['>=', 1], ['<=', 2]]), include_blank: false, class: 'select_operation'
+                = text_field_tag 'by_preseizure[amount]', nil, class: 'input_with_operation', placeholder: 100.00
+      .modal-footer
+        %a{ href: '#', :class=>"btn btn-primary", id: 'validatePackFilterModal' } Valider
+        %a{ href: '#', :class=>"btn btn-danger", id: 'initPackFilterModal' } Ré-initialiser
+        %a{ href: '#', :class=>"modal-close btn btn-light", style: 'margin-left: 10px' } Fermer

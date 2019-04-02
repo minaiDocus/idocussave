@@ -29,8 +29,8 @@ getAnalyticsResume = () ->
             section_names.push( $("#analytic_fields #h_analytic_#{i}#{j}_axis#{t} option[value='#{sect_value}']").text() )
         if section_names.length > 0
           html += " <div class='analytic_section_group clearfix'>
-                      <div class='analytic_section_name pull-left'>- #{section_names.join(", ")}&nbsp;:&nbsp;</div>
-                      <div class='analytic_section_ventilation pull-left'>#{ventilation_value}%</div>
+                      <div class='analytic_section_name float-left'>- #{section_names.join(", ")}&nbsp;:&nbsp;</div>
+                      <div class='analytic_section_ventilation float-left'>#{ventilation_value}%</div>
                     </div>
                   "
       html += '</div>'

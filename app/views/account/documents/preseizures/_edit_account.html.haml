@@ -1,5 +1,5 @@
 .edit.preseizure_account
-  = simple_form_for @account, url: '', method: 'get', html: { class: 'form form-horizontal margin0', id: 'preseizure_edition_form' } do |f|
+  = simple_form_for @account, url: '', method: 'get', html: { class: 'form-horizontal', id: 'preseizure_edition_form' } do |f|
     = hidden_field_tag 'preseizure_id', @account.preseizure.id
     = f.hidden_field :id
     = f.input :number

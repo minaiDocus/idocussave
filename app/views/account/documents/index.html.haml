@@ -1,41 +1,40 @@
-.container-fluid{ class: (@user.active? ? 'padding19bottom' : '') }
+#documents.container-fluid{ class: (@user.active? ? 'padding19bottom' : '') }
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
-    .span3
-      #documents_view.actionview.well.clearfix
+  .row
+    .col-md-3
+      #documents_view.actionview.box.clearfix.medium-shadow
         .block_view.active#pieces_view
           %span Pieces
         .block_view#preseizures_view
           %span Ecritures comptables
-    .span9
+    .col-md-9
       #documents_actions
-        .actionbar.well.clearfix{style: 'padding: 14px 10px 5px 10px'}
-          .feedback.inactive.pull-left
+        .actionbar.box.medium-shadow.clearfix{style: 'padding: 14px 10px 5px 10px'}
+          .feedback.inactive.float-left
             %span.out
               Aucun traitement
-          %span.filter_indication.pull-left
+          %span.filter_indication.float-left
             %span.filter_indication_text
             %a.do-tooltip{ href:'#', title:'supprimer le filtre', class: 'btn btn-danger', id: 'initPackFilter' }
-              %span.icon.icon-remove
+              = glyphicon('x', class: 'fs-origin')
           - if @user.active?
-            .pull-right
+            .float-right
               - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
               - # |
               - if file_upload_users_list.present?
                 %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
-                  %span.icon.icon-plus
                   Ajouter des documents
-  .row-fluid
-    .span3
-      #documentslist.well.qtip-target
+  .row
+    .col-md-3
+      #documentslist.box.bg-light.qtip-target
         .header.clearfix
           .actionfilter.clearfix
             .pack_name.margin1bottom
               = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option,["tous","all"]), :class => "view_for wauto margin05left margin0bottom"
             .other_filter.clearfix
-              .per_page.pull-right
+              .per_page.float-right
                 = label_tag :per_page, "par :", :class => "margin1left pull-left"
                 = select_tag :per_page, options_for_select([["20",20],["40",40],["60",60]]), :class => "per_page w50 margin1left"
               %a{ href:'#packFilterModal', title:'plus de filtre', style: 'margin-right: 5px', class: 'btn btn-primary pull-left', data: {toggle: :modal} }
@@ -48,38 +47,38 @@
             Opérations
         .packsList
           .actions.clearfix
-            %h3.pull-left
+            %h3.float-left
               #{@packs.total_count} lot(s)
             - if @user.active?
-              .actiongroup.pull-right
+              .actiongroup.float-right
                 - if current_user.is_admin
                   %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
-                    %i.icon-share-alt
+                    = glyphicon('share')
                 %a.do-tooltip{ :href => '#', :id => "download_multi_pack", :title => "Télécharger la séléction" }
-                  %i.icon-download-alt
+                  = glyphicon('data-transfer-download')
                 %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
-                  %i.icon-tag
+                  = glyphicon('tag')
                 |
                 %a.do-selectAll.do-tooltip{:href => "#", :title => "Tous"}
-                  %i.icon-ok
+                  = glyphicon('check')
                 %a.do-unselectAll.do-tooltip{:href => "#", :title => "Aucun"}
-                  %i.icon-ban-circle
-          .content
-            %ul.margin0left
+                  = glyphicon('ban')
+          .content.clearfix
+            %ul.margin0left.padding0left
               = render :partial => "/account/documents/pack", :collection => @packs
-            .aligncenter
+            .float-right
               = paginate @packs
         .reportsList.hide
           %h3
             #{@reports.total_count} lot(s)
-          .content
-            %ul.margin0left
+          .content.clearfix
+            %ul.margin0left.padding0left
               = render :partial => "/account/documents/report", :collection => @reports
-            .aligncenter
+            .float-right
               = paginate @reports
 
-    .span9
-      #pageslist.well
+    .col-md-9
+      #pageslist.box
         = render partial: '/account/documents/pieces/index'
       #preseizureslist
         = render partial: '/account/documents/preseizures/index'

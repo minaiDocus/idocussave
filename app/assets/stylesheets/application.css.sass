@@ -111,14 +111,11 @@ html, body
     background-position: center center
 
 #uploadDialog.modal
-  width: 830px
-  margin: -260px 0 0 -415px !important
   .modal-body
-    overflow-y: scroll
     .control-label
       font-weight: 900
     select
-      font-size: 11px
+      font-size: 13px
     #analytic_user_fields
       margin-bottom: 5px !important
     .analytic_resume_box
@@ -126,7 +123,7 @@ html, body
       .analytic_resume
         padding: 5px
         background-color: #F0F0F0
-        margin: 0px 0px 0px 155px
+        margin: 0 20px 0 0
         .analytic_title
           text-decoration: underline
           font-size: 14px
@@ -141,17 +138,13 @@ html, body
               font-weight: bold
 
 #comptaAnalysisEdition
-  width: 990px
-  margin: -260px 0 0 -500px !important
+  .modal-dialog
+    max-width: 1024px !important
   .modal-body
-    overflow-y: scroll
-    //Cant use height attribute
-    max-height: 500px !important
-    min-height: 500px !important
     .control-label
       font-weight: 900
     select
-      font-size: 11px
+      font-size: 12px
 
 #packFilterModal
   .target_filter
@@ -163,6 +156,11 @@ html, body
     margin-bottom: 10px
     span
       font-size: 14px
+
+#preseizuresModals
+  .modal-footer
+    .block_footer
+      width: 100%
 
 //Used by document upload and Default analytics journal
 #analytic_fields
@@ -221,19 +219,6 @@ html, body
     .no_analytic
       position: relative
       top: 5px
-
-#documentsTaggingDialog, #pagesTaggingDialog, #selectionTaggingDialog
-  width: 250px
-  margin: -200px 0 0 -125px !important
-
-#compositionDialog.modal
-  width: 250px
-  margin: -125px 0 0 -125px !important
-
-#invoiceDialog.modal
-  width: 878px
-  height: 700px
-  margin: -250px 0 0 -439px !important
 
 #news.modal
   .title
@@ -428,6 +413,12 @@ html, body
         width: 130px
 
 /*** Documents ***/
+#documents
+  .oi
+    padding: 0px 3px
+    color: #3e2f24 !important
+  ul
+    padding: 0px
 #documents_actions
   .filter_indication
     margin-top: -3px
@@ -440,6 +431,8 @@ html, body
       padding: 0px 5px
 #documents_view
   text-align: center
+  padding-top: 11px
+  padding-bottom: 10px
   #pieces_view
     border-radius: 10px 0px 0px 10px
   #preseizures_view
@@ -453,7 +446,7 @@ html, body
     border: 1px solid #aaa
     width: 48%
     min-height: 25px
-    padding-top: 5px
+    padding: 5px 0px
     text-align: center
     background: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%)
     box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.3)
@@ -486,23 +479,20 @@ html, body
       display: inline-block
       width: 100px
       text-align: center
-      border: 1px solid #aaa
+      border: 1px solid #ddd
       border-bottom: none
       border-radius: 2px
     .tab-nav.selected
       background-color: #FFF
   .packsList, .reportsList
     background-color: #FFF
-    padding: 5px
-    border-top: 1px solid #aaa
+    padding: 10px 7px
+    border: 1px solid #ddd
 
 #documentslist .content ul
   list-style: none
   li
     font-size: 11px
-    padding: 0
-    .name
-      width: 130px
   li:hover
     background-color: #eeeeee
   li.activated
@@ -511,6 +501,8 @@ html, body
     background-color: #dddddd
   li.selected:hover
     background-color: #cccccc
+  .pack, .report
+    padding: 2px 0px
 
 #documentslist .header .actiongroup
   position: relative
@@ -529,9 +521,6 @@ html, body
   border-left-width: 0
 
 /*** Pages ***/
-#show_pages, #show_pieces
-  background-color: #E1E1E1
-
 .pages
   height: 100%
   ul li
@@ -615,31 +604,30 @@ html, body
       background-position: left -33px
     .pagethumb
       background: url("/assets/application/sprite_vertical_page_n2.png")
-      background-position: -5px -183px
+      background-position: 6px -183px
       background-repeat: no-repeat
       display: block
-      width: 96px
-      height: 136px
+      width: 98%
+      height: 100%
       margin: 9px auto 0px auto
+      padding: 0 0 0 12px
       .thumb
         display: block
         position: absolute
         z-index: 8
-        width: 92px
-        height: 133px
         background: url("/assets/application/spinner_gray.gif")
         background-position: 50% 50%
         background-repeat: no-repeat
         img
           display: block !important
           position: relative !important
-          width: 92px
-          height: 133px
+          width: 100%
+          height: 100%
       .stamp
         display: block
         position: absolute
         transform: rotate(35deg)
-        right: 10px
+        right: 7px
         z-index: 9
         img
           display: block !important
@@ -680,21 +668,18 @@ html, body
       display: block !important
     .pagethumb
       padding: 2px
-      width: 116px
-      height: 156px
-      border: 1px solid #A6A6A6
+      width: 98%
+      height: 100%
+      border: 1px solid #aaa
       background: none
       background-color: #FFF
       border-radius: 10px 0px
       margin: 0px auto
       .thumb
-        width: 112px
-        height: 153px
         left: 7px
         top: 5px
-        img
-          width: 112px
-          height: 153px
+        width: 90%
+        height: 95%
     .stamp
       top: 37px
       background-color: #FFF
@@ -745,7 +730,9 @@ html, body
   width: 100%
 #selectionlist
   margin-bottom: 0
-  padding: 0px 10px
+  padding: 5px 10px 0 10px
+  background-color: #f5f5f5
+  border-top: 1px #aaa solid
   .header
     .actiongroup
       line-height: 27px
@@ -755,7 +742,7 @@ html, body
       background-color: #F5F5F5
       padding: 7px 20px
       border-top-left-radius: 60px
-      border: 1px #DDDDDD solid
+      border: 1px #aaa solid
       border-bottom: none
       .icon_actions
         border-right: 1px #000 solid
@@ -778,7 +765,7 @@ html, body
     .header
       .actiongroup
         a
-          margin: 3px
+          margin: 1px
   #show_preseizures
     #lists_preseizures
       margin-top: 10px
@@ -799,9 +786,12 @@ html, body
             .stamp
               float: left
               width: 55px
+              img
+                width: 100%
             .stamp:hover
               position: absolute
               width: 135px
+              z-index: 20
             a
               padding: 3px
           .preseizure_label
@@ -814,26 +804,21 @@ html, body
         .content_details
           border-top: 1px solid rgb(221,221,221)
           padding: 10px
-  #presPanel2
-    #preseizuresFilterForm
-      .control-group
-        clear: both !important
-        .control-label
-          width: 80px !important
-        .controls
-          margin-left: 5px !important
-          float: left
-          input, select
-            width: 180px
-          .select_operation
-            width: 50px !important
-          .input_with_operation
-            width: 130px !important
-      .buttons-group
-        width: 100%
-        text-align: center
-        a, input
-          margin: auto
+
+/* Filter */
+#packFilterForm
+  .form-group
+    .control-section
+      .select_operation
+        width: 50px !important
+      .input_with_operation
+        width: calc(100% - 55px) !important
+        max-width: calc(400px - 55px) !important
+  .buttons-group
+    width: 100%
+    text-align: center
+    a, input
+      margin: auto
 
 
 

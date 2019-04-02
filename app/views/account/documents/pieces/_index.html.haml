@@ -1,21 +1,20 @@
 #panel1
-  .header.span12.margin0left{style: "float:none!important; border-bottom: 1px solid #ddd; margin-bottom: 10px"}
-    %h3.pull-left
+  .header.clearfix.col-md-12.margin0left{style: "border-bottom: 1px solid #ddd; margin-bottom: 10px"}
+    %h3.float-left
       Pieces
     - if @user.active?
-      .actiongroup.pull-right
+      .actiongroup.float-right
         %a.download{ :title => "Télécharger", :target => "_blank", style: 'margin: 3px' }
-          %i.icon-download-alt
+          = glyphicon('data-transfer-download')
         %a.zip_download{ :title => "Télécharger une archive zip", :target => "_blank", style: 'margin: 3px' }
-          %i.icon-download
+          = glyphicon('collapse-down')
   .content.pages
 #panel2{ :style => "display: none" }
-  .header.row-fluid
-    .actiongroup.span4.alignleft
-      %a{ href: '#', class: 'backToPanel1 btn' }
-        %i.icon-arrow-left
+  .header.row
+    .actiongroup.col-md-4.alignleft
+      %a{ href: '#', class: 'backToPanel1 btn btn-light' }
         Retour
-    .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
+    .actiongroup.col-md-4.aligncenter{ style: 'margin-top:4px' }
       %a.do-prevPage{:href => "#"}
         pièce précédente
       \-
@@ -23,28 +22,28 @@
       \-
       %a.do-nextPage{:href => "#"}
         pièce suivante
-    .actiongroup.span4.alignright{ style: 'margin-top:4px' }
+    .actiongroup.col-md-4.alignright{ style: 'margin-top:4px' }
       %span.stamp.hide{ id: 'stamp_box' }= image_tag('', alt: 'tampon', class: 'img_stamp')
-      %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
-        %span.label.label-info.do-goToPreseizure.hide{ style: 'margin-right: 5px' }
+      %a.do-goToPreseizure.hide{ style: 'margin-right: 5px' }
+        %span.badge.badge-info.fs-origin
           écriture
-        %span.label.label-info
+      %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
+        %span.badge.badge-info.fs-origin
           tags
       - if @user.active?
         |
         %a.do-selectSinglePage.do-tooltip{:href => "#", :title => "Sélectionner"}
-          %i.icon-ok
+          = glyphicon('check')
         %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
-          %i.icon-ban-circle
+          = glyphicon('ban')
   .content
     %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:550px;"}
 #panel3{ :style => "display: none" }
-  .header.row-fluid
-    .actiongroup.span4.alignleft
-      %a{ href: '#', class: 'backToPanel1 btn' }
-        %i.icon-arrow-left
+  .header.row
+    .actiongroup.col-md-4.alignleft
+      %a{ href: '#', class: 'backToPanel1 btn btn-light' }
         Retour
-    .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
+    .actiongroup.col-md-4.aligncenter{ style: 'margin-top:4px' }
       %a.do-prevPage{:href => "#"}
         piece précédente
       \-

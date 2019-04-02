@@ -1,20 +1,20 @@
-.row-fluid
-  .span12
-    #presPanel1.well
-      .header.span12.margin0left{style: "border-bottom: 1px solid #ddd; margin-bottom: 10px"}
-        %h3.pull-left
+.row
+  .col-md-12
+    #presPanel1.box
+      .header.clearfix.margin0left{style: "border-bottom: 1px solid #ddd; margin-bottom: 10px"}
+        %h3.float-left
           Ecritures comptables
         - if @user.active?
-          .actiongroup.pull-right
+          .actiongroup.float-right
             %a.do-exportSelectedPreseizures.do-tooltip{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
-              %i.icon-download-alt
+              = glyphicon('data-transfer-download')
             - if @user.collaborator?
               %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
-                %i.icon-edit
+                = glyphicon('pencil')
             |
             %a.do-selectAllPreseizures.do-tooltip{ :href => "#", :title => "Tous" }
-              %i.icon-ok
+              = glyphicon('check')
             %a.do-unselectAllPreseizures.do-tooltip{ :href => "#", :title => "Aucun" }
-              %i.icon-ban-circle
+              = glyphicon('ban')
       .content.preseizures
         
