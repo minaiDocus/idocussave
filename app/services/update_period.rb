@@ -110,7 +110,7 @@ class UpdatePeriod
       if @subscription.is_mini_package_active
         is_base_package_priced = true
 
-        price = package_options_price([:subscription, :pre_assignment], type)
+        price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
 
         option = ProductOptionOrder.new
 
@@ -119,7 +119,7 @@ class UpdatePeriod
         option.duration = 0
         option.quantity = 1
         option.group_title = "iDo'Mini"
-        option.is_to_be_disabled     = @subscription.is_micro_package_to_be_disabled
+        option.is_to_be_disabled     = @subscription.is_mini_package_to_be_disabled
         option.price_in_cents_wo_vat = price
 
         selected_options << option

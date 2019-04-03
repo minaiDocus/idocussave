@@ -172,7 +172,7 @@ update_price = ->
     if $('#subscription_is_micro_package_active').is(':checked')
       options.push 'subscription'
     if $('#subscription_is_mini_package_active').is(':checked')
-      options.push 'subscription', 'pre_assignment'
+      options.push 'subscription', 'subscription_plus', 'pre_assignment'
     options = _.uniq(options)
 
 
