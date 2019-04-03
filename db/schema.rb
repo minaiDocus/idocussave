@@ -303,6 +303,8 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.string   "cloud_content_content_type", limit: 255
     t.integer  "cloud_content_file_size",    limit: 4
 =======
+=======
+>>>>>>> 0ac3c98... Fix schema conflit
 ActiveRecord::Schema.define(version: 2019_03_05_064104) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -608,7 +610,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "cloud_content_file_name"
     t.string "cloud_content_content_type"
     t.integer "cloud_content_file_size"
->>>>>>> 2ed7cec... Fix schema migration
     t.datetime "content_updated_at"
     t.string "content_fingerprint"
     t.index ["mongo_id"], name: "index_cms_images_on_mongo_id"
@@ -658,21 +659,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-<<<<<<< HEAD
-  add_index "csv_descriptors", ["mongo_id"], name: "index_csv_descriptors_on_mongo_id", using: :btree
-  add_index "csv_descriptors", ["organization_id"], name: "organization_id", using: :btree
-  add_index "csv_descriptors", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-  add_index "csv_descriptors", ["user_id"], name: "user_id", using: :btree
-  add_index "csv_descriptors", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "currency_rates", force: :cascade do |t|
-    t.datetime "date"
-    t.string   "exchange_from",         limit: 5
-    t.string   "exchange_to",           limit: 5
-    t.string   "currency_name",         limit: 255
-    t.float    "exchange_rate",         limit: 24
-    t.float    "reverse_exchange_rate", limit: 24
-=======
   create_table "currency_rates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.datetime "date"
     t.string "exchange_from", limit: 5
@@ -680,21 +666,13 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "currency_name"
     t.float "exchange_rate"
     t.float "reverse_exchange_rate"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["date", "exchange_from", "exchange_to"], name: "index_exchange_name_date"
   end
 
-<<<<<<< HEAD
-  add_index "currency_rates", ["date", "exchange_from", "exchange_to"], name: "index_exchange_name_date", using: :btree
-
-  create_table "dba_sequences", force: :cascade do |t|
-    t.string   "mongo_id",     limit: 255
-=======
   create_table "dba_sequences", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "mongo_id"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "locked_at"
     t.datetime "locked_until"
     t.string "name"
@@ -1315,30 +1293,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "name"
     t.datetime "notified_at"
     t.datetime "processing_at"
-<<<<<<< HEAD
-    t.integer  "user_id",               limit: 4
-    t.string   "user_id_mongo_id",      limit: 255
-    t.integer  "api_id",                limit: 4
-    t.boolean  "is_sent",                             default: false
-    t.text     "encrypted_url",         limit: 65535
-    t.string   "encrypted_login",       limit: 255
-    t.text     "encrypted_description", limit: 65535
-    t.text     "encrypted_message",     limit: 65535
-    t.string   "encrypted_email",       limit: 255
-    t.string   "encrypted_types",       limit: 255
-  end
-
-  add_index "new_provider_requests", ["mongo_id"], name: "index_new_provider_requests_on_mongo_id", using: :btree
-  add_index "new_provider_requests", ["user_id"], name: "user_id", using: :btree
-  add_index "new_provider_requests", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "news", force: :cascade do |t|
-    t.string   "state",           limit: 255,   null: false
-    t.string   "title",           limit: 255,   null: false
-    t.text     "body",            limit: 65535, null: false
-    t.string   "target_audience", limit: 255,   null: false
-    t.string   "url",             limit: 255
-=======
     t.integer "user_id"
     t.string "user_id_mongo_id"
     t.integer "api_id"
@@ -1360,7 +1314,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.text "body", null: false
     t.string "target_audience", null: false
     t.string "url"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1527,145 +1480,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.boolean "address_is_for_dematbox_shipping", default: false, null: false
     t.datetime "paper_return_address_created_at"
     t.datetime "paper_return_address_updated_at"
-<<<<<<< HEAD
-    t.string   "paper_return_address_first_name",                 limit: 255
-    t.string   "paper_return_address_last_name",                  limit: 255
-    t.string   "paper_return_address_email",                      limit: 255
-    t.string   "paper_return_address_company",                    limit: 255
-    t.string   "paper_return_address_company_number",             limit: 255
-    t.string   "paper_return_address_address_1",                  limit: 255
-    t.string   "paper_return_address_address_2",                  limit: 255
-    t.string   "paper_return_address_city",                       limit: 255
-    t.string   "paper_return_address_zip",                        limit: 255
-    t.string   "paper_return_address_state",                      limit: 255
-    t.string   "paper_return_address_country",                    limit: 255
-    t.string   "paper_return_address_building",                   limit: 255
-    t.string   "paper_return_address_place_called_or_postal_box", limit: 255
-    t.string   "paper_return_address_door_code",                  limit: 255
-    t.string   "paper_return_address_other",                      limit: 255
-    t.string   "paper_return_address_phone",                      limit: 255
-    t.string   "paper_return_address_phone_mobile",               limit: 255
-    t.boolean  "paper_return_address_is_for_billing",                         default: false,     null: false
-    t.boolean  "paper_return_address_is_for_paper_return",                    default: false,     null: false
-    t.boolean  "paper_return_address_is_for_paper_set_shipping",              default: false,     null: false
-    t.boolean  "paper_return_address_is_for_dematbox_shipping",               default: false,     null: false
-  end
-
-  add_index "orders", ["mongo_id"], name: "index_orders_on_mongo_id", using: :btree
-  add_index "orders", ["organization_id"], name: "organization_id", using: :btree
-  add_index "orders", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-  add_index "orders", ["period_id"], name: "period_id", using: :btree
-  add_index "orders", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
-  add_index "orders", ["user_id"], name: "user_id", using: :btree
-  add_index "orders", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "organization_groups", force: :cascade do |t|
-    t.string   "name",                         limit: 255,                 null: false
-    t.string   "description",                  limit: 255
-    t.boolean  "is_auto_membership_activated",             default: false, null: false
-    t.datetime "created_at",                                               null: false
-    t.datetime "updated_at",                                               null: false
-  end
-
-  create_table "organization_rights", force: :cascade do |t|
-    t.string   "mongo_id",                                   limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "is_groups_management_authorized",                        default: true,  null: false
-    t.boolean  "is_collaborators_management_authorized",                 default: false, null: false
-    t.boolean  "is_customers_management_authorized",                     default: true,  null: false
-    t.boolean  "is_journals_management_authorized",                      default: true,  null: false
-    t.boolean  "is_customer_journals_management_authorized",             default: true,  null: false
-    t.integer  "user_id",                                    limit: 4
-    t.string   "user_id_mongo_id",                           limit: 255
-  end
-
-  add_index "organization_rights", ["mongo_id"], name: "index_organization_rights_on_mongo_id", using: :btree
-  add_index "organization_rights", ["user_id"], name: "user_id", using: :btree
-  add_index "organization_rights", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "organizations", force: :cascade do |t|
-    t.string   "mongo_id",                        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "name",                            limit: 255
-    t.string   "description",                     limit: 255
-    t.string   "code",                            limit: 255
-    t.boolean  "is_detail_authorized",                        default: false, null: false
-    t.boolean  "is_period_duration_editable",                 default: true,  null: false
-    t.boolean  "is_test",                                     default: false, null: false
-    t.boolean  "is_for_admin",                                default: false, null: false
-    t.boolean  "is_active",                                   default: true,  null: false
-    t.boolean  "is_suspended",                                default: false, null: false
-    t.boolean  "is_quadratus_used",                           default: false, null: false
-    t.boolean  "is_quadratus_auto_deliver",                   default: false
-    t.boolean  "is_pre_assignment_date_computed",             default: false, null: false
-    t.boolean  "is_csv_descriptor_used",                      default: false, null: false
-    t.boolean  "is_csv_descriptor_auto_deliver",              default: false
-    t.boolean  "is_coala_used",                               default: false, null: false
-    t.boolean  "is_coala_auto_deliver",                       default: false
-    t.integer  "authd_prev_period",               limit: 4,   default: 1,     null: false
-    t.integer  "auth_prev_period_until_day",      limit: 4,   default: 11,    null: false
-    t.integer  "auth_prev_period_until_month",    limit: 4,   default: 0,     null: false
-    t.integer  "leader_id",                       limit: 4
-    t.string   "leader_id_mongo_id",              limit: 255
-    t.boolean  "is_operation_processing_forced",              default: false
-    t.boolean  "is_operation_value_date_needed",              default: false
-    t.integer  "preseizure_date_option",          limit: 4,   default: 0
-    t.boolean  "is_duplicate_blocker_activated",              default: true
-    t.integer  "organization_group_id",           limit: 4
-    t.boolean  "subject_to_vat",                              default: true
-    t.boolean  "is_exact_online_used",                        default: false
-    t.boolean  "is_exact_online_auto_deliver",                default: false
-    t.string   "invoice_mails",                   limit: 255
-    t.boolean  "is_cegid_used",                               default: false
-    t.boolean  "is_cegid_auto_deliver",                       default: false
-  end
-
-  add_index "organizations", ["leader_id"], name: "leader_id", using: :btree
-  add_index "organizations", ["leader_id_mongo_id"], name: "leader_id_mongo_id", using: :btree
-  add_index "organizations", ["mongo_id"], name: "index_organizations_on_mongo_id", using: :btree
-  add_index "organizations", ["organization_group_id"], name: "index_organizations_on_organization_group_id", using: :btree
-
-  create_table "pack_dividers", force: :cascade do |t|
-    t.string   "mongo_id",         limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "name",             limit: 255
-    t.string   "type",             limit: 255
-    t.string   "origin",           limit: 255
-    t.boolean  "is_a_cover",                   default: false, null: false
-    t.integer  "pages_number",     limit: 4
-    t.integer  "position",         limit: 4
-    t.integer  "pack_id",          limit: 4
-    t.string   "pack_id_mongo_id", limit: 255
-  end
-
-  add_index "pack_dividers", ["is_a_cover"], name: "index_pack_dividers_on_is_a_cover", using: :btree
-  add_index "pack_dividers", ["mongo_id"], name: "index_pack_dividers_on_mongo_id", using: :btree
-  add_index "pack_dividers", ["origin"], name: "index_pack_dividers_on_origin", using: :btree
-  add_index "pack_dividers", ["pack_id"], name: "pack_id", using: :btree
-  add_index "pack_dividers", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
-  add_index "pack_dividers", ["type"], name: "index_pack_dividers_on_type", using: :btree
-
-  create_table "pack_pieces", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "name",                       limit: 255
-    t.integer  "number",                     limit: 4
-    t.boolean  "is_a_cover",                                    default: false,   null: false
-    t.string   "origin",                     limit: 255
-    t.integer  "position",                   limit: 4
-    t.integer  "pages_number",               limit: 4,          default: 0
-    t.string   "token",                      limit: 255
-    t.boolean  "is_awaiting_pre_assignment",                    default: false,   null: false
-    t.string   "pre_assignment_state",       limit: 255,        default: "ready"
-    t.string   "pre_assignment_comment",     limit: 255
-    t.string   "content_file_name",          limit: 255
-    t.string   "content_content_type",       limit: 255
-    t.integer  "content_file_size",          limit: 4
-=======
     t.string "paper_return_address_first_name"
     t.string "paper_return_address_last_name"
     t.string "paper_return_address_email"
@@ -1796,131 +1610,12 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "content_file_name"
     t.string "content_content_type"
     t.integer "content_file_size"
->>>>>>> 63541c0... Fix schema migration
     t.datetime "content_updated_at"
     t.string "content_fingerprint"
     t.string "cloud_content_file_name"
     t.string "cloud_content_content_type"
     t.integer "cloud_content_file_size"
     t.datetime "cloud_content_updated_at"
-<<<<<<< HEAD
-    t.string   "cloud_content_fingerprint",  limit: 255
-    t.integer  "organization_id",            limit: 4
-    t.string   "organization_id_mongo_id",   limit: 255
-    t.integer  "user_id",                    limit: 4
-    t.string   "user_id_mongo_id",           limit: 255
-    t.integer  "pack_id",                    limit: 4
-    t.string   "pack_id_mongo_id",           limit: 255
-    t.integer  "analytic_reference_id",      limit: 4
-    t.text     "content_text",               limit: 4294967295
-    t.text     "tags",                       limit: 65535
-    t.boolean  "is_finalized",                                  default: false
-  end
-
-  add_index "pack_pieces", ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id", using: :btree
-  add_index "pack_pieces", ["is_finalized"], name: "index_pack_pieces_on_is_finalized", using: :btree
-  add_index "pack_pieces", ["name"], name: "index_pack_pieces_on_name", using: :btree
-  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
-  add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pack_pieces", ["pack_id"], name: "pack_id", using: :btree
-  add_index "pack_pieces", ["position"], name: "index_pack_pieces_on_position", using: :btree
-  add_index "pack_pieces", ["user_id"], name: "user_id", using: :btree
-
-  create_table "pack_report_expenses", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "amount_in_cents_wo_vat",   limit: 24
-    t.float    "amount_in_cents_w_vat",    limit: 24
-    t.float    "vat",                      limit: 24
-    t.date     "date"
-    t.string   "type",                     limit: 255
-    t.string   "origin",                   limit: 255
-    t.integer  "obs_type",                 limit: 4
-    t.integer  "position",                 limit: 4
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
-    t.integer  "report_id",                limit: 4
-    t.string   "report_id_mongo_id",       limit: 255
-    t.integer  "piece_id",                 limit: 4
-    t.string   "piece_id_mongo_id",        limit: 255
-  end
-
-  add_index "pack_report_expenses", ["mongo_id"], name: "index_pack_report_expenses_on_mongo_id", using: :btree
-  add_index "pack_report_expenses", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pack_report_expenses", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-  add_index "pack_report_expenses", ["piece_id"], name: "piece_id", using: :btree
-  add_index "pack_report_expenses", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
-  add_index "pack_report_expenses", ["report_id"], name: "report_id", using: :btree
-  add_index "pack_report_expenses", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
-  add_index "pack_report_expenses", ["user_id"], name: "user_id", using: :btree
-  add_index "pack_report_expenses", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "pack_report_observation_guests", force: :cascade do |t|
-    t.string  "mongo_id",                limit: 255
-    t.string  "first_name",              limit: 255
-    t.string  "last_name",               limit: 255
-    t.integer "observation_id",          limit: 4
-    t.string  "observation_id_mongo_id", limit: 255
-  end
-
-  add_index "pack_report_observation_guests", ["mongo_id"], name: "index_pack_report_observation_guests_on_mongo_id", using: :btree
-  add_index "pack_report_observation_guests", ["observation_id"], name: "observation_id", using: :btree
-  add_index "pack_report_observation_guests", ["observation_id_mongo_id"], name: "observation_id_mongo_id", using: :btree
-
-  create_table "pack_report_observations", force: :cascade do |t|
-    t.string  "mongo_id",            limit: 255
-    t.string  "comment",             limit: 255
-    t.integer "expense_id",          limit: 4
-    t.string  "expense_id_mongo_id", limit: 255
-  end
-
-  add_index "pack_report_observations", ["expense_id"], name: "expense_id", using: :btree
-  add_index "pack_report_observations", ["expense_id_mongo_id"], name: "expense_id_mongo_id", using: :btree
-  add_index "pack_report_observations", ["mongo_id"], name: "index_pack_report_observations_on_mongo_id", using: :btree
-
-  create_table "pack_report_preseizure_accounts", force: :cascade do |t|
-    t.string   "mongo_id",               limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "type",                   limit: 4
-    t.string   "number",                 limit: 255
-    t.string   "lettering",              limit: 255
-    t.integer  "preseizure_id",          limit: 4
-    t.string   "preseizure_id_mongo_id", limit: 255
-  end
-
-  add_index "pack_report_preseizure_accounts", ["mongo_id"], name: "index_pack_report_preseizure_accounts_on_mongo_id", using: :btree
-  add_index "pack_report_preseizure_accounts", ["preseizure_id"], name: "preseizure_id", using: :btree
-  add_index "pack_report_preseizure_accounts", ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id", using: :btree
-
-  create_table "pack_report_preseizure_entries", force: :cascade do |t|
-    t.string   "mongo_id",               limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "type",                   limit: 4
-    t.string   "number",                 limit: 255
-    t.decimal  "amount",                             precision: 11, scale: 2
-    t.integer  "preseizure_id",          limit: 4
-    t.string   "preseizure_id_mongo_id", limit: 255
-    t.integer  "account_id",             limit: 4
-    t.string   "account_id_mongo_id",    limit: 255
-  end
-
-  add_index "pack_report_preseizure_entries", ["account_id"], name: "account_id", using: :btree
-  add_index "pack_report_preseizure_entries", ["account_id_mongo_id"], name: "account_id_mongo_id", using: :btree
-  add_index "pack_report_preseizure_entries", ["mongo_id"], name: "index_pack_report_preseizure_entries_on_mongo_id", using: :btree
-  add_index "pack_report_preseizure_entries", ["preseizure_id"], name: "preseizure_id", using: :btree
-  add_index "pack_report_preseizure_entries", ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id", using: :btree
-
-  create_table "pack_report_preseizures", force: :cascade do |t|
-    t.string   "mongo_id",                       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "type",                           limit: 255
-=======
     t.string "cloud_content_fingerprint"
     t.integer "organization_id"
     t.string "organization_id_mongo_id"
@@ -2032,7 +1727,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "type"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "date"
     t.datetime "deadline_date"
     t.text "operation_label"
@@ -2578,27 +2272,15 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "name"
     t.string "journal_name"
     t.datetime "sync_at"
-    t.boolean  "is_sane",                                  default: true
-    t.boolean  "is_new_password_needed",                   default: false
-    t.boolean  "is_selection_needed",                      default: true
-    t.string   "state",                      limit: 255
-    t.text     "error_message",              limit: 65535
-    t.string   "budgea_state",               limit: 255
-<<<<<<< HEAD
-    t.text     "budgea_error_message",       limit: 65535
-=======
     t.text     "budgea_additionnal_fields",  limit: 65535
     t.text     "budgea_error_message",       limit: 65535
     t.string   "fiduceo_state",              limit: 255
     t.text     "fiduceo_additionnal_fields", limit: 65535
     t.string   "fiduceo_error_message",      limit: 255
->>>>>>> 127fa09... Fix schema migration
     t.datetime "created_at",                                               null: false
     t.datetime "updated_at",                                               null: false
     t.integer  "user_id",                    limit: 4
     t.integer  "journal_id",                 limit: 4
-<<<<<<< HEAD
-=======
     t.string   "service_name",               limit: 255
     t.text     "capabilities",               limit: 65535
     t.text     "encrypted_answers",          limit: 65535
@@ -2630,7 +2312,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.integer  "budgea_connector_id",    limit: 4
     t.string   "service_name",           limit: 255
     t.text     "capabilities",           limit: 65535
->>>>>>> 127fa09... Fix schema migration
     t.integer  "budgea_connector_id",        limit: 4
     t.string   "service_name",               limit: 255
     t.text     "capabilities",               limit: 65535
@@ -2649,10 +2330,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string   "fiduceo_transaction_id",     limit: 255
     t.string   "fiduceo_id",                 limit: 255
   end
-<<<<<<< HEAD
-
-=======
->>>>>>> 127fa09... Fix schema migration
   add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree
   add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
   add_index "retrievers", ["user_id"], name: "index_retrievers_on_user_id", using: :btree
@@ -2767,7 +2444,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "content_content_type"
     t.integer "content_file_size"
     t.datetime "content_updated_at"
-<<<<<<< HEAD
     t.string   "content_fingerprint",  limit: 255
   end
 
@@ -2952,6 +2628,8 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
 
   create_table "temp_document_metadata", force: :cascade do |t|
 =======
+=======
+>>>>>>> 0ac3c98... Fix schema conflit
     t.string "content_fingerprint"
     t.index ["api_id"], name: "index_sandbox_documents_on_api_id"
     t.index ["api_name"], name: "index_sandbox_documents_on_api_name"
@@ -3146,7 +2824,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
   end
 
   create_table "temp_document_metadata", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
->>>>>>> 127fa09... Fix schema migration
     t.datetime "date"
     t.string "name", limit: 191
     t.decimal "amount", precision: 10, scale: 2
@@ -3201,60 +2878,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "cloud_raw_content_content_type"
     t.integer "cloud_raw_content_file_size"
     t.datetime "cloud_raw_content_updated_at"
-<<<<<<< HEAD
-    t.string   "cloud_raw_content_fingerprint",  limit: 255
-    t.integer  "organization_id",                limit: 4
-    t.string   "organization_id_mongo_id",       limit: 255
-    t.integer  "user_id",                        limit: 4
-    t.string   "user_id_mongo_id",               limit: 255
-    t.integer  "temp_pack_id",                   limit: 4
-    t.string   "temp_pack_id_mongo_id",          limit: 255
-    t.integer  "document_delivery_id",           limit: 4
-    t.string   "document_delivery_id_mongo_id",  limit: 255
-    t.integer  "fiduceo_retriever_id",           limit: 4
-    t.string   "fiduceo_retriever_id_mongo_id",  limit: 255
-    t.integer  "email_id",                       limit: 4
-    t.string   "email_id_mongo_id",              limit: 255
-    t.integer  "piece_id",                       limit: 4
-    t.string   "piece_id_mongo_id",              limit: 255
-    t.string   "dematbox_doc_id",                limit: 255
-    t.string   "dematbox_box_id",                limit: 255
-    t.string   "dematbox_service_id",            limit: 255
-    t.string   "api_id",                         limit: 255
-    t.string   "api_name",                       limit: 255
-    t.text     "metadata",                       limit: 16777215
-    t.integer  "retriever_id",                   limit: 4
-    t.integer  "ibizabox_folder_id",             limit: 4
-    t.integer  "analytic_reference_id",          limit: 4
-  end
-
-  add_index "temp_documents", ["analytic_reference_id"], name: "index_temp_documents_on_analytic_reference_id", using: :btree
-  add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
-  add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
-  add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree
-  add_index "temp_documents", ["document_delivery_id_mongo_id"], name: "document_delivery_id_mongo_id", using: :btree
-  add_index "temp_documents", ["email_id"], name: "email_id", using: :btree
-  add_index "temp_documents", ["email_id_mongo_id"], name: "email_id_mongo_id", using: :btree
-  add_index "temp_documents", ["fiduceo_retriever_id"], name: "fiduceo_retriever_id", using: :btree
-  add_index "temp_documents", ["fiduceo_retriever_id_mongo_id"], name: "fiduceo_retriever_id_mongo_id", using: :btree
-  add_index "temp_documents", ["ibizabox_folder_id"], name: "index_temp_documents_on_ibizabox_folder_id", using: :btree
-  add_index "temp_documents", ["is_an_original"], name: "index_temp_documents_on_is_an_original", using: :btree
-  add_index "temp_documents", ["mongo_id"], name: "index_temp_documents_on_mongo_id", using: :btree
-  add_index "temp_documents", ["organization_id"], name: "organization_id", using: :btree
-  add_index "temp_documents", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-  add_index "temp_documents", ["piece_id"], name: "piece_id", using: :btree
-  add_index "temp_documents", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
-  add_index "temp_documents", ["retriever_id"], name: "index_temp_documents_on_retriever_id", using: :btree
-  add_index "temp_documents", ["state"], name: "index_temp_documents_on_state", using: :btree
-  add_index "temp_documents", ["temp_pack_id"], name: "temp_pack_id", using: :btree
-  add_index "temp_documents", ["temp_pack_id_mongo_id"], name: "temp_pack_id_mongo_id", using: :btree
-  add_index "temp_documents", ["user_id"], name: "index_temp_documents_on_user_id", using: :btree
-  add_index "temp_documents", ["user_id"], name: "user_id", using: :btree
-  add_index "temp_documents", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "temp_packs", force: :cascade do |t|
-    t.string   "mongo_id",                      limit: 255
-=======
     t.string "cloud_raw_content_fingerprint"
     t.integer "organization_id"
     t.string "organization_id_mongo_id"
@@ -3306,7 +2929,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
 
   create_table "temp_packs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "mongo_id"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "locked_at"
@@ -3337,37 +2959,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.datetime "updated_at"
     t.datetime "locked_at"
     t.datetime "locked_until"
-<<<<<<< HEAD
-    t.integer  "max_number_of_journals",          limit: 4,   default: 5,            null: false
-    t.boolean  "is_preassignment_authorized",                 default: false,        null: false
-    t.boolean  "is_taxable",                                  default: true,         null: false
-    t.integer  "is_pre_assignment_date_computed", limit: 4,   default: -1,           null: false
-    t.integer  "is_auto_deliver",                 limit: 4,   default: -1,           null: false
-    t.boolean  "is_own_csv_descriptor_used",                  default: false,        null: false
-    t.boolean  "is_upload_authorized",                        default: false,        null: false
-    t.integer  "user_id",                         limit: 4
-    t.string   "user_id_mongo_id",                limit: 255
-    t.boolean  "is_retriever_authorized",                     default: false
-    t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
-    t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
-    t.integer  "preseizure_date_option",          limit: 4,   default: -1
-    t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
-    t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
-    t.boolean  "skip_accounting_plan_finder",                 default: false
-  end
-
-  add_index "user_options", ["mongo_id"], name: "index_user_options_on_mongo_id", using: :btree
-  add_index "user_options", ["user_id"], name: "user_id", using: :btree
-  add_index "user_options", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "users", force: :cascade do |t|
-    t.string   "mongo_id",                                                       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "email",                                                          limit: 255
-    t.string   "encrypted_password",                                             limit: 255,   default: "",                                                 null: false
-    t.string   "reset_password_token",                                           limit: 255
-=======
     t.integer "max_number_of_journals", default: 5, null: false
     t.boolean "is_preassignment_authorized", default: false, null: false
     t.boolean "is_taxable", default: true, null: false
@@ -3395,7 +2986,6 @@ ActiveRecord::Schema.define(version: 2019_03_05_064104) do
     t.string "email"
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
->>>>>>> 127fa09... Fix schema migration
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer "sign_in_count", default: 0, null: false
