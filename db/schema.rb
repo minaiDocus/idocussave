@@ -10,339 +10,1849 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191003081504) do
-  create_table "account_book_types", force: :cascade do |t|
-    t.string   "mongo_id",                       limit: 255
+ActiveRecord::Schema.define(version: 2019_03_05_064104) do
+
+  create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name",                           limit: 255
-    t.string   "pseudonym",                      limit: 255
-    t.string   "description",                    limit: 255,   default: "",    null: false
-    t.integer  "position",                       limit: 4,     default: 0,     null: false
-    t.integer  "entry_type",                     limit: 4,     default: 0,     null: false
-    t.string   "currency",                       limit: 5,     default: "EUR"
-    t.string   "domain",                         limit: 255,   default: "",    null: false
-    t.string   "account_number",                 limit: 255
-    t.string   "default_account_number",         limit: 255
-    t.string   "charge_account",                 limit: 255
-    t.string   "default_charge_account",         limit: 255
-    t.string   "vat_account",                    limit: 255
-    t.string   "vat_account_10",                 limit: 255
-    t.string   "vat_account_8_5",                limit: 255
-    t.string   "vat_account_5_5",                limit: 255
-    t.string   "vat_account_2_1",                limit: 255
-    t.string   "anomaly_account",                limit: 255
-    t.boolean  "is_default",                                   default: false
-    t.boolean  "is_expense_categories_editable",               default: false, null: false
-    t.text     "instructions",                   limit: 65535
-    t.integer  "organization_id",                limit: 4
-    t.string   "organization_id_mongo_id",       limit: 255
-    t.integer  "user_id",                        limit: 4
-    t.string   "user_id_mongo_id",               limit: 255
-    t.integer  "analytic_reference_id",          limit: 4
+    t.string "name"
+    t.string "pseudonym"
+    t.string "description", default: "", null: false
+    t.integer "position", default: 0, null: false
+    t.integer "entry_type", default: 0, null: false
+    t.string "currency", limit: 5, default: "EUR"
+    t.string "domain", default: "", null: false
+    t.string "account_number"
+    t.string "default_account_number"
+    t.string "charge_account"
+    t.string "default_charge_account"
+    t.string "vat_account"
+    t.string "vat_account_10"
+    t.string "vat_account_8_5"
+    t.string "vat_account_5_5"
+    t.string "vat_account_2_1"
+    t.string "anomaly_account"
+    t.boolean "is_default", default: false
+    t.boolean "is_expense_categories_editable", default: false, null: false
+    t.text "instructions"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "analytic_reference_id"
+    t.index ["mongo_id"], name: "index_account_book_types_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  add_index "account_book_types", ["mongo_id"], name: "index_account_book_types_on_mongo_id", using: :btree
-  add_index "account_book_types", ["organization_id"], name: "organization_id", using: :btree
-  add_index "account_book_types", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-  add_index "account_book_types", ["user_id"], name: "user_id", using: :btree
-  add_index "account_book_types", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "account_number_rules", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
+  create_table "account_number_rules", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name",                     limit: 255
-    t.string   "rule_type",                limit: 255
-    t.string   "rule_target",              limit: 255,   default: "both"
-    t.string   "affect",                   limit: 255
-    t.text     "content",                  limit: 65535
-    t.string   "third_party_account",      limit: 255
-    t.integer  "priority",                 limit: 4,     default: 0,      null: false
-    t.string   "categorization",           limit: 255
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
+    t.string "name"
+    t.string "rule_type"
+    t.string "rule_target", default: "both"
+    t.string "affect"
+    t.text "content"
+    t.string "third_party_account"
+    t.integer "priority", default: 0, null: false
+    t.string "categorization"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.index ["mongo_id"], name: "index_account_number_rules_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
   end
 
-  add_index "account_number_rules", ["mongo_id"], name: "index_account_number_rules_on_mongo_id", using: :btree
-  add_index "account_number_rules", ["organization_id"], name: "organization_id", using: :btree
-  add_index "account_number_rules", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
-
-  create_table "account_number_rules_users", force: :cascade do |t|
-    t.integer "user_id",                limit: 4
-    t.integer "account_number_rule_id", limit: 4
+  create_table "account_number_rules_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "account_number_rule_id"
   end
 
-  create_table "account_sharings", force: :cascade do |t|
-    t.integer  "organization_id",  limit: 4
-    t.integer  "collaborator_id",  limit: 4
-    t.integer  "account_id",       limit: 4
-    t.integer  "authorized_by_id", limit: 4
-    t.boolean  "is_approved",                default: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+  create_table "account_sharings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "collaborator_id"
+    t.integer "account_id"
+    t.integer "authorized_by_id"
+    t.boolean "is_approved", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_account_sharings_on_account_id"
+    t.index ["authorized_by_id"], name: "index_account_sharings_on_authorized_by_id"
+    t.index ["collaborator_id"], name: "index_account_sharings_on_collaborator_id"
+    t.index ["is_approved"], name: "index_account_sharings_on_is_approved"
+    t.index ["organization_id"], name: "index_account_sharings_on_organization_id"
   end
 
-  add_index "account_sharings", ["account_id"], name: "index_account_sharings_on_account_id", using: :btree
-  add_index "account_sharings", ["authorized_by_id"], name: "index_account_sharings_on_authorized_by_id", using: :btree
-  add_index "account_sharings", ["collaborator_id"], name: "index_account_sharings_on_collaborator_id", using: :btree
-  add_index "account_sharings", ["is_approved"], name: "index_account_sharings_on_is_approved", using: :btree
-  add_index "account_sharings", ["organization_id"], name: "index_account_sharings_on_organization_id", using: :btree
-
-  create_table "accounting_plan_items", force: :cascade do |t|
-    t.string   "mongo_id",                             limit: 255
-    t.string   "third_party_account",                  limit: 255
-    t.string   "third_party_name",                     limit: 255
-    t.string   "conterpart_account",                   limit: 255
-    t.string   "code",                                 limit: 255
-    t.integer  "accounting_plan_itemable_id",          limit: 4
-    t.string   "accounting_plan_itemable_type",        limit: 255
-    t.string   "accounting_plan_itemable_id_mongo_id", limit: 255
-    t.string   "kind",                                 limit: 255
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.boolean  "is_updated",                                       default: true
+  create_table "accounting_plan_items", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "third_party_account"
+    t.string "third_party_name"
+    t.string "conterpart_account"
+    t.string "code"
+    t.integer "accounting_plan_itemable_id"
+    t.string "accounting_plan_itemable_type"
+    t.string "accounting_plan_itemable_id_mongo_id"
+    t.string "kind"
+    t.index ["accounting_plan_itemable_id"], name: "accounting_plan_itemable_id"
+    t.index ["accounting_plan_itemable_id_mongo_id"], name: "accounting_plan_itemable_id_mongo_id"
+    t.index ["accounting_plan_itemable_type"], name: "accounting_plan_itemable_type"
+    t.index ["mongo_id"], name: "index_accounting_plan_items_on_mongo_id"
   end
 
-  add_index "accounting_plan_items", ["accounting_plan_itemable_id"], name: "accounting_plan_itemable_id", using: :btree
-  add_index "accounting_plan_items", ["accounting_plan_itemable_id_mongo_id"], name: "accounting_plan_itemable_id_mongo_id", using: :btree
-  add_index "accounting_plan_items", ["accounting_plan_itemable_type"], name: "accounting_plan_itemable_type", using: :btree
-  add_index "accounting_plan_items", ["is_updated"], name: "index_accounting_plan_items_on_is_updated", using: :btree
-  add_index "accounting_plan_items", ["mongo_id"], name: "index_accounting_plan_items_on_mongo_id", using: :btree
-
-  create_table "accounting_plan_vat_accounts", force: :cascade do |t|
-    t.string  "mongo_id",                    limit: 255
-    t.string  "code",                        limit: 255
-    t.string  "nature",                      limit: 255
-    t.string  "account_number",              limit: 255
-    t.integer "accounting_plan_id",          limit: 4
-    t.string  "accounting_plan_id_mongo_id", limit: 255
+  create_table "accounting_plan_vat_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "code"
+    t.string "nature"
+    t.string "account_number"
+    t.integer "accounting_plan_id"
+    t.string "accounting_plan_id_mongo_id"
+    t.index ["accounting_plan_id"], name: "accounting_plan_id"
+    t.index ["accounting_plan_id_mongo_id"], name: "accounting_plan_id_mongo_id"
+    t.index ["mongo_id"], name: "index_accounting_plan_vat_accounts_on_mongo_id"
   end
 
-  add_index "accounting_plan_vat_accounts", ["accounting_plan_id"], name: "accounting_plan_id", using: :btree
-  add_index "accounting_plan_vat_accounts", ["accounting_plan_id_mongo_id"], name: "accounting_plan_id_mongo_id", using: :btree
-  add_index "accounting_plan_vat_accounts", ["mongo_id"], name: "index_accounting_plan_vat_accounts_on_mongo_id", using: :btree
-
-  create_table "accounting_plans", force: :cascade do |t|
-    t.string   "mongo_id",         limit: 255
+  create_table "accounting_plans", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "last_checked_at"
-    t.integer  "user_id",          limit: 4
-    t.string   "user_id_mongo_id", limit: 255
-    t.boolean  "is_updating",                  default: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.boolean "is_updating", default: false
+    t.index ["mongo_id"], name: "index_accounting_plans_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  add_index "accounting_plans", ["mongo_id"], name: "index_accounting_plans_on_mongo_id", using: :btree
-  add_index "accounting_plans", ["user_id"], name: "user_id", using: :btree
-  add_index "accounting_plans", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "addresses", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
+  create_table "addresses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "first_name",                 limit: 255
-    t.string   "last_name",                  limit: 255
-    t.string   "email",                      limit: 255
-    t.string   "company",                    limit: 255
-    t.string   "company_number",             limit: 255
-    t.string   "address_1",                  limit: 255
-    t.string   "address_2",                  limit: 255
-    t.string   "city",                       limit: 255
-    t.string   "zip",                        limit: 255
-    t.string   "state",                      limit: 255
-    t.string   "country",                    limit: 255
-    t.string   "building",                   limit: 255
-    t.string   "place_called_or_postal_box", limit: 255
-    t.string   "door_code",                  limit: 255
-    t.string   "other",                      limit: 255
-    t.string   "phone",                      limit: 255
-    t.string   "phone_mobile",               limit: 255
-    t.boolean  "is_for_billing",                         default: false, null: false
-    t.boolean  "is_for_paper_return",                    default: false, null: false
-    t.boolean  "is_for_paper_set_shipping",              default: false, null: false
-    t.boolean  "is_for_dematbox_shipping",               default: false, null: false
-    t.integer  "locatable_id",               limit: 4
-    t.string   "locatable_type",             limit: 255
-    t.string   "locatable_id_mongo_id",      limit: 255
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "company"
+    t.string "company_number"
+    t.string "address_1"
+    t.string "address_2"
+    t.string "city"
+    t.string "zip"
+    t.string "state"
+    t.string "country"
+    t.string "building"
+    t.string "place_called_or_postal_box"
+    t.string "door_code"
+    t.string "other"
+    t.string "phone"
+    t.string "phone_mobile"
+    t.boolean "is_for_billing", default: false, null: false
+    t.boolean "is_for_paper_return", default: false, null: false
+    t.boolean "is_for_paper_set_shipping", default: false, null: false
+    t.boolean "is_for_dematbox_shipping", default: false, null: false
+    t.integer "locatable_id"
+    t.string "locatable_type"
+    t.string "locatable_id_mongo_id"
+    t.index ["locatable_id"], name: "locatable_id"
+    t.index ["locatable_id_mongo_id"], name: "locatable_id_mongo_id"
+    t.index ["locatable_type"], name: "locatable_type"
+    t.index ["mongo_id"], name: "index_addresses_on_mongo_id"
   end
 
-  add_index "addresses", ["locatable_id"], name: "locatable_id", using: :btree
-  add_index "addresses", ["locatable_id_mongo_id"], name: "locatable_id_mongo_id", using: :btree
-  add_index "addresses", ["locatable_type"], name: "locatable_type", using: :btree
-  add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
+  create_table "analytic_references", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "a1_name"
+    t.text "a1_references"
+    t.decimal "a1_ventilation", precision: 5, scale: 2, default: "0.0"
+    t.string "a1_axis1"
+    t.string "a1_axis2"
+    t.string "a1_axis3"
+    t.string "a2_name"
+    t.text "a2_references"
+    t.decimal "a2_ventilation", precision: 5, scale: 2, default: "0.0"
+    t.string "a2_axis1"
+    t.string "a2_axis2"
+    t.string "a2_axis3"
+    t.string "a3_name"
+    t.text "a3_references"
+    t.decimal "a3_ventilation", precision: 5, scale: 2, default: "0.0"
+    t.string "a3_axis1"
+    t.string "a3_axis2"
+    t.string "a3_axis3"
+  end
 
-  create_table "advanced_preseizures", force: :cascade do |t|
-    t.integer  "user_id",           limit: 4
-    t.integer  "organization_id",   limit: 4
-    t.integer  "report_id",         limit: 4
-    t.integer  "piece_id",          limit: 4
-    t.integer  "pack_id",           limit: 4
-    t.integer  "operation_id",      limit: 4
-    t.integer  "position",          limit: 4
+  create_table "audits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "auditable_id"
+    t.string "auditable_type"
+    t.integer "associated_id"
+    t.string "associated_type"
+    t.integer "user_id"
+    t.string "user_type"
+    t.string "username"
+    t.string "action"
+    t.text "audited_changes"
+    t.integer "version", default: 0
+    t.string "comment"
+    t.string "remote_address"
+    t.string "request_uuid"
+    t.datetime "created_at"
+    t.index ["associated_id", "associated_type"], name: "associated_index"
+    t.index ["auditable_id", "auditable_type"], name: "auditable_index"
+    t.index ["created_at"], name: "index_audits_on_created_at"
+    t.index ["request_uuid"], name: "index_audits_on_request_uuid"
+    t.index ["user_id", "user_type"], name: "user_index"
+  end
+
+  create_table "bank_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "bank_name"
+    t.string "name"
+    t.string "number"
+    t.string "journal"
+    t.string "currency", limit: 5, default: "EUR"
+    t.text "original_currency"
+    t.string "foreign_journal"
+    t.string "accounting_number", default: "512000", null: false
+    t.string "temporary_account", default: "471000", null: false
+    t.date "start_date"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "retriever_id"
+    t.string "retriever_id_mongo_id"
+    t.string "api_id"
+    t.string "api_name", default: "budgea"
+    t.boolean "is_used", default: false
+    t.string "type_name"
+    t.boolean "lock_old_operation", default: true
+    t.integer "permitted_late_days", default: 30
+    t.index ["mongo_id"], name: "index_bank_accounts_on_mongo_id"
+    t.index ["retriever_id"], name: "retriever_id"
+    t.index ["retriever_id_mongo_id"], name: "retriever_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "boxes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "path", default: "iDocus/:code/:year:month/:account_book", null: false
+    t.boolean "is_configured", default: false, null: false
+    t.integer "external_file_storage_id"
+    t.string "external_file_storage_id_mongo_id"
+    t.string "encrypted_access_token"
+    t.string "encrypted_refresh_token"
+    t.index ["external_file_storage_id"], name: "external_file_storage_id"
+    t.index ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id"
+    t.index ["mongo_id"], name: "index_boxes_on_mongo_id"
+  end
+
+  create_table "budgea_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "identifier"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.string "encrypted_access_token"
+    t.index ["user_id"], name: "fk_rails_bc19f24997"
+  end
+
+  create_table "ckeditor_assets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "data_file_name", null: false
+    t.string "data_content_type"
+    t.integer "data_file_size"
+    t.string "data_fingerprint"
+    t.integer "assetable_id"
+    t.string "assetable_type", limit: 30
+    t.string "type", limit: 30
+    t.integer "width"
+    t.integer "height"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assetable_type", "assetable_id"], name: "idx_ckeditor_assetable"
+    t.index ["assetable_type", "type", "assetable_id"], name: "idx_ckeditor_assetable_type"
+  end
+
+  create_table "cms_images", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "original_file_name"
+    t.string "content_file_name"
+    t.string "content_content_type"
+    t.integer "content_file_size"
+    t.string "cloud_content_file_name"
+    t.string "cloud_content_content_type"
+    t.integer "cloud_content_file_size"
+    t.datetime "content_updated_at"
+    t.string "content_fingerprint"
+    t.index ["mongo_id"], name: "index_cms_images_on_mongo_id"
+  end
+
+  create_table "compositions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "path"
+    t.text "document_ids"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_compositions_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "connectors", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "capabilities"
+    t.text "apis"
+    t.text "active_apis"
+    t.integer "budgea_id"
+    t.string "fiduceo_ref"
+    t.text "combined_fields"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text "urls"
+  end
+
+  create_table "csv_descriptors", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "comma_as_number_separator", default: false, null: false
+    t.text "directive"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_csv_descriptors_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "currency_rates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.datetime "date"
+    t.string "exchange_from", limit: 5
+    t.string "exchange_to", limit: 5
+    t.string "currency_name"
+    t.float "exchange_rate"
+    t.float "reverse_exchange_rate"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["date", "exchange_from", "exchange_to"], name: "index_exchange_name_date"
+  end
+
+  create_table "dba_sequences", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "locked_at"
+    t.datetime "locked_until"
+    t.string "name"
+    t.integer "counter", default: 1, null: false
+    t.index ["mongo_id"], name: "index_dba_sequences_on_mongo_id"
+  end
+
+  create_table "debit_mandates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "transactionId"
+    t.string "transactionStatus"
+    t.string "transactionErrorCode"
+    t.string "signatureOperationResult"
+    t.string "signatureDate"
+    t.string "mandateScore"
+    t.string "clientReference"
+    t.string "cardTransactionId"
+    t.string "cardRequestId"
+    t.string "cardOperationType"
+    t.string "cardOperationResult"
+    t.string "collectOperationResult"
+    t.string "invoiceReference"
+    t.string "invoiceAmount"
+    t.string "invoiceExecutionDate"
+    t.string "reference"
+    t.string "title"
+    t.string "firstName"
+    t.string "lastName"
+    t.string "email"
+    t.string "bic"
+    t.string "iban"
+    t.string "RUM"
+    t.string "companyName"
+    t.string "organizationId"
+    t.string "invoiceLine1"
+    t.string "invoiceLine2"
+    t.string "invoiceCity"
+    t.string "invoiceCountry"
+    t.string "invoicePostalCode"
+    t.string "deliveryLine1"
+    t.string "deliveryLine2"
+    t.string "deliveryCity"
+    t.string "deliveryCountry"
+    t.string "deliveryPostalCode"
+    t.integer "organization_id"
+    t.index ["organization_id"], name: "index_debit_mandates_on_organization_id"
+  end
+
+  create_table "delayed_backend_mongoid_jobs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.string "handler"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.string "locked_by"
+    t.datetime "failed_at"
+    t.string "last_error"
+    t.string "queue"
+    t.index ["mongo_id"], name: "index_delayed_backend_mongoid_jobs_on_mongo_id"
+  end
+
+  create_table "dematbox", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "is_configured", default: false, null: false
+    t.datetime "beginning_configuration_at"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_dematbox_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "dematbox_services", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "pid"
+    t.string "type"
+    t.string "state", default: "unknown", null: false
+    t.index ["mongo_id"], name: "index_dematbox_services_on_mongo_id"
+  end
+
+  create_table "dematbox_subscribed_services", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "pid"
+    t.string "group_name"
+    t.string "group_pid"
+    t.boolean "is_for_current_period", default: true, null: false
+    t.integer "dematbox_id"
+    t.string "dematbox_id_mongo_id"
+    t.index ["dematbox_id"], name: "dematbox_id"
+    t.index ["dematbox_id_mongo_id"], name: "dematbox_id_mongo_id"
+    t.index ["mongo_id"], name: "index_dematbox_subscribed_services_on_mongo_id"
+  end
+
+  create_table "document_deliveries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "provider"
+    t.date "date"
+    t.boolean "is_processed"
+    t.datetime "processed_at"
+    t.integer "position", default: 1
+    t.index ["mongo_id"], name: "index_document_deliveries_on_mongo_id"
+  end
+
+  create_table "documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text "content_text", limit: 4294967295
+    t.boolean "is_a_cover", default: false
+    t.string "origin"
+    t.text "tags", limit: 4294967295
+    t.integer "position"
+    t.boolean "dirty", default: true, null: false
+    t.string "token"
+    t.string "content_file_name"
+    t.string "content_content_type"
+    t.integer "content_file_size"
+    t.string "cloud_content_file_name"
+    t.string "cloud_content_content_type"
+    t.integer "cloud_content_file_size"
+    t.datetime "content_updated_at"
+    t.string "content_fingerprint"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.index ["dirty"], name: "index_documents_on_dirty"
+    t.index ["is_a_cover"], name: "index_documents_on_is_a_cover"
+    t.index ["mongo_id"], name: "index_documents_on_mongo_id"
+    t.index ["origin"], name: "index_documents_on_origin"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+  end
+
+  create_table "dropbox_basics", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "path",                              limit: 255,        default: ":code/:year:month/:account_book/", null: false
+    t.integer  "dropbox_id",                        limit: 8
+    t.datetime "changed_at"
+    t.datetime "checked_at"
+    t.text "delta_cursor", limit: 4294967295
+    t.string "delta_path_prefix"
+    t.text "import_folder_paths", limit: 4294967295
+    t.integer "external_file_storage_id"
+    t.string "external_file_storage_id_mongo_id"
+    t.string "encrypted_access_token"
+    t.index ["external_file_storage_id"], name: "external_file_storage_id"
+    t.index ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id"
+    t.index ["mongo_id"], name: "index_dropbox_basics_on_mongo_id"
+  end
+
+  create_table "emails", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "originally_created_at"
+    t.string "to"
+    t.string "from"
+    t.string "subject"
+    t.text "attachment_names"
+    t.integer "size", default: 0, null: false
+    t.string "state", default: "created", null: false
+    t.text "errors_list"
+    t.boolean "is_error_notified", default: false, null: false
+    t.string "original_content_file_name"
+    t.string "original_content_content_type"
+    t.integer "original_content_file_size"
+    t.datetime "original_content_updated_at"
+    t.string "original_content_fingerprint"
+    t.string "cloud_original_content_file_name"
+    t.string "cloud_original_content_content_type"
+    t.integer "cloud_original_content_file_size"
+    t.datetime "cloud_original_content_updated_at"
+    t.string "cloud_original_content_fingerprint"
+    t.integer "to_user_id"
+    t.string "to_user_id_mongo_id"
+    t.integer "from_user_id"
+    t.string "from_user_id_mongo_id"
+    t.string "message_id"
+    t.index ["from_user_id"], name: "from_user_id"
+    t.index ["from_user_id_mongo_id"], name: "from_user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_emails_on_mongo_id"
+    t.index ["to_user_id"], name: "to_user_id"
+    t.index ["to_user_id_mongo_id"], name: "to_user_id_mongo_id"
+  end
+
+  create_table "events", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "user_code"
+    t.string "action"
+    t.string "target_type"
+    t.string "target_name"
+    t.text "target_attributes"
+    t.string "path"
+    t.string "ip_address"
+    t.integer "organization_id"
+    t.integer "user_id"
+    t.integer "target_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["user_id"], name: "user_id"
+  end
+
+  create_table "exact_online", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.text "encrypted_client_id"
+    t.text "encrypted_client_secret"
+    t.string "user_name"
+    t.string "full_name"
+    t.string "email"
+    t.string "state"
+    t.text "encrypted_refresh_token"
+    t.text "encrypted_access_token"
+    t.datetime "token_expires_at"
+    t.integer "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "exercises", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.date "start_date"
+    t.date "end_date"
+    t.boolean "is_closed", default: false, null: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_exercises_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "expense_categories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "name"
+    t.string "description"
+    t.integer "account_book_type_id"
+    t.string "account_book_type_id_mongo_id"
+    t.index ["account_book_type_id"], name: "account_book_type_id"
+    t.index ["account_book_type_id_mongo_id"], name: "account_book_type_id_mongo_id"
+    t.index ["mongo_id"], name: "index_expense_categories_on_mongo_id"
+  end
+
+  create_table "external_file_storages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
+    t.boolean "is_path_used", default: false, null: false
+    t.integer "used", default: 0, null: false
+    t.integer "authorized", default: 30, null: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_external_file_storages_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "fiduceo_retrievers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "service_name"
+    t.string "type", default: "provider", null: false
+    t.string "name"
+    t.string "login"
+    t.string "cash_register"
+    t.string "state"
+    t.boolean "is_active", default: true, null: false
+    t.boolean "is_selection_needed", default: true, null: false
+    t.boolean "is_auto", default: true, null: false
+    t.boolean "is_sane", default: true, null: false
+    t.boolean "is_password_renewal_notified", default: false, null: false
+    t.boolean "wait_for_user", default: false, null: false
+    t.string "wait_for_user_label"
+    t.text "pending_document_ids"
+    t.string "frequency", default: "day", null: false
+    t.string "journal_name"
+    t.string "transaction_status"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "journal_id"
+    t.string "journal_id_mongo_id"
+    t.string "provider_id"
+    t.string "fiduceo_id"
+    t.string "bank_id"
+    t.index ["journal_id"], name: "journal_id"
+    t.index ["journal_id_mongo_id"], name: "journal_id_mongo_id"
+    t.index ["mongo_id"], name: "index_fiduceo_retrievers_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "fiduceo_transactions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "status", default: "PENDING", null: false
+    t.text "events", limit: 4294967295
+    t.text "wait_for_user_labels"
+    t.text "retrieved_document_ids"
+    t.boolean "is_processed", default: false, null: false
+    t.string "type", default: "provider", null: false
+    t.string "service_name"
+    t.string "custom_service_name"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "retriever_id"
+    t.string "retriever_id_mongo_id"
+    t.string "fiduceo_id"
+    t.index ["mongo_id"], name: "index_fiduceo_transactions_on_mongo_id"
+    t.index ["retriever_id"], name: "retriever_id"
+    t.index ["retriever_id_mongo_id"], name: "retriever_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "file_naming_policies", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "scope", default: "organization", null: false
+    t.string "separator", default: "_", null: false
+    t.string "first_user_identifier", default: "code", null: false
+    t.integer "first_user_identifier_position", default: 1, null: false
+    t.string "second_user_identifier", default: "", null: false
+    t.integer "second_user_identifier_position", default: 1, null: false
+    t.boolean "is_journal_used", default: true, null: false
+    t.integer "journal_position", default: 2, null: false
+    t.boolean "is_period_used", default: true, null: false
+    t.integer "period_position", default: 3, null: false
+    t.boolean "is_piece_number_used", default: true, null: false
+    t.integer "piece_number_position", default: 4, null: false
+    t.boolean "is_third_party_used", default: false, null: false
+    t.integer "third_party_position", default: 5, null: false
+    t.boolean "is_invoice_number_used", default: false, null: false
+    t.integer "invoice_number_position", default: 6, null: false
+    t.boolean "is_invoice_date_used", default: false, null: false
+    t.integer "invoice_date_position", default: 7, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.index ["mongo_id"], name: "index_file_naming_policies_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "file_sending_kits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "title", default: "Title", null: false
+    t.text "instruction"
+    t.integer "position", default: 0, null: false
+    t.string "logo_path", default: "logo/path", null: false
+    t.integer "logo_height", default: 0, null: false
+    t.integer "logo_width", default: 0, null: false
+    t.string "left_logo_path", default: "left/logo/path", null: false
+    t.integer "left_logo_height", default: 0, null: false
+    t.integer "left_logo_width", default: 0, null: false
+    t.string "right_logo_path", default: "right/logo/path", null: false
+    t.integer "right_logo_height", default: 0, null: false
+    t.integer "right_logo_width", default: 0, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.index ["mongo_id"], name: "index_file_sending_kits_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "firebase_tokens", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "name"
+    t.string "platform"
+    t.datetime "last_registration_date"
+    t.datetime "last_sending_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "name"], name: "index_owener_id_and_name"
+  end
+
+  create_table "ftps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
+    t.boolean "is_configured", default: false, null: false
+    t.integer "external_file_storage_id"
+    t.string "external_file_storage_id_mongo_id"
+    t.string "encrypted_host"
+    t.string "encrypted_login"
+    t.string "encrypted_password"
+    t.string "encrypted_port"
+    t.boolean "is_passive", default: true
+    t.string "root_path", default: "/"
+    t.datetime "import_checked_at"
+    t.text "previous_import_paths"
+    t.integer "organization_id"
+    t.index ["external_file_storage_id"], name: "external_file_storage_id"
+    t.index ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id"
+    t.index ["mongo_id"], name: "index_ftps_on_mongo_id"
+    t.index ["organization_id"], name: "index_ftps_on_organization_id"
+  end
+
+  create_table "google_docs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "is_configured", default: false, null: false
+    t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
+    t.integer "external_file_storage_id"
+    t.string "external_file_storage_id_mongo_id"
+    t.string "encrypted_access_token"
+    t.string "encrypted_refresh_token"
+    t.string "encrypted_access_token_expires_at"
+    t.index ["external_file_storage_id"], name: "external_file_storage_id"
+    t.index ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id"
+    t.index ["mongo_id"], name: "index_google_docs_on_mongo_id"
+  end
+
+  create_table "groups", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "description"
+    t.string "dropbox_delivery_folder", default: "iDocus_delivery/:code/:year:month/:account_book/", null: false
+    t.boolean "is_dropbox_authorized", default: false, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.index ["mongo_id"], name: "index_groups_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "groups_members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "member_id", null: false
+    t.integer "group_id", null: false
+    t.index ["group_id"], name: "index_groups_members_on_group_id"
+    t.index ["member_id", "group_id"], name: "index_groups_members_on_member_id_and_group_id", unique: true
+    t.index ["member_id"], name: "index_groups_members_on_member_id"
+  end
+
+  create_table "groups_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "group_id", null: false
+    t.index ["group_id"], name: "index_groups_users_on_group_id"
+    t.index ["user_id", "group_id"], name: "index_groups_users_on_user_id_and_group_id", unique: true
+    t.index ["user_id"], name: "index_groups_users_on_user_id"
+  end
+
+  create_table "ibizabox_folders", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "journal_id"
+    t.integer "user_id"
+    t.boolean "is_selection_needed", default: true
+    t.string "state"
+    t.datetime "last_checked_at"
+    t.string "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ibizas", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "state", default: "none", null: false
+    t.string "state_2", default: "none", null: false
+    t.text "description"
+    t.string "description_separator", default: " - ", null: false
+    t.text "piece_name_format"
+    t.string "piece_name_format_sep", default: " ", null: false
+    t.string "voucher_ref_target", default: "piece_number"
+    t.boolean "is_auto_deliver", default: false, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.text "encrypted_access_token"
+    t.text "encrypted_access_token_2"
+    t.boolean "is_analysis_activated", default: false
+    t.boolean "is_analysis_to_validate", default: false
+    t.index ["mongo_id"], name: "index_ibizas_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "invoices", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "number"
+    t.float "vat_ratio", default: 1.2, null: false
+    t.integer "amount_in_cents_w_vat"
+    t.string "content_file_name"
+    t.string "content_content_type"
+    t.integer "content_file_size"
+    t.datetime "content_updated_at"
+    t.string "content_fingerprint"
+    t.string "cloud_content_file_name"
+    t.string "cloud_content_content_type"
+    t.integer "cloud_content_file_size"
+    t.datetime "cloud_content_updated_at"
+    t.string "cloud_content_fingerprint"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "subscription_id"
+    t.string "subscription_id_mongo_id"
+    t.integer "period_id"
+    t.string "period_id_mongo_id"
+    t.index ["mongo_id"], name: "index_invoices_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["period_id"], name: "period_id"
+    t.index ["period_id_mongo_id"], name: "period_id_mongo_id"
+    t.index ["subscription_id"], name: "subscription_id"
+    t.index ["subscription_id_mongo_id"], name: "subscription_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "knowings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "is_active", default: true, null: false
+    t.string "state", default: "not_performed", null: false
+    t.string "pole_name", default: "Pièces", null: false
+    t.boolean "is_third_party_included", default: false, null: false
+    t.boolean "is_pre_assignment_state_included", default: false, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.string "encrypted_url"
+    t.string "encrypted_username"
+    t.string "encrypted_password"
+    t.index ["mongo_id"], name: "index_knowings_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "mcf_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "access_token"
+    t.string "code"
+    t.string "journal"
+    t.string "original_file_name", default: ""
+    t.text "file64", limit: 4294967295
+    t.string "state", default: "ready"
+    t.integer "retake_retry", default: 0
+    t.datetime "retake_at"
+    t.boolean "is_generated", default: false
+    t.boolean "is_moved", default: false
+    t.boolean "is_notified", default: false
+    t.text "error_message"
+    t.datetime "updated_at"
+    t.datetime "created_at"
+    t.index ["user_id"], name: "index_mcf_documents_on_user_id"
+  end
+
+  create_table "mcf_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "organization_id"
+    t.string "encrypted_access_token"
+    t.string "encrypted_refresh_token"
+    t.string "encrypted_access_token_expires_at"
+    t.string "delivery_path_pattern", default: "/:year:month/:account_book/"
+    t.boolean "is_delivery_activated", default: true
+    t.index ["organization_id"], name: "index_mcf_settings_on_organization_id"
+  end
+
+  create_table "members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "organization_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "role", default: "collaborator", null: false
+    t.string "code", null: false
+    t.boolean "manage_groups", default: true
+    t.boolean "manage_collaborators", default: false
+    t.boolean "manage_customers", default: true
+    t.boolean "manage_journals", default: true
+    t.boolean "manage_customer_journals", default: true
+    t.index ["code"], name: "index_members_on_code", unique: true
+    t.index ["organization_id", "user_id"], name: "index_organization_user_on_members", unique: true
+    t.index ["role"], name: "index_members_on_role"
+  end
+
+  create_table "mobile_connexions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "platform"
+    t.string "version"
+    t.integer "periode"
+    t.integer "daily_counter", default: 1
+    t.date "date"
+    t.index ["periode"], name: "index_mobile_connexions_on_periode"
+    t.index ["platform"], name: "index_mobile_connexions_on_platform"
+  end
+
+  create_table "new_provider_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "state", default: "pending", null: false
+    t.string "name"
+    t.datetime "notified_at"
+    t.datetime "processing_at"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "api_id"
+    t.boolean "is_sent", default: false
+    t.text "encrypted_url"
+    t.text "encrypted_description"
+    t.text "encrypted_message"
+    t.string "encrypted_email"
+    t.string "encrypted_types"
+    t.index ["mongo_id"], name: "index_new_provider_requests_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "news", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "state", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "target_audience", null: false
+    t.string "url"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["published_at"], name: "index_news_on_published_at"
+    t.index ["target_audience"], name: "index_news_on_target_audience"
+  end
+
+  create_table "notifiables_notifies", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "notifiable_id"
+    t.string "notifiable_type"
+    t.integer "notify_id"
+    t.string "label"
+    t.index ["notify_id", "notifiable_id", "notifiable_type", "label"], name: "index_notifiable"
+  end
+
+  create_table "notifications", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "notice_type", null: false
+    t.boolean "is_read", default: false, null: false
+    t.boolean "is_sent", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "message"
+    t.string "url"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "notifies", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.boolean "to_send_docs", default: true
+    t.string "published_docs", default: "delay"
+    t.boolean "reception_of_emailed_docs", default: true
+    t.boolean "r_wrong_pass", default: false
+    t.boolean "r_site_unavailable", default: false
+    t.boolean "r_action_needed", default: false
+    t.boolean "r_bug", default: false
+    t.string "r_new_documents", default: "none"
+    t.integer "r_new_documents_count", default: 0
+    t.string "r_new_operations", default: "none"
+    t.integer "r_new_operations_count", default: 0
+    t.boolean "r_no_bank_account_configured", default: false
+    t.boolean "document_being_processed", default: false
+    t.boolean "paper_quota_reached", default: false
+    t.boolean "new_pre_assignment_available", default: false
+    t.boolean "dropbox_invalid_access_token", default: true
+    t.boolean "dropbox_insufficient_space", default: true
+    t.boolean "ftp_auth_failure", default: true
+    t.boolean "detected_preseizure_duplication", default: false
+    t.integer "detected_preseizure_duplication_count", default: 0
+    t.integer "unblocked_preseizure_count", default: 0
+    t.boolean "new_scanned_documents", default: false
+    t.string "pre_assignment_delivery_errors", default: "none"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.boolean "pre_assignment_ignored_piece", default: false
+    t.integer "pre_assignment_ignored_piece_count", default: 0
+    t.boolean "mcf_document_errors", default: false
+    t.boolean "pre_assignment_export", default: true
+    t.index ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count"
+    t.index ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count"
+    t.index ["user_id"], name: "index_notifies_on_user_id"
+  end
+
+  create_table "operations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.date "date"
+    t.date "value_date"
+    t.date "transaction_date"
+    t.text "label", limit: 4294967295
+    t.decimal "amount", precision: 11, scale: 2
+    t.string "comment"
+    t.string "supplier_found"
+    t.integer "category_id"
+    t.string "category"
+    t.datetime "accessed_at"
+    t.datetime "processed_at"
+    t.boolean "is_locked"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "bank_account_id"
+    t.string "bank_account_id_mongo_id"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.integer "piece_id"
+    t.string "piece_id_mongo_id"
+    t.string "api_id"
+    t.string "type_id"
+    t.string "api_name", default: "budgea"
+    t.string "type_name"
+    t.boolean "is_coming", default: false
+    t.datetime "deleted_at"
+    t.datetime "forced_processing_at"
+    t.integer "forced_processing_by_user_id"
+    t.text "currency"
+    t.index ["api_id"], name: "fiduceo_id"
+    t.index ["api_name"], name: "index_operations_on_api_name"
+    t.index ["bank_account_id"], name: "bank_account_id"
+    t.index ["bank_account_id_mongo_id"], name: "bank_account_id_mongo_id"
+    t.index ["created_at"], name: "index_operations_on_created_at"
+    t.index ["deleted_at"], name: "index_operations_on_deleted_at"
+    t.index ["forced_processing_at"], name: "index_operations_on_forced_processing_at"
+    t.index ["is_locked"], name: "index_operations_on_is_locked"
+    t.index ["mongo_id"], name: "index_operations_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+    t.index ["piece_id"], name: "piece_id"
+    t.index ["piece_id_mongo_id"], name: "piece_id_mongo_id"
+    t.index ["processed_at"], name: "index_operations_on_processed_at"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "orders", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "locked_at"
+    t.datetime "locked_until"
+    t.string "state", default: "pending", null: false
+    t.string "type"
+    t.integer "price_in_cents_wo_vat"
+    t.float "vat_ratio", default: 1.2, null: false
+    t.integer "dematbox_count", default: 0, null: false
+    t.integer "period_duration", default: 1, null: false
+    t.integer "paper_set_casing_size", default: 0, null: false
+    t.integer "paper_set_folder_count", default: 0, null: false
+    t.date "paper_set_start_date"
+    t.date "paper_set_end_date"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "period_id"
+    t.string "period_id_mongo_id"
+    t.datetime "address_created_at"
+    t.datetime "address_updated_at"
+    t.string "address_first_name"
+    t.string "address_last_name"
+    t.string "address_email"
+    t.string "address_company"
+    t.string "address_company_number"
+    t.string "address_address_1"
+    t.string "address_address_2"
+    t.string "address_city"
+    t.string "address_zip"
+    t.string "address_state"
+    t.string "address_country"
+    t.string "address_building"
+    t.string "address_place_called_or_postal_box"
+    t.string "address_door_code"
+    t.string "address_other"
+    t.string "address_phone"
+    t.string "address_phone_mobile"
+    t.boolean "address_is_for_billing", default: false, null: false
+    t.boolean "address_is_for_paper_return", default: false, null: false
+    t.boolean "address_is_for_paper_set_shipping", default: false, null: false
+    t.boolean "address_is_for_dematbox_shipping", default: false, null: false
+    t.datetime "paper_return_address_created_at"
+    t.datetime "paper_return_address_updated_at"
+    t.string "paper_return_address_first_name"
+    t.string "paper_return_address_last_name"
+    t.string "paper_return_address_email"
+    t.string "paper_return_address_company"
+    t.string "paper_return_address_company_number"
+    t.string "paper_return_address_address_1"
+    t.string "paper_return_address_address_2"
+    t.string "paper_return_address_city"
+    t.string "paper_return_address_zip"
+    t.string "paper_return_address_state"
+    t.string "paper_return_address_country"
+    t.string "paper_return_address_building"
+    t.string "paper_return_address_place_called_or_postal_box"
+    t.string "paper_return_address_door_code"
+    t.string "paper_return_address_other"
+    t.string "paper_return_address_phone"
+    t.string "paper_return_address_phone_mobile"
+    t.boolean "paper_return_address_is_for_billing", default: false, null: false
+    t.boolean "paper_return_address_is_for_paper_return", default: false, null: false
+    t.boolean "paper_return_address_is_for_paper_set_shipping", default: false, null: false
+    t.boolean "paper_return_address_is_for_dematbox_shipping", default: false, null: false
+    t.index ["mongo_id"], name: "index_orders_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["period_id"], name: "period_id"
+    t.index ["period_id_mongo_id"], name: "period_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "organization_groups", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description"
+    t.boolean "is_auto_membership_activated", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "organization_rights", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "is_groups_management_authorized", default: true, null: false
+    t.boolean "is_collaborators_management_authorized", default: false, null: false
+    t.boolean "is_customers_management_authorized", default: true, null: false
+    t.boolean "is_journals_management_authorized", default: true, null: false
+    t.boolean "is_customer_journals_management_authorized", default: true, null: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.index ["mongo_id"], name: "index_organization_rights_on_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "organizations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "description"
+    t.string "code"
+    t.boolean "is_detail_authorized", default: false, null: false
+    t.boolean "is_period_duration_editable", default: true, null: false
+    t.boolean "is_test", default: false, null: false
+    t.boolean "is_for_admin", default: false, null: false
+    t.boolean "is_active", default: true, null: false
+    t.boolean "is_suspended", default: false, null: false
+    t.boolean "is_quadratus_used", default: false, null: false
+    t.boolean "is_quadratus_auto_deliver", default: false
+    t.boolean "is_pre_assignment_date_computed", default: false, null: false
+    t.boolean "is_csv_descriptor_used", default: false, null: false
+    t.boolean "is_csv_descriptor_auto_deliver", default: false
+    t.boolean "is_coala_used", default: false, null: false
+    t.boolean "is_coala_auto_deliver", default: false
+    t.integer "authd_prev_period", default: 1, null: false
+    t.integer "auth_prev_period_until_day", default: 11, null: false
+    t.integer "auth_prev_period_until_month", default: 0, null: false
+    t.integer "leader_id"
+    t.string "leader_id_mongo_id"
+    t.boolean "is_operation_processing_forced", default: false
+    t.boolean "is_operation_value_date_needed", default: false
+    t.integer "preseizure_date_option", default: 0
+    t.boolean "is_duplicate_blocker_activated", default: true
+    t.integer "organization_group_id"
+    t.boolean "subject_to_vat", default: true
+    t.boolean "is_exact_online_used", default: false
+    t.boolean "is_exact_online_auto_deliver", default: false
+    t.index ["leader_id"], name: "leader_id"
+    t.index ["leader_id_mongo_id"], name: "leader_id_mongo_id"
+    t.index ["mongo_id"], name: "index_organizations_on_mongo_id"
+    t.index ["organization_group_id"], name: "index_organizations_on_organization_group_id"
+  end
+
+  create_table "pack_dividers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "type"
+    t.string "origin"
+    t.boolean "is_a_cover", default: false, null: false
+    t.integer "pages_number"
+    t.integer "position"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.index ["is_a_cover"], name: "index_pack_dividers_on_is_a_cover"
+    t.index ["mongo_id"], name: "index_pack_dividers_on_mongo_id"
+    t.index ["origin"], name: "index_pack_dividers_on_origin"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+    t.index ["type"], name: "index_pack_dividers_on_type"
+  end
+
+  create_table "pack_pieces", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.integer "number"
+    t.boolean "is_a_cover", default: false, null: false
+    t.string "origin"
+    t.integer "position"
+    t.integer "pages_number", default: 0
+    t.string "token"
+    t.boolean "is_awaiting_pre_assignment", default: false, null: false
+    t.string "pre_assignment_state", default: "ready"
+    t.string "pre_assignment_comment"
+    t.string "content_file_name"
+    t.string "content_content_type"
+    t.integer "content_file_size"
+    t.datetime "content_updated_at"
+    t.string "content_fingerprint"
+    t.string "cloud_content_file_name"
+    t.string "cloud_content_content_type"
+    t.integer "cloud_content_file_size"
+    t.datetime "cloud_content_updated_at"
+    t.string "cloud_content_fingerprint"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.integer "analytic_reference_id"
+    t.text "content_text", limit: 4294967295
+    t.text "tags"
+    t.boolean "is_finalized", default: false
+    t.index ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id"
+    t.index ["is_finalized"], name: "index_pack_pieces_on_is_finalized"
+    t.index ["name"], name: "index_pack_pieces_on_name"
+    t.index ["number"], name: "index_pack_pieces_on_number"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["position"], name: "index_pack_pieces_on_position"
+    t.index ["user_id"], name: "user_id"
+  end
+
+  create_table "pack_report_expenses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float "amount_in_cents_wo_vat"
+    t.float "amount_in_cents_w_vat"
+    t.float "vat"
+    t.date "date"
+    t.string "type"
+    t.string "origin"
+    t.integer "obs_type"
+    t.integer "position"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "report_id"
+    t.string "report_id_mongo_id"
+    t.integer "piece_id"
+    t.string "piece_id_mongo_id"
+    t.index ["mongo_id"], name: "index_pack_report_expenses_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["piece_id"], name: "piece_id"
+    t.index ["piece_id_mongo_id"], name: "piece_id_mongo_id"
+    t.index ["report_id"], name: "report_id"
+    t.index ["report_id_mongo_id"], name: "report_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "pack_report_observation_guests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.integer "observation_id"
+    t.string "observation_id_mongo_id"
+    t.index ["mongo_id"], name: "index_pack_report_observation_guests_on_mongo_id"
+    t.index ["observation_id"], name: "observation_id"
+    t.index ["observation_id_mongo_id"], name: "observation_id_mongo_id"
+  end
+
+  create_table "pack_report_observations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "comment"
+    t.integer "expense_id"
+    t.string "expense_id_mongo_id"
+    t.index ["expense_id"], name: "expense_id"
+    t.index ["expense_id_mongo_id"], name: "expense_id_mongo_id"
+    t.index ["mongo_id"], name: "index_pack_report_observations_on_mongo_id"
+  end
+
+  create_table "pack_report_preseizure_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "type"
+    t.string "number"
+    t.string "lettering"
+    t.integer "preseizure_id"
+    t.string "preseizure_id_mongo_id"
+    t.index ["mongo_id"], name: "index_pack_report_preseizure_accounts_on_mongo_id"
+    t.index ["preseizure_id"], name: "preseizure_id"
+    t.index ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id"
+  end
+
+  create_table "pack_report_preseizure_entries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "type"
+    t.string "number"
+    t.decimal "amount", precision: 11, scale: 2
+    t.integer "preseizure_id"
+    t.string "preseizure_id_mongo_id"
+    t.integer "account_id"
+    t.string "account_id_mongo_id"
+    t.index ["account_id"], name: "account_id"
+    t.index ["account_id_mongo_id"], name: "account_id_mongo_id"
+    t.index ["mongo_id"], name: "index_pack_report_preseizure_entries_on_mongo_id"
+    t.index ["preseizure_id"], name: "preseizure_id"
+    t.index ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id"
+  end
+
+  create_table "pack_report_preseizures", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "type"
     t.datetime "date"
     t.datetime "deadline_date"
+    t.text "operation_label"
+    t.string "observation"
+    t.integer "position"
+    t.string "piece_number"
+    t.decimal "amount", precision: 11, scale: 2
+    t.string "currency"
+    t.string "unit", limit: 5, default: "EUR"
+    t.float "conversion_rate"
+    t.string "third_party"
+    t.integer "category_id"
+    t.boolean "is_made_by_abbyy", default: false, null: false
+    t.boolean "is_delivered", default: false, null: false
     t.datetime "delivery_tried_at"
-    t.text     "delivery_message",  limit: 65535
-    t.string   "name",              limit: 255
-    t.string   "piece_number",      limit: 255
-    t.string   "third_party",       limit: 255
-    t.decimal  "cached_amount",                   precision: 11, scale: 2
-    t.string   "delivery_state",    limit: 20
+    t.text "delivery_message"
+    t.boolean "is_locked", default: false, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "report_id"
+    t.string "report_id_mongo_id"
+    t.integer "piece_id"
+    t.string "piece_id_mongo_id"
+    t.integer "operation_id"
+    t.string "operation_id_mongo_id"
+    t.integer "similar_preseizure_id"
+    t.datetime "duplicate_detected_at"
+    t.boolean "is_blocked_for_duplication", default: false
+    t.datetime "marked_as_duplicate_at"
+    t.integer "marked_as_duplicate_by_user_id"
+    t.datetime "duplicate_unblocked_at"
+    t.integer "duplicate_unblocked_by_user_id"
+    t.decimal "cached_amount", precision: 11, scale: 2
+    t.string "is_delivered_to", default: ""
+    t.string "exact_online_id"
+    t.index ["duplicate_unblocked_by_user_id"], name: "index_pack_report_preseizures_on_duplicate_unblocked_by_user_id"
+    t.index ["is_blocked_for_duplication"], name: "index_pack_report_preseizures_on_is_blocked_for_duplication"
+    t.index ["is_delivered_to"], name: "index_pack_report_preseizures_on_is_delivered_to"
+    t.index ["marked_as_duplicate_by_user_id"], name: "index_pack_report_preseizures_on_marked_as_duplicate_by_user_id"
+    t.index ["operation_id"], name: "operation_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["piece_id"], name: "piece_id"
+    t.index ["position"], name: "index_pack_report_preseizures_on_position"
+    t.index ["report_id"], name: "report_id"
+    t.index ["similar_preseizure_id"], name: "index_pack_report_preseizures_on_similar_preseizure_id"
+    t.index ["third_party"], name: "index_pack_report_preseizures_on_third_party"
+    t.index ["user_id"], name: "user_id"
+  end
+
+  create_table "pack_report_preseizures_pre_assignment_deliveries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "pre_assignment_delivery_id"
+    t.integer "preseizure_id"
+  end
+
+  create_table "pack_report_preseizures_pre_assignment_exports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "preseizure_id"
+    t.integer "pre_assignment_export_id"
+  end
+
+  create_table "pack_report_preseizures_remote_files", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "remote_file_id"
+    t.integer "pack_report_preseizure_id"
+  end
+
+  create_table "pack_reports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "checked_at"
+    t.string "name"
+    t.string "type"
+    t.boolean "is_delivered", default: false, null: false
+    t.datetime "delivery_tried_at"
+    t.text "delivery_message"
+    t.boolean "is_locked", default: false, null: false
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.integer "document_id"
+    t.string "document_id_mongo_id"
+    t.string "is_delivered_to", default: ""
+    t.index ["document_id"], name: "document_id"
+    t.index ["document_id_mongo_id"], name: "document_id_mongo_id"
+    t.index ["is_delivered_to"], name: "index_pack_reports_on_is_delivered_to"
+    t.index ["mongo_id"], name: "index_pack_reports_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  add_index "advanced_preseizures", ["checked_at"], name: "index_advanced_preseizures_on_checked_at", using: :btree
-  add_index "advanced_preseizures", ["delivery_state"], name: "index_advanced_preseizures_on_delivery_state", using: :btree
-  add_index "advanced_preseizures", ["name"], name: "index_advanced_preseizures_on_name", using: :btree
-  add_index "advanced_preseizures", ["position"], name: "index_advanced_preseizures_on_position", using: :btree
-  add_index "advanced_preseizures", ["third_party"], name: "index_advanced_preseizures_on_third_party", using: :btree
-  add_index "advanced_preseizures", ["updated_at"], name: "index_advanced_preseizures_on_updated_at", using: :btree
-
-  create_table "analytic_references", force: :cascade do |t|
-    t.string  "a1_name",        limit: 255
-    t.text    "a1_references",  limit: 65535
-    t.decimal "a1_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string  "a1_axis1",       limit: 255
-    t.string  "a1_axis2",       limit: 255
-    t.string  "a1_axis3",       limit: 255
-    t.string  "a2_name",        limit: 255
-    t.text    "a2_references",  limit: 65535
-    t.decimal "a2_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string  "a2_axis1",       limit: 255
-    t.string  "a2_axis2",       limit: 255
-    t.string  "a2_axis3",       limit: 255
-    t.string  "a3_name",        limit: 255
-    t.text    "a3_references",  limit: 65535
-    t.decimal "a3_ventilation",               precision: 5, scale: 2, default: 0.0
-    t.string  "a3_axis1",       limit: 255
-    t.string  "a3_axis2",       limit: 255
-    t.string  "a3_axis3",       limit: 255
-  end
-
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value",      limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  create_table "audits", force: :cascade do |t|
-    t.integer  "auditable_id",    limit: 4
-    t.string   "auditable_type",  limit: 255
-    t.integer  "associated_id",   limit: 4
-    t.string   "associated_type", limit: 255
-    t.integer  "user_id",         limit: 4
-    t.string   "user_type",       limit: 255
-    t.string   "username",        limit: 255
-    t.string   "action",          limit: 255
-    t.text     "audited_changes", limit: 65535
-    t.integer  "version",         limit: 4,     default: 0
-    t.string   "comment",         limit: 255
-    t.string   "remote_address",  limit: 255
-    t.string   "request_uuid",    limit: 255
-    t.datetime "created_at"
-  end
-
-  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", using: :btree
-  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", using: :btree
-  add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
-  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
-  add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
-
-  create_table "bank_accounts", force: :cascade do |t|
-    t.string   "mongo_id",              limit: 255
+  create_table "packs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "bank_name",             limit: 255
-    t.string   "name",                  limit: 255
-    t.string   "number",                limit: 255
-    t.string   "journal",               limit: 255
-    t.string   "currency",              limit: 5,     default: "EUR"
-    t.text     "original_currency",     limit: 65535
-    t.string   "foreign_journal",       limit: 255
-    t.string   "accounting_number",     limit: 255,   default: "512000", null: false
-    t.string   "temporary_account",     limit: 255,   default: "471000", null: false
-    t.date     "start_date"
-    t.integer  "user_id",               limit: 4
-    t.string   "user_id_mongo_id",      limit: 255
-    t.integer  "retriever_id",          limit: 4
-    t.string   "retriever_id_mongo_id", limit: 255
-    t.string   "api_id",                limit: 255
-    t.string   "api_name",              limit: 255,   default: "budgea"
-    t.boolean  "is_used",                             default: false
-    t.string   "type_name",             limit: 255
-    t.boolean  "lock_old_operation",                  default: true
-    t.integer  "permitted_late_days",   limit: 4,     default: 7
+    t.datetime "locked_at"
+    t.datetime "locked_until"
+    t.string "name"
+    t.string "original_document_id"
+    t.string "content_url"
+    t.text "content_historic"
+    t.text "tags"
+    t.integer "pages_count", default: 0, null: false
+    t.integer "scanned_pages_count", default: 0, null: false
+    t.boolean "is_update_notified", default: true, null: false
+    t.boolean "is_fully_processed", default: true, null: false
+    t.boolean "is_indexing", default: false, null: false
+    t.datetime "remote_files_updated_at"
+    t.integer "owner_id"
+    t.string "owner_id_mongo_id"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.string "content_file_name"
+    t.string "content_content_type"
+    t.integer "content_file_size"
+    t.datetime "content_updated_at"
+    t.string "content_fingerprint"
+    t.index ["mongo_id"], name: "index_packs_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["owner_id"], name: "owner_id"
+    t.index ["owner_id_mongo_id"], name: "owner_id_mongo_id"
   end
 
-  add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree
-  add_index "bank_accounts", ["retriever_id"], name: "retriever_id", using: :btree
-  add_index "bank_accounts", ["retriever_id_mongo_id"], name: "retriever_id_mongo_id", using: :btree
-  add_index "bank_accounts", ["user_id"], name: "user_id", using: :btree
-  add_index "bank_accounts", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
-
-  create_table "boxes", force: :cascade do |t|
-    t.string   "mongo_id",                          limit: 255
+  create_table "paper_processes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "path",                              limit: 255, default: "iDocus/:code/:year:month/:account_book", null: false
-    t.boolean  "is_configured",                                 default: false,                                    null: false
-    t.integer  "external_file_storage_id",          limit: 4
-    t.string   "external_file_storage_id_mongo_id", limit: 255
-    t.string   "encrypted_access_token",            limit: 255
-    t.string   "encrypted_refresh_token",           limit: 255
+    t.string "type"
+    t.string "tracking_number"
+    t.string "customer_code"
+    t.integer "journals_count"
+    t.integer "periods_count"
+    t.integer "letter_type"
+    t.string "pack_name"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "period_document_id"
+    t.string "period_document_id_mongo_id"
+    t.integer "order_id"
+    t.index ["mongo_id"], name: "index_paper_processes_on_mongo_id"
+    t.index ["order_id"], name: "index_paper_processes_on_order_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["period_document_id"], name: "period_document_id"
+    t.index ["period_document_id_mongo_id"], name: "period_document_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  add_index "boxes", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
-  add_index "boxes", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
-  add_index "boxes", ["mongo_id"], name: "index_boxes_on_mongo_id", using: :btree
-
-  create_table "budgea_accounts", force: :cascade do |t|
-    t.string   "identifier",             limit: 255
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.integer  "user_id",                limit: 4
-    t.string   "encrypted_access_token", limit: 255
+  create_table "period_billings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.integer "order", default: 1, null: false
+    t.integer "amount_in_cents_wo_vat", default: 0, null: false
+    t.integer "excesses_amount_in_cents_wo_vat", default: 0, null: false
+    t.integer "scanned_pieces", default: 0, null: false
+    t.integer "scanned_sheets", default: 0, null: false
+    t.integer "scanned_pages", default: 0, null: false
+    t.integer "dematbox_scanned_pieces", default: 0, null: false
+    t.integer "dematbox_scanned_pages", default: 0, null: false
+    t.integer "uploaded_pieces", default: 0, null: false
+    t.integer "uploaded_pages", default: 0, null: false
+    t.integer "retrieved_pieces", default: 0, null: false
+    t.integer "retrieved_pages", default: 0, null: false
+    t.integer "preseizure_pieces", default: 0, null: false
+    t.integer "expense_pieces", default: 0, null: false
+    t.integer "paperclips", default: 0, null: false
+    t.integer "oversized", default: 0, null: false
+    t.integer "excess_sheets", default: 0, null: false
+    t.integer "excess_uploaded_pages", default: 0, null: false
+    t.integer "excess_dematbox_scanned_pages", default: 0, null: false
+    t.integer "excess_compta_pieces", default: 0, null: false
+    t.integer "period_id"
+    t.string "period_id_mongo_id"
+    t.index ["mongo_id"], name: "index_period_billings_on_mongo_id"
+    t.index ["period_id"], name: "period_id"
+    t.index ["period_id_mongo_id"], name: "period_id_mongo_id"
   end
 
-  add_index "budgea_accounts", ["user_id"], name: "fk_rails_bc19f24997", using: :btree
-
-  create_table "ckeditor_assets", force: :cascade do |t|
-    t.string   "data_file_name",    limit: 255, null: false
-    t.string   "data_content_type", limit: 255
-    t.integer  "data_file_size",    limit: 4
-    t.string   "data_fingerprint",  limit: 255
-    t.integer  "assetable_id",      limit: 4
-    t.string   "assetable_type",    limit: 30
-    t.string   "type",              limit: 30
-    t.integer  "width",             limit: 4
-    t.integer  "height",            limit: 4
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-  end
-
-  add_index "ckeditor_assets", ["assetable_type", "assetable_id"], name: "idx_ckeditor_assetable", using: :btree
-  add_index "ckeditor_assets", ["assetable_type", "type", "assetable_id"], name: "idx_ckeditor_assetable_type", using: :btree
-
-  create_table "cms_images", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
+  create_table "period_deliveries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "original_file_name",         limit: 255
-    t.string   "content_file_name",          limit: 255
-    t.string   "content_content_type",       limit: 255
-    t.integer  "content_file_size",          limit: 4
-    t.string   "cloud_content_file_name",    limit: 255
-    t.string   "cloud_content_content_type", limit: 255
-    t.integer  "cloud_content_file_size",    limit: 4
-    t.boolean  "is_sane",                                  default: true
-    t.boolean  "is_new_password_needed",                   default: false
-    t.boolean  "is_selection_needed",                      default: true
-    t.string   "state",                      limit: 255
-    t.text     "error_message",              limit: 65535
-    t.string   "budgea_state",               limit: 255
+    t.string "state", default: "wait", null: false
+    t.integer "period_id"
+    t.string "period_id_mongo_id"
+    t.index ["mongo_id"], name: "index_period_deliveries_on_mongo_id"
+    t.index ["period_id"], name: "period_id"
+    t.index ["period_id_mongo_id"], name: "period_id_mongo_id"
+  end
+
+  create_table "period_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name", default: "", null: false
+    t.integer "pieces", default: 0, null: false
+    t.integer "pages", default: 0, null: false
+    t.integer "scanned_pieces", default: 0, null: false
+    t.integer "scanned_sheets", default: 0, null: false
+    t.integer "scanned_pages", default: 0, null: false
+    t.integer "dematbox_scanned_pieces", default: 0, null: false
+    t.integer "dematbox_scanned_pages", default: 0, null: false
+    t.integer "uploaded_pieces", default: 0, null: false
+    t.integer "uploaded_pages", default: 0, null: false
+    t.integer "retrieved_pieces", default: 0, null: false
+    t.integer "retrieved_pages", default: 0, null: false
+    t.integer "paperclips", default: 0, null: false
+    t.integer "oversized", default: 0, null: false
+    t.boolean "is_shared", default: true, null: false
+    t.datetime "scanned_at"
+    t.string "scanned_by"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "period_id"
+    t.string "period_id_mongo_id"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.index ["mongo_id"], name: "index_period_documents_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+    t.index ["period_id"], name: "period_id"
+    t.index ["period_id_mongo_id"], name: "period_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "periods", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "locked_at"
+    t.datetime "locked_until"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "duration", default: 1, null: false
+    t.boolean "is_centralized", default: true, null: false
+    t.integer "price_in_cents_wo_vat", default: 0, null: false
+    t.integer "products_price_in_cents_wo_vat", default: 0, null: false
+    t.integer "recurrent_products_price_in_cents_wo_vat", default: 0, null: false
+    t.integer "ponctual_products_price_in_cents_wo_vat", default: 0, null: false
+    t.integer "orders_price_in_cents_wo_vat", default: 0, null: false
+    t.integer "excesses_price_in_cents_wo_vat", default: 0, null: false
+    t.float "tva_ratio", default: 1.2, null: false
+    t.integer "max_sheets_authorized", default: 100, null: false
+    t.integer "max_upload_pages_authorized", default: 200, null: false
+    t.integer "max_dematbox_scan_pages_authorized", default: 200, null: false
+    t.integer "max_preseizure_pieces_authorized", default: 100, null: false
+    t.integer "max_expense_pieces_authorized", default: 100, null: false
+    t.integer "max_paperclips_authorized", default: 0, null: false
+    t.integer "max_oversized_authorized", default: 0, null: false
+    t.integer "unit_price_of_excess_sheet", default: 12, null: false
+    t.integer "unit_price_of_excess_upload", default: 6, null: false
+    t.integer "unit_price_of_excess_dematbox_scan", default: 6, null: false
+    t.integer "unit_price_of_excess_preseizure", default: 12, null: false
+    t.integer "unit_price_of_excess_expense", default: 12, null: false
+    t.integer "unit_price_of_excess_paperclips", default: 20, null: false
+    t.integer "unit_price_of_excess_oversized", default: 100, null: false
+    t.text "documents_name_tags"
+    t.integer "pieces", default: 0, null: false
+    t.integer "pages", default: 0, null: false
+    t.integer "scanned_pieces", default: 0, null: false
+    t.integer "scanned_sheets", default: 0, null: false
+    t.integer "scanned_pages", default: 0, null: false
+    t.integer "dematbox_scanned_pieces", default: 0, null: false
+    t.integer "dematbox_scanned_pages", default: 0, null: false
+    t.integer "uploaded_pieces", default: 0, null: false
+    t.integer "uploaded_pages", default: 0, null: false
+    t.integer "retrieved_pieces", default: 0, null: false
+    t.integer "retrieved_pages", default: 0, null: false
+    t.integer "paperclips", default: 0, null: false
+    t.integer "oversized", default: 0, null: false
+    t.integer "preseizure_pieces", default: 0, null: false
+    t.integer "expense_pieces", default: 0, null: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "subscription_id"
+    t.string "subscription_id_mongo_id"
+    t.datetime "delivery_created_at"
+    t.datetime "delivery_updated_at"
+    t.string "delivery_state", default: "wait", null: false
+    t.boolean "is_paper_quota_reached_notified", default: false
+    t.index ["mongo_id"], name: "index_periods_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["subscription_id"], name: "subscription_id"
+    t.index ["subscription_id_mongo_id"], name: "subscription_id_mongo_id"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "pre_assignment_deliveries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "pack_name"
+    t.string "state"
+    t.boolean "is_auto"
+    t.integer "total_item"
+    t.date "grouped_date"
+    t.text "data_to_deliver", limit: 4294967295
+    t.text "error_message"
+    t.boolean "is_to_notify"
+    t.boolean "is_notified"
+    t.datetime "notified_at"
+    t.integer "organization_id"
+    t.integer "report_id"
+    t.integer "user_id"
+    t.string "software_id"
+    t.string "deliver_to", default: "ibiza"
+    t.index ["deliver_to"], name: "index_pre_assignment_deliveries_on_deliver_to"
+    t.index ["is_auto"], name: "index_pre_assignment_deliveries_on_is_auto"
+    t.index ["is_notified"], name: "index_pre_assignment_deliveries_on_is_notified"
+    t.index ["is_to_notify"], name: "index_pre_assignment_deliveries_on_is_to_notify"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["report_id"], name: "report_id"
+    t.index ["state"], name: "index_pre_assignment_deliveries_on_state"
+    t.index ["user_id"], name: "user_id"
+  end
+
+  create_table "pre_assignment_exports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "state"
+    t.string "pack_name"
+    t.string "for"
+    t.string "file_name"
+    t.integer "total_item", default: 0
+    t.text "error_message"
+    t.boolean "is_notified", default: false
+    t.datetime "notified_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "user_id"
+    t.integer "organization_id"
+    t.integer "report_id"
+    t.index ["for"], name: "index_pre_assignment_exports_on_for"
+    t.index ["pack_name"], name: "index_pre_assignment_exports_on_pack_name"
+    t.index ["state"], name: "index_pre_assignment_exports_on_state"
+  end
+
+  create_table "product_option_orders", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.string "name"
+    t.string "title"
+    t.string "group_title"
+    t.string "description"
+    t.float "price_in_cents_wo_vat"
+    t.integer "group_position"
+    t.integer "position"
+    t.integer "duration"
+    t.integer "quantity"
+    t.boolean "is_an_extra"
+    t.boolean "is_to_be_disabled"
+    t.integer "product_optionable_id"
+    t.string "product_optionable_type"
+    t.string "product_optionable_id_mongo_id"
+    t.index ["mongo_id"], name: "index_product_option_orders_on_mongo_id"
+    t.index ["product_optionable_id"], name: "product_optionable_id"
+    t.index ["product_optionable_id_mongo_id"], name: "product_optionable_id_mongo_id"
+    t.index ["product_optionable_type"], name: "product_optionable_type"
+  end
+
+  create_table "reminder_emails", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name"
+    t.string "subject"
+    t.text "content"
+    t.integer "delivery_day", default: 1, null: false
+    t.integer "period", default: 1, null: false
+    t.datetime "delivered_at"
+    t.text "delivered_user_ids"
+    t.text "processed_user_ids"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.index ["mongo_id"], name: "index_reminder_emails_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+  end
+
+  create_table "remote_files", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "mongo_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "remotable_type"
+    t.string "path", default: "", null: false
+    t.string "temp_path", default: "", null: false
+    t.string "extension", default: ".pdf", null: false
+    t.integer "size"
+    t.datetime "tried_at"
+    t.string "state", default: "waiting", null: false
+    t.string "service_name"
+    t.text "error_message", limit: 4294967295
+    t.integer "tried_count", default: 0, null: false
+    t.integer "user_id"
+    t.string "user_id_mongo_id"
+    t.integer "pack_id"
+    t.string "pack_id_mongo_id"
+    t.integer "organization_id"
+    t.string "organization_id_mongo_id"
+    t.integer "group_id"
+    t.string "group_id_mongo_id"
+    t.integer "remotable_id"
+    t.string "remotable_id_mongo_id"
+    t.index ["extension"], name: "index_remote_files_on_extension"
+    t.index ["group_id"], name: "group_id"
+    t.index ["group_id_mongo_id"], name: "group_id_mongo_id"
+    t.index ["mongo_id"], name: "index_remote_files_on_mongo_id"
+    t.index ["organization_id"], name: "organization_id"
+    t.index ["organization_id_mongo_id"], name: "organization_id_mongo_id"
+    t.index ["pack_id"], name: "pack_id"
+    t.index ["pack_id_mongo_id"], name: "pack_id_mongo_id"
+    t.index ["remotable_id"], name: "remotable_id"
+    t.index ["remotable_id_mongo_id"], name: "remotable_id_mongo_id"
+    t.index ["service_name"], name: "index_remote_files_on_service_name"
+    t.index ["state"], name: "index_remote_files_on_state"
+    t.index ["tried_count"], name: "index_remote_files_on_tried_count"
+    t.index ["user_id"], name: "user_id"
+    t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
+  end
+
+  create_table "retrieved_data", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.text "state"
+    t.text "error_message", limit: 16777215
+    t.text "processed_connection_ids"
+    t.datetime "content_updated_at"
+    t.integer "content_file_size"
+    t.string "content_content_type"
+    t.string "content_file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "fk_rails_c47071c4c1"
+  end
+
+  create_table "retrievers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.integer "budgea_id"
+    t.string "name"
+    t.string "journal_name"
+    t.datetime "sync_at"
     t.text     "budgea_additionnal_fields",  limit: 65535
     t.text     "budgea_error_message",       limit: 65535
     t.string   "fiduceo_state",              limit: 255
@@ -482,7 +1992,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["service_name"], name: "index_retrievers_historics_on_service_name"
   end
 
-  create_table "sandbox_bank_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sandbox_bank_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "api_id"
     t.string "api_name", default: "budgea"
     t.string "bank_name"
@@ -503,7 +2013,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id"], name: "index_sandbox_bank_accounts_on_user_id"
   end
 
-  create_table "sandbox_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sandbox_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "api_id"
     t.string "api_name", default: "budgea"
     t.text "retrieved_metadata"
@@ -705,7 +2215,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id"], name: "index_sandbox_documents_on_user_id"
   end
 
-  create_table "sandbox_operations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sandbox_operations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "api_id"
     t.string "api_name", default: "budgea"
     t.date "date"
@@ -729,7 +2239,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["organization_id"], name: "index_sandbox_operations_on_organization_id"
   end
 
-  create_table "scanning_providers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "scanning_providers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -739,7 +2249,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["mongo_id"], name: "index_scanning_providers_on_mongo_id"
   end
 
-  create_table "settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.text "key"
     t.text "is_journals_modification_authorized"
@@ -758,7 +2268,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["mongo_id"], name: "index_mongoid_app_settings_records_on_mongo_id"
   end
 
-  create_table "softwares_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "softwares_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "user_id"
     t.boolean "is_ibiza_used", default: false
     t.integer "is_ibiza_auto_deliver", default: -1, null: false
@@ -781,36 +2291,14 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id"], name: "index_softwares_settings_on_user_id"
   end
 
-  create_table "softwares_settings_backup", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "user_id"
-    t.boolean "is_ibiza_used", default: false
-    t.integer "is_ibiza_auto_deliver", default: -1, null: false
-    t.integer "is_ibiza_compta_analysis_activated", default: -1, null: false
-    t.integer "is_ibiza_analysis_to_validate", default: -1, null: false
-    t.boolean "is_coala_used", default: false
-    t.integer "is_coala_auto_deliver", default: -1, null: false
-    t.boolean "is_quadratus_used", default: false
-    t.integer "is_quadratus_auto_deliver", default: -1, null: false
-    t.boolean "is_csv_descriptor_used", default: false
-    t.boolean "use_own_csv_descriptor_format", default: false
-    t.integer "is_csv_descriptor_auto_deliver", default: -1, null: false
-    t.boolean "is_exact_online_used", default: false
-    t.integer "is_exact_online_auto_deliver", default: -1, null: false
-    t.index ["is_coala_used"], name: "index_softwares_settings_on_is_coala_used"
-    t.index ["is_csv_descriptor_used"], name: "index_softwares_settings_on_is_csv_descriptor_used"
-    t.index ["is_exact_online_used"], name: "index_softwares_settings_on_is_exact_online_used"
-    t.index ["is_ibiza_used"], name: "index_softwares_settings_on_is_ibiza_used"
-    t.index ["is_quadratus_used"], name: "index_softwares_settings_on_is_quadratus_used"
-  end
-
-  create_table "statistics", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "statistics", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "information"
     t.float "counter", limit: 53
   end
 
-  create_table "subscription_options", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "subscription_options", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -821,7 +2309,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["mongo_id"], name: "index_subscription_options_on_mongo_id"
   end
 
-  create_table "subscription_options_subscriptions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "subscription_options_subscriptions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "subscription_id"
     t.integer "subscription_option_id"
   end
@@ -840,7 +2328,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["organization_code"], name: "index_subscription_statistics_on_organization_code"
   end
 
-  create_table "subscriptions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "subscriptions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -901,7 +2389,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["temp_document_id"], name: "index_temp_document_metadata_on_temp_document_id"
   end
 
-  create_table "temp_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "temp_documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -995,7 +2483,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  create_table "temp_packs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "temp_packs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1021,7 +2509,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  create_table "user_options", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "user_options", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1047,7 +2535,7 @@ ActiveRecord::Schema.define(version: 20191003081504) do
     t.index ["user_id_mongo_id"], name: "user_id_mongo_id"
   end
 
-  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
