@@ -1,9 +1,9 @@
 #events
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %h3 Liste des événements
-  .row-fluid
-    .span12
+  .row
+    .col-12
       .filter.panel.margin1top
         = form_tag admin_events_path, method: :get, class: 'form form-vertical margin0bottom' do
           = hidden_field_tag :direction, sort_direction
@@ -52,14 +52,14 @@
                   = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
                   = link_to t('filters.reset'), admin_events_path, class: 'btn'
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render partial: 'shared/list_options', locals: { collection: @events }
-  .row-fluid
-    .span8
+  .row
+    .col-8
       %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th.number=      sortable :id,          'ID'
             %th.date=        sortable :created_at,  'Date'
             %th=             sortable :user_id,     t('activerecord.models.event.attributes.user')
@@ -76,11 +76,11 @@
               %td.do-show=             event_presenter.action
               %td.do-show=             event_presenter.target_type
               %td.do-show.target_name= event_presenter.target_name
-    .span4.show.margin1top.margin0bottom
+    .col-4.show.margin1top.margin0bottom
       .panel
         %h4 Détails
         %p.margin0bottom
           Cliquer sur une ligne du tableau pour en afficher les détails ici.
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render partial: 'shared/list_options', locals: { collection: @events }

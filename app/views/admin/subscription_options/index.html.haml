@@ -1,14 +1,14 @@
 #subscription_options
-  .row-fluid
-    .span12.panel
-      .row-fluid.margin1top.margin1bottom
-        .span6
+  .row
+    .col-12
+      .row.margin1top.margin1bottom
+        .col-6
           %h4 Options
-        .span6.alignright
+        .col-6.alignright
           = link_to 'Nouveau', new_admin_subscription_option_path, class: 'btn btn-primary'
       %table.table.table-bordered.table-condensed.table-striped
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th.position=              t('activerecord.models.subscription_option.attributes.position')
             %th.updated_at=            t('activerecord.models.common.attributes.updated_at')
             %th.name=                  t('activerecord.models.subscription_option.attributes.name')

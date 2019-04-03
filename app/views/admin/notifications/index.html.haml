@@ -1,31 +1,33 @@
 #notifications
-  .row-fluid.marginbottom
-    .span12.margin1bottom
-      %h3 Liste des notifications utilisateurs (#{@notifications.total_count})
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des notifications utilisateurs
+            %span.badge.badge-info= @notifications.total_count
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @notifications }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @notifications }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th Utilisateur
+              %th= sortable :title, t('activerecord.models.notification.attributes.title')
+              %th Message
+              %th= sortable :is_sent, t('activerecord.models.notification.attributes.is_sent')
+              %th= sortable :is_read, t('activerecord.models.notification.attributes.is_read')
+          %tbody
+            - @notifications.each do |notification|
               %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th Utilisateur
-                %th= sortable :title, t('activerecord.models.notification.attributes.title')
-                %th Message
-                %th= sortable :is_sent, t('activerecord.models.notification.attributes.is_sent')
-                %th= sortable :is_read, t('activerecord.models.notification.attributes.is_read')
-            %tbody
-              - @notifications.each do |notification|
-                %tr
-                  %td= l(notification.created_at, format: '%d %b %Y %H:%M')
-                  %td= link_to(notification.user.code, [:admin, notification.user])
-                  %td= notification.title
-                  %td!= markdown_render notification.message
-                  %td= notification.is_sent ? icon_ok : icon_not_ok
-                  %td= notification.is_read ? icon_ok : icon_not_ok
+                %td= l(notification.created_at, format: '%d %b %Y %H:%M')
+                %td= link_to(notification.user.code, [:admin, notification.user])
+                %td= notification.title
+                %td!= markdown_render notification.message
+                %td= notification.is_sent ? icon_ok : icon_not_ok
+                %td= notification.is_read ? icon_ok : icon_not_ok
       = render partial: 'shared/list_options', locals: { collection: @notifications }
-    .span3
-      = render partial: 'sidebar'
+    = render partial: 'sidebar'

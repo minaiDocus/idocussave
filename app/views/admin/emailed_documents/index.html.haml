@@ -1,47 +1,49 @@
 #emails
-  .row-fluid.marginbottom
-    .span12.margin1bottom
-      %h3 Liste des mails d'envoi de documents (#{@emails_count})
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des mails d'envoi de documents
+            %span.badge.badge-info= @emails_count
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @emails }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @emails }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th= sortable :state,      t('activerecord.models.email.attributes.state')
+              %th= sortable :from,       t('activerecord.models.email.attributes.from')
+              %th= sortable :to,         t('activerecord.models.email.attributes.to')
+              %th= sortable :subject,    t('activerecord.models.email.attributes.subject')
+              %th= sortable :size,       t('activerecord.models.email.attributes.size') + ' (Mo)'
+              %th= t('activerecord.models.email.attributes.attachment_names_count')
+              %th Actions
+          %tbody
+            - @emails.each do |email|
               %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th= sortable :state,      t('activerecord.models.email.attributes.state')
-                %th= sortable :from,       t('activerecord.models.email.attributes.from')
-                %th= sortable :to,         t('activerecord.models.email.attributes.to')
-                %th= sortable :subject,    t('activerecord.models.email.attributes.subject')
-                %th= sortable :size,       t('activerecord.models.email.attributes.size') + ' (Mo)'
-                %th= t('activerecord.models.email.attributes.attachment_names_count')
-                %th Actions
-            %tbody
-              - @emails.each do |email|
-                %tr
-                  %td= l(email.created_at, format: '%d %b %Y %H:%M')
-                  %td= email_state email
-                  %td
-                    - if email.from_user
-                      = link_to(email.from_user.code, [:admin, email.from_user])
-                      \-
-                    = email.from
-                  %td
-                    - if email.to_user
-                      = link_to(email.to_user.code, [:admin, email.to_user])
-                      \-
-                    = email.to
-                  %td= email.subject
-                  %td= file_size email.size
-                  %td= email.attachment_names.try(:count)
-                  %td
-                    - if email.errors_list.try(:any?)
-                      = link_to content_tag(:i, '', class: 'icon-exclamation-sign'), show_errors_admin_emailed_document_path(email), title: 'Afficher les erreurs'
-                    - if email.original_content.try(:path).present?
-                      = link_to content_tag(:i, '', class: 'icon-download'), admin_emailed_document_path(email), title: 'Télécharger le mail original'
+                %td= l(email.created_at, format: '%d %b %Y %H:%M')
+                %td= email_state email
+                %td
+                  - if email.from_user
+                    = link_to(email.from_user.code, [:admin, email.from_user])
+                    \-
+                  = email.from
+                %td
+                  - if email.to_user
+                    = link_to(email.to_user.code, [:admin, email.to_user])
+                    \-
+                  = email.to
+                %td= email.subject
+                %td= file_size email.size
+                %td= email.attachment_names.try(:count)
+                %td
+                  - if email.errors_list.try(:any?)
+                    = link_to content_tag(:i, '', class: 'icon-exclamation-sign'), show_errors_admin_emailed_document_path(email), title: 'Afficher les erreurs'
+                  - if email.original_content.try(:path).present?
+                    = link_to content_tag(:i, '', class: 'icon-download'), admin_emailed_document_path(email), title: 'Télécharger le mail original'
       = render partial: 'shared/list_options', locals: { collection: @emails }
-    .span3
-      = render partial: 'sidebar'
+    = render partial: 'sidebar'

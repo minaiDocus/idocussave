@@ -1,15 +1,15 @@
 #dematboxes
   = render 'navigation'
 
-  .row-fluid
-    .span3
+  .row
+    .col-3
       %h3.margin1bottom Dematboxes (#{@dematboxes.count})
 
-  .row-fluid
-    .span3
+  .row
+    .col-8
       %table.table.table-striped.table-bordered.table-condensed
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th Client
             %th Nombre de service
             %th Actions

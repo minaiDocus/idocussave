@@ -1,19 +1,19 @@
 #dematboxes
   = render 'admin/dematboxes/navigation'
 
-  .row-fluid
-    .span6
-      .row-fluid
-        .span12.margin1bottom
+  .row
+    .col-6
+      .row
+        .col-12.margin1bottom
           .pull-left
             %h3 Services et Groupes (#{@dematbox_services.count})
           .pull-right
             = link_to icon(icon: 'refresh') + ' Mettre à jour', load_from_external_admin_dematbox_services_path, class: 'btn btn-primary', data: { method: :post }
-      .row-fluid
-        .span12
+      .row
+        .col-12
           %table.table.table-striped.table-bordered.table-condensed
             %thead
-              %tr
+              %tr.bg-brown.text-white
                 %th Id
                 %th Type
                 %th Nom

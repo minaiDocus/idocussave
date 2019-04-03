@@ -1,33 +1,37 @@
 #dematboxes
   = render '/admin/dematboxes/navigation'
 
-  .row-fluid
-    .span9
-      %h3.margin1bottom Fichiers scannés (#{@dematbox_files_count})
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Fichiers scannés
+            %span.badge.badge-info= @dematbox_files_count
 
-  .row-fluid
-    .span9
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @dematbox_files }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= t('activerecord.models.common.attributes.created_at')
+              %th= t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+              %th= t('activerecord.models.temp_document.attributes.delivered_by')
+              %th= t('activerecord.models.temp_document.attributes.content_file_name')
+              %th= t('activerecord.models.temp_document.attributes.content_file_size')
+              %th= t('activerecord.models.temp_document.attributes.dematbox_notified_at')
+              %th= t('activerecord.models.temp_document.attributes.state')
+          %tbody
+            - @dematbox_files.each do |file|
+              %tr
+                %td= l file.created_at
+                %td= file.dematbox_doc_id
+                %td= file.delivered_by
+                %td= file.content_file_name
+                %td= file_size file.content_file_size
+                %td= I18n.l(file.dematbox_notified_at) rescue nil
+                %td= TempDocument.state_machine.states[file.state].human_name
       = render partial: 'shared/list_options', locals: { collection: @dematbox_files }
-      %table.table.table-striped.table-bordered.table-condensed.margin1top.margin0bottom
-        %thead
-          %tr
-            %th= t('activerecord.models.common.attributes.created_at')
-            %th= t('activerecord.models.temp_document.attributes.dematbox_doc_id')
-            %th= t('activerecord.models.temp_document.attributes.delivered_by')
-            %th= t('activerecord.models.temp_document.attributes.content_file_name')
-            %th= t('activerecord.models.temp_document.attributes.content_file_size')
-            %th= t('activerecord.models.temp_document.attributes.dematbox_notified_at')
-            %th= t('activerecord.models.temp_document.attributes.state')
-        %tbody
-          - @dematbox_files.each do |file|
-            %tr
-              %td= l file.created_at
-              %td= file.dematbox_doc_id
-              %td= file.delivered_by
-              %td= file.content_file_name
-              %td= file_size file.content_file_size
-              %td= I18n.l(file.dematbox_notified_at) rescue nil
-              %td= TempDocument.state_machine.states[file.state].human_name
-      = render partial: 'shared/list_options', locals: { collection: @dematbox_files }
-    .span3
-      = render 'sidebar'
+    = render partial: 'sidebar'

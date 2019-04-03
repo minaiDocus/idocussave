@@ -1,12 +1,12 @@
 #process_reporting
-  .row-fluid.margin1bottom
+  .row.margin1bottom
     .span12
       %h3 Reporting des traitements de #{l(@time, format: '%B %Y')}
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %table.table.table-condensed.table-striped.table-bordered
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th.date{ rowspan: 2 }
               = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
               \-
@@ -19,7 +19,7 @@
             %th{ rowspan: 2 } Regroupement
             %th{ rowspan: 2 } Pré-aff
             %th{ colspan: 3 } Retours plis
-          %tr
+          %tr.bg-brown-light.text-white
             %th Demandes
             %th Envois
             %th Feuilles

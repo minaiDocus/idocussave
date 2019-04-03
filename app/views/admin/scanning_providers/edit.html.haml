@@ -1,10 +1,10 @@
 #scanning_provider.edit
   = render partial: 'navigation'
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       %h3 Edition de l'atelier : #{link_to @scanning_provider, admin_scanning_provider_path(@scanning_provider)}
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       = render partial: 'form'

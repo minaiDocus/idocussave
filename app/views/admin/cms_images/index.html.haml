@@ -1,14 +1,14 @@
-.row-fluid
-  .span12
+.row
+  .col-12
     %h2.margin1bottom.title Toutes les Images (#{@cms_images.count})
 
-.row-fluid
-  .span12
-    .row-fluid
-      .span9.padding1top
+.row
+  .col-12
+    .row
+      .col-9.padding1top
         %form{ id: 'fileupload', action: '/admin/cms_images', method: 'POST', enctype: 'multipart/form-data' }
-          .fileupload-buttonbar.row-fluid
-            .span6
+          .fileupload-buttonbar.row
+            .col-6
               %span.btn.btn-success.fileinput-button
                 %span
                   %i.icon-plus.icon-white
@@ -20,7 +20,7 @@
               %button.btn.btn-warning.cancel{ type: 'reset' }
                 %i.icon-ban-circle.icon-white
                 Annuler
-            .span6
+            .col-6
               .progress.progress-success.progress-striped.active.fade
                 .bar{ style: 'width:0%;' }
           %br
