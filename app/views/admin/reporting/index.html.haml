@@ -1,15 +1,15 @@
 #reporting
-  .row-fluid.margin1bottom
-    .span6
+  .row.margin1bottom
+    .col-6
       %h3 Reporting de l'année #{@year}
-    .span6.alignright
+    .col-6.alignright
       = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls"
       = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1"
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %table.table.table-striped.table-bordered
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th.year
               = link_to (@year - 1), "/admin/reporting/#{(@year - 1)}"
               \-

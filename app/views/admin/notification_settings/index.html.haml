@@ -1,10 +1,10 @@
 #notification_settings
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %h3 Paramétrage des notifications
 
-  .row-fluid.margin2top
-    .span12
+  .row.margin2top
+    .col-12
       .pull-left.margin1bottom
         %h4 Erreur au niveau de la plateforme
       .pull-right.margin1bottom
@@ -24,8 +24,8 @@
           %th Adresse mail à notifier (#{Settings.first.notify_errors_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_errors_to)
 
-  .row-fluid.margin1top
-    .span12
+  .row.margin1top
+    .col-12
       .pull-left.margin1bottom
         %h4 Commande de Dematbox
       .pull-right.margin1bottom
@@ -38,8 +38,8 @@
           %th Adresse mail à notifier (#{Settings.first.notify_dematbox_order_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_dematbox_order_to)
 
-  .row-fluid.margin1top
-    .span12
+  .row.margin1top
+    .col-12
       .pull-left.margin1bottom
         %h4 Commande de Kit envoi courrier
       .pull-right.margin1bottom
@@ -52,8 +52,8 @@
           %th Adresse mail à notifier (#{Settings.first.notify_paper_set_order_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_paper_set_order_to)
 
-  .row-fluid.margin1top
-    .span12
+  .row.margin1top
+    .col-12
       .pull-left.margin1bottom
         %h4 Livraison de pré-affectation vers iBiza
       .pull-right.margin1bottom
@@ -69,8 +69,8 @@
           %th Type
           %td= ibiza_notification_type
 
-  .row-fluid.margin1top
-    .span12
+  .row.margin1top
+    .col-12
       .pull-left.margin1bottom
         %h4 Numérisation des documents
       .pull-right.margin1bottom

@@ -1,52 +1,67 @@
-.row-fluid
-  .span12.well.margin0bottom
-    %h3 Filtres
+.card.retractable-filter
+  = form_tag admin_news_index_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'news_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[created_at][>=]', (params[:news_contains][:created_at]['>='] rescue '')
+              %span.add-on
+                %i.icon-th
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[created_at][<=]', (params[:news_contains][:created_at]['<='] rescue '')
+              %span.add-on
+                %i.icon-th
+        .form-group
+          .label-section
+            = label_tag 'news_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[updated_at][>=]', (params[:news_contains][:updated_at]['>='] rescue '')
+              %span.add-on
+                %i.icon-th
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[updated_at][<=]', (params[:news_contains][:updated_at]['<='] rescue '')
+              %span.add-on
+                %i.icon-th
+        .form-group
+          .label-section
+            = label_tag 'news_contains[title]', t('activerecord.models.news.attributes.title')
+          .control-section
+            = text_field_tag 'news_contains[title]', (params[:news_contains][:title] rescue '')
+        .form-group
+          .label-section
+            = label_tag 'news_contains[target_audience]', t('activerecord.models.news.attributes.target_audience')
+          .control-section
+            = select_tag 'news_contains[target_audience]', options_for_select(news_target_audience_options, (params[:news_contains][:target_audience] rescue '')), include_blank: true
 
-    %br
-    = form_tag admin_news_index_path, method: :get, class: 'form form-vertical margin0bottom' do
-      = hidden_field_tag :direction, sort_direction
-      = hidden_field_tag :sort, sort_column
-      = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'news_contains[published_at][>=]', t('activerecord.models.news.attributes.published_at')
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[published_at][>=]', (params[:news_contains][:published_at]['>='] rescue '')
+              %span.add-on
+                %i.icon-th
+          .control-section
+            .input-append.date.datepicker
+              = text_field_tag 'news_contains[published_at][<=]', (params[:news_contains][:published_at]['<='] rescue '')
+              %span.add-on
+                %i.icon-th
 
-      = label_tag 'news_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'news_contains[created_at][>=]', (params[:news_contains][:created_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'news_contains[created_at][<=]', (params[:news_contains][:created_at]['<='] rescue '')
-
-      = label_tag 'news_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'news_contains[updated_at][>=]', (params[:news_contains][:updated_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'news_contains[updated_at][<=]', (params[:news_contains][:updated_at]['<='] rescue '')
-
-      = label_tag 'news_contains[title]', t('activerecord.models.news.attributes.title')
-      = text_field_tag 'news_contains[title]', (params[:news_contains][:title] rescue '')
-
-      = label_tag 'news_contains[target_audience]', t('activerecord.models.news.attributes.target_audience')
-      = select_tag 'news_contains[target_audience]', options_for_select(news_target_audience_options, (params[:news_contains][:target_audience] rescue '')), include_blank: true
-
-      = label_tag 'news_contains[published_at][>=]', t('activerecord.models.news.attributes.published_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'news_contains[published_at][>=]', (params[:news_contains][:published_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'news_contains[published_at][<=]', (params[:news_contains][:published_at]['<='] rescue '')
-
-      %br
-      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-      = link_to t('filters.reset'), admin_news_index_path, class: 'btn'
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to t('filters.reset'), admin_news_index_path, class: 'btn'

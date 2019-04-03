@@ -1,10 +1,10 @@
 #notification_settings.edit_error
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       %h3 Edition du paramétrage des notifications pour les erreurs
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       = form_tag update_error_admin_notification_settings_path, class: 'form form-horizontal margin0 padding1top' do |f|
         .control-group
           = label_tag 'notification[to]', 'Notifier à', class: 'control-label'

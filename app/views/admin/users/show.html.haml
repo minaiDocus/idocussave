@@ -1,16 +1,16 @@
 #user.show{ data: { user_id: @user.id } }
-  .row-fluid
-    .span12
-      .row-fluid
-        .span6
+  .row
+    .col-12
+      .row
+        .col-6
           - if @user.inactive?
             %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
           %h2= @user.info
 
-        .span6.alignright
+        .col-6.alignright
           = link_to icon(icon: 'refresh') + ' ' + 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
-  #information.row-fluid.margin1top
-    .span4
+  #information.row.margin1top
+    .col-4
       %table.table.table-striped.table-bordered.table-condensed.bestinplace
         %tbody
           %tr
@@ -63,7 +63,7 @@
               - if @user.scanning_provider
                 .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
                 .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
-    .span8
+    .col-8
       %table.table.table-striped.table-bordered.table-condensed
         %tbody
           %tr
