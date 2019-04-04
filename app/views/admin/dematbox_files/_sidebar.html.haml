@@ -9,38 +9,28 @@
       .card-body
         = hidden_field_tag :per_page, per_page
         .form-group
-          .label-section
-            = label_tag 'dematbox_file_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'dematbox_file_contains[created_at][>=]', (params['dematbox_file_contains']['created_at']['>='] rescue ''), class: 'span4'
-              %span.add-on
-                %i.icon-th
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'dematbox_file_contains[created_at][<=]', (params['dematbox_file_contains']['created_at']['<='] rescue ''), class: 'span4'
-              %span.add-on
-                %i.icon-th
+          = label_tag 'dematbox_file_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'dematbox_file_contains[created_at][>=]', (params['dematbox_file_contains']['created_at']['>='] rescue ''), class: 'form-control date datepicker'
+          &nbsp;
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'dematbox_file_contains[created_at][<=]', (params['dematbox_file_contains']['created_at']['<='] rescue ''), class: 'form-control date datepicker'
         .form-group
-          .label-section
-            = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('activerecord.models.temp_document.attributes.dematbox_doc_id')
-          .control-section
-            = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue '')
+          = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+          = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'dematbox_file_contains[delivered_by]', t('activerecord.models.temp_document.attributes.delivered_by')
-          .control-section
-            = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue '')
+          = label_tag 'dematbox_file_contains[delivered_by]', t('activerecord.models.temp_document.attributes.delivered_by')
+          = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'dematbox_file_contains[content_file_name]', t('activerecord.models.temp_document.attributes.content_file_name')
-          .control-section
-            = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue '')
+          = label_tag 'dematbox_file_contains[content_file_name]', t('activerecord.models.temp_document.attributes.content_file_name')
+          = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
-          .control-section
-            = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true
+          = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
+          = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true, class: 'form-control'
       .card-footer
         .form-actions
           = submit_tag t('filters.action'), class: 'btn btn-primary'

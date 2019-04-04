@@ -11,56 +11,42 @@
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'duplicate_contains[created_at][>=]', (params[:duplicate_contains][:created_at]['>='] rescue ''), class: 'input-medium'
-              %span.add-on
-                %i.icon-th
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue ''), class: 'input-medium'
-              %span.add-on
-                %i.icon-th
+          = label_tag 'duplicate_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'duplicate_contains[created_at][>=]', (params[:duplicate_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+          &nbsp;
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[organization_name]', 'Organisation'
-          .control-section
-            = text_field_tag 'duplicate_contains[organization_name]', (params[:duplicate_contains][:organization_name] rescue ''), class: 'span12'
+          = label_tag 'duplicate_contains[organization_name]', 'Organisation'
+          = text_field_tag 'duplicate_contains[organization_name]', (params[:duplicate_contains][:organization_name] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
-          .control-section
-            = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue ''), class: 'span12'
+          = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
+          = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[piece_number]', 'N° facture'
-          .control-section
-            = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue ''), class: 'span12'
+          = label_tag 'duplicate_contains[piece_number]', 'N° facture'
+          = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
-          .control-section
-            = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue ''), class: 'span12'
+          = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
+          = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[amount]', t('activerecord.models.pack_report_preseizure.attributes.amount')
-          .control-section
-            = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue ''), class: 'span12'
+          = label_tag 'duplicate_contains[amount]', t('activerecord.models.pack_report_preseizure.attributes.amount')
+          = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'duplicate_contains[date][>=]', t('activerecord.models.pack_report_preseizure.attributes.date')
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'duplicate_contains[date][>=]', (params[:duplicate_contains][:date]['>='] rescue ''), class: 'input-medium'
-              %span.add-on
-                %i.icon-th
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue ''), class: 'input-medium'
-              %span.add-on
-                %i.icon-th
+          = label_tag 'duplicate_contains[date][>=]', t('activerecord.models.pack_report_preseizure.attributes.date')
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'duplicate_contains[date][>=]', (params[:duplicate_contains][:date]['>='] rescue ''), class: 'form-control date datepicker'
+          &nbsp;
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
         .form-actions
           = submit_tag t('filters.action'), class: 'btn btn-primary'

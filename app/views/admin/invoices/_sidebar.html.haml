@@ -1,5 +1,5 @@
 .card.retractable-filter
-  = form_tag admin_invoices_path, method: :get, class: 'form-filter' do
+  = form_tag admin_invoices_path, method: :get do
     .card-header.clearfix
       .float-left
         %h3 Filtres
@@ -11,60 +11,48 @@
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
         .form-group
-          .label-section
-            = label_tag 'invoice_contains[number]', t('activerecord.models.invoice.attributes.number')
-          .control-section
-            = text_field_tag 'invoice_contains[number]', (params[:invoice_contains][:number] rescue ''), class: 'span12'
+          = label_tag 'invoice_contains[number]', t('activerecord.models.invoice.attributes.number')
+          = text_field_tag 'invoice_contains[number]', (params[:invoice_contains][:number] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'invoice_contains[amount_in_cents_w_vat]', t('activerecord.models.invoice.attributes.amount_in_cents_w_vat')
-          .control-section
-            = select_tag 'invoice_contains[amount_in_cents_w_vat_comparison_operator]', options_for_select([['=', '='], ['>', '>='], ['<', '<=']], (params[:invoice_contains][:amount_in_cents_w_vat_comparison_operator] rescue '')), class: 'span3', style: 'float:left;margin-right:6px;'
-            = text_field_tag 'invoice_contains[amount_in_cents_w_vat]', (params[:invoice_contains][:amount_in_cents_w_vat] rescue ''), class: 'span9'
+          = label_tag 'invoice_contains[amount_in_cents_w_vat]', t('activerecord.models.invoice.attributes.amount_in_cents_w_vat')
+          .row
+            .col-4
+              = select_tag 'invoice_contains[amount_in_cents_w_vat_comparison_operator]', options_for_select([['=', '='], ['>', '>='], ['<', '<=']], (params[:invoice_contains][:amount_in_cents_w_vat_comparison_operator] rescue '')), class: 'form-control'
+            .col-8
+              = text_field_tag 'invoice_contains[amount_in_cents_w_vat]', (params[:invoice_contains][:amount_in_cents_w_vat] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'invoice_contains[organization_contains][name]', t('activerecord.models.organization.name')
-          .control-section
-            = text_field_tag 'invoice_contains[organization_contains][name]', (params[:invoice_contains][:organization_contains][:name] rescue ''), class: 'span12'
+          = label_tag 'invoice_contains[organization_contains][name]', t('activerecord.models.organization.name')
+          = text_field_tag 'invoice_contains[organization_contains][name]', (params[:invoice_contains][:organization_contains][:name] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'invoice_contains[user_contains][code]', t('activerecord.models.user.name')
-          .control-section
-            = text_field_tag 'invoice_contains[user_contains][code]', (params[:invoice_contains][:user_contains][:code] rescue ''), class: 'span12'
+          = label_tag 'invoice_contains[user_contains][code]', t('activerecord.models.user.name')
+          = text_field_tag 'invoice_contains[user_contains][code]', (params[:invoice_contains][:user_contains][:code] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'invoice_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'invoice_contains[created_at][>=]', (params[:invoice_contains][:created_at]['>='] rescue '')
-              %span.add-on
-                %i.icon-th
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'invoice_contains[created_at][<=]', (params[:invoice_contains][:created_at]['<='] rescue '')
-              %span.add-on
-                %i.icon-th
+          = label_tag 'invoice_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'invoice_contains[created_at][>=]', (params[:invoice_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+          &nbsp;
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'invoice_contains[created_at][<=]', (params[:invoice_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
         .form-actions
           = submit_tag t('filters.action'), class: 'btn btn-primary'
           = link_to t('filters.reset'), admin_invoices_path, class: 'btn'
-        %br
-        = form_tag debit_order_admin_invoices_path, class: 'form form-vertical margin0bottom' do
+        %hr
+        = form_tag debit_order_admin_invoices_path do
           .form-group
-            .label-section
-              Date
-              = label_tag 'invoice_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-            .control-section
-              .input-append.date.datepicker
-                = text_field_tag :invoice_date
-                %span.add-on
-                  %i.icon-th
+            = label_tag 'date', 'Date'
+            .input-group
+              .input-group-prepend
+                %span.input-group-text= glyphicon('calendar')
+              = text_field_tag :invoice_date, '', class: 'form-control date datepicker'
           .form-group
-            .label-section
-              Date de prélv.
-            .control-section
-              .input-append.date.datepicker
-                = text_field_tag :debit_date
-                %span.add-on
-                  %i.icon-th
+            = label_tag 'prel', 'Date de prélv.'
+            .input-group
+              .input-group-prepend
+                %span.input-group-text= glyphicon('calendar')
+              = text_field_tag :debit_date, '', class: 'form-control date datepicker'
           = submit_tag 'Générer le fichier CSV', class: 'btn btn-primary'

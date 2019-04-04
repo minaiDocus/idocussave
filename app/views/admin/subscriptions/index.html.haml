@@ -77,10 +77,11 @@
                 %td
                   %b= @organization_count
                 %td.field
-                  = select_tag 'first_period', subscription_period_options_for_select(params[:first_period])
+                  = select_tag 'first_period', subscription_period_options_for_select(params[:first_period]), class: 'form-control'
                 %td.field
-                  = select_tag 'second_period', subscription_period_options_for_select(params[:second_period])
-                %td.field.text_field= text_field_tag 'organization', (params[:organization] rescue '')
+                  = select_tag 'second_period', subscription_period_options_for_select(params[:second_period]), class: 'form-control'
+                %td.field.text_field
+                  = text_field_tag 'organization', (params[:organization] rescue ''), class: 'form-control'
                 %td
                   = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
                   = link_to t('filters.reset'), admin_subscriptions_path, class: 'btn'

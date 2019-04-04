@@ -1,14 +1,14 @@
 #retrievers
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid.marginbottom
-    .span12.margin1bottom
+  .row.marginbottom
+    .col-12.margin1bottom
       %h3 Automates de récupérations
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       .filter.panel.margin1top
         = form_tag admin_retrievers_path, method: :get, class: 'form form-horizontal margin0bottom' do
           = hidden_field_tag :direction, sort_direction
@@ -33,45 +33,53 @@
                 %td
                   %b= @retrievers_count
                 %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      >=
-                    = text_field_tag 'retriever_contains[created_at][>=]', (params[:retriever_contains][:created_at]['>='] rescue '')
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      <=
-                    = text_field_tag 'retriever_contains[created_at][<=]', (params[:retriever_contains][:created_at]['<='] rescue '')
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'retriever_contains[created_at][>=]', (params[:retriever_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+                  %hr
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'retriever_contains[created_at][<=]', (params[:retriever_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
                 %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      >=
-                    = text_field_tag 'retriever_contains[updated_at][>=]', (params[:retriever_contains][:updated_at]['>='] rescue '')
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      <=
-                    = text_field_tag 'retriever_contains[updated_at][<=]', (params[:retriever_contains][:updated_at]['<='] rescue '')
-                %td.field.text_field= text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue '')
-                %td.field= select_tag 'retriever_contains[capabilities]', options_for_select([['Document', :document], ['Op. Bancaire', :bank], ['Doc. et Op. Bancaires', :both]], (params[:retriever_contains][:capabilities] rescue '')), include_blank: true
-                %td.field.text_field= text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue '')
-                %td.field.text_field= text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
-                %td.field= select_tag 'retriever_contains[state]', options_for_select(Retriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
-                %td.field= select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'retriever_contains[updated_at][>=]', (params[:retriever_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
+                  %hr
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'retriever_contains[updated_at][<=]', (params[:retriever_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
+                %td.text_field
+                  = text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue ''), class: 'form-control'
                 %td
-                  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-                  = link_to t('filters.reset'), admin_retrievers_path, class: 'btn'
+                  = select_tag 'retriever_contains[capabilities]', options_for_select([['Document', :document], ['Op. Bancaire', :bank], ['Doc. et Op. Bancaires', :both]], (params[:retriever_contains][:capabilities] rescue '')), include_blank: true, class: 'form-control'
+                %td.text_field
+                  = text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue ''), class: 'form-control'
+                %td.text_field
+                  = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue ''), class: 'form-control'
+                %td
+                  = select_tag 'retriever_contains[state]', options_for_select(Retriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+                %td
+                  = select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true, class: 'form-control'
+          %hr
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to t('filters.reset'), admin_retrievers_path, class: 'btn'
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       .panel
-        = form_tag run_admin_retrievers_path(params), class: 'form form-horizontal margin0bottom' do
+        = form_tag run_admin_retrievers_path(params.permit!), class: 'form form-horizontal margin0bottom' do
           = submit_tag "Lancer la récupération (#{@retrievers_count})", name: nil, class: 'btn btn-primary'
 
-  .row-fluid
-    .span12
-      .row-fluid
-        .span6
+  .row
+    .col-12
+      .row
+        .col-6
           = render partial: 'shared/list_options', locals: { collection: @retrievers }
-        .span6.alignright.padding1top
+        .col-6.alignright.padding1top
           = link_to admin_retrievers_path do
             %span.badge Tous
           = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
@@ -82,11 +90,11 @@
             %span.badge Sélection
           = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
             %span.badge.badge-important Erreur
-      .row-fluid
-        .span12
+      .row
+        .col-12
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
-              %tr
+              %tr.bg-brown.text-white
                 %th= sortable :created_at,   'Créé le'
                 %th= sortable :updated_at,   'Modifié le'
                 %th= sortable :user_id,      t('activerecord.models.user.name')
