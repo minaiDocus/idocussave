@@ -1,23 +1,23 @@
 - ### TODO : HANDLE COMPOSITION DOCUMENTS OR PIECES
-- Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
+- # TO ENABLE LATER : Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
 
 - stamp_url = document.get_state_to :image
 
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
   %input{ type: :hidden, name: :page_number, value: document.position }
   %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }
-  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}"), piece_id: document.preseizures.count > 0 ? document.id : 0 } unless @is_composition
-  %a.badge.badge-warning.fs-origin.piece_number.do-goToPreseizure{ title: "Voir l'écriture comptable", data: { id: document.preseizures.count > 0 ? document.id : 0 } }
+  = link_to '', document.content.url, class: 'do-tooltip zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}"), piece_id: document.preseizures.count > 0 ? document.id : 0 } unless @is_composition
+  %a.do-tooltip.badge.badge-warning.fs-origin.piece_number.do-goToPreseizure{ title: "Voir l'écriture comptable", data: { id: document.preseizures.count > 0 ? document.id : 0 } }
     = sprintf '%03d', document.position
   .toolbar
     %ul.margin0
-      %li.download= link_to '', document.content.url, class: 'download', title: 'Télécharger', target: '_blank'
+      %li.download= link_to '', document.content.url, class: 'do-tooltip download', title: 'Télécharger', target: '_blank'
       - if @user.active?
         - if @is_composition
           %li.delete_composition
-            %a.delete.do-removePageFromSelection{ href: '#', title: 'Sélection' }
+            %a.do-tooltip.delete.do-removePageFromSelection{ href: '#', title: 'Sélection' }
         - else
-          %li.selector= link_to '', '#', class: 'select do-selectPage', title: 'Sélection'
+          %li.selector= link_to '', '#', class: 'do-tooltip select do-selectPage', title: 'Sélection'
   - if @is_composition
     .handle{ title: 'Déplacer' }
   .pagethumb

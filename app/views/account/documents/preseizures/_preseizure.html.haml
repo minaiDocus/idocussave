@@ -3,14 +3,14 @@
 
   .name.row
     .col-md-9.title
-      - if preseizure.piece_id
+      - if preseizure.piece
         %a.badge.fs-origin.badge-warning.piece_number.do-goToPiece.do-tooltip{ title: "Voir la pièce", data: { id: preseizure.piece_id } }
           = sprintf '%03d', preseizure.piece.try(:position) || preseizure.position || 0
       - else
         %a.badge.fs-origin.badge-info.do-tooltip{ title: "position" }
           = sprintf '%03d', preseizure.position || 0
       %span.preseizure_label
-        %a.tip_details.do-tooltip{href: '#', data: {id: preseizure.id}}
+        %a.tip_details.do-tooltip{ href: '#', data: { id: preseizure.id } }
           - if @ibiza
             = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
           - else
@@ -18,9 +18,10 @@
     .col-md-3.actionbox
       - if stamp_url.present?
         .stamp.bg-light= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
-      %a.tip_details.float-right.do-tooltip{href: '#', title: "Détails", data: {id: preseizure.id}}
-        = glyphicon('eye')
-      %a.tip_edit.float-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
+      - if preseizure.piece
+        %a.custom_popover.float-right{ href: '#', "data-content" => html_piece_view(preseizure.piece) }
+          = glyphicon('eye')
+      %a.tip_edit.float-right.do-tooltip{ href: '#', title: "Edition", data: { id: preseizure.id } }
         = glyphicon('pencil')
       - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
         %a.tip_deliver.float-right.do-tooltip{href: '#', title: "Livraison écriture comptable (#{@software_human_name})", data: {id: preseizure.id}}

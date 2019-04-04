@@ -1,13 +1,11 @@
 @import "common"
+@import "custom_popover"
 
 html, body
   height: 100%
-  /* background-image: linear-gradient(to bottom right, black, #6B0D0D, #3e2f24)*/
-  background-color: #e7dfd3
   background-image: url('application/bg_body.png')
   background-repeat: repeat
   background-attachment: fixed
-  /* The html and body elements cannot have any padding or margin. */
 
 //Navigation
 #next-nav-wrapper
@@ -528,7 +526,7 @@ html, body
     display: block
     position: relative
     float: left
-    width: 121px
+    width: 119px
     height: 163px
     text-align: center
     .toolbar
@@ -682,12 +680,13 @@ html, body
         height: 95%
     .stamp
       top: 37px
-      background-color: #FFF
+      background-color: #fff
+      width: 92.5%
       transform: none
       right: auto
       img
         height: 54px
-        width: 114px
+        width: 100%
   ul li.selected
     background: url("/assets/application/sprite_vertical_page.png")
     background-position: center top
@@ -802,6 +801,7 @@ html, body
           .date
             width: 20%
         .content_details
+          background-color: #fff
           border-top: 1px solid rgb(221,221,221)
           padding: 10px
 
@@ -956,7 +956,7 @@ table td.second
         background-color: #000 !important
   .period
     text-align: right
-    height: 24px
+    min-height: 24px
     border: 3px solid #BBBBBB
     margin: 0
     padding: 2px 3px 3px
@@ -991,7 +991,8 @@ table td.second
       margin-left: 15px
   .delivery_state
     +border-radius(7px)
-    margin-top: 2px
+    margin-top: 3px
+    margin-right: 3px
     float: left
     width: 10px
     height: 10px
@@ -1007,21 +1008,21 @@ table td.second
     +border-bottom-right-radius(7px)
   .period
     .value
-      display: inline-block
+      display: block
+      float: left
       text-align: right
       position: relative
-      top: -2px
       .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         float: left
       .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         margin-left: 37.58px
     .value.duration-3
-      width: calc(100% - 10px)
+      width: calc(100% - 13px)
       .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         margin: 0!important
         width: calc(100% / 3)
     .value.duration-12
-      width: calc(100% - 10px)
+      width: calc(100% - 13px)
       .period_1, .period_2, .period_3, .period_4, .period_5, .period_6, .period_7, .period_8, .period_9, .period_10, .period_11, .period_12
         margin: 0!important
         width: calc(100% / 12)
@@ -1199,7 +1200,7 @@ footer
     .footer-logo
       margin: auto
       .logo-container
-        margin: auto 40px
+        margin: auto 40px auto auto
         text-align: center
         float: right
       img.logo
@@ -1328,7 +1329,7 @@ footer
   .social
     float: right
     text-align: center
-    margin: 0 7px
+    margin: auto
     a
       display: inline-block
       padding: 7px
@@ -1387,10 +1388,13 @@ footer
 #push, footer
   height: 96px
 
+/* Bootstrap overwrite */
+.badge
+  white-space: normal !important
+
 /* Lastly, apply responsive CSS fixes as necessary */
-@media (max-width: 767px)
-  footer
-    margin-left: -20px
-    margin-right: -20px
-    padding-left: 20px
-    padding-right: 20px
+@media (max-width: 1186px)
+  .navbar.navbar-static-top
+    height: auto
+
+

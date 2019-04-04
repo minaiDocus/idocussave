@@ -16,7 +16,6 @@
           .control-section
             .input-prepend.date.datepicker
               %span.add-on
-                %i.icon-th
               = text_field_tag 'paper_process_contains[created_at][>=]', (params[:paper_process_contains][:created_at]['>='] rescue '')
         .form-group
           .label-section
@@ -24,7 +23,6 @@
           .control-section
             .input-prepend.date.datepicker
               %span.add-on
-                %i.icon-th
               = text_field_tag 'paper_process_contains[created_at][<=]', (params[:paper_process_contains][:created_at]['<='] rescue '')
         .form-group
           .label-section

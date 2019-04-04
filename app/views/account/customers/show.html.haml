@@ -380,7 +380,7 @@
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Ibiza?'
-                        %td{width: '5%'}= f.input :is_ibiza_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_ibiza_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
@@ -435,7 +435,7 @@
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Exact Online?'
-                        %td{width: '5%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?'
                         - if @user.leader?
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
@@ -480,7 +480,7 @@
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Coala?'
-                        %td{width: '5%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
@@ -505,7 +505,7 @@
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Quadratus?'
-                        %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
@@ -555,7 +555,7 @@
                     %tbody
                       %tr
                         %th= "Ce dossier utilise un format d'export personnalisé ?"
-                        %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'

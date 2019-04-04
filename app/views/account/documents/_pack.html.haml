@@ -1,6 +1,6 @@
 %li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => (pack.owner == @user ? 'pack own' : 'pack shared') }
   %span.action
-    %a.do-popover{ :href => "#", "data-content" => html_pack_info(pack) }
+    %a.custom_popover{ :href => "#", "data-content" => html_pack_info(pack) }
       = glyphicon('info')
     - if @user.active?
       %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
@@ -16,4 +16,4 @@
         = glyphicon('cog')
     - if pack.reports.not_delivered.not_locked.count > 0
       %a.do-tooltip{ :title => "Ecritures comptable non livrées"}
-        = glyphicon('pause')
+        = glyphicon('media-pause')

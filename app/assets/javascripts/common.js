@@ -83,6 +83,23 @@ function custom_dynamic_height(){
   }
 }
 
+function _require(script) {
+    var src = ''
+    $.ajax({
+        url: script,
+        dataType: "script",
+        async: false,
+        success: function (data) {
+          src = data
+        },
+        error: function (e) {
+          console.error(e)
+          throw new Error("Could not load script " + script);
+        }
+    });
+    return src;
+}
+
 jQuery(function () {
   //For serializing Form to object
   $.fn.serializeObject = function() {
@@ -170,20 +187,3 @@ jQuery(function () {
   //Custom dynamic height groups
   setTimeout(custom_dynamic_height, 1000);
 });
-
-function _require(script) {
-    var src = ''
-    $.ajax({
-        url: script,
-        dataType: "script",
-        async: false,
-        success: function (data) {
-          src = data
-        },
-        error: function (e) {
-          console.error(e)
-          throw new Error("Could not load script " + script);
-        }
-    });
-    return src;
-}

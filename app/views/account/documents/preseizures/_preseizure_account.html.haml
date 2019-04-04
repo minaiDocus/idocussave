@@ -22,7 +22,7 @@
             - if @user.collaborator?
               %td.account
                 %a.tip_edit_account{href: '#', data: {id: entry.account.id}}
-                  %i.icon-edit
+                  = glyphicon('pencil')
             %td.entry
               - if entry.type == 1
                 = entry.amount
@@ -32,7 +32,7 @@
             - if @user.collaborator?
               %td.entry
                 %a.tip_edit_entry{href: '#', data: {id: entry.id}}
-                  %i.icon-edit
+                  = glyphicon('pencil')
   - if @data_analytics.any?
     .analytics.col-md-6
       %strong Analyse comptable

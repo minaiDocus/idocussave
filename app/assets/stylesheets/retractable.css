@@ -3,7 +3,7 @@
   padding-left: 50px;
 }
 
-.retractable.with-filter{
+.retractable.with-filter {
   padding-right: 290px; 
 }
 
@@ -27,41 +27,41 @@
   padding-left: 11px !important;
   padding-right: 11px !important;
 }
-.retractable .retractable-menu .retractable-caret{
+.retractable .retractable-menu .retractable-caret {
   text-align: right;
   width: 100%;
   display: inline-block;
   border-bottom: 1px solid #fff;
   margin-bottom: 8px;
 }
-.retractable .retractable-menu .retractable-caret .title{
+.retractable .retractable-menu .retractable-caret .title {
   display: inline-block;
   text-align: left;
   width: 90%;
 }
 
 //retractable-filter
-.retractable .retractable-filter{
+.retractable .retractable-filter {
   position: fixed;
   z-index: 300;
   margin-right: 15px;
   right: 0;
   width: 270px;
 }
-.retractable .retractable-filter .locker{
+.retractable .retractable-filter .locker {
   padding: 2px;
 }
-.retractable .retractable-filter.close{
+.retractable .retractable-filter.close {
   position: absolute;
   width: auto;
 }
-.retractable .retractable-filter-content .card-body{
+.retractable .retractable-filter-content .card-body {
   max-height: 560px;
   overflow-y: scroll;
 }
 
 //detachable table head
-table.table-detachable-head thead.detached{
+table.table-detachable-head thead.detached {
   display:none;
   position: fixed;
   z-index: 50;
@@ -69,6 +69,24 @@ table.table-detachable-head thead.detached{
   color: #fff;
   top: 30px;
 }
-table.table-detachable-head thead.detached a{
+table.table-detachable-head thead.detached a {
   color: #c9dd03;
+}
+
+@media (max-width: 1186px) {
+  table.table-detachable-head thead.detached {
+    top: 46px;
+  }
+}
+
+@media (max-height: 800px) {
+  .retractable .retractable-filter {
+    position: absolute;
+    z-index:2;
+  }
+
+  .retractable .retractable-filter-content .card-body {
+    max-height: none;
+    overflow-y: auto;
+  }
 }

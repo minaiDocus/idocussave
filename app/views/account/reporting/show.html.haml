@@ -73,7 +73,7 @@
                             - pos = []
                             - period.duration.times do |i|
                               - pos << "pos_#{row}_#{(index + i + 1)}"
-                            .period{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: row}
+                            .period.clearfix{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: row}
                               - if period.scanned_pages == 0 && period.uploaded_pages == 0
                                 - annual_summary[period.end_date.month - 1][:delivery_status][0] += 1
                                 .delivery_state.back_red

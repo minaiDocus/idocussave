@@ -61,9 +61,11 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
           $('#show_preseizures .showALLPreseizures').removeClass('hide');
 
         $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
-        $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').remove();
-        if(software_used != '' && need_delivery != 'no')
-          $('#presPanel1 .header .actiongroup').prepend('<a href="#" title="Livraison écriture comptable ('+software_used+')" class="do-deliverAllPreseizure do-tooltip"><i class="icon-refresh" /></a>');
+        $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').addClass('hide');
+        if(software_used != '' && need_delivery != 'no') {
+          $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').removeClass('hide');
+          $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('title', 'Livraison écriture comptable ('+software_used+')');
+        }
       }
       else if(data != 'none' && page > 1)
       {
@@ -279,6 +281,7 @@ function editPreseizureEntry(id){
     success: function(data){
       logAfterAction();
       $('#preseizuresModals #preseizureEntryEdition .modal-body').html(data);
+      custom_radio_buttons();
     },
     error: function(data){
       logAfterAction();

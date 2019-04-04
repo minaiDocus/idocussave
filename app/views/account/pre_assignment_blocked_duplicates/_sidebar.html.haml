@@ -1,45 +1,68 @@
-%h3 Filtres
+.card.retractable-filter
+  = form_tag account_pre_assignment_blocked_duplicates_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
 
-%br
-= form_tag account_pre_assignment_blocked_duplicates_path, method: :get, class: 'form form-vertical margin0bottom' do
-  = hidden_field_tag :direction, sort_direction
-  = hidden_field_tag :sort, sort_column
-  = hidden_field_tag :per_page, per_page
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section
+            .filter-date
+              .input-prepend.date.datepicker
+                %span.add-on
+                  %span.badge.badge-secondary.fs-origin.mr-md-1 >=
+                = text_field_tag 'duplicate_contains[created_at][>=]', (params[:duplicate_contains][:created_at]['>='] rescue '')
+              .input-prepend.date.datepicker
+                %span.add-on
+                  %span.badge.badge-secondary.fs-origin.mr-md-1 <=
+                = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue '')
 
-  = label_tag 'duplicate_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-  .filter_date
-    .input-prepend.date.datepicker
-      %span.add-on
-        >=
-      = text_field_tag 'duplicate_contains[created_at][>=]', (params[:duplicate_contains][:created_at]['>='] rescue ''), class: 'input-medium'
-    .input-prepend.date.datepicker
-      %span.add-on
-        <=
-      = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue ''), class: 'input-medium'
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
+          .control-section
+            = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue '')
 
-  = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
-  = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue ''), class: 'span12'
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[piece_number]', 'N° facture'
+          .control-section
+            = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue '')
 
-  = label_tag 'duplicate_contains[piece_number]', 'N° facture'
-  = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue ''), class: 'span12'
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
+          .control-section
+            = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue '')
 
-  = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
-  = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue ''), class: 'span12'
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[amount]', t('activerecord.models.pack_report_preseizure.attributes.amount')
+          .control-section
+            = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue '')
 
-  = label_tag 'duplicate_contains[amount]', t('activerecord.models.pack_report_preseizure.attributes.amount')
-  = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue ''), class: 'span12'
-
-  = label_tag 'duplicate_contains[date][>=]', t('activerecord.models.pack_report_preseizure.attributes.date')
-  .filter_date
-    .input-prepend.date.datepicker
-      %span.add-on
-        >=
-      = text_field_tag 'duplicate_contains[date][>=]', (params[:duplicate_contains][:date]['>='] rescue ''), class: 'input-medium'
-    .input-prepend.date.datepicker
-      %span.add-on
-        <=
-      = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue ''), class: 'input-medium'
-
-  %br
-  = submit_tag t('filters.action'), class: 'btn btn-primary'
-  = link_to t('filters.reset'), account_pre_assignment_blocked_duplicates_path, class: 'btn'
+        .form-group.clearfix
+          .label-section
+            = label_tag 'duplicate_contains[date][>=]', t('activerecord.models.pack_report_preseizure.attributes.date')
+          .control-section
+            .filter-date
+              .input-prepend.date.datepicker
+                %span.add-on
+                  %span.badge.badge-secondary.fs-origin.mr-md-1 >=
+                = text_field_tag 'duplicate_contains[date][>=]', (params[:duplicate_contains][:date]['>='] rescue '')
+              .input-prepend.date.datepicker
+                %span.add-on
+                  %span.badge.badge-secondary.fs-origin.mr-md-1 <=
+                = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue '')
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+          = link_to glyphicon('x'), account_pre_assignment_blocked_duplicates_path, class: 'btn btn-light'
