@@ -2,5 +2,5 @@
   = simple_form_for @entry, url: '', method: 'get', html: { class: 'form-horizontal', id: 'preseizure_edition_form' } do |f|
     = hidden_field_tag 'preseizure_id', @entry.preseizure.id
     = f.hidden_field :id
-    = f.input :type, collection: [['Débit', 1], ['Crédit', 2]]
+    = f.input :type, collection: [['Débit', 1], ['Crédit', 2]], as: :radio_buttons
     = f.input :amount

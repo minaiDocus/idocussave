@@ -12,7 +12,7 @@
       %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
       %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
       %th= sortable :journal_name, 'Journal'
-      %th.retriever_state= sortable :state, t('activerecord.models.retriever.attributes.state')
+      %th= sortable :state, t('activerecord.models.retriever.attributes.state')
       %th Actions
   %tbody
     - @retrievers.each do |retriever|
@@ -23,7 +23,7 @@
           %td= retriever_presenter.service_name
           %td= retriever_presenter.name
           %td= retriever_presenter.journal.try(:name) || '-'
-          %td.retriever_state{class: "state_field_#{retriever.id}"}!= retriever_presenter.state(scope)
+          %td{class: "state_field_#{retriever.id}"}= retriever_presenter.state(scope)
           %td
             = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
             - if retriever.ready? || retriever.error? || retriever.waiting_additionnal_info?

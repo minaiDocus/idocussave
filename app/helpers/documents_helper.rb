@@ -155,7 +155,7 @@ module DocumentsHelper
 
     contents = ''
     contents += content_tag :h4, 'Informations'
-    contents += content_tag :div, tinformations(pack, 120)
+    contents += content_tag :div, tinformations(pack, 220)
 
     if pack.preseizures.any?
       contents += content_tag :h4, 'Ecritures Comptables'

@@ -2,30 +2,34 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
-    .span12.well
-      .pull-left
-        %h3 Liste des livraisons de pré-affectation en erreurs (#{@errors.count})
-  .row-fluid
-    .span12.well
-      %table.table.table-striped.table-condensed.margin0bottom
-        %thead
-          %tr
-            %th.date Date
-            %th.name Lot
-            %th.count Nb.
-            %th.message Erreur
-        %tbody
-          - @errors.each do |object|
-            %tr
-              %td.date
-                - if object.date
-                  - if object.date.today?
-                    = l(object.date, format: '%H:%M')
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des livraisons de pré-affectation en erreurs 
+            %span.badge.badge-info.fs-origin= @errors.count
+  .row
+    .col-md-12
+      .box
+        %table.table.table-striped.table-condensed.margin1top.margin1bottom.table-bordered-inner.table-detachable-head
+          %thead
+            %tr.bg-brown.text-white
+              %th.date Date
+              %th.name Lot
+              %th.count Nb.
+              %th.message Erreur
+          %tbody
+            - @errors.each do |object|
+              %tr
+                %td.date
+                  - if object.date
+                    - if object.date.today?
+                      = l(object.date, format: '%H:%M')
+                    - else
+                      = l(object.date, format: '%d %b %Y %H:%M')
                   - else
-                    = l(object.date, format: '%d %b %Y %H:%M')
-                - else
-                  \-
-              %td.name= object.name
-              %td.count= object.document_count
-              %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
+                    \-
+                %td.name= object.name
+                %td.count= object.document_count
+                %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))

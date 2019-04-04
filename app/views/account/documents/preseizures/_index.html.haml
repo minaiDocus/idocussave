@@ -6,7 +6,9 @@
           Ecritures comptables
         - if @user.active?
           .actiongroup.float-right
-            %a.do-exportSelectedPreseizures.do-tooltip{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
+            %a.do-deliverAllPreseizure.do-tooltip.hide{ href: '#', title: '' }
+              = glyphicon('loop-circular', { size: '13px' })
+            %a.do-exportSelectedPreseizures.do-tooltip{ href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
               = glyphicon('data-transfer-download')
             - if @user.collaborator?
               %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #058acd; padding: 5px 2px 5px 5px; border-radius: 3px', data: { toggle: 'modal' } }

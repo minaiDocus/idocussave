@@ -2,14 +2,15 @@
   //FUNCTION DECLARATION
   // init all link action
   window.initEventOnHoverOnInformation = function() {
-    $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({placement: 'top', trigger: 'hover', html: true});
-    $('.do-tooltip-right, .information-right').tooltip({placement: 'left', trigger: 'hover', html: true});
-    $('.do-tooltip-bottom, .information-bottom').tooltip({placement: 'left', trigger: 'hover', html: true});
-    $('.do-tooltip-left, .information-left').tooltip({placement: 'left', trigger: 'hover', html: true});
-    $('.do-popover-top').popover({placement: 'top', trigger: 'hover', html: true});
-    $('.do-popover, .do-popover-right').popover({placement: 'right', trigger: 'hover', html: true});
-    $('.do-popover-bottom').popover({placement: 'bottom', trigger: 'hover', html: true});
-    $('.do-popover-left').popover({placement: 'left', trigger: 'hover', html: true});
+    $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({ placement: 'top', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-right, .information-right').tooltip({ placement: 'right', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-bottom, .information-bottom').tooltip({ placement: 'bottom', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-left, .information-left').tooltip({ placement: 'left', trigger: 'hover', html: true, sanitize: false });
+
+    $('.do-popover-top').popover({ placement: 'top', trigger: 'hover', html: true, sanitize: false });
+    $('.do-popover, .do-popover-right').popover({ placement: 'right', trigger: 'hover', html: true, sanitize: false});
+    $('.do-popover-bottom').popover({ placement: 'bottom', trigger: 'hover', html: true, sanitize: false });
+    $('.do-popover-left').popover({ placement: 'left', trigger: 'hover', html: true, sanitize: false });
 
     $('.custom_popover').custom_popover();
   }
