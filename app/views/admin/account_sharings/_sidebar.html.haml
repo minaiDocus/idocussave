@@ -11,33 +11,25 @@
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
         .form-group
-          .label-section
-            = label_tag 'account_sharing_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue '')
-              %span.add-on
-                %i.icon-th
-          .control-section
-            .input-append.date.datepicker
-              = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue '')
-              %span.add-on
-                %i.icon-th
+          = label_tag 'account_sharing_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue ''), class: 'form-control'
+          &nbsp;
+          .input-group
+            .input-group-prepend
+              %span.input-group-text= glyphicon('calendar')
+            = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'account_sharing_contains[account]', 'Dossier'
-          .control-section
-            = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'span12'
+          = label_tag 'account_sharing_contains[account]', 'Dossier'
+          = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact'
-          .control-section
-            = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue ''), class: 'span12'
+          = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact'
+          = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue ''), class: 'form-control'
         .form-group
-          .label-section
-            = label_tag 'account_sharing_contains[is_approved]', 'Etat'
-          .control-section
-            = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true
+          = label_tag 'account_sharing_contains[is_approved]', 'Etat'
+          = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true, class: 'form-control'
       .card-footer
         .form-actions
           = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'

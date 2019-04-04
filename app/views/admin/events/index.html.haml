@@ -5,7 +5,7 @@
   .row
     .col-12
       .filter.panel.margin1top
-        = form_tag admin_events_path, method: :get, class: 'form form-vertical margin0bottom' do
+        = form_tag admin_events_path, method: :get do
           = hidden_field_tag :direction, sort_direction
           = hidden_field_tag :sort,      sort_column
           = hidden_field_tag :per_page,  per_page
@@ -14,13 +14,20 @@
             %thead
               %tr
                 %th Total
-                %th.field.number_field= label_tag 'event_contains[id]', 'ID'
-                %th.field.date_field= label_tag 'event_contains[created_at][>=]', 'Date de début'
-                %th.field.date_field= label_tag 'event_contains[created_at][<=]', 'Date de fin'
-                %th.field.text_field= label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
-                %th.field.action_field= label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
-                %th.field.target_type_field= label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
-                %th.field.text_field= label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
+                %th
+                  = label_tag 'event_contains[id]', 'ID'
+                %th
+                  = label_tag 'event_contains[created_at][>=]', 'Date de début'
+                %th
+                  = label_tag 'event_contains[created_at][<=]', 'Date de fin'
+                %th
+                  = label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
+                %th
+                  = label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
+                %th
+                  = label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
+                %th
+                  = label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
                 %th
             %tbody
               %tr
@@ -31,23 +38,26 @@
                     = Event.count
                   - else
                     %b= Event.count
-                %td.field.number_field= number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][>=]', (params[:event_contains][:created_at]['>='] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][<=]', (params[:event_contains][:created_at]['<='] rescue '')
-                %td.field.text_field= text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue '')
-                %td.field.action_field
-                  = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true
-                %td.field.target_type_field
-                  = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true
-                %td.field.text_field= text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue '')
+                %td
+                  = number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue ''), class: 'form-control'
+                %td
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'event_contains[created_at][>=]', (params[:event_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+                %td
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text= glyphicon('calendar')
+                    = text_field_tag 'event_contains[created_at][<=]', (params[:event_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+                %td
+                  = text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue ''), class: 'form-control'
+                %td
+                  = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true, class: 'form-control'
+                %td
+                  = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true, class: 'form-control'
+                %td
+                  = text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue ''), class: 'form-control'
                 %td
                   = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
                   = link_to t('filters.reset'), admin_events_path, class: 'btn'
