@@ -1,69 +1,61 @@
 #dashboard
   .row
     .col-8
-      .panel
-        .panel-header
+      .row
+        .col
           %h3 Flux de traitement
-        %hr.margin0top
-        .panel-body
-          .tabbable.tabs-left
-            %ul.nav.nav-tabs
-              %li.nav-item
-                %a.nav-link{ href: '#ocr_needed_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success OCR
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#bundle_needed_temp_packs', data: { toggle: 'tab' } }
-                  %span.label Regroupement
-                  %span.badge -
-              %li.nav-item.active
-                %a.nav-link{ href: '#bundling_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Regroupement
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#processing_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Publication
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#currently_being_delivered_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Livraison
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#failed_packs_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-important Livraison
-                  %span.badge.badge-important -
-              %li.nav-item
-                %a.nav-link{ href: '#blocked_pre_assignments', data: { toggle: 'tab' } }
-                  %span.label Pré-affectation
-                  %span.badge -
-              %li.nav-item
-                %a.nav-link{ href: '#awaiting_pre_assignments', data: { toggle: 'tab' } }
-                  %span.label.label-success Pré-affectation
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#reports_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-success Livr. Pré-aff.
-                  %span.badge.badge-success -
-              %li.nav-item
-                %a.nav-link{ href: '#failed_reports_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-important Livr. Pré-aff.
-                  %span.badge.badge-important -
-            .tab-content
-              #ocr_needed_temp_packs.tab-pane
-              #bundle_needed_temp_packs.tab-pane
-              #bundling_temp_packs.tab-pane.active
-              #processing_temp_packs.tab-pane
-              #currently_being_delivered_packs.tab-pane
-              #failed_packs_delivery.tab-pane
-              #blocked_pre_assignments.tab-pane
-              #awaiting_pre_assignments.tab-pane
-              #reports_delivery.tab-pane
-              #failed_reports_delivery.tab-pane
-    .col-4
+      %hr
+      .row
+        .col-3
+          #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
+            %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
+              %span OCR
+              %span.float-right.badge.badge-success -
+            %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
+              %span Regroupement
+              %span.float-right.badge -
+            %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
+              %span Regroupement
+              %span.float-right.badge.badge-success -
+            %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
+              %span Publication
+              %span.float-right.badge.badge-success -
+            %a#v-currently_being_delivered_packs.nav-link{"aria-controls": "v-currently_being_delivered_packs", "aria-selected": "false", "data-toggle": "pill", href: "#v-currently_being_delivered_packs", role: "tab"}
+              %span Livraison
+              %span.float-right.badge.badge-success -
+            %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
+              %span Livraison
+              %span.float-right.badge.badge-important -
+            %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
+              %span Pré-affectation
+              %span.float-right.badge -
+            %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_pre_assignments", role: "tab"}
+              %span Pré-affectation
+              %span.float-right.badge.badge-success -
+            %a#v-reports_delivery.nav-link{"aria-controls": "v-reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#reports_delivery", role: "tab"}
+              %span Livr. Pré-aff.
+              %span.float-right.badge.badge-success -
+            %a#v-failed_reports_delivery.nav-link{"aria-controls": "v-failed_reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_reports_delivery", role: "tab"}
+              %span Livr. Pré-aff.
+              %span.float-right.badge.badge-important -
+        .col-9
+          #v-pills-tabContent.tab-content
+            #ocr_needed_temp_packs.tab-pane
+            #bundle_needed_temp_packs.tab-pane
+            #bundling_temp_packs.tab-pane.active
+            #processing_temp_packs.tab-pane
+            #currently_being_delivered_packs.tab-pane
+            #failed_packs_delivery.tab-pane
+            #blocked_pre_assignments.tab-pane
+            #awaiting_pre_assignments.tab-pane
+            #reports_delivery.tab-pane
+            #failed_reports_delivery.tab-pane
+
+    .col-4.text-center
       - cache 'admin_right_panels', expires_in: 5.minutes do
         .row
           .col-6
-            %h4.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
+            %h4 Traitement des documents
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -88,10 +80,10 @@
                   %th Traités
                   %td= StatisticsManager.get_statistic('processed_temp_documents_count')
           .col-6
-            %h4.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
+            %h4 Livraison des documents
             %table.table.table-striped.table-condensed.table-bordered
               %thead
-                %tr
+                %tr.bg-brown.text-white
                   %th Service
                   %th Restant
                   %th Echoué
@@ -122,7 +114,7 @@
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
         .row
           .col-6
-            %h4.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
+            %h4 Récupérateurs automatiques
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -148,7 +140,7 @@
                     = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
                     (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
           .col-6
-            %h4.label{ style: 'padding:3px 5px 3px;' } Etat des pages
+            %h4 Etat des pages
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -176,7 +168,7 @@
                   %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
         .row
           .col-12
-            %h4.label{ style: 'padding:3px 5px 3px;' } Opérations bancaires
+            %h4.label Opérations bancaires
             .row
               .col-6
                 %table.table.table-striped.table-condensed.table-bordered
@@ -204,13 +196,14 @@
                       %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
       .row
         .col-12
-          %h4.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs en cours
+          %h4 Demande de nouveaux fournisseurs en cours
           %table.table.table-striped.table-condensed.table-bordered
             %thead
-              %th Date
-              %th Client
-              %th Nom
-              %th Etat
+              %tr.bg-brown.text-white
+                %th Date
+                %th Client
+                %th Nom
+                %th Etat
             %tbody
               - @new_provider_requests.each do |new_provider_request|
                 %tr
@@ -220,7 +213,6 @@
                   %td= new_provider_request_state(new_provider_request)
       .row
         .col-12
-          %h4.label{ style: 'padding:3px 5px 3px;' } Organisations facturées n'ayant pas d'adresse de facturation
-          .well
-            - @unbillable_organizations.each do |organization|
-              = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'label label-important'
+          %h4 Organisations facturées n'ayant pas d'adresse de facturation
+          - @unbillable_organizations.each do |organization|
+            = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'badge badge-danger'

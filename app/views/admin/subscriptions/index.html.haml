@@ -26,11 +26,11 @@
           %th.ths{style: 'width:5%'} nouveaux
           %th.ths{style: 'width:5%'} clôturés
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render 'layouts/admin/statistics/navigation'
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
       %table.table.table-condensed.table-striped.table-bordered
         %thead
@@ -57,39 +57,40 @@
             %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
             %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
             %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
-  .row-fluid
-    .span12
+  .row
+    .col-12
+
       %h3 Reporting détaillés
-  .row-fluid
-    .span12
+  .row
+    .col-12
       .filter.panel.margin1top
         = form_tag admin_subscriptions_path, method: :get, class: 'form form-vertical margin0bottom' do
           %table.table.table-condensed.margin0bottom
             %thead
               %tr
                 %th Nb. Organisations
-                %th.field.date_field= label_tag 'first_period', 'Première période'
-                %th.field.date_field= label_tag 'second_period', 'Deuxième période'
-                %th.field.text_field= label_tag 'organization', 'Organisation'
+                %th= label_tag 'first_period', 'Première période'
+                %th= label_tag 'second_period', 'Deuxième période'
+                %th= label_tag 'organization', 'Organisation'
                 %th= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Exporter vers XLS', "/admin/subscriptions.xls?first_period=#{params[:first_period]}&second_period=#{params[:second_period]}&organization=#{params[:organization]}"
             %tbody
               %tr
                 %td
                   %b= @organization_count
-                %td.field
+                %td
                   = select_tag 'first_period', subscription_period_options_for_select(params[:first_period]), class: 'form-control'
-                %td.field
+                %td
                   = select_tag 'second_period', subscription_period_options_for_select(params[:second_period]), class: 'form-control'
-                %td.field.text_field
+                %td
                   = text_field_tag 'organization', (params[:organization] rescue ''), class: 'form-control'
                 %td
                   = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
                   = link_to t('filters.reset'), admin_subscriptions_path, class: 'btn'
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render partial: 'shared/list_options', locals: { collection: @statistics }
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top
         %thead
           %tr.bg-brown.text-white
@@ -186,8 +187,8 @@
             %td.total_footer
               %span{ class: ("negative" if @statistics_total[:closed_customers] > 0) }= @statistics_total[:closed_customers]
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render partial: 'shared/list_options', locals: { collection: @statistics }
 
   #showAccounts.modal.hide.fade

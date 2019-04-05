@@ -26,7 +26,7 @@ class Admin::RetrieversController < Admin::AdminController
     count = retrievers.count
     retrievers.each(&:run)
     flash[:notice] = "#{count} récupération(s) en cours."
-    redirect_to admin_retrievers_path(params.except(:authenticity_token))
+    redirect_to admin_retrievers_path(params.permit.except(:authenticity_token))
   end
 
 private

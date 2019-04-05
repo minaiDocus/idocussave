@@ -53,6 +53,7 @@
           = link_to 'Paramétrage des notifications', admin_notification_settings_path, class: 'dropdown-item'
 
     %span.navbar-text
-      = link_to current_user.email, root_path
-      |
-      = link_to 'déconnexion', destroy_user_session_path, method: :delete
+      .text-white
+        = link_to current_user.email, root_path, class: 'text-white'
+        |
+        = link_to 'déconnexion', destroy_user_session_path, method: :delete, class: 'text-white'
