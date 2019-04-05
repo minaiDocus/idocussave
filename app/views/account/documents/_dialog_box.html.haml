@@ -19,16 +19,16 @@
       .modal-body{style: 'min-height: 450px'}
         %form#packFilterForm.simple_form.form-horizontal
           .general_filter.box.clearfix
-            .form-group.clearfix.hide
-              .label-section
-                = label_tag 'by_piece[content]', "Contenu", class: 'control-label'
-              .control-section
-                = text_field_tag 'by_piece[content]'
             .form-group.clearfix
               .label-section
                 = label_tag 'by_pack[pack_name]', "Nom du lot", class: 'control-label'
               .control-section
                 = text_field_tag 'by_pack[pack_name]'
+            .form-group.clearfix
+              .label-section
+                = label_tag 'by_piece[content]', "Contenu", class: 'control-label'
+              .control-section
+                = text_field_tag 'by_piece[content]'
             .form-group.clearfix
               .label-section
                 = label_tag 'by_all[position]', 'Numéro de pièce iDocus', class: 'control-label'
