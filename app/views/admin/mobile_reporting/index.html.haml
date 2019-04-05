@@ -1,87 +1,95 @@
 #mobile_reporting
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render 'layouts/admin/statistics/navigation'
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %h3.margin1top.margin1bottom Statistiques d'utilisation de l'application mobile
-  .row-fluid
-    .span12
+  .row
+    .col-12
       .filter.panel.margin1top
         = form_tag admin_mobile_reporting_index_path, method: :get, class: 'form form-vertical margin0bottom' do
           %table.table.table-condensed.margin0bottom
             %thead
-              %tr
+              %tr.bg-brown.text-white
                 %th Mois
                 %th Année
                 %th
             %tbody
               %tr
                 %td
-                  = select_tag "month", options_for_select(get_options_months, params[:month] || Date.today.strftime("%m").to_s)
+                  = select_tag "month", options_for_select(get_options_months, params[:month] || Date.today.strftime("%m").to_s), class: 'form-control'
                 %td
-                  = select_tag "year", options_for_select(get_options_years, params[:year] || Date.today.strftime("%Y").to_s)
+                  = select_tag "year", options_for_select(get_options_years, params[:year] || Date.today.strftime("%Y").to_s), class: 'form-control'
                 %td
                   = submit_tag t('actions.submit'), class: 'btn btn-primary'
-  .row-fluid
-    .span12.center
+  .row
+    .col-12
       %br
       %h3{ style: 'text-decoration: underline' }
         - month = get_options_months.map{ |m| m.first if(m.last == @month_params) }.compact
         = "Statistique du mois de : #{month.first} #{@year_params}"
-  .row-fluid
-    .span8
+  .row
+    .col-8
       .boxChart
         %h3 UTILISATEURS APPLICATION MOBILE
-        .row-fluid
-          .span6
+        .row
+          .col-6
             #usersLoading.blink Chargement en cours...
             %canvas.chartContainer#chartUsersContainer
             .legends
               %ul.list-group
-                %li.liFloat.list-group-item
-                  %span.badge{ style: 'background-color:#3E2F24;' } Utilisateurs iDocus (actifs)
+                %li.text-center.list-group-item
+                  %span.badge.badge-secondary Utilisateurs iDocus (actifs)
+                  %br
                   %strong#usersCount 0
               .clearfix
                 %br
                 %br
               %ul.list-group
-                %li.liFloat.list-group-item
-                  %span.badge{ style: 'background-color:#FF420E;' } Utilisateurs mobile total
+                %li.text-center.list-group-item
+                  %span.badge.badge-warning Utilisateurs mobile total
+                  %br
                   %strong#usersMobileCount 0
-                %li.liFloat.list-group-item
-                  %span.badge{ style: 'background-color:#F08A42;' } iOS
+                %li.text-center.list-group-item
+                  %span.badge.badge-danger iOS
+                  %br
                   %strong#iOSUsersCount 0
-                %li.liFloat.list-group-item
-                  %span.badge{ style: 'background-color:#C0D838;' } Android
+                %li.text-center.list-group-item
+                  %span.badge.badge-success Android
+                  %br
                   %strong#androidUsersCount 0
-          .span6
+          .col-6
             #uploaderLoading.blink Chargement en cours...
             %canvas.chartContainer#chartUploaderContainer
             .legends
-              .row-fluid
-                .span6
+              .row
+                .col-6
                   %ul.list-group
-                    %li.list-group-item
-                      .legend_badge.badge{ style: 'background-color:#018CCF;' } Simple consultation
+                    %li.text-center.list-group-item
+                      .badge.badge-primary Simple consultation
+                      %br
                       %strong#viewerUsersCount 0
-                    %li.list-group-item
-                      .legend_badge.badge{ style: 'background-color:#FF420E;' } Avec téléversement
+                    %li.text-center.list-group-item
+                      .badge.badge-success Avec téléversement
+                      %br
                       %strong#uploaderUsersCount 0
-                .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
-    .span4
+                .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+    .col-4
       .boxChart
         %h3 TELEVERSEMENT DE DOCUMENTS
         #documentsLoading.blink Chargement en cours...
         %canvas.chartContainer#chartDocumentsContainer
         .legends
-          .row-fluid
-            .span6
+          .row
+            .col-6
               %ul.list-group
-                %li.list-group-item
-                  .legend_badge.badge{ style: 'background-color:#018CCF;' } Upload via iDocus
+                %li.text-center.list-group-item
+                  .badge.badge-info Upload via iDocus
+                  %br
                   %strong#uploadedFrameworkDocumentsCount 0
-                %li.list-group-item
-                  .legend_badge.badge{ style: 'background-color:#FF420E;' } Upload via App Mobile
+                %li.text-center.list-group-item
+                  .badge.badge-danger Upload via App Mobile
+                  %br
                   %strong#uploadedMobileDocumentsCount 0
-            .span6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
+            .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"

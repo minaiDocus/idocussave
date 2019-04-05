@@ -44,8 +44,8 @@
         %hr
         - grouped_addresses = @scanning_provider.addresses.in_groups_of(3)
         - grouped_addresses.each_with_index do |addresses, index|
-          .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+          .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
             - addresses.each do |address|
               - if address
-                .span4
+                .col-4
                   = render partial: 'address', locals: { address: address, single: false }

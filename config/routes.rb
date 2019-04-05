@@ -562,7 +562,7 @@ Rails.application.routes.draw do
     get 'subscriptions', controller: 'subscriptions', action: 'index'
     post 'subscriptions/accounts/(:type)', controller: 'subscriptions', action: 'accounts'
 
-    resources :mobile_reporting, only: %w(index) do
+    resources :mobile_reporting, only: :index do
       get 'mobile_users_stats(/:month)(/:year)', action: 'download_mobile_users', on: :collection, as: :download_users
       get 'mobile_documents_stats(/:month)(/:year)', action: 'download_mobile_documents', on: :collection, as: :download_documents
     end
