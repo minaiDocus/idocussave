@@ -1,7 +1,7 @@
 #users
   .row
-    .col-md-12
-      .box.clearfix
+    .col-12
+      .panel.clearfix
         .float-left
           %h3
             Liste des utilisateurs
@@ -10,9 +10,11 @@
           = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: @user_contains), class: 'btn btn-primary'
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @users }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @users }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -28,7 +30,9 @@
                 %td= l(user.created_at)
                 %td= l(user.updated_at)
                 %td= user.info
-                %td= link_to icon_show, admin_user_path(user), alt: t('actions.show'), title: t('actions.show')
+                %td.text-center= icon_link_to admin_user_path(user), { icon: 'eye' }
         %br
-        = render partial: 'shared/list_options', locals: { collection: @users }
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @users }
     = render partial: 'sidebar'

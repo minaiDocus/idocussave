@@ -38,10 +38,11 @@
               %span.input-group-text= glyphicon('calendar')
             = text_field_tag 'invoice_contains[created_at][<=]', (params[:invoice_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_invoices_path, class: 'btn'
-        %hr
+        .row
+          .col
+            = submit_tag t('filters.action'), class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_invoices_path, class: 'btn'
+        %br
         = form_tag debit_order_admin_invoices_path do
           .form-group
             = label_tag 'date', 'Date'

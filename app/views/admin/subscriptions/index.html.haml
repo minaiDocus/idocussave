@@ -28,42 +28,42 @@
 
   .row
     .col-12
-      = render 'layouts/admin/statistics/navigation'
+      .panel
+        = render 'layouts/admin/statistics/navigation'
   .row
     .col-12
-      %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
-      %table.table.table-condensed.table-striped.table-bordered
-        %thead
-          %tr.bg-brown.text-white
-            %th
-            %th iDo'Basique
-            %th iDo'Courrier
-            %th iDo'Box
-            %th iDo'Mini
-            %th iDo'Micro
-            %th Pack Annuel
-            %th Total
-            %th iDo'FacBanque
-            %th Pré-saisie
-        %tbody
-          %tr
-            %th Abonnés
-            %td= link_to @basic_package_count, "#", class: 'do-showAccounts', title: "iDo'Basique", type: "basic_package"
-            %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "iDo'Courrier", type: "mail_package"
-            %td= link_to @scan_box_package_count, "#", class: 'do-showAccounts', title: "iDo'Box", type: "scan_box_package"
-            %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo'Mini", type: "mini_package"
-            %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo'Micro", type: "micro_package"
-            %td= link_to @annual_package_count, "#", class: 'do-showAccounts', title: "Pack Annuel", type: "annual_package"
-            %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
-            %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
-            %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
-  .row
-    .col-12
-
-      %h3 Reporting détaillés
+      .panel
+        %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
+        %table.table.table-condensed.table-striped.table-bordered
+          %thead
+            %tr.bg-brown.text-white
+              %th
+              %th iDo'Basique
+              %th iDo'Courrier
+              %th iDo'Box
+              %th iDo'Mini
+              %th iDo'Micro
+              %th Pack Annuel
+              %th Total
+              %th iDo'FacBanque
+              %th Pré-saisie
+              %th Tamponnage du papier
+          %tbody
+            %tr
+              %th Abonnés
+              %td= link_to @basic_package_count, "#", class: 'do-showAccounts', title: "iDo'Basique", type: "basic_package"
+              %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "iDo'Courrier", type: "mail_package"
+              %td= link_to @scan_box_package_count, "#", class: 'do-showAccounts', title: "iDo'Box", type: "scan_box_package"
+              %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo'Mini", type: "mini_package"
+              %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo'Micro", type: "micro_package"
+              %td= link_to @annual_package_count, "#", class: 'do-showAccounts', title: "Pack Annuel", type: "annual_package"
+              %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
+              %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
+              %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
   .row
     .col-12
       .filter.panel.margin1top
+        %h3 Reporting détaillés
         = form_tag admin_subscriptions_path, method: :get, class: 'form form-vertical margin0bottom' do
           %table.table.table-condensed.margin0bottom
             %thead
@@ -88,108 +88,109 @@
                   = link_to t('filters.reset'), admin_subscriptions_path, class: 'btn'
   .row
     .col-12
-      = render partial: 'shared/list_options', locals: { collection: @statistics }
-  .row
-    .col-12
-      %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top
-        %thead
-          %tr.bg-brown.text-white
-            %th(colspan='3') Information
-            %th(colspan='7') Forfaits
-            %th(colspan='4') Utilisation
-            %th(colspan='3') Clients
-          %tr.bg-brown-light.text-white
-            %th{style: 'width:4%'} période
-            %th= sortable 'organization_name', 'organisation'
-            %th{style: 'width:7%'}= sortable 'organization_code', 'code'
-            %th{style: 'width:5%'}= sortable 'options.basic_package', 'basique'
-            %th{style: 'width:5%'}= sortable 'options.mail_package', 'courrier'
-            %th{style: 'width:5%'}= sortable 'options.scan_box_package', 'box'
-            %th{style: 'width:5%'}= sortable 'options.retriever_package', 'automate'
-            %th{style: 'width:5%'}= sortable 'options.mini_package', 'mini'
-            %th{style: 'width:5%'}= sortable 'options.micro_package', 'micro'
-            %th{style: 'width:5%'}= sortable 'options.annual_package', 'annuel'
-            %th{style: 'width:6%'}= sortable 'consumption.upload', 'téléversement'
-            %th{style: 'width:6%'}= sortable 'consumption.scan', 'numérisation'
-            %th{style: 'width:5%'}= sortable 'consumption.dematbox_scan', 'dematbox'
-            %th{style: 'width:5%'}= sortable 'consumption.retriever', 'automate'
-            %th{style: 'width:5%'}= sortable 'customers', 'actifs'
-            %th{style: 'width:5%'}= sortable 'new_customers', 'nouveaux'
-            %th{style: 'width:5%'}= sortable 'closed_customers', 'clôturés'
-        %tbody
-          - @statistics.each do |statistic|
+      .panel
+        .row
+          .col-12
+            = render partial: 'shared/list_options', locals: { collection: @statistics }
+        %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top
+          %thead
+            %tr.bg-brown.text-white
+              %th(colspan='3') Information
+              %th(colspan='7') Forfaits
+              %th(colspan='4') Utilisation
+              %th(colspan='3') Clients
+            %tr.bg-brown-light.text-white
+              %th{style: 'width:4%'} période
+              %th= sortable 'organization_name', 'organisation'
+              %th{style: 'width:7%'}= sortable 'organization_code', 'code'
+              %th{style: 'width:5%'}= sortable 'options.basic_package', 'basique'
+              %th{style: 'width:5%'}= sortable 'options.mail_package', 'courrier'
+              %th{style: 'width:5%'}= sortable 'options.scan_box_package', 'box'
+              %th{style: 'width:5%'}= sortable 'options.retriever_package', 'automate'
+              %th{style: 'width:5%'}= sortable 'options.mini_package', 'mini'
+              %th{style: 'width:5%'}= sortable 'options.micro_package', 'micro'
+              %th{style: 'width:5%'}= sortable 'options.annual_package', 'annuel'
+              %th{style: 'width:6%'}= sortable 'consumption.upload', 'téléversement'
+              %th{style: 'width:6%'}= sortable 'consumption.scan', 'numérisation'
+              %th{style: 'width:5%'}= sortable 'consumption.dematbox_scan', 'dematbox'
+              %th{style: 'width:5%'}= sortable 'consumption.retriever', 'automate'
+              %th{style: 'width:5%'}= sortable 'customers', 'actifs'
+              %th{style: 'width:5%'}= sortable 'new_customers', 'nouveaux'
+              %th{style: 'width:5%'}= sortable 'closed_customers', 'clôturés'
+          %tbody
+            - @statistics.each do |statistic|
+              %tr
+                %td= I18n.l(statistic.month, format: "%b%y").titleize
+                %td= statistic.organization_name
+                %td= statistic.organization_code
+                %td
+                  %span= statistic.options[:basic_package]
+                  = subscription_diff_content_for(statistic.options[:basic_package_diff])
+                %td
+                  %span= statistic.options[:mail_package]
+                  = subscription_diff_content_for(statistic.options[:mail_package_diff])
+                %td
+                  %span= statistic.options[:scan_box_package]
+                  = subscription_diff_content_for(statistic.options[:scan_box_package_diff])
+                %td
+                  %span= statistic.options[:retriever_package]
+                  = subscription_diff_content_for(statistic.options[:retriever_package_diff])
+                %td
+                  %span= statistic.options[:mini_package]
+                  = subscription_diff_content_for(statistic.options[:mini_package_diff])
+                %td
+                  %span= statistic.options[:micro_package]
+                  = subscription_diff_content_for(statistic.options[:micro_package_diff])
+                %td
+                  %span= statistic.options[:annual_package]
+                  = subscription_diff_content_for(statistic.options[:annual_package_diff])
+                %td= statistic.consumption[:upload]
+                %td= statistic.consumption[:scan]
+                %td= statistic.consumption[:dematbox_scan]
+                %td= statistic.consumption[:retriever]
+                %td= statistic.customers.size
+                %td
+                  = subscription_customers_popover_content_for(statistic.new_customers, 'positive')
+                %td
+                  = subscription_customers_popover_content_for(statistic.closed_customers, 'negative')
             %tr
-              %td= I18n.l(statistic.month, format: "%b%y").titleize
-              %td= statistic.organization_name
-              %td= statistic.organization_code
-              %td
-                %span= statistic.options[:basic_package]
-                = subscription_diff_content_for(statistic.options[:basic_package_diff])
-              %td
-                %span= statistic.options[:mail_package]
-                = subscription_diff_content_for(statistic.options[:mail_package_diff])
-              %td
-                %span= statistic.options[:scan_box_package]
-                = subscription_diff_content_for(statistic.options[:scan_box_package_diff])
-              %td
-                %span= statistic.options[:retriever_package]
-                = subscription_diff_content_for(statistic.options[:retriever_package_diff])
-              %td
-                %span= statistic.options[:mini_package]
-                = subscription_diff_content_for(statistic.options[:mini_package_diff])
-              %td
-                %span= statistic.options[:micro_package]
-                = subscription_diff_content_for(statistic.options[:micro_package_diff])
-              %td
-                %span= statistic.options[:annual_package]
-                = subscription_diff_content_for(statistic.options[:annual_package_diff])
-              %td= statistic.consumption[:upload]
-              %td= statistic.consumption[:scan]
-              %td= statistic.consumption[:dematbox_scan]
-              %td= statistic.consumption[:retriever]
-              %td= statistic.customers.size
-              %td
-                = subscription_customers_popover_content_for(statistic.new_customers, 'positive')
-              %td
-                = subscription_customers_popover_content_for(statistic.closed_customers, 'negative')
-          %tr
-            %td.total_footer -
-            %td.total_footer -
-            %td.total_footer -
-            %td.total_footer
-              %span= @statistics_total[:basic_package]
-              = subscription_diff_content_for(@statistics_total[:basic_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:mail_package]
-              = subscription_diff_content_for(@statistics_total[:mail_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:scan_box_package]
-              = subscription_diff_content_for(@statistics_total[:scan_box_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:retriever_package]
-              = subscription_diff_content_for(@statistics_total[:retriever_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:mini_package]
-              = subscription_diff_content_for(@statistics_total[:mini_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:micro_package]
-              = subscription_diff_content_for(@statistics_total[:micro_package_diff])
-            %td.total_footer
-              %span= @statistics_total[:annual_package]
-              = subscription_diff_content_for(@statistics_total[:annual_package_diff])
-            %td.total_footer= @statistics_total[:upload]
-            %td.total_footer= @statistics_total[:scan]
-            %td.total_footer= @statistics_total[:dematbox_scan]
-            %td.total_footer= @statistics_total[:retriever]
-            %td.total_footer= @statistics_total[:customers]
-            %td.total_footer
-              %span{ class: ("positive" if @statistics_total[:new_customers] > 0) }= @statistics_total[:new_customers]
-            %td.total_footer
-              %span{ class: ("negative" if @statistics_total[:closed_customers] > 0) }= @statistics_total[:closed_customers]
-
-  .row
-    .col-12
-      = render partial: 'shared/list_options', locals: { collection: @statistics }
+              %td.total_footer -
+              %td.total_footer -
+              %td.total_footer -
+              %td.total_footer
+                %span= @statistics_total[:basic_package]
+                = subscription_diff_content_for(@statistics_total[:basic_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:mail_package]
+                = subscription_diff_content_for(@statistics_total[:mail_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:scan_box_package]
+                = subscription_diff_content_for(@statistics_total[:scan_box_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:retriever_package]
+                = subscription_diff_content_for(@statistics_total[:retriever_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:mini_package]
+                = subscription_diff_content_for(@statistics_total[:mini_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:micro_package]
+                = subscription_diff_content_for(@statistics_total[:micro_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:annual_package]
+                = subscription_diff_content_for(@statistics_total[:annual_package_diff])
+              %td.total_footer= @statistics_total[:upload]
+              %td.total_footer= @statistics_total[:scan]
+              %td.total_footer= @statistics_total[:dematbox_scan]
+              %td.total_footer= @statistics_total[:retriever]
+              %td.total_footer= @statistics_total[:customers]
+              %td.total_footer
+                %span{ class: ("positive" if @statistics_total[:new_customers] > 0) }= @statistics_total[:new_customers]
+              %td.total_footer
+                %span{ class: ("negative" if @statistics_total[:closed_customers] > 0) }= @statistics_total[:closed_customers]
+        %br
+        .row
+          .col-12
+            = render partial: 'shared/list_options', locals: { collection: @statistics }
 
   #showAccounts.modal.hide.fade
     .modal-header

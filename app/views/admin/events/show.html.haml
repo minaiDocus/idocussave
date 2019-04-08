@@ -1,7 +1,7 @@
 = render 'account_book_type' if @event.target_type == 'account_book_type/user'
 
 %table.table.table-striped.table-condensed.panel
-  %tr.bg-brown.text-white
+  %tr
     %th Adresse IP
     %td= @event.ip_address
   - if @event.target_type == AccountBookType.to_s.underscore

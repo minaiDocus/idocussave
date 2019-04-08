@@ -1,5 +1,5 @@
 .card.retractable-filter
-  = form_tag admin_users_path, method: :get, class: 'form-filter' do
+  = form_tag admin_orders_path, method: :get, class: 'form-filter' do
     .card-header.clearfix
       .float-left
         %h3 Filtres
@@ -36,6 +36,7 @@
           = label_tag 'order_contains[state]', t('activerecord.models.order.attributes.state')
           = select_tag 'order_contains[state]', options_for_select([["En attente", 'pending'],['Confirmé', 'confirmed'], ['Annulée', 'cancelled']], (params[:order_contains][:state] rescue '')), include_blank: true, class: 'form-control'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_orders_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_orders_path, class: 'btn'

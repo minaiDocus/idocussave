@@ -1,10 +1,13 @@
 #news.new
-  = render partial: 'navigation'
+  .row
+    .col-12
+      .panel
+        = render partial: 'navigation'
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12
       %h3 Créer une annonce
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12
       = render partial: 'form'

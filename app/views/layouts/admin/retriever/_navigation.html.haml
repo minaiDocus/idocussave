@@ -1,16 +1,16 @@
-.navbar
-  .navbar-inner
-    %ul.nav
-      %li.dropdown
-        = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
-          Automates
-          %b.caret
-        %ul.dropdown-menu
-          %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'index') }
-            = link_to 'Automates de récupération', admin_retrievers_path
-          %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'fetcher') }
-            = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path
-      %li{ class: ('active' if controller_name == 'new_provider_requests') }
-        = link_to 'Demandes', admin_new_provider_requests_path
-      %li{ class: ('active' if controller_name == 'retriever_services') }
-        = link_to 'Services', admin_retriever_services_path
+%ul.nav
+  %li.dropdown
+    = link_to '#', class: 'dropdown-toggle btn btn-outline-secondary', data: { toggle: 'dropdown' } do
+      Automates
+      %b.caret
+    %ul.dropdown-menu
+      %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'index') }
+        = link_to 'Automates de récupération', admin_retrievers_path, class: 'dropdown-item'
+      %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'fetcher') }
+        = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
+  &nbsp;
+  %li{ class: ('active' if controller_name == 'new_provider_requests') }
+    = link_to 'Demandes', admin_new_provider_requests_path, class: 'btn btn-outline-secondary'
+  &nbsp;
+  %li{ class: ('active' if controller_name == 'retriever_services') }
+    = link_to 'Services', admin_retriever_services_path, class: 'btn btn-outline-secondary'

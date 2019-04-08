@@ -200,6 +200,9 @@ GEM
     execjs (2.7.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
+    factory_bot_rails (5.0.1)
+      factory_bot (~> 5.0.0)
+      railties (>= 4.2.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.10.0)
@@ -628,7 +631,7 @@ DEPENDENCIES
   dropbox_api
   eco
   elastic-apm
-  factory_bot
+  factory_bot_rails
   ftpd
   gio2
   gobject-introspection

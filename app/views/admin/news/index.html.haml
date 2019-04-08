@@ -1,18 +1,23 @@
 #news
-  = render partial: 'navigation'
+  .row
+    .col-12
+      .panel
+        = render partial: 'navigation'
 
   .row
-    .col-md-12
-      .box.clearfix
+    .col-12
+      .panel.clearfix
         .float-left
           %h3
             News
             %span.badge.badge-info= @news.total_count
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @news }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @news }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -33,10 +38,15 @@
                   - if news.published_at
                     = l(news.published_at)
                   - else
-                    = link_to 'Publier maintenant', publish_admin_news_path(news), data: { method: 'POST', confirm: t('actions.confirm') }, class: 'btn btn-mini'
-                %td
-                  = icon_link_to admin_news_path(news), { icon: 'eye-open' }
-                  = icon_link_to edit_admin_news_path(news), { icon: 'edit' }
-                  = icon_link_to admin_news_path(news), { icon: 'remove' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }
-      = render partial: 'shared/list_options', locals: { collection: @news }
+                    = link_to 'Publier maintenant', publish_admin_news_path(news), data: { method: 'POST', confirm: t('actions.confirm') }, class: 'btn btn-outline-secondary'
+                %td.text-center
+                  = icon_link_to admin_news_path(news), { icon: 'eye' }
+                  &nbsp;
+                  = icon_link_to edit_admin_news_path(news), { icon: 'pencil' }
+                  &nbsp;
+                  = icon_link_to admin_news_path(news), { icon: 'trash' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @news }
     = render partial: 'sidebar'

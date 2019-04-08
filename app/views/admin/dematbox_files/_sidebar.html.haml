@@ -32,6 +32,7 @@
           = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
           = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true, class: 'form-control'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), class: 'btn btn-primary'
-          = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), class: 'btn btn-primary'
+            = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'

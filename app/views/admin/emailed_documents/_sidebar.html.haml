@@ -37,6 +37,7 @@
           = label_tag 'emailed_document_contains[subject]', t('activerecord.models.email.attributes.subject')
           = text_field_tag 'emailed_document_contains[subject]', (params[:emailed_document_contains][:subject] rescue ''), class: 'form-control'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_emailed_documents_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_emailed_documents_path, class: 'btn'

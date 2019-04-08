@@ -48,6 +48,7 @@
               %span.input-group-text= glyphicon('calendar')
             = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_pre_assignment_blocked_duplicates_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_pre_assignment_blocked_duplicates_path, class: 'btn'

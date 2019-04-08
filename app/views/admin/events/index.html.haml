@@ -63,11 +63,11 @@
                   = link_to t('filters.reset'), admin_events_path, class: 'btn'
 
   .row
-    .col-12
-      = render partial: 'shared/list_options', locals: { collection: @events }
-  .row
     .col-8
-      %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
+      .row
+        .col.mb-2
+          = render partial: 'shared/list_options', locals: { collection: @events }
+      %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
         %thead
           %tr.bg-brown.text-white
             %th.number=      sortable :id,          'ID'
@@ -86,11 +86,12 @@
               %td.do-show=             event_presenter.action
               %td.do-show=             event_presenter.target_type
               %td.do-show.target_name= event_presenter.target_name
-    .col-4.show.margin1top.margin0bottom
+      %br
+      .row
+        .col.mb-2
+          = render partial: 'shared/list_options', locals: { collection: @events }
+    .col-4.show
       .panel
         %h4 Détails
         %p.margin0bottom
           Cliquer sur une ligne du tableau pour en afficher les détails ici.
-  .row
-    .col-12
-      = render partial: 'shared/list_options', locals: { collection: @events }

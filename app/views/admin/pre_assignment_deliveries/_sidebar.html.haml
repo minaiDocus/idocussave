@@ -52,6 +52,7 @@
               %span.input-group-text= glyphicon('calendar')
             = text_field_tag 'pre_assignment_delivery_contains[updated_at][<=]', (params[:pre_assignment_delivery_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_pre_assignment_deliveries_path(software: params[:software]), class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_pre_assignment_deliveries_path(software: params[:software]), class: 'btn'

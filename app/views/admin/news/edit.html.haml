@@ -1,10 +1,14 @@
 #news.edit
-  = render partial: 'navigation'
+  .row
+    .col
+      .panel
+        = render partial: 'navigation'
 
   .row
-    .col-12.panel
-      %h3 Edition de l'annonce : #{@news.title}
+    .col-12
+      .panel
+        %h3 Edition de l'annonce : #{@news.title}
 
   .row
-    .col-12.panel
+    .col-12
       = render partial: 'form'

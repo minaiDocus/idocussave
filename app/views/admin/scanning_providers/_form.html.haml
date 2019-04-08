@@ -3,10 +3,10 @@
   = f.input :code, label: t('activerecord.models.scanning_provider.attributes.code')
   = f.input :is_default, as: :boolean, label: t('activerecord.models.scanning_provider.attributes.is_default')
   %fieldset
-    %legend Adresses
+    %u Adresses
     .row
       = f.fields_for :addresses do |address|
-        .col-4
+        .col.panel
           = address.input :first_name,   label: t('activerecord.models.address.attributes.first_name')
           = address.input :last_name,    label: t('activerecord.models.address.attributes.last_name')
           = address.input :company,      label: t('activerecord.models.address.attributes.company')
@@ -16,14 +16,17 @@
           = address.input :city,         label: t('activerecord.models.address.attributes.city')
           = address.input :phone,        label: t('activerecord.models.address.attributes.phone')
           = address.input :phone_mobile, label: t('activerecord.models.address.attributes.phone_mobile')
-          .form-actions
-            = address.link_to_remove "Supprimer l'adresse", class: 'btn'
-      = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn'
-  %fieldset
-    %legend Assignation
+
+          = address.link_to_remove "Supprimer l'adresse", class: 'btn btn-outline-danger mb-4'
+  = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn btn-outline-dark'
+  %fieldset.mt-5
+    %u Assignation
     = f.input :customer_tokens,                                                                                             |
       input_html: { data: { pre: @scanning_provider.customers.order(code: :asc).map{ |e| { id: e.id.to_s, name: e.code } }.to_json } }, |
       label: t('activerecord.models.scanning_provider.attributes.customers')
+
+  %hr
+
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), admin_scanning_providers_path, class: 'btn'

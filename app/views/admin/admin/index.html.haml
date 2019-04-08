@@ -3,41 +3,45 @@
     .col-8
       .row
         .col
-          %h3 Flux de traitement
+          .panel
+            %h3 Flux de traitement
+
       %hr
+
       .row
         .col-3
-          #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
-            %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
-              %span OCR
-              %span.float-right.badge.badge-success -
-            %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
-              %span Regroupement
-              %span.float-right.badge -
-            %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
-              %span Regroupement
-              %span.float-right.badge.badge-success -
-            %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
-              %span Publication
-              %span.float-right.badge.badge-success -
-            %a#v-currently_being_delivered_packs.nav-link{"aria-controls": "v-currently_being_delivered_packs", "aria-selected": "false", "data-toggle": "pill", href: "#v-currently_being_delivered_packs", role: "tab"}
-              %span Livraison
-              %span.float-right.badge.badge-success -
-            %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
-              %span Livraison
-              %span.float-right.badge.badge-important -
-            %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
-              %span Pré-affectation
-              %span.float-right.badge -
-            %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_pre_assignments", role: "tab"}
-              %span Pré-affectation
-              %span.float-right.badge.badge-success -
-            %a#v-reports_delivery.nav-link{"aria-controls": "v-reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#reports_delivery", role: "tab"}
-              %span Livr. Pré-aff.
-              %span.float-right.badge.badge-success -
-            %a#v-failed_reports_delivery.nav-link{"aria-controls": "v-failed_reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_reports_delivery", role: "tab"}
-              %span Livr. Pré-aff.
-              %span.float-right.badge.badge-important -
+          .panel
+            #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
+              %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
+                %span OCR
+                %span.float-right.badge.badge-success -
+              %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
+                %span Regroupement
+                %span.float-right.badge -
+              %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
+                %span Regroupement
+                %span.float-right.badge.badge-success -
+              %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
+                %span Publication
+                %span.float-right.badge.badge-success -
+              %a#v-currently_being_delivered_packs.nav-link{"aria-controls": "v-currently_being_delivered_packs", "aria-selected": "false", "data-toggle": "pill", href: "#v-currently_being_delivered_packs", role: "tab"}
+                %span Livraison
+                %span.float-right.badge.badge-success -
+              %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
+                %span Livraison
+                %span.float-right.badge.badge-important -
+              %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
+                %span Pré-affectation
+                %span.float-right.badge -
+              %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_pre_assignments", role: "tab"}
+                %span Pré-affectation
+                %span.float-right.badge.badge-success -
+              %a#v-reports_delivery.nav-link{"aria-controls": "v-reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#reports_delivery", role: "tab"}
+                %span Livr. Pré-aff.
+                %span.float-right.badge.badge-success -
+              %a#v-failed_reports_delivery.nav-link{"aria-controls": "v-failed_reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_reports_delivery", role: "tab"}
+                %span Livr. Pré-aff.
+                %span.float-right.badge.badge-important -
         .col-9
           #v-pills-tabContent.tab-content
             #ocr_needed_temp_packs.tab-pane
