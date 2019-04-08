@@ -1,13 +1,12 @@
 #mobile_reporting
   .row
     .col-12
-      = render 'layouts/admin/statistics/navigation'
-  .row
-    .col-12
-      %h3.margin1top.margin1bottom Statistiques d'utilisation de l'application mobile
+      .panel
+        = render 'layouts/admin/statistics/navigation'
   .row
     .col-12
       .filter.panel.margin1top
+        %h3.margin1top.margin1bottom Statistiques d'utilisation de l'application mobile
         = form_tag admin_mobile_reporting_index_path, method: :get, class: 'form form-vertical margin0bottom' do
           %table.table.table-condensed.margin0bottom
             %thead
@@ -31,8 +30,8 @@
         = "Statistique du mois de : #{month.first} #{@year_params}"
   .row
     .col-8
-      .boxChart
-        %h3 UTILISATEURS APPLICATION MOBILE
+      .panel
+        %h3.text-center UTILISATEURS APPLICATION MOBILE
         .row
           .col-6
             #usersLoading.blink Chargement en cours...
@@ -76,8 +75,8 @@
                       %strong#uploaderUsersCount 0
                 .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
     .col-4
-      .boxChart
-        %h3 TELEVERSEMENT DE DOCUMENTS
+      .panel
+        %h3.text-center TELEVERSEMENT DE DOCUMENTS
         #documentsLoading.blink Chargement en cours...
         %canvas.chartContainer#chartDocumentsContainer
         .legends

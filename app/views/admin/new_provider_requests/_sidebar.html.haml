@@ -71,6 +71,7 @@
               %span.input-group-text= glyphicon('calendar')
             = text_field_tag 'new_provider_request_contains[processing_at][<=]', (params[:new_provider_request_contains][:processing_at]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_new_provider_requests_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_new_provider_requests_path, class: 'btn'

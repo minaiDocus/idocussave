@@ -175,7 +175,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_bot'
+  gem 'factory_bot_rails'
   gem 'simplecov', require: false
   gem 'capybara'
   gem 'guard-rspec', require: false

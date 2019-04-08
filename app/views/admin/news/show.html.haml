@@ -1,8 +1,11 @@
 #news.show
-  = render partial: 'navigation'
+  .row
+    .col
+      .panel
+        = render partial: 'navigation'
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       .pull-left
         %h2 Annonce : #{@news.title}
       .pull-right
@@ -11,8 +14,8 @@
         = link_to icon_edit + ' ' + t('actions.edit'), edit_admin_news_path(@news), { class: 'btn' }
         = link_to t('actions.return'), admin_news_index_path, class: 'btn'
 
-  .row-fluid
-    .span4
+  .row
+    .col-4
       %table.table.table-condensed.table-bordered.table-striped
         %thead
           %tr
@@ -38,4 +41,4 @@
           %tr
             %th= t('activerecord.models.news.attributes.url')
             %td= link_to @news.url, @news.url, target: '_blank'
-    .span8.panel!= @news.body
+    .col-8.panel!= @news.body

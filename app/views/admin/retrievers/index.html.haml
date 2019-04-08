@@ -1,21 +1,22 @@
 #retrievers
   .row
     .col-12
-      = render 'layouts/admin/retriever/navigation'
+      .panel
+        = render 'layouts/admin/retriever/navigation'
 
-  .row.marginbottom
-    .col-12.margin1bottom
+  .row
+    .col-12
       %h3 Automates de récupérations
 
   .row
     .col-12
-      .filter.panel.margin1top
+      .filter.panel
         = form_tag admin_retrievers_path, method: :get, class: 'form form-horizontal margin0bottom' do
           = hidden_field_tag :direction, sort_direction
           = hidden_field_tag :sort, sort_column
           = hidden_field_tag :per_page, per_page
 
-          %table.table.table-condensed.margin0bottom
+          %table.table.table-condensed
             %thead
               %tr
                 %th Total
@@ -76,47 +77,51 @@
 
   .row
     .col-12
-      .row
-        .col-6
-          = render partial: 'shared/list_options', locals: { collection: @retrievers }
-        .col-6.alignright.padding1top
-          = link_to admin_retrievers_path do
-            %span.badge Tous
-          = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
-            %span.badge Récent
-          = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
-            %span.badge.badge-success OK
-          = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
-            %span.badge Sélection
-          = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
-            %span.badge.badge-important Erreur
-      .row
-        .col-12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
-              %tr.bg-brown.text-white
-                %th= sortable :created_at,   'Créé le'
-                %th= sortable :updated_at,   'Modifié le'
-                %th= sortable :user_id,      t('activerecord.models.user.name')
-                %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
-                %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
-                %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
-                %th Journal
-                %th= t('activerecord.models.retriever.attributes.state')
-                %th= sortable :is_sane,      t('activerecord.models.retriever.attributes.is_sane')
-                %th Action
-            %tbody
-              - @retrievers.each do |retriever|
-                - present retriever do |retriever_presenter|
-                  %tr
-                    %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
-                    %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
-                    %td= link_to retriever.user.code, [:admin, retriever.user]
-                    %td= retriever_presenter.capabilities
-                    %td= retriever_presenter.service_name
-                    %td= retriever_presenter.name
-                    %td= retriever_presenter.journal.try(:name) || '-'
-                    %td!= retriever_presenter.state(:admin)
-                    %td= retriever.is_sane ? t('yes_value') : t('no_value')
-                    %td= link_to icon(icon: 'eye-open'), account_retrievers_path(user_code: retriever.user.code)
-      = render partial: 'shared/list_options', locals: { collection: @retrievers }
+      .panel
+        .row
+          .col-6
+            = render partial: 'shared/list_options', locals: { collection: @retrievers }
+          .col-6.alignright.padding1top
+            = link_to admin_retrievers_path do
+              %span.badge Tous
+            = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
+              %span.badge Récent
+            = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
+              %span.badge.badge-success OK
+            = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
+              %span.badge Sélection
+            = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
+              %span.badge.badge-important Erreur
+        .row
+          .col-12
+            %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+              %thead
+                %tr.bg-brown.text-white
+                  %th= sortable :created_at,   'Créé le'
+                  %th= sortable :updated_at,   'Modifié le'
+                  %th= sortable :user_id,      t('activerecord.models.user.name')
+                  %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
+                  %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
+                  %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
+                  %th Journal
+                  %th= t('activerecord.models.retriever.attributes.state')
+                  %th= sortable :is_sane,      t('activerecord.models.retriever.attributes.is_sane')
+                  %th Action
+              %tbody
+                - @retrievers.each do |retriever|
+                  - present retriever do |retriever_presenter|
+                    %tr
+                      %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+                      %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
+                      %td= link_to retriever.user.code, [:admin, retriever.user]
+                      %td= retriever_presenter.capabilities
+                      %td= retriever_presenter.service_name
+                      %td= retriever_presenter.name
+                      %td= retriever_presenter.journal.try(:name) || '-'
+                      %td!= retriever_presenter.state(:admin)
+                      %td= retriever.is_sane ? t('yes_value') : t('no_value')
+                      %td.text-center= icon_link_to account_retrievers_path(user_code: retriever.user.code), { icon: 'eye' }
+        %br
+        .row
+          .col
+            = render partial: 'shared/list_options', locals: { collection: @retrievers }

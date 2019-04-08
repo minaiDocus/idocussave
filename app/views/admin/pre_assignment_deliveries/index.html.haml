@@ -1,16 +1,18 @@
 #pre_assignment_deliveries
   .row
-    .col-md-12
-      .box.clearfix
+    .col-12
+      .panel.clearfix
         .float-left
           %h3
             Liste des livraisons de pré-affectation vers #{@pre_assignment_deliveries_software}
             %span.badge.badge-info= @pre_assignment_deliveries_count
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -34,6 +36,9 @@
                 %td= delivery.is_auto ? t('yes_value') : t('no_value')
                 %td= pre_assignment_delivery_state delivery
                 %td= delivery.error_message.to_s[0..55]
-                %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery), title: 'Afficher les détails'
-      = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
+                %td.text-center= link_to glyphicon('eye'), admin_pre_assignment_delivery_path(delivery), title: 'Afficher les détails'
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
     = render partial: 'sidebar'

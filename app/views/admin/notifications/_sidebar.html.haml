@@ -38,6 +38,7 @@
           = select_tag 'notification_contains[is_read]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:notification_contains][:is_read] rescue '')), include_blank: true, class: 'form-control'
 
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_notifications_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_notifications_path, class: 'btn'

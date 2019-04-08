@@ -1,11 +1,14 @@
-.col-12
-  #scanning_provider.new
-    = render partial: 'navigation'
+#scanning_provider.new
+  .row
+    .col-12
+      .panel
+        = render partial: 'navigation'
 
-    .row
-      .col-12.panel
-        %h3 Nouvel atelier
+  .row
+    .col-12
+      %h3 Nouvel atelier
 
-    .row
-      .col-12.panel
+  .row
+    .col-12
+      .panel
         = render partial: 'form'

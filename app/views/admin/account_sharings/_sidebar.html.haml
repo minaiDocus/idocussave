@@ -15,12 +15,12 @@
           .input-group
             .input-group-prepend
               %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue ''), class: 'form-control'
+            = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
           &nbsp;
           .input-group
             .input-group-prepend
               %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue ''), class: 'form-control'
+            = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
         .form-group
           = label_tag 'account_sharing_contains[account]', 'Dossier'
           = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'form-control'
@@ -31,6 +31,7 @@
           = label_tag 'account_sharing_contains[is_approved]', 'Etat'
           = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true, class: 'form-control'
       .card-footer
-        .form-actions
-          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-          = link_to t('filters.reset'), admin_account_sharings_path, class: 'btn'
+        .row
+          .col
+            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+            = link_to t('filters.reset'), admin_account_sharings_path, class: 'btn'

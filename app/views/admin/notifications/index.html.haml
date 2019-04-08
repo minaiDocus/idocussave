@@ -1,7 +1,7 @@
 #notifications
   .row
     .col-md-12
-      .box.clearfix
+      .panel.clearfix
         .float-left
           %h3
             Liste des notifications utilisateurs
@@ -9,8 +9,10 @@
 
   .row.retractable.with-filter
     .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @notifications }
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @notifications }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -29,5 +31,8 @@
                 %td!= markdown_render notification.message
                 %td= notification.is_sent ? icon_ok : icon_not_ok
                 %td= notification.is_read ? icon_ok : icon_not_ok
-      = render partial: 'shared/list_options', locals: { collection: @notifications }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @notifications }
     = render partial: 'sidebar'

@@ -1,14 +1,17 @@
 #notification_settings
   .row
     .col-12
-      %h3 Paramétrage des notifications
+      .panel
+        %h3 Paramétrage des notifications
 
-  .row.margin2top
+  .row
     .col-12
-      .pull-left.margin1bottom
-        %h4 Erreur au niveau de la plateforme
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_error_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      .row
+        .col
+          %h4 Erreur au niveau de la plateforme
+        .col
+          .float-right.margin1bottom
+            = link_to icon_edit + 'Editer', edit_error_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description
@@ -23,13 +26,15 @@
         %tr
           %th Adresse mail à notifier (#{Settings.first.notify_errors_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_errors_to)
-
-  .row.margin1top
+  %hr
+  .row
     .col-12
-      .pull-left.margin1bottom
-        %h4 Commande de Dematbox
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      .row
+        .col
+          %h4 Commande de Dematbox
+        .col
+          .float-right.margin1bottom
+            = link_to icon_edit + 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description
@@ -37,13 +42,15 @@
         %tr
           %th Adresse mail à notifier (#{Settings.first.notify_dematbox_order_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_dematbox_order_to)
-
-  .row.margin1top
+  %hr
+  .row
     .col-12
-      .pull-left.margin1bottom
-        %h4 Commande de Kit envoi courrier
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_paper_set_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      .row
+        .col
+          %h4 Commande de Kit envoi courrier
+        .col
+          .float-right.margin1bottom
+            = link_to icon_edit + 'Editer', edit_paper_set_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description
@@ -51,13 +58,15 @@
         %tr
           %th Adresse mail à notifier (#{Settings.first.notify_paper_set_order_to.try(:size) || 0})
           %td!= notification_addresses(Settings.first.notify_paper_set_order_to)
-
-  .row.margin1top
+  %hr
+  .row
     .col-12
-      .pull-left.margin1bottom
-        %h4 Livraison de pré-affectation vers iBiza
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      .row
+        .col
+          %h4 Livraison de pré-affectation vers iBiza
+        .col
+          .float-right.margin1bottom
+            = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description
@@ -68,13 +77,15 @@
         %tr
           %th Type
           %td= ibiza_notification_type
-
-  .row.margin1top
+  %hr
+  .row
     .col-12
-      .pull-left.margin1bottom
-        %h4 Numérisation des documents
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_scans_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      .row
+        .col
+          %h4 Numérisation des documents
+        .col
+          .float-right.margin1bottom
+            = link_to icon_edit + 'Editer', edit_scans_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description

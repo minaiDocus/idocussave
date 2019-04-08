@@ -1,18 +1,18 @@
-/* */
-
 #pre_assignment_blocked_duplicates
   .row
     .col-md-12
-      .box.clearfix
+      .panel.clearfix
         .float-left
           %h3
             Liste des doublons de pré-affectation
             %span.badge.badge-info= @duplicates.total_count
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @duplicates }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @duplicates }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -71,7 +71,10 @@
                   %b Doublon
                   %br
                   Original
-        = render partial: 'shared/list_options', locals: { collection: @duplicates }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @duplicates }
     = render partial: 'sidebar'
 
   #showPieces.modal.hide.fade

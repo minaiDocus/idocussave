@@ -1,16 +1,18 @@
 #orders
   .row
-    .col-md-12
-      .box.clearfix
+    .col-12
+      .panel.clearfix
         .float-left
           %h3
             Liste des commandes de scanner iDocus'Box et de Kit envoi courrier
             %span.badge.badge-info= @orders_count
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @orders }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @orders }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -43,5 +45,8 @@
                   %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
                 %td= order.address.try(:long_info)
                 %td= Order.state_machine.states[order.state].human_name
-        = render partial: 'shared/list_options', locals: { collection: @orders }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @orders }
     = render partial: 'sidebar'

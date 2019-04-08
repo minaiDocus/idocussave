@@ -1,16 +1,18 @@
 #invoices
   .row
-    .col-md-12
-      .box.clearfix
+    .col-12
+      .panel.clearfix
         .float-left
           %h3
             Liste des factures
             %span.badge.badge-info= @invoices_count
 
   .row.retractable.with-filter
-    .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @invoices }
+    .col-12
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @invoices }
         = form_tag download_admin_invoices_path do |f|
           %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
             %thead
@@ -40,10 +42,15 @@
                       = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
                   %td.actions
                     = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                    = icon_link_to admin_invoice_path(invoice), { icon: 'download' }, { target: '_blank' }
+                    = icon_link_to admin_invoice_path(invoice), { icon: 'data-transfer-download' }, { target: '_blank' }
           %br
-          = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
-          = render partial: 'shared/list_options', locals: { collection: @invoices }
+          .row
+            .col.mb-4
+              .float-right
+                = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
+              .float-left
+                = render partial: 'shared/list_options', locals: { collection: @invoices }
+
     = render partial: 'sidebar'
 
   #showInvoice.modal.hide.fade

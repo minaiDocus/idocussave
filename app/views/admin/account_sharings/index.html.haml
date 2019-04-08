@@ -1,7 +1,7 @@
 #account_sharings
   .row
     .col-md-12
-      .box.clearfix
+      .panel.clearfix
         .float-left
           %h3
             Liste des partages de compte
@@ -9,8 +9,10 @@
 
   .row.retractable.with-filter
     .col-md-12
-      .box
-        = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+      .panel
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @account_sharings }
         %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
@@ -29,5 +31,8 @@
                   - else
                     = link_to account_sharing.collaborator.info, account_organization_customer_path(account_sharing.collaborator.organization, account_sharing.collaborator)
                 %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
-      = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @account_sharings }
     = render partial: 'sidebar'
