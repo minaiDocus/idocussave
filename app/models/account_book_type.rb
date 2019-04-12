@@ -31,9 +31,9 @@ class AccountBookType < ApplicationRecord
   has_many  :expense_categories
   has_many  :retrievers, inverse_of: 'journal', foreign_key: :journal_id
 
-  belongs_to :user
-  belongs_to :organization
-  belongs_to :analytic_reference, inverse_of: :journals
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
+  belongs_to :analytic_reference, inverse_of: :journals, optional: true
 
 
   accepts_nested_attributes_for :expense_categories, allow_destroy: true

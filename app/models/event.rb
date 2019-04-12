@@ -2,8 +2,8 @@
 class Event < ApplicationRecord
   serialize :target_attributes
 
-  belongs_to :user
-  belongs_to :organization
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
   before_create :set_user_code
 

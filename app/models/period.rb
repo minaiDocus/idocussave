@@ -10,9 +10,9 @@ class Period < ApplicationRecord
   has_many :billings, class_name: 'PeriodBilling'
   has_many :documents, class_name: 'PeriodDocument'
   has_many :product_option_orders, as: :product_optionable
-  belongs_to :user
-  belongs_to :organization
-  belongs_to :subscription
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
+  belongs_to :subscription, optional: true
 
   validates_inclusion_of :duration, in: [1, 3, 12]
 

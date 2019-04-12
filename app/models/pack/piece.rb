@@ -16,7 +16,7 @@ class Pack::Piece < ApplicationRecord
   belongs_to :user
   belongs_to :pack, inverse_of: :pieces
   belongs_to :organization
-  belongs_to :analytic_reference, inverse_of: :pieces
+  belongs_to :analytic_reference, inverse_of: :pieces, optional: true
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',

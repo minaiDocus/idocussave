@@ -5,9 +5,9 @@ class Operation < ApplicationRecord
   belongs_to :organization
   belongs_to :user
   belongs_to :bank_account
-  belongs_to :pack
-  belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations
-  belongs_to :forced_processing_by_user, class_name: 'User',   inverse_of: :forced_processing_operations
+  belongs_to :pack, optional: true
+  belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations, optional: true
+  belongs_to :forced_processing_by_user, class_name: 'User',   inverse_of: :forced_processing_operations, optional: true
   has_one :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :operation
 
   validates_presence_of :date, :label, :amount

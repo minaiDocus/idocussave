@@ -10,8 +10,8 @@ class Pack::Report < ApplicationRecord
 
 
   belongs_to :user
-  belongs_to :pack
-  belongs_to :document, class_name: 'PeriodDocument',           inverse_of: :report, foreign_key: :document_id
+  belongs_to :pack, optional: true
+  belongs_to :document, class_name: 'PeriodDocument', inverse_of: :report, foreign_key: :document_id, optional: true
   belongs_to :organization
 
   scope :delivered,                 -> { where.not(is_delivered_to: [nil, '']) }

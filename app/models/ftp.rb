@@ -1,6 +1,6 @@
 class Ftp < ApplicationRecord
-  belongs_to :organization
-  belongs_to :external_file_storage
+  belongs_to :organization, optional: true
+  belongs_to :external_file_storage, optional: true
 
   attr_encrypted :host,     random_iv: true
   attr_encrypted :port,     random_iv: true, type: :integer

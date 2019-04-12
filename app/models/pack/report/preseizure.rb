@@ -2,9 +2,9 @@ class Pack::Report::Preseizure < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   belongs_to :user,                                  inverse_of: :preseizures
-  belongs_to :piece,     class_name: 'Pack::Piece',  inverse_of: :preseizures
+  belongs_to :piece,     class_name: 'Pack::Piece',  inverse_of: :preseizures, optional: true
   belongs_to :report,    class_name: 'Pack::Report', inverse_of: :preseizures
-  belongs_to :operation, class_name: 'Operation',    inverse_of: :preseizure
+  belongs_to :operation, class_name: 'Operation',    inverse_of: :preseizure, optional: true
   belongs_to :organization,                          inverse_of: :preseizures
   has_one    :analytic_reference, through: :piece
 
@@ -16,7 +16,7 @@ class Pack::Report::Preseizure < ApplicationRecord
   has_and_belongs_to_many :pre_assignment_exports
 
   has_many :duplicates, class_name: 'Pack::Report::Preseizure', foreign_key: :similar_preseizure_id
-  belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure'
+  belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure', optional: true
 
   scope :locked,                        -> { where(is_locked: true) }
   scope :delivered,                     -> { where.not(is_delivered_to: [nil, '']) }
