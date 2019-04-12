@@ -264,6 +264,9 @@ $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").cli
     },
     success: function(data){
       logAfterAction();
+
+      refreshPreseizures(window.preseizuresSelected);
+
       if(data.error == '')
       {
         $('#preseizuresModals #editSelectedPreseizures').modal('hide');

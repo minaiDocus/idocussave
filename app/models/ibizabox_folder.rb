@@ -1,7 +1,7 @@
 class IbizaboxFolder < ApplicationRecord
 
-  belongs_to :user
-  belongs_to :journal, class_name: 'AccountBookType'
+  belongs_to :user, optional: true
+  belongs_to :journal, class_name: 'AccountBookType', optional: true
 
   has_many   :temp_documents
 

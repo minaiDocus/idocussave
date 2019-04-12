@@ -1,8 +1,8 @@
 class PaperProcess < ApplicationRecord
-  belongs_to :organization
-  belongs_to :user
-  belongs_to :period_document
-  belongs_to :order
+  belongs_to :organization, optional: true
+  belongs_to :user, optional: true
+  belongs_to :period_document, optional: true
+  belongs_to :order, optional: true
 
   self.inheritance_column = :_type_disabled
   after_save :update_order, if: proc { |e| e.type == 'kit' }

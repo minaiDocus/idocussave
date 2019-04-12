@@ -1,8 +1,8 @@
 class AccountSharing < ApplicationRecord
-  belongs_to :organization
-  belongs_to :collaborator,  class_name: 'User'
-  belongs_to :account,       class_name: 'User'
-  belongs_to :authorized_by, class_name: 'User'
+  belongs_to :organization, optional: true
+  belongs_to :collaborator,  class_name: 'User', optional: true
+  belongs_to :account,       class_name: 'User', optional: true
+  belongs_to :authorized_by, class_name: 'User', optional: true
 
   validates_presence_of :organization, :collaborator, :account
   validate :type_of_collaborator

@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Subscription < ApplicationRecord
-  belongs_to :user
-  belongs_to :organization
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
 
   has_many :periods

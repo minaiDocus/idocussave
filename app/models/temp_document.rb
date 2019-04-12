@@ -8,14 +8,14 @@ class TempDocument < ApplicationRecord
   serialize :metadata, Hash
 
   belongs_to :user
-  belongs_to :email
-  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
+  belongs_to :email, optional: true
+  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document, optional: true
   belongs_to :temp_pack
   belongs_to :organization
-  belongs_to :document_delivery
-  belongs_to :retriever
-  belongs_to :ibizabox_folder
-  belongs_to :analytic_reference
+  belongs_to :document_delivery, optional: true
+  belongs_to :retriever, optional: true
+  belongs_to :ibizabox_folder, optional: true
+  belongs_to :analytic_reference, optional: true
   has_many :notifiables, dependent: :destroy, as: :notifiable
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'

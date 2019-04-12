@@ -7,7 +7,7 @@ class Organization < ApplicationRecord
   validates_presence_of   :name, :code
   validates_uniqueness_of :name, :code
 
-  belongs_to :organization_group
+  belongs_to :organization_group, optional: true
   has_many :members
   has_many :admin_members, -> { admins }, class_name: 'Member'
   has_many :admins, through: :admin_members, source: :user

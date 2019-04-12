@@ -16,11 +16,11 @@ class Invoice < ApplicationRecord
   before_validation :set_number
 
 
-  belongs_to :organization
+  belongs_to :organization, optional: true
   # INFO : keeping those 3 relations for backward compatibility
-  belongs_to :user
-  belongs_to :period
-  belongs_to :subscription
+  belongs_to :user, optional: true
+  belongs_to :period, optional: true
+  belongs_to :subscription, optional: true
 
 
   def self.search(contains)

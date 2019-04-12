@@ -7,8 +7,8 @@ class Member < ApplicationRecord
 
   audited
 
-  belongs_to :organization
-  belongs_to :user
+  belongs_to :organization, optional: true
+  belongs_to :user, optional: true
   has_many :managed_users, class_name: 'User', inverse_of: :manager
   has_and_belongs_to_many :groups
   has_many :grouped_customers, -> { distinct }, through: :groups, source: :customers

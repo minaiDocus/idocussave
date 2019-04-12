@@ -7,9 +7,9 @@ class Order < ApplicationRecord
   has_one :paper_return_address, as: :locatable, class_name: 'Address'
   has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess'
 
-  belongs_to :user
-  belongs_to :period
-  belongs_to :organization
+  belongs_to :user, optional: true
+  belongs_to :period, optional: true
+  belongs_to :organization, optional: true
 
   validate :inclusion_of_paper_set_end_date,   if: proc { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date, if: proc { |o| o.paper_set? }

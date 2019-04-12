@@ -7,7 +7,7 @@ class TempPack < ApplicationRecord
 
   belongs_to :user
   belongs_to :organization
-  belongs_to :document_delivery
+  belongs_to :document_delivery, optional: true
 
 
 

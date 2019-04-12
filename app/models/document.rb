@@ -8,7 +8,7 @@ class Document < ApplicationRecord
 
   has_many :remote_files, as: :remotable, dependent: :destroy
 
-  belongs_to :pack
+  belongs_to :pack, optional: true
 
   has_attached_file :content,
                             styles: {
