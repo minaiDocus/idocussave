@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190305064104) do
+ActiveRecord::Schema.define(version: 20190413210925) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1940,7 +1940,7 @@ ActiveRecord::Schema.define(version: 20190305064104) do
     t.boolean  "is_new_password_needed",                   default: false
     t.boolean  "is_selection_needed",                      default: true
     t.string   "state",                      limit: 255
-    t.string   "error_message",              limit: 255
+    t.text     "error_message",              limit: 65535
     t.string   "budgea_state",               limit: 255
     t.text     "budgea_additionnal_fields",  limit: 65535
     t.text     "budgea_error_message",       limit: 65535
