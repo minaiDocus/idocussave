@@ -19,6 +19,8 @@ redis = { url: "redis://localhost:6379/#{database}" }
 
 $remote_lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new(redis)))
 
+Sidekiq::Extensions.enable_delay!
+
 Sidekiq.configure_server do |config|
   config.on(:startup) do
     Sidekiq.schedule = YAML.load_file(scheduler_config_file)
