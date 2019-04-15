@@ -19,7 +19,6 @@ describe DowngradeSubscription do
     subscription.is_scan_box_package_active     = true
     subscription.is_mail_package_active         = true
     subscription.is_mail_package_to_be_disabled = true
-    subscription.is_stamp_active                = true
     subscription.is_stamp_to_be_disabled        = false
     subscription.save
 
@@ -28,7 +27,5 @@ describe DowngradeSubscription do
     expect(subscription.is_scan_box_package_active).to     eq(true)
     expect(subscription.is_mail_package_active).to         eq(false)
     expect(subscription.is_mail_package_to_be_disabled).to eq(false)
-    expect(subscription.is_stamp_active).to                eq(false)
-    expect(subscription.is_stamp_to_be_disabled).to        eq(false)
   end
 end

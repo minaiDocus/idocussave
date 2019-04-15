@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190413210925) do
+ActiveRecord::Schema.define(version: 20190415064821) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -2156,7 +2156,6 @@ ActiveRecord::Schema.define(version: 20190413210925) do
     t.boolean  "is_annual_package_active",                        default: false, null: false
     t.integer  "number_of_journals",                  limit: 4,   default: 5,     null: false
     t.boolean  "is_pre_assignment_active",                        default: true,  null: false
-    t.boolean  "is_stamp_active",                                 default: false, null: false
     t.boolean  "is_micro_package_to_be_disabled"
     t.boolean  "is_mini_package_to_be_disabled"
     t.boolean  "is_basic_package_to_be_disabled"
@@ -2164,7 +2163,6 @@ ActiveRecord::Schema.define(version: 20190413210925) do
     t.boolean  "is_scan_box_package_to_be_disabled"
     t.boolean  "is_retriever_package_to_be_disabled"
     t.boolean  "is_pre_assignment_to_be_disabled"
-    t.boolean  "is_stamp_to_be_disabled"
     t.date     "start_date"
     t.date     "end_date"
     t.integer  "max_sheets_authorized",               limit: 4,   default: 100,   null: false

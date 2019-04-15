@@ -72,7 +72,6 @@ class Subscription < ActiveRecord::Base
 
 
   def downgrade
-    self.is_stamp_active             = false if is_stamp_to_be_disabled
     self.is_mail_package_active      = false if is_mail_package_to_be_disabled
     self.is_basic_package_active     = false if is_basic_package_to_be_disabled
     self.is_micro_package_active     = false if is_micro_package_to_be_disabled

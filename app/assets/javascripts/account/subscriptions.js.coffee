@@ -1,5 +1,5 @@
 update_form = ->
-  options = ['period_duration', 'number_of_journals', 'pre_assignment', 'stamp']
+  options = ['period_duration', 'number_of_journals', 'pre_assignment']
   selected_options = []
   
   $('.package input').each((e)->
@@ -17,7 +17,7 @@ update_form = ->
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
     lock_heavy_package()
   if $('#subscription_is_mail_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment', 'stamp'
+    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
     lock_heavy_package()
   if $('#subscription_is_scan_box_package_active').is(':checked')
     selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
@@ -111,12 +111,6 @@ update_warning = ->
     unless $('.pre_assignment_disable_warning').length > 0
       $('#subscription_is_pre_assignment_active_false').parent('label').parent('.choice').after('<div class="pre_assignment_disable_warning"><b class="label label-warning">'+to_be_disabled_text+'</b></div>')
 
-  if $('#subscription_is_stamp_active_true').is(':checked')
-    $('.stamp_disable_warning').remove()
-  else if $('#subscription_is_stamp_active_true').data('original-value') == 1 && !is_recently_created
-    unless $('.stamp_disable_warning').length > 0
-      $('#subscription_is_stamp_active_false').parent('label').parent('.choice').after('<div class="stamp_disable_warning"><b class="label label-warning">'+to_be_disabled_text+'</b></div>')
-
 lock_heavy_package = ->
   $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
   $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
@@ -133,7 +127,6 @@ update_price = ->
     'subscription':        [10,   30,   null],
     'pre_assignment':      [9,    15,   null],
     'return_paper':        [10,   10,   null],
-    'stamp':               [5,    5,    null],
     'retriever':           [5,    15,   null],
     'reduced_retriever':   [3,    9,    null],
     'annual_subscription': [null, null, 199],
@@ -164,7 +157,7 @@ update_price = ->
     if $('#subscription_is_basic_package_active').is(':checked')
       options.push 'subscription', 'subscription_plus', 'pre_assignment'
     if $('#subscription_is_mail_package_active').is(':checked')
-      options.push 'subscription', 'subscription_plus', 'pre_assignment', 'return_paper', 'stamp'
+      options.push 'subscription', 'subscription_plus', 'pre_assignment', 'return_paper'
     if $('#subscription_is_scan_box_package_active').is(':checked')
       options.push 'subscription', 'subscription_plus', 'pre_assignment'
     if $('#subscription_is_retriever_package_active').is(':checked')
@@ -177,10 +170,7 @@ update_price = ->
 
 
     for option in options
-      if option == 'stamp'
-        if $('#subscription_is_stamp_active_true').is(':checked')
-          selected_options.push 'stamp'
-      else if option == 'pre_assignment'
+      if option == 'pre_assignment'
         if $('#subscription_is_pre_assignment_active_true').is(':checked')
           selected_options.push 'pre_assignment'
       else

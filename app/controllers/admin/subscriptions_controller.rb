@@ -3,7 +3,6 @@ class Admin::SubscriptionsController < Admin::AdminController
   before_filter :load_accounts_ids
   # GET /admin/subscriptions
   def index
-    @stamp_count             = Rails.cache.fetch('admin_report_stamp_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_stamp_active:  true).count }
     @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mail_package_active:      true).count }
     @basic_package_count     = Rails.cache.fetch('admin_report_basic_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_basic_package_active:     true).count }
     @annual_package_count    = Rails.cache.fetch('admin_report_annual_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_annual_package_active:    true).count }
@@ -32,8 +31,6 @@ class Admin::SubscriptionsController < Admin::AdminController
     accounts = User.where(id: @accounts_ids).joins(:subscription)
 
     case params[:type]
-      when 'stamp_active'
-        data_accounts = Rails.cache.fetch('admin_report_stamp_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_stamp_active:  true)) }
       when 'mail_package'
         data_accounts = Rails.cache.fetch('admin_report_mail_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_mail_package_active: true)) }
       when 'basic_package'

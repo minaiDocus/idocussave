@@ -145,20 +145,6 @@ class UpdatePeriod
         option.price_in_cents_wo_vat = price
 
         selected_options << option
-
-        if @subscription.is_stamp_active
-          option = ProductOptionOrder.new
-
-          option.title    = 'Tamponnage du papier en sortie de numérisation'
-          option.name = 'mail_package-stamp'
-          option.duration = 0
-          option.quantity = 1
-          option.group_title = "iDo'Courrier - Option"
-          option.is_to_be_disabled     = @subscription.is_stamp_to_be_disabled
-          option.price_in_cents_wo_vat = package_options_price([:stamp], type)
-
-          selected_options << option
-        end
       end
 
       if @subscription.is_scan_box_package_active
@@ -361,7 +347,6 @@ class UpdatePeriod
   def prices_list
     @prices_list ||= {
       #standard prices
-      stamp:              [5,  5],
       retriever:          [5,  15],
       reduced_retriever:  [3, 9],
       subscription:       [10, 30],

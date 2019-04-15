@@ -106,17 +106,6 @@ class SubscriptionForm
       @subscription.is_pre_assignment_active = false
     end
 
-    if @subscription.is_mail_package_active
-      if @subscription.is_stamp_active && dont_apply_now
-        @subscription.is_stamp_to_be_disabled = params[:is_stamp_active] == 'false'
-      else
-        @subscription.is_stamp_active = params[:is_stamp_active] == 'true'
-        @subscription.is_stamp_to_be_disabled = false if @subscription.is_stamp_to_be_disabled
-      end
-    else
-      @subscription.is_stamp_active = false
-    end
-
     if @requester.is_admin
       _params = params.permit(
         { option_ids: [] },

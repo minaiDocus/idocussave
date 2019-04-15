@@ -45,7 +45,6 @@
             %th Total
             %th iDo'FacBanque
             %th Pré-saisie
-            %th Tamponnage du papier
         %tbody
           %tr
             %th Abonnés
@@ -58,7 +57,6 @@
             %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
             %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
             %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
-            %td= link_to @stamp_count, "#", class: 'do-showAccounts', title: "Tamponnage du papier", type: "stamp_active"
   .row-fluid
     .span12
       %h3 Reporting détaillés

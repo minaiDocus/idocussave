@@ -24,7 +24,6 @@ class DowngradeSubscription
     end
 
     if @subscription.is_mail_package_to_be_disabled
-      @subscription.is_stamp_active                = false
       @subscription.is_mail_package_active         = false
       @subscription.is_mail_package_to_be_disabled = false
     end
@@ -46,11 +45,6 @@ class DowngradeSubscription
     if @subscription.is_pre_assignment_to_be_disabled
       @subscription.is_pre_assignment_active         = false
       @subscription.is_pre_assignment_to_be_disabled = false
-    end
-
-    if @subscription.is_stamp_to_be_disabled
-      @subscription.is_stamp_active         = false
-      @subscription.is_stamp_to_be_disabled = false
     end
 
     @subscription.save
