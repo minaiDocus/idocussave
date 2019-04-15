@@ -35,7 +35,7 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/ftp_delivery.yml'
 )
 
-server 'my.idocus.com', user: 'idocus', roles: %w{app db web}
+server 'www.idocus.com', user: 'idocus', roles: %w{app db web}
 
 namespace :deploy do
   after :finished, :restart_passenger do
