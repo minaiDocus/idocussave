@@ -13,7 +13,7 @@
     .col-md-12.retractable-content
       .box
         = render partial: 'shared/list_options', locals: { collection: @duplicates }
-        = form_tag '/account/pre_assignment_blocked_duplicates/update_multiple', method: :post do
+        = form_tag '/account/pre_assignment_blocked_duplicates/update_multiple', method: :post, class: 'margin1bottom' do
           %table.table.table-striped.table-condensed.margin1top.margin1bottom.table-bordered-inner.table-detachable-head
             %thead
               %tr.bg-brown.text-white
