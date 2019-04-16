@@ -16,7 +16,7 @@
             \: Fichiers de plus de 100 pages ou plus de 10 mégas non acceptés. PDF protégés non acceptés.
           %br
           %br
-        %form#fileupload.form-horizontal.padding3left{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
+        %form#fileupload.form-horizontal.padding3left.padding2right{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
           - if has_multiple_accounts?
             .form-group.clearfix
               .label-section
@@ -75,6 +75,10 @@
             = render 'shared/compta_analytics_hidden_fields'
             .row.fileupload-buttonbar
               .col-md-6
+                .fileupload-progress
+                  .progress.progress-success.progress-striped.active.margin1top{ role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100" }
+                    .progress-bar{ style: 'width: 0%' }
+              .col-md-6.alignright
                 %span.btn.btn-secondary.fileinput-button
                   %span Ajouter des fichiers ...
                   %input{ type: 'file', name: 'files[]', multiple: true }
@@ -82,11 +86,8 @@
                   Démarrer
                 %button.btn.btn-light.cancel{ type: 'reset' }
                   Annuler
-              .col-md-6
-                .progress.progress-success.progress-striped.active.fade
-                  .bar{ style: 'width: 0%' }
             %br
-            %table.table.table-striped
+            %table.table.table-striped{ role: "presentation" }
               %tbody.files{ data: { toggle: "modal-gallery", target: "#modal-gallery" } }
       .modal-footer
         %a{ :class=>"modal-close btn btn-light" } Fermer
@@ -107,24 +108,24 @@
                 <td class="name">{%=file.name%}</td>
                 <td class="size">{%=o.formatFileSize(file.size)%}</td>
                 {% if (file.error) { %}
-                    <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
-                {% } else if (o.files.valid && !i) { %}
-                    <td>
-                        <div class="progress progress-success progress-striped active"><div class="bar" style="width:0%;"></div></div>
-                    </td>
-                    <td class="start">{% if (!o.options.autoUpload) { %}
-                        <button class="btn btn-primary">
-                            <i class="icon-upload icon-white"></i> Démarrer
-                        </button>
-                    {% } %}</td>
+                  <td class="error"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
                 {% } else { %}
-                    <td colspan="2"></td>
+                  <td style="width:120px;">
+                      <div class="progress progress-success progress-striped active margin1top"><div class="progress-bar" style="width:0%;"></div></div>
+                  </td>
                 {% } %}
-                <td class="cancel">{% if (!i) { %}
-                    <button class="btn btn-warning">
-                        <i class="icon-ban-circle icon-white"></i> Annuler
+                <td class="alignright">
+                  {% if (!i && !o.options.autoUpload && !file.error) { %}
+                    <button class="start btn btn-primary margin1right">
+                      Démarrer
                     </button>
-                {% } %}</td>
+                  {% } %}
+                  {% if (!i) { %}
+                      <button class="cancel btn btn-light">
+                        Annuler
+                      </button>
+                  {% } %}
+                </td>
             </tr>
         {% } %}
         </script>
@@ -132,15 +133,24 @@
         {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
             <tr class="template-download fade">
                 {% if (file.error) { %}
-                    <td style="width:110px;"></td>
-                    <td class="name">{%=file.name%}</td>
-                    <td class="error" colspan="3"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                  <td class="name">{%=file.name%}</td>
+                  <td class="error" colspan="2"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
                 {% } else { %}
-                    <td class="created_at" style="width:110px;">{%=file.created_at%}</td>
-                    <td class="name">{%=file.name%}</td>
-                    <td class="new_name">{%=file.new_name%}</td>
-                    <td class="message" colspan="2">{%=file.message%}</td>
+                  <td class="name">{%=file.name%}</td>
+                  <td class="new_name">{%=file.new_name%}</td>
+                  <td class="message">
+                    {% if (file.message) { %}
+                      {%= file.message %}
+                    {% } else { %}
+                      <span class="badge badge-success fs-origin">Envoyé</span>
+                    {% } %}
+                  </td>
                 {% } %}
+                  <td class="alignright">
+                    <button class="cancel btn btn-light">
+                      Vu
+                    </button>
+                  </td>
             </tr>
         {% } %}
         </script>
