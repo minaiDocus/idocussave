@@ -7,7 +7,7 @@
             Liste des utilisateurs
             %span.badge.badge-info= @users_count
         .float-right
-          = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: @user_contains), class: 'btn btn-primary'
+          = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column), class: 'btn btn-primary'
 
   .row.retractable.with-filter
     .col-12
