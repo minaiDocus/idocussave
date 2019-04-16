@@ -20,7 +20,7 @@ class Account::Documents::UploadsController < Account::AccountController
 
       data = present(uploaded_document).to_json
     else
-      data = [{ name: params[:files][0].original_filename, error: 'Accès non autorisé.' }].to_json
+      data = { files: [{ name: params[:files][0].original_filename, error: 'Accès non autorisé.' }] }.to_json
     end
 
     respond_to do |format|
