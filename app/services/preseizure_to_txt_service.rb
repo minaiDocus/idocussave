@@ -10,7 +10,12 @@ class PreseizureToTxtService
     data = []
     @preseizures.each do |preseizure|
       preseizure.entries.each do |entry|
-        label = [preseizure.third_party.presence, preseizure.piece_number.presence].compact.join(' - ')[0..29]
+        if preseizure.operation
+          label = preseizure.operation_label[0..29]
+        else
+          label = [preseizure.third_party.presence, preseizure.piece_number.presence].compact.join(' - ')[0..29]
+        end
+
         label = ' ' unless label.present?
         line = ' ' * 256
         line[0] = 'M'
