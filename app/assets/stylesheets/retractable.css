@@ -1,4 +1,42 @@
 //Retractable CSS
+
+//Animations
+@mozkeyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@webkitkeyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// CSS ANIMATED
+.retractable.slidedown {
+  opacity: 0;
+  overflow: hidden;
+}
+
+tbody.retractable.slidedown tr {
+  opacity: 0;
+  -webkit-transition: -webkit-opacity 0.2s ease-out;
+  -moz-transition: -moz-opacity 0.2s ease-out;
+  -o-transition: opacity 0.2s ease-out;
+  -ms-transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
+}
+
+.retractable.fadein {
+  opacity: 1;
+  animation-name: fadeIn;
+  animation-duration: 0.8s;
+}
+
+// CSS NORMAL
+
 .retractable.with-menu {
   padding-left: 50px;
 }

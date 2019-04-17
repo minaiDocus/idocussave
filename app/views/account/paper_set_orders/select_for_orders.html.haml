@@ -10,7 +10,7 @@
     = form_tag(order_multiple_account_organization_paper_set_orders_path(@organization), method: :post) do
       .card-body
         %p Veuillez sélectionner les clients pour lesquels vous voulez commander un Kit Courrier.
-        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
           %thead
             %tr.bg-brown.text-white
               %th.checkbox= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
@@ -18,7 +18,7 @@
               %th société
               %th dernière commande
               %th dern. envel. retour
-          %tbody
+          %tbody.retractable.slidedown
             - @customers.each do |customer|
               - last_order = customer.orders.paper_sets.billed.last
               - paper_return = customer.paper_processes.returns.last

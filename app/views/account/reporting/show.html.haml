@@ -53,7 +53,7 @@
                 - months.each do |month|
                   %th.month
                     #{month}
-            %tbody
+            %tbody.retractable.slidedown
               - row = 0
               - accounts.each_with_index do |user|
                 - periods = annual_periods_for_user(@periods_by_users[user.id] || [])

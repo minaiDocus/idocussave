@@ -13,13 +13,13 @@
     .col-md-12.retractable-content
       .box
         = render partial: 'list_options'
-        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
           %thead
             %tr.bg-brown.text-white
               %th.active_state
               %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
               %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
-          %tbody
+          %tbody.retractable.slidedown
             - @customers.each do |customer|
               %tr
                 %td.active_state= glyphicon('x') if customer.inactive?

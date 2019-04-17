@@ -9,7 +9,7 @@
     .col-md-12.retractable-content
       .box
         = render 'shared/list_options', collection: @paper_processes
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th= sortable :created_at,      'Date'
@@ -19,7 +19,7 @@
                 %th Société
               %th= sortable :tracking_number, 'N° de suivi'
               %th= sortable :pack_name,       'Nom du lot'
-          %tbody
+          %tbody.retractable.slidedown
             - @paper_processes.each do |paper_process|
               %tr
                 %td= l paper_process.created_at, format: '%d %B %Y'

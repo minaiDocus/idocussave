@@ -77,12 +77,12 @@ function custom_checkbox_buttons(){
 
 function custom_dynamic_height(){
   for(var i=1; i <= 5; i++) {
-    var max_height = 0;
+    var min_height = 0;
     if($('.height_groups.groups_'+i).length > 0){
       $('.height_groups.groups_'+i).each(function(e){
-        if( max_height < $(this).innerHeight() ) max_height = $(this).innerHeight()
+        if( min_height < $(this).innerHeight() ) min_height = $(this).innerHeight()
       });
-      $('.height_groups.groups_'+i).attr('style', 'height:'+max_height+'px');
+      $('.height_groups.groups_'+i).css('min-height', min_height+'px');
     }
   }
 }

@@ -10,7 +10,7 @@
   .col-md-12.retractable-content
     .box
       = render partial: 'shared/list_options', locals: { collection: @documents }
-      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
         %thead
           %tr.bg-brown.text-white
             %th= sortable :created_at,         'Date de la récupération'
@@ -20,7 +20,7 @@
             %th Nom iDocus
             %th.pages= sortable :pages_number, 'Nb. pages'
             %th.amount= sortable :amount,      'Montant'
-        %tbody
+        %tbody.retractable.slidedown
           - @documents.each do |document|
             %tr
               %td= l(document.created_at)
@@ -35,6 +35,7 @@
               %td.pages= document.pages_number
               %td.amount= document.metadata['amount'].to_s + ' €'
       = render partial: 'shared/list_options', locals: { collection: @documents }
+
   .card.retractable-filter
     = form_tag account_retrieved_documents_path, method: :get, class: 'form-filter' do
       .card-header.clearfix

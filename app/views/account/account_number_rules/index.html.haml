@@ -24,7 +24,7 @@
               %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
                 = 'Paramètres avancés'
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
@@ -35,7 +35,7 @@
               %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
               %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
               %th Actions
-          %tbody
+          %tbody.retractable.slidedown
             - @account_number_rules.each do |rule|
               %tr
                 %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'

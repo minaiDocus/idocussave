@@ -6,7 +6,7 @@
         %span.badge.badge-info= @new_provider_requests.size
     .box
       = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
-      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
         %thead
           %tr.bg-brown.text-white
             %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
@@ -16,7 +16,7 @@
             %th= t('activerecord.models.new_provider_request.attributes.url')
             %th= t('activerecord.models.new_provider_request.attributes.email')
             %th Détails
-        %tbody
+        %tbody.retractable.slidedown
           - @new_provider_requests.each do |new_provider_request|
             %tr{class: "detail_#{new_provider_request.id}" }
               %td.created_at= l(new_provider_request.created_at)

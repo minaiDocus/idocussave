@@ -17,7 +17,7 @@
         = render partial: 'shared/list_options', locals: { collection: @organization_groups }
         .row
           .col-md-12
-            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+            %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
               %thead
                 %tr.bg-brown.text-white
                   %th= t('activerecord.models.common.attributes.created_at')
@@ -25,7 +25,7 @@
                   %th Nom
                   %th Membres
                   %th Actions
-              %tbody
+              %tbody.retractable.slidedown
                 - @organization_groups.each do |group|
                   %tr
                     %td= l(group.created_at)

@@ -5,7 +5,7 @@
       %th Description/Options
       %th.price Prix HT
       %th.price Prix TTC
-  %tbody
+  %tbody.retractable.slidedown
     - period = @subscription.current_period
     - if period
       - period.product_option_orders.by_position.each do |option|
