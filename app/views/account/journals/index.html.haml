@@ -25,7 +25,7 @@
               %th Type de compte
               %th Compte tiers
               %th Compte de charge/produit
-          %tbody
+          %tbody.retractable.slidedown
             - @journals.each do |journal|
               %tr
                 %td.aligncenter= journal.is_default ? icon_ok : nil

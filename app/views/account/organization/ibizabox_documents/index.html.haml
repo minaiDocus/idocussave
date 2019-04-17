@@ -10,7 +10,7 @@
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @documents }
-        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
           %thead
             %tr.bg-brown.text-white
               %th= sortable :created_at,              'Date de la récupération'
@@ -18,7 +18,7 @@
               %th= sortable :original_file_name,       'Nom original'
               %th Nom iDocus
               %th.pages= sortable :pages_number,      'Nb. pages'
-          %tbody
+          %tbody.retractable.slidedown
             - @documents.each do |document|
               %tr
                 %td= l(document.created_at)

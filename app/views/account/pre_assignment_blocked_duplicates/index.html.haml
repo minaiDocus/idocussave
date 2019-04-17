@@ -26,7 +26,7 @@
                 %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
                 %th Pièces (PDF)
                 %th Statut
-            %tbody
+            %tbody.retractable.slidedown
               - @duplicates.each do |object|
                 %tr
                   %td= check_box_tag 'duplicate_ids[]', object.id, false, class: 'checkbox'

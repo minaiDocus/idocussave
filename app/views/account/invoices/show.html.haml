@@ -11,7 +11,7 @@
                 %th Numéro
                 %th.alignright Montant
                 %th.alignright Actions
-            %tbody
+            %tbody.retractable.slidedown
             - if !@user.leader?
               %tr
                 %td{ colspan: 3 }

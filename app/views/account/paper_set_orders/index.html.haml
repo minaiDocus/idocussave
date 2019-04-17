@@ -13,7 +13,7 @@
     .col-md-12.retractable-content
       .box
         = render partial: 'shared/list_options', locals: { collection: @orders }
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
@@ -23,7 +23,7 @@
               %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
               %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
               %th actions
-          %tbody
+          %tbody.retractable.slidedown
             - @orders.each do |order|
               %tr
                 %td= l order.created_at, format: :standard

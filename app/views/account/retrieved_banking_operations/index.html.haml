@@ -12,7 +12,7 @@
   .col-md-12.retractable-content
     .box
       = render partial: 'shared/list_options', locals: { collection: @operations }
-      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
         %thead
           %tr.bg-brown.text-white
             %th= sortable :date,                     'Date Op'
@@ -23,7 +23,7 @@
             %th.amount= sortable :amount,            'Montant'
             - if current_user.collaborator?
               %th Pré-affecté
-        %tbody
+        %tbody.retractable.slidedown
           - @operations.each do |operation|
             %tr
               %td= l(operation.date, format: '%d %b %Y')

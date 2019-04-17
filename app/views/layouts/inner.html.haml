@@ -22,7 +22,8 @@
   %body
     #wrap
       =render 'layouts/head_menu'
-      != content_for?(:content) ? yield(:content) : yield
+      .retractable.fadein
+        != content_for?(:content) ? yield(:content) : yield
 
       #push
 

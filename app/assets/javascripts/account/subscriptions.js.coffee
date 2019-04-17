@@ -68,31 +68,31 @@ update_warning = ->
     $('.basic_package_disable_warning').remove()
   else if $('#subscription_is_basic_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.basic_package_disable_warning').length > 0
-      $('#subscription_is_basic_package_active').parent('label').append('<b class="label label-warning basic_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_basic_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin basic_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_mail_package_active').is(':checked')
     $('.mail_package_disable_warning').remove()
   else if $('#subscription_is_mail_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.mail_package_disable_warning').length > 0
-      $('#subscription_is_mail_package_active').parent('label').append('<b class="label label-warning mail_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_mail_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin mail_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_scan_box_package_active').is(':checked')
     $('.scan_box_package_disable_warning').remove()
   else if $('#subscription_is_scan_box_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.scan_box_package_disable_warning').length > 0
-      $('#subscription_is_scan_box_package_active').parent('label').append('<b class="label label-warning scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_scan_box_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_micro_package_active').is(':checked')
     $('.micro_package_disable_warning').remove()
   else if $('#subscription_is_micro_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.micro_package_disable_warning').length > 0
-      $('#subscription_is_micro_package_active').parent('label').append('<b class="label label-warning micro_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_micro_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin micro_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_mini_package_active').is(':checked')
     $('.mini_package_disable_warning').remove()
   else if $('#subscription_is_mini_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.mini_package_disable_warning').length > 0
-      $('#subscription_is_mini_package_active').parent('label').append('<b class="label label-warning mini_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_mini_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin mini_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_retriever_package_active').is(':checked')
     $('.retriever_package_disable_warning').remove()
@@ -103,13 +103,13 @@ update_warning = ->
   else if $('#subscription_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
     $('.retriever_package_warning').hide()
     unless $('.retriever_package_disable_warning').length > 0
-      $('#subscription_is_retriever_package_active').parent('label').append('<b class="label label-warning retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_retriever_package_active').parent('label').append('<b class="badge-inline badge badge-warning fs-origin retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_pre_assignment_active_true').is(':checked')
     $('.pre_assignment_disable_warning').remove()
   else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.pre_assignment_disable_warning').length > 0
-      $('#subscription_is_pre_assignment_active_false').parent('label').parent('.choice').after('<div class="pre_assignment_disable_warning"><b class="label label-warning">'+to_be_disabled_text+'</b></div>')
+      $('#subscription_is_pre_assignment_active_false').parent('label').parent('.choice').after('<div class="pre_assignment_disable_warning"><b class="badge-inline badge badge-warning fs-origin">'+to_be_disabled_text+'</b></div>')
 
 lock_heavy_package = ->
   $('#subscription_is_annual_package_active').attr('disabled', 'disabled')

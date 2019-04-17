@@ -14,14 +14,14 @@
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @members }
-        %table.table.table-condensed.table-striped.users_list.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+        %table.table.table-condensed.table-striped.users_list.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
               %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
               %th= sortable :role, t('activerecord.models.member.attributes.role')
               %th Action
-          %tbody
+          %tbody.retractable.slidedown
             - @members.each do |member|
               %tr
                 %td.date= l member.created_at

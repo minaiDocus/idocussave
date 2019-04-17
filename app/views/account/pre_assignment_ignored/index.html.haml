@@ -25,7 +25,7 @@
                 %th Remarque
                 %th= sortable :pre_assignment_stat, 'Statut'
                 %th Pièces (PDF)
-            %tbody
+            %tbody.retractable.slidedown
               - @ignored_list.each_with_index do |piece, ind|
                 %tr
                   %td

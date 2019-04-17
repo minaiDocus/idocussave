@@ -12,7 +12,7 @@
             .col-md-12
               .box.border-top-0.bg-light
                 = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
-                %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+                %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
                   %thead
                     %tr.bg-brown.text-white
                       %th= sortable :created_at, 'Date de création'
@@ -21,7 +21,7 @@
                       %th Nom
                       %th Nb. de dossiers
                       %th Actions
-                  %tbody
+                  %tbody.retractable.slidedown
                     - @guest_collaborators.each do |guest_collaborator|
                       %tr
                         %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')

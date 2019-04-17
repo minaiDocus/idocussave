@@ -8,7 +8,7 @@
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @documents }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin1bottom
         %thead
           %tr
             %th= sortable :created_at,         'Date de la récupération'
@@ -18,7 +18,7 @@
             %th Nom iDocus
             %th.pages= sortable :pages_number, 'Nb. pages'
             %th.amount= sortable :amount,      'Montant'
-        %tbody
+        %tbody.retractable.slidedown
           - @documents.each do |document|
             %tr
               %td= l(document.created_at)

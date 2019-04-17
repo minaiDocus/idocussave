@@ -6,7 +6,7 @@
 %h3.margin2bottom 
   Liste des répertoires accessibles
   %span.badge.badge-info= @customer.ibizabox_folders.count
-%table.table.table-striped.table-condensed.margin0bottom.table-bordered-inner.table-detachable-head
+%table.table.table-striped.table-condensed.margin1bottom.table-bordered-inner.table-detachable-head
   %thead
     %tr.bg-brown.text-white
       %th Code journal idocus
@@ -14,7 +14,7 @@
       %th Périodes accessibles
       %th Statut
       %th Actions
-  %tbody
+  %tbody.retractable.slidedown
     - ibiza_journals = IbizaboxImport.get_accessible_journals(@customer)
     - @customer.ibizabox_folders.includes(:journal).each do |folder|
       %tr

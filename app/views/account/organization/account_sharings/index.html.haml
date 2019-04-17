@@ -12,7 +12,7 @@
             .col-md-12
               .box.border-top-0.bg-light
                 = render partial: 'shared/list_options', locals: { collection: @account_sharings }
-                %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+                %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
                   %thead
                     %tr.bg-brown.text-white
                       %th= sortable :created_at, 'Date'
@@ -20,7 +20,7 @@
                       %th Client ou contact
                       %th Etat
                       %th Actions
-                  %tbody
+                  %tbody.retractable.slidedown
                     - @account_sharings.each do |account_sharing|
                       %tr
                         %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')

@@ -16,7 +16,7 @@
           = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
           = hidden_field_tag 'document_contains[amount]',       (params[:document_contains][:amount] rescue '')
           = render 'shared/list_options', collection: @documents
-          %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
+          %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
             %thead
               %tr.bg-brown.text-white
                 %th= check_box_tag 'master_checkbox', 0, false
@@ -26,7 +26,7 @@
                 %th= sortable :name,               'Nom original'
                 %th.pages= sortable :pages_number, 'Nb. pages'
                 %th.amount= sortable :amount,      'Montant'
-            %tbody
+            %tbody.retractable.slidedown
               - @documents.each do |document|
                 %tr
                   %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox'

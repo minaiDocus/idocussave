@@ -14,7 +14,7 @@
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @groups }
-        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
@@ -22,7 +22,7 @@
               %th= t('activerecord.models.group.attributes.collaborators_count')
               %th= t('activerecord.models.group.attributes.customers_count')
               %th= t('actions.name')
-          %tbody
+          %tbody.retractable.slidedown
             - @groups.each do |group|
               %tr
                 %td= l(group.created_at)
