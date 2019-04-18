@@ -69,6 +69,21 @@ function animationSlideDown(elem){
   setTimeout(animate, interval_duration);
 }
 
+function setFilterHeight(){
+  var win_height = $(window).height();
+  var footer_height = $('body footer').height();
+
+  $('.retractable .retractable-filter .retractable-filter-content .card-body').each(function(e){
+    var filter_top = $(this).offset().top;
+    var max_height = win_height - footer_height - filter_top - 60; //marge of 50px (card-footer)
+    var current_height = $(this).height();
+
+    $(this).css('max-height', max_height+'px');
+    if(current_height >= max_height)
+      $(this).css('overflow-y', 'scroll');
+  });
+}
+
 $(document).ready(function(){
   $('.retractable .retractable-filter .locker').on('click', function(e){
     e.preventDefault();
@@ -90,6 +105,8 @@ $(document).ready(function(){
   $('.retractable.slidedown').each(function(e) {
     animationSlideDown($(this));
   });
+
+  setFilterHeight();
 
   $(window).scroll(function(e){
     if($('table.table-detachable-head').length > 0)

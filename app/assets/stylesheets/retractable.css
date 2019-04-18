@@ -81,7 +81,7 @@ tbody.retractable.slidedown tr {
 //retractable-filter
 .retractable .retractable-filter {
   position: fixed;
-  z-index: 300;
+  z-index: 20;
   margin-right: 15px;
   right: 0;
   width: 270px;
@@ -92,10 +92,6 @@ tbody.retractable.slidedown tr {
 .retractable .retractable-filter.close {
   position: absolute;
   width: auto;
-}
-.retractable .retractable-filter-content .card-body {
-  max-height: 560px;
-  overflow-y: scroll;
 }
 
 //detachable table head
@@ -114,17 +110,5 @@ table.table-detachable-head thead.detached a {
 @media (max-width: 1186px) {
   table.table-detachable-head thead.detached {
     top: 46px;
-  }
-}
-
-@media (max-height: 800px) {
-  .retractable .retractable-filter {
-    position: absolute;
-    z-index:2;
-  }
-
-  .retractable .retractable-filter-content .card-body {
-    max-height: none;
-    overflow-y: auto;
   }
 }
