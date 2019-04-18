@@ -1,4 +1,4 @@
-class FixIndexOfPackReportPreseizures < ActiveRecord::Migration
+class FixIndexOfPackReportPreseizures < ActiveRecord::Migration[5.2]
   def change
     change_column :pack_report_preseizures, :operation_label, :text, limit: 65535
 

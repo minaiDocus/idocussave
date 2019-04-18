@@ -44,7 +44,7 @@ class Admin::NotificationSettingsController < Admin::AdminController
   def update_paper_set_order
     Settings.update_setting('notify_paper_set_order_to', params[:notification][:to].split(',').map(&:strip))
 
-    settings.save
+    # settings.save
 
     flash[:notice] = 'Modifié avec succès.'
 
