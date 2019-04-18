@@ -1,4 +1,4 @@
-class FixIndexOfPieces < ActiveRecord::Migration
+class FixIndexOfPieces < ActiveRecord::Migration[5.2]
   def change
     change_column :pack_pieces, :tags, :text, limit: 65535
 
