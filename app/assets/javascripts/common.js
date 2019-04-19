@@ -104,6 +104,31 @@ function _require(script) {
     return src;
 }
 
+function adjustIconColor(elem) {
+  $('.oi-icon').each(function(e) {
+    if(!$(this).hasClass('colored')) {
+      var parent = $(this).parent();
+
+      parent.unbind('mouseenter');
+      parent.unbind('mouseleave');
+
+      parent.bind('mouseenter', function(e) {
+        var icon = $(this).find('.oi-icon:first');
+        if(!icon.hasClass('colored'))
+          icon.css('fill', $(this).css('color'));
+      });
+
+      parent.bind('mouseleave', function(e) {
+        var icon = $(this).find('.oi-icon:first');
+        if(!icon.hasClass('colored'))
+          icon.css('fill', $(this).css('color'));
+      });
+
+      $(this).css('fill', parent.css('color'));
+    }
+  });
+}
+
 jQuery(function () {
   //For serializing Form to object
   $.fn.serializeObject = function() {
@@ -177,6 +202,9 @@ jQuery(function () {
   //     $('.dynamic_padding').css('padding-top', '100px');
   //   }
   // }
+
+  //adjust icons color
+  adjustIconColor();
 
   // Execute on load
   // dynamicTopPadding();
