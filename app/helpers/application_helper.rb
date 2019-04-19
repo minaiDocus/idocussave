@@ -43,11 +43,13 @@ module ApplicationHelper
 
   def glyphicon(icon, options={})
     style = ''
-    style += options[:size].present? ? "font-size:#{options[:size]};" : ''
-    style = options[:style] if options[:style].present?
+    style += options[:size].present? ? "width: #{options[:size]}px; height: #{options[:size]}px;" : ''
+    style += options[:color].present? ? "fill: #{options[:color]};" : ''
+    style += options[:style] if options[:style].present?
+
     klass = options[:class].to_s
 
-    content_tag 'span', '', class: "oi #{klass}", 'aria-hidden' => "true", 'data-glyph' => "#{icon}", style: style
+    content_tag 'svg', content_tag('use', '', 'xlink:href'=>"/assets/open-iconic.min.svg##{icon}", class: "icon icon-#{icon}"), viewBox: "0 0 8 8", class: "oi-icon #{klass} #{options[:color].present? ? 'colored' : ''}", style: style
   end
 
   def icon_ban_circle

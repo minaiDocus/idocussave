@@ -2,6 +2,8 @@
   //FUNCTION DECLARATION
   // init all link action
   window.initEventOnHoverOnInformation = function() {
+    adjustIconColorDocument();
+
     $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({ placement: 'top', trigger: 'hover', html: true, sanitize: false });
     $('.do-tooltip-right, .information-right').tooltip({ placement: 'right', trigger: 'hover', html: true, sanitize: false });
     $('.do-tooltip-bottom, .information-bottom').tooltip({ placement: 'bottom', trigger: 'hover', html: true, sanitize: false });
@@ -728,6 +730,16 @@
     });
   }
 
+  //force the color of all icons to dark
+  function adjustIconColorDocument() {
+    $('.oi-icon').each(function(e) {
+      if(!$(this).hasClass('colored')) {
+        $(this).css('fill', '#3E2F24');
+        $(this).addClass('colored');
+      }
+    });
+  }
+
   _require('/assets/account/documents/pieces_functions.js');
   _require('/assets/account/documents/preseizures_functions.js');
 
@@ -767,6 +779,8 @@
     if($('#documentslist .packsList .content ul li').length == 1) {
       setTimeout(function() { $('#documentslist .packsList .content ul li:first').find('.do-show-pack').click() }, 1000 );
     }
+
+    adjustIconColorDocument();
   });
 
 })(jQuery);
