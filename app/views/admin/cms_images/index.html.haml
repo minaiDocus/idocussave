@@ -6,79 +6,83 @@
   .col-12
     .row
       .col-9.padding1top
-        %form{ id: 'fileupload', action: '/admin/cms_images', method: 'POST', enctype: 'multipart/form-data' }
-          .fileupload-buttonbar.row
-            .col-6
-              %span.btn.btn-success.fileinput-button
-                %span
-                  %i.icon-plus.icon-white
-                  Ajouter des fichiers...
+        %form#fileupload{ action: '/admin/cms_images', method: 'POST', enctype: 'multipart/form-data' }
+          .row.fileupload-buttonbar
+            .col
+              %span.btn.btn-secondary.fileinput-button
+                %span Ajouter des fichiers ...
                 %input{ type: 'file', name: 'files[]', multiple: true }
               %button.btn.btn-primary.start{ type: 'submit' }
-                %i.icon-upload.icon-white
                 Démarrer
-              %button.btn.btn-warning.cancel{ type: 'reset' }
-                %i.icon-ban-circle.icon-white
+              %button.btn.btn-light.cancel{ type: 'reset' }
                 Annuler
-            .col-6
-              .progress.progress-success.progress-striped.active.fade
-                .bar{ style: 'width:0%;' }
-          .fileupload-loading
-          %br
-          %table.table.table-striped
-            %tbody.files{ 'data-toggle' => 'modal-gallery', 'data-target' => '#modal-gallery' }
+            %br
+            %table.table.table-striped{ role: "presentation" }
+              %tbody.files{ data: { toggle: "modal-gallery", target: "#modal-gallery" } }
 
     :plain
-      <script>
-        var fileUploadErrors = {
-          maxFileSize: 'File is too big',
-          minFileSize: 'File is too small',
-          acceptFileTypes: 'Filetype not allowed',
-          maxNumberOfFiles: 'Max number of files exceeded',
-          uploadedBytes: 'Uploaded bytes exceed file size',
-          emptyResult: 'Empty file upload result'
-        };
-      </script>
-      <script id="template-upload" type="text/html">
+        <script>
+          var fileUploadErrors = {
+            maxFileSize: 'File is too big',
+            minFileSize: 'File is too small',
+            acceptFileTypes: 'Filetype not allowed',
+            maxNumberOfFiles: 'Max number of files exceeded',
+            uploadedBytes: 'Uploaded bytes exceed file size',
+            emptyResult: 'Empty file upload result'
+          };
+        </script>
+        <script id="template-upload" type="text/html">
         {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
-          <tr class="template-upload fade">
-            <td class="name">{%=file.name%}</td>
-            <td class="size">{%=o.formatFileSize(file.size)%}</td>
-            {% if (file.error) { %}
-              <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
-            {% } else if (o.files.valid && !i) { %}
-              <td>
-                <div class="progress progress-success progress-striped active"><div class="bar" style="width:0%;"></div></div>
-              </td>
-              <td class="start">{% if (!o.options.autoUpload) { %}
-                <button class="btn btn-primary">
-                  <i class="icon-upload icon-white"></i> Démarrer
-                </button>
-              {% } %}</td>
-            {% } else { %}
-              <td colspan="2"></td>
-            {% } %}
-            <td class="cancel">{% if (!i) { %}
-              <button class="btn btn-warning">
-                <i class="icon-ban-circle icon-white"></i> Annuler
-              </button>
-            {% } %}</td>
-          </tr>
+            <tr class="template-upload fade">
+                <td class="name">{%=file.name%}</td>
+                <td class="size">{%=o.formatFileSize(file.size)%}</td>
+                {% if (file.error) { %}
+                  <td class="error"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                {% } else { %}
+                  <td style="width:120px;">
+                      <div class="progress progress-success progress-striped active margin1top"><div class="progress-bar" style="width:0%;"></div></div>
+                  </td>
+                {% } %}
+                <td class="alignright">
+                  {% if (!i && !o.options.autoUpload && !file.error) { %}
+                    <button class="start btn btn-primary margin1right">
+                      Démarrer
+                    </button>
+                  {% } %}
+                  {% if (!i) { %}
+                      <button class="cancel btn btn-light">
+                        Annuler
+                      </button>
+                  {% } %}
+                </td>
+            </tr>
         {% } %}
-      </script>
-      <script id="template-download" type="text/html">
+        </script>
+        <script id="template-download" type="text/html">
         {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
-          <tr class="template-download fade">
-            {% if (file.error) { %}
-              <td class="error" colspan="3"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
-            {% } else { %}
-              <td><img src='{%=file.thumb%}'/></td>
-              <td>{%=file.name%}</td>
-              <td>{%=file.url%}</td>
-            {% } %}
-          </tr>
+            <tr class="template-download fade">
+                {% if (file.error) { %}
+                  <td class="name">{%=file.name%}</td>
+                  <td class="error" colspan="2"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                {% } else { %}
+                  <td class="name">{%=file.name%}</td>
+                  <td class="new_name">{%=file.new_name%}</td>
+                  <td class="message">
+                    {% if (file.message) { %}
+                      {%= file.message %}
+                    {% } else { %}
+                      <span class="badge badge-success fs-origin">Envoyé</span>
+                    {% } %}
+                  </td>
+                {% } %}
+                  <td class="alignright">
+                    <button class="cancel btn btn-light">
+                      Vu
+                    </button>
+                  </td>
+            </tr>
         {% } %}
-      </script>
+        </script>
 
     #cms_images
       %table.table.table-striped
@@ -93,4 +97,4 @@
                 %br
                 = cms_image.content.url
               %td.center
-                = link_to icon_destroy, [:admin, cms_image], method: :delete, data: { confirm: t('actions.confirm') }
+                = link_to 'supprimer', [:admin, cms_image], method: :delete, data: { confirm: t('actions.confirm') }
