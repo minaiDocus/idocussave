@@ -16,8 +16,8 @@ class Admin::CmsImagesController < Admin::AdminController
     data = [{ thumb: @cms_image.content.url(:thumb).to_s, url: @cms_image.content.url.to_s, name: @cms_image.name }]
 
     respond_to do |format|
-      format.json { render json: data }
-      format.html { render json: data }  # IE8 compatibility
+      format.json { render json: { files: data } }
+      format.html { render json: { files: data } }  # IE8 compatibility
     end
   end
 
