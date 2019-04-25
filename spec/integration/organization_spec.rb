@@ -11,8 +11,8 @@ describe 'Organization Management' do
 
   describe 'relation' do
     before(:each) do
-      @collaborator = FactoryGirl.create(:prescriber)
-      @customer = FactoryGirl.create(:user)
+      @collaborator = FactoryBot.create(:prescriber)
+      @customer = FactoryBot.create(:user)
 
       @organization = Organization.create name: 'iDocus', code: 'IDOC', leader_id: @collaborator.id
       @organization.customers << @customer

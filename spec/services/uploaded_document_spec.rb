@@ -32,7 +32,7 @@ describe UploadedDocument do
         context 'when periodicity is monthly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
@@ -60,7 +60,7 @@ describe UploadedDocument do
         context 'when periodicity is quarterly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @subscription = @user.find_or_create_subscription
             @subscription.update_attribute(:period_duration, 3)
             UpdatePeriod.new(@subscription.current_period).execute
@@ -95,7 +95,7 @@ describe UploadedDocument do
         context 'when periodicity is yearly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @subscription = @user.find_or_create_subscription
             @subscription.update_attribute(:period_duration, 12)
             UpdatePeriod.new(@subscription.current_period).execute
@@ -140,7 +140,7 @@ describe UploadedDocument do
         context 'when periodicity is monthly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document
@@ -168,7 +168,7 @@ describe UploadedDocument do
         context 'when periodicity is quarterly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @subscription = @user.find_or_create_subscription
             @subscription.update_attribute(:period_duration, 3)
             UpdatePeriod.new(@subscription.current_period).execute
@@ -203,7 +203,7 @@ describe UploadedDocument do
         context 'when periodicity is yearly' do
           before(:all) do
             DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @user = FactoryBot.create(:user, code: 'TS0001')
             @subscription = @user.find_or_create_subscription
             @subscription.update_attribute(:period_duration, 12)
             UpdatePeriod.new(@subscription.current_period).execute
@@ -241,7 +241,7 @@ describe UploadedDocument do
       before(:all) do
         DatabaseCleaner.start
         Timecop.freeze(Time.local(2013,1,10))
-        @user = FactoryGirl.create(:user, code: 'TS0001')
+        @user = FactoryBot.create(:user, code: 'TS0001')
         @user.create_notify
         file = File.open("#{Rails.root}/spec/support/files/upload.tiff", "r")
         @user.account_book_types.create(name: 'TS', description: 'TEST')
@@ -273,7 +273,7 @@ describe UploadedDocument do
       before(:all) do
         DatabaseCleaner.start
         Timecop.freeze(Time.local(2013,1,10))
-        @user = FactoryGirl.create(:user, code: 'TS0001', authd_prev_period: 0, auth_prev_period_until_day: 11)
+        @user = FactoryBot.create(:user, code: 'TS0001', authd_prev_period: 0, auth_prev_period_until_day: 11)
         @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 
@@ -390,7 +390,7 @@ describe UploadedDocument do
       before(:all) do
         DatabaseCleaner.start
         Timecop.freeze(Time.local(2013,1,10))
-        @user = FactoryGirl.create(:user, code: 'TS0001')
+        @user = FactoryBot.create(:user, code: 'TS0001')
         @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 

@@ -7,7 +7,7 @@ describe AccountingWorkflow::TempPackProcessor do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2013,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_options
       @user.create_notify
       @user.find_or_create_subscription
@@ -3258,7 +3258,7 @@ describe AccountingWorkflow::TempPackProcessor do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2015,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_notify
       @subscription = Subscription.create(user_id: @user.id, period_duration: 12)
       UpdatePeriod.new(@subscription.current_period).execute

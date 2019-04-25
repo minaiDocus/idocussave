@@ -9,7 +9,7 @@ module LoginMacros
 
   def login(user_type, user, type)
     before(type) do
-      @user = user || FactoryGirl.create(user_type)
+      @user = user || FactoryBot.create(user_type)
       page.driver.post user_session_path,
         user: { email: @user.email, password: @user.password }
     end

@@ -6,7 +6,7 @@ describe DiscountBillingService do
     after(:all)  { DatabaseCleaner.clean }
 
     before(:all) do
-      @organization              = FactoryGirl.create(:organization)
+      @organization              = FactoryBot.create(:organization)
       Subscription.create(period_duration: 1, organization_id: @organization.id)
     end
 
@@ -14,7 +14,7 @@ describe DiscountBillingService do
       before(:all) do
         #basic_package : 10
         1.upto(10).each {
-          user = FactoryGirl.create(:user)
+          user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_basic_package_active: true, is_retriever_package_active: true)
           @organization.customers << user
@@ -22,7 +22,7 @@ describe DiscountBillingService do
         }
         #scan_box_package : 5
         1.upto(5).each {
-          user = FactoryGirl.create(:user)
+          user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_scan_box_package_active: true)
           @organization.customers << user
@@ -30,7 +30,7 @@ describe DiscountBillingService do
         }
         #retriever_package only : 3
         1.upto(3).each {
-          user = FactoryGirl.create(:user)
+          user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_retriever_package_active: true)
           @organization.customers << user
@@ -38,7 +38,7 @@ describe DiscountBillingService do
         }
         #micro_package : 5
         1.upto(5).each {
-          user = FactoryGirl.create(:user)
+          user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_micro_package_active: true, is_retriever_package_active: true)
           @organization.customers << user
@@ -46,7 +46,7 @@ describe DiscountBillingService do
         }
         #quaterly period: 5
         1.upto(5).each {
-          user = FactoryGirl.create(:user)
+          user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 3, user_id: user.id, is_basic_package_active: true, is_retriever_package_active: true)
           @organization.customers << user

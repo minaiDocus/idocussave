@@ -59,13 +59,13 @@ RSpec.configure do |config|
 
     begin
       DatabaseCleaner.start
-      FactoryGirl.lint
+      FactoryBot.lint
     ensure
       DatabaseCleaner.clean
     end
 
     suppress_warnings do
-      FactoryGirl.reload
+      FactoryBot.reload
       Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}
     end
   end

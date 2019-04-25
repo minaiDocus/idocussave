@@ -8,7 +8,7 @@ describe SendToMcf do
   after(:each) { DatabaseCleaner.clean_with(:truncation) }
 
   before(:each) do
-    @leader = FactoryGirl.create :user, code: 'IDO%LEAD'
+    @leader = FactoryBot.create :user, code: 'IDO%LEAD'
     @organization = create :organization, code: 'IDO'
     @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
     @organization.admin_members << @leader.memberships.first
@@ -18,7 +18,7 @@ describe SendToMcf do
       access_token: '64b01bda571f47aea8814cb7a29a7dc356310755ce01404f',
       access_token_expires_at: 1.year.from_now
     )
-    @user = FactoryGirl.create :user, code: 'IDO%0001', mcf_storage: 'John Doe'
+    @user = FactoryBot.create :user, code: 'IDO%0001', mcf_storage: 'John Doe'
 
     @pack = Pack.new
     @pack.owner = @user
