@@ -112,17 +112,14 @@ function adjustIconColor(elem) {
       parent.unbind('mouseenter');
       parent.unbind('mouseleave');
 
-      parent.bind('mouseenter', function(e) {
-        var icon = $(this).find('.oi-icon:first');
+      var handleChange = function(el) {
+        var icon = el.find('.oi-icon:first');
         if(!icon.hasClass('colored'))
-          icon.css('fill', $(this).css('color'));
-      });
+          icon.css('fill', el.css('color'));
+      }
 
-      parent.bind('mouseleave', function(e) {
-        var icon = $(this).find('.oi-icon:first');
-        if(!icon.hasClass('colored'))
-          icon.css('fill', $(this).css('color'));
-      });
+      parent.bind('mouseenter', function() { handleChange($(this)) });
+      parent.bind('mouseleave', function() { handleChange($(this)) });
 
       $(this).css('fill', parent.css('color'));
     }

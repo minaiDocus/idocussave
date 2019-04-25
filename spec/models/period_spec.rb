@@ -35,7 +35,7 @@ describe Period do
 
   describe "returns right values" do
     before(:all) do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       @subscription = Subscription.create(user_id: @user.id)
     end
 

@@ -25,7 +25,7 @@
               - # |
               - if file_upload_users_list.present?
                 %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
-                  = glyphicon('data-transfer-upload')
+                  = glyphicon('data-transfer-upload', { class: 'mr-sm-1', color: '#fff' })
                   Ajouter des documents
   .row
     .col-md-3
@@ -39,7 +39,7 @@
                 = label_tag :per_page, "par :", :class => "margin1left pull-left"
                 = select_tag :per_page, options_for_select([["20",20],["40",40],["60",60]]), :class => "per_page w50 margin1left"
               %a{ href:'#packFilterModal', title:'plus de filtre', style: 'margin-right: 5px', class: 'btn btn-primary pull-left', data: {toggle: :modal} }
-                = glyphicon('excerpt')
+                = glyphicon('excerpt', { class: 'mr-sm-1', color: '#fff' })
                 Plus de filtre
         .subView
           %span{ class: 'tab-nav selected', id: 'view_packs' }

@@ -5,9 +5,9 @@ require 'spec_helper'
 describe FetchFiduceoData do
   # context 'document' do
   #   before(:all) do
-  #     @user = FactoryGirl.create :user, code: 'IDO%0001'
+  #     @user = FactoryBot.create :user, code: 'IDO%0001'
   #     @user.options = UserOptions.create(user_id: @user.id)
-  #     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
+  #     @journal = FactoryBot.create :account_book_type, user_id: @user.id
 
   #     @connector = Connector.new
   #     @connector.name            = 'OVH'

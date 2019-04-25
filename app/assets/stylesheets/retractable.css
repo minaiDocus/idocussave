@@ -71,6 +71,7 @@ tbody.retractable.slidedown tr {
   display: inline-block;
   border-bottom: 1px solid #fff;
   margin-bottom: 8px;
+  padding-bottom: 5px;
 }
 .retractable .retractable-menu .retractable-caret .title {
   display: inline-block;

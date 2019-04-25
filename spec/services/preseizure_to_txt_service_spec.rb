@@ -5,7 +5,7 @@ require_dependency 'pack/report/preseizure/account'
 
 describe PreseizureToTxtService do
   before(:all) do
-    user = FactoryGirl.create :user,  code: 'TS%0001'
+    user = FactoryBot.create :user,  code: 'TS%0001'
     journal = AccountBookType.create(name: 'AC', description: 'Achats')
     user.account_book_types << journal
     report = Pack::Report.new

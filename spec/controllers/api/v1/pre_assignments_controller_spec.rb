@@ -5,8 +5,8 @@ describe Api::V1::PreAssignmentsController do
   render_views
 
   before(:all) do
-    @admin = FactoryGirl.create :admin, code: 'AD%0001'
-    @user  = FactoryGirl.create :user,  code: 'TS%0001'
+    @admin = FactoryBot.create :admin, code: 'AD%0001'
+    @user  = FactoryBot.create :user,  code: 'TS%0001'
 
     @admin.update_authentication_token
     @user.update_authentication_token

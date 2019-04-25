@@ -149,8 +149,8 @@ describe AccountingWorkflow::GroupDocument do
       @result_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'output', 'result.xml'
       @errors_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'errors', 'result.txt'
 
-      @user = FactoryGirl.create(:user, code: 'TS%0001')
-      FactoryGirl.create(:journal_with_preassignment, user_id: @user.id, name: 'AC', description: '( Achat )')
+      @user = FactoryBot.create(:user, code: 'TS%0001')
+      FactoryBot.create(:journal_with_preassignment, user_id: @user.id, name: 'AC', description: '( Achat )')
     end
 
     before(:each) do

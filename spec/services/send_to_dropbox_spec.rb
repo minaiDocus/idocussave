@@ -8,7 +8,7 @@ describe SendToDropbox do
   after(:each) { DatabaseCleaner.clean_with(:truncation) }
 
   before(:each) do
-    @user = FactoryGirl.create :user, code: 'IDO%0001'
+    @user = FactoryBot.create :user, code: 'IDO%0001'
     @user.create_options
     @user.create_notify
     @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)

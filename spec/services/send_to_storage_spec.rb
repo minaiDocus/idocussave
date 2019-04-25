@@ -40,7 +40,7 @@ describe SendToStorage do
       end
     end
 
-    @user = FactoryGirl.create :user, code: 'IDO%0001'
+    @user = FactoryBot.create :user, code: 'IDO%0001'
     @user.options = UserOptions.create(user_id: @user.id)
 
     @pack = Pack.new

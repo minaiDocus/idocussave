@@ -4,7 +4,7 @@ require 'spec_helper'
 describe PendingPreAssignmentService do
   describe '.pending' do
     before(:all) do
-      @user  = FactoryGirl.create :user,  code: 'TS%0001'
+      @user  = FactoryBot.create :user,  code: 'TS%0001'
 
       Timecop.freeze(Time.local(2014,1,1,8,0,0))
       @pack = Pack.create(name: 'TS%0001 AC 201401 all', owner_id: @user.id)

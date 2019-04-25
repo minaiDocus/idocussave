@@ -7,7 +7,7 @@ describe EmailedDocument do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
 
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       @journal.save
@@ -398,7 +398,7 @@ describe EmailedDocument do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_options is_upload_authorized: true
       @user.create_notify
 

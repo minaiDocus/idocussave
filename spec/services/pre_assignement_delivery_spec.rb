@@ -5,7 +5,7 @@ describe PreAssignmentDelivery do
   def delivery_exact_online
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_exact_online?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
-    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
+    preseizure   = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
     accounts = Pack::Report::Preseizure::Account.create([
                                                           { type: 1, number: '0000001', preseizure_id: preseizure.id },
                                                           { type: 2, number: '101000', preseizure_id: preseizure.id },
@@ -22,7 +22,7 @@ describe PreAssignmentDelivery do
   def delivery_ibiza
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_ibiza?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
-    preseizure   = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
+    preseizure   = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
     accounts = Pack::Report::Preseizure::Account.create([
                                                           { type: 1, number: '601109', preseizure_id: preseizure.id },
                                                           { type: 2, number: '471000', preseizure_id: preseizure.id },
@@ -47,11 +47,11 @@ describe PreAssignmentDelivery do
                                           a2_references: '[{"ventilation":"50","axis1":"AH11","axis2":null,"axis3":null},{"ventilation":"50","axis1":"PE09","axis2":null,"axis3":null},{"ventilation":"0","axis1":null,"axis2":null,"axis3":null}]'
                                         )
 
-    @organization = FactoryGirl.create :organization, code: 'IDO'
-    @user         = FactoryGirl.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
-    @report       = FactoryGirl.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
-    pack          = FactoryGirl.create :pack, owner: @user, name: (@report.name + ' all')
-    @piece        = FactoryGirl.create :piece, pack: pack, name: (@report.name + ' 001'), analytic_reference: analytic
+    @organization = FactoryBot.create :organization, code: 'IDO'
+    @user         = FactoryBot.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
+    @report       = FactoryBot.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
+    pack          = FactoryBot.create :pack, owner: @user, name: (@report.name + ' all')
+    @piece        = FactoryBot.create :piece, pack: pack, name: (@report.name + ' 001'), analytic_reference: analytic
     # pack = Pack.new
     # pack.owner = @user
     # pack.name = @report.name + ' all'
