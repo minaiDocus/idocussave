@@ -669,6 +669,7 @@ fr:
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
           is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
           subject_to_vat: Est assujetti à la tva ?
+          invoice_mails: Email(s) en copie de la facture iDocus
           preseizure_date_option: Date de l'écriture des opérations bancaires
           is_exact_online_used: Utilise Exact Online?
           is_exact_online_auto_deliver: Livrer automatiquement les écritures ?

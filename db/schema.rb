@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190415064821) do
+ActiveRecord::Schema.define(version: 20190430105031) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1299,6 +1299,7 @@ ActiveRecord::Schema.define(version: 20190415064821) do
     t.boolean  "subject_to_vat",                              default: true
     t.boolean  "is_exact_online_used",                        default: false
     t.boolean  "is_exact_online_auto_deliver",                default: false
+    t.string   "invoice_mails",                   limit: 255
   end
 
   add_index "organizations", ["leader_id"], name: "leader_id", using: :btree

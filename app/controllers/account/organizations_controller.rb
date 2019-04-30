@@ -191,6 +191,7 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_duplicate_blocker_activated,
         :preseizure_date_option,
         :subject_to_vat,
+        :invoice_mails,
         :is_exact_online_used,
         :is_exact_online_auto_deliver
       )
@@ -210,6 +211,7 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_operation_value_date_needed,
         :is_duplicate_blocker_activated,
         :preseizure_date_option,
+        :invoice_mails,
         :is_exact_online_used,
         :is_exact_online_auto_deliver
       )

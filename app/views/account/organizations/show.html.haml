@@ -106,6 +106,9 @@
                     %tr
                       %th= t('activerecord.models.organization.attributes.is_duplicate_blocker_activated')
                       %td= @organization.is_duplicate_blocker_activated ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.invoice_mails')
+                      %td= @organization.invoice_mails || '-'
                     - if @user.is_admin
                       %tr
                         %th= t('activerecord.models.organization.attributes.subject_to_vat')
