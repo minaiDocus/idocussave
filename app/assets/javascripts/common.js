@@ -8,6 +8,7 @@
 //= require help
 //= require tmpl.min
 //= require jquery.tokeninput.min
+//= require jquery.livequery.min
 //= require jquery_nested_form
 //= require file-uploader/fileupload-tpl
 //= require file-uploader/fileupload-load-image
@@ -31,60 +32,66 @@
 //
 
 function custom_radio_buttons(){
-  $('form .radio_buttons .control-section').each(function(e){
-    $(this).find('.radio label').each(function(e){
-      var text = $(this).text();
-      if(text.length > 13) {
-        $(this).attr('title', text);
-        $(this).tooltip({placement: 'bottom', trigger: 'hover'});
-      }
+  $('form .radio_buttons .control-section').livequery(function(){
+    $('form .radio_buttons .control-section').each(function(e){
+      $(this).find('.radio label').each(function(e){
+        var text = $(this).text();
+        if(text.length > 13) {
+          $(this).attr('title', text);
+          $(this).tooltip({placement: 'bottom', trigger: 'hover'});
+        }
+      });
+
+      var label_parent = $(this).find('input[type="radio"]:checked').parent();
+      label_parent.addClass('checked');
     });
 
-    var label_parent = $(this).find('input[type="radio"]:checked').parent();
-    label_parent.addClass('checked');
-  });
-
-  $('form .radio_buttons .control-section .radio label').unbind('click');
-  $('form .radio_buttons .control-section .radio label').bind('click', function(e) {
-    var section = $(this).parent().parent();
-    section.find('label.checked').removeClass('checked');
-    $(this).addClass('checked');
+    $('form .radio_buttons .control-section .radio label').unbind('click');
+    $('form .radio_buttons .control-section .radio label').bind('click', function(e) {
+      var section = $(this).parent().parent();
+      section.find('label.checked').removeClass('checked');
+      $(this).addClass('checked');
+    });
   });
 }
 
 function custom_checkbox_buttons(){
-  $('form .check_boxes .control-section').each(function(e){
-    $(this).find('.checkbox label').each(function(e){
-      var text = $(this).text();
-      if(text.length > 13){
-        $(this).attr('title', text);
-        $(this).tooltip({placement: 'bottom', trigger: 'hover'});
-      }
+  $('form .check_boxes .control-section').livequery(function(){
+    $('form .check_boxes .control-section').each(function(e){
+      $(this).find('.checkbox label').each(function(e){
+        var text = $(this).text();
+        if(text.length > 13){
+          $(this).attr('title', text);
+          $(this).tooltip({placement: 'bottom', trigger: 'hover'});
+        }
+      });
+
+      var label_parent = $(this).find('input[type="checkbox"]:checked').parent();
+      label_parent.addClass('checked');
     });
 
-    var label_parent = $(this).find('input[type="checkbox"]:checked').parent();
-    label_parent.addClass('checked');
-  });
-
-  $('form .check_boxes .control-section .checkbox label').unbind('click');
-  $('form .check_boxes .control-section .checkbox label').bind('click', function(e) {
-    if($(this).find('input[type="checkbox"]').is(':checked'))
-      $(this).addClass('checked');
-    else
-      $(this).removeClass('checked');
+    $('form .check_boxes .control-section .checkbox label').unbind('click');
+    $('form .check_boxes .control-section .checkbox label').bind('click', function(e) {
+      if($(this).find('input[type="checkbox"]').is(':checked'))
+        $(this).addClass('checked');
+      else
+        $(this).removeClass('checked');
+    });
   });
 }
 
 function custom_dynamic_height(){
-  for(var i=1; i <= 5; i++) {
-    var min_height = 0;
-    if($('.height_groups.groups_'+i).length > 0){
-      $('.height_groups.groups_'+i).each(function(e){
-        if( min_height < $(this).innerHeight() ) min_height = $(this).innerHeight()
-      });
-      $('.height_groups.groups_'+i).css('min-height', min_height+'px');
+  $('.height_groups').livequery(function(){
+    for(var i=1; i <= 5; i++) {
+      var min_height = 0;
+      if($('.height_groups.groups_'+i).length > 0){
+        $('.height_groups.groups_'+i).each(function(e){
+          if( min_height < $(this).innerHeight() ) min_height = $(this).innerHeight()
+        });
+        $('.height_groups.groups_'+i).css('min-height', min_height+'px');
+      }
     }
-  }
+  });
 }
 
 function _require(script) {
@@ -105,24 +112,61 @@ function _require(script) {
 }
 
 function adjustIconColor(elem) {
-  $('.oi-icon').each(function(e) {
-    if(!$(this).hasClass('colored')) {
-      var parent = $(this).parent();
+  //add envents
+  originalClick = $.fn.click
+  $.fn.click = function(prop, value) {
+    this.trigger('icon_click', [prop, value]);
+    return originalClick.apply(this, arguments);
+  }
 
-      parent.unbind('mouseenter');
-      parent.unbind('mouseleave');
 
-      var handleChange = function(el) {
-        var icon = el.find('.oi-icon:first');
-        if(!icon.hasClass('colored'))
-          icon.css('fill', el.css('color'));
+  $('.oi-icon').livequery(function(){
+    $('.oi-icon').each(function(e) {
+      if(!$(this).hasClass('colored')) {
+        var parent = $(this).parent();
+
+        parent.unbind('mouseenter.iconEnter');
+        parent.unbind('mouseleave.iconLeave');
+        parent.unbind('click.iconClick');
+
+        var handleChange = function(el, type) {
+          var icon = el.find('.oi-icon:first');
+          if(type == 'click')
+            icon.addClass('clicked');
+
+          if(!icon.hasClass('colored'))
+          {
+            if(type == 'in' || type == 'out')
+            {
+              icon.addClass('mouseentered');
+              icon.css('fill', el.css('color'));
+            }
+          }
+        }
+
+        parent.bind('mouseenter.iconEnter', function() { handleChange($(this), 'in') });
+        parent.bind('mouseleave.iconLeave', function() { handleChange($(this), 'out') });
+        parent.bind('click.iconClick', function() { handleChange($(this), 'click') });
+
+        $(this).css('fill', parent.css('color'));
       }
+    });
+  });
 
-      parent.bind('mouseenter', function() { handleChange($(this)) });
-      parent.bind('mouseleave', function() { handleChange($(this)) });
+  $('.oi-icon.clicked').livequery(function(){
+    $('.oi-icon.mouseentered, .oi-icon.last-clicked').each(function(){
+      if(!$(this).hasClass('colored'))
+      {
+        $(this).removeClass('mouseentered');
+        $(this).css('fill', $(this).parent().css('color'));
+      }
+      $(this).removeClass('last-clicked');
+    });
 
-      $(this).css('fill', parent.css('color'));
-    }
+    $('.oi-icon.clicked').each(function(){
+      $(this).removeClass('clicked');
+      $(this).addClass('last-clicked');
+    })
   });
 }
 
@@ -200,19 +244,17 @@ jQuery(function () {
   //   }
   // }
 
-  //adjust icons color
-  adjustIconColor();
-
   // Execute on load
   // dynamicTopPadding();
 
   // Bind event listener
   // $(window).resize(dynamicTopPadding);
 
+  //adjust icons color
+  adjustIconColor();
   //Custom Radio / Checkbox buttons
   custom_radio_buttons();
   custom_checkbox_buttons();
-
   //Custom dynamic height groups
   setTimeout(custom_dynamic_height, 1000);
 });
