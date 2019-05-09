@@ -59,7 +59,7 @@ class Account::PackReportsController < Account::OrganizationController
       if preseizures.any? && @report.user.uses_csv_descriptor?
         data = PreseizuresToCsv.new(@report.user, preseizures).execute
 
-        send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_')}.csv")
+        send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_').tr('%', '_')}.csv", x_sendfile: true, :disposition => 'inline')
       else
         unless @report.user.uses_csv_descriptor?
           flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation et paramètres client avant d'utiliser cette fonctionnalité."
@@ -69,7 +69,7 @@ class Account::PackReportsController < Account::OrganizationController
     when 'xml_ibiza'
       if current_user.is_admin
         if preseizures.any?
-          file_name = "#{@report.name.tr(' ', '_')}.xml"
+          file_name = "#{@report.name.tr(' ', '_').tr('%', '_')}.xml"
 
           ibiza = @organization.ibiza
 
@@ -80,7 +80,7 @@ class Account::PackReportsController < Account::OrganizationController
             if exercise
               data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza)
 
-              send_data(data, type: 'application/xml', filename: file_name)
+              send_data(data, type: 'application/xml', filename: file_name, x_sendfile: true, :disposition => 'inline')
             else
               render :select_to_download
             end

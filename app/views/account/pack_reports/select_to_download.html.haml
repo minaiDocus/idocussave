@@ -23,7 +23,7 @@
                 - if @organization.ibiza && @report.user.uses_ibiza?
                   %td= label_tag "preseizure_#{preseizure.id}", IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
                 - else
-                  %td= label_tag "preseizure_#{preseizure.id}", preseizure.third_party
+                  %td= label_tag "preseizure_#{preseizure.id}", preseizure.third_party || '-'
         .control-group
           = label_tag 'download[format]', 'Format', class: 'control-label'
           .controls

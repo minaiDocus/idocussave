@@ -10,7 +10,7 @@ class CoalaZipService
   end
 
   def execute
-    base_name = @preseizures.first.report.name.gsub(' ', '_')
+    base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     # initialising a temp dir into rails_app insted of /tmp
     dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
     FileUtils.chmod(0755, dir)

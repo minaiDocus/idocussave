@@ -7,7 +7,7 @@ class QuadratusZipService
 
 
   def execute
-    base_name = @preseizures.first.report.name.tr(' ', '_')
+    base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
 
     # Initialize a temp directory
     dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
