@@ -76,17 +76,19 @@ class EmailedDocument
 
 
   def self.receive(mail, rescue_error = true)
-    email = Email.where(message_id: mail.message_id).first
+    email = Email.find_by(message_id: mail.message_id)
 
     unless email
+      mail_to = mail.to.grep(/@fw.idocus.com/i).first
+
       email                       = Email.new
       email.message_id            = mail.message_id
       email.originally_created_at = mail.date
-      email.to                    = mail.to.first
+      email.to                    = mail_to
       email.from                  = mail.from.first
       email.subject               = mail.subject
       email.from_user             = User.find_by_email(mail.from.first)
-      email.to_user               = User.where(email_code: mail.to.first.split('@')[0]).first
+      email.to_user               = User.find_by(email_code: mail_to.split('@')[0])
 
       email.save
 
@@ -166,11 +168,13 @@ class EmailedDocument
   end
 
   def email_code
-    @email_code ||= @mail.to.first.split('@')[0]
+    mail_to = @mail.to.grep(/@fw.idocus.com/i).first
+
+    @email_code ||= mail_to.split('@')[0]
   end
 
   def user
-    @user ||= User.where(email_code: email_code).first
+    @user ||= User.find_by(email_code: email_code)
   end
 
   def journal
