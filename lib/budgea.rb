@@ -199,6 +199,27 @@ class Budgea
       run_and_parse_response
     end
 
+    def get_all_accounts(connexion_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts?all",
+        method:  :get,
+        proxy:   @settings[:proxy],
+        headers: headers
+      )
+      run_and_parse_response 'accounts'
+    end
+
+    def activate_account(connexion_id, account_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts/#{account_id}?all",
+        method:  :post,
+        proxy:   @settings[:proxy],
+        headers: headers,
+        body:  { disabled: 0 }
+      )
+      run_and_parse_response 'accounts'
+    end
+
     def get_accounts
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',
