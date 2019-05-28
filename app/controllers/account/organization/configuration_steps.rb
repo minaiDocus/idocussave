@@ -236,7 +236,7 @@ module Account::Organization::ConfigurationSteps
       when 'order_dematbox'
         controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox') || action_name.in?(%w(edit update)))
       when 'retrievers'
-        controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts')) && params[:customer_id].present?
+        controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts)) && params[:customer_id].present?
       when 'ged'
         controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))
     end
