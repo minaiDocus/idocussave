@@ -7,7 +7,7 @@ class Account::BankAccountsController < Account::RetrieverController
       @retriever = @account.retrievers.find(bank_account_contains[:retriever_id])
       @retriever.ready if @retriever && @retriever.waiting_selection?
     end
-    @bank_accounts = @account.bank_accounts
+    @bank_accounts = @account.retrievers.collect(&:bank_accounts).flatten!
     @is_filter_empty = bank_account_contains.empty?
   end
 

@@ -10,7 +10,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
       @retriever = @customer.retrievers.find(bank_account_contains[:retriever_id])
       @retriever.ready if @retriever && @retriever.waiting_selection?
     end
-    @bank_accounts = @customer.bank_accounts
+    @bank_accounts = @customer.retrievers.collect(&:bank_accounts).flatten!
   end
 
   def edit
