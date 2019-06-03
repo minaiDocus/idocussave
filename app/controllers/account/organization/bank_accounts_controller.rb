@@ -72,7 +72,18 @@ private
               account['number']
             ).first
 
-            unless bank_account
+            if bank_account
+              bank_account.is_used = false unless bank_account.retriever
+
+              bank_account.user              = @customer
+              bank_account.retriever         = retriever
+              bank_account.api_id            = account['id']
+              bank_account.api_name          = 'budgea'
+              bank_account.name              = account['name']
+              bank_account.type_name         = account['type']
+              bank_account.original_currency = account['currency']
+              bank_account.save if bank_account.changed?
+            else
               bank_account                   = BankAccount.new
               bank_account.user              = @customer
               bank_account.retriever         = retriever

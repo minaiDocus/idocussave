@@ -7,6 +7,7 @@ class Account::BankAccountsController < Account::RetrieverController
       @retriever = @account.retrievers.find(bank_account_contains[:retriever_id])
       @retriever.ready if @retriever && @retriever.waiting_selection?
     end
+
     @bank_accounts = @account.retrievers.collect(&:bank_accounts).flatten!
     @is_filter_empty = bank_account_contains.empty?
   end
@@ -53,7 +54,18 @@ private
               account['number']
             ).first
 
-            unless bank_account
+            if bank_account
+              bank_account.is_used = false unless bank_account.retriever
+
+              bank_account.user              = @account
+              bank_account.retriever         = retriever
+              bank_account.api_id            = account['id']
+              bank_account.api_name          = 'budgea'
+              bank_account.name              = account['name']
+              bank_account.type_name         = account['type']
+              bank_account.original_currency = account['currency']
+              bank_account.save if bank_account.changed?
+            else
               bank_account                   = BankAccount.new
               bank_account.user              = @account
               bank_account.retriever         = retriever

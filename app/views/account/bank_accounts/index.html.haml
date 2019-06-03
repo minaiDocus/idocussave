@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Paramétrage des automates bancaires (#{@bank_accounts.count})
+          %h3 Paramétrage des automates bancaires (#{@bank_accounts.try(:count).to_i})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
