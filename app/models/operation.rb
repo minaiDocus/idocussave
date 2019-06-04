@@ -25,6 +25,7 @@ class Operation < ActiveRecord::Base
   scope :forced_processing,  -> { where.not(forced_processing_at: nil) }
   scope :waiting_processing, -> { where(forced_processing_at: nil) }
   scope :not_deleted,        -> { where(deleted_at: nil) }
+  scope :with_api_id,        -> { where.not(api_id: nil) }
 
   scope :not_recently_added_or_forced, -> { where('operations.created_at < ? OR operations.forced_processing_at IS NOT ?', 7.days.ago, nil) }
 
@@ -60,12 +61,12 @@ class Operation < ActiveRecord::Base
   def self.processable
     users_accounting_plan_updating = AccountingPlan.updating.pluck(:user_id).uniq
 
-    operations = Operation.not_processed.not_deleted.not_locked.where.not(user_id: users_accounting_plan_updating).where('created_at < ? OR forced_processing_at IS NOT NULL', 1.week.ago).order(date: :asc).includes(:user, :pack, :bank_account)
+    operations = Operation.with_api_id.not_processed.not_deleted.not_locked.where.not(user_id: users_accounting_plan_updating).where('created_at < ? OR forced_processing_at IS NOT NULL', 1.week.ago).order(date: :asc).includes(:user, :pack, :bank_account)
 
-    user_ids = Operation.not_processed.not_deleted.not_locked.where.not(user_id: users_accounting_plan_updating).where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).pluck(:user_id).uniq
+    user_ids = Operation.with_api_id.not_processed.not_deleted.not_locked.where.not(user_id: users_accounting_plan_updating).where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).pluck(:user_id).uniq
     users = User.find user_ids
     forced_user_ids = users.select { |user| user.options.operation_processing_forced? }.map(&:id)
-    forced_operations = Operation.not_processed.not_deleted.not_locked.where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).where(user_id: forced_user_ids).includes(:user, :pack, :bank_account)
+    forced_operations = Operation.with_api_id.not_processed.not_deleted.not_locked.where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).where(user_id: forced_user_ids).includes(:user, :pack, :bank_account)
 
     operations + forced_operations
   end
