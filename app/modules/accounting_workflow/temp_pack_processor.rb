@@ -63,6 +63,22 @@ class AccountingWorkflow::TempPackProcessor
           piece.pages_number          = pages_number
           piece.analytic_reference_id = temp_document.analytic_reference_id
           piece.save
+
+          ##Temp fix issue imagemagick v 6 thumb generation (The piece will not have a thumb)
+          ## REMOVE THIS after imagemagick upgrade
+          if !piece.valid? && !piece.persisted?
+            DocumentTools.correct_pdf_if_needed piece_file_path
+            piece.content = open(piece_file_path)
+            piece.save
+
+            if piece.valid? && piece.persisted?
+              Pack::Piece.extract_content piece
+              piece.update(is_finalized: true)
+            end
+          end
+          ##Temp fix issue imagemagick
+
+
           added_pieces << piece
 
           DocumentTools.sign_pdf(piece_file_path, piece.content.path)
