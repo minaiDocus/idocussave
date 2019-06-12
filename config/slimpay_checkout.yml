@@ -1,0 +1,21 @@
+defaults: &defaults
+  app_base_uri: 'https://api.preprod.slimpay.com'
+  app_id: 'idocus01'
+  app_secret: 'QhBN1uk5ZBmf6Bh4c83K8pckCxSqgl7ezFx5UwmJ'
+  app_creditor: 'idocus'
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  app_base_uri: 'https://api.slimpay.net'
+  app_id: 'idocus02'
+  app_secret: 'a2OFnMADKh91bUc254HFHZ1WPcrBKtsPrf5L1JsD'
+  app_creditor: 'idocusnew'
+

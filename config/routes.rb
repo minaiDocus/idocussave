@@ -84,6 +84,8 @@ Idocus::Application.routes.draw do
       get   :edit_options,          on: :collection
       get   :edit_software_users,   on: :member
       get   :close_confirm,         on: :member
+      post  :prepare_payment,       on: :member
+      post  :confirm_payment,       on: :member
       patch :update_options,        on: :collection
       patch :update_software_users, on: :member
 
@@ -367,6 +369,7 @@ Idocus::Application.routes.draw do
 
     resource :payment do
       post 'debit_mandate_notify', on: :member
+      get  'debit_mandate_notify',  on: :member
       get  'use_debit_mandate',    on: :member
     end
 

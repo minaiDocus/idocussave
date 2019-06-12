@@ -12,24 +12,26 @@ class Account::PaymentsController < Account::AccountController
 
   # POST /account/payment/debit_mandate_notify
   def debit_mandate_notify
-    attributes = DebitMandateResponseService.new(params[:blob]).execute
+    #NOTE: slimpay notification doesn't work so we fetch the debit mandate infos after debit configuration
+    render text: 'OK'
+    # attributes = DebitMandateResponseService.new(params[:blob]).execute
 
-    if attributes.present?
-      debit_mandate = DebitMandate.where(clientReference: attributes['clientReference']).first
+    # if attributes.present?
+    #   debit_mandate = DebitMandate.where(clientReference: attributes['clientReference']).first
 
-      if debit_mandate
-        debit_mandate.update(attributes)
+    #   if debit_mandate
+    #     debit_mandate.update(attributes)
 
-        if debit_mandate.configured? && debit_mandate.organization.is_suspended
-          debit_mandate.organization.update(is_suspended: false)
-        end
+    #     if debit_mandate.configured? && debit_mandate.organization.is_suspended
+    #       debit_mandate.organization.update(is_suspended: false)
+    #     end
 
-        render text: 'OK'
-      else
-        render text: 'Erreur'
-      end
-    else
-      render text: 'Erreur'
-    end
+    #     render text: 'OK'
+    #   else
+    #     render text: 'Erreur'
+    #   end
+    # else
+    #   render text: 'Erreur'
+    # end
   end
 end

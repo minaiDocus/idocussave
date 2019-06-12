@@ -12,7 +12,11 @@ class DebitMandate < ActiveRecord::Base
   validates_presence_of :clientReference, if: proc { |dm| dm.persisted? }
 
   def pending?
-    transactionStatus.nil?
+    !transactionStatus.present?
+  end
+
+  def started?
+    transactionStatus == 'started'
   end
 
   def configured?

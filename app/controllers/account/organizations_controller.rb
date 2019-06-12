@@ -144,6 +144,44 @@ class Account::OrganizationsController < Account::OrganizationController
   def close_confirm
   end
 
+  def prepare_payment
+    debit_mandate = @organization.debit_mandate
+
+    if debit_mandate.pending?
+      debit_mandate.title             = payment_params[:gender]
+      debit_mandate.firstName         = payment_params[:first_name]
+      debit_mandate.lastName          = payment_params[:last_name]
+      debit_mandate.email             = payment_params[:email]
+      debit_mandate.invoiceLine1      = payment_params[:address]
+      debit_mandate.invoiceLine2      = payment_params[:address_2]
+      debit_mandate.invoiceCity       = payment_params[:city]
+      debit_mandate.invoicePostalCode = payment_params[:postal_code]
+      debit_mandate.invoiceCountry    = payment_params[:country]
+    end
+
+    if debit_mandate.save
+      mandate = DebitMandateResponseService.new debit_mandate
+      mandate.prepare_order
+
+      if mandate.errors
+        render json: { success: false, message: mandate.errors  }, status: 200
+      else
+        debit_mandate.update(reference: mandate.order_reference, transactionStatus: 'started')
+
+        render json: { success: true, frame_64: mandate.get_frame }, status: 200
+      end
+    else
+      render json: { success: false, message: debit_mandate.errors.message  }, status: 200
+    end
+  end
+
+  def confirm_payment
+    debit_mandate = @organization.debit_mandate
+    DebitMandateResponseService.new(debit_mandate).confirm_payment if debit_mandate.started?
+
+    render json: { success: true, debit_mandate: @organization.debit_mandate.reload }, status: 200
+  end
+
   private
 
   def verify_rights
@@ -216,6 +254,21 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_exact_online_auto_deliver
       )
     end
+  end
+
+  def payment_params
+    params.permit(
+      :gender,
+      :first_name,
+      :last_name,
+      :email,
+      :phone_number,
+      :address,
+      :address_2,
+      :city,
+      :postal_code,
+      :country
+    )
   end
 
   def sort_column

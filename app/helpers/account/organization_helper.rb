@@ -64,7 +64,7 @@ module Account::OrganizationHelper
       used_fields = ibiza.description.select { |_k, v| v['is_used'].to_i == 1 || v['is_used'] == true }
 
       sorted_used_fields = used_fields.sort { |(_ak, av), (_bk, bv)| av['position'] <=> bv['position'] }
-      
+
       keys = sorted_used_fields.map { |k, _| k }
       keys.empty? ? [:third_party] : keys
     else
@@ -84,5 +84,48 @@ module Account::OrganizationHelper
     end
 
     options
+  end
+
+  def debit_mandate_countries
+    [
+      ["Allemagne", "DE"],
+      ["Autriche", "AT"],
+      ["Belgique", "BE"],
+      ["Bulgarie", "BG"],
+      ["Chypre", "CY"],
+      ["Danemark", "DK"],
+      ["Espagne", "ES"],
+      ["Estonie", "EE"],
+      ["Finlande", "FI"],
+      ["France", "FR"],
+      ["Gibraltar", "GI"],
+      ["Grêce", "GR"],
+      ["Guadeloupe", "GP"],
+      ["Guyane Française", "GF"],
+      ["Hungary", "HU"],
+      ["Irlande", "IE"],
+      ["Islande", "IS"],
+      ["Italie", "IT"],
+      ["Lettonie", "LV"],
+      ["Liechtenstein", "LI"],
+      ["Lituanie", "LT"],
+      ["Luxembourg", "LU"],
+      ["Malte", "MT"],
+      ["Martinique", "MQ"],
+      ["Monaco", "MC"],
+      ["Norvège", "NO"],
+      ["Pays-Bas", "NL"],
+      ["Pologne", "PL"],
+      ["Portugal", "PT"],
+      ["Roumanie", "RO"],
+      ["Royaume-Uni", "GB"],
+      ["République Tchêque", "CZ"],
+      ["Réunion", "RE"],
+      ["Slovaquie", "SK"],
+      ["Slovénie", "SI"],
+      ["Suisse", "CH"],
+      ["Suède", "SE"],
+      ["Iles Aland", "AX"]
+    ]
   end
 end

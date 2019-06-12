@@ -1,0 +1,65 @@
+.modal.fade{ :id=>"slimpay_checkout" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Prélèvement
+  .modal-body
+    #step1_section
+      %form#slimpay_checkout_form.form.form-horizontal
+        - debit_mandate = @organization.debit_mandate
+        = hidden_field_tag :organization_id, @organization.id
+        .row-fluid.hide#alert
+
+        %h3.margin1bottom Information de base
+        .control-group
+          = label_tag :gender, 'Civilité : ', class: 'control-label'
+          .controls
+            = radio_button_tag :gender, 'mr', (!debit_mandate.try(:title) || debit_mandate.try(:title) == 'mr'), disabled: !debit_mandate.try(:pending?)
+            M
+            = radio_button_tag :gender, 'mrs', debit_mandate.try(:title) == 'mrs', disabled: !debit_mandate.try(:pending?)
+            Mme
+            = radio_button_tag :gender, 'miss', debit_mandate.try(:title) == 'miss', disabled: !debit_mandate.try(:pending?)
+            Mlle
+        .control-group
+          = label_tag :first_name, '* Prénom : ', class: 'control-label'
+          .controls
+            = text_field_tag :first_name, debit_mandate.try(:firstName), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :last_name, '* Nom : ', class: 'control-label'
+          .controls
+            = text_field_tag :last_name, debit_mandate.try(:lastName), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :email, '* Email : ', class: 'control-label'
+          .controls
+            = text_field_tag :email, (debit_mandate.try(:email) || (@user.leader? ? @user.email : @organization.admins.first.try(:email))), disabled: !debit_mandate.try(:pending?)
+        / .control-group
+        /   = label_tag :phone_number, 'Téléphone : ', class: 'control-label'
+        /   .controls
+        /     = text_field_tag :phone_number
+        %h3.margin1bottom Adresse de facturation
+        .control-group
+          = label_tag :address, '* Adresse : ', class: 'control-label'
+          .controls
+            = text_field_tag :address, debit_mandate.try(:invoiceLine1), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :address_2, "Complément d'adresse : ", class: 'control-label'
+          .controls
+            = text_field_tag :address_2, debit_mandate.try(:invoiceLine2), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :city, "* Ville : ", class: 'control-label'
+          .controls
+            = text_field_tag :city, debit_mandate.try(:invoiceCity), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :postal_code, "* Code postal : ", class: 'control-label'
+          .controls
+            = text_field_tag :postal_code, debit_mandate.try(:invoicePostalCode), disabled: !debit_mandate.try(:pending?)
+        .control-group
+          = label_tag :country, "* Pays : ", class: 'control-label'
+          .controls
+            = select_tag :country, options_for_select(debit_mandate_countries, debit_mandate.try(:invoiceCountry) || 'FR'), disabled: !debit_mandate.try(:pending?)
+    #step2_section.hide
+  .modal-footer
+    #step1_buttons
+      %a#submitSlimpay{ :class=>"btn btn-primary" } Suivant
+    #step_loader.pull-right.clearfix.hide
+      .feedback.active.pull-left
+      %span Chargement en cours ...

@@ -521,25 +521,34 @@
                     .alignright= link_to icon_edit + ' Créer maintenant', edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
             - if @user.leader?
               #payments.tab-pane{ class: ('active' if params[:tab] == 'payments') }
+                = render :partial => '/account/organizations/slimpay_checkout'
                 %h3.aligncenter Prélèvement
                 %table.table.table-condensed.margin2top
                   %tbody
                     %tr
                       %th Etat :
-                      %td
+                      %td#debit_state
                         - if @organization.try(:debit_mandate).try(:pending?)
                           %span.label Non configuré
+                        - elsif @organization.try(:debit_mandate).try(:started?)
+                          %span.label.label-warning En attente utilisateur ...
                         - elsif @organization.try(:debit_mandate).try(:configured?)
                           %span.label.label-success OK
                         - else
                           %span.label.label-important Information non valide
                     %tr
                       %th Banque :
-                      %td= @organization.try(:debit_mandate).try(:bic)
-                %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
-                  %input{ name: :email, type: 'hidden', value: (@user.leader? ? @user.email : @organization.admins.first&.email) }
-                  %input{ name: :client_reference, type: 'hidden', value: @organization.try(:debit_mandate).try(:clientReference) }
-                  %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
+                      %td#debit_bic= @organization.try(:debit_mandate).try(:bic)
+                    %tr
+                      %th Nom :
+                      %td#debit_name= @organization.try(:debit_mandate).try(:title).try(:capitalize).to_s + ' ' + @organization.try(:debit_mandate).try(:firstName).to_s + ' ' + @organization.try(:debit_mandate).try(:lastName).to_s
+                    %tr
+                      %th Email :
+                      %td#debit_email= @organization.try(:debit_mandate).try(:email)
+                %a#link_slimpay_checkout.btn.btn-primary{ href: '#slimpay_checkout', data: { toggle: :modal } } Configurer
+                %span#payment_configuration_checker.label.label-warning.hide
+                  Verification de votre configuration en cours ... Veuillez patienter svp.
+
             - if @user.is_admin
               #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
                 %table.table.table-striped.table-condensed
