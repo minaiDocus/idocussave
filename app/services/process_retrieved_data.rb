@@ -105,7 +105,7 @@ class ProcessRetrievedData
                 errors = []
                 connection['subscriptions'].each do |subscription|
                   if subscription['documents'].present?
-                    client = Budgea::Client.new(retriever.user.budgea_account.access_token)
+                    client = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
                     subscription['documents'].select do |document|
                       retriever.service_name.in?(['Nespresso', 'Online.net']) && document['date'].nil? ? false : true
                     end.sort_by do |document|

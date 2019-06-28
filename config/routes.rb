@@ -260,9 +260,7 @@ Idocus::Application.routes.draw do
 
         with_options module: 'organization' do |r|
           r.resources :new_provider_requests, only: %w(index new create edit update)
-          r.resources :bank_accounts, only: %w(index edit update) do
-            post 'update_multiple', on: :collection
-          end
+          r.resources :bank_accounts, only: %w(index edit update)
           r.resources :retrieved_banking_operations, only: :index do
             post 'force_processing', on: :collection
           end
@@ -418,9 +416,7 @@ Idocus::Application.routes.draw do
       patch 'validate', on: :collection
     end
 
-    resources :bank_accounts do
-      patch 'update_multiple', on: :collection
-    end
+    resources :bank_accounts
 
     resources :emailed_documents do
       post 'regenerate_code', on: :collection

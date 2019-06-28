@@ -40,6 +40,7 @@ class Retriever < ActiveRecord::Base
   scope :unavailable,              -> { where(state: 'unavailable') }
   scope :not_processed,            -> { where(state: %w(configuring destroying running)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
+  scope :linked,                   -> { where('budgea_id IS NOT NULL AND budgea_id != ""') }
 
   scope :providers,           -> { where("capabilities LIKE '%document%'") }
   scope :banks,               -> { where("capabilities LIKE '%bank%'") }
@@ -230,6 +231,10 @@ class Retriever < ActiveRecord::Base
 
   def not_uniq?
     not uniq?
+  end
+
+  def linked?
+    budgea_id.present?
   end
 
 private

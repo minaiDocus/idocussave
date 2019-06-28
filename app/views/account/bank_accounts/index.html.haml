@@ -3,20 +3,24 @@
     .box
       .row-fluid
         .span6
-          %h3 Paramétrage des automates bancaires (#{@bank_accounts.try(:count).to_i})
+          %h3 Paramétrage des automates bancaires (#{@bank_accounts.select{|ba| ba.is_used}.try(:size).to_i})
         .span6
           %a{ href: '#', class: 'btn pull-right toggle_filter' }
             %i.icon-filter
             %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
     .filter.box{ style: ('display: none' if @is_filter_empty) }
       = form_tag account_bank_accounts_path, method: :get, class: 'form form-inline margin0bottom' do
-        = label_tag 'bank_account_contains[retriever_id]', 'Banque'
-        = select_tag 'bank_account_contains[retriever_id]', options_for_select(@account.retrievers.banks.map { |e| [e.service_name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
+        = label_tag 'bank_account_contains[retriever_budgea_id]', 'Banque'
+        = select_tag 'bank_account_contains[retriever_budgea_id]', options_for_select(@account.retrievers.linked.banks.map { |e| [e.service_name, e.budgea_id] }, (params[:bank_account_contains][:retriever_budgea_id] rescue nil)), include_blank: true
         = submit_tag t('filters.action'), class: 'btn btn-primary'
         = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
     .box{ style: 'padding-bottom:0;' }
-      = form_tag update_multiple_account_bank_accounts_path, method: 'patch', class: 'form form-horizontal' do
-        = hidden_field_tag 'bank_account_contains[retriever_id]', @retriever.id if @retriever
+      = form_tag '#', method: 'patch', class: 'form-selection form form-horizontal' do
+        = hidden_field_tag 'retriever_budgea_config', @bi_config
+        = hidden_field_tag 'retriever_bi_token', @account.budgea_account.try(:access_token)
+        = hidden_field_tag 'retriever_user_token', @account.authentication_token
+        = hidden_field_tag 'bank_account_contains[retriever_budgea_id]', @retriever.budgea_id if @retriever.try(:linked?)
+        = hidden_field_tag 'bank_account_ids[]'
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
           %thead
             %tr
@@ -24,15 +28,9 @@
               %th= t('activerecord.models.bank_account.attributes.bank_name')
               %th= t('activerecord.models.bank_account.attributes.name')
               %th= t('activerecord.models.bank_account.attributes.number')
-          %tbody
-            = hidden_field_tag 'bank_account_ids[]'
-            - @bank_accounts.each do |bank_account|
-              %tr
-                %td
-                  - if bank_account.bank_name.present?
-                    = check_box_tag 'bank_account_ids[]', bank_account.id, bank_account.is_used, class: 'checkbox', id: "bank_account_ids_#{bank_account.id}"
-                %td= label_tag "bank_account_ids[#{bank_account.id}]", bank_account.bank_name.presence || '(inconnu)'
-                %td= label_tag "bank_account_ids[#{bank_account.id}]", bank_account.name.presence || '(inconnu)'
-                %td= label_tag "bank_account_ids[#{bank_account.id}]", bank_account.number
+          %tbody#all_accounts_list
+            %tr
+              %td{ colspan: 4 }
+                .feedback.active
         .form-actions
-          = submit_tag 'Valider les changements', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
+          = button_tag 'Valider les changements', class: 'btn-selection btn btn-primary'
