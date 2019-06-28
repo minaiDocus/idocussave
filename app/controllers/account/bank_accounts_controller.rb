@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::BankAccountsController < Account::RetrieverController
-  def index
-    fetch_remote_accounts
+  before_filter :load_budgea_config
 
-    if bank_account_contains && bank_account_contains[:retriever_id]
-      @retriever = @account.retrievers.find(bank_account_contains[:retriever_id])
+  def index
+    if bank_account_contains && bank_account_contains[:retriever_budgea_id]
+      @retriever = @account.retrievers.find_by_budgea_id(bank_account_contains[:retriever_budgea_id])
       @retriever.ready if @retriever && @retriever.waiting_selection?
     end
 
@@ -12,83 +12,7 @@ class Account::BankAccountsController < Account::RetrieverController
     @is_filter_empty = bank_account_contains.empty?
   end
 
-  def update_multiple
-    bank_accounts = @account.bank_accounts
-    if bank_account_ids.is_a?(Array)
-      selected_bank_accounts = @account.bank_accounts.where(id: bank_account_ids)
-      unselected_bank_accounts = @account.bank_accounts.where.not(id: bank_account_ids)
-      selected_bank_accounts.update_all(is_used: true)
-      unselected_bank_accounts.update_all(is_used: false)
-
-      selected_bank_accounts.map(&:retriever).compact.uniq.each do |retriever|
-        retriever.ready if retriever.waiting_selection?
-      end
-
-      activate_selected_accounts selected_bank_accounts
-
-      flash[:success] = 'Modifié avec succès.'
-    end
-    redirect_to account_bank_accounts_path(bank_account_contains: params[:bank_account_contains])
-  end
-
 private
-
-  #TEMP fix of disable accounts budgea (according to DSP2)
-  def client
-    return nil unless @account.budgea_account
-    @client ||= Budgea::Client.new @account.budgea_account.access_token
-  end
-
-  def fetch_remote_accounts
-    if @account.budgea_account
-      @account.retrievers.each do |retriever|
-        remote_accounts = client.get_all_accounts retriever.budgea_id
-        if client.response.code == 200 && client.error_message.nil?
-          remote_accounts.each do |account|
-            bank_account = @account.bank_accounts.where(
-              'api_id = ? OR (name = ? AND number = ?)',
-              account['id'],
-              account['name'],
-              account['number']
-            ).first
-
-            if bank_account
-              bank_account.is_used = false unless bank_account.retriever
-
-              bank_account.user              = @account
-              bank_account.retriever         = retriever
-              bank_account.api_id            = account['id']
-              bank_account.api_name          = 'budgea'
-              bank_account.name              = account['name']
-              bank_account.type_name         = account['type']
-              bank_account.original_currency = account['currency']
-              bank_account.save if bank_account.changed?
-            else
-              bank_account                   = BankAccount.new
-              bank_account.user              = @account
-              bank_account.retriever         = retriever
-              bank_account.api_id            = account['id']
-              bank_account.bank_name         = retriever.service_name
-              bank_account.name              = account['name']
-              bank_account.number            = account['number']
-              bank_account.type_name         = account['type']
-              bank_account.original_currency = account['currency']
-              bank_account.save
-            end
-          end
-        end
-      end
-    end
-  end
-
-  def activate_selected_accounts(banks)
-    if @account.budgea_account
-      banks.each do |bank|
-        client.activate_account(bank.retriever.budgea_id, bank.api_id) if(bank.reload)
-      end
-    end
-  end
-  #TEMP fix
 
   def bank_account_contains
     search_terms(params[:bank_account_contains])
@@ -97,5 +21,16 @@ private
 
   def bank_account_ids
     params[:bank_account_ids].reject(&:blank?)
+  end
+
+  def load_budgea_config
+    bi_config = {
+                  url:    "https://#{Budgea.config.domain}/2.0",
+                  c_id:   Budgea.config.client_id,
+                  c_ps:   Budgea.config.client_secret,
+                  c_ky:   Budgea.config.encryption_key ? Base64.encode64(Budgea.config.encryption_key.to_json.to_s) : '',
+                  proxy:  Budgea.config.proxy
+                }.to_json
+    @bi_config = Base64.encode64(bi_config.to_s)
   end
 end

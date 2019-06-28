@@ -28,7 +28,7 @@ class Idocus.Views.RetrieversStep3 extends Backbone.View
         self.loading = false
         self.render()
       (error)->
-        self.$el.find('#information').html("<div class='alert alert-danger'>'+error+'</div>")
+        self.$el.find('#information').html("<div class='alert alert-danger'>"+error+"</div>")
     )
 
   select_all_accounts: () ->
@@ -38,21 +38,22 @@ class Idocus.Views.RetrieversStep3 extends Backbone.View
       @$el.find('.checkbox').prop('checked', false)
 
   submit_selected_accounts: () ->
-    self = this
-    @common.action_loading(@$el, true)
+    if confirm('Etes vous sûr?')
+      self = this
+      @common.action_loading(@$el, true)
 
-    data = @common.serialize_form_json( @$el.find('#accounts_selection') )
-    accounts = []
-    for account_id in (data.accounts || [])
-      account = @accounts.find('id', 'is', account_id)
-      if account.length > 0
-        accounts.push(account[0].attributes)
+      data = @common.serialize_form_json( @$el.find('#accounts_selection') )
+      accounts = []
+      for account_id in (data.accounts || [])
+        account = @accounts.find('id', 'is', account_id)
+        if account.length > 0
+          accounts.push(account[0].attributes)
 
-    Idocus.budgeaApi.update_my_accounts({connector_id: self.connector_info.id, accounts: accounts}).then(
-      ()->
-        self.common.action_loading(self.$el, false)
-        location.href = "#{Idocus.budgeaApi.local_host}/account/retrievers/new?create=1"
-      (error)->
-        self.common.action_loading(self.$el, false)
-        self.$el.find('#information').html("<div class='alert alert-danger'>#{error}</div>")
-    )
+      Idocus.budgeaApi.update_my_accounts(accounts).then(
+        ()->
+          self.common.action_loading(self.$el, false)
+          location.href = "#{Idocus.budgeaApi.local_host}/account/retrievers/new?create=1"
+        (error)->
+          self.common.action_loading(self.$el, false)
+          self.$el.find('#information').html("<div class='alert alert-danger'>#{error}</div>")
+      )

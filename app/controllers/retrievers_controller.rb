@@ -102,7 +102,7 @@ class RetrieversController < ApiController
   end
 
   def create_bank_accounts
-    if CreateBankAccount.execute(@current_user, params[:connector_id], (params[:accounts] || []))
+    if CreateBankAccount.execute(@current_user, (params[:accounts] || []), params[:options])
       render json: { success: true }, status: 200
     else
       render json: { success: false, error_message: 'Impossible de synchroniser un compte bancaire' }, status: 200
@@ -110,8 +110,17 @@ class RetrieversController < ApiController
   end
 
   def get_my_accounts
-    banks = @current_user.retrievers.where(budgea_id: params[:data_local][:connector_id]).try(:first).try(:bank_accounts).try(:used)
-    accounts = banks.collect(&:api_id) if banks
+    if params[:data_local][:connector_id].present?
+      banks = @current_user.retrievers.where(budgea_id: params[:data_local][:connector_id]).try(:first).try(:bank_accounts).try(:used)
+    else
+      banks = @current_user.retrievers.linked.map{ |r| r.try(:bank_accounts).try(:used) }.compact.flatten
+    end
+
+    if params[:data_local][:full_result].present? && params[:data_local][:full_result] == 'true'
+      accounts = banks
+    else
+      accounts = banks.collect(&:api_id) if banks
+    end
 
     render json: { success: true, accounts: accounts || [] }, status: 200
   end

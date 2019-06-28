@@ -123,19 +123,24 @@ class Idocus.BudgeaApi
         })
     )
 
-  get_accounts_of: (connector_id) ->
+  get_accounts_of: (connector_id, full_result) ->
     self = this
     remote_accounts = []
     my_accounts = []
+    full_result = full_result || false
+
+    if parseInt(connector_id) > 0
+      remote_url = "/users/me/connections/#{connector_id}/accounts?all"
+    else
+      remote_url = "/users/me/accounts?all"
+
     promise = new Promise((resolve, reject)->
       self.double_fetch({
-        remote: { url: '/users/me/connections?expand=all_accounts', type: 'GET', collection: 'connections' }
-        local: { url: '/retriever/get_my_accounts', data: {connector_id: connector_id} }
+        remote: { url: remote_url, type: 'GET', collection: 'accounts' }
+        local: { url: '/retriever/get_my_accounts', data: {connector_id: connector_id, full_result: full_result} }
         onSuccess: (remote_response, local_response)->
           ### Respond to remote response ###
-          for account in remote_response
-            if account.id == connector_id
-              remote_accounts = account.all_accounts
+          remote_accounts = remote_response
 
           ### Respond to local response ###
           my_accounts = local_response.accounts
@@ -145,15 +150,31 @@ class Idocus.BudgeaApi
       })
     )
 
-  update_my_accounts: (local_params)->
+  update_my_accounts: (accounts, options)->
     self = this
     promise = new Promise((resolve, reject)->
-      self.local_fetch({
-        url: '/retriever/create_bank_accounts',
-        data: local_params,
-        onSuccess: (data)-> resolve(data)
-        onError: (error)-> reject(error)
-      })
+      # We activate all selected accounts first
+      error = false
+
+      for account in accounts
+        if(!error)
+          self.remote_fetch({
+            url: "/users/me/connections/#{account.id_connection}/accounts/#{account.id}?all",
+            type: 'POST',
+            data: { disabled: 0 },
+            collection: 'accounts',
+            onError: (data)-> error = true
+          })
+
+      if(!error)
+        self.local_fetch({
+          url: '/retriever/create_bank_accounts',
+          data: { accounts: accounts, options: options || {} },
+          onSuccess: (data)-> resolve(data)
+          onError: (error)-> reject(error)
+        })
+      else
+        reject("Erreur lors de l'activation des comptes bancaires séléctionnés")
     )
 
   get_connectors: ()->

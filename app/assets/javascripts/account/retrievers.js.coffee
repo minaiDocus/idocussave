@@ -231,6 +231,66 @@ jQuery ->
         form.find('.form-actions .actions').css(display: 'block')
         form.find('.form-actions .feedback').remove()
 
+  if $('#bank_accounts.select').length > 0
+    Idocus.budgeaApi = new Idocus.BudgeaApi()
+    Idocus.budgeaApi.init_for_user()
+
+    t_body = $('#bank_accounts.select tbody#all_accounts_list')
+    connector_id = $('#bank_accounts.select #bank_account_contains_retriever_budgea_id').val()
+
+    accounts_lists = []
+
+    parseAccounts = (data) ->
+      html = ''
+      local_accounts = data.my_accounts
+      accounts_lists = data.remote_accounts
+
+      for account in accounts_lists
+        bank = local_accounts.find((a)->
+          return parseInt(a.api_id) == parseInt(account.id)
+        ) || {}
+
+        checked = ''
+        if(bank['is_used'] != undefined && bank['is_used'])
+          checked = 'checked="checked"'
+
+        bank_name = $('#bank_accounts.select #bank_account_contains_retriever_budgea_id option[value="'+account.id_connection+'"]').html()
+
+        html += '<tr>'
+        html += '<td><input type="checkbox" class="checkbox" name="bank_account_ids[]" value="'+account.id+'" '+checked+' /></td>'
+        html += '<td>'+(bank_name || "-")+'</td>'
+        html += '<td>'+account.name+'</td>'
+        html += '<td>'+account.number+'</td>'
+        html += '</tr>'
+
+      t_body.html(html)
+
+    Idocus.budgeaApi.get_accounts_of(connector_id, true).then(
+      (data)-> parseAccounts(data)
+      (error)-> t_body.html('<tr><td colspan="4">Erreur de chargement des comptes bancaires</td></tr>')
+    )
+
+    $('#bank_accounts.select .btn-selection').on 'click',  (e)->
+      e.preventDefault()
+      if confirm('Etes vous sûr?')
+        $('.form-actions').html('<div class="feedback active"></div>')
+
+        data = $('#bank_accounts.select .form-selection').serializeArray()
+
+        selected_ids = []
+        for dt in data
+          if /bank_account_ids/i.test(dt.name)
+            selected_ids.push(parseInt(dt.value))
+
+        accounts = accounts_lists.filter((a)->
+          return selected_ids.includes(parseInt(a.id))
+        )
+
+        Idocus.budgeaApi.update_my_accounts(accounts, {force_disable: true}).then(
+          ()-> window.location.href = "#{Idocus.budgeaApi.local_host}/account/bank_accounts"
+          (error)-> $('.form-actions').html('<span>Le processus a échoué</span>')
+        )
+
   $('select#account_id').chosen({
     search_contains: true,
     no_results_text: 'Aucun résultat correspondant à'

@@ -61,7 +61,7 @@ class SyncBudgeaConnection
 private
 
   def client
-    @client ||= Budgea::Client.new @user.budgea_account.access_token
+    @client ||= Budgea::Client.new @user.budgea_account.try(:access_token)
   end
 
   def connection_params
