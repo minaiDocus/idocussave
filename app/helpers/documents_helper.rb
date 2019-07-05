@@ -7,7 +7,7 @@ module DocumentsHelper
 
   def account_book_types_option
     @user.account_book_types.by_position.map do |j|
-      [j.name + ' ' + j.description, j.name]
+      [j.name + ' ' + j.description, j.name, { 'compta-processable' => (j.compta_processable? ? '1' : '0') }]
     end
   end
 
@@ -196,6 +196,9 @@ module DocumentsHelper
           journals: user.account_book_types.order(name: :asc).map do |j|
             j.name + ' ' + j.description
           end,
+          journals_compta_processable: user.account_book_types.order(name: :asc).map do |j|
+            j.name if j.compta_processable?
+          end.compact,
           periods:  options_for_period(period_service),
           is_analytic_used: (user.ibiza_id.present? && user.uses_ibiza? && user.try(:softwares).try(:ibiza_compta_analysis_activated?))
         }

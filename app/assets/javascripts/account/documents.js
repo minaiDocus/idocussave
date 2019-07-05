@@ -785,9 +785,14 @@
 
       function file_upload_update_fields(code) {
         var account_book_types = file_upload_params[code]['journals'];
+        var journals_compta_processable = file_upload_params[code]['journals_compta_processable'] || [];
         var content = '';
+
         for (var i=0; i<account_book_types.length; i++) {
-          content = content + "<option value=" + account_book_types[i] + ">" + account_book_types[i] + "</option>";
+          var name = account_book_types[i].split(' ')[0].trim();
+          var compta_processable = journals_compta_processable.includes(name)? '1':'0';
+
+          content = content + "<option compta-processable=" + compta_processable  +" value=" + name + ">" + account_book_types[i] + "</option>";
         }
         $('#h_file_account_book_type').html(content);
 
@@ -814,7 +819,10 @@
           file_upload_update_fields($(this).val());
           $('#file_code').val($(this).val());
           $('#file_account_book_type').val($('#h_file_account_book_type').val());
+          $('#h_file_account_book_type').change();
+
           $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
+          $('#h_file_prev_period_offset').change();
         } else {
           $('#file_code').val('');
           $('#file_account_book_type').val('');
@@ -832,6 +840,12 @@
     $('#h_file_account_book_type').on('change', function() {
       code = $('#h_file_code').val();
       $('#file_account_book_type').val($(this).val());
+
+      var option_processable = $(this).find('option[value="'+$(this).val()+'"]').attr('compta-processable')
+      if( option_processable == '1' )
+        $('#fileupload #compta_processable').css('display', 'none');
+      else
+        $('#fileupload #compta_processable').css('display', 'block');
 
       var use_analytics = true;
       if(file_upload_params[code] != undefined)
@@ -905,6 +919,8 @@
 
       if( $('#h_file_code').val() != '' && ( $('#fileupload').data('params') == 'undefined' || jQuery.isEmptyObject($('#fileupload').data('params')) ) ) {
         ready = true
+        $('#h_file_account_book_type').change();
+        $('#h_file_prev_period_offset').change();
       } else {
         $('#h_file_code').chosen({
           search_contains: true,

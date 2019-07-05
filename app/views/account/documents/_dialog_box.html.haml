@@ -28,6 +28,9 @@
         .controls
           = select_tag :h_file_account_book_type, has_multiple_accounts? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type
           = hidden_field_tag :file_account_book_type
+          %span#compta_processable{ style: 'display: none; margin-top: 9px' }
+            %span.label.label-warning.margin1right
+              Ce journal n'est pas paramétré pour une pré-saisie comptable.
       .control-group.prev_period_offset
         = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label'
         .controls
