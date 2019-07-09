@@ -547,13 +547,13 @@
                       %th Etat :
                       %td#debit_state
                         - if @organization.try(:debit_mandate).try(:pending?)
-                          %span.label Non configuré
+                          %span.badge.fs-origin Non configuré
                         - elsif @organization.try(:debit_mandate).try(:started?)
-                          %span.label.label-warning En attente utilisateur ...
+                          %span.badge.fs-origin.badge-warning En attente utilisateur ...
                         - elsif @organization.try(:debit_mandate).try(:configured?)
-                          %span.label.label-success OK
+                          %span.badge.fs-origin.badge-success OK
                         - else
-                          %span.label.label-important Information non valide
+                          %span.badge.fs-origin.badge-important Information non valide
                     %tr
                       %th Banque :
                       %td#debit_bic= @organization.try(:debit_mandate).try(:bic)
@@ -564,7 +564,7 @@
                       %th Email :
                       %td#debit_email= @organization.try(:debit_mandate).try(:email)
                 %a#link_slimpay_checkout.btn.btn-primary{ href: '#slimpay_checkout', data: { toggle: :modal } } Configurer
-                %span#payment_configuration_checker.label.label-warning.hide
+                %span#payment_configuration_checker.fs-origin.badge.badge-warning.hide
                   Verification de votre configuration en cours ... Veuillez patienter svp.
 
             - if @user.is_admin

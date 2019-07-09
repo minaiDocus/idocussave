@@ -252,7 +252,7 @@ jQuery ->
         html += '<td>'+account.name+'</td>'
         html += '<td>'+account.number+'</td>'
         html += '</tr>'
-
+ 
       t_body.html(html)
 
     Idocus.budgeaApi.get_accounts_of(connector_id, true).then(
