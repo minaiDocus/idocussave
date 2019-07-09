@@ -140,7 +140,7 @@ class RetrieversController < ApiController
   end
 
   def create_bank_accounts
-    if CreateBankAccount.execute(@current_user, (params[:accounts] || []), params[:options])
+    if CreateBankAccount.execute(@current_user, (params[:accounts].to_unsafe_h || []), params[:options])
       render json: { success: true }, status: 200
     else
       render json: { success: false, error_message: 'Impossible de synchroniser un compte bancaire' }, status: 200

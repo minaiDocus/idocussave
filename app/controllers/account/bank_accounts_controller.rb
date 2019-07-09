@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::BankAccountsController < Account::RetrieverController
-  before_filter :load_budgea_config
+  before_action :load_budgea_config
 
   def index
     if bank_account_contains && bank_account_contains[:retriever_budgea_id]
