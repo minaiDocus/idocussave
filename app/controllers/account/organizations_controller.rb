@@ -187,11 +187,11 @@ class Account::OrganizationsController < Account::OrganizationController
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if current_user.is_admin && action_name.in?(%w(index edit_options update_options edit_software_users update_software_users new create suspend unsuspend))
+      if current_user.is_admin && action_name.in?(%w(index edit_options update_options edit_software_users update_software_users new create prepare_payment confirm_payment suspend unsuspend))
         authorized = true
       elsif action_name.in?(%w(show)) && @user.is_prescriber
         authorized = true
-      elsif action_name.in?(%w(edit update edit_software_users update_software_users)) && @user.leader?
+      elsif action_name.in?(%w(edit update edit_software_users update_software_users prepare_payment confirm_payment)) && @user.leader?
         authorized = true
       end
 
