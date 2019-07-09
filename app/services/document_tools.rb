@@ -42,6 +42,15 @@ class DocumentTools
     system "/usr/local/bin/PortableSigner -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
   end
 
+  def self.remake_pdf(file_path)
+    # NOTE : the original name with the character "%" is problematic with GhostScript, so we use a simple naming "CORRECTED.pdf"
+    # IMPORTANT : Remade pdf is not signed
+    corrected_file_path = File.dirname(file_path) + '/REMADE.pdf'
+    if system "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dUseFlateCompression=false -sOutputFile='#{corrected_file_path}' '#{file_path}'"
+      FileUtils.mv corrected_file_path, file_path
+    end
+  end
+
   def self.modifiable?(file_path, strict = true)
     if completed? file_path, strict
       begin

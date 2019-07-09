@@ -159,6 +159,18 @@ class Pack::Piece < ActiveRecord::Base
     end
   end
 
+  def correct_pdf_signature
+    sign_piece if DocumentTools.remake_pdf(self.content.path)
+  end
+
+  def sign_piece
+    to_sign_file = File.dirname(self.content.path) + '/signed.pdf'
+    FileUtils.cp self.content.path, to_sign_file
+
+    DocumentTools.sign_pdf(to_sign_file, self.content.path)
+    FileUtils.rm to_sign_file
+  end
+
   def self.extract_content(piece)
     begin
       path = if piece.content.queued_for_write[:original]

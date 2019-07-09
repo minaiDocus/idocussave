@@ -81,7 +81,7 @@ class AccountingWorkflow::TempPackProcessor
 
           added_pieces << piece
 
-          DocumentTools.sign_pdf(piece_file_path, piece.content.path)
+          # DocumentTools.sign_pdf(piece_file_path, piece.content.path)
 
           ## Dividers
           pack_divider              = pack.dividers.build
@@ -160,6 +160,8 @@ class AccountingWorkflow::TempPackProcessor
             end
           end
           current_piece_position += 1 unless is_a_cover
+
+          piece.try(:sign_piece)
         end
 
         published_temp_documents << temp_document
