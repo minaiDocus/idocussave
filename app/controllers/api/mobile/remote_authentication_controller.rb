@@ -1,8 +1,4 @@
 class Api::Mobile::RemoteAuthenticationController < ApplicationController
-  skip_before_action :load_user_and_role
-  skip_before_action :verify_suspension
-  skip_before_action :verify_if_active
-
   respond_to :json
 
   def ping
@@ -14,7 +10,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     message = 'Ping success'
 
     #(code 500 for automatically logout app mobile)
-      if (build_code.to_i < 5 || build_code.nil?)
+      if (build_code.to_i < 6 || build_code.nil?)
         code = 500 
         message = "Le service iDocus actuel nécessite une version plus récente de l'application; Veuillez mettre à jour votre application iDocus s'il vous plaît. Merci."
       end
@@ -26,7 +22,10 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
   def request_connexion
     ensure_params_exist
 
-    resource = User.find_for_database_authentication(email: params[:user_login][:login])
+    user = User.find_by_mail_or_code(params[:user_login][:login])
+    return invalid_login_attempt unless user
+
+    resource = User.find_for_database_authentication(email: user.email)
     return invalid_login_attempt unless resource
 
     if resource.valid_password?(params[:user_login][:password])
