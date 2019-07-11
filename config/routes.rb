@@ -478,8 +478,28 @@ Idocus::Application.routes.draw do
           post :load_documents_processed
           post :load_documents_processing
           post :load_stats
+          post :load_preseizures
           post :get_packs
+          post :get_reports
           get  :render_image_documents
+        end
+      end
+
+      resources :preseizures do
+        collection do
+          post :get_details
+          post :deliver
+          post :edit_preseizures
+          post :edit_account
+          post :edit_entry
+        end
+      end
+
+      resources :operations do
+        collection do
+          post :get_operations
+          post :force_pre_assignment
+          post :get_customers_options
         end
       end
 

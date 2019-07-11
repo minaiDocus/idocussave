@@ -220,7 +220,7 @@ class AccountingWorkflow::RetrievePreAssignments
     report.user         = pack.owner
     report.pack         = pack
     report.document     = document
-    report.type         = journal.compta_type
+    report.type         = journal.try(:compta_type)
     report.name         = pack.name.sub(/ all\z/, '')
     report.save
     report

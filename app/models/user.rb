@@ -165,6 +165,11 @@ class User < ActiveRecord::Base
     current_configuration_step.nil?
   end
 
+  #login can be email or code
+  def self.find_by_mail_or_code(login)
+    user = self.find_by_email login
+    user ||= self.get_by_code login
+  end
 
   # Do not keep this bad idea to override active_record methods for nothing
   def self.find_by_token(token)
