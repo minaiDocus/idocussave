@@ -70,6 +70,6 @@ private
     bank_account_ids = @account.bank_accounts.used.map(&:id)
     operations = @account.operations.not_processed.not_locked.recently_added.waiting_processing
     operations = operations.where(bank_account_id: bank_account_ids)
-    Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains]))
+    Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).includes(:bank_account)
   end
 end
