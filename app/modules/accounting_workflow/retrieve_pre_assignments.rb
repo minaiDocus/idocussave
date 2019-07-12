@@ -70,9 +70,11 @@ class AccountingWorkflow::RetrievePreAssignments
       piece_name = xml_piece['name'].tr('_', ' ')
 
       piece = Pack::Piece.where(name: piece_name).first
+      journal = piece.user.account_book_types.where(name: piece.pack.name.split[1]).first if piece
 
       errors = []
       errors << "Piece #{xml_piece['name']} unknown" unless piece
+      errors << "Journal not found" unless journal
       errors << "Piece #{xml_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
       if errors.empty?
