@@ -13,7 +13,7 @@ class Subscription < ActiveRecord::Base
   attr_accessor :is_to_apply_now
 
 
-  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 10 }
+  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 12 }
 
 
   validates_inclusion_of :period_duration, in: [1, 3, 12]

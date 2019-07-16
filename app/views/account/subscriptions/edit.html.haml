@@ -76,7 +76,8 @@
             %tr.number_of_journals{ style: 'display:none' }
               %td.question Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
               %td.subscription_number_of_journals
-                - (5..10).each do |number|
+                - iterations = (@customer.code == 'GMBA%ECURIESJLB')? (5..12) : (5..10)
+                - iterations.each do |number|
                   .choice
                     %label{ for: "subscription_number_of_journals_#{number}" }
                       = radio_button_tag 'subscription[number_of_journals]', number, @subscription.number_of_journals == number, class: 'radio_buttons', disabled: (number < @customer.account_book_types.count)
