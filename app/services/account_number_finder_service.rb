@@ -11,8 +11,10 @@ class AccountNumberFinderService
 
   def execute(operation)
     number = nil
-    label  = operation.label
-    target = operation.amount < 0 ? 'credit' : 'debit'
+    @operation = operation
+
+    label  = @operation.label
+    target = @operation.amount < 0 ? 'credit' : 'debit'
 
     number =  self.class.find_with_rules(@rules, label, target) if @rules.any?
     number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty?
@@ -30,14 +32,22 @@ class AccountNumberFinderService
 
 
   def find_or_update_accounting_plan
-    accounts = (@user.accounting_plan.customers + @user.accounting_plan.providers)
+    if @operation.amount < 0 #credit
+      accounts = @user.accounting_plan.providers
+    else #debit
+      accounts = @user.accounting_plan.customers
+    end
 
     if accounts.present?
       accounts
     elsif @user.accounting_plan.last_checked_at.nil? || @user.accounting_plan.last_checked_at <= 5.minutes.ago
       UpdateAccountingPlan.new(@user).execute
 
-      (@user.accounting_plan.customers + @user.accounting_plan.providers)
+      if @operation.amount < 0 #credit
+        @user.accounting_plan.providers
+      else #debit
+        @user.accounting_plan.customers
+      end
     else
       []
     end
@@ -95,6 +105,7 @@ class AccountNumberFinderService
     end
 
     matches += accounting_plan.select { |account| label.match /#{Regexp.quote(account[0])}/i }
+
     matches.uniq!
 
     name = get_the_highest_match(label, matches.map(&:first))
