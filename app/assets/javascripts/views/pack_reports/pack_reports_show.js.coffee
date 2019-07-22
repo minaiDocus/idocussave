@@ -38,7 +38,7 @@ class Idocus.Views.PackReportsShow extends Backbone.View
   details: ->
     content = "<table class=\"table table-striped table-condensed margin0bottom\">"
     content += "<tr><td><b>Date d'ajout de la première écriture :</b></td><td>" + @model.get('created_at') + "</td></tr>"
-    content += "<tr><td><b>Date d'ajout de la dernière écriture :</b></td><td>" + @model.get('updated_at') + "</td></tr>"
+    content += "<tr><td><b>Date d'ajout de la dernière écriture :</b></td><td>" + @model.get('last_preseizure_at') + "</td></tr>"
     if @model.get('user_software')
       content += "<tr><td><b>Date du dernier envoi [#{@model.get('user_software')}] :</b></td><td>"
       if @model.get('delivery_tried_at') != null

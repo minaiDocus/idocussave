@@ -16,6 +16,10 @@ node :updated_at do |report|
   I18n.l(report.updated_at)
 end
 
+node :last_preseizure_at do |report|
+  I18n.l(report.preseizures.last.try(:created_at))
+end
+
 node :delivery_tried_at do |report|
   I18n.l(report.delivery_tried_at) if report.delivery_tried_at
 end
