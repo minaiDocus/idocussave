@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class RetrieversController < ApiController
   before_filter :load_retriever, only: [:destroy, :trigger, :get_retriever_infos]
-  before_filter :authenticate_current_user, except: [:callback, :destroy, :trigger, :get_retriever_infos]
+  before_filter :authenticate_current_user, except: [:callback, :webauth_callback, :destroy, :trigger, :get_retriever_infos]
   skip_before_filter :verify_authenticity_token
   skip_before_filter :verify_rights
 
@@ -24,6 +24,25 @@ class RetrieversController < ApiController
     else
       render text: '', status: :unauthorized
     end
+  end
+
+  def webauth_callback
+    if params[:error_description] != 'None'
+      flash[:error] = params[:error_description]
+    elsif params[:id_connection]
+      local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
+      remote_params = { id: params[:id_connection], last_update: Time.now }
+
+      user = User.find local_params[:user_id]
+      if user
+        CreateBudgeaConnection.new(user, local_params, remote_params).execute
+        flash[:success] = 'Paramétrage effectué'
+      else
+        flash[:error] = 'Modification non autorisée'
+      end
+    end
+
+    redirect_to account_retrievers_path
   end
 
   def get_retriever_infos

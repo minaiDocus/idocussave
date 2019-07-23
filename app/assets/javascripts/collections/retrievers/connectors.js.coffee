@@ -20,7 +20,7 @@ class Idocus.Collections.Connectors extends Backbone.Collection
         )
       else
         Idocus.budgeaApi.get_connectors().then(
-          (datas)-> 
+          (datas)->
             self.common.setCache('connectors', datas, 15)
             self.reset(datas)
             resolve()

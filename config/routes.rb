@@ -77,6 +77,7 @@ Idocus::Application.routes.draw do
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
+  get  'retriever/webauth_callback', controller: 'retrievers', action: 'webauth_callback'
   post 'retriever/create', controller: 'retrievers', action: 'create'
   post 'retriever/add_infos', controller: 'retrievers', action: 'add_infos'
   post 'retriever/create_bank_accounts', controller: 'retrievers', action: 'create_bank_accounts'
