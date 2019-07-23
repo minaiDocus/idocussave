@@ -10,15 +10,16 @@ class CreateBudgeaConnection
     retriever.user = @user
     retriever.sync_at   = Time.parse @budgea_response[:last_update] if @budgea_response[:last_update].present?
     retriever.assign_attributes parse_parameters
-    retriever.save
 
-    retriever.configure_budgea_connection
+    if retriever.save
+      retriever.configure_budgea_connection
 
-    if @budgea_response[:error].present? && @budgea_response[:error] == "additionalInformationNeeded"
-      retriever.pause_budgea_connection
-    else
-      retriever.synchronize_budgea_connection
-      retriever.success_budgea_connection
+      if @budgea_response[:error].present? && @budgea_response[:error] == "additionalInformationNeeded"
+        retriever.pause_budgea_connection
+      else
+        retriever.synchronize_budgea_connection
+        retriever.success_budgea_connection
+      end
     end
   end
 

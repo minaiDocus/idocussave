@@ -27,7 +27,12 @@ class Idocus.Models.Connector extends Backbone.Model
     @common.fields_constructor(fields)
 
   information_fields: ()->
-    fields = @get('fields')
+    fields = @get('fields') || []
+
+    ##Add field exception for Paypal API REST
+    if(@get('name') == 'Paypal REST API')
+      fields = fields.concat({ label: '', name: 'paypal_oauth', value: 'true', regex: null, required: false, type: "oauth" })
+
     if Idocus.new_connector
       for f in fields
         Object.assign(f, f, {required: true})

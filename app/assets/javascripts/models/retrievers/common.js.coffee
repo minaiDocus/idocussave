@@ -53,12 +53,20 @@ class Idocus.Models.Common
         if field.name == "website"
           class_website = ' field_website'
 
-        field_input = '<select class="select field '+class_required+class_website+class_plus+'" style="outline: medium none currentcolor; width: 263px!important;" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
+        field_input = '<select class="select field '+class_required+class_website+class_plus+'" style="outline: medium none currentcolor; width: 90%; max-width: 263px" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
+
+      else if field.type == 'oauth' #type oAuth redirection
+        field_input = '<input class="field oauth" id="field_'+field.name+'" name="'+field.name+'" type="hidden" value="'+(field.value || '')+'">'
+
+
+      label = ''
+      if field.label && field.label != ''
+        label = '<label class="'+class_required+' control-label" for="field_'+field.name+'">
+                  '+abbr_required+' '+field.label+'
+                </label>'
 
       html += '<div class="control-group '+class_required+' field_parent">
-                <label class="'+class_required+' control-label" for="field_'+field.name+'">
-                  '+abbr_required+' '+field.label+'
-                </label>
+                '+label+'
                 <div class="controls">
                   '+field_input+'
                 </div>

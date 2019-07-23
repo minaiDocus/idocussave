@@ -188,7 +188,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          resolve()
+          setTimeout(resolve, 1000)
         onError: (error)-> reject(error)
       })
 
@@ -199,7 +199,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          resolve()
+          setTimeout(resolve, 1000)
         onError: (error)-> reject(error)
       })
 
@@ -326,6 +326,29 @@ class Idocus.BudgeaApi
         onError: (error)-> reject(error)
       })
     )
+
+  webauth: (id, is_new)->
+    redirect_uri = "#{@local_host}/retriever/webauth_callback"
+    client_id = @api_client_id
+    state = btoa("{
+                    \"user_id\": \"#{$('#account_id').val()}\",
+                    \"ido_capabilities\": \"#{$('#field_ido_capabilities').val().replace('"', '\'')}\",
+                    \"ido_connector_id\": \"#{$('#ido_connector_id').val().replace('"', '\'')}\",
+                    \"ido_custom_name\": \"#{$('#field_ido_custom_name').val().replace('"', '\'')}\",
+                    \"ido_connector_name\": \"#{$('#ido_connector_name').val().replace('"', '\'')}\"
+                }")
+
+    if is_new
+      url = "#{@api_base_url}/webauth?id_connector=#{id}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{state}"
+    else
+      url = "#{@api_base_url}/webauth?id_connection=#{id}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{state}"
+
+    window.location.href = url
+    # error = (message) -> alert(message)
+
+    # success = (data) -> console.error(data)
+
+    # this.remote_fetch({url: url, type: 'GET', onSuccess: success, onError: error})
 
   local_fetch: (options)->
     method = options.type || 'POST'
