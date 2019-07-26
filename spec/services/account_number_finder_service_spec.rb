@@ -193,10 +193,59 @@ describe AccountNumberFinderService do
         @rule.priority = 0
         @rule.third_party_account = '0GOG'
         @rule.save
+
+        @accounting_plan_base = AccountingPlan.new
+        @accounting_plan_base.last_checked_at = Time.now
+        @accounting_plan_base.is_updating = false
+        @accounting_plan_base.user = @user
+        @accounting_plan_base.save
+
+        @ac_items1 = AccountingPlanItem.new
+        @ac_items1.third_party_account = '0CUST'
+        @ac_items1.third_party_name = 'TEST CUST'
+        @ac_items1.kind = 'customer'
+        @ac_items1.accounting_plan_itemable_type = 'AccountingPlan'
+        @ac_items1.accounting_plan_itemable_id = @accounting_plan_base.id
+        @ac_items1.save
+
+        @ac_items2 = AccountingPlanItem.new
+        @ac_items2.third_party_account = '0PROV'
+        @ac_items2.third_party_name = 'TEST PROV'
+        @ac_items2.kind = 'provider'
+        @ac_items2.accounting_plan_itemable_type = 'AccountingPlan'
+        @ac_items2.accounting_plan_itemable_id = @accounting_plan_base.id
+        @ac_items2.save
       end
 
       after(:all) do
         @rule.destroy
+      end
+
+      it 'returns providers only on operation\'s negative amount' do
+        @operation.label = 'TEST PROV $10.00'
+        @operation.amount = -10
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+
+        expect(result).to eq('0PROV')
+      end
+
+      it 'returns customers only on operation\'s positive amount' do
+        @operation.label = 'TEST CUST $10.00'
+        @operation.amount = 10
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+
+        expect(result).to eq('0CUST')
+      end
+
+      it 'returns temp_account even providers is found but operation\'s amount is positive' do
+        @operation.label = 'TEST PROV $10.00'
+        @operation.amount = 10
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+
+        expect(result).to eq('0TEMP')
       end
 
       it 'returns 0GOG based on rules' do

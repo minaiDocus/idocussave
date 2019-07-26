@@ -10,4 +10,8 @@ class AccountingPlanItem < ActiveRecord::Base
   def self.find_by_name(name)
     where(third_party_name: name).first
   end
+
+  def self.find_by_name_and_account(name, account)
+    where(third_party_name: name, third_party_account: account).first
+  end
 end

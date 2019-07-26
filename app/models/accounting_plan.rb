@@ -56,7 +56,6 @@ class AccountingPlan < ActiveRecord::Base
     end
   end
 
-
   def to_xml
     _address = user.paper_return_address
     builder = Nokogiri::XML::Builder.new do
@@ -100,7 +99,6 @@ class AccountingPlan < ActiveRecord::Base
     builder.to_xml
   end
 
-
   def to_csv(header = true)
     data = if header
              [%w(category name number associate customer_code).join(',')]
@@ -121,6 +119,11 @@ class AccountingPlan < ActiveRecord::Base
     end
 
     data.join("\n")
+  end
+
+  def cleanNotUpdatedItems
+    self.providers.where(is_updated: false).each(&:destroy)
+    self.customers.where(is_updated: false).each(&:destroy)
   end
 
   def need_update?

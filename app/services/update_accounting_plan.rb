@@ -23,14 +23,15 @@ class UpdateAccountingPlan
       if get_ibiza_accounting_plan
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
-        @accounting_plan.providers = []
-        @accounting_plan.customers = []
+        @accounting_plan.providers.update_all(is_updated: false)
+        @accounting_plan.customers.update_all(is_updated: false)
 
         ibiza_accounts.each do |account|
           create_ibiza_item(account)
         end
 
         @accounting_plan.is_updating = false
+        @accounting_plan.cleanNotUpdatedItems
         @accounting_plan.save
       else
         false
@@ -39,15 +40,16 @@ class UpdateAccountingPlan
       if exact_online_accounts.present?
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
-        @accounting_plan.providers    = []
-        @accounting_plan.customers    = []
-        @accounting_plan.vat_accounts = []
+        @accounting_plan.providers.update_all(is_updated: false)
+        @accounting_plan.customers.update_all(is_updated: false)
+        @accounting_plan.vat_accounts = [] #TODO : exact online will be removed so we don't change vat_accounts process
 
         exact_online_accounts.each do |account|
           create_exact_online_item(account)
         end
 
         @accounting_plan.is_updating = false
+        @accounting_plan.cleanNotUpdatedItems
         @accounting_plan.save
       else
         false
@@ -88,10 +90,11 @@ class UpdateAccountingPlan
 
 
   def create_ibiza_item(account)
-    item = AccountingPlanItem.new
+    item = AccountingPlanItem.find_by_name_and_account(account.css('name').text, account.css('number').text) || AccountingPlanItem.new
     item.third_party_name    = account.css('name').text
     item.third_party_account = account.css('number').text
     item.conterpart_account  = account.css('associate').text
+    item.is_updated          = true
 
     if account.css('category').text.to_i == 1
       item.kind = 'customer'
@@ -104,12 +107,13 @@ class UpdateAccountingPlan
   end
 
   def create_exact_online_item(account)
-    item = AccountingPlanItem.new
+    item = AccountingPlanItem.find_by_name_and_account(account[:name], account[:number]) || AccountingPlanItem.new
     item.third_party_name       = account[:name]
     item.third_party_account    = account[:number]
     item.conterpart_account     = account[:account]
     item.code                   = account[:vat][:code] if account[:vat][:code].present?
     item.kind                   = account[:is_provider] ? 'provider' : 'customer'
+    item.is_updated             = true
 
     @accounting_plan.customers << item if item.kind == 'customer'
     @accounting_plan.providers << item if item.kind == 'provider'
