@@ -17,7 +17,6 @@ class UpdateAccountingPlan
     @accounting_plan = user.accounting_plan
   end
 
-
   def execute
     if @user.ibiza_id.present? && @user.uses_ibiza? && @accounting_plan.need_update?
       if get_ibiza_accounting_plan
@@ -90,7 +89,7 @@ class UpdateAccountingPlan
 
 
   def create_ibiza_item(account)
-    item = AccountingPlanItem.find_by_name_and_account(account.css('name').text, account.css('number').text) || AccountingPlanItem.new
+    item = AccountingPlanItem.find_by_name_and_account(@accounting_plan.id, account.css('name').text, account.css('number').text) || AccountingPlanItem.new
     item.third_party_name    = account.css('name').text
     item.third_party_account = account.css('number').text
     item.conterpart_account  = account.css('associate').text
@@ -107,7 +106,7 @@ class UpdateAccountingPlan
   end
 
   def create_exact_online_item(account)
-    item = AccountingPlanItem.find_by_name_and_account(account[:name], account[:number]) || AccountingPlanItem.new
+    item = AccountingPlanItem.find_by_name_and_account(@accounting_plan.id, account[:name], account[:number]) || AccountingPlanItem.new
     item.third_party_name       = account[:name]
     item.third_party_account    = account[:number]
     item.conterpart_account     = account[:account]

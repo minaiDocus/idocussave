@@ -36,6 +36,7 @@ describe UpdateAccountingPlan do
       UpdateAccountingPlan.new(@user.reload).execute
     end
 
+    sleep(5)
     @user.reload.accounting_plan.last_checked_at = nil
     @user.accounting_plan.save
     VCR.use_cassette('update_accounting_plan/accounting_plan') do
