@@ -314,11 +314,31 @@ class User < ActiveRecord::Base
   # TODO : need a test
   def self.search(contains)
     users = self.all
+
+    if contains[:collaborator_id].present?
+      collaborator = User.unscoped.find(contains[:collaborator_id].to_i) rescue nil
+      if collaborator
+        collaborator = Collaborator.new(collaborator)
+        groups = collaborator.groups
+        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
+        users = users.where(id: customers)
+      end
+    end
+
+    if contains[:group_ids].present?
+      groups = Group.find(contains[:group_ids]) rescue nil
+      if groups
+        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
+        users = users.where(id: customers)
+      end
+    end
+
     users = contains[:is_inactive] == '1' ? users.closed : users.active                        if contains[:is_inactive].present?
     users = users.where(is_admin:            (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
     users = users.where(is_prescriber:       (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
     users = users.where(is_guest:            (contains[:is_guest] == '1' ? true : false))      if contains[:is_guest].present?
     users = users.where(organization_id:     contains[:organization_id])                       if contains[:organization_id].present?
+
     users = users.where("code LIKE ?",       "%#{contains[:code]}%")                           if contains[:code].present?
     users = users.where("email LIKE ?",      "%#{contains[:email]}%")                          if contains[:email].present?
     users = users.where("company LIKE ?",    "%#{contains[:company]}%")                        if contains[:company].present?

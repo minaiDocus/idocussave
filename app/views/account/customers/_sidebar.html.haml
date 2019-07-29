@@ -18,12 +18,12 @@
     = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email')
     = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'span12'
     - if @user.leader?
-      = label_tag 'collaborator_id', 'Collaborateur'
-      = select_tag 'collaborator_id', options_from_collection_for_select(@organization.collaborators.order(code: :asc), :id, :code, params[:collaborator_id]), include_blank: true
+      = label_tag 'user_contains[collaborator_id]', 'Collaborateur'
+      = select_tag 'user_contains[collaborator_id]', options_from_collection_for_select(@organization.collaborators.order(code: :asc), :id, :code, (params[:user_contains][:collaborator_id] rescue '')), include_blank: true
     = label_tag 'group_ids[]', t('activerecord.models.group.name').pluralize
     - if @groups.size > 0
       - @groups.each do |group|
-        = check_box_tag 'group_ids[]', group.id, (params[:group_ids].include?(group.id) rescue false), id: "group_ids_#{group.id}", class: 'no-relative', style: 'margin:0 5px 0 0'
+        = check_box_tag 'group_ids[]', group.id, (params[:group_ids].include?(group.id.to_s) rescue false), id: "group_ids_#{group.id}", class: 'no-relative', style: 'margin:0 5px 0 0'
         %label{ for: "group_ids_#{group.id}" }= group
     - else
       %i [Aucun groupe]

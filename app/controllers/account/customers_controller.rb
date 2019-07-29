@@ -11,6 +11,7 @@ class Account::CustomersController < Account::OrganizationController
   def index
     respond_to do |format|
       format.html do
+        params[:user_contains][:group_ids] = params[:group_ids] if params[:group_ids].present?
         @customers = customers.search(search_terms(params[:user_contains])).
           order(sort_column => sort_direction).
           page(params[:page]).
