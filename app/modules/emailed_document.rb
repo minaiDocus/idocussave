@@ -77,6 +77,7 @@ class EmailedDocument
 
   def self.receive(mail, rescue_error = true)
     email = Email.find_by(message_id: mail.message_id)
+    mail.subject = mail.subject.gsub(/fwd([ ]+)?(:)?/i, '').strip
 
     unless email
       mail_to = mail.to.grep(/@fw.idocus.com/i).first

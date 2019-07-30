@@ -4,7 +4,7 @@ class UploadedDocument
   attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
 
 
-  VALID_EXTENSION = %w(.pdf .jpeg .jpg .gif .png .bmp .tiff .tif).freeze
+  VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif).freeze
 
 
   def self.valid_extensions
