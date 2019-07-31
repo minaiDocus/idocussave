@@ -1,6 +1,5 @@
 jQuery ->
   if $('#organizations .edit_software_users .searchable-option-list').length > 0
-    console.log 'oui'
     $('#organizations .edit_software_users .searchable-option-list').searchableOptionList(
       showSelectionBelowList: true,
       showSelectAll: true,

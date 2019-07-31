@@ -56,3 +56,39 @@ jQuery ->
         $('.checkbox').attr('checked', true);
       else
         $('.checkbox').attr('checked', false);
+
+
+  if $('#skipAccountingPlan .searchable-option-list').length > 0
+    $('#skipAccountingPlan .searchable-option-list').searchableOptionList(
+      showSelectionBelowList: true,
+      showSelectAll: true,
+      maxHeight: '300px',
+      texts: {
+        noItemsAvailable:  'Aucune entrée trouvée',
+        selectAll:         'Sélectionner tout',
+        selectNone:        'Désélectionner tout',
+        quickDelete:       '&times;',
+        searchplaceholder: 'Cliquer ici pour rechercher'
+      }
+    )
+
+  $('#skipAccountingPlan #skipAccountingPlanButton').on 'click', ->
+    accounts = $('#skipAccountingPlan #account_list').val()
+    url = $('#skipAccountingPlan #skipAccountingPlanForm').attr('action')
+
+    $.ajax({
+      url: url,
+      data: { account_list: accounts },
+      dataType: 'json',
+      type: 'post',
+      beforeSend: () ->
+        $('#skipAccountingPlan .parentFeedback').show()
+        $('#skipAccountingPlan #skipAccountingPlanButton').attr('disabled', 'disabled')
+      success: (data) ->
+        $('#skipAccountingPlan .parentFeedback').hide()
+        $('#skipAccountingPlan #skipAccountingPlanButton').removeAttr('disabled', 'disabled')
+        $('#skipAccountingPlan').modal('hide')
+      error: (data) ->
+        $('#skipAccountingPlan .parentFeedback').hide()
+        $('#skipAccountingPlan #skipAccountingPlanButton').removeAttr('disabled', 'disabled')
+    })

@@ -105,6 +105,7 @@ Idocus::Application.routes.draw do
         get     'import_form',               on: :collection
         get     'import_model',              on: :collection
         post    'export_or_destroy',         on: :collection
+        post    'update_skip_accounting_plan_accounts',         on: :collection
       end
 
       resource :knowings, only: %w(new create edit update)

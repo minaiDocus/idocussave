@@ -17,6 +17,8 @@
           = icon_download + ' Exporter sur Excel '
         %button(type="submit" name="export_or_destroy" value="destroy" class="btn btn-danger" data-confirm="Etes-vous sûr de vouloir supprimer les règles sélectionnées ?")
           = icon_not_ok + ' Supprimer les règles '
+        %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
+          = icon_refresh + ' Paramètres avancés '
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
         .row-fluid
           .span12
@@ -57,3 +59,4 @@
     .span3.box
       .row-fluid
         = render partial: 'sidebar'
+  = render partial: 'modal_form_skip_accounting_plan'

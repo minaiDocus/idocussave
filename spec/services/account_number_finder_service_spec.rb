@@ -239,6 +239,24 @@ describe AccountNumberFinderService do
         expect(result).to eq('0CUST')
       end
 
+      it 'returns temp account if accounting_plan is skiped and rules not found', :test do
+        @operation.label = 'TEST PROV $10.00'
+        @operation.amount = -10
+
+        options = UserOptions.new
+        options.user = @user
+        options.skip_accounting_plan_finder = true
+        options.save
+
+        result = AccountNumberFinderService.new(@user.reload, '0TEMP').execute(@operation)
+
+        options.skip_accounting_plan_finder = false
+        options.save
+        @user.reload
+
+        expect(result).to eq('0TEMP')
+      end
+
       it 'returns temp_account even providers is found but operation\'s amount is positive' do
         @operation.label = 'TEST PROV $10.00'
         @operation.amount = 10

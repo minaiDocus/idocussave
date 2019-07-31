@@ -17,7 +17,7 @@ class AccountNumberFinderService
     target = @operation.amount < 0 ? 'credit' : 'debit'
 
     number =  self.class.find_with_rules(@rules, label, target) if @rules.any?
-    number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty?
+    number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty? || @user.options.try(:skip_accounting_plan_finder)
     number ||= @temporary_account
 
     number

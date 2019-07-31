@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190430105031) do
+ActiveRecord::Schema.define(version: 20190731112641) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -92,20 +92,24 @@ ActiveRecord::Schema.define(version: 20190430105031) do
   add_index "account_sharings", ["organization_id"], name: "index_account_sharings_on_organization_id", using: :btree
 
   create_table "accounting_plan_items", force: :cascade do |t|
-    t.string  "mongo_id",                             limit: 255
-    t.string  "third_party_account",                  limit: 255
-    t.string  "third_party_name",                     limit: 255
-    t.string  "conterpart_account",                   limit: 255
-    t.string  "code",                                 limit: 255
-    t.integer "accounting_plan_itemable_id",          limit: 4
-    t.string  "accounting_plan_itemable_type",        limit: 255
-    t.string  "accounting_plan_itemable_id_mongo_id", limit: 255
-    t.string  "kind",                                 limit: 255
+    t.string   "mongo_id",                             limit: 255
+    t.string   "third_party_account",                  limit: 255
+    t.string   "third_party_name",                     limit: 255
+    t.string   "conterpart_account",                   limit: 255
+    t.string   "code",                                 limit: 255
+    t.integer  "accounting_plan_itemable_id",          limit: 4
+    t.string   "accounting_plan_itemable_type",        limit: 255
+    t.string   "accounting_plan_itemable_id_mongo_id", limit: 255
+    t.string   "kind",                                 limit: 255
+    t.datetime "updated_at"
+    t.datetime "created_at"
+    t.boolean  "is_updated",                                       default: true
   end
 
   add_index "accounting_plan_items", ["accounting_plan_itemable_id"], name: "accounting_plan_itemable_id", using: :btree
   add_index "accounting_plan_items", ["accounting_plan_itemable_id_mongo_id"], name: "accounting_plan_itemable_id_mongo_id", using: :btree
   add_index "accounting_plan_items", ["accounting_plan_itemable_type"], name: "accounting_plan_itemable_type", using: :btree
+  add_index "accounting_plan_items", ["is_updated"], name: "index_accounting_plan_items_on_is_updated", using: :btree
   add_index "accounting_plan_items", ["mongo_id"], name: "index_accounting_plan_items_on_mongo_id", using: :btree
 
   create_table "accounting_plan_vat_accounts", force: :cascade do |t|
@@ -2157,6 +2161,7 @@ ActiveRecord::Schema.define(version: 20190430105031) do
     t.boolean  "is_annual_package_active",                        default: false, null: false
     t.integer  "number_of_journals",                  limit: 4,   default: 5,     null: false
     t.boolean  "is_pre_assignment_active",                        default: true,  null: false
+    t.boolean  "is_stamp_active",                                 default: false, null: false
     t.boolean  "is_micro_package_to_be_disabled"
     t.boolean  "is_mini_package_to_be_disabled"
     t.boolean  "is_basic_package_to_be_disabled"
@@ -2164,6 +2169,7 @@ ActiveRecord::Schema.define(version: 20190430105031) do
     t.boolean  "is_scan_box_package_to_be_disabled"
     t.boolean  "is_retriever_package_to_be_disabled"
     t.boolean  "is_pre_assignment_to_be_disabled"
+    t.boolean  "is_stamp_to_be_disabled"
     t.date     "start_date"
     t.date     "end_date"
     t.integer  "max_sheets_authorized",               limit: 4,   default: 100,   null: false
@@ -2346,6 +2352,7 @@ ActiveRecord::Schema.define(version: 20190430105031) do
     t.integer  "preseizure_date_option",          limit: 4,   default: -1
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
     t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
+    t.boolean  "skip_accounting_plan_finder",                 default: false
   end
 
   add_index "user_options", ["mongo_id"], name: "index_user_options_on_mongo_id", using: :btree

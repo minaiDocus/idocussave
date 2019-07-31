@@ -10,6 +10,9 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     @account_number_rules_count = @account_number_rules.count
 
     @account_number_rules = @account_number_rules.page(params[:page]).per(params[:per_page])
+
+    @list_accounts = @user.customers
+    @list_skiped_accounting_plan = @list_accounts.select{|c| c.options.skip_accounting_plan_finder}
   end
 
 
@@ -138,6 +141,16 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     end
 
     redirect_to account_organization_account_number_rules_path(@organization)
+  end
+
+  def update_skip_accounting_plan_accounts
+    if params[:account_list]
+      @user.customers.each do |customer|
+        customer.options.skip_accounting_plan_finder = (params[:account_list].include? customer.info) ? true : false
+        customer.options.save
+      end
+    end
+    render json: { success: true }, status: 200
   end
 
 private
