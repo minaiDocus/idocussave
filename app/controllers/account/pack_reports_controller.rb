@@ -115,6 +115,13 @@ class Account::PackReportsController < Account::OrganizationController
       else
         render action: 'select_to_download'
       end
+    when 'csv_cegid'
+      if @report.user.uses_cegid?
+        file_path = CegidZipService.new(@report.user, preseizures).execute
+        send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
+      else
+        render action: 'select_to_download'
+      end
     else
       render :select_to_download
     end

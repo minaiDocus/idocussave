@@ -16,14 +16,21 @@ class Pack::Report::Preseizure::Entry < ActiveRecord::Base
 
   validates_presence_of :type
 
+  def debit?
+    type == DEBIT
+  end
+
+  def credit?
+    type == CREDIT
+  end
 
   def get_debit
-    type == DEBIT ? amount : nil
+    debit? ? amount : nil
   end
 
 
   def get_credit
-    type == CREDIT ? amount : nil
+    credit? ? amount : nil
   end
 
 

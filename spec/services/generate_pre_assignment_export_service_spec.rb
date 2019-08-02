@@ -5,7 +5,7 @@ describe GeneratePreAssignmentExportService do
   before(:all) do
     DatabaseCleaner.start
 
-    @organization = FactoryGirl.create :organization, code: 'IDO', is_coala_used: true, is_quadratus_used: true, is_csv_descriptor_used: true
+    @organization = FactoryGirl.create :organization, code: 'IDO', is_coala_used: true, is_cegid_used: true, is_quadratus_used: true, is_csv_descriptor_used: true
     @user = FactoryGirl.create :user, code: 'IDO%LEAD', organization_id: @organization.id
     @report = FactoryGirl.create :report, user: @user, organization: @organization
     @preseizures = FactoryGirl.create :preseizure, user: @user, organization: @organization, report_id: @report.id
@@ -65,7 +65,6 @@ describe GeneratePreAssignmentExportService do
     end
   end
 
-
   context 'software quadratus', :quadratus_spec do
     before(:each) do
       @report.reload.pre_assignment_exports.each(&:destroy)
@@ -116,6 +115,55 @@ describe GeneratePreAssignmentExportService do
     end
   end
 
+  context 'software cegid', :cegid_spec do
+    before(:each) do
+      @report.reload.pre_assignment_exports.each(&:destroy)
+      @user.reload.softwares.destroy if @user.reload.softwares
+    end
+
+    it 'generates cegid successfully' do
+      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 1})
+      @user.reload.softwares.reload
+      @report.reload
+
+      GeneratePreAssignmentExportService.new(@preseizures.reload).execute
+
+      pre_assignment_export = @report.reload.pre_assignment_exports.try(:last)
+
+      expect(pre_assignment_export.state).to eq 'generated'
+      expect(pre_assignment_export.for).to eq 'cegid'
+      expect(pre_assignment_export.file_name).to match "#{@report.name.tr(' ', '_')}_"
+      expect(File).to exist pre_assignment_export.file_path
+    end
+
+    it 'doesn\'t generates cegid when not auto deliver' do
+      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 0})
+      @user.reload.softwares.reload
+      @report.reload
+
+      GeneratePreAssignmentExportService.new(@preseizures.reload).execute
+
+      pre_assignment_export = @report.reload.pre_assignment_exports.try(:last)
+
+      expect(pre_assignment_export).to be nil
+    end
+
+    it 'got cegid error when errors occure' do
+      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 1})
+      @user.reload.softwares.reload
+      @report.reload
+
+      allow_any_instance_of(CegidZipService).to receive(:execute).and_raise("file unzip error")
+      GeneratePreAssignmentExportService.new(@preseizures.reload).execute
+
+      pre_assignment_export = @report.reload.pre_assignment_exports.try(:last)
+
+      expect(pre_assignment_export.state).to eq 'error'
+      expect(pre_assignment_export.for).to eq 'cegid'
+      expect(pre_assignment_export.error_message).to match "file unzip error"
+      expect(pre_assignment_export.file_name).to eq nil
+    end
+  end
 
   context 'software csv_descriptor', :csv_descriptor_spec do
     before(:each) do

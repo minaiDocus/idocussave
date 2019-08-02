@@ -23,12 +23,15 @@ class Pack::Report < ActiveRecord::Base
   scope :not_locked,                -> { where(is_locked: false) }
   scope :preseizures,               -> { where.not(type: ['NDF']) }
 
-  def journal
+  def journal(options={ name_only: true })
+    #TODO : separate journal and journal name
     result = name.split[1]
-    if user
-      user.account_book_types.where(name: result).first.try(:get_name) || result
+    journal = user ? user.account_book_types.where(name: result).first : nil
+
+    if options[:name_only]
+      journal.try(:get_name) || result
     else
-      result
+      journal
     end
   end
 

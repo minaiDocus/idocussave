@@ -16,7 +16,7 @@ class CoalaZipService
     FileUtils.chmod(0755, dir)
 
     CoalaZipService.delay_for(6.hours).remove_temp_dir(dir)
-    data = PreseizuresToCsv.new(@user, @preseizures, true).execute
+    data = PreseizuresToCsv.new(@user, @preseizures, 'coala').execute
 
     if @options[:to_xls]
       file = OpenStruct.new({path: "#{dir}/#{base_name}.xls", close: nil})

@@ -19,6 +19,8 @@
                   -list_selected = list_options.select{ |c| c.uses_coala? }
                 -elsif @software == 'quadratus'
                   -list_selected = list_options.select{ |c| c.uses_quadratus? }
+                -elsif @software == 'cegid'
+                  -list_selected = list_options.select{ |c| c.uses_cegid? }
                 -elsif @software == 'csv_descriptor'
                   -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
                 -elsif @software == 'ibiza'

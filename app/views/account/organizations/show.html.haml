@@ -34,7 +34,7 @@
                 %a{ href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
             %li{ class: ('active' if params[:tab] == 'mcf') }
               %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
-            %li.dropdown{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus'].include? params[:tab]) }
+            %li.dropdown{ class: ('active' if ['ibiza', 'exact_online', 'csv_descriptor', 'coala', 'quadratus', 'cegid'].include? params[:tab]) }
               %a.dropdown-toogle{ href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
               %ul.dropdown-menu{ style: "min-width: 187px" }
                 %li{ class: ('active' if params[:tab] == 'ibiza') }
@@ -56,6 +56,11 @@
                   %a{ href: '#quadratus', data: { toggle: 'tab' } }
                     .pull-left Quadratus
                     - if @organization.is_quadratus_used
+                      %i.icon-ok.pull-right
+                %li{ class: ('active' if params[:tab] == 'cegid') }
+                  %a{ href: '#cegid', data: { toggle: 'tab' } }
+                    .pull-left Cegid
+                    - if @organization.is_cegid_used
                       %i.icon-ok.pull-right
                 %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                   %a{ href: '#csv_descriptor', data: { toggle: 'tab' } }
@@ -448,6 +453,26 @@
                   .alignright
                     -if @organization.is_coala_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
+            #cegid.tab-pane{ class: ('active' if params[:tab] == 'cegid') }
+              .aligncenter
+                %h4.margin1bottom Configuration Cegid
+              = simple_form_for [:account, @organization], html: { id: 'form_cegid', class: 'form form-horizontal margin0' } do |f|
+                = hidden_field_tag :part, 'cegid'
+                %table.table.table-condensed.with_custom_controls
+                  %tbody
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_cegid_used')
+                      %td{width: '30%'} Cette option permet de selectionner/utiliser Cegid dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_cegid_used, as: 'boolean', label: 'oui?'
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_cegid_auto_deliver')
+                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_cegid_auto_deliver, as: 'boolean', label: 'oui?'
+                - if @user.leader?
+                  .alignright
+                    -if @organization.is_cegid_used
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #exact_online.tab-pane{ class: ('active' if params[:tab] == 'exact_online') }
               .aligncenter

@@ -1304,6 +1304,8 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.boolean  "is_exact_online_used",                        default: false
     t.boolean  "is_exact_online_auto_deliver",                default: false
     t.string   "invoice_mails",                   limit: 255
+    t.boolean  "is_cegid_used",                               default: false
+    t.boolean  "is_cegid_auto_deliver",                       default: false
   end
 
   add_index "organizations", ["leader_id"], name: "leader_id", using: :btree
@@ -2098,8 +2100,11 @@ ActiveRecord::Schema.define(version: 20190731112641) do
     t.integer "is_csv_descriptor_auto_deliver",     limit: 4, default: -1,    null: false
     t.boolean "is_exact_online_used",                         default: false
     t.integer "is_exact_online_auto_deliver",       limit: 4, default: -1,    null: false
+    t.boolean "is_cegid_used",                                default: false
+    t.integer "is_cegid_auto_deliver",              limit: 4, default: -1,    null: false
   end
 
+  add_index "softwares_settings", ["is_cegid_used"], name: "index_softwares_settings_on_is_cegid_used", using: :btree
   add_index "softwares_settings", ["is_coala_used"], name: "index_softwares_settings_on_is_coala_used", using: :btree
   add_index "softwares_settings", ["is_csv_descriptor_used"], name: "index_softwares_settings_on_is_csv_descriptor_used", using: :btree
   add_index "softwares_settings", ["is_exact_online_used"], name: "index_softwares_settings_on_is_exact_online_used", using: :btree

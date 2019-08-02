@@ -162,6 +162,6 @@ class Organization < ActiveRecord::Base
   end
 
   def uses_non_api_softwares?
-    is_coala_used || is_quadratus_used || is_csv_descriptor_used
+    is_coala_used || is_quadratus_used || is_cegid_used || is_csv_descriptor_used
   end
 end

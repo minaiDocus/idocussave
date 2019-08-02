@@ -53,6 +53,17 @@ class SoftwaresSetting < ActiveRecord::Base
   # -1 means we refer to organization
   # 0 means manuel deliver
   # 1 means auto deliver
+  def cegid_auto_deliver?
+    if is_cegid_auto_deliver == -1
+      user.organization.try(:is_cegid_auto_deliver)
+    else
+      is_cegid_auto_deliver == 1
+    end
+  end
+
+  # -1 means we refer to organization
+  # 0 means manuel deliver
+  # 1 means auto deliver
   def quadratus_auto_deliver?
     if is_quadratus_auto_deliver == -1
       user.organization.try(:is_quadratus_auto_deliver)

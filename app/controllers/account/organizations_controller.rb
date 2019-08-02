@@ -32,6 +32,8 @@ class Account::OrganizationsController < Account::OrganizationController
                           'Coala'
                         when 'quadratus'
                           'Quadratus'
+                        when 'cegid'
+                          'Cegid'
                         when 'csv_descriptor'
                           'Export csv personnalisé'
                         when 'ibiza'
@@ -53,6 +55,8 @@ class Account::OrganizationsController < Account::OrganizationController
         softwares_params = { is_coala_used: software_users.include?(customer.to_s) }
       elsif software == 'quadratus'
         softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
+      elsif software == 'cegid'
+        softwares_params = { is_cegid_used: software_users.include?(customer.to_s) }
       elsif software == 'ibiza'
         softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact_online?) }
       elsif software == 'exact_online'
@@ -221,6 +225,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_quadratus_auto_deliver,
         :is_coala_used,
         :is_coala_auto_deliver,
+        :is_cegid_used,
+        :is_cegid_auto_deliver,
         :is_csv_descriptor_used,
         :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
@@ -242,6 +248,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_quadratus_auto_deliver,
         :is_coala_used,
         :is_coala_auto_deliver,
+        :is_cegid_used,
+        :is_cegid_auto_deliver,
         :is_csv_descriptor_used,
         :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,

@@ -94,6 +94,7 @@ fr:
         is_exact_online_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
         is_ibiza_analysis_to_validate: Souhaitez-vous valider la compta analytique des pièces avant envoi en pré-affectation ?
         is_coala_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+        is_cegid_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
         is_quadratus_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
         use_own_csv_descriptor_format: Utilise son propre format de CSV ?
         is_csv_descriptor_auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures ?
@@ -108,6 +109,7 @@ fr:
         is_test: Organisation de test ?
         is_quadratus_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
         is_coala_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+        is_cegid_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
         is_csv_descriptor_used: Activer l’option de création d'export (csv) des écritures comptables ?
         is_pre_assignment_date_computed: Date de saisie des factures
         is_operation_processing_forced: Souhaitez-vous forcer la pré-affectation des écritures récupérées par les automates ?

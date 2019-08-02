@@ -379,7 +379,7 @@ class User < ActiveRecord::Base
   end
 
   def uses_non_api_softwares?
-    uses_coala? || uses_quadratus? || uses_csv_descriptor?
+    uses_coala? || uses_quadratus? || uses_cegid? || uses_csv_descriptor?
   end
 
   def uses_ibiza?
@@ -392,6 +392,10 @@ class User < ActiveRecord::Base
 
   def uses_coala?
     self.try(:softwares).try(:is_coala_used) && self.organization.is_coala_used
+  end
+
+  def uses_cegid?
+    self.try(:softwares).try(:is_cegid_used) && self.organization.is_cegid_used
   end
 
   def uses_quadratus?

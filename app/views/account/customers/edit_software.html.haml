@@ -20,6 +20,9 @@
           -if @software == 'quadratus'
             = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, include_blank: false
 
+          -if @software == 'cegid'
+            = f.input :is_cegid_auto_deliver, collection: auto_deliver_options, include_blank: false
+
           -if @software == 'csv_descriptor'
             = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, include_blank: false
 
