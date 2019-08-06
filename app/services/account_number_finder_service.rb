@@ -12,6 +12,7 @@ class AccountNumberFinderService
   def execute(operation)
     number = nil
     @operation = operation
+    @accounting_plan = nil
 
     label  = @operation.label
     target = @operation.amount < 0 ? 'credit' : 'debit'
@@ -33,9 +34,9 @@ class AccountNumberFinderService
 
   def find_or_update_accounting_plan
     if @operation.amount < 0 #credit
-      accounts = @user.accounting_plan.providers
+      accounts = @user.accounting_plan.reload.providers
     else #debit
-      accounts = @user.accounting_plan.customers
+      accounts = @user.accounting_plan.reload.customers
     end
 
     if accounts.present?
@@ -44,9 +45,9 @@ class AccountNumberFinderService
       UpdateAccountingPlan.new(@user).execute
 
       if @operation.amount < 0 #credit
-        @user.accounting_plan.providers
+        @user.accounting_plan.reload.providers
       else #debit
-        @user.accounting_plan.customers
+        @user.accounting_plan.reload.customers
       end
     else
       []
