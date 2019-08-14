@@ -24,7 +24,7 @@
             = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
           -if @software == 'cegid'
-            = f.input :is_cegid_auto_deliver, collection: auto_deliver_options, include_blank: false
+            = f.input :is_cegid_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
           -if @software == 'csv_descriptor'
             = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
