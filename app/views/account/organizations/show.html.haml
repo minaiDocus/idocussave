@@ -510,7 +510,7 @@
                 - if @user.leader?
                   .alignright
                     -if @organization.is_cegid_used
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn'
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
               .aligncenter
