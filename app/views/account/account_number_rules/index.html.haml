@@ -21,7 +21,7 @@
                 = 'Exporter sur Excel'
               %button(type="submit" name="export_or_destroy" value="destroy" class="btn btn-danger" data-confirm="Etes-vous sûr de vouloir supprimer les règles sélectionnées ?")
                 = 'Supprimer les règles'
-              %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 10px; height: 19px; padding: 1px 10px', class: 'btn btn-primary btn-filter pull-right', data: {toggle: :modal} }
+              %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 20px', class: 'btn btn-secondary btn-filter', data: {toggle: :modal} }
                 = 'Paramètres avancés'
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
         %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
