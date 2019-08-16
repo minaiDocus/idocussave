@@ -1,0 +1,8 @@
+.my_custom_popover_wrapper{
+  position: absolute;
+  z-index: 1000;
+  background-color: #f8f9fa;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  padding: 10px;
+}

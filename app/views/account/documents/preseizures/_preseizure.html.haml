@@ -19,7 +19,7 @@
       - if stamp_url.present?
         .stamp= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
       - if preseizure.piece
-        %a.pull-right.do-popover-left{href: '#', "data-content" => html_piece_view(preseizure.piece)}
+        %a.pull-right.custom_popover{href: '#', "data-content" => html_piece_view(preseizure.piece)}
           %i.icon-eye-open
       %a.tip_edit.pull-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
         %i.icon-edit
