@@ -312,6 +312,7 @@ class Account::DocumentsController < Account::AccountController
     options << ['ZIP (Quadratus)', 'zip_quadratus'] if user.uses_quadratus?
     options << ['ZIP (Coala)', 'zip_coala']         if user.uses_coala?
     options << ['XLS (Coala)', 'xls_coala']         if user.uses_coala?
+    options << ['CSV (Cegid)', 'csv_cegid']         if user.uses_cegid?
 
     render json: { options: options }, status: 200
   end
@@ -392,6 +393,13 @@ class Account::DocumentsController < Account::AccountController
         if preseizures.any? && user.organization.is_coala_used && user.try(:uses_coala?)
           file_path = CoalaZipService.new(user, preseizures, {preseizures_only: true, to_xls: true}).execute
           send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
+        else
+          render text: 'Aucun résultat'
+        end
+      when 'csv_cegid'
+        if preseizures.any? && user.uses_cegid?
+          file_path = CegidZipService.new(user, preseizures).execute
+          send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
         else
           render text: 'Aucun résultat'
         end
