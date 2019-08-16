@@ -5,4 +5,5 @@
 // the compiled file.
 //
 //= require common.js
+//= require custom_popover.js
 //= require ckeditor/init

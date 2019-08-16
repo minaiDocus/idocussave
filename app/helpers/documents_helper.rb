@@ -164,14 +164,14 @@ module DocumentsHelper
 
     contents += content_tag :h4, 'Historique des ajouts de pages'
     contents += content_tag :div, custom_table_for(columns, pack.content_historic)
-    content_tag :div, contents, style: 'width: 400px'
+    content_tag :div, contents, style: 'width: 100%'
   end
 
   def html_report_info(report)
     contents = ''
     contents += content_tag :h4, 'Ecritures Comptables'
     contents += content_tag :div, preseizures_informations(report, 220)
-    content_tag :div, contents, style: 'width: 400px'
+    content_tag :div, contents, style: 'width: 100%'
   end
 
   def html_piece_view(piece)
