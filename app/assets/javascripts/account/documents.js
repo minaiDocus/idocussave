@@ -10,6 +10,8 @@
     $('.do-popover, .do-popover-right').popover({placement: 'right'});
     $('.do-popover-bottom').popover({placement: 'bottom'});
     $('.do-popover-left').popover({placement: 'left'});
+
+    $('.custom_popover').custom_popover();
   }
 
   window.handleView = function(url=null){
