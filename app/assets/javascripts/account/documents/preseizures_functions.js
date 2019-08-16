@@ -100,6 +100,14 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
         window.handleView();
       }
 
+      //auto open details
+      setTimeout(function() {
+        $('#presPanel1 #lists_preseizures_content .preseizure').each(function(e){
+          if( !$(this).find('.content_details').is(':visible') )
+            $(this).find('.preseizure_label .tip_details').click();
+        });
+      }, 1000);
+
       setTimeout(function(){
         window.preseizuresLoaderLocked = false;
         if(then_pieces)
@@ -115,6 +123,58 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
           showPieces(window.currentLink, 1);
       }, 1000);
     }
+  });
+}
+
+//refresh the edited or selected preseizures (param ids must be an array)
+function refreshPreseizures(ids){
+  if(window.preseizuresLoaderLocked)
+    return false;
+
+  var document_id = window.currentLink.parents("li").attr("id").split("_")[2];
+  var source = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack';
+  var url = "/account/documents/"+document_id+"?source="+source+"&fetch=preseizures&page=1";
+
+  ids.forEach(function(id) {
+    var elem = $(".preseizure#"+id);
+    url += "&preseizure_ids="+id;
+
+    $.ajax({
+      url: url,
+      data: '',
+      dataType: "html",
+      type: "GET",
+      beforeSend: function() {
+        logBeforeAction("Traitement en cours");
+        window.preseizuresLoaderLocked = true;
+      },
+      success: function(data){
+        logAfterAction();
+        data = data.trim();
+
+        var parser = new DOMParser();
+        var htmlDoc = parser.parseFromString(data, 'text/html');
+
+        elem.html($(htmlDoc).find('#show_preseizures #lists_preseizures_content .preseizure#'+id).html());
+
+        initEventOnPreseizuresRefresh();
+        window.initEventOnHoverOnInformation();
+
+        //auto open details
+        setTimeout(function() {
+          $('#presPanel1 #lists_preseizures_content .preseizure').each(function(e){
+            if( !$(this).find('.content_details').is(':visible') )
+              $(this).find('.preseizure_label .tip_details').click();
+          });
+        }, 1000);
+
+        setTimeout( function(){ window.preseizuresLoaderLocked = false; }, 1000 );
+      },
+      error: function(data){
+        logAfterAction();
+        setTimeout( function(){ window.preseizuresLoaderLocked = false; }, 1000 );
+      }
+    });
   });
 }
 

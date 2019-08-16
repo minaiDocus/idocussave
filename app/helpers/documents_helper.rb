@@ -164,14 +164,21 @@ module DocumentsHelper
 
     contents += content_tag :h4, 'Historique des ajouts de pages'
     contents += content_tag :div, custom_table_for(columns, pack.content_historic)
-    content_tag :div, contents
+    content_tag :div, contents, style: 'width: 400px'
   end
 
   def html_report_info(report)
     contents = ''
     contents += content_tag :h4, 'Ecritures Comptables'
     contents += content_tag :div, preseizures_informations(report, 220)
-    content_tag :div, contents
+    content_tag :div, contents, style: 'width: 400px'
+  end
+
+  def html_piece_view(piece)
+    contents = ''
+    contents += content_tag :h4, "Pièce n° #{piece.position} - #{piece.name}"
+    contents += content_tag :div, content_tag(:iframe, "", :src => piece.content.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
+    content_tag :div, contents, style: 'width: 750px; padding: 10px'
   end
 
   def quarterly_of_month(month)

@@ -18,8 +18,9 @@
     .span3.actionbox.padding1
       - if stamp_url.present?
         .stamp= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
-      %a.tip_details.pull-right.do-tooltip{href: '#', title: "Détails", data: {id: preseizure.id}}
-        %i.icon-eye-open
+      - if preseizure.piece
+        %a.pull-right.do-popover-left{href: '#', "data-content" => html_piece_view(preseizure.piece)}
+          %i.icon-eye-open
       %a.tip_edit.pull-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
         %i.icon-edit
       - if (@software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)

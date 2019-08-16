@@ -748,9 +748,9 @@
     $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
     $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
 
-    if($('#pack').length > 0) {
-      var url = '/account/documents/' + $('#pack').data('id');
-      getPieces(url, $('#pack').data('name'));
+    //auto click on link where there is only one pack
+    if($('#documentslist .packsList .content ul li').length == 1) {
+      setTimeout(function() { $('#documentslist .packsList .content ul li:first').find('.do-show-pack').click() }, 1000 );
     }
   });
 
