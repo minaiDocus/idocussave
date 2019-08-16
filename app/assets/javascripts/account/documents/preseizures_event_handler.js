@@ -178,6 +178,9 @@ $('#preseizuresModals #preseizureEdition #editPreseizureSubmit').click(function(
     },
     success: function(data){
       logAfterAction();
+
+      refreshPreseizures([id]);
+
       if(data.error == '')
         $('#preseizuresModals #preseizureEdition').modal('hide');
       else

@@ -13,8 +13,14 @@ class Account::DocumentsController < Account::AccountController
       sort:      true
     }
 
-    @packs   = Pack.search(nil, options)
-    @reports = Pack::Report.where(user_id: options[:owner_ids], pack_id: nil).page(options[:page]).per(options[:per_page])
+    if params[:pack_name].present?
+      @packs = Pack.where(owner_id: options[:owner_ids], name: params[:pack_name]).page(options[:page]).per(options[:per_page])
+      ### TODO: find a better way to get empty reports with kaminari classes / methods
+      @reports = @packs.first.reports.where(pack_id: nil).page(options[:page]).per(options[:per_page])
+    else
+      @packs   = Pack.search(params.try(:[], :by_piece).try(:[], :content), options)
+      @reports = Pack::Report.where(user_id: options[:owner_ids], pack_id: nil).order(updated_at: :desc).page(options[:page]).per(options[:per_page])
+    end
 
     @last_composition = @user.composition
 
@@ -24,9 +30,6 @@ class Account::DocumentsController < Account::AccountController
     ######################
 
     @period_service   = PeriodService.new user: @user
-
-    @pack = Pack.where(owner_id: options[:owner_ids], name: params[:pack_name]).first if params[:pack_name].present?
-    @reports = @pack.reports.page(options[:page]).per(options[:per_page]) if params[:pack_name].present?
   end
 
   # GET /account/documents/:id
@@ -48,9 +51,12 @@ class Account::DocumentsController < Account::AccountController
     if  @data_type == 'preseizures'
       if(params[:piece_id].present?)
         @preseizures = source.preseizures.where(piece_id: params[:piece_id]).order(position: :desc).distinct.page(params[:page]).per(10)
+      elsif(params[:preseizure_ids].present?)
+        @preseizures = source.preseizures.where(id: params[:preseizure_ids]).page(params[:page]).per(10)
       else
         if params[:by_piece].present? && @data_source == 'pack'
           pieces = source.pieces
+          pieces = pieces.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%") if params[:by_piece].try(:[], :content)
           pieces = pieces.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
           pieces = pieces.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
           pieces = pieces.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
@@ -90,6 +96,7 @@ class Account::DocumentsController < Account::AccountController
         @documents = source.pieces
 
         @documents = @documents.where(id: piece_ids) if piece_ids.present?
+        @documents = @documents.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%") if params[:by_piece].try(:[], :content)
         @documents = @documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
         @documents = @documents.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
         @documents = @documents.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
@@ -144,7 +151,7 @@ class Account::DocumentsController < Account::AccountController
 
       options[:piece_ids] = piece_ids if piece_ids.present?
 
-      @packs = Pack.search(nil, options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
+      @packs = Pack.search(params.try(:[], :by_piece).try(:[], :content), options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
     end
   end
 
@@ -171,7 +178,7 @@ class Account::DocumentsController < Account::AccountController
       reports_ids = Pack::Report::Preseizure.where(user_id: options[:user_ids]).where('operation_id > 0').filter_by(params[:by_preseizure]).distinct.pluck(:report_id).presence || [0] if params[:by_preseizure].present?
       options[:ids] = reports_ids if reports_ids.present?
 
-      @reports = Pack::Report.where(pack_id: nil).search(options).order(updated_at: :desc).page(params[:page] || 1).per(params[:per_page] || 20)
+      @reports = Pack::Report.preseizures.joins(:preseizures).where(pack_id: nil).search(options).distinct.order(updated_at: :desc).page(params[:page] || 1).per(params[:per_page] || 20)
     end
   end
 
@@ -211,7 +218,11 @@ class Account::DocumentsController < Account::AccountController
     preseizure = Pack::Report::Preseizure.find params[:id]
 
     error = ''
-    error = preseizure.errors.full_messages unless preseizure.update_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
+
+    preseizure.assign_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
+    preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
+
+    error = preseizure.errors.full_messages unless preseizure.save
 
     render json: { error: error }, status: 200
   end
