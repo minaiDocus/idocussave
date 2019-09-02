@@ -138,7 +138,7 @@ class Retriever < ActiveRecord::Base
     end
 
     event :error do
-      transition [:ready, :configuring, :destroying, :running] => :error
+      transition [:ready, :configuring, :destroying, :running, :error] => :error
     end
 
     event :unavailable do
@@ -196,7 +196,7 @@ class Retriever < ActiveRecord::Base
     end
 
     event :fail do
-      transition [:synchronizing, :paused, :successful] => :failed
+      transition [:synchronizing, :paused, :successful, :failed] => :failed
     end
 
     event :success do
@@ -262,7 +262,7 @@ class Retriever < ActiveRecord::Base
     end
 
     event :fail do
-      transition [:synchronizing, :paused, :successful] => :failed
+      transition [:synchronizing, :paused, :successful, :failed] => :failed
     end
 
     event :success do
