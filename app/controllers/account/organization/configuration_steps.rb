@@ -80,27 +80,19 @@ module Account::Organization::ConfigurationSteps
                                                  end
                                                elsif @customer.subscription.is_scan_box_package_active
                                                  'order_dematbox'
-                                               elsif @customer.subscription.is_retriever_package_active
-                                                 'retrievers'
                                                elsif @organization.knowings.try(:configured?)
                                                  'ged'
                                                end
                                              when 'order_paper_set'
                                                if @customer.subscription.is_scan_box_package_active
                                                  'order_dematbox'
-                                               elsif @customer.subscription.is_retriever_package_active
-                                                 'retrievers'
                                                elsif @organization.knowings.try(:configured?)
                                                  'ged'
                                                end
                                              when 'order_dematbox'
-                                               if @customer.subscription.is_retriever_package_active
-                                                 'retrievers'
-                                               elsif @organization.knowings.try(:configured?)
+                                               if @organization.knowings.try(:configured?)
                                                  'ged'
                                                end
-                                             when 'retrievers'
-                                               'ged' if @organization.knowings.try(:configured?)
                                              when 'ged'
                                                nil
     end
@@ -117,17 +109,7 @@ module Account::Organization::ConfigurationSteps
   def previous_configuration_step
     @customer.current_configuration_step = case @customer.current_configuration_step
                                            when 'ged'
-                                             if @customer.subscription.is_retriever_package_active
-                                               'retrievers'
-                                             elsif @customer.subscription.is_scan_box_package_active
-                                               'order_dematbox'
-                                             elsif @customer.subscription.is_mail_package_active
-                                               'order_paper_set'
-                                             else
-                                               'journals'
-                                             end
-                                           when 'retrievers'
-                                             if @customer.subscription.is_scan_box_package_active
+                                              if @customer.subscription.is_scan_box_package_active
                                                'order_dematbox'
                                              elsif @customer.subscription.is_mail_package_active
                                                'order_paper_set'
@@ -235,8 +217,6 @@ module Account::Organization::ConfigurationSteps
         controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'paper_set') || action_name.in?(%w(edit update)))
       when 'order_dematbox'
         controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox') || action_name.in?(%w(edit update)))
-      when 'retrievers'
-        controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts)) && params[:customer_id].present?
       when 'ged'
         controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))
     end
@@ -247,17 +227,12 @@ module Account::Organization::ConfigurationSteps
     when 'journals'
       !@customer.subscription.is_mail_package_active &&
         !@customer.subscription.is_scan_box_package_active &&
-        !@customer.subscription.is_retriever_package_active &&
         !@organization.knowings.try(:configured?)
     when 'order_paper_set'
       !@customer.subscription.is_scan_box_package_active &&
-        !@customer.subscription.is_retriever_package_active &&
         !@organization.knowings.try(:configured?)
     when 'order_dematbox'
-      !@customer.subscription.is_retriever_package_active &&
         !@organization.knowings.try(:configured?)
-    when 'retrievers'
-      !@organization.knowings.try(:configured?)
     when 'ged'
       true
     else
@@ -303,8 +278,6 @@ module Account::Organization::ConfigurationSteps
       else
         new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' })
       end
-    when 'retrievers'
-      account_organization_customer_retrievers_path(@organization, @customer)
     when 'ged'
       edit_knowings_options_account_organization_customer_path(@organization, @customer)
     end

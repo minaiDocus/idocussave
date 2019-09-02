@@ -5,16 +5,15 @@
         .span6
           %h3 Paramétrage des automates bancaires (#{@bank_accounts.try(:count).to_i})
         .span6
-          = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
-    .filter.box{ class: ('hide' if @is_filter_empty) }
-      = form_tag account_bank_accounts_path, method: :get, class: 'form form-vertical margin0bottom' do
-        %table.table-condensed
-          %tr
-            %th= label_tag 'bank_account_contains[retriever_id]', 'Banque'
-            %td= select_tag 'bank_account_contains[retriever_id]', options_for_select(@user.retrievers.banks.map { |e| [e.name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
-            %td
-              = submit_tag t('filters.action'), class: 'btn btn-primary'
-              = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
+          %a{ href: '#', class: 'btn pull-right toggle_filter' }
+            %i.icon-filter
+            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
+    .filter.box{ style: ('display: none' if @is_filter_empty) }
+      = form_tag account_bank_accounts_path, method: :get, class: 'form form-inline margin0bottom' do
+        = label_tag 'bank_account_contains[retriever_id]', 'Banque'
+        = select_tag 'bank_account_contains[retriever_id]', options_for_select(@account.retrievers.banks.map { |e| [e.service_name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
+        = submit_tag t('filters.action'), class: 'btn btn-primary'
+        = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
     .box{ style: 'padding-bottom:0;' }
       = form_tag update_multiple_account_bank_accounts_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'bank_account_contains[retriever_id]', @retriever.id if @retriever

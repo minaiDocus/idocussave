@@ -1,15 +1,45 @@
-#connectors{ data: { connectors: @connectors.to_json, selected_connectors: [@retriever.connector.try(:public_attributes)].compact.to_json } }
+= hidden_field_tag :retriever_budgea_config, @bi_config
+= hidden_field_tag :retriever_user_token, @user_token
+= hidden_field_tag :retriever_bi_token, @bi_token
+= hidden_field_tag :retriever_journals, @journals
 
-= simple_form_for [:account, @retriever], html: { class: 'retriever_form form form-horizontal' } do |f|
-  = f.input :connector_id, required: true, disabled: @retriever.persisted?
-  = f.input :service_name, as: :hidden
-  = f.input :capabilities, disabled: true
-  = f.input :name
-  - unless @retriever.persisted? && @retriever.connector.bank?
-    = f.input :journal_id, collection: @account.account_book_types.order(name: :asc), include_blank: false, required: true, wrapper_html: { style: 'display:none' }
-  #params{ data: { connector_id: @retriever.connector_id, attributes: retriever_dyn_attrs(@retriever) } }
-  .form-actions
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    = link_to t('actions.cancel'), account_retrievers_path, class: 'btn'
+= hidden_field_tag :retriever_connector_id, @retriever.try(:budgea_connector_id) || params[:connector_id] || nil
+= hidden_field_tag :retriever_custom_name, @retriever.try(:name) || nil
+= hidden_field_tag :retriever_journal_id, @retriever.try(:journal_id) || nil
+= hidden_field_tag :retriever_budgea_id, @retriever.try(:budgea_id) || nil
 
-= render partial: 'account/retrievers/form_template'
+= hidden_field_tag :contact_company, @contact_company || nil
+= hidden_field_tag :contact_name, @contact_name || nil
+= hidden_field_tag :contact_first_name, @contact_first_name || nil
+
+#budgea_sync
+  #section1.row-fluid
+    .span6.box
+      %h4.aligncenter Connecteurs
+      %hr.margin0top.margin3bottom
+      #budgea_retrievers
+    #section11.span6.box
+      %h4.aligncenter Informations basiques & Authentification
+      %hr.margin0top.margin3bottom
+      #budgea_information_fields
+    #section12.span6.box{style: 'display:none'}
+      %h4.aligncenter Informations additionnelles
+      %hr.margin0top.margin3bottom
+      #budgea_additionnal_fields
+  #section2.row-fluid{style: 'display:none'}
+    .span12.box
+      %h4.aligncenter Séléction comptes bancaires
+      %hr.margin0top.margin3bottom
+      #budgea_bank_accounts
+
+
+  #showCguBI.modal.hide.fade{data: { backdrop: "static" } }
+    .modal-header
+      %h3 Condition générale d'utilisation
+    .modal-body
+      #terms
+      #controls.form-actions
+        .pull-right
+          .feedback.pull-left
+          =button_tag "J'accepte les conditions générales d'utilisation", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn'
+          %a{href: account_retrievers_path, id: 'cgu_bi_exit', class: 'btn-danger btn', style: 'margin-left: 10px'} Sortir

@@ -75,6 +75,14 @@ Idocus::Application.routes.draw do
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
+  post 'retriever/create', controller: 'retrievers', action: 'create'
+  post 'retriever/add_infos', controller: 'retrievers', action: 'add_infos'
+  post 'retriever/create_bank_accounts', controller: 'retrievers', action: 'create_bank_accounts'
+  post 'retriever/get_my_accounts', controller: 'retrievers', action: 'get_my_accounts'
+  post 'retriever/destroy', controller: 'retrievers', action: 'destroy'
+  post 'retriever/trigger', controller: 'retrievers', action: 'trigger'
+  post 'retriever/create_budgea_user', controller: 'retrievers', action: 'create_budgea_user'
+  post 'retriever/get_retriever_infos', controller: 'retrievers', action: 'get_retriever_infos'
 
   get '/docs/download', controller: 'account/docs', action: 'download'
 
@@ -251,12 +259,6 @@ Idocus::Application.routes.draw do
 
 
         with_options module: 'organization' do |r|
-          r.resources :retrievers do
-            get   'list',                     on: :collection
-            post  'run',                      on: :member
-            get   'waiting_additionnal_info', on: :member
-            patch 'additionnal_info',         on: :member
-          end
           r.resources :new_provider_requests, only: %w(index new create edit update)
           r.resources :bank_accounts, only: %w(index edit update) do
             post 'update_multiple', on: :collection
@@ -403,12 +405,12 @@ Idocus::Application.routes.draw do
 
     resources :retrievers do
       get   'list',                     on: :collection
-      post  'run',                      on: :member
-      get   'waiting_additionnal_info', on: :member
-      patch 'additionnal_info',         on: :member
     end
     resources :new_provider_requests, only: %w(index new create edit update)
-    resources :retrieved_banking_operations
+
+    resources :retrieved_banking_operations, only: %W(index) do
+      post 'force_processing', on: :collection
+    end
 
     resources :retrieved_documents do
       get   'piece',    on: :member

@@ -5,10 +5,14 @@
         .span6
           %h3 Opérations bancaires #{@operations ? "(#{@operations.total_count})" : nil}
         .span6
-          = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
-    .filter.box{ class: ('hide' if @is_filter_empty) }
+          %a{ href: '#', class: 'btn pull-right toggle_filter' }
+            %i.icon-filter
+            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
+          - if current_user.collaborator? && !@account.try(:options).try(:operation_processing_forced?)
+            = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_account_retrieved_banking_operations_path(banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger pull-right margin1right', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
+    .filter.box{ style: ('display: none' if @is_filter_empty) }
       = form_tag account_retrieved_banking_operations_path, method: :get, class: 'form form-vertical margin0bottom' do
-        %table.table-condensed
+        %table.table.table-condensed.table-striped.table-bordered.table-filter
           %thead
             %tr
               %th= label_tag 'banking_operation_contains[date][>=]',              'Date de début'
@@ -17,6 +21,8 @@
               %th= label_tag 'banking_operation_contains[bank_account][number]',    'Compte'
               %th= label_tag 'banking_operation_contains[category]',                'Catégorie'
               %th= label_tag 'banking_operation_contains[label]',                   'Libellé'
+              - if current_user.collaborator?
+                %th= label_tag 'banking_operation_contains[pre_assigned]',                   'Pré-affectation'
               %th
           %tbody
             %tr
@@ -34,6 +40,8 @@
               %td= text_field_tag 'banking_operation_contains[bank_account][number]',    (params[:banking_operation_contains][:bank_account][:number] rescue ''),    class: 'input-small'
               %td= text_field_tag 'banking_operation_contains[category]', (params[:banking_operation_contains][:category] rescue ''), class: 'input-small'
               %td= text_field_tag 'banking_operation_contains[label]',    (params[:banking_operation_contains][:label] rescue ''),    class: 'input-medium'
+              - if current_user.collaborator?
+                %td= select_tag 'banking_operation_contains[pre_assigned]', options_for_select({"" => "", "Oui" => "pre_assigned", "Non" => "not_pre_assigned", "En attente" => "is_waiting"}, (params[:banking_operation_contains][:pre_assigned] rescue nil)), class: 'input-medium'
               %td
                 = submit_tag t('filters.action'), class: 'btn btn-primary'
                 = link_to icon(icon: 'remove'), account_retrieved_banking_operations_path, class: 'btn', title: t('filters.reset')
@@ -48,6 +56,8 @@
             %th= sortable :category,                 'Catégorie'
             %th= sortable :label,                    'Libellé'
             %th.amount= sortable :amount,            'Montant'
+            - if current_user.collaborator?
+              %th Pré-affecté
         %tbody
           - @operations.each do |operation|
             %tr
@@ -57,4 +67,6 @@
               %td= operation.category
               %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || '€'}"
+              - if @user.collaborator?
+                %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }

@@ -150,43 +150,42 @@ FactoryGirl.define do
       sync_at { Time.now }
       state 'ready'
       budgea_state 'successful'
-      fiduceo_state 'not_configured'
       journal_name 'AC'
       journal factory: :account_book_type
       capabilities ['bank', 'provider']
-      connector_id 1
+      budgea_connector_id 40
     end
 
-    factory :connector do
-      name 'Connecteur de test'
-      capabilities ['document', 'bank']
-      apis ['budgea']
-      active_apis ['budgea']
-      budgea_id 40
-      fiduceo_ref nil
-      combined_fields {{
-        'website' => {
-          'label'       => 'Type de compte',
-          'type'        => 'list',
-          'regex'       => nil,
-          'budgea_name' => 'website',
-          'values' => [
-            { 'value' => 'par', 'label' => 'Particuliers' },
-            { 'value' => 'pro', 'label' => 'Professionnels' }
-          ]
-        },
-        'login' => {
-          'label'       => 'Identifiant',
-          'type'        => 'text',
-          'regex'       => nil,
-          'budgea_name' => 'login'
-        },
-        'password' => {
-          'label'       => 'Mot de passe',
-          'type'        => 'password',
-          'regex'       => nil,
-          'budgea_name' => 'password'
-        }
-      }}
-    end
+    # factory :connector do
+    #   name 'Connecteur de test'
+    #   capabilities ['document', 'bank']
+    #   apis ['budgea']
+    #   active_apis ['budgea']
+    #   budgea_id 40
+    #   fiduceo_ref nil
+    #   combined_fields {{
+    #     'website' => {
+    #       'label'       => 'Type de compte',
+    #       'type'        => 'list',
+    #       'regex'       => nil,
+    #       'budgea_name' => 'website',
+    #       'values' => [
+    #         { 'value' => 'par', 'label' => 'Particuliers' },
+    #         { 'value' => 'pro', 'label' => 'Professionnels' }
+    #       ]
+    #     },
+    #     'login' => {
+    #       'label'       => 'Identifiant',
+    #       'type'        => 'text',
+    #       'regex'       => nil,
+    #       'budgea_name' => 'login'
+    #     },
+    #     'password' => {
+    #       'label'       => 'Mot de passe',
+    #       'type'        => 'password',
+    #       'regex'       => nil,
+    #       'budgea_name' => 'password'
+    #     }
+    #   }}
+    # end
 end

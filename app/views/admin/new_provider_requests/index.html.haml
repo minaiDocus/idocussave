@@ -38,11 +38,9 @@
                   %td= l(new_provider_request.notified_at, format: '%d %b %Y %H:%M') rescue nil
                   %td= l(new_provider_request.processing_at, format: '%d %b %Y %H:%M') rescue nil
                   %td
-                    - if new_provider_request.pending?
-                      = link_to icon_ok, start_process_admin_new_provider_request_path(new_provider_request), method: 'patch', class: 'btn btn-mini', data: { confirm: t('actions.confirm') }, title: 'Démarrer le traitement'
                     - if new_provider_request.processing?
                       = link_to icon_ok, accept_admin_new_provider_request_path(new_provider_request), method: 'patch', class: 'btn btn-mini btn-success', data: { confirm: t('actions.confirm') }, title: 'Accepter'
-                    - if new_provider_request.pending? || new_provider_request.processing?
+                    - if new_provider_request.processing?
                       = link_to icon_not_ok, edit_admin_new_provider_request_path(new_provider_request), class: 'btn btn-mini btn-danger', title: 'Rejeter'
       = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
     .span3

@@ -13,12 +13,10 @@ class Account::BankAccountsController < Account::RetrieverController
   end
 
   def update_multiple
-    if params[:bank_account_ids].is_a?(Array)
-      params[:bank_account_ids] = params[:bank_account_ids].reject { |item| item.blank? }
-
-      selected_bank_accounts = @account.bank_accounts.where(id: params[:bank_account_ids])
-      unselected_bank_accounts = @account.bank_accounts.where.not(id: params[:bank_account_ids])
-
+    bank_accounts = @account.bank_accounts
+    if bank_account_ids.is_a?(Array)
+      selected_bank_accounts = @account.bank_accounts.where(id: bank_account_ids)
+      unselected_bank_accounts = @account.bank_accounts.where.not(id: bank_account_ids)
       selected_bank_accounts.update_all(is_used: true)
       unselected_bank_accounts.update_all(is_used: false)
 
@@ -96,4 +94,8 @@ private
     search_terms(params[:bank_account_contains])
   end
   helper_method :bank_account_contains
+
+  def bank_account_ids
+    params[:bank_account_ids].reject(&:blank?)
+  end
 end

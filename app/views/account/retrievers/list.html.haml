@@ -1,15 +1,2 @@
-.row-fluid
-  .box
-    %h3 Liste des automates disponibles
-  .box
-    .row-fluid
-      .span6
-        %h3 Documents (#{@providers.size})
-        %ul
-          - @providers.each do |provider|
-            %li= link_to provider.name, new_account_retriever_path(connector_id: provider.id)
-      .span6
-        %h3 Banques (#{@banks.size})
-        %ul
-          - @banks.each do |bank|
-            %li= link_to bank.name, new_account_retriever_path(connector_id: bank.id)
+= hidden_field_tag :retriever_budgea_config, @bi_config
+#connectors_list.row-fluid

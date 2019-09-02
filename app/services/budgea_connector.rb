@@ -2,13 +2,13 @@
 class BudgeaConnector
   class << self
     def banks
-      Rails.cache.fetch 'budgea_connector_banks', expires_in: 1.day, compress: true do
+      Rails.cache.fetch 'budgea_connector_banks', expires_in: 1.hours, compress: true do
         get 'banks'
       end
     end
 
     def providers
-      Rails.cache.fetch 'budgea_connector_providers', expires_in: 1.day, compress: true do
+      Rails.cache.fetch 'budgea_connector_providers', expires_in: 1.hours, compress: true do
         get 'providers'
       end
     end

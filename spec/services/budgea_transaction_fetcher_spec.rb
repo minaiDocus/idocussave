@@ -11,8 +11,6 @@ describe BudgeaTransactionFetcher do
     @user = create :user, code: 'IDOC%001', organization: organization
     @retriever = create :retriever
     @bank_account = create :bank_account, user: @user, retriever: @retriever
-    connector = create :connector
-    connector.retrievers << @retriever
   end
 
   it 'returns log client invalid if user not found' do

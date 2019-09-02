@@ -23,7 +23,7 @@ module Account::RetrieverHelper
       'Sélection de documents': 'waiting_selection',
       "En attente de l'utilisateur": 'waiting_additionnal_info',
       'Erreur': 'error',
-      "Demander la création d'un automate": 'unavailable',
+      "Indisponible": 'unavailable',
     }
   end
 
