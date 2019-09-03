@@ -17,7 +17,7 @@
   .modal-body{style: 'min-height: 450px'}
     %form#packFilterForm.simple_form.form.form-horizontal.margin0
       .general_filter.box
-        .control-group.hide
+        .control-group
           = label_tag 'by_piece[content]', "Contenue :", class: 'control-label'
           .controls
             = text_field_tag 'by_piece[content]'
