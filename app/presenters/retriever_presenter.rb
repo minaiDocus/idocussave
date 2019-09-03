@@ -101,15 +101,19 @@ class RetrieverPresenter < BasePresenter
 
 private
 
-  def formatted_state
+  def formatted_state(options={})
     if retriever.error?
       str = 'Erreur'
-      if retriever.error_message.present? && retriever.error_message.size <= 50
-        str += ": #{retriever.error_message}"
+      if retriever.error_message.present?
+        full_str = "#{str}: #{retriever.error_message}"
+
+        str += retriever.error_message.length < 40 ? ": #{retriever.error_message}" : ": #{retriever.error_message.slice(0..40)} ..."
       end
-      str
     else
-      Retriever.state_machine.states[retriever.state].human_name
+      full_str  = ''
+      str       = Retriever.state_machine.states[retriever.state].human_name
     end
+
+    h.content_tag :span, str, class: options[:class], title: full_str
   end
 end
