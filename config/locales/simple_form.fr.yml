@@ -317,8 +317,8 @@ fr:
         date: Date
         deadline_date: Date d'échéance
         third_party: Nom de tiers
-        operation_label: Libelé de l'opérations
-        piece_number: Numéro de pièces
+        operation_label: Libelé de l'opération
+        piece_number: Numéro de pièce
         amount: Montant d'origine
         cached_amount: Montant d'origine
         currency: Devise

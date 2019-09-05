@@ -83,9 +83,9 @@ class Account::DocumentsController < Account::AccountController
       end
 
       if @data_source == 'pack'
-        @need_delivery = source.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no' if params[:page].to_i == 1
+        @need_delivery = (@user.collaborator? && source.reports.not_delivered.not_locked.count > 0) ? 'yes' : 'no' if params[:page].to_i == 1
       else
-        @need_delivery = (source.is_not_delivered? && !source.is_locked)? 'yes' : 'no' if params[:page].to_i == 1
+        @need_delivery = (@user.collaborator? && source.is_not_delivered? && !source.is_locked)? 'yes' : 'no' if params[:page].to_i == 1
       end
     elsif @data_source == 'pack'
       if params[:piece_id].present?
@@ -215,52 +215,64 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_preseizure
-    preseizure = Pack::Report::Preseizure.find params[:id]
+    unless @user.collaborator?
+      render json: { error: '' }, status: 200
+    else
+      preseizure = Pack::Report::Preseizure.find params[:id]
 
-    error = ''
+      error = ''
 
-    preseizure.assign_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
-    preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
+      preseizure.assign_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
+      preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
 
-    error = preseizure.errors.full_messages unless preseizure.save
+      error = preseizure.errors.full_messages unless preseizure.save
 
-    render json: { error: error }, status: 200
+      render json: { error: error }, status: 200
+    end
   end
 
   def update_multiple_preseizures
-    preseizures = Pack::Report::Preseizure.where(id: params[:ids])
+    unless @user.collaborator?
+      render json: { error: '' }, status: 200
+    else
+      preseizures = Pack::Report::Preseizure.where(id: params[:ids])
 
-    real_params = update_multiple_preseizures_params
-    begin
-      error = ''
-      preseizures.update_all(real_params) if real_params.present?
-    rescue => e
-      error = 'Impossible de modifier la séléction'
+      real_params = update_multiple_preseizures_params
+      begin
+        error = ''
+        preseizures.update_all(real_params) if real_params.present?
+      rescue => e
+        error = 'Impossible de modifier la séléction'
+      end
+
+      render json: { error: error }, status: 200
     end
-
-    render json: { error: error }, status: 200
   end
 
   def deliver_preseizures
-    if params[:ids].present?
-      preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
-    elsif params[:id]
-      if params[:type] == 'report'
-        reports = Pack::Report.where(id: params[:id])
-      else
-        reports = Pack.find(params[:id]).try(:reports)
+    unless @user.collaborator?
+      render json: { success: true }, status: 200
+    else
+      if params[:ids].present?
+        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
+      elsif params[:id]
+        if params[:type] == 'report'
+          reports = Pack::Report.where(id: params[:id])
+        else
+          reports = Pack.find(params[:id]).try(:reports)
+        end
+
+        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
       end
 
-      preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
-    end
-
-    if preseizures.present?
-      preseizures.group_by(&:report_id).each do |report_id, preseizures_by_report|
-        CreatePreAssignmentDeliveryService.new(preseizures_by_report, ['ibiza', 'exact_online']).execute
+      if preseizures.present?
+        preseizures.group_by(&:report_id).each do |report_id, preseizures_by_report|
+          CreatePreAssignmentDeliveryService.new(preseizures_by_report, ['ibiza', 'exact_online']).execute
+        end
       end
-    end
 
-    render json: { success: true }, status: :ok
+      render json: { success: true }, status: :ok
+    end
   end
 
   def edit_preseizure_account
@@ -270,12 +282,16 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_preseizure_account
-    account = Pack::Report::Preseizure::Account.find params[:id]
+    unless @user.collaborator?
+      render json: { error: '' }, status: 200
+    else
+      account = Pack::Report::Preseizure::Account.find params[:id]
 
-    error = ''
-    error = account.errors.full_messages unless account.update_attributes params[:pack_report_preseizure_account].permit(:number, :lettering)
+      error = ''
+      error = account.errors.full_messages unless account.update_attributes params[:pack_report_preseizure_account].permit(:number, :lettering)
 
-    render json: { error: error }, status: 200
+      render json: { error: error }, status: 200
+    end
   end
 
   def edit_preseizure_entry
@@ -285,12 +301,16 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_preseizure_entry
-    entry = Pack::Report::Preseizure::Entry.find params[:id]
+    unless @user.collaborator?
+      render json: { error: '' }, status: 200 
+    else
+      entry = Pack::Report::Preseizure::Entry.find params[:id]
 
-    error = ''
-    error = entry.errors.full_messages unless entry.update_attributes params[:pack_report_preseizure_entry].permit(:type, :amount)
+      error = ''
+      error = entry.errors.full_messages unless entry.update_attributes params[:pack_report_preseizure_entry].permit(:type, :amount)
 
-    render json: { error: error }, status: 200
+      render json: { error: error }, status: 200
+    end
   end
 
   def select_to_export

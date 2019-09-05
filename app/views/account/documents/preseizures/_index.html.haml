@@ -8,8 +8,9 @@
           .actiongroup.pull-right
             %a.do-exportSelectedPreseizures.do-tooltip{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
               %i.icon-download-alt
-            %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
-              %i.icon-edit
+            - if @user.collaborator?
+              %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
+                %i.icon-edit
             |
             %a.do-selectAllPreseizures.do-tooltip{ :href => "#", :title => "Tous" }
               %i.icon-ok
