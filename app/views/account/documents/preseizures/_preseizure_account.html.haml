@@ -9,26 +9,30 @@
       %thead
         %tr
           %th.account Numéro de compte
-          %th.account
+          - if @user.collaborator?
+            %th.account
           %th.entry Débit
           %th.entry Crédit
-          %th.entry
+          - if @user.collaborator?
+            %th.entry
       %tbody.entries
         - @preseizure_entries.each do |entry|
           %tr
             %td.account= entry.account.number
-            %td.account
-              %a.tip_edit_account{href: '#', data: {id: entry.account.id}}
-                %i.icon-edit
+            - if @user.collaborator?
+              %td.account
+                %a.tip_edit_account{href: '#', data: {id: entry.account.id}}
+                  %i.icon-edit
             %td.entry
               - if entry.type == 1
                 = entry.amount
             %td.entry
               - if entry.type == 2
                 = entry.amount
-            %td.entry
-              %a.tip_edit_entry{href: '#', data: {id: entry.id}}
-                %i.icon-edit
+            - if @user.collaborator?
+              %td.entry
+                %a.tip_edit_entry{href: '#', data: {id: entry.id}}
+                  %i.icon-edit
   - if @data_analytics.any?
     .analytics.span6
       %strong Analyse comptable

@@ -1,12 +1,12 @@
 .edit.preseizure
   = simple_form_for @preseizure, url: '', method: 'get', html: { class: 'form form-horizontal margin0', id: 'preseizure_edition_form' } do |f|
     = f.hidden_field :id
-    = f.input :date, as: :string, class: 'input-medium date datepicker', input_html: { :value => f.object.date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
-    = f.input :deadline_date, as: :string, class: 'input-medium date datepicker', input_html: { :value => f.object.deadline_date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
-    = f.input :third_party
-    = f.input :operation_label, as: :text
-    = f.input :piece_number
-    = f.input :amount
-    = f.input :currency
-    = f.input :conversion_rate
-    = f.input :observation, as: :text
+    = f.input :date, as: :string, disabled: (@user.collaborator? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
+    = f.input :deadline_date, as: :string, disabled: (@user.collaborator? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.deadline_date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
+    = f.input :third_party, disabled: (@user.collaborator? ? false : true)
+    = f.input :operation_label, as: :text, disabled: (@user.collaborator? ? false : true)
+    = f.input :piece_number, disabled: (@user.collaborator? ? false : true)
+    = f.input :amount, disabled: (@user.collaborator? ? false : true)
+    = f.input :currency, disabled: (@user.collaborator? ? false : true)
+    = f.input :conversion_rate, disabled: (@user.collaborator? ? false : true)
+    = f.input :observation, as: :text, disabled: (@user.collaborator? ? false : true)
