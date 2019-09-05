@@ -75,7 +75,7 @@
         bdColor = '#CB413B';
 
       $('#documents_actions .filter_indication').attr('style', 'display: inline-block; border: 1px solid '+bdColor);
-      $('#documents_actions .filter_indication_text').html('<strong>Filtre active : </strong>' + window.filterText.trim().substring(0, 140));
+      $('#documents_actions .filter_indication_text').html('<strong>Filtre actif : </strong>' + window.filterText.trim().substring(0, 140));
     }
     else
     {
@@ -657,6 +657,13 @@
 
     $('#documents_view #pieces_view').click(function(){
       window.currentView = 'pieces';
+
+      $('#documentslist #view_packs').text('Documents');
+      $('#documentslist #view_packs').click();
+
+      $('#documentslist #view_reports').text('Opérations');
+      $('#documentslist #view_reports').hide();
+
       $("#pageslist").fadeIn('slow');
       $("#preseizureslist").hide();
       $('#documents_view .block_view').removeClass('active');
@@ -665,6 +672,11 @@
 
     $('#documents_view #preseizures_view').click(function(){
       window.currentView = 'preseizures';
+
+      $('#documentslist #view_packs').text('Preaff. Pieces');
+      $('#documentslist #view_reports').text('Preaff. Opérations');
+      $('#documentslist #view_reports').show();
+
       $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px;");
       $("#preseizureslist").fadeIn('slow');
       $("#pageslist").hide();
