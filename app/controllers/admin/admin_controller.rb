@@ -133,7 +133,7 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/awaiting_pre_assignments
   def awaiting_pre_assignments
-    @awaiting_pre_assignments = PendingPreAssignmentService.pending.select { |e| e.message.blank? }
+    @awaiting_pre_assignments = PendingPreAssignmentService.pending.select { |e| (e.message.blank? || e.pre_assignment_state == 'force_processing') }
 
     render partial: 'process', locals: { collection: @awaiting_pre_assignments }
   end
