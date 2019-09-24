@@ -18,9 +18,6 @@
     .col-md-3.actionbox
       - if stamp_url.present?
         .stamp.bg-light= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
-      - if preseizure.piece
-        %a.custom_popover.float-right{ href: '#', "data-content" => html_piece_view(preseizure.piece) }
-          = glyphicon('eye')
       %a.tip_edit.float-right.do-tooltip{ href: '#', title: "Edition", data: { id: preseizure.id } }
         = glyphicon('pencil')
       - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
@@ -28,6 +25,9 @@
           = glyphicon('loop-circular')
       %a.tip_selection.float-right.do-tooltip{href: '#', title: "Sélection", data: {id: preseizure.id}}
         = glyphicon('check')
+      - if preseizure.piece
+        %a.custom_popover.float-right{ href: '#', "data-content" => html_piece_view(preseizure.piece) }
+          = glyphicon('eye')
   .informations.row
     .col-md-12
       %table.table.table-striped.table-condensed.margin0bottom
