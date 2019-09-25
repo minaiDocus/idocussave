@@ -79,7 +79,7 @@ class PreAssignmentDeliveryService
     if ibiza_client.response.success?
       handle_delivery_success
     else
-      handle_delivery_error ibiza_client.response.message.to_s
+      handle_delivery_error ibiza_client.response.message.to_s.presence || ibiza_client.response.code.to_s
 
       retry_delivery = true
 
