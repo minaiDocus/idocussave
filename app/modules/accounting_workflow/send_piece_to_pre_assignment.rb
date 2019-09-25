@@ -12,11 +12,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def execute
-    if @piece.user.code == 'MCN%PPP'
-      copy_to_dir abbyy_dir unless journal.compta_type == 'NDF'
-    else
-      copy_to_dir manual_dir
-    end
+    copy_to_dir manual_dir
 
     @piece.update(is_awaiting_pre_assignment: true)
 
@@ -29,11 +25,6 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def manual_dir
     list = AccountingWorkflow.pre_assignments_dir.join 'input', journal.compta_type
-  end
-
-
-  def abbyy_dir
-    AccountingWorkflow.pre_assignments_dir.join 'abbyy', 'input', journal.compta_type
   end
 
 
