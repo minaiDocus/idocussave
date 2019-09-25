@@ -16,5 +16,5 @@ server_url: 'https://apm.idocus.com'
 api_buffer_size: 1024
 pool_size: 1
 
+#Temp fix of elastic apm full queue (disable sending payloads to amp server wich will avoid queuing datas)
 disable_send: true
-

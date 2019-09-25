@@ -4,8 +4,8 @@ class RestoreIbizaHash < ActiveRecord::Migration[5.2]
       piece_name_format = i.piece_name_format.to_s
       description = i.description.to_s
 
-      i.piece_name_format = JSON.parse(piece_name_format.gsub('=>', ':')).to_h
-      i.description = JSON.parse(description.gsub('=>', ':')).to_h
+      i.piece_name_format = JSON.parse(piece_name_format.gsub('=>', ':').gsub('nil', 'null')).to_h
+      i.description = JSON.parse(description.gsub('=>', ':').gsub('nil', 'null')).to_h
 
       i.save
     end
