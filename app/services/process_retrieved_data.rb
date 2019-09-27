@@ -237,7 +237,12 @@ class ProcessRetrievedData
 
               RetrieverNotification.new(retriever).notify_bug
             else
-              if is_new_document_present || is_new_transaction_present || retriever.error?
+              if connection['error'].present?
+                retriever.update(budgea_error_message: connection['error_message'].presence || connection['error'])
+                retriever.fail_budgea_connection
+
+                RetrieverNotification.new(retriever).notify_bug
+              elsif is_new_document_present || is_new_transaction_present || retriever.error?
                 retriever.success_budgea_connection
 
                 RetrieverNotification.new(retriever).notify_new_documents new_documents_count if new_documents_count > 0
