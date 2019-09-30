@@ -29,7 +29,7 @@ class FTPClient
   private
 
   def slow_methods
-    [:get, :getbinaryfile, :gettextfile, :put, :putbinaryfile, :puttextfile]
+    [:get, :getbinaryfile, :gettextfile, :put, :putbinaryfile, :puttextfile, :login]
   end
 
   def logger
