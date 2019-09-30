@@ -20,7 +20,7 @@ class ProcessRetrievedData
             new_operations_count = 0
             if connection['accounts'].present?
               connection['accounts'].each do |account|
-                bank_accounts = if retriever.connector.is_fiduceo_active?
+                bank_accounts = if retriever.connector.try(:is_fiduceo_active?)
                   user.sandbox_bank_accounts
                 else
                   user.bank_accounts
@@ -35,7 +35,7 @@ class ProcessRetrievedData
                 if bank_account
                   # NOTE 'deleted' type is datetime
                   if account['deleted'].present?
-                    if retriever.connector.is_fiduceo_active?
+                    if retriever.connector.try(:is_fiduceo_active?)
                       bank_account.sandbox_operations.update_all(api_id: nil)
                     else
                       bank_account.operations.update_all(api_id: nil)
@@ -52,7 +52,7 @@ class ProcessRetrievedData
                     bank_account.save if bank_account.changed?
                   end
                 else
-                  bank_account = if retriever.connector.is_fiduceo_active?
+                  bank_account = if retriever.connector.try(:is_fiduceo_active?)
                     SandboxBankAccount.new
                   else
                     BankAccount.new
@@ -74,7 +74,7 @@ class ProcessRetrievedData
                 if bank_account && account['transactions'].present?
                   is_new_transaction_present = true
                   account['transactions'].each do |transaction|
-                    operations = if retriever.connector.is_fiduceo_active?
+                    operations = if retriever.connector.try(:is_fiduceo_active?)
                       bank_account.sandbox_operations
                     else
                       bank_account.operations
@@ -90,7 +90,7 @@ class ProcessRetrievedData
                     else
                       orphaned_operation = find_orphaned_operation(bank_account, transaction)
                       if orphaned_operation
-                        if retriever.connector.is_fiduceo_active?
+                        if retriever.connector.try(:is_fiduceo_active?)
                           orphaned_operation.sandbox_bank_account = bank_account
                         else
                           orphaned_operation.bank_account = bank_account
@@ -101,7 +101,7 @@ class ProcessRetrievedData
                         orphaned_operation.save
 
                       elsif transaction['deleted'].nil?
-                        operation = if retriever.connector.is_fiduceo_active?
+                        operation = if retriever.connector.try(:is_fiduceo_active?)
                           SandboxOperation.new(sandbox_bank_account_id: bank_account.id)
                         else
                           Operation.new(bank_account_id: bank_account.id)
@@ -138,7 +138,7 @@ class ProcessRetrievedData
                     end.sort_by do |document|
                       document['date'].present? ? Time.parse(document['date']) : Time.local(1970)
                     end.each do |document|
-                      already_exist = if retriever.connector.is_fiduceo_active?
+                      already_exist = if retriever.connector.try(:is_fiduceo_active?)
                         retriever.sandbox_documents.where(api_id: document['id']).first
                       else
                         retriever.temp_documents.where(api_id: document['id']).first
@@ -152,7 +152,7 @@ class ProcessRetrievedData
                           temp_file_path = client.get_file document['id']
                           begin
                             if client.response.code == 200
-                              if retriever.connector.is_fiduceo_active?
+                              if retriever.connector.try(:is_fiduceo_active?)
                                 sandbox_document = SandboxDocument.new
                                 sandbox_document.user               = retriever.user
                                 sandbox_document.retriever          = retriever
@@ -285,7 +285,7 @@ class ProcessRetrievedData
 private
 
   def find_orphaned_operation(bank_account, transaction)
-    operations = if bank_account.retriever.connector.is_fiduceo_active?
+    operations = if bank_account.retriever.connector.try(:is_fiduceo_active?)
       bank_account.user.sandbox_operations
     else
       bank_account.user.operations
