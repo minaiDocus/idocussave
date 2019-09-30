@@ -16,6 +16,8 @@ class NotifyNewPreAssignmentAvailable
   def self.execute(user_id)
     user = User.find user_id
 
+    collab = (user.collaborator?)? Collaborator.new(user) : user
+
     list = user.notify.notifiable_new_pre_assignments.includes(notifiable: [:report]).to_a
 
     return if list.empty?
@@ -24,7 +26,7 @@ class NotifyNewPreAssignmentAvailable
     notification.user        = user
     notification.notice_type = 'new_pre_assignment_available'
     notification.title       = list.size == 1 ? 'Nouvelle pré-affectation disponible' : 'Nouvelles pré-affectations disponibles'
-    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignments_url(user.organization, ActionMailer::Base.default_url_options)
+    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignments_url(collab.organization, ActionMailer::Base.default_url_options)
 
     notification.message = if list.size == 1
       "1 nouvelle pré-affectation est disponible pour le lot suivant : #{list.first.notifiable.report.name}"
