@@ -16,10 +16,14 @@ var initEventOnPiecesRefresh = function(){
     e.preventDefault();
     $("#show_pages li.pages").each(function(index,li){
       if (!$(li).hasClass("selected")) {
-        $(li).addClass("selected");
-        addPage($(li));
+        $(li).addClass("selected");             
+        $(this).find('a.do-selectPage i').addClass('icon-ban-circle');
+        $(this).find('a.do-selectPage i').removeClass('icon-ok');                 
+        addPage($(li));        
       }
     });
+    $(".compta_analysis_edition, .composer, .delete_piece_composition").show();
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});  
   });
 
   $(".do-unselectAllPages").unbind('click');
@@ -27,95 +31,74 @@ var initEventOnPiecesRefresh = function(){
     e.preventDefault();
     $("#show_pages li.pages").removeClass("selected");
     $("#show_pages li.pages").each(function(index,li){
+      $(this).find('a.do-selectPage i').removeClass('icon-ban-circle');
+      $(this).find('a.do-selectPage i').addClass('icon-ok');        
       removePage($(li));
     });
-  });
+    window.preseizuresSelected = [];
+    $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
+    $(".delete_piece_composition, .piece_tag, .composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+  });  
 
-  $("a.do-selectSinglePage").unbind('click');
-  $("a.do-selectSinglePage").click(function(e){
+  $("a.do-nextPage").unbind('click');
+  $("a.do-nextPage").click(function(e){
     e.preventDefault();
-    var id = "#document_" + $(".showPage").attr("id");
-    var li = $(id);
-    li.addClass("selected");
-    addPage(li);
-  });
-
-  $("a.do-unselectSinglePage").unbind('click');
-  $("a.do-unselectSinglePage").click(function(e){
-    e.preventDefault();
-    var id = "#document_" + $(".showPage").attr("id");
-    var li = $(id);
-    li.removeClass("selected");
-    removePage(li);
-  });
-
-  $("#panel2 a.do-nextPage").unbind('click');
-  $("#panel2 a.do-nextPage").click(function(e){
-    e.preventDefault();
-    var id = $("#panel2 .showPage").attr("id");
+    var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.next().children(".do-showPage");
     if (link.length > 0)
-      showPage(link);
+      showPage(link,"next");
   });
 
-  $("#panel2 a.do-prevPage").unbind('click');
-  $("#panel2 a.do-prevPage").click(function(e){
+  $("a.do-prevPage").unbind('click');
+  $("a.do-prevPage").click(function(e){
     e.preventDefault();
-    var id = $("#panel2 .showPage").attr("id");
+    var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.prev().children(".do-showPage")
     if (link.length > 0)
-      showPage(link);
-  });
+      showPage(link,"previous");
+  }); 
 
-  $("#panel3 a.do-nextPage").unbind('click');
-  $("#panel3 a.do-nextPage").click(function(e){
-    e.preventDefault();
-    var id = $("#panel3 .showPage").attr("id");
-    var li = $("#document_"+id);
-    var link = li.next().children(".do-showPage");
-    if (link.length > 0)
-      showPage(link);
-  });
-
-  $("#panel3 a.do-prevPage").unbind('click');
-  $("#panel3 a.do-prevPage").click(function(e){
-    e.preventDefault();
-    var id = $("#panel3 .showPage").attr("id");
-    var li = $("#document_"+id);
-    var link = li.prev().children(".do-showPage")
-    if (link.length > 0)
-      showPage(link);
-  });
-
-  $(".backToPanel1").unbind('click');
-  $(".backToPanel1").click(function(){
-    $("#panel2").hide();
-    $("#panel3").hide();
-    $("#panel1").show();
-
-    $(".actiongroup.group1").show();
-    $(".actiongroup.group2").hide();
+  $("a.piece").unbind('click');
+  $("a.piece").bind('click',function(e) {
+    deletePiece($(this).attr('id'));
     return false;
   });
 
-  $(".do-goToPreseizure").unbind('click');
-  $(".do-goToPreseizure").click(function(e){
-    e.preventDefault();
-    var piece_id = $(this).attr('data-id');
-    if(piece_id > 0)
-    {
-      window.currentView = 'preseizures';
-      getPreseizures(window.currentLink, 1, piece_id, false);
-    }
+  $(".delete_piece_composition").unbind('click');
+  $(".delete_piece_composition").bind('click',function(e) {
+    deletePieceComposition();
+    return false;
   });
 
-  $('#do-showAllPieces').unbind('click');
-  $('#do-showAllPieces').click(function(e){
-    e.preventDefault();
-    showPieces(window.currentLink, 1);
+  $(".check_modif_preseizure input").unbind('click');
+  $(".check_modif_preseizure input").click(function(e) {
+    var span_id = $(this).attr('id');
+    var div_id = span_id.split('_');
+    
+    if ($("#div_"+div_id[1]).hasClass("preseizure_selected active"))
+    {     
+      $("#span"+span_id).removeClass("preseizure_selected");    
+      $("#div_"+div_id[1]).removeClass("preseizure_selected active");
+    }
+    else 
+    {      
+      $("#span"+span_id).addClass("preseizure_selected");    
+      $("#div_"+div_id[1]).addClass("preseizure_selected active");
+    }           
+    handlePreseizureSelection(div_id[1]);
+    togglePreseizureAction();
   });
+
+  $(".custom_popover").unbind('click');
+  $(".custom_popover").click(function(e) {
+    var data_content = $(this).attr('data-content');
+
+    $("#PdfViewerDialog").modal('show');
+    $("#PdfViewerDialog .modal-body .view-content").html(data_content);    
+  });
+
 }
 
 var initEventOnPiecesSelection = function(){
@@ -124,7 +107,6 @@ var initEventOnPiecesSelection = function(){
     removePageFromSelection($(this));
     return false;
   });
-
 
   $("a.removeAllSelection").unbind('click');
   $("a.removeAllSelection").click(function(e) {
@@ -186,7 +168,7 @@ $('#comptaAnalysisEdition').on('show', function() {
   if(window.analytic_target_form != '#fileupload')
   {
     $('#analysis_validate').removeClass('hide');
-    var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+    var document_ids = $.map($("#lists_pieces > #lists_pieces_content > ul#pages > li"), function(li){ return li.id.split("_")[1] });
     window.setAnalytics(window.user_code, document_ids, 'piece', true);
   }
   else
@@ -205,7 +187,11 @@ $('#comptaAnalysisEdition').on('hide', function() {
 });
 
 $('#analysis_validate').on('click', function(){
-  var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+  var document_ids = [];
+  $("#lists_pieces > #lists_pieces_content > ul > li.selected").each(function(li){ 
+      document_ids.push($(this).attr('id').split("_")[1]); 
+  });
+
   if (document_ids.length <= 0)
   {
     $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
@@ -213,7 +199,7 @@ $('#analysis_validate').on('click', function(){
   else 
   {
     var data = $('#comptaAnalysisEdition #compta_analytic_form_modal').serialize()
-    data += '&document_ids='+document_ids
+    data += '&document_ids='+document_ids.join(',')
     $.ajax({
       url: "/account/documents/compta_analytics/update_multiple",
       data: data,
@@ -260,8 +246,11 @@ $("#composition_name").change(function() {
   $("#compositionDialog .names_alert").html("");
 });
 
-$("#compositionButton").click(function() {
-  var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+$("#compositionButton").click(function() {  
+  var document_ids = [];
+  $("#lists_pieces > #lists_pieces_content > ul > li.selected").each(function(li){ 
+      document_ids.push($(this).attr('id').split("_")[1]); 
+  });
   var $composition_name = $("#composition_name");
 
   if (document_ids.length <= 0)

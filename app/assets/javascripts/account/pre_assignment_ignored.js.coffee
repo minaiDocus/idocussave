@@ -18,7 +18,7 @@ load_modal = (el, show)->
 
 jQuery ->
   currentIndex = 0
-
+  $('.custom_popover').custom_popover()
   $('a.do-showPieces').click (e) ->
     e.defaultPrevented
     currentIndex = $(this).data('pieceIndex')

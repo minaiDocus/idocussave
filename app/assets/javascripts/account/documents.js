@@ -14,21 +14,6 @@
     $('.custom_popover').custom_popover();
   }
 
-  window.handleView = function(url=null){
-    if(window.currentView == 'pieces')
-    {
-      $('#documents_view #pieces_view').click();
-
-      $("#panel2").hide();
-      $("#panel3").hide();
-      $("#panel1").show();
-    }
-    else
-    {
-      $('#documents_view #preseizures_view').click();
-    }
-  }
-
   window.getParamsFromFilter = function(){
     window.filterText = '';
 
@@ -87,43 +72,39 @@
   function initEventOnPackOrReportRefresh(){
     $("a.do-show-pack").unbind("click");
     $("a.do-show-pack").bind("click",function() {
-      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+      if(window.datasLoaderLocked || window.piecesLoaderLocked)
         return false;
 
       $('#documentslist .content > ul > li').removeClass('activated');
       $(this).parents('li').addClass('activated');
 
+      show_pieces_view();
       window.currentLink = $(this);
 
       $("#panel1 > .content").html("");
       $("#presPanel1 > .content").html("");
 
+      $(".href_download").val('');
+      $(".href_download_zip").val('');
+      
       var href_download = $(this).parents('li').find('.action .download').attr('href') || '#';
       var href_zip_download = $(this).parents('li').find('.action .zip_download').attr('href') || '#';
-      if(href_download != '#')
-        $('#panel1 > .header .actiongroup .download').attr('href', href_download);
-      else
-        $('#panel1 > .header .actiongroup .download').removeAttr('href');
 
-      if(href_zip_download != '#')
-        $('#panel1 > .header .actiongroup .zip_download').attr('href', href_zip_download);
-      else
-        $('#panel1 > .header .actiongroup .zip_download').removeAttr('href');
+      $(".href_download").val(href_download);
+      $(".href_download_zip").val(href_zip_download);
 
       showPieces(window.currentLink);
-      initParameters(window.currentLink);
-      getPreseizures(window.currentLink, 1, null);
+      initParameters(window.currentLink);         
 
       return false;
     });
 
     $("a.do-show-report").unbind("click");
     $("a.do-show-report").bind("click",function() {
-      if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
+      if(window.datasLoaderLocked || window.preseizuresLoaderLocked)
         return false;
 
-      window.currentView = 'preseizures';
-      $("#panel1 .header h3").text('Pieces');
+      show_preseizures_view();
 
       $('#documentslist .content > ul > li').removeClass('activated');
       $(this).parents('li').addClass('activated');
@@ -160,6 +141,28 @@
         showPacksOrReports($(this), 'report');
       return false;
     });
+
+    $(".scroll_on_top").unbind('click');
+    $(".scroll_on_top").bind('click',function(e) { 
+      var body = $("html, body");
+      body.stop().animate({scrollTop:0}, 500, 'swing', function() {});
+    });
+
+  }
+
+  function show_pieces_view(){
+    window.currentView = 'pieces';
+
+    $("#pageslist").fadeIn('slow');
+    $("#preseizuresList").hide();
+  }
+
+  function show_preseizures_view(){
+    window.currentView = 'preseizures';
+
+    $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px;");
+    $("#preseizuresList").fadeIn('slow');
+    $("#pageslist").hide();
   }
 
 
@@ -237,9 +240,8 @@
         $("#documentslist .packsList h3").text(packs_count + " lot(s)");
 
         $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
-        $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+        $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
 
-        window.handleView();
         initEventOnPackOrReportRefresh();
         window.initEventOnHoverOnInformation();
 
@@ -308,9 +310,8 @@
         $("#documentslist .reportsList h3").text(reports_count + " lot(s)");
 
         $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
-        $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+        $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
 
-        window.handleView();
         initEventOnPackOrReportRefresh();
         window.initEventOnHoverOnInformation();
 
@@ -655,35 +656,6 @@
       $('#documentslist .reportsList').removeClass('hide');
     });
 
-    $('#documents_view #pieces_view').click(function(){
-      window.currentView = 'pieces';
-
-      $('#documentslist #view_packs').text('Documents');
-      $('#documentslist #view_packs').click();
-
-      $('#documentslist #view_reports').text('Opérations');
-      $('#documentslist #view_reports').hide();
-
-      $("#pageslist").fadeIn('slow');
-      $("#preseizureslist").hide();
-      $('#documents_view .block_view').removeClass('active');
-      $('#documents_view #pieces_view ').addClass('active');
-    });
-
-    $('#documents_view #preseizures_view').click(function(){
-      window.currentView = 'preseizures';
-
-      $('#documentslist #view_packs').text('Preaff. Pieces');
-      $('#documentslist #view_reports').text('Preaff. Opérations');
-      $('#documentslist #view_reports').show();
-
-      $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px;");
-      $("#preseizureslist").fadeIn('slow');
-      $("#pageslist").hide();
-      $('#documents_view .block_view').removeClass('active');
-      $('#documents_view #preseizures_view ').addClass('active');
-    });
-
     $('#packFilterModal #target_filter').on('change', function(){
       var value = $(this).val()
 
@@ -724,6 +696,15 @@
         if(sTop >= (diffHeight - 25))
           getPreseizures(window.currentLink, window.preseizuresPage);
       }
+      
+      if (sTop > 600)
+      {
+        $('.scroll_on_top').show('slow');
+      }
+      else 
+      {
+        $('.scroll_on_top').hide('slow');
+      }
     });
   }
 
@@ -749,15 +730,16 @@
 
     _require('/assets/account/documents/pieces_event_handler.js');
     _require('/assets/account/documents/preseizures_event_handler.js');
-
+    
     //View Initializers
     initManager();
 
     initEventOnPackOrReportRefresh();
+    initEventOnPreseizuresRefresh();
     window.initEventOnHoverOnInformation();
 
     $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
-    $("#preseizureslist #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+    $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
 
     $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
     $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");

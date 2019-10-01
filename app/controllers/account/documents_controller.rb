@@ -36,85 +36,16 @@ class Account::DocumentsController < Account::AccountController
   def show
     @data_type = params[:fetch] || 'pieces'
     @data_source = params[:source] || 'pack'
-
-    if @data_source == 'report'
-      source = Pack::Report.where(user_id: account_ids, id: params[:id]).first!
+    
+    if @data_type == 'pieces' && @data_source == 'pack'
+      show_pack_pieces
     else
-      source = Pack.where(owner_id: account_ids, id: params[:id]).first!
-    end
-
-    if params[:by_all].present?
-      params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
-      params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
-    end
-
-    if  @data_type == 'preseizures'
-      if(params[:piece_id].present?)
-        @preseizures = source.preseizures.where(piece_id: params[:piece_id]).order(position: :desc).distinct.page(params[:page]).per(10)
-      elsif(params[:preseizure_ids].present?)
-        @preseizures = source.preseizures.where(id: params[:preseizure_ids]).page(params[:page]).per(10)
-      else
-        if params[:by_piece].present? && @data_source == 'pack'
-          pieces = source.pieces
-          pieces = pieces.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%") if params[:by_piece].try(:[], :content)
-          pieces = pieces.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
-          pieces = pieces.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
-          pieces = pieces.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
-          piece_ids = pieces.distinct.pluck(:id).presence || [0]
-        end
-        
-        @preseizures = source.preseizures
-
-        @preseizures = @preseizures.where(piece_id: piece_ids) if piece_ids.present?
-
-        @preseizures = @preseizures.filter_by(params[:by_preseizure]).order(position: :desc).distinct.page(params[:page]).per(10)
-      end
-
-      user = @preseizures.first.try(:user)
-      @ibiza = @preseizures.first.try(:organization).try(:ibiza)
-
-      @software = @software_human_name = ''
-      if user.try(:uses_ibiza?)
-        @software = 'ibiza'
-        @software_human_name = 'Ibiza'
-      elsif user.try(:uses_exact_online?)
-        @software = 'exact_online'
-        @software_human_name = 'Exact Online'
-      end
-
-      if @data_source == 'pack'
-        @need_delivery = (@user.collaborator? && source.reports.not_delivered.not_locked.count > 0) ? 'yes' : 'no' if params[:page].to_i == 1
-      else
-        @need_delivery = (@user.collaborator? && source.is_not_delivered? && !source.is_locked)? 'yes' : 'no' if params[:page].to_i == 1
-      end
-    elsif @data_source == 'pack'
-      if params[:piece_id].present?
-        @documents = source.pieces.where(id: params[:piece_id]).includes(:pack).order(position: :desc).page(params[:page]).per(20)
-      else
-        piece_ids = source.preseizures.filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
-
-        @documents = source.pieces
-
-        @documents = @documents.where(id: piece_ids) if piece_ids.present?
-        @documents = @documents.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%") if params[:by_piece].try(:[], :content)
-        @documents = @documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
-        @documents = @documents.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
-        @documents = @documents.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
-
-        @documents = @documents.order(position: :desc).includes(:pack).page(params[:page]).per(20)
-      end
-
-      if params[:page].to_i == 1
-        unless source.is_fully_processed || params[:filter].presence
-          @temp_pack      = TempPack.find_by_name(source.name)
-          @temp_documents = @temp_pack.temp_documents.not_published
-        end
-      end
-    end
+      show_report_preseizures
+    end    
   end
 
   # GET /account/documents/packs
-  def packs
+  def packs    
     if params[:view] == 'current_delivery'
       pack_ids = @user.remote_files.not_processed.distinct.pluck(:pack_id)
       @packs = Pack.where(owner_id: account_ids, id: pack_ids).
@@ -184,12 +115,24 @@ class Account::DocumentsController < Account::AccountController
 
   #GET /account/documents/preseizure_account/:id
   def preseizure_account
-    preseizure = Pack::Report::Preseizure.find params[:id]
-    @unit = preseizure.try(:unit) || 'EUR'
-    @preseizure_entries = preseizure.entries
+    @preseizure = Pack::Report::Preseizure.find params[:id]
+
+    user = @preseizure.try(:user)
+    @ibiza = user.try(:organization).try(:ibiza)
+    @software = @software_human_name = ''
+    if user.try(:uses_ibiza?)
+      @software = 'ibiza'
+      @software_human_name = 'Ibiza'
+    elsif user.try(:uses_exact_online?)
+      @software = 'exact_online'
+      @software_human_name = 'Exact Online'
+    end
+
+    @unit = @preseizure.try(:unit) || 'EUR'
+    @preseizure_entries = @preseizure.entries
     @pre_tax_amount = @preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
     
-    analytics = preseizure.analytic_reference
+    analytics = @preseizure.analytic_reference
     @data_analytics = []
     if analytics 
       3.times do |i|
@@ -211,6 +154,8 @@ class Account::DocumentsController < Account::AccountController
   def edit_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
 
+    @preseizure_entries = @preseizure.entries
+    
     render partial: 'account/documents/preseizures/edit'
   end
 
@@ -276,7 +221,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def edit_preseizure_account
-    @account = Pack::Report::Preseizure::Account.find params[:id]
+    @preseizures = Pack::Report::Preseizure.find params[:id]
 
     render partial: 'account/documents/preseizures/edit_account'
   end
@@ -285,33 +230,24 @@ class Account::DocumentsController < Account::AccountController
     unless @user.collaborator?
       render json: { error: '' }, status: 200
     else
-      account = Pack::Report::Preseizure::Account.find params[:id]
-
       error = ''
-      error = account.errors.full_messages unless account.update_attributes params[:pack_report_preseizure_account].permit(:number, :lettering)
+      params[:account_id].each do |id|
+        account = Pack::Report::Preseizure::Account.find id
+        error = account.errors.full_messages unless account.number = params[:entry_account_number][id]
+        error = account.errors.full_messages unless account.lettering = params[:entry_account_lettrage][id]
+        account.save
+      end
+
+      params[:entry_id].each do |id|
+        entry = Pack::Report::Preseizure::Entry.find id
+        error = entry.errors.full_messages unless entry.type = params[:entry_type][id]
+        error = entry.errors.full_messages unless entry.amount = params[:entry_amount_number][id]
+        entry.save
+      end      
 
       render json: { error: error }, status: 200
     end
-  end
-
-  def edit_preseizure_entry
-    @entry = Pack::Report::Preseizure::Entry.find params[:id]
-
-    render partial: 'account/documents/preseizures/edit_entry'
-  end
-
-  def update_preseizure_entry
-    unless @user.collaborator?
-      render json: { error: '' }, status: 200 
-    else
-      entry = Pack::Report::Preseizure::Entry.find params[:id]
-
-      error = ''
-      error = entry.errors.full_messages unless entry.update_attributes params[:pack_report_preseizure_entry].permit(:type, :amount)
-
-      render json: { error: error }, status: 200
-    end
-  end
+  end  
 
   def select_to_export
     if params[:ids]
@@ -558,11 +494,36 @@ class Account::DocumentsController < Account::AccountController
     filepath = @pack.content.path
 
     if File.exist?(filepath) && (@pack.owner.in?(accounts) || current_user.try(:is_admin))
-      mime_type = 'application/pdf'
+      mime_type = 'application/pdf'           
       send_file(filepath, type: mime_type, filename: @pack.content_file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
+  end
+
+  # POST /account/documents/delete_multiple_piece
+  def delete_multiple_piece
+    pieces    = params[:piece_id]
+    pack      = nil
+
+    pieces.each do |piece_id|
+      piece           = Pack::Piece.find piece_id
+      piece.delete_at = DateTime.now
+      piece.delete_by = @user.code
+      piece.save
+      
+      temp_piece      = piece.temp_document
+      temp_piece.original_fingerprint    = nil 
+      temp_piece.content_fingerprint     = nil 
+      temp_piece.raw_content_fingerprint = nil 
+      temp_piece.save
+
+      pack ||= piece.pack
+    end    
+
+    pack.delay.try(:recreate_original_document)        
+    
+    render json: { success: true }, status: 200    
   end
 
 protected
@@ -581,5 +542,86 @@ private
       conversion_rate:    params[:preseizures_attributes][:conversion_rate].presence,
       observation:        params[:preseizures_attributes][:observation].presence,
     }.compact
+  end
+
+
+  def show_pack_pieces
+
+    pack = Pack.find params[:id]
+    
+    if params[:by_all].present?
+      params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
+      params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
+    end
+    
+    if(params[:piece_id].present?)
+      @documents = pack.pieces.where(id: params[:piece_id]).includes(:pack).order(position: :desc).page(params[:page]).per(2)
+    else
+      piece_ids = pack.preseizures.filter_by(params[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if params[:by_preseizure].present?
+
+      @documents = pack.pieces
+      @documents = @documents.where(id: piece_ids) if piece_ids.present?
+
+      if(params[:by_piece].present?)
+        @documents = @documents.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%", "%#{params[:by_piece][:content]}%") if params[:by_piece].try(:[], :content)
+        @documents = @documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
+        @documents = @documents.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
+        @documents = @documents.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
+      end
+
+      @documents = @documents.order(position: :desc).includes(:pack).page(params[:page]).per(5)
+    end
+
+    user = pack.user
+    @ibiza = user.try(:organization).try(:ibiza)
+
+    @software = @software_human_name = ''
+    
+    if user.try(:uses_ibiza?)
+      @software = 'ibiza'
+      @software_human_name = 'Ibiza'
+    elsif user.try(:uses_exact_online?)
+      @software = 'exact_online'
+      @software_human_name = 'Exact Online'
+    end
+
+    @need_delivery = (@user.collaborator? && pack.reports.not_delivered.not_locked.count > 0) ? 'yes' : 'no' if params[:page].to_i == 1
+
+    if params[:page].to_i == 1
+      unless pack.is_fully_processed || params[:filter].presence
+        @temp_pack      = TempPack.find_by_name(pack.name)
+        @temp_documents = @temp_pack.temp_documents.not_published
+      end
+    end
+  end
+
+  def show_report_preseizures
+    source = Pack::Report.find params[:id]
+
+    if params[:by_all].present?
+      params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
+    end
+    
+    if(params[:preseizure_ids].present?)
+       @preseizures = source.preseizures.where(id: params[:preseizure_ids])
+    else
+      @preseizures = source.preseizures
+      @preseizures = @preseizures.filter_by(params[:by_preseizure]).order(position: :desc).distinct.page(params[:page]).per(5)
+    end
+
+    user = @preseizures.first.try(:user)
+    @ibiza = @preseizures.first.try(:organization).try(:ibiza)
+
+    @software = @software_human_name = ''
+    
+    if user.try(:uses_ibiza?)
+      @software = 'ibiza'
+      @software_human_name = 'Ibiza'
+    elsif user.try(:uses_exact_online?)
+      @software = 'exact_online'
+      @software_human_name = 'Exact Online'
+    end
+
+    @need_delivery = (@user.collaborator? && source.is_not_delivered? && !source.is_locked)? 'yes' : 'no' if params[:page].to_i == 1
   end
 end

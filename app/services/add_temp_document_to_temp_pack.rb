@@ -1,5 +1,6 @@
 class AddTempDocumentToTempPack
   def self.execute(temp_pack, file, options = {})
+    
     user         = temp_pack.user
     organization = temp_pack.organization
 

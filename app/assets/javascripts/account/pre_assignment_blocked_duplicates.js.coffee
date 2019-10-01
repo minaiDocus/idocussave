@@ -1,4 +1,5 @@
 jQuery ->
+  $('.custom_popover').custom_popover()
   $('a.do-showPieces').click (e) ->
     e.defaultPrevented
     $diffDialog = $('#showPieces')

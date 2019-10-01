@@ -178,8 +178,8 @@ module DocumentsHelper
     contents = ''
     contents += content_tag :h4, "Pièce n° #{piece.position} - #{piece.name}"
     contents += content_tag :div, content_tag(:iframe, "", :src => piece.content.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
-    content_tag :div, contents, style: 'width: 750px; padding: 10px'
-  end
+    content_tag :div, contents, style: 'width: 750px; padding: 10px;z-index:200'
+  end 
 
   def quarterly_of_month(month)
     if month < 4

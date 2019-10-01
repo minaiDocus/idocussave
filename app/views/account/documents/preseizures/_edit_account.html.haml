@@ -1,6 +1,18 @@
-.edit.preseizure_account
-  = simple_form_for @account, url: '', method: 'get', html: { class: 'form form-horizontal margin0', id: 'preseizure_edition_form' } do |f|
-    = hidden_field_tag 'preseizure_id', @account.preseizure.id
-    = f.hidden_field :id
-    = f.input :number
-    = f.input :lettering
+- @entries = @preseizures.entries
+
+.edit.preseizure_account	
+	= form_tag '', method: :post do
+		= hidden_field_tag 'preseizure_id', @preseizures.id		
+		- @entries.each do |entry|	
+			.account_section
+				= hidden_field_tag 'account_id[]', entry.account.id
+				= label_tag 'account_number', 'Numéro : ' 
+				= text_field_tag "entry_account_number[#{entry.account.id}]", entry.account.number			
+				= label_tag 'account_number', 'Lettrage : ' 
+				= text_field_tag "entry_account_lettrage[#{entry.account.id}]"		
+			.entry_section 
+				= hidden_field_tag 'entry_id[]', entry.id
+				= label_tag 'entry', 'Type :* '
+				= select_tag "entry_type[#{entry.id}]", options_for_select([[t('Débit'), 1], [t('Crédit'), 2]], (entry.type rescue ''))			
+				= label_tag 'montant_type', 'Montant : '
+				= number_field_tag "entry_amount_number[#{entry.id}]", entry.amount

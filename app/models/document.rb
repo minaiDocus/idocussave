@@ -223,4 +223,5 @@ class Document < ActiveRecord::Base
   def retrieved?
     origin == 'retriever'
   end
+
 end

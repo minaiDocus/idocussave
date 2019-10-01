@@ -1,28 +1,59 @@
 - ### TODO : HANDLE COMPOSITION DOCUMENTS OR PIECES
 - Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
-
+- preseizures = document.preseizures
+- size = preseizures.length
 - stamp_url = document.get_state_to :image
 
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
-  %input{ type: :hidden, name: :page_number, value: document.position }
-  %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }
-  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page', data: { stamp_url: ("/assets/#{stamp_url}"), piece_id: document.preseizures.count > 0 ? document.id : 0 } unless @is_composition
-  %a.label.label-warning.piece_number.do-goToPreseizure{ title: "Voir l'écriture comptable", data: { id: document.preseizures.count > 0 ? document.id : 0 } }
-    = sprintf '%03d', document.position
-  .toolbar
-    %ul.margin0
-      %li.download= link_to '', document.content.url, class: 'download', title: 'Télécharger', target: '_blank'
-      - if @user.active?
-        - if @is_composition
-          %li.delete_composition
-            %a.delete.do-removePageFromSelection{ href: '#', title: 'Sélection' }
-        - else
-          %li.selector= link_to '', '#', class: 'select do-selectPage', title: 'Sélection'
-  - if @is_composition
-    .handle{ title: 'Déplacer' }
-  .pagethumb
-    .thumb= image_tag document_thumb_url(document)
-    - if stamp_url.present?
-      .stamp= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
-  .foot
-    %span
+  .piece_head
+    %span.position_label.label.label-warning.piece_number
+      = sprintf '%03d', document.position
+    %span.preseizure_label.tip_details.each.do-tooltip
+      = document.name
+    %span.choose_action_piece     
+      %a.pull-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
+        %i.icon-trash       
+      %a.pull-right.margin3.do-tooltip{href: document.content.url, title: 'Télécharger', target: '_blank'}
+        %i.icon-download-alt 
+      %a.pull-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
+        %i.icon-ok         
+     
+  .piece_body
+    
+    .piece_image
+      %input{ type: :hidden, name: :page_number, value: document.position }
+      %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }   
+          
+      .pagethumb 
+        .zoom.custom_popover{title: 'Visualiser la pièce', "data-content" => html_piece_view(document)}              
+        .image_piece                
+          = image_tag document_thumb_url(document)        
+      .foot
+        %span
+          - if stamp_url.present?
+            .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')     
+    .preseizure_description
+      - if size > 0 
+        .content_details         
+          %input{type: :hidden, class: :list_preseizure_id, value: preseizures.ids}      
+          .tab_preseizures
+            - active = nil
+            - preseizures.each do |preseizure| 
+              - if @ibiza
+                - preseizure_name = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
+              - else 
+                - preseizure_name = preseizure.piece_name  
+              %div{id: "span_#{preseizure.id}", class: "#{(size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && size >1) ? 'tab_active' : ''}", title: "#{(size > 1) ? preseizure_name : ''}"}                
+                - if size == 1
+                  %input{type: :hidden, id: ""}
+                - else
+                  %div.check_modif_preseizure{ title: "Sélection"}
+                    %input{ id: "_#{preseizure.id}", type: :checkbox,style: "margin-top: -2px;margin-left: 5px;"}  
+                  = preseizure_name[0,10]                                                                      
+              - active = 1            
+        - preseizures.each do |preseizure|               
+          .content_preseizure{id: "div_#{preseizure.id}"}
+      - else 
+        .content_details
+          .no_preseizure
+            Aucune &eacute;criture comptable

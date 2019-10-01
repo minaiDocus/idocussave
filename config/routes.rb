@@ -342,6 +342,7 @@ Idocus::Application.routes.draw do
       get  'reports',                         on: :collection
       get  'archive',                         on: :member
       post 'sync_with_external_file_storage', on: :collection
+      post 'delete_multiple_piece',           on: :collection
     end
 
 

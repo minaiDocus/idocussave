@@ -261,3 +261,25 @@
         Traitement en cours ...
     %a#analysis_validate.btn.btn-primary.hide{ :href => "#" }
       Valider
+
+.modal.fade{ :id=>"confirmDeletePiece" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } 
+    %h3 Information
+  %form
+    .modal-body
+      .message_confirm
+        Voulez-vous vraiment supprimer cette pièce ? 
+      .length_alert
+    .modal-footer
+      %a{ :class=>"modal-close btn" } Annuler
+      %input#deletebutton.btn.btn-primary{ :type => "button", :value => "Supprimer" }
+
+.modal.fade.wauto.hauto{ :id => "PdfViewerDialog", style: "top:40% !important; left:43% !important;"}
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Aperçu PDF
+  .modal-body{style: "max-height: none !important; padding:0;"}
+    .view-content.margin3
+  
+  .modal-footer

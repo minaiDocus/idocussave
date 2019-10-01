@@ -293,5 +293,5 @@ class DocumentTools
 
   def self.checksum(file_path)
     `md5sum "#{file_path}"`.split[0]
-  end
+  end 
 end

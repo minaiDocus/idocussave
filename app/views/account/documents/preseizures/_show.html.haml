@@ -1,9 +1,6 @@
 - if @preseizures.any?
   #show_preseizures
     %h4
-    %span.total_preseizures_count.hide= @preseizures.total_count
-    %span.software_used.hide= @software_human_name
-    %span.need_delivery.hide= @need_delivery
     #lists.margin0.margin2bottom{ style: "clear:both;", :id => "preseizures" }
       #lists_preseizures_content
         = render :partial => "/account/documents/preseizures/preseizure", :collection => @preseizures
@@ -11,5 +8,3 @@
       .loader.margin1top.pull-left
         .feedback.inactive
           %span.out Aucun traitement
-      .showALLPreseizures.margin1top.pull-right.hide
-        %a{ href:'#', id: 'do-showAllPreseizures', style: 'font-size: 16px' } Afficher tout

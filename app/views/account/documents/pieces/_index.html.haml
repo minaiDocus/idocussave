@@ -2,55 +2,7 @@
   .header.span12.margin0left{style: "float:none!important; border-bottom: 1px solid #ddd; margin-bottom: 10px"}
     %h3.pull-left
       Pieces
-    - if @user.active?
-      .actiongroup.pull-right
-        %a.download{ :title => "Télécharger", :target => "_blank", style: 'margin: 3px' }
-          %i.icon-download-alt
-        %a.zip_download{ :title => "Télécharger une archive zip", :target => "_blank", style: 'margin: 3px' }
-          %i.icon-download
+    - if @user.collaborator?
+      %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px', data: { toggle: 'modal' } }
+        %i.icon-edit        
   .content.pages
-#panel2{ :style => "display: none" }
-  .header.row-fluid
-    .actiongroup.span4.alignleft
-      %a{ href: '#', class: 'backToPanel1 btn' }
-        %i.icon-arrow-left
-        Retour
-    .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
-      %a.do-prevPage{:href => "#"}
-        pièce précédente
-      \-
-      %span.page_number
-      \-
-      %a.do-nextPage{:href => "#"}
-        pièce suivante
-    .actiongroup.span4.alignright{ style: 'margin-top:4px' }
-      %span.stamp.hide{ id: 'stamp_box' }= image_tag('', alt: 'tampon', class: 'img_stamp')
-      %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
-        %span.label.label-info.do-goToPreseizure.hide{ style: 'margin-right: 5px' }
-          écriture
-        %span.label.label-info
-          tags
-      - if @user.active?
-        |
-        %a.do-selectSinglePage.do-tooltip{:href => "#", :title => "Sélectionner"}
-          %i.icon-ok
-        %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
-          %i.icon-ban-circle
-  .content
-    %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:550px;"}
-#panel3{ :style => "display: none" }
-  .header.row-fluid
-    .actiongroup.span4.alignleft
-      %a{ href: '#', class: 'backToPanel1 btn' }
-        %i.icon-arrow-left
-        Retour
-    .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
-      %a.do-prevPage{:href => "#"}
-        piece précédente
-      \-
-      %span.page_number
-      \-
-      %a.do-nextPage{:href => "#"}
-        piece suivante
-  .content
-    %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:550px;"}

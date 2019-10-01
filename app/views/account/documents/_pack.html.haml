@@ -4,7 +4,7 @@
       %i.icon-info-sign
     - if @user.active?
       %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
-        %i.icon-ok
+        %i.icon-ok 
     %a.do-tooltip.download.hide{ :href => pack.content_url, :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
     %a.do-tooltip.zip_download.hide{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :target => "_blank"}

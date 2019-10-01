@@ -20,8 +20,7 @@ function showPieces(link, page=1, by_preseizure=null) {
   var url = "/account/documents/"+document_id+"?source="+source+"&fetch=pieces&page="+page+filter;
 
   window.piecesPage = page + 1;
-
-  $("#panel2").hide();
+  
   $("#panel3").hide();
   $("#panel1").show();
 
@@ -49,7 +48,9 @@ function getPieces(url,title,by_preseizure=null) {
       data = data.trim();
 
       logAfterAction();
+      window.preseizuresSelected = [];
 
+      // window.piecesPage == 2 means that we fetched the first result from page 1
       if(window.piecesPage == 2)
       {
         if(data != 'none')
@@ -78,43 +79,12 @@ function getPieces(url,title,by_preseizure=null) {
 
       $("#show_pages #lists_pieces_content > ul > li:not(:visible)").fadeIn(1500);
 
-      //calculate Approximative height of lists content
-      var lists_pieces_height = Math.ceil($(window).outerHeight() / 1.2); 
-
-      var img_width   = 121
-      var img_height  = 163
-
-      var content_box_width = $('#pageslist').parent().outerWidth();
-      var elem_per_row      = Math.ceil(content_box_width / img_width)
-      var elem_count        = $('#lists_pieces_content > ul > li').length;
-      var rows_count        = Math.ceil(elem_count / elem_per_row);
-
-      var lists_pieces_content_height = rows_count * img_height // height approximative
-
-      //Fetch data until content pieces has not enough space
-      var fetch_by_size = (lists_pieces_height > lists_pieces_content_height)? true : false;
-
-      var sTop = $(window).scrollTop();
-      var last_element = $('#lists_pieces_content > ul > li:last');
-
-      if(last_element.is(':visible'))
-        var offsetTopLast = last_element.offset().top;
-      else
-        var offsetTopLast = $(window).outerHeight() + 1;
-
-      var realTopLast = offsetTopLast - sTop;
-      fetch_from_visible = ($(window).outerHeight() > realTopLast)? true : false;
-
-      if((fetch_by_size || fetch_from_visible) && window.piecesPage > 0)
-      { 
-        window.piecesLoaderLocked = false;
-        setTimeout(showPieces(window.currentLink, window.piecesPage, by_preseizure), 1000);
-      }
-      else
       {
         initEventOnPiecesRefresh();
         synchroniseSelected();
-        window.handleView();
+        initEventOnPreseizuresRefresh();
+        getPreseizureAccount();
+        initEventOnHoverOnInformation();
 
         $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
         $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
@@ -129,6 +99,18 @@ function getPieces(url,title,by_preseizure=null) {
           $(this).load();
       });
 
+      var href_download     = $(".href_download").val();
+      var href_zip_download = $(".href_download_zip").val();
+
+      if(href_download != '#')
+        $('#panel1 > .pages .actiongroup .download').attr('href', href_download);
+      else
+        $('#panel1 > .pages .actiongroup .download').removeAttr('href');
+
+      if(href_zip_download != '#')
+        $('#panel1 > .pages .actiongroup .zip_download').attr('href', href_zip_download);
+      else
+        $('#panel1 > .pages .actiongroup .zip_download').removeAttr('href');
       setTimeout(function(){ window.piecesLoaderLocked = false }, 1000);
     },
     error: function(data){
@@ -141,22 +123,15 @@ function getPieces(url,title,by_preseizure=null) {
 
 // show or hide selection field
 function toogleSelectionBox(){
-  lists = btoa($('#selectionsBox #selectionlist ul.list').html().trim());
-  if ( lists == '' )
-    $('#selectionsBox').addClass('hide');
-  else
-    $('#selectionsBox').removeClass('hide');
+  $('#selectionsBox').addClass('hide');
 }
 
 // add page to the selection field
 function addPage(page) {
   var id = page.attr("id").split("_")[1];
   if (!$("#composition_"+id).length > 0) {
-    var li = page.clone();
-    li.appendTo("#selectionlist .content > ul").attr("id","composition_"+id);
-    li.removeClass("selected");
-    li.children(".zoom").remove();
-    li.children(".toolbar").after("<div class='handle' title='Déplacer'></div>");
+    var li = page.clone();    
+    li.removeClass("selected");    
     var ul = li.children(".toolbar").children("ul");
     ul.children("li.selector").remove();
     ul.append("<li><a class='delete do-removePageFromSelection' href='#' title='Supprimer'></a><li>");
@@ -188,67 +163,54 @@ function initParameters(link) {
 }
 
 // show the preview of page given by link
-function showPage(link) {
+function showPage(link,view="init") {
   var url = link.attr("href");
-
-  if (link.parents("ul").attr("id") == "pieces")
-    var panel = "#panel3"
-  else
-    var panel = "#panel2"
-  $("#panel1").hide();
-  $(panel).show();
-
-  $(".actiongroup.group1").hide();
-  $(".actiongroup.group2").show();
-
-  $("#pageslist .header h3.all").hide();
-  $("#pageslist .header .single").show();
 
   var li = link.parents("li");
   var id = li.attr("id").split("_")[1];
-  var tags = li.children("input[name=tags]").val();
-  var name = li.children("input[name=name]").val();
-  if (panel == "#panel2")
+  var page_number = (li.prevAll().length + 1);
+
+  var data_content = '<div style="width: 750px; padding: 10px"><input type="hidden" class="showPage" value="'+id+'"><div class="actiongroup span4 aligncenter" style="margin:1% 25%;"><a class="do-prevPage left btn" href="#"><i class="icon-arrow-left"></i></a>&nbsp; '+page_number+' &nbsp;<a class="do-nextPage right btn" href="#"><i class="icon-arrow-right"></i></a></div><div><iframe src="'+url+'" class="piece_view" style="width:100%;min-height:550px; max-height: 600px"></iframe></div></div>';
+  
+  if (view == "init")
   {
-    var page_number = li.children("input[name=page_number]").val();
-    var piece_id    = link.attr('data-piece-id');
-    if(piece_id > 0)
-    {
-      $('#panel2 .actiongroup .do-goToPreseizure').attr('data-id', piece_id);
-      $('#panel2 .actiongroup .do-goToPreseizure').removeClass('hide');
-    }
-    else
-    {
-      $('#panel2 .actiongroup .do-goToPreseizure').addClass('hide');
-    }
+    $("#PdfViewerDialog").modal('show');  
   }
-  else
+  else 
   {
-    var page_number = (li.prevAll().length + 1);
+    $("#PdfViewerDialog .modal-body .view-content").html('<img src="/assets/application/spinner_gray_alpha.gif" alt="Chargement">Chargement en cours . . . ');
   }
-
-  $(panel + " .showPage").attr("id",id);
-  $(panel + " .showPage").attr("src",url);
-  $("#pageInformation").attr("data-content",tags);
-
-  $(panel + ' #stamp_box').addClass('hide')
-  if(link.attr("data-stamp-url") != '/assets/'){
-    $(panel + ' #stamp_box img').attr("src", link.attr("data-stamp-url"))
-    $(panel + ' #stamp_box').removeClass('hide')
-  }
-
-  $(panel + " .header h3").text(name);
-  $(panel + " .header .actiongroup .page_number").text(page_number);
+  
+  $("#PdfViewerDialog .modal-body .view-content").html(data_content); 
+  initEventOnPiecesRefresh();
 }
 
 // toggle page selection given by link
 function selectPage(link) {
   var li = link.parents("li.pages")
   li.toggleClass("selected");
-  if (li.hasClass("selected")) {
-    addPage(li);
-  } else {
-    removePage(li);
+
+  if ($("li.selected").length > 0)
+  {
+    $(".compta_analysis_edition, .composer, .delete_piece_composition").show();
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+   
+  }
+  else 
+  {
+    $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+  } 
+
+  if (li.hasClass('selected'))
+  {
+    link.find('i').addClass('icon-ban-circle');
+    link.find('i').removeClass('icon-ok');
+  }
+  else 
+  {
+    link.find('i').removeClass('icon-ban-circle');
+    link.find('i').addClass('icon-ok');
   }
 }
 
@@ -340,4 +302,78 @@ function lock_or_unlock_file_upload_params() {
         isUploadParamsLocked = false;
       }
     }
+}
+
+function actionDeletePiece(piece_id){
+  $('#confirmDeletePiece .message_confirm').html('<img src="/assets/application/spinner_gray_alpha.gif" alt="Chargement">Traitement en cours . . . ');
+  $.ajax({
+      url: "/account/documents/delete_multiple_piece",
+      data: { piece_id: piece_id },
+      type: "POST",        
+      success: function(data){        
+        $.map(piece_id, function(piece_id,id){            
+         $('#document_'+piece_id).remove();              
+        }) ; 
+        var pagesTitle = $("#show_pages h4");
+        var pagesCount = $("ul#pages > li").length; 
+        pagesTitle.text(pagesCount + " piece(s) traitée(s)");
+        if (pagesCount == 0) pagesTitle.text('');   
+        $('#selectionsBox').addClass('hide');
+        $('#confirmDeletePiece').modal('hide');
+        $('#confirmDeletePiece .message_confirm').html('Voulez-vous vraiment supprimer cette pièce ? ');
+      }
+    });
+}
+
+function deletePiece(piece){
+  $('#confirmDeletePiece').off();
+  $('#confirmDeletePiece').modal('show').on('click','#deletebutton',function(e){
+    e.preventDefault();      
+    actionDeletePiece([piece]);
+  });
+}
+
+function deletePieceComposition(){
+  if ($('li[id^="document_"].selected').length > 0)
+  {  
+    $('#confirmDeletePiece').off();
+    $('#confirmDeletePiece').modal('show').on('click','#deletebutton',function(e){
+      e.preventDefault();
+      var piece_id   = [];
+      $('li[id^="document_"].selected').each(function(i){
+        tmp_this     = $(this).attr('id'); 
+        piece_id_tmp = tmp_this.split('_');
+        piece_id.push(piece_id_tmp[1]);       
+      });
+      actionDeletePiece(piece_id); 
+    });
+  }
+ }
+
+function togglePreseizureAction()
+{  
+  if ($(".preseizure_selected.active").length > 1){
+    
+    if ($(".tip_edit_multiple").html() == '')
+    {
+      $(".tip_edit_multiple").append('<i class="icon-edit"></i>');
+    }
+    $(".tip_edit_multiple").removeClass("hide");
+    $(".tip_edit_multiple").css({'border' : '1px solid #058acd', 'padding' : '4px 4px 6px 4px', 'border-radius' : '3px'});
+    $(".do-exportSelectedPreseizures").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+    $(".do-deliverAllPreseizure").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+  }
+  else if ($(".preseizure_selected.active").length >= 1){      
+    $(".tip_edit_multiple").addClass("hide");
+    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-exportSelectedPreseizures").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+    $(".do-deliverAllPreseizure").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+  }
+  else 
+  { 
+    $(".tip_edit_multiple").addClass("hide");   
+    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-deliverAllPreseizure").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+  }
 }

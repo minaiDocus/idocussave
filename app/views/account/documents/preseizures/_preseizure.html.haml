@@ -1,23 +1,15 @@
 .preseizure{ id: preseizure.id, style: 'display: none' }
-  - stamp_url = preseizure.get_state_to :image
-
   .name.row-fluid
     .span9.title.padding1
-      - if preseizure.piece_id
-        %a.label.label-warning.piece_number.do-goToPiece.do-tooltip{ title: "Voir la pièce", data: { id: preseizure.piece_id } }
-          = sprintf '%03d', preseizure.piece.try(:position) || preseizure.position || 0
-      - else
-        %a.label.label-info.do-tooltip{ title: "position" }
-          = sprintf '%03d', preseizure.position || 0
-      %span.preseizure_label
+      %a.label.label-info.do-tooltip{ title: "position" }
+        = sprintf '%03d', preseizure.position || 0
+      %span.preseizure_label 
         %a.tip_details.do-tooltip{href: '#', data: {id: preseizure.id}}
           - if @ibiza
             = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
           - else
             = preseizure.piece_name
     .span3.actionbox.padding1
-      - if stamp_url.present?
-        .stamp= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
       %a.tip_edit.pull-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
         %i.icon-edit
       - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
@@ -25,9 +17,6 @@
           %i.icon-refresh
       %a.tip_selection.pull-right.do-tooltip{href: '#', title: "Sélection", data: {id: preseizure.id}}
         %i.icon-ok
-      - if preseizure.piece
-        %a.pull-right.custom_popover{href: '#', "data-content" => html_piece_view(preseizure.piece)}
-          %i.icon-eye-open
   .informations.row-fluid
     .span12
       %table.table.table-striped.table-condensed.margin0bottom
@@ -43,5 +32,62 @@
             %td.date= preseizure.updated_at.try(:to_formatted_s, :db)
             %td.date= preseizure.delivery_tried_at.try(:to_formatted_s, :db)
             %td= @software != '' ? preseizure.get_delivery_message_of(@software) : ''
-
-  .content_details{style: 'display: none'}
+  .content_detail
+    - preseizure_entries = preseizure.entries
+    - pre_tax_amount = preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
+    - data_analytics = analytics_of preseizure
+    
+    %p{style: 'text-align: left;margin: 6px 0px 4px;'}
+      Unité monétaire:
+      %strong= preseizure.try(:unit) || 'EUR' 
+      %a.tip_edit_entry_account.margin3{href: '#', title: "Edition compte-montant", data: {id: preseizure.id}}
+        %i.icon-edit{style: "margin-top: -2px;"}  
+    .row-fluid
+      .entries{ class: (data_analytics.any? ? 'span6' : 'span12') }
+        - if data_analytics.any?
+          %strong Ecritures     
+        %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+          %thead
+            %tr
+              %th.account Numéro de compte                 
+              %th.entry Débit
+              %th.entry Crédit          
+          %tbody.entries
+            - preseizure_entries.each do |entry|
+              %tr
+                %td.account= entry.account.number
+                - if @user.collaborator?
+                  %input.account_id_hidden{type: :hidden, value: entry.account.id}
+                %td.entry
+                  - if entry.type == 1
+                    = entry.amount
+                %td.entry
+                  - if entry.type == 2
+                    = entry.amount
+                - if @user.collaborator?
+                  %input.account_id_hidden{type: :hidden, value: entry.id}              
+      - if data_analytics.any?
+        .analytics.span6
+          %strong Analyse comptable
+          %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+            %thead
+              %tr
+                %th Analyse
+                %th Axe
+                %th Ventilation
+                %th Montant ventilé
+            %tbody.entries
+              - data_analytics.each do |analysis|
+                %tr
+                  %td= analysis[:name]
+                  %td
+                    %ul
+                      -if analysis[:axis1].present?
+                        %li= analysis[:axis1]
+                      -if analysis[:axis2].present?
+                        %li= analysis[:axis2]
+                      -if analysis[:axis3].present?
+                        %li= analysis[:axis3]
+                  %td= analysis[:ventilation] + " %"
+                  %td= pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)
+  

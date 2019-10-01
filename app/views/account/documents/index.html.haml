@@ -3,13 +3,7 @@
     = render partial: 'shared/messages'
 
   .row-fluid
-    .span3
-      #documents_view.actionview.well.clearfix
-        .block_view.active#pieces_view
-          %span Pieces
-        .block_view#preseizures_view
-          %span Ecritures comptables
-    .span9
+    .span12
       #documents_actions
         .actionbar.well.clearfix{style: 'padding: 14px 10px 5px 10px'}
           .feedback.inactive.pull-left
@@ -44,7 +38,7 @@
         .subView
           %span{ class: 'tab-nav selected', id: 'view_packs' }
             Documents
-          %span{ class: 'tab-nav', id: 'view_reports', style: 'display: none' }
+          %span{ class: 'tab-nav', id: 'view_reports' }
             Opérations
         .packsList
           .actions.clearfix
@@ -80,13 +74,14 @@
 
     .span9
       #pageslist.well
+        %input.href_download{type: :hidden, value: ""}
+        %input.href_download_zip{type: :hidden, value: ""}
         = render partial: '/account/documents/pieces/index'
-      #preseizureslist
+      #preseizuresList
         = render partial: '/account/documents/preseizures/index'
-
-  - if @user.active?
-    #selectionsBox.selection-fixed-bottom.hide
-      = render partial: '/account/documents/pieces/selection_box'
+      .scroll_on_top.hide
+        %span
+          %i.icon-arrow-up 
 
 - if @pack
   #pack{ data: { name: @pack.name.sub(' all', ''), id: @pack.id } }

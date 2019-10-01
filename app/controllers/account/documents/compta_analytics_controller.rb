@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Documents::ComptaAnalyticsController < Account::AccountController
   def update_multiple
-    pieces = Pack::Piece.where("id IN (#{params[:document_ids].presence || 0}) AND pre_assignment_state != 'ready'")
+  	pieces = Pack::Piece.where("id IN (#{params[:document_ids].presence || 0}) AND pre_assignment_state != 'ready'")
     
     messages = PiecesAnalyticReferences.new(pieces, params[:analytic]).update_analytics
 

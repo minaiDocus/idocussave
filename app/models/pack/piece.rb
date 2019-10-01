@@ -47,6 +47,9 @@ class Pack::Piece < ActiveRecord::Base
   scope :by_position,            -> { order(position: :asc) }
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
+  scope :deleted,                -> { where.not(delete_at: [nil, '']) }
+
+  default_scope { where(delete_at: [nil, '']) }
 
   scope :of_period, lambda { |time, duration|
     case duration
@@ -305,7 +308,6 @@ class Pack::Piece < ActiveRecord::Base
     return text if type.to_s == 'text'
     return img_url
   end
-
 
   private
 

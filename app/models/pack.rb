@@ -60,7 +60,8 @@ class Pack < ActiveRecord::Base
     per_page = options[:per_page].present? ? options[:per_page].to_i : default_per_page
 
     query = self
-    query = query.where(id: options[:ids]) if options[:ids].present?    
+    query = query.where(id: options[:ids]) if options[:ids].present?
+    
     # WARN : do not change "unless..nil?" to "if..present?, an empty owner_ids must be passed to the query
     query = query.where(owner_id: options[:owner_ids]) unless options[:owner_ids].nil?
     query = query.joins(:pieces).where(pack_pieces: { id: options[:piece_ids] }) unless options[:piece_ids].nil?
@@ -72,8 +73,7 @@ class Pack < ActiveRecord::Base
 
     query = query.joins(:pieces).where("DATE_FORMAT(pack_pieces.created_at, '%Y-%m-%d') #{options[:piece_created_at_operation].tr('012', ' ><')}= ?", options[:piece_created_at]) if options[:piece_created_at]
     query = query.joins(:pieces).where("pack_pieces.position #{options[:piece_position_operation].tr('012', ' ><')}= ?", options[:piece_position]) if options[:piece_position].present?
-    query = query.joins(:pieces).where('packs.tags LIKE ? OR pack_pieces.tags LIKE ?' , "%#{options[:tags]}%", "%#{options[:tags]}%") if options[:tags].present?
-    query = query.joins(:pieces).where(pack_pieces: {id: options[:piece_ids]}) if options[:piece_ids].present?
+
     query = query.order(updated_at: :desc) if options[:sort] == true
 
     query.distinct.page(page).per(per_page)
@@ -108,14 +108,15 @@ class Pack < ActiveRecord::Base
   end
 
   def set_pages_count
-    if pages.first.is_a? Document
+    if pages(false).first.is_a? Document
       self.scanned_pages_count = pages.scanned.size
 
       self.pages_count = pages.size
     else
-      self.scanned_pages_count = pages.scanned.inject(0){ |memo, piece| memo + piece.get_pages_number }
-
-      self.pages_count = pages.inject(0){ |memo, piece| memo + piece.get_pages_number }
+      
+      self.scanned_pages_count = pages(false).scanned.inject(0){ |memo, piece| memo + piece.get_pages_number }
+    
+      self.pages_count = pages(false).inject(0){ |memo, piece| memo + piece.get_pages_number }
     end
   end
 
@@ -135,8 +136,8 @@ class Pack < ActiveRecord::Base
   end
 
 
-  def pages
-    @pages ||= documents.not_mixed.presence || pieces
+  def pages(with_deleted = true)
+    @pages ||= documents.not_mixed.presence || ( with_deleted ? pieces.unscoped.where(pack_id: self.id) : pieces  )
   end
 
   def original_document
@@ -250,20 +251,25 @@ class Pack < ActiveRecord::Base
     info
   end
 
-  def append(file_path)
+  def append(file_path, overwrite_original = false)
+    target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
+    target_file_path = overwrite_original ? original_document.content.path.to_s.gsub('.pdf', '_2.pdf') : original_document.content.path
+
     Dir.mktmpdir do |dir|
-      if File.exist? original_document.content.path.to_s
-        merged_file_path = File.join(dir, original_document.content_file_name)
-        Pdftk.new.merge([original_document.content.path, file_path], merged_file_path)
+      if File.exist? target_file_path.to_s
+        merged_file_path = File.join(dir, target_file_name)
+        Pdftk.new.merge([target_file_path, file_path], merged_file_path)
       else
-        new_file_name = self.name.tr(' ', '_') + '.pdf'
+        new_file_name = target_file_name
         merged_file_path = File.join(dir, new_file_name)
         FileUtils.copy file_path, merged_file_path
       end
 
-      if DocumentTools.modifiable?(merged_file_path)
+      if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
         original_document.content = open(merged_file_path)
         original_document.save
+      elsif overwrite_original
+        FileUtils.copy merged_file_path, target_file_path
       end
     end
   end
@@ -298,15 +304,23 @@ class Pack < ActiveRecord::Base
     message
   end
 
-  private
-
   def recreate_original_document
-    FileUtils.rm original_document.content.path.to_s, force: true
-    original_document.content = nil
-    original_document.save
+    pieces = self.pieces.by_position
 
-    self.pieces.by_position.each do |piece|
-      append piece.content.path
+    if pieces.present?    
+        pieces.each do |piece| 
+          append(piece.content.path, true)
+        end
+
+        temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
+
+        FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+
+        set_pages_count
+        save
+        
+    else
+      FileUtils.rm self.original_document.content.path, :force =>  true
     end
   end
 end
