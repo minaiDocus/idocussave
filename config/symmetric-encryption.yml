@@ -15,6 +15,9 @@ development:         &development_defaults
 local:
   <<: *development_defaults
 
+idocus_r5:
+  <<: *development_defaults
+
 test:
   <<: *development_defaults
 
