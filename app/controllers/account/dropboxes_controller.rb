@@ -28,8 +28,12 @@ class Account::DropboxesController < Account::AccountController
         )
 
         flash[:success] = 'Votre compte Dropbox a été configuré avec succès.'
-      rescue OAuth2::Error
-        flash[:error] = "Impossible de configurer votre compte Dropbox. L'autorisation a peut être expiré."
+      rescue => e
+        if e.class.name == 'OAuth2::Error'
+          flash[:error] = "Impossible de configurer votre compte Dropbox. L'autorisation a peut être expiré."
+        else
+          flash[:error] = e.to_s
+        end
       end
     end
 
