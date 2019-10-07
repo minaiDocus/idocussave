@@ -13,35 +13,35 @@
           .panel
             #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
               %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
-                %span OCR
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin OCR
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
-                %span Regroupement
-                %span.float-right.badge -
+                %span.badge-pill.badge-secondary.fs-origin Regroupement
+                %span.float-right.badge.badge-pill.badge-secondary.fs-origin -
               %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
-                %span Regroupement
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin Regroupement
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
-                %span Publication
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin Publication
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-currently_being_delivered_packs.nav-link{"aria-controls": "v-currently_being_delivered_packs", "aria-selected": "false", "data-toggle": "pill", href: "#v-currently_being_delivered_packs", role: "tab"}
-                %span Livraison
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin Livraison
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
-                %span Livraison
-                %span.float-right.badge.badge-important -
+                %span.badge-pill.badge-danger.fs-origin Livraison
+                %span.float-right.badge.badge-pill.badge-danger.fs-origin -
               %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
-                %span Pré-affectation
-                %span.float-right.badge -
+                %span.badge-pill.badge-secondary.fs-origin Pré-affectation
+                %span.float-right.badge.badge-pill.badge-secondary.fs-origin -
               %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_pre_assignments", role: "tab"}
-                %span Pré-affectation
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin Pré-affectation
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-reports_delivery.nav-link{"aria-controls": "v-reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#reports_delivery", role: "tab"}
-                %span Livr. Pré-aff.
-                %span.float-right.badge.badge-success -
+                %span.badge-pill.badge-success.fs-origin Livr. Pré-aff.
+                %span.float-right.badge.badge-pill.badge-success.fs-origin -
               %a#v-failed_reports_delivery.nav-link{"aria-controls": "v-failed_reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_reports_delivery", role: "tab"}
-                %span Livr. Pré-aff.
-                %span.float-right.badge.badge-important -
+                %span.badge-pill.badge-danger.fs-origin Livr. Pré-aff.
+                %span.span.float-right.badge.badge-pill.badge-danger.fs-origin -
         .col-9
           #v-pills-tabContent.tab-content
             #ocr_needed_temp_packs.tab-pane
@@ -59,7 +59,9 @@
       - cache 'admin_right_panels', expires_in: 5.minutes do
         .row
           .col-6
-            %h4 Traitement des documents
+            %h4
+              %strong
+                %u Traitement des documents
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -84,7 +86,9 @@
                   %th Traités
                   %td= StatisticsManager.get_statistic('processed_temp_documents_count')
           .col-6
-            %h4 Livraison des documents
+            %h4
+              %strong
+                %u Livraison des documents
             %table.table.table-striped.table-condensed.table-bordered
               %thead
                 %tr.bg-brown.text-white
@@ -118,7 +122,9 @@
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
         .row
           .col-6
-            %h4 Récupérateurs automatiques
+            %h4
+              %strong
+                %u Récupérateurs automatiques
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -144,7 +150,9 @@
                     = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
                     (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
           .col-6
-            %h4 Etat des pages
+            %h4
+              %strong
+                %u Etat des pages
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
@@ -172,7 +180,9 @@
                   %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
         .row
           .col-12
-            %h4.label Opérations bancaires
+            %h4.label
+              %strong
+                %u Opérations bancaires
             .row
               .col-6
                 %table.table.table-striped.table-condensed.table-bordered
@@ -200,7 +210,9 @@
                       %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
       .row
         .col-12
-          %h4 Demande de nouveaux fournisseurs en cours
+          %h4
+            %strong
+              %u Demande de nouveaux fournisseurs en cours
           %table.table.table-striped.table-condensed.table-bordered
             %thead
               %tr.bg-brown.text-white
@@ -219,4 +231,4 @@
         .col-12
           %h4 Organisations facturées n'ayant pas d'adresse de facturation
           - @unbillable_organizations.each do |organization|
-            = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'badge badge-danger'
+            = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'badge badge-danger fs-origin'

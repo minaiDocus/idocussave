@@ -23,7 +23,7 @@
               %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: @order_contains }
               %th Adresse de livraison
               %th= sortable :state, t('activerecord.models.order.attributes.state'), { order_contains: @order_contains }
-          %tbody
+          %tbody.retractable.slidedown
             - @orders.each do |order|
               %tr
                 %td= l order.created_at

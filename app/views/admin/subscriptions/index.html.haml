@@ -1,37 +1,10 @@
 #subscriptions
-  #detachable_header
-    %table.table.table-condensed.table-striped
-      %thead
-        %tr.bg-brown.text-white
-          %th.ths(colspan='3') Information
-          %th.ths(colspan='7') Forfaits
-          %th.ths(colspan='4') Utilisation
-          %th.ths(colspan='3') Clients
-        %tr.bg-brown-light.text-white
-          %th.ths{style: 'width:4%'} période
-          %th.ths organisation
-          %th.ths{style: 'width:7%'} code
-          %th.ths{style: 'width:5%'} basique
-          %th.ths{style: 'width:5%'} courrier
-          %th.ths{style: 'width:5%'} box
-          %th.ths{style: 'width:5%'} automate
-          %th.ths{style: 'width:5%'} mini
-          %th.ths{style: 'width:5%'} micro
-          %th.ths{style: 'width:5%'} annuel
-          %th.ths{style: 'width:6%'} téléversement
-          %th.ths{style: 'width:6%'} numérisation
-          %th.ths{style: 'width:5%'} dematbox
-          %th.ths{style: 'width:5%'} automate
-          %th.ths{style: 'width:5%'} actifs
-          %th.ths{style: 'width:5%'} nouveaux
-          %th.ths{style: 'width:5%'} clôturés
-
   .row
-    .col-12
+    .col-md-12
       .panel
         = render 'layouts/admin/statistics/navigation'
   .row
-    .col-12
+    .col-md-12
       .panel
         %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
         %table.table.table-condensed.table-striped.table-bordered
@@ -59,40 +32,13 @@
               %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
               %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
               %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
-
-  .row
-    .col-12
-      .filter.panel.margin1top
-        %h3 Reporting détaillés
-        = form_tag admin_subscriptions_path, method: :get, class: 'form form-vertical margin0bottom' do
-          %table.table.table-condensed.margin0bottom
-            %thead
-              %tr
-                %th Nb. Organisations
-                %th= label_tag 'first_period', 'Première période'
-                %th= label_tag 'second_period', 'Deuxième période'
-                %th= label_tag 'organization', 'Organisation'
-                %th= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Exporter vers XLS', "/admin/subscriptions.xls?first_period=#{params[:first_period]}&second_period=#{params[:second_period]}&organization=#{params[:organization]}"
-            %tbody
-              %tr
-                %td
-                  %b= @organization_count
-                %td
-                  = select_tag 'first_period', subscription_period_options_for_select(params[:first_period]), class: 'form-control'
-                %td
-                  = select_tag 'second_period', subscription_period_options_for_select(params[:second_period]), class: 'form-control'
-                %td
-                  = text_field_tag 'organization', (params[:organization] rescue ''), class: 'form-control'
-                %td
-                  = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
-                  = link_to t('filters.reset'), admin_subscriptions_path, class: 'btn'
-  .row
-    .col-12
-      .panel
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box.clearfix
         .row
-          .col-12
+          .col-md-12
             = render partial: 'shared/list_options', locals: { collection: @statistics }
-        %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top
+        %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th(colspan='3') Information
@@ -100,23 +46,23 @@
               %th(colspan='4') Utilisation
               %th(colspan='3') Clients
             %tr.bg-brown-light.text-white
-              %th{style: 'width:4%'} période
+              %th période
               %th= sortable 'organization_name', 'organisation'
-              %th{style: 'width:7%'}= sortable 'organization_code', 'code'
-              %th{style: 'width:5%'}= sortable 'options.basic_package', 'basique'
-              %th{style: 'width:5%'}= sortable 'options.mail_package', 'courrier'
-              %th{style: 'width:5%'}= sortable 'options.scan_box_package', 'box'
-              %th{style: 'width:5%'}= sortable 'options.retriever_package', 'automate'
-              %th{style: 'width:5%'}= sortable 'options.mini_package', 'mini'
-              %th{style: 'width:5%'}= sortable 'options.micro_package', 'micro'
-              %th{style: 'width:5%'}= sortable 'options.annual_package', 'annuel'
-              %th{style: 'width:6%'}= sortable 'consumption.upload', 'téléversement'
-              %th{style: 'width:6%'}= sortable 'consumption.scan', 'numérisation'
-              %th{style: 'width:5%'}= sortable 'consumption.dematbox_scan', 'dematbox'
-              %th{style: 'width:5%'}= sortable 'consumption.retriever', 'automate'
-              %th{style: 'width:5%'}= sortable 'customers', 'actifs'
-              %th{style: 'width:5%'}= sortable 'new_customers', 'nouveaux'
-              %th{style: 'width:5%'}= sortable 'closed_customers', 'clôturés'
+              %th= sortable 'organization_code', 'code'
+              %th= sortable 'options.basic_package', 'basique'
+              %th= sortable 'options.mail_package', 'courrier'
+              %th= sortable 'options.scan_box_package', 'box'
+              %th= sortable 'options.retriever_package', 'automate'
+              %th= sortable 'options.mini_package', 'mini'
+              %th= sortable 'options.micro_package', 'micro'
+              %th= sortable 'options.annual_package', 'annuel'
+              %th= sortable 'consumption.upload', 'téléversement'
+              %th= sortable 'consumption.scan', 'numérisation'
+              %th= sortable 'consumption.dematbox_scan', 'dematbox'
+              %th= sortable 'consumption.retriever', 'automate'
+              %th= sortable 'customers', 'actifs'
+              %th= sortable 'new_customers', 'nouveaux'
+              %th= sortable 'closed_customers', 'clôturés'
           %tbody
             - @statistics.each do |statistic|
               %tr
@@ -191,6 +137,39 @@
         .row
           .col-12
             = render partial: 'shared/list_options', locals: { collection: @statistics }
+    = form_tag admin_subscriptions_path, method: :get, class: 'form-filter' do
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group
+              .label-section
+                %h5
+                  = label_tag 'Nb. Organisations : '
+                  %span.badge.badge-info= @organization_count
+            .form-group
+              .label-section
+                = label_tag 'first_period', 'Première période'
+              .control-section
+                = select_tag 'first_period', subscription_period_options_for_select(params[:first_period]), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'second_period', 'Deuxième période'
+              .control-section
+                = select_tag 'second_period', subscription_period_options_for_select(params[:second_period]), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'organization', 'Organisation'
+              .control-section
+                = text_field_tag 'organization', (params[:organization] rescue ''), class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.compare'), name: nil, class: 'btn btn-primary'
+              = link_to glyphicon('x'), admin_subscriptions_path, class: 'btn btn-light', title: t('filters.reset')
 
   #showAccounts.modal.fade
     .modal-dialog.modal-dialog-centered

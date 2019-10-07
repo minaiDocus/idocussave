@@ -8,27 +8,27 @@
           = link_to 'Nouveau', new_admin_subscription_option_path, class: 'btn btn-primary'
 
   .row
-    .col-12
+    .col-md-12
       .panel
-        %table.table.table-bordered.table-condensed.table-striped
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
-              %th.position=              t('activerecord.models.subscription_option.attributes.position')
-              %th.updated_at=            t('activerecord.models.common.attributes.updated_at')
-              %th.name=                  t('activerecord.models.subscription_option.attributes.name')
-              %th.price_in_cents_wo_vat= t('activerecord.models.subscription_option.attributes.price_in_cents_wo_vat')
-              %th.period_duration=       t('activerecord.models.subscription_option.attributes.period_duration')
-              %th Abonnés
-              %th Actions
-          %tbody
+              %th.position.aligncenter=              t('activerecord.models.subscription_option.attributes.position')
+              %th.updated_at.aligncenter=            t('activerecord.models.common.attributes.updated_at')
+              %th.name.aligncenter=                  t('activerecord.models.subscription_option.attributes.name')
+              %th.price_in_cents_wo_vat.aligncenter= t('activerecord.models.subscription_option.attributes.price_in_cents_wo_vat')
+              %th.period_duration.aligncenter=       t('activerecord.models.subscription_option.attributes.period_duration')
+              %th.aligncenter Abonnés
+              %th.aligncenter Actions
+          %tbody.retractable.slidedown
             - @subscription_options.each do |option|
               %tr
-                %td= option.position
-                %td= l option.updated_at
-                %td= option.name
-                %td.alignright= option.price_in_cents_wo_vat
-                %td= option.period_duration == 0 ? 'Continuelle' : 'Une période'
-                %td= option.subscribers.count
+                %td.aligncenter=            option.position
+                %td=                        l option.updated_at
+                %td=                        option.name
+                %td.alignright.aligncenter= option.price_in_cents_wo_vat
+                %td.aligncenter=            option.period_duration == 0 ? 'Continuelle' : 'Une période'
+                %td.aligncenter=            option.subscribers.count
                 %td.text-center
                   = icon_link_to edit_admin_subscription_option_path(option), { icon: 'pencil' }
                   &nbsp;

@@ -13,13 +13,13 @@
         = hidden_field_tag :per_page, per_page
         .form-group
           = label_tag 'pre_assignment_delivery_contains[id]', 'N°'
-          = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), class: 'form-control'
+          = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), min: 0, class: 'form-control'
         .form-group
           = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
           = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'form-control'
         .form-group
           = label_tag 'pre_assignment_delivery_contains[total_item]', t('activerecord.models.pre_assignment_delivery.attributes.total_item')
-          = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), class: 'form-control'
+          = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), min: 0, class: 'form-control'
         .form-group
           = label_tag 'pre_assignment_delivery_contains[is_auto]', t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
           = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true, class: 'form-control'

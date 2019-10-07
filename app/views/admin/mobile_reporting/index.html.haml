@@ -10,7 +10,7 @@
         = form_tag admin_mobile_reporting_index_path, method: :get, class: 'form form-vertical margin0bottom' do
           %table.table.table-condensed.margin0bottom
             %thead
-              %tr.bg-brown.text-white
+              %tr
                 %th Mois
                 %th Année
                 %th
@@ -23,7 +23,7 @@
                 %td
                   = submit_tag t('actions.submit'), class: 'btn btn-primary'
   .row
-    .col-12
+    .col-12.center
       %br
       %h3{ style: 'text-decoration: underline' }
         - month = get_options_months.map{ |m| m.first if(m.last == @month_params) }.compact
@@ -38,25 +38,19 @@
             %canvas.chartContainer#chartUsersContainer
             .legends
               %ul.list-group
-                %li.text-center.list-group-item
-                  %span.badge.badge-secondary Utilisateurs iDocus (actifs)
-                  %br
+                %li.list-group-item.liFloat
+                  %span.badge.badge-secondary.with-idocus Utilisateurs iDocus (actifs)
                   %strong#usersCount 0
               .clearfix
-                %br
-                %br
-              %ul.list-group
-                %li.text-center.list-group-item
-                  %span.badge.badge-warning Utilisateurs mobile total
-                  %br
+              %ul.list-group.list-inline.list-group-horizontal
+                %li.liFloat.text-center.list-group-item
+                  %span.badge.badge-warning.with-mobile Utilisateurs mobile total
                   %strong#usersMobileCount 0
-                %li.text-center.list-group-item
-                  %span.badge.badge-danger iOS
-                  %br
+                %li.liFloat.text-center.list-group-item
+                  %span.badge.badge-danger.with-ios iOS
                   %strong#iOSUsersCount 0
-                %li.text-center.list-group-item
-                  %span.badge.badge-success Android
-                  %br
+                %li.liFloat.text-center.list-group-item
+                  %span.badge.badge-success.with-android Android
                   %strong#androidUsersCount 0
           .col-6
             #uploaderLoading.blink Chargement en cours...
@@ -66,12 +60,10 @@
                 .col-6
                   %ul.list-group
                     %li.text-center.list-group-item
-                      .badge.badge-primary Simple consultation
-                      %br
+                      .badge.badge-primary.with-default Simple consultation
                       %strong#viewerUsersCount 0
                     %li.text-center.list-group-item
-                      .badge.badge-success Avec téléversement
-                      %br
+                      .badge.badge-success.with-custom Avec téléversement
                       %strong#uploaderUsersCount 0
                 .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_users_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"
     .col-4
@@ -84,11 +76,9 @@
             .col-6
               %ul.list-group
                 %li.text-center.list-group-item
-                  .badge.badge-info Upload via iDocus
-                  %br
+                  .badge.badge-info.with-default Upload via iDocus
                   %strong#uploadedFrameworkDocumentsCount 0
                 %li.text-center.list-group-item
-                  .badge.badge-danger Upload via App Mobile
-                  %br
+                  .badge.badge-danger.with-custom Upload via App Mobile
                   %strong#uploadedMobileDocumentsCount 0
             .col-6{ style: 'text-align:right;' }= link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Téléchargement détails', "#{download_documents_admin_mobile_reporting_index_path}/#{@month_params}/#{@year_params}"

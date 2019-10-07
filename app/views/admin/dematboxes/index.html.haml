@@ -8,13 +8,13 @@
     .col-8
       .panel
         %h3 Dematboxes (#{@dematboxes.count})
-        %table.table.table-striped.table-bordered.table-condensed
+        %table.table.table-striped.table-bordered.table-condensed.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th Client
               %th Nombre de service
               %th Actions
-          %tbody
+          %tbody.retractable.slidedown
             - @dematboxes.each do |dematbox|
               %tr
                 %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
