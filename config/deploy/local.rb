@@ -1,20 +1,16 @@
-set :deploy_to, '/data/idocus/deploy/production'
+set :deploy_to, '/var/www/idocus'
 
-set :repo_url, 'git@github.com:dbarbarossa/idocusave.git'
+set :branch, `git rev-parse --abbrev-ref HEAD`.strip
 
-set :branch, 'master'
+set :linked_dirs, fetch(:linked_dirs, []).push('files')
+
+set :repo_url, 'git@192.168.0.38:idocus'
+
+set :branch, 'master_local'
 
 set :rvm_ruby_version, '2.3.1'
 
-server 'www.idocus.com', user: 'idocus', roles: %w{app db web}
-
-namespace :deploy do
-  after :updated, :link_production_data do
-    on roles(:all) do
-      execute "ln -s /data/idocus/production_data/files #{release_path}/files"
-    end
-  end
-end
+server '192.168.0.38', user: 'serveurlocal', roles: %w{app db web}
 
 # server-based syntax
 # ======================

@@ -12,6 +12,9 @@ development:         &development_defaults
   encoding:          :base64strict
   always_add_header: true
 
+local:
+  <<: *development_defaults
+
 test:
   <<: *development_defaults
 

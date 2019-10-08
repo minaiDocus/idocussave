@@ -13,6 +13,11 @@ public/ckeditor_assets
 coverage/
 doc_data.txt
 .sass-cache
+
+config/deploy/production.rb
+config/deploy/sandbox.rb
+config/deploy/staging.rb
+
 config/secrets.yml
 config/elastic_apm.yml
 config/database.yml
@@ -28,3 +33,4 @@ config/budgea.yml
 config/fiduceo.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
+config/symmetric-encryption.yml

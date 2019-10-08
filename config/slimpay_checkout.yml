@@ -4,6 +4,9 @@ defaults: &defaults
   app_secret: 'QhBN1uk5ZBmf6Bh4c83K8pckCxSqgl7ezFx5UwmJ'
   app_creditor: 'idocus'
 
+local:
+  <<: *defaults
+
 test:
   <<: *defaults
 

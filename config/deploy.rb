@@ -1,11 +1,5 @@
 set :application, 'idocus'
 
-set :repo_url, 'git@github.com:dbarbarossa/idocusave.git'
-
-set :branch, 'master'
-
-set :rvm_ruby_version, '2.3.1'
-
 set :conditionally_migrate, true
 
 set :linked_dirs, fetch(:linked_dirs, []).push(
@@ -34,8 +28,6 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/smtp.yml',
   'config/ftp_delivery.yml'
 )
-
-server 'www.idocus.com', user: 'idocus', roles: %w{app db web}
 
 namespace :deploy do
   after :finished, :restart_passenger do
