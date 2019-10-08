@@ -12,7 +12,7 @@ gem 'state_machines-activerecord'
 
 # XML-RPC/SOAP
 gem 'savon'
-gem 'wash_out', git: 'git@github.com:Pikomu/wash_out.git', branch: 'removing_model_integration'
+gem 'wash_out'
 
 
 # Pagination
