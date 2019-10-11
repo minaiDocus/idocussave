@@ -1,74 +1,65 @@
-Idocus::Application.configure do
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # The production environment is meant for finished, "live" apps.
-  # Code is not reloaded between requests
-  config.cache_classes = true
+  # In the development environment your application's code is reloaded on
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
+  config.cache_classes = false
 
-  config.eager_load = true
+  config.action_controller.include_all_helpers = true
 
-  # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local       = false
-  config.action_controller.perform_caching = true
+  # Do not eager load code on boot.
+  config.eager_load = false
 
-  # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = 'X-Sendfile'
+  # Show full error reports.
+  config.consider_all_requests_local = true
 
-  # For nginx:
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+  # Enable/disable caching. By default caching is disabled.
+  # Run rails dev:cache to toggle caching.
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
 
-  # If you have no front-end server that supports something like X-Sendfile,
-  # just comment this out and Rails will serve the files
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
 
-  # See everything in the log (default is :info)
-  config.log_level = :debug
+    config.cache_store = :null_store
+  end
 
-  # Prepend all log lines with the following tags.
-  config.log_tags = [:uuid]
+  # Store uploaded files on the local file system (see config/storage.yml for options)
+  config.active_storage.service = :local
 
-  # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
 
-  config.cache_store = :dalli_store, { namespace: 'idocus_local' }
+  config.action_mailer.perform_caching = false
 
-  # Disable Rails's static asset server
-  # In production, Apache or nginx will already do this
-  config.serve_static_files = true
+  config.action_mailer.default_url_options = { host: '192.168.0.38:90' }
 
-  # Enable serving of images, stylesheets, and javascripts from an asset server
-  # config.action_controller.asset_host = "http://assets.example.com"
+  # Print deprecation notices to the Rails logger.
+  config.active_support.deprecation = :log
 
-  # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
-  # config.action_mailer.default_url_options = { host: 'staging.idocus.com', protocol: 'https' }
+  # Raise an error on page load if there are pending migrations.
+  config.active_record.migration_error = :page_load
 
-  # config.action_mailer.delivery_method = :smtp
+  # Highlight code that triggered database queries in logs.
+  config.active_record.verbose_query_logs = true
 
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation can not be found)
-  config.i18n.fallbacks = true
+  # Debug mode disables concatenation and preprocessing of assets.
+  # This option may cause significant delays in view rendering with a large
+  # number of complex assets.
+  config.assets.debug = true
 
-  # Send deprecation notices to registered listeners
-  config.active_support.deprecation = :notify
+  # Suppress logger output for asset requests.
+  config.assets.quiet = true
 
-  # config.active_record.raise_in_transactional_callbacks = true
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
 
-  config.active_record.dump_schema_after_migration = true
-
-  # Compress JavaScript and CSS
-  config.assets.js_compress = :uglifier
-
-  # Don't fallback to assets pipeline
-  # config.assets.compile = false
-  config.assets.compile = true
-
-  # Generate digests for assets URLs
-  # config.assets.digest = true
-  config.assets.digest = false
-
-  # Adding js files
-  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)
-
-  # Adding css files
-  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/stylesheets/**/*')).grep(/\.(css|sass|scss)\z/)
+  # Use an evented file watcher to asynchronously detect changes in source code,
+  # routes, locales, etc. This feature depends on the listen gem.
+  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end
