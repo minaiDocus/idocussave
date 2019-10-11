@@ -2,7 +2,7 @@
   .row-fluid
     .span6
       = f.input :name
-      = f.input :rule_target, collection: rule_target_options_for_select, include_blank: false, hint: "Spécifiez si la règle est à appliquer aux opérations de type: Débit, Crédit, ou les deux"
+      = f.input :rule_target, collection: rule_target_options_for_select, include_blank: false, hint: "Spécifiez si la règle est à appliquer aux opérations de type: Recette, Dépense, ou les deux"
       = f.input :categorization, required: false, hint: "Donnez un nom de catégorie à votre règle afin de pouvoir filtrer plus simplement. Ex: banque, impôts, chèques…"
       = f.input :affect, collection: affect_options_for_select, include_blank: false, disabled: action_name.in?(%w(edit update)), hint: ('Ne pourra plus être changé par la suite.' if action_name.in?(%w(new create)))
       = f.input :rule_type, collection: rule_type_options_for_select, include_blank: false, hint: 'Effectue une recherche ou une correction du plan de compte avec le champ "Contenu" ci-dessous.'

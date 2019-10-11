@@ -951,8 +951,8 @@ fr:
             match: Recherche
             truncate: Correction
           rule_target_values:
-            debit: Débit
-            credit: Crédit
+            debit: Recette
+            credit: Dépense
             both: Tous
       file_naming_policy:
         zero: 0 charte de nommage
