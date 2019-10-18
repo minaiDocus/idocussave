@@ -25,7 +25,7 @@ class EmailedDocument::Attachment
 
 
   def valid_content?
-    printable? && modifiable?
+    printable? && !corrupted?
   end
 
   def original_extension
@@ -42,11 +42,11 @@ class EmailedDocument::Attachment
   end
 
     # syntactic sugar ||= does not store false/nil value
-  def modifiable?
-    if @modifiable.nil?
-      @modifiable = DocumentTools.modifiable? processed_file_path
+  def corrupted?
+    if @corrupted.nil?
+      @corrupted = DocumentTools.corrupted? processed_file_path
     else
-      @modifiable
+      @corrupted
     end
   end
 

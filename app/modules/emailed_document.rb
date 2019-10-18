@@ -5,15 +5,6 @@ class EmailedDocument
     attr_accessor :config
   end
 
-
-  def initialize(mail)
-    @mail = mail
-    errors # instanciate errors
-    save_attachments if valid?
-    attachments.each(&:clean_dir)
-  end
-
-
   def self.configure
     yield config
     update_config
@@ -126,13 +117,12 @@ class EmailedDocument
 
             email.save
 
-            if emailed_document.user.notify.reception_of_emailed_docs
-              if emailed_document.get_invalid_attachments.any?
-                email.update_attribute(:errors_list, emailed_document.errors)
-                EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver_now
-              else
-                EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now
-              end
+            if emailed_document.get_invalid_attachments.any?
+              email.update_attribute(:errors_list, emailed_document.errors)
+              EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver_now
+            else
+              sender = User.find email.from_user_id
+              EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now if sender.try(:notify).try(:reception_of_emailed_docs)
             end
           else
             email.update_attribute(:errors_list, emailed_document.errors)
@@ -163,6 +153,12 @@ class EmailedDocument
     end
   end
 
+  def initialize(mail)
+    @mail = mail
+    errors # instanciate errors
+    save_attachments if valid?
+    attachments.each(&:clean_dir)
+  end
 
   def file_name
     "#{user.code}_#{journal}_#{period}.pdf"
@@ -333,9 +329,12 @@ class EmailedDocument
   end
 
   def save_attachments
+    @temp_documents = []
+    return @temp_documents if attachments.size == 1 && errors.any?
+
     pack = TempPack.find_or_create_by_name pack_name
     pack.update_pack_state
-    @temp_documents = []
+
     attachments.each do |attachment|
       next unless attachment.valid?
       options = {
