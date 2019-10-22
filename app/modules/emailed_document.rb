@@ -121,8 +121,10 @@ class EmailedDocument
               email.update_attribute(:errors_list, emailed_document.errors)
               EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver_now
             else
-              sender = User.find email.from_user_id
-              EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now if sender.try(:notify).try(:reception_of_emailed_docs)
+              if email.from_user_id.presence.to_i > 0
+                sender = User.find email.from_user_id
+                EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now if sender.try(:notify).try(:reception_of_emailed_docs)
+              end
             end
           else
             email.update_attribute(:errors_list, emailed_document.errors)
