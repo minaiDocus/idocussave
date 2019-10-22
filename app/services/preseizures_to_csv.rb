@@ -76,32 +76,60 @@ class PreseizuresToCsv
 
       description_name = IbizaAPI::Utils.description(entry.preseizure, description, description_separator)
       label = description_name.present? ? description_name : entry.preseizure.third_party
+      piece_number = entry.preseizure.piece_number
     else
       operation    = entry.preseizure.operation
       bank_account = operation.try(:bank_account)
 
       general_account = if(
-                            (operation.try(:amount).to_i < 0 && entry.type == Pack::Report::Preseizure::Entry::CREDIT) ||
-                            (operation.try(:amount).to_i >= 0 && entry.type == Pack::Report::Preseizure::Entry::DEBIT)
+                            (operation.try(:amount).to_i < 0 && entry.credit?) ||
+                            (operation.try(:amount).to_i >= 0 && entry.debit?)
                           )
-        bank_account.try(:accounting_number) || 512_000
-      else
-        bank_account.try(:temporary_account) || 471_000
-      end
+                          bank_account.try(:accounting_number) || 512_000
+                        else
+                          bank_account.try(:temporary_account) || 471_000
+                        end
 
       label = entry.preseizure.operation_label[0..34].gsub(';', ',') if entry.preseizure.operation_label.present?
+      piece_number = ''
     end
 
-    axiliary_account = (general_account.to_s != entry.account.number.to_s)? entry.account.number : ''
+    auxiliary_account = (general_account.to_s != entry.account.number.to_s)? entry.account.number : ''
+
+    if auxiliary_account.present?
+      if(entry.preseizure.piece_id.present?)
+        is_provider = entry.preseizure.user.accounting_plan.providers.where(third_party_account: auxiliary_account).limit(1).size > 0
+        is_customer = entry.preseizure.user.accounting_plan.customers.where(third_party_account: auxiliary_account).limit(1).size > 0 unless is_provider
+
+        general_account = if is_provider
+                            4_010_000_000
+                          elsif is_customer
+                            4_110_000_000
+                          else
+                            auxiliary_account
+                          end
+
+        auxiliary_account = '' unless is_provider || is_customer
+      else
+        if general_account != bank_account.try(:accounting_number) && general_account != 512_000
+          general_account = if entry.debit?
+                              4_010_000_000
+                            else
+                              4_110_000_000
+                            end
+        end
+      end
+    end
 
     result =  [
                 entry.preseizure.computed_date.try(:strftime, "%d%m%Y"),
                 entry.preseizure.journal_name.upcase[0..2],
                 general_account,
-                axiliary_account,
+                auxiliary_account,
                 entry.debit? ? 'D' : 'C',
                 entry.amount,
-                label
+                label,
+                piece_number
               ].join(';')
     return result.to_s
   end
