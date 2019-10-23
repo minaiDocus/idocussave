@@ -12,6 +12,8 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def execute
+    return false unless @piece.temp_document.present?
+
     copy_to_dir manual_dir
 
     @piece.update(is_awaiting_pre_assignment: true)
