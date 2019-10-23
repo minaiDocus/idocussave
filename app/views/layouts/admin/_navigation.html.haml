@@ -5,7 +5,7 @@
     %span.navbar-toggler-icon
 
   .collapse.navbar-collapse#navbarSupportedContent
-    %ul.navbar-nav.mr-auto
+    %ul.nav.navbar-nav.mr-auto
       -#%li.nav-item{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
       %li.nav-item{ class: ('active' if controller_name == 'admin') }
         = link_to 'Tableau de bord', admin_root_path, class: 'nav-link'

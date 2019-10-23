@@ -42,8 +42,10 @@ input[type="radio"], input[type="checkbox"]
   margin-right: 5px
 
 nav.navbar
-  :background-color: #3e2f24
-  :background-image none
+  :background-image: url('application/bg_body_2.png')
+  :background-repeat: repeat
+  :background-attachment: fixed
+  :background-color: #214255
   :margin-bottom 20px
   :padding-top: 0.1rem !important
   :padding-bottom: 0.1rem !important
@@ -58,12 +60,15 @@ nav.navbar
       :margin 0 5px
   :text-decoration none !important
 nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
-  :color #c9dd03 !important
+  :color #E6F7FF !important
 nav.navbar a:hover, footer a:hover
   :text-decoration underline
 
 nav.navbar .dropdown-menu
-  background-color: #3e2f24
+  background-color: #214255
+  background-image: url('application/bg_body_2.png')
+  background-repeat: repeat
+  background-attachment: fixed
 .dropdown-item.active
   background-color: rgba(0, 0, 0, 0.3);
 
@@ -325,16 +330,15 @@ form.form-filter
       border-bottom: none !important
 
 .bg-brown
-  background-color: #3e2f24
+  background-color: #214255
 .bg-brown-light
-  background-color: #5C4D42
+  background-color: #517285
 
 .bg-dark, .table-dark, .bg-brown, .bg-brown-light
   a
-    color: #c9dd03
+    color: #CCE6FF
   a:hover
-    color: #7D9106
-
+    color: #E6FFE6
 /* open iconic style */
 .oi-icon
   width: 13px

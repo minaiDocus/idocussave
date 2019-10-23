@@ -1,4 +1,4 @@
-%ul.navbar-nav.bg-menu
+%ul.nav.navbar-nav.bg-menu
   - unless organizations_suspended? && @user.active?
     %li.nav-item{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path, class: 'nav-link'

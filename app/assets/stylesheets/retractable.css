@@ -64,6 +64,9 @@ tbody.retractable.slidedown tr {
 .retractable .retractable-menu .side-menu {
   padding-left: 11px !important;
   padding-right: 11px !important;
+  background-image: url('application/bg_body_2.png');
+  background-repeat: repeat;
+  background-attachment: fixed;
 }
 .retractable .retractable-menu .retractable-caret {
   text-align: right;
@@ -86,6 +89,7 @@ tbody.retractable.slidedown tr {
   margin-right: 15px;
   right: 0;
   width: 270px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.36), 0 2px 10px 0 rgba(0, 0, 0, 0.32) !important;
 }
 .retractable .retractable-filter .locker {
   padding: 2px;
@@ -100,13 +104,17 @@ table.table-detachable-head thead.detached {
   display:none;
   position: fixed;
   z-index: 50;
-  background-color: #3e2f24;
+  background-color: #214255;
   color: #fff;
   top: 30px;
 }
 table.table-detachable-head thead.detached a {
-  color: #c9dd03;
+  color: #CCE6FF;
 }
+table.table-detachable-head thead.detached a:hover {
+  color: #E6FFE6;
+}
+
 
 @media (max-width: 1186px) {
   table.table-detachable-head thead.detached {
