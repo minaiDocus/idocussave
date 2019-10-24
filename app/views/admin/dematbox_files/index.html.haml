@@ -1,12 +1,12 @@
 #dematboxes
   .row
-    .col-12
-      .panel
+    .col-md-12
+      .box.small-shadow.clearfix
         = render '/admin/dematboxes/navigation'
 
   .row
     .col-md-12
-      .panel.clearfix
+      .box.clearfix
         .float-left
           %h3
             Fichiers scannés
@@ -14,7 +14,7 @@
 
   .row.retractable.with-filter
     .col-md-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @dematbox_files }
@@ -28,7 +28,7 @@
               %th= t('activerecord.models.temp_document.attributes.content_file_size')
               %th= t('activerecord.models.temp_document.attributes.dematbox_notified_at')
               %th= t('activerecord.models.temp_document.attributes.state')
-          %tbody
+          %tbody.retractable-slidedown
             - @dematbox_files.each do |file|
               %tr
                 %td= l file.created_at

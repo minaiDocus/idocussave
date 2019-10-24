@@ -12,47 +12,62 @@
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[id]', 'N°'
-          = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), min: 0, class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[id]', 'N°'
+          .control-section  
+            = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), min: 0, class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
-          = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
+          .control-section  
+            = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[total_item]', t('activerecord.models.pre_assignment_delivery.attributes.total_item')
-          = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), min: 0, class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[total_item]', t('activerecord.models.pre_assignment_delivery.attributes.total_item')
+          .control-section  
+            = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), min: 0, class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[is_auto]', t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
-          = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true, class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[is_auto]', t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
+          .control-section  
+            = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true, class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[state]', t('activerecord.models.pre_assignment_delivery.attributes.state')
-          = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[state]', t('activerecord.models.pre_assignment_delivery.attributes.state')
+          .control-section  
+            = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true, class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[error_message]', t('activerecord.models.pre_assignment_delivery.attributes.error_message')
-          = text_field_tag 'pre_assignment_delivery_contains[error_message]', (params[:pre_assignment_delivery_contains][:error_message] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[error_message]', t('activerecord.models.pre_assignment_delivery.attributes.error_message')
+          .control-section  
+            = text_field_tag 'pre_assignment_delivery_contains[error_message]', (params[:pre_assignment_delivery_contains][:error_message] rescue ''), class: 'form-control'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'pre_assignment_delivery_contains[created_at][>=]', (params[:pre_assignment_delivery_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
-          &nbsp;
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'pre_assignment_delivery_contains[created_at][<=]', (params[:pre_assignment_delivery_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section  
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'pre_assignment_delivery_contains[created_at][>=]', (params[:pre_assignment_delivery_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'pre_assignment_delivery_contains[created_at][<=]', (params[:pre_assignment_delivery_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
         .form-group
-          = label_tag 'pre_assignment_delivery_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'pre_assignment_delivery_contains[updated_at][>=]', (params[:pre_assignment_delivery_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
-          &nbsp;
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'pre_assignment_delivery_contains[updated_at][<=]', (params[:pre_assignment_delivery_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
+          .label-section
+            = label_tag 'pre_assignment_delivery_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
+          .control-section  
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'pre_assignment_delivery_contains[updated_at][>=]', (params[:pre_assignment_delivery_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'pre_assignment_delivery_contains[updated_at][<=]', (params[:pre_assignment_delivery_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
       .card-footer
-        .row
-          .col
-            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-            = link_to t('filters.reset'), admin_pre_assignment_deliveries_path(software: params[:software]), class: 'btn'
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_pre_assignment_deliveries_path, class: 'btn btn-light', title: t('filters.reset')

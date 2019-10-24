@@ -1,4 +1,10 @@
-#events.container-fluid
+#events
+  .row.fixed-bottom.bg-dark.text-white
+    .col-md-12
+      .box.bg-brown.text-white
+        %h4.text-white Détails
+        %p.margin0bottom
+          Cliquer sur une ligne du tableau pour en afficher les détails ici.
   .row
     .col-md-12
       .box.small-shadow.clearfix
@@ -50,13 +56,14 @@
           .card-body
             .form-group
               .label-section
-                = label_tag 'Total :'
-                - if @events.total_count != Event.count
-                  %b= @events.total_count
-                  sur
-                  = Event.count
-                - else
-                  %b= Event.count
+                .badge.badge-info.fs-origin
+                  Total :
+                  - if @events.total_count != Event.count
+                    %b= @events.total_count
+                    sur
+                    = Event.count
+                  - else
+                    %b= Event.count
             .form-group
               .label-section
                 = label_tag 'event_contains[id]', 'ID'
@@ -102,8 +109,3 @@
             .form-actions
               = submit_tag t('filters.action'), class: 'btn btn-primary'
               = link_to glyphicon('x'), admin_events_path, class: 'btn btn-light', title: t('filters.reset')
-    .col-4.show
-      .panel
-        %h4 Détails
-        %p.margin0bottom
-          Cliquer sur une ligne du tableau pour en afficher les détails ici.

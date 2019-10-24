@@ -1,24 +1,26 @@
 #dematboxes
   .row
-    .col-12
-      .panel
+    .col-md-12
+      .box.small-shadow.clearfix
         = render 'navigation'
 
-  .row
-    .col-8
-      .panel
-        %h3 Dematboxes (#{@dematboxes.count})
-        %table.table.table-striped.table-bordered.table-condensed.table-detachable-head.table-bordered-inner
-          %thead
-            %tr.bg-brown.text-white
-              %th Client
-              %th Nombre de service
-              %th Actions
-          %tbody.retractable.slidedown
-            - @dematboxes.each do |dematbox|
-              %tr
-                %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
-                %td= link_to dematbox.services.count, admin_dematbox_path(dematbox)
-                %td.text-center
-                  = link_to glyphicon('loop-circular'), subscribe_admin_dematbox_path(dematbox), title: 'Réassigner les services', data: { method: 'post', confirm: t('actions.confirm') }
-                  = link_to glyphicon('trash'), admin_dematbox_path(dematbox), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }
+  .card
+    .card-header
+      %h3 
+        Dematboxes
+        .badge.badge-info.fs-origin #{@dematboxes.count}
+    .card-body
+      %table.table.table-striped.table-bordered-inner.table-condensed.table-detachable-head.table-bordered-inner
+        %thead
+          %tr.bg-brown.text-white
+            %th Client
+            %th Nombre de service
+            %th Actions
+        %tbody.retractable.slidedown
+          - @dematboxes.each do |dematbox|
+            %tr
+              %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
+              %td= link_to dematbox.services.count, admin_dematbox_path(dematbox)
+              %td.text-center
+                = link_to glyphicon('loop-circular'), subscribe_admin_dematbox_path(dematbox), title: 'Réassigner les services', data: { method: 'post', confirm: t('actions.confirm') }
+                = link_to glyphicon('trash'), admin_dematbox_path(dematbox), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }

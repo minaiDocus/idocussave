@@ -1,15 +1,15 @@
 #orders
   .row
-    .col-12
-      .panel.clearfix
+    .col.md-12
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des commandes de scanner iDocus'Box et de Kit envoi courrier
             %span.badge.badge-info= @orders_count
 
   .row.retractable.with-filter
-    .col-12
-      .panel
+    .col.md-12
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @orders }

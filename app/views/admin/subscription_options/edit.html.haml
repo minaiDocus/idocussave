@@ -1,9 +1,5 @@
 .row
-  .col
-    .panel
+  .col-md-12
+    .box.small-shadow
       %h3 Edition de l'option d'abonnement : #{@subscription_option.name}
-
-.row
-  .col
-    .panel
-      = render partial: 'form'
+= render partial: 'form'

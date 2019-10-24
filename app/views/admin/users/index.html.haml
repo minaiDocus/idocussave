@@ -1,17 +1,17 @@
 #users
   .row
-    .col-12
-      .panel.clearfix
+    .col-md-12
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des utilisateurs
             %span.badge.badge-info= @users_count
         .float-right
-          = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column), class: 'btn btn-primary'
+          = link_to image_tag('application/icon-xls.png', alt: 'Export CSV') + ' Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column), class: 'btn btn-light'
 
   .row.retractable.with-filter
-    .col-12
-      .panel
+    .col-md-12
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @users }
@@ -23,7 +23,7 @@
               %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at'), { user_contains: @user_contains }
               %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier'), { user_contains: @user_contains }
               %th= t('actions.name').singularize
-          %tbody
+          %tbody.retractable.slidedown
             - @users.each do |user|
               %tr
                 %td= user.inactive? ? icon_not_ok : nil

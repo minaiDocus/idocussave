@@ -1,95 +1,92 @@
 #notification_settings
   .row
-    .col-12
-      .panel
+    .col-md-12
+      .box.small-shadow
         %h3 Paramétrage des notifications
 
   .row
-    .col-12
-      .row
-        .col
-          %h4 Erreur au niveau de la plateforme
-        .col
-          .float-right.mb-3
-            = link_to icon_edit + 'Editer', edit_error_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td
-            Lorsque les erreurs suivantes se produisent sur la plateforme :
-            %ul
-              %li Impossible de récupérer la numérisation
-              %li Le(s) document(s) numérisé(s) est/sont corrompu(s)
-              %li Automate non disponible
-              %li Automate sans récupération
-              %li Impossible d'accéder à la boîte mail de récupération des documents
-        %tr
-          %th Adresse mail à notifier (#{Settings.first.notify_errors_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.first.notify_errors_to)
-  %hr
-  .row
-    .col-12
-      .row
-        .col
-          %h4 Commande de Dematbox
-        .col
-          .float-right.mb-3
-            = link_to icon_edit + 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td Lorsqu'une commande de Dematbox est validée
-        %tr
-          %th Adresse mail à notifier (#{Settings.first.notify_dematbox_order_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.first.notify_dematbox_order_to)
-  %hr
-  .row
-    .col-12
-      .row
-        .col
-          %h4 Commande de Kit envoi courrier
-        .col
-          .float-right.mb-3
-            = link_to icon_edit + 'Editer', edit_paper_set_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td Lorsqu'une commande de Kit envoi courrier est validée
-        %tr
-          %th Adresse mail à notifier (#{Settings.first.notify_paper_set_order_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.first.notify_paper_set_order_to)
-  %hr
-  .row
-    .col-12
-      .row
-        .col
-          %h4 Livraison de pré-affectation vers iBiza
-        .col
-          .float-right.mb-3
-            = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td Lorsqu'une livraison de pré-affectation vers iBiza est effectué
-        %tr
-          %th Adresse mail à notifier (#{Settings.first.notify_ibiza_deliveries_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.first.notify_ibiza_deliveries_to)
-        %tr
-          %th Type
-          %td= ibiza_notification_type
-  %hr
-  .row
-    .col-12
-      .row
-        .col
-          %h4 Numérisation des documents
-        .col
-          .float-right.mb-3
-            = link_to icon_edit + 'Editer', edit_scans_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td Lorsque la livraison n'est pas effectuée
-        %tr
-          %th Adresse mail à notifier (#{Settings.first.notify_scans_not_delivered_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.first.notify_scans_not_delivered_to)
+    .col-md-12
+      .card.mt-2
+        .card-header.clearfix
+          .float-left
+            %h4 Erreur au niveau de la plateforme
+          .float-right
+            = link_to 'Editer', edit_error_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+        .card-body  
+          %table.table.table-condensed.table-striped.table-bordered-inner
+            %tr
+              %th Description
+              %td
+                Lorsque les erreurs suivantes se produisent sur la plateforme :
+                %ul
+                  %li Impossible de récupérer la numérisation
+                  %li Le(s) document(s) numérisé(s) est/sont corrompu(s)
+                  %li Automate non disponible
+                  %li Automate sans récupération
+                  %li Impossible d'accéder à la boîte mail de récupération des documents
+            %tr
+              %th Adresse mail à notifier (#{Settings.first.notify_errors_to.try(:size) || 0})
+              %td!= notification_addresses(Settings.first.notify_errors_to)
+
+      .card.mt-5
+        .card-header.clearfix
+          .float-left
+            %h4 Commande de Dematbox
+          .float-right
+            = link_to 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+        .card-body
+          %table.table.table-condensed.table-striped.table-bordered-inner
+            %tr
+              %th Description
+              %td Lorsqu'une commande de Dematbox est validée
+            %tr
+              %th Adresse mail à notifier (#{Settings.first.notify_dematbox_order_to.try(:size) || 0})
+              %td!= notification_addresses(Settings.first.notify_dematbox_order_to)
+      
+      .card.mt-5
+        .card-header.clearfix
+          .float-left
+            %h4 Commande de Kit envoi courrier
+          .float-right
+            = link_to 'Editer', edit_paper_set_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+        .card-body
+          %table.table.table-condensed.table-striped.table-bordered-inner
+            %tr
+              %th Description
+              %td Lorsqu'une commande de Kit envoi courrier est validée
+            %tr
+              %th Adresse mail à notifier (#{Settings.first.notify_paper_set_order_to.try(:size) || 0})
+              %td!= notification_addresses(Settings.first.notify_paper_set_order_to)
+      
+      .card.mt-5
+        .card-header.clearfix
+          .float-left
+            %h4 Livraison de pré-affectation vers iBiza
+          .float-right
+            = link_to  'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+        .card-body
+          %table.table.table-condensed.table-striped.table-bordered-inner
+            %tr
+              %th Description
+              %td Lorsqu'une livraison de pré-affectation vers iBiza est effectué
+            %tr
+              %th Adresse mail à notifier (#{Settings.first.notify_ibiza_deliveries_to.try(:size) || 0})
+              %td!= notification_addresses(Settings.first.notify_ibiza_deliveries_to)
+            %tr
+              %th Type
+              %td= ibiza_notification_type
+     
+      .card.mt-5
+        .card-header.clearfix
+          .float-left
+            %h4 Numérisation des documents
+          .float-right
+            = link_to 'Editer', edit_scans_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+        .card-body  
+          %table.table.table-condensed.table-striped.table-bordered-inner
+            %tr
+              %th Description
+              %td Lorsque la livraison n'est pas effectuée
+            %tr
+              %th Adresse mail à notifier (#{Settings.first.notify_scans_not_delivered_to.try(:size) || 0})
+              %td!= notification_addresses(Settings.first.notify_scans_not_delivered_to)

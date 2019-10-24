@@ -1,15 +1,15 @@
 #emails
   .row
     .col-md-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des mails d'envoi de documents
-            %span.badge.badge-info= @emails_count
+            %span.badge.badge-info.fs-origin= @emails_count
 
   .row.retractable.with-filter
     .col-md-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @emails }
@@ -24,7 +24,7 @@
               %th= sortable :size,       t('activerecord.models.email.attributes.size') + ' (Mo)'
               %th= t('activerecord.models.email.attributes.attachment_names_count')
               %th Actions
-          %tbody
+          %tbody.retractable.slidedown
             - @emails.each do |email|
               %tr
                 %td= l(email.created_at, format: '%d %b %Y %H:%M')

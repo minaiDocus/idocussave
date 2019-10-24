@@ -1,11 +1,11 @@
 #subscriptions
   .row
     .col-md-12
-      .panel
+      .box.small-shadow.clearfix
         = render 'layouts/admin/statistics/navigation'
   .row
     .col-md-12
-      .panel
+      .box
         %h3.margin1top.margin1bottom Récapitulatif des Forfaits actuels
         %table.table.table-condensed.table-striped.table-bordered
           %thead
@@ -38,7 +38,7 @@
         .row
           .col-md-12
             = render partial: 'shared/list_options', locals: { collection: @statistics }
-        %table#statistic_table.table.table-condensed.table-striped.table-bordered.margin1top.table-detachable-head.table-bordered-inner
+        %table#statistic_table.table.table-condensed.table-striped.margin1top.table-detachable-head.table-bordered-inner
           %thead
             %tr.bg-brown.text-white
               %th(colspan='3') Information
@@ -148,9 +148,9 @@
           .card-body
             .form-group
               .label-section
-                %h5
+                %span.badge.badge-info.fs-origin
                   = label_tag 'Nb. Organisations : '
-                  %span.badge.badge-info= @organization_count
+                  = @organization_count
             .form-group
               .label-section
                 = label_tag 'first_period', 'Première période'

@@ -1,11 +1,11 @@
-%nav.navbar.fixed-top.navbar-expand-lg.navbar-light
+%nav.navbar.fixed-top.navbar-static-top.navbar-expand-lg.navbar-light.medium-shadow
   = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo navbar-brand'
 
   %button.navbar-toggler{"aria-controls" => "navbarSupportedContent", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbarSupportedContent", "data-toggle" => "collapse", :type => "button"}
     %span.navbar-toggler-icon
 
   .collapse.navbar-collapse#navbarSupportedContent
-    %ul.nav.navbar-nav.mr-auto
+    %ul.nav.navbar-nav.mr-auto.bg-menu
       -#%li.nav-item{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
       %li.nav-item{ class: ('active' if controller_name == 'admin') }
         = link_to 'Tableau de bord', admin_root_path, class: 'nav-link'

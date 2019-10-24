@@ -1,20 +1,20 @@
 #new_provider_requests
   .row
     .col-12
-      .panel
+      .box.small-shadow.clearfix
         = render 'layouts/admin/retriever/navigation'
 
   .row
     .col-md-12
-      .panel.clearfix
+      .box.clearfix
         .float-left
           %h3
             Liste des demandes de nouveaux fournisseurs
-            %span.badge.badge-info= @new_provider_requests_count
+            %span.badge.badge-info.fs-origin= @new_provider_requests_count
 
   .row.retractable.with-filter
     .col-md-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @new_provider_requests }
@@ -30,7 +30,7 @@
               %th= sortable :notified_at,   t('activerecord.models.new_provider_request.attributes.notified_at')
               %th= sortable :processing_at, t('activerecord.models.new_provider_request.attributes.processing_at')
               %th Actions
-          %tbody
+          %tbody.retractable.slidedown
             - @new_provider_requests.each do |new_provider_request|
               %tr
                 %td= l(new_provider_request.created_at, format: '%d %b %Y %H:%M')
@@ -45,9 +45,9 @@
                 %td= l(new_provider_request.processing_at, format: '%d %b %Y %H:%M') rescue nil
                 %td
                   - if new_provider_request.processing?
-                    = link_to icon_ok, accept_admin_new_provider_request_path(new_provider_request), method: 'patch', class: 'btn btn-outline-success', data: { confirm: t('actions.confirm') }, title: 'Accepter'
+                    = link_to glyphicon('check'), accept_admin_new_provider_request_path(new_provider_request), method: 'patch', class: 'btn btn-light', data: { confirm: t('actions.confirm') }, title: 'Accepter'
                   - if new_provider_request.processing?
-                    = link_to icon_not_ok, edit_admin_new_provider_request_path(new_provider_request), class: 'btn btn-outline-danger', title: 'Rejeter'
+                    = link_to glyphicon('x'), edit_admin_new_provider_request_path(new_provider_request), class: 'btn btn-light', title: 'Rejeter'
         %br
         .row
           .col.mb-4

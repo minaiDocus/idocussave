@@ -1,15 +1,15 @@
 #account_sharings
   .row
     .col-md-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des partages de compte
-            %span.badge.badge-info= @account_sharings.total_count
+            %span.badge.badge-info.fs-origin= @account_sharings.total_count
 
   .row.retractable.with-filter
     .col-md-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @account_sharings }
@@ -20,7 +20,7 @@
               %th Dossier
               %th Client ou contact
               %th Etat
-          %tbody
+          %tbody.retractable.slidedown
             - @account_sharings.each do |account_sharing|
               %tr
                 %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')

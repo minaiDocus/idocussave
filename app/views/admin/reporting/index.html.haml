@@ -1,18 +1,18 @@
 #reporting
   .row
     .col-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Reporting de l'année #{@year}
         .float-right
-          = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls"
-          = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1"
+          = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls", class: "btn btn-light"
+          = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1", class: "btn btn-light"
 
   .row
     .col-12
-      .panel
-        %table.table.table-striped.table-bordered
+      .box
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-bordered-inner.table-detachable-head
           %thead
             %tr.bg-brown.text-white
               %th.year
@@ -23,13 +23,13 @@
                 = link_to (@year + 1), "/admin/reporting/#{(@year + 1)}"
               - t('date.month_names').compact.each do |month_name|
                 %th= month_name.capitalize
-          %tbody
+          %tbody.retractable.slidedown
             - @total = 12.times.map { |e| [0,0,0] }
             - @organizations.each do |organization|
               %tr
-                %td.organization
+                %td.organization.clearfix
                   = link_to organization.name, [:account, organization]
-                  = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS'
+                  = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS', class: 'float-right'
                 - user_ids = organization.customers.pluck(:id)
                 - 12.times.each do |i|
                   %td

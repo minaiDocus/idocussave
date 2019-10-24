@@ -1,7 +1,7 @@
 #invoices
   .row
     .col-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des factures
@@ -9,7 +9,7 @@
 
   .row.retractable.with-filter
     .col-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @invoices }
@@ -23,7 +23,7 @@
                 %th= sortable :organization_id, t('activerecord.models.organization.name') + ' / ' + t('activerecord.models.user.name')
                 %th.price= sortable :amount_in_cents_w_vat, t('activerecord.models.invoice.attributes.amount_w_vat')
                 %th.actions= t('actions.name')
-            %tbody
+            %tbody.retractable.slidedown
               - @invoices.each do |invoice|
                 %tr
                   %td= check_box_tag "invoice_ids[]", invoice.id, false, class: 'invoices'

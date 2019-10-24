@@ -1,14 +1,10 @@
 #scanning_provider.new
   .row
-    .col-12
-      .panel
+    .col-md-12
+      .box.small-shadow.clearfix
         = render partial: 'navigation'
 
-  .row
-    .col-12
+  .card
+    .card-header
       %h3 Nouvel atelier
-
-  .row
-    .col-12
-      .panel
-        = render partial: 'form'
+    = render partial: 'form'

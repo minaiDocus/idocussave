@@ -1,14 +1,10 @@
 #news.edit
   .row
-    .col
-      .panel
+    .col-md-12
+      .box.small-shadow.clearfix
         = render partial: 'navigation'
 
-  .row
-    .col-12
-      .panel
-        %h3 Edition de l'annonce : #{@news.title}
-
-  .row
-    .col-12
-      = render partial: 'form'
+  .card
+    .card-header
+      %h3 Edition de l'annonce : #{@news.title}
+    = render partial: 'form'

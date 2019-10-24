@@ -4,27 +4,28 @@ function setWidth(){
 
   var tableWidth = $('table.table-detachable-head').innerWidth();
 
-  tableHead.attr('style', 'width:'+tableWidth+'px');
+  tableHead.css('width', tableWidth+'px');
   var widthTH = [];
 
   tableHead.find('th').each(function(e){
     var thisWidth = $(this).innerWidth()
     widthTH.push(thisWidth);
-    $(this).attr('style', 'width:'+thisWidth+'px');
+    $(this).css('width', thisWidth+'px');
   });
 
-  tableBody.find('tr:first-child').each(function(e){
-    var counter = 0;
-    $(this).find('td').each(function(e){
-      $(this).attr('style', 'width:'+widthTH[counter]+'px');
-      counter++;
-    });
+
+  var first_tr = tableBody.find('tr:first-child');
+  var counter = 0;
+
+  first_tr.find('td').each(function(e){
+    $(this).css('width', widthTH[counter]+'px');
+    counter++;
   });
 }
 
 function removeWidth(){
-  $('table.table-detachable-head thead').find('th').removeAttr('style');
-  $('table.table-detachable-head tbody').find('tr:first-child > td').removeAttr('style');
+  $('table.table-detachable-head thead').find('th').css('width', '');
+  $('table.table-detachable-head tbody').find('tr:first-child > td').css('width', '');
 }
 
 function animationSlideDown(elem){

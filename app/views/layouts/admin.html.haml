@@ -27,11 +27,11 @@
   %body
     = render 'layouts/admin/navigation'
 
-    .container-fluid.wrapper.ad_dynamic_padding.mt-5
+    .container-fluid.wrapper.mt-4.clearfix
       .content
         .row
           = render 'layouts/messages'
         = yield
       .push
-    %footer.footer
+    %footer.fixed-bottom.footer.clearfix
       %p.copyright{ style: 'text-align:center;' } &copy; iDocus #{Time.now.year}

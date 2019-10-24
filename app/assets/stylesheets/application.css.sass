@@ -1,7 +1,6 @@
 @import "common"
 
 html, body
-  height: 100%
   background-color: #F1EFEC
   background: #{"linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
   background: #{"-moz-linear-gradient(-55deg, #FFF 40%, #71969E 0%)"}
@@ -10,6 +9,10 @@ html, body
   // background-image: url('application/bg_body.png')
   background-repeat: repeat
   background-attachment: fixed
+
+.box
+  background-color: white
+
 //Navigation
 #next-nav-wrapper
   padding-top: 50px
@@ -28,63 +31,35 @@ html, body
       position: relative
       top: 7px
       left: 11px
-.navbar.navbar-static-top
-  position: fixed
-  z-index: 100
-  margin: 0
-  width: 100%
-  height: 30px
 
 #user_logged_in
   padding: 0 0 0 20px
 #notifications
   padding: 0 0 0 20px
 
+/* menu base */
 .bg-menu
   background-color: #214255 !important
-  color: #E6F7FF
-  background-image: url('application/bg_body_2.png')
-  background-repeat: repeat
-  background-attachment: fixed
-  .nav-link
-    color: #fff
-  // disable: allow link to be clickable
-  .nav-link.disable
-    color: #6c757d
-  // disabled: disallow link to be clickable
-  .nav-link.disabled
-    color: #6c757d
-  .nav-item:hover
-    background-color: #d7d6d7 !important
-    .nav-link
-      color: #3e2f24 !important
-  .dropdown-menu .dropdown-item:hover
-    background-color: #d7d6d7 !important
-    color: #3e2f24 !important
-  .nav-item.active
-    background-color: #fff !important
-    .nav-link
-      color: #3e2f24 !important
-  .nav-header
-    border-bottom: 1px solid #fff
-    font-size: 12px
-    margin-top: 5px
-  .dropdown-menu
-    .nav-item.active
-      .dropdown-link
-        color: #3e2f24 !important
 
 .nav-tabs
   .dropdown
     .dropdown-menu
       .dropdown-item:hover
         background-color: #214255 !important
-        color: #fff !important
-  .nav-link.active
-    background-color: #d7d6d7 !important
 
+nav.navbar
+  :background-color: #214255
 
+nav.navbar .dropdown-menu
+  background-color: #214255
 
+nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
+  :color #E6F7FF !important
+
+.bg-brown
+  background-color: #214255
+.bg-brown-light
+  background-color: #517285
 
 // Welcome
 #welcome
@@ -324,15 +299,6 @@ html, body
 
 .btn
   font-size: 11px
-
-.small-shadow
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.36),0 2px 10px 0 rgba(0,0,0,0.32) !important
-
-.medium-shadow
-  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.38),0 4px 15px 0 rgba(0,0,0,0.35) !important;
-
-.large-shadow
-  box-shadow: 0 12px 15px 0 rgba(0,0,0,0.44),0 17px 50px 0 rgba(0,0,0,0.39) !important;
 
 .popover-inner
   width: 400px
@@ -1588,16 +1554,6 @@ table.historic
 #customer.subscription table td.input
   width: 15px
 
-/***** Account *****/
-.box
-  margin-bottom: 10px
-  padding: 14px 19px 14px
-  background-color: white
-  border: 1px solid #DDD
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
-  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.065)
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
-
 /***** Notification *****/
 .dropdown-notifications
   .dropdown-menu::before, .dropdown-menu::after
@@ -1866,10 +1822,5 @@ footer
 /* Bootstrap overwrite */
 .badge
   white-space: normal !important
-
-/* Lastly, apply responsive CSS fixes as necessary */
-@media (max-width: 1186px)
-  .navbar.navbar-static-top
-    height: auto
 
 

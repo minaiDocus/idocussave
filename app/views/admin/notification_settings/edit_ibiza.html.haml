@@ -1,20 +1,22 @@
 #notification_settings.edit_ibiza
-  .row
-    .col-12
-      .panel
-        %h3 Edition du paramétrage des notifications pour la livraison de pré-affectation vers iBiza
+  .card
+    .card-header
+      %h3 Edition du paramétrage des notifications pour la livraison de pré-affectation vers iBiza
 
-  .row
-    .col-12
-      .panel
-        = form_tag update_ibiza_admin_notification_settings_path, class: 'form form-horizontal margin0 padding1top' do
-          .form-group
+    = form_tag update_ibiza_admin_notification_settings_path, class: 'form form-horizontal margin0 padding1top' do
+      .card-body
+        .form-group.clearfix
+          .label-section
             = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
+          .control-section
             = text_field_tag 'notification[to]', !Settings.first.notify_ibiza_deliveries_to ? '' : Settings.first.notify_ibiza_deliveries_to.join(', '), class: 'form-control w-25'
             %span.help-block Séparer les valeurs par une virgule. La deuxième et les suivantes seront en copie.
-          .form-group
+        .form-group.clearfix
+          .label-section
             = label_tag 'notification[type]', 'Type', class: 'control-label'
+          .control-section
             = select_tag 'notification[type]', options_for_select([['Désactivé', 'no'], ['Erreur uniquement', 'error'], ['Tous', 'yes']], Settings.first.notify_on_ibiza_delivery), class: 'form-control w-25'
-          .form-actions.mt-3
-            = submit_tag t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), admin_notification_settings_path, class: 'btn btn-outline-secondary'
+      .card-footer
+        .form-actions.mt-3
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), admin_notification_settings_path, class: 'btn btn-light'

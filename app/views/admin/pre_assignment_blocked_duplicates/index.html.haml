@@ -1,15 +1,15 @@
 #pre_assignment_blocked_duplicates
   .row
     .col-md-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des doublons de pré-affectation
-            %span.badge.badge-info= @duplicates.total_count
+            %span.badge.badge-info.fs-origin= @duplicates.total_count
 
   .row.retractable.with-filter
     .col-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @duplicates }
@@ -24,7 +24,7 @@
               %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
               %th Pièces (PDF)
               %th Statut
-          %tbody
+          %tbody.retractable.slidedown
             - @duplicates.each do |object|
               %tr
                 %td

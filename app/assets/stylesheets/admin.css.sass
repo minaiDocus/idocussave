@@ -2,19 +2,59 @@
 
 // Admin
 body
+  background-color: #778899
+  background: #{"linear-gradient(#778899, #FFF)"}
+  background: #{"-moz-linear-gradient(#778899, #FFF)"}
+  background: #{"-webkit-linear-gradient(#778899, #FFF)"}
+  background: #{"-o-linear-gradient(#778899, #FFF)"}
+  background-repeat: repeat
+  background-attachment: fixed
   padding-top: 30px
 
-/* Sticky footer */
-html, body
-  height: 100%
+.box, .card-body
+  background-color: #F5F5F5
 
+/*menu base*/
+.bg-menu
+  background-color: #696969 !important
+
+.nav-tabs
+  .dropdown
+    .dropdown-menu
+      .dropdown-item:hover
+        background-color: #696969 !important
+
+nav.navbar
+  :background-color: #696969
+
+nav.navbar .dropdown-menu
+  background-color: #696969
+
+nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
+  :color #FFF !important
+
+.bg-brown
+  background-color: #696969
+.bg-brown-light
+  background-color: #323232
+
+/* Sticky footer */
 .wrapper
   min-height: 100%
   height: auto !important
   height: 100%
   margin: 0 auto -4em
 
-.footer, .push
+.footer
+  background-image: url('application/bg_body.png')
+  background-repeat: repeat
+  background-attachment: fixed
+  background-color: #DAE0E2
+  color: #214255
+  padding: 4px
+.footer
+  height: 2em
+.push
   height: 4em
 
 /*****************/
@@ -68,6 +108,9 @@ h3 a
 #dashboard
   .panel
     padding-bottom: 0
+    .badge-tags
+      padding: 5px
+      font-size: 12px
   table
     .date
       width: 100px

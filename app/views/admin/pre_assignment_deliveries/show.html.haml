@@ -1,12 +1,12 @@
 #pre_assignment_delivery.show
-  .row
-    .col-12.panel
-      .pull-left.margin1bottom
+  .card
+    .card-header
+      .float-left
         %h3 Détail de la livraison n°#{@delivery.id}
-      .pull-right
-        = link_to t('actions.return'), admin_pre_assignment_deliveries_path(software: @delivery.deliver_to), class: 'btn'
-      %br
-      %table.table.table-condensed.table-striped.table-bordered
+      .float-right
+        = link_to t('actions.return'), admin_pre_assignment_deliveries_path(software: @delivery.deliver_to), class: 'btn btn-primary'
+    .card-body
+      %table.table.table-condensed.table-striped.table-bordered-inner
         %tr
           %th= t('activerecord.models.pre_assignment_delivery.attributes.deliver_to')
           %td= @delivery.human_form_of_deliver_to

@@ -11,33 +11,44 @@
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
         .form-group
-          = label_tag 'emailed_document_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'emailed_document_contains[created_at][>=]', (params[:emailed_document_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
-          &nbsp;
-          .input-group
-            .input-group-prepend
-              %span.input-group-text= glyphicon('calendar')
-            = text_field_tag 'emailed_document_contains[created_at][<=]', (params[:emailed_document_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+          .label-section
+            = label_tag 'emailed_document_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'emailed_document_contains[created_at][>=]', (params[:emailed_document_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'emailed_document_contains[created_at][<=]', (params[:emailed_document_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
         .form-group
-          = label_tag 'emailed_document_contains[state]', t('activerecord.models.email.attributes.state')
-          = select_tag 'emailed_document_contains[state]', options_for_select([['Traité', 'processed'], ['Untraitable', 'unprocessable'], ['En erreur', 'error']], (params[:emailed_document_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+          .label-section
+            = label_tag 'emailed_document_contains[state]', t('activerecord.models.email.attributes.state')
+          .control-section
+            = select_tag 'emailed_document_contains[state]', options_for_select([['Traité', 'processed'], ['Untraitable', 'unprocessable'], ['En erreur', 'error']], (params[:emailed_document_contains][:state] rescue '')), include_blank: true, class: 'form-control'
         .form-group
-          = label_tag 'emailed_document_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
-          = text_field_tag 'emailed_document_contains[user_contains][code]', (params[:emailed_document_contains][:user_contains][:code] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'emailed_document_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
+          .control-section
+            = text_field_tag 'emailed_document_contains[user_contains][code]', (params[:emailed_document_contains][:user_contains][:code] rescue ''), class: 'form-control'
         .form-group
-          = label_tag 'emailed_document_contains[from]', t('activerecord.models.email.attributes.from')
-          = text_field_tag 'emailed_document_contains[from]', (params[:emailed_document_contains][:from] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'emailed_document_contains[from]', t('activerecord.models.email.attributes.from')
+          .control-section
+            = text_field_tag 'emailed_document_contains[from]', (params[:emailed_document_contains][:from] rescue ''), class: 'form-control'
         .form-group
-          = label_tag 'emailed_document_contains[to]', t('activerecord.models.email.attributes.to')
-          = text_field_tag 'emailed_document_contains[to]', (params[:emailed_document_contains][:to] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'emailed_document_contains[to]', t('activerecord.models.email.attributes.to')
+          .control-section
+            = text_field_tag 'emailed_document_contains[to]', (params[:emailed_document_contains][:to] rescue ''), class: 'form-control'
         .form-group
-          = label_tag 'emailed_document_contains[subject]', t('activerecord.models.email.attributes.subject')
-          = text_field_tag 'emailed_document_contains[subject]', (params[:emailed_document_contains][:subject] rescue ''), class: 'form-control'
+          .label-section
+            = label_tag 'emailed_document_contains[subject]', t('activerecord.models.email.attributes.subject')
+          .control-section
+            = text_field_tag 'emailed_document_contains[subject]', (params[:emailed_document_contains][:subject] rescue ''), class: 'form-control'
       .card-footer
-        .row
-          .col
-            = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-            = link_to t('filters.reset'), admin_emailed_documents_path, class: 'btn'
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_emailed_documents_path, class: 'btn btn-light', title: t('filters.reset')

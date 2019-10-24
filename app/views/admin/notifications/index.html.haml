@@ -1,15 +1,15 @@
 #notifications
   .row
     .col-md-12
-      .panel.clearfix
+      .box.small-shadow.clearfix
         .float-left
           %h3
             Liste des notifications utilisateurs
-            %span.badge.badge-info= @notifications.total_count
+            %span.badge.badge-info.fs-origin= @notifications.total_count
 
   .row.retractable.with-filter
     .col-md-12
-      .panel
+      .box
         .row
           .col.mt-4
             = render partial: 'shared/list_options', locals: { collection: @notifications }
@@ -22,7 +22,7 @@
               %th Message
               %th= sortable :is_sent, t('activerecord.models.notification.attributes.is_sent')
               %th= sortable :is_read, t('activerecord.models.notification.attributes.is_read')
-          %tbody
+          %tbody.retractable.slidedown
             - @notifications.each do |notification|
               %tr
                 %td= l(notification.created_at, format: '%d %b %Y %H:%M')
