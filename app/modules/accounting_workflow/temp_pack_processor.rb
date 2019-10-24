@@ -22,8 +22,9 @@ class AccountingWorkflow::TempPackProcessor
                                 end
     end
 
-    added_pieces = []
     published_temp_documents = []
+    added_pieces = []
+    invoice_pieces = []
 
     temp_documents.each_with_index do |temp_document, document_index|
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start"
@@ -78,8 +79,11 @@ class AccountingWorkflow::TempPackProcessor
           end
           ##Temp fix issue imagemagick
 
-
-          added_pieces << piece
+          if temp_document.api_name == 'invoice_auto'
+            invoice_pieces << piece
+          else
+            added_pieces << piece
+          end
 
           # DocumentTools.sign_pdf(piece_file_path, piece.content.path)
 
@@ -183,7 +187,7 @@ class AccountingWorkflow::TempPackProcessor
     pack.save
     Reporting.update(pack)
 
-    piece_files_path = added_pieces.map { |e| e.content.path }
+    piece_files_path = (added_pieces + invoice_pieces).map { |e| e.content.path }
     piece_files_path.in_groups_of(50).each do |group|
       DocumentTools.archive(pack.archive_file_path, group)
     end
@@ -205,6 +209,8 @@ class AccountingWorkflow::TempPackProcessor
 
       pieces_to_pre_assigned.flatten!
       AccountingWorkflow::SendPieceToPreAssignment.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
+
+      AutoPreAssignedInvoicePieces.execute(invoice_pieces) if invoice_pieces.any?
     end
 
     FileDelivery.prepare(pack)

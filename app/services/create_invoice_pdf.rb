@@ -55,8 +55,6 @@ class CreateInvoicePdf
   def execute
     months = I18n.t('date.month_names').map { |e| e.capitalize if e }
 
-    first_day_of_month = (@invoice.created_at - 1.month).beginning_of_month.day
-
     current_month  = months[@invoice.created_at.month]
     previous_month = months[(@invoice.created_at - 1.month).month]
 
@@ -279,9 +277,34 @@ class CreateInvoicePdf
     @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
 
     @invoice.save
+
+    auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
+  end
+
+  def auto_upload_last_invoice
+    begin
+      user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
+
+      file = File.new @invoice.content.path
+      content_file_name = @invoice.content_file_name
+
+      uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
+
+      if uploaded_document.valid?
+        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded"
+      else
+        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}"
+      end
+    rescue => e
+      Airbrake.notify e
+    end
   end
 
 private
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_auto_upload_invoice.log")
+  end
 
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
