@@ -6,7 +6,7 @@ show_event = (id) ->
     datatype: 'html',
     type: 'GET'
     success: (data) ->
-      $('#events .show').html(data)
+      $('#events .show').html(data)      
 
 jQuery ->
   $('tbody tr td.do-show').on 'click', (e) ->

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_25_070700) do
+ActiveRecord::Schema.define(version: 2019_10_07_113929) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "mongo_id"
@@ -534,8 +534,8 @@ ActiveRecord::Schema.define(version: 2019_09_25_070700) do
     t.string "mongo_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "path",                              limit: 255,        default: ":code/:year:month/:account_book/", null: false
-    t.integer  "dropbox_id",                        limit: 8
+    t.string "path", default: ":code/:year:month/:account_book/", null: false
+    t.bigint "dropbox_id"
     t.datetime "changed_at"
     t.datetime "checked_at"
     t.text "delta_cursor", limit: 4294967295
@@ -1362,11 +1362,16 @@ ActiveRecord::Schema.define(version: 2019_09_25_070700) do
     t.text "content_text", limit: 4294967295
     t.text "tags"
     t.boolean "is_finalized", default: false
+    t.datetime "delete_at"
+    t.string "delete_by"
     t.index ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id"
+    t.index ["delete_at"], name: "index_pack_pieces_on_delete_at"
+    t.index ["delete_by"], name: "index_pack_pieces_on_delete_by"
     t.index ["is_finalized"], name: "index_pack_pieces_on_is_finalized"
     t.index ["name"], name: "index_pack_pieces_on_name"
     t.index ["number"], name: "index_pack_pieces_on_number"
     t.index ["organization_id"], name: "organization_id"
+    t.index ["origin"], name: "index_pack_pieces_on_origin"
     t.index ["pack_id"], name: "pack_id"
     t.index ["position"], name: "index_pack_pieces_on_position"
     t.index ["updated_at"], name: "index_pack_pieces_on_updated_at"

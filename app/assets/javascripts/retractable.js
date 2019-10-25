@@ -13,7 +13,6 @@ function setWidth(){
     $(this).css('width', thisWidth+'px');
   });
 
-
   var first_tr = tableBody.find('tr:first-child');
   var counter = 0;
 
