@@ -76,7 +76,7 @@
             %tr.number_of_journals{ style: 'display:none' }
               %td.question Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
               %td.subscription_number_of_journals
-                - iterations = (@customer.code == 'GMBA%ECURIESJLB')? (5..12) : (5..10)
+                - iterations = (@customer.code.in?(['GMBA%ECURIESJLB', 'AFH%AFH']))? (5..12) : (5..10)
                 - iterations.each do |number|
                   .choice
                     %label{ for: "subscription_number_of_journals_#{number}" }
