@@ -72,6 +72,7 @@ class EmailedDocument
 
     unless email
       mail_to = mail.to.grep(/@fw.idocus.com/i).first
+      mail_to = mail.cc.grep(/@fw.idocus.com/i).first unless mail_to.present?
 
       email                       = Email.new
       email.message_id            = mail.message_id
