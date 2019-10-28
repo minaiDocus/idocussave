@@ -1,10 +1,9 @@
 #events
-  .row.fixed-bottom.bg-dark.text-white
-    .col-md-12
-      .box.bg-brown.text-white.show
-        %h4.text-white Détails
-        %p.margin0bottom
-          Cliquer sur une ligne du tableau pour en afficher les détails ici.
+  .bg-dark.text-white.details.focusable.focused
+    .box.bg-brown.text-white.show
+      %h4.text-white Détails
+      %p.margin0bottom
+        Cliquer sur une ligne du tableau pour en afficher les détails ici.
   .row
     .col-md-12
       .box.small-shadow.clearfix
@@ -46,7 +45,7 @@
       = hidden_field_tag :direction, sort_direction
       = hidden_field_tag :sort,      sort_column
       = hidden_field_tag :per_page,  per_page
-      .card.retractable-filter
+      .card.retractable-filter.focusable
         .card-header.clearfix
           .float-left
             %h3 Filtres

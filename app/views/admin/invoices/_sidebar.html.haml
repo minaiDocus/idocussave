@@ -41,12 +41,12 @@
             .input-group
               .input-group-prepend
                 %span.input-group-text >=
-              = text_field_tag 'invoice_contains[created_at][>=]', (params[:invoice_contains][:created_at]['>='] rescue 'Début'), class: 'form-control date datepicker'
+              = text_field_tag 'invoice_contains[created_at][>=]', (params[:invoice_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
             &nbsp;
             .input-group
               .input-group-prepend
                 %span.input-group-text <=
-              = text_field_tag 'invoice_contains[created_at][<=]', (params[:invoice_contains][:created_at]['<='] rescue 'Fin'), class: 'form-control date datepicker'
+              = text_field_tag 'invoice_contains[created_at][<=]', (params[:invoice_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
         .form-action
           = submit_tag t('filters.action'), class: 'btn btn-primary'
           = link_to t('filters.reset'), admin_invoices_path, class: 'btn btn-outline-secondary'
