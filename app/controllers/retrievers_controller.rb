@@ -26,9 +26,28 @@ class RetrieversController < ApiController
     end
   end
 
+  def fetch_webauth_url
+    if params[:id].present? && params[:user_id].present?
+      user = User.find params[:user_id]
+
+      budgea_account = user.budgea_account
+      redirect_uri = retriever_webauth_callback_url
+      base_uri = "https://#{Budgea.config.domain}/2.0"
+      client_id = Budgea.config.client_id
+
+      target = "id_connection=#{params[:id]}"
+      target = "id_connector=#{params[:id]}" if params[:is_new].to_s == 'true'
+
+      paypal_dom = `curl '#{base_uri}/webauth?#{target}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{params[:state]}' -H 'Authorization: Bearer #{budgea_account.access_token}'`
+      render json: { success: true, paypal_dom: paypal_dom }, status: 200
+    else
+      render json: { success: false, error: 'Erreur de service interne' }, status: 200
+    end
+  end
+
   def webauth_callback
     if params[:error_description] != 'None'
-      flash[:error] = params[:error_description]
+      flash[:error] = params[:error_description].pesence
     elsif params[:id_connection]
       local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
       remote_params = { id: params[:id_connection], last_update: Time.now }

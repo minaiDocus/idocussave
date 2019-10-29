@@ -218,7 +218,7 @@ class Idocus.BudgeaApi
     id_params = if id > 0 then "/#{id}" else ""
 
     promise = new Promise((resolve, reject)->
-      self.encrypt_params(remote_params, ["id_provider", "id_bank"]).then( (remote_params_encrypted)->
+      self.encrypt_params(remote_params, ["id_provider", "id_bank", "openapiwebsite", "directaccesswebsite"]).then( (remote_params_encrypted)->
         self.double_fetch({
           remote: { url: "/users/me/connections#{id_params}", data: remote_params_encrypted, type: 'POST' }
           local: { url: "/retriever/create", data: local_params }
@@ -232,7 +232,7 @@ class Idocus.BudgeaApi
     self = this
     promise = new Promise((resolve, reject)->
       if id > 0
-        self.encrypt_params(remote_params).then( (remote_params_encrypted)->
+        self.encrypt_params(remote_params, ["openapiwebsite", "directaccesswebsite"]).then( (remote_params_encrypted)->
           self.double_fetch({
             remote: { url: "/users/me/connections/#{id}", data: remote_params_encrypted, type: 'POST' }
             local: { url: "/retriever/add_infos", data: local_params }
@@ -328,27 +328,36 @@ class Idocus.BudgeaApi
     )
 
   webauth: (id, is_new)->
-    redirect_uri = "#{@local_host}/retriever/webauth_callback"
-    client_id = @api_client_id
+    user_id = $('#account_id').val()
     state = btoa("{
-                    \"user_id\": \"#{$('#account_id').val()}\",
+                    \"user_id\": \"#{user_id}\",
                     \"ido_capabilities\": \"#{$('#field_ido_capabilities').val().replace('"', '\'')}\",
                     \"ido_connector_id\": \"#{$('#ido_connector_id').val().replace('"', '\'')}\",
                     \"ido_custom_name\": \"#{$('#field_ido_custom_name').val().replace('"', '\'')}\",
                     \"ido_connector_name\": \"#{$('#ido_connector_name').val().replace('"', '\'')}\"
                 }")
 
-    if is_new
-      url = "#{@api_base_url}/webauth?id_connector=#{id}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{state}"
-    else
-      url = "#{@api_base_url}/webauth?id_connection=#{id}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{state}"
+    url = '/retriever/fetch_webauth_url'
 
-    window.location.href = url
-    # error = (message) -> alert(message)
+    error = (response) ->
+      $('#budgea_information_fields .feedparagraph').remove()
+      $('#budgea_information_fields .actions').show()
+      alert(response.error)
 
-    # success = (data) -> console.error(data)
+    success = (response) ->
+      $('#budgea_information_fields .feedparagraph').remove()
+      $('#budgea_information_fields .actions').show()
+      domparser = new DOMParser()
+      data = domparser.parseFromString(response.paypal_dom, 'text/html')
+      redirect_url = $(data).find('a').attr('href')
+      if(redirect_url != undefined && redirect_url != null)
+        window.location.href = redirect_url
+      else
+        error({error: 'Erreur de paramètre'})
 
-    # this.remote_fetch({url: url, type: 'GET', onSuccess: success, onError: error})
+    $('#budgea_information_fields .actions').hide()
+    $('#budgea_information_fields .actions').after('<p class="feedparagraph">Redirection en cours ... </p>')
+    this.local_fetch({url: url, type: 'POST', data: {id: id, user_id: user_id, is_new: is_new, state: state}, onSuccess: success, onError: error})
 
   local_fetch: (options)->
     method = options.type || 'POST'

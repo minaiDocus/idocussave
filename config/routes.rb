@@ -78,6 +78,7 @@ Idocus::Application.routes.draw do
 
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
   get  'retriever/webauth_callback', controller: 'retrievers', action: 'webauth_callback'
+  post 'retriever/fetch_webauth_url', controller: 'retrievers', action: 'fetch_webauth_url'
   post 'retriever/create', controller: 'retrievers', action: 'create'
   post 'retriever/add_infos', controller: 'retrievers', action: 'add_infos'
   post 'retriever/create_bank_accounts', controller: 'retrievers', action: 'create_bank_accounts'

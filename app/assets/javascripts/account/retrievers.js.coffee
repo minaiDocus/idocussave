@@ -99,8 +99,14 @@ jQuery ->
 
           $('.trigger_retriever').bind 'click', (e)->
             e.preventDefault()
-            if confirm('Voulez-vous vraiment synchroniser cette automate?')
-              id = $(this).attr('data-id')
+            self = $(this)
+
+            fClose = () ->
+              $('#syncConfirm.modal').modal('hide')
+
+            onConfirm = () ->
+              fClose()
+              id = self.attr('data-id')
               releaseRetrieversTimer(id)
               $('.state_field_'+id).html('<span class="label">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
@@ -110,6 +116,10 @@ jQuery ->
                   refreshRetrievers(id)
                   $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
               )
+
+            $('#syncConfirm.modal').modal('show')
+            $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
+            $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
 
     releaseRetrieversTimer()
     window.retriever_contains_name = ''

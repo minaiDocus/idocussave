@@ -21,6 +21,16 @@
         = link_to icon(icon: 'remove'), account_retrievers_path, class: 'btn reset_filter', title: t('filters.reset')
     .retrievers_list.box
 
+#syncConfirm.modal.hide.fade{data: { backdrop: "static" } }
+  .modal-header
+    %h3 Synchronisation
+  .modal-body
+    #terms
+      %p Voulez vous vraiment lancer la synchronisation de cet automate ?
+    #controls.form-actions
+      =button_tag "J’accepte la transmission de mes transactions à Idocus", type: 'button', id:'sync_confirm_button', class: 'btn-primary btn pull-right'
+      =button_tag "Annuler", type: 'button', id: 'sync_cancel_button', class: 'btn-danger btn pull-right', style: 'margin-right: 7px'
+
 #retrievers_security_informations.modal.fade
   .modal-header
     %a{ class: 'close', 'data-dismiss' => 'modal' } ×
