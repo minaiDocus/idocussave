@@ -670,6 +670,8 @@ fr:
           is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
           is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
+          is_fec_agiris_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+          is_fec_agiris_auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
           subject_to_vat: Est assujetti à la tva ?
           invoice_mails: Email(s) en copie de la facture iDocus
           preseizure_date_option: Date de l'écriture des opérations bancaires

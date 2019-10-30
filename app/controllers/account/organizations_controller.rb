@@ -25,7 +25,7 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:id/edit_software_users
-  def edit_software_users
+  def edit_software_users    
     @software = params[:software]
     @software_name =  case @software
                         when 'coala'
@@ -40,13 +40,15 @@ class Account::OrganizationsController < Account::OrganizationController
                           'Ibiza'
                         when 'exact_online'
                           'Exact Online'
+                        when 'fec_agiris'
+                          'Fec Agiris'
                         else
                           ''
                       end
   end
 
   # PUT /account/organizations/:id/update_software_users
-  def update_software_users
+  def update_software_users 
     software = params[:software]
     software_users = params[:software_account_list] || ''
     @organization.customers.active.each do |customer|
@@ -61,10 +63,12 @@ class Account::OrganizationsController < Account::OrganizationController
         softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact_online?) }
       elsif software == 'exact_online'
         softwares_params = { is_exact_online_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
+      elsif software == 'fec_agiris'
+        softwares_params = { is_fec_agiris_used: software_users.include?(customer.to_s) }
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
       end
-
+      
       customer.create_or_update_software(softwares_params) unless softwares_params.nil?
     end
     flash[:success] = 'Modifié avec succès.'
@@ -102,7 +106,7 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   # PUT /account/organizations/:id
-  def update
+  def update    
     if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       if params[:part].present?
@@ -227,6 +231,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_coala_auto_deliver,
         :is_cegid_used,
         :is_cegid_auto_deliver,
+        :is_fec_agiris_used,
+        :is_fec_agiris_auto_deliver,
         :is_csv_descriptor_used,
         :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
@@ -250,6 +256,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_coala_auto_deliver,
         :is_cegid_used,
         :is_cegid_auto_deliver,
+        :is_fec_agiris_used,
+        :is_fec_agiris_auto_deliver,
         :is_csv_descriptor_used,
         :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,

@@ -16,6 +16,10 @@ class GeneratePreAssignmentExportService
     @report.user.uses_cegid? && @report.user.try(:softwares).try(:cegid_auto_deliver?)
   end
 
+  def valid_fec_agiris?
+    @report.user.uses_fec_agiris? && @report.user.try(:softwares).try(:fec_agiris_auto_deliver?)
+  end
+
   def valid_quadratus?
     @report.user.uses_quadratus? && @report.user.try(:softwares).try(:quadratus_auto_deliver?)
   end
@@ -44,6 +48,11 @@ class GeneratePreAssignmentExportService
       if valid_cegid?
         create_pre_assignment_export_for 'cegid'
         generate_cegid_export
+      end
+
+      if valid_fec_agiris?
+        create_pre_assignment_export_for 'fec_agiris'
+        generate_fec_agiris_export
       end
 
       if valid_quadratus?
@@ -76,6 +85,20 @@ private
       file_csv = CegidZipService.new(@report.user, @preseizures).execute
       final_file_name = "#{file_real_name}.csv"
       FileUtils.mv file_csv, "#{file_path}/#{final_file_name}"
+      @preseizures.each do |preseizure|
+        FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+      end
+      @export.got_success "#{final_file_name}"
+    rescue => e
+      @export.got_error e
+    end
+  end
+
+  def generate_fec_agiris_export
+    begin
+      file_txt = FecAgirisTxtService.new(@preseizures).execute
+      final_file_name = "#{file_real_name}.txt"
+      FileUtils.mv file_txt, "#{file_path}/#{final_file_name}"
       @preseizures.each do |preseizure|
         FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
       end

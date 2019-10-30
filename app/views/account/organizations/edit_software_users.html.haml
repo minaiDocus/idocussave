@@ -27,6 +27,8 @@
                   -list_selected = list_options.select{ |c| c.uses_ibiza? }
                 -elsif @software == 'exact_online'
                   -list_selected = list_options.select{ |c| c.uses_exact_online? }
+                -elsif @software == 'fec_agiris'
+                  -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
 
                 = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
           .form-actions.margin0bottom

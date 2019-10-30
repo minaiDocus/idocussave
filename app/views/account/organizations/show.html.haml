@@ -62,6 +62,11 @@
                     .pull-left Cegid
                     - if @organization.is_cegid_used
                       %i.icon-ok.pull-right
+                %li{ class: ('active' if params[:tab] == 'fec_agiris') }
+                  %a{ href: '#fec_agiris', data: { toggle: 'tab' } }
+                    .pull-left Fec Agiris
+                    - if @organization.is_fec_agiris_used
+                      %i.icon-ok.pull-right
                 %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                   %a{ href: '#csv_descriptor', data: { toggle: 'tab' } }
                     .pull-left Autre (format d'export .csv)
@@ -513,6 +518,26 @@
                   .alignright
                     -if @organization.is_quadratus_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'quadratus'), class: 'btn'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
+            #fec_agiris.tab-pane{ class: ('active' if params[:tab] == 'fec_agiris') }
+              .aligncenter
+                %h4.margin1bottom Configuration Fec Agiris
+              = simple_form_for [:account, @organization], html: { id: 'form_fec_agiris', class: 'form form-horizontal margin0' } do |f|
+                = hidden_field_tag :part, 'fec_agiris'
+                %table.table.table-condensed.with_custom_controls
+                  %tbody
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_fec_agiris_used')
+                      %td{width: '30%'} Cette option permet de selectionner/utiliser Fec Agiris dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_fec_agiris_used, as: 'boolean', label: 'oui?'
+                    %tr.hide
+                      %th= t('activerecord.models.organization.attributes.is_fec_agiris_auto_deliver')
+                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_fec_agiris_auto_deliver, as: 'boolean', label: 'oui?'
+                - if @user.leader?
+                  .alignright
+                    -if @organization.is_fec_agiris_used
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_agiris'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               .aligncenter

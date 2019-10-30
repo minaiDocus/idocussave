@@ -410,6 +410,10 @@ class User < ActiveRecord::Base
     uses_ibiza? && self.ibiza_id.present? && self.try(:softwares).try(:ibiza_compta_analysis_activated?)
   end
 
+  def uses_fec_agiris?
+    self.try(:softwares).try(:is_fec_agiris_used) && self.organization.is_fec_agiris_used
+  end
+
   def validate_ibiza_analyitcs?
     uses_ibiza_analytics? && self.try(:softwares).try(:ibiza_analysis_to_validate?)
   end

@@ -67,7 +67,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   # PUT /account/organizations/:organization_id/customers/:id
-  def update
+  def update    
     if params[:user][:softwares_attributes].present?
       software = @customer.create_or_update_software(params[:user][:softwares_attributes])
       if software && software.persisted?

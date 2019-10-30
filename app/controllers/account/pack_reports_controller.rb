@@ -53,7 +53,7 @@ class Account::PackReportsController < Account::OrganizationController
   # POST /account/organizations/:organization_id/pack_reports/:id/download
   def download
     preseizures = @report.preseizures.where(id: params[:download].try(:[], :preseizure_ids) || []).by_position
-
+    
     case params[:download].try(:[], :format)
     when 'csv'
       if preseizures.any? && @report.user.uses_csv_descriptor?
@@ -112,6 +112,13 @@ class Account::PackReportsController < Account::OrganizationController
       if @organization.is_coala_used
         file_path = CoalaZipService.new(@report.user, preseizures, {preseizures_only: true, to_xls: true}).execute
         send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
+      else
+        render action: 'select_to_download'
+      end
+    when 'txt_fec_agiris'
+      if @organization.is_fec_agiris_used
+        file_path = FecAgirisTxtService.new(preseizures).execute
+        send_file(file_path, type: 'application/txt', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
