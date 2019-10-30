@@ -18,21 +18,22 @@ class AutoPreAssignedInvoicePieces
   def execute
     begin
       if @temp_document.present? && @invoice.present?
-        @piece.update(is_awaiting_pre_assignment: true, number: invoice_number)
+        @piece.update(is_awaiting_pre_assignment: true)
         @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
         preseizure = Pack::Report::Preseizure.new
-        preseizure.organization    = @piece.user.organization
-        preseizure.report          = initialize_report
-        preseizure.user            = @piece.user
-        preseizure.piece           = @piece
-        preseizure.type            = 'FLUX'
-        preseizure.date            = invoice_date
-        preseizure.piece_number    = @piece.number
-        preseizure.position        = @piece.position
-        preseizure.amount          = invoice_amount
-        preseizure.unit            = 'EUR'
-        preseizure.third_party     = third_party_name
+        preseizure.organization     = @piece.user.organization
+        preseizure.report           = initialize_report
+        preseizure.user             = @piece.user
+        preseizure.piece            = @piece
+        preseizure.date             = invoice_date
+        preseizure.deadline_date    = invoice_deadline_date
+        preseizure.piece_number     = invoice_number
+        preseizure.position         = @piece.position
+        preseizure.currency         = 'EUR'
+        preseizure.unit             = 'EUR'
+        preseizure.third_party      = third_party_name
+        preseizure.is_made_by_abbyy = true
         preseizure.save
 
         ### 1 ###
@@ -100,6 +101,7 @@ class AutoPreAssignedInvoicePieces
         end
       end
     rescue => e
+      logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}"
       Airbrake.notify e
     end
   end
@@ -130,18 +132,12 @@ class AutoPreAssignedInvoicePieces
     (@invoice.created_at - 1.month).end_of_month
   end
 
-  def third_party_name
-    @invoice.organization.addresses.for_billing.first.try(:company) || @invoice.organization.name
+  def invoice_deadline_date
+    "4/#{@invoice.created_at.month}/#{@invoice.created_at.year}".to_date
   end
 
-  def invoice_amount
-    return @invoice_amount unless @invoice_amount.nil?
-
-    if @invoice.organization.subject_to_vat
-      @invoice_amount = @invoice.amount_in_cents_w_vat
-    else
-      @invoice_amount = (@invoice.amount_in_cents_w_vat / @invoice.vat_ratio).round
-    end
+  def third_party_name
+    @invoice.organization.addresses.for_billing.first.try(:company) || @invoice.organization.name
   end
 
   def amount_ht
@@ -149,7 +145,13 @@ class AutoPreAssignedInvoicePieces
   end
 
   def amount_ttc
-    invoice_amount
+    return @invoice_amount unless @invoice_amount.nil?
+
+    if @invoice.organization.subject_to_vat
+      @invoice_amount = @invoice.amount_in_cents_w_vat
+    else
+      @invoice_amount = (@invoice.amount_in_cents_w_vat / @invoice.vat_ratio).round
+    end
   end
 
   def amount_tva

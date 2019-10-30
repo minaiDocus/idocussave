@@ -56,8 +56,8 @@ describe AutoPreAssignedInvoicePieces do
       expect(Pack::Piece.count).to eq(1)
     end
 
-    it 'should only call AutoPreAssignedInvoicePieces.execute(@pieces) method when invoice_piece.any? is passed in' do
-      expect(AccountingWorkflow::SendPieceToPreAssignment).to_not receive(:execute).with(nil).exactly(0).times
+    it 'should only call AutoPreAssignedInvoicePieces.execute(@pieces) method when invoice_piece is not empty' do
+      expect(AccountingWorkflow::SendPieceToPreAssignment).to_not receive(:execute).exactly(0).times
       expect(AutoPreAssignedInvoicePieces).to receive(:execute).exactly(:once)
 
       AccountingWorkflow::TempPackProcessor.process(@temp_pack)
@@ -104,11 +104,13 @@ describe AutoPreAssignedInvoicePieces do
       @preseizure.reload
 
       expect(@preseizure.piece).to eq @piece
-  		expect(@preseizure.date.to_date).to eq "Mon, 30 Sep 2019".to_date
+      expect(@preseizure.date.to_date).to eq "Mon, 30 Sep 2019".to_date
+      expect(@preseizure.deadline_date.to_date).to eq "Fri, 04 Oct 2019".to_date
       expect(@preseizure.report.name).to eq 'ACC%IDO VT 201909'
       expect(@preseizure.piece_number).to eq @invoice.number
       expect(@preseizure.position).to eq @piece.position
       expect(@preseizure.organization).to eq @organization
+      expect(@preseizure.cached_amount).to eq @preseizure.entries.map(&:amount).max
       expect(@preseizure.third_party).to eq(@invoice.organization.addresses.for_billing.first.try(:company)).or eq(@invoice.organization.name)
 		end
 
