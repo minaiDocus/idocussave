@@ -165,17 +165,17 @@ class PreseizuresToCsv
           format.gsub!(/JJ/, "%d")
           entry.preseizure.deadline_date.try(:strftime, format) || ''
         when /\Aclient_code\z/
-          entry.preseizure.report.user.code
+          part[1].to_i > 0 ? entry.preseizure.report.user.code[0, part[1].to_i] : entry.preseizure.report.user.code
         when /\Ajournal\z/
-          entry.preseizure.journal_name
+          part[1].to_i > 0 ? entry.preseizure.journal_name[0, part[1].to_i] : entry.preseizure.journal_name
         when /\Aperiod\z/
           entry.preseizure.piece_name.try(:split).try(:[], 2)
         when /\Apiece_number\z/
           entry.preseizure.piece_name.try(:split).try(:[], 3).try(:to_i)
         when /\Aoriginal_piece_number\z/
-          entry.preseizure.piece_number
+          part[1].to_i > 0 ? entry.preseizure.piece_number[0, part[1].to_i] : entry.preseizure.piece_number
         when /\Apiece\z/
-          entry.preseizure.piece_name.try(:gsub, ' ', '_')
+          part[1].to_i > 0 ? entry.preseizure.piece_name.try(:gsub, ' ', '_')[0, part[1].to_i] : entry.preseizure.piece_name.try(:gsub, ' ', '_')
         when /\Aoriginal_amount\z/
           "#{entry.preseizure.amount}".gsub(/[\.,\,]/, @descriptor.separator)
         when /\Acurrency\z/
@@ -190,9 +190,9 @@ class PreseizuresToCsv
             Settings.first.inner_url + entry.preseizure.piece_content_url
           end
         when /\Aremark\z/
-          entry.preseizure.observation
+          part[1].to_i > 0 ? entry.preseizure.observation[0, part[1].to_i] : entry.preseizure.observation
         when /\Athird_party\z/
-          entry.preseizure.third_party
+          part[1].to_i > 0 ? entry.preseizure.third_party[0, part[1].to_i] : entry.preseizure.third_party
         when /\Anumber\z/
           entry.account.number
         when /\Adebit\z/
@@ -204,9 +204,9 @@ class PreseizuresToCsv
         when /\Apartial_unit\z/
           entry.preseizure.unit.split(//).try(:first).try(:upcase)
         when /\Aoperation_label\z/
-          entry.preseizure.operation_label
+          part[1].to_i > 0 ? entry.preseizure.operation_label.try(:[], [0, part[1].to_i]) : entry.preseizure.operation_label
         when /\Alettering\z/
-          entry.account.lettering
+          part[1].to_i > 0 ? entry.account.lettering[0, part[1].to_i] : entry.account.lettering
         when /\Aother\z/
           part[1].nil? ? '' : part[1]
         when /\Aseparator\z/

@@ -2,14 +2,27 @@ update_directive_input = (type, element) ->
   if type == 'date' || type == 'deadline_date' || type == 'period_date'
     element.parents('li').find('#text_format').hide()
     element.parents('li').find('#text_format').attr('disabled','disabled')
+    element.parents('li').find('.number-input').hide()
+    element.parents('li').find('.number-input #number-input').attr('disabled','disabled')
     element.parents('li').find('#select_format').show()
     element.parents('li').find('#select_format').removeAttr('disabled')
+  else if type == 'client_code' || type == 'journal' || type == 'original_piece_number' || type == 'operation_label' || type == 'piece' || type == 'lettering' || type == 'remark' || type == 'third_party'
+    element.parents('li').find('#text_format').hide()
+    element.parents('li').find('#text_format').attr('disabled','disabled')
+    element.parents('li').find('#select_format').hide()
+    element.parents('li').find('#select_format').attr('disabled','disabled')
+    element.parents('li').find('.number-input').show()
+    element.parents('li').find('.number-input #number-input').removeAttr('disabled')
   else if type == 'other'
     element.parents('li').find('#select_format').hide()
     element.parents('li').find('#select_format').attr('disabled','disabled')
+    element.parents('li').find('.number-input').hide()
+    element.parents('li').find('.number-input #number-input').attr('disabled','disabled')
     element.parents('li').find('#text_format').show()
     element.parents('li').find('#text_format').removeAttr('disabled')
   else
+    element.parents('li').find('.number-input').hide()
+    element.parents('li').find('.number-input #number-input').attr('disabled','disabled')
     element.parents('li').find('#select_format').hide()
     element.parents('li').find('#select_format').attr('disabled','disabled')
     element.parents('li').find('#text_format').hide()
@@ -31,6 +44,23 @@ activate_csv_field_action = ->
     $(this).children('option:selected').attr('selected','selected')
     type = $(this).children('option:selected').attr('value')
     update_directive_input(type, $(this))
+
+  $('.number-input input[data-toggle="tooltip"]').tooltip()
+
+  $('.number-input #step-button').unbind('click')
+
+  $('.number-input input[type=number]').keypress (evt) ->
+    evt.preventDefault()
+
+  $('.number-input .step-up').on 'click', (e) ->
+    e.preventDefault()
+    @parentNode.querySelector('input[type=number]').stepUp(1)
+    false
+
+  $('.number-input .step-down').on 'click', (e) ->
+    e.preventDefault()
+    @parentNode.querySelector('input[type=number]').stepDown(1)
+    false
 
 activate_csv_global_action = ->
   $('#csv_descriptors.edit .add_field').click ->
@@ -80,6 +110,8 @@ jQuery ->
         field = li.find('option:selected').val()
         if field == 'date' || field == 'deadline_date' || field == 'period_date'
           part = field + '-' + li.find('#select_format').val()
+        else if field == 'client_code' || field == 'journal' || field == 'original_piece_number' || field == 'operation_label' || field == 'piece' || field == 'lettering' || field == 'remark' || field == 'third_party'
+          part = field + '-' + li.find('.number-input #number-input').val()
         else if field == 'other'
           part = field + '-' + li.find('#text_format').val()
         else
