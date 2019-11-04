@@ -17,7 +17,7 @@ describe AutoPreAssignedInvoicePieces do
 		@user.organization = @organization
 		@user.save
 
-  	@invoice           = Invoice.create(number: "2019090001", vat_ratio: 1.2, amount_in_cents_w_vat: 2862.77, content_file_name: "2019090001.pdf", organization_id: @organization.id, user_id: @user.id)
+  	@invoice           = Invoice.create(number: "2019090001", vat_ratio: 1.2, amount_in_cents_w_vat: 286277, content_file_name: "2019090001.pdf", organization_id: @organization.id, user_id: @user.id)
   	@invoice.content   = File.new "#{Rails.root}/spec/support/files/2019090001.pdf"
     @invoice.save
   end
@@ -128,15 +128,15 @@ describe AutoPreAssignedInvoicePieces do
 		it 'returns a valid entries numbers and amounts' do
       expect(@entries[0].type).to eq(2)
       expect(@entries[0].number).to eq '0'
-      expect(sprintf("%.2f", @entries[0].amount).to_f).to eq (477.0)
+      expect(sprintf("%.2f", @entries[0].amount).to_f).to eq (477.13)
 
       expect(@entries[1].type).to eq(2)
       expect(@entries[1].number).to eq '0'
-      expect(sprintf("%.2f", @entries[1].amount).to_f).to eq (2385.0)
+      expect(sprintf("%.2f", @entries[1].amount).to_f).to eq (2385.64)
 
 		  expect(@entries[2].type).to eq(1)
 		  expect(@entries[2].number).to eq '0'
-      expect(sprintf("%.2f", @entries[2].amount).to_f).to eq (2862.0)
+      expect(sprintf("%.2f", @entries[2].amount).to_f).to eq (2862.77)
 		end
 
   	context 'Logs' do

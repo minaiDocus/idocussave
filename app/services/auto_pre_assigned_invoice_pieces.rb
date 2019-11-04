@@ -48,7 +48,7 @@ class AutoPreAssignedInvoicePieces
         entry.preseizure = preseizure
         entry.type       = Pack::Report::Preseizure::Entry::DEBIT
         entry.number     = 0
-        entry.amount     = amount_ttc
+        entry.amount     = format_price amount_ttc
         entry.save
 
         ### 2 ###
@@ -63,7 +63,7 @@ class AutoPreAssignedInvoicePieces
         entry.preseizure = preseizure
         entry.type       = Pack::Report::Preseizure::Entry::CREDIT
         entry.number     = 0
-        entry.amount     = amount_ht
+        entry.amount     = format_price amount_ht
         entry.save
 
         if amount_tva > 0
@@ -79,7 +79,7 @@ class AutoPreAssignedInvoicePieces
           entry.preseizure = preseizure
           entry.type       = Pack::Report::Preseizure::Entry::CREDIT
           entry.number     = 0
-          entry.amount     = amount_tva
+          entry.amount     = format_price amount_tva
           entry.save
         end
         
@@ -164,6 +164,11 @@ class AutoPreAssignedInvoicePieces
     else
       @amount_tva = 0
     end
+  end
+
+  def format_price price_in_cents
+    price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
+    ("%0.2f" % price_in_euros)
   end
 
   def logger
