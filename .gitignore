@@ -13,6 +13,8 @@ public/ckeditor_assets
 coverage/
 doc_data.txt
 .sass-cache
+db/schema.rb
+
 
 config/deploy/production.rb
 config/deploy/sandbox.rb
