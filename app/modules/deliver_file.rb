@@ -17,6 +17,7 @@ module DeliverFile
 
       pack         = remote_file.pack
       receiver     = remote_file.receiver
+      storage      = nil
 
       unless receiver
         remote_file.cancel!
@@ -24,7 +25,7 @@ module DeliverFile
         remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
 
         storage = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
-        storage ||= receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
+        storage = receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
 
         if receiver.class.name == User.name
           efs = receiver.find_or_create_external_file_storage
