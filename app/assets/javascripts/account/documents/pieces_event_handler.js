@@ -168,7 +168,7 @@ $('#comptaAnalysisEdition').on('show', function() {
   if(window.analytic_target_form != '#fileupload')
   {
     $('#analysis_validate').removeClass('hide');
-    var document_ids = $.map($("#lists_pieces > #lists_pieces_content > ul#pages > li"), function(li){ return li.id.split("_")[1] });
+    var document_ids = $.map($("#lists_pieces > #lists_pieces_content > ul#pages > li.selected"), function(li){ return li.id.split("_")[1] });
     window.setAnalytics(window.user_code, document_ids, 'piece', true);
   }
   else

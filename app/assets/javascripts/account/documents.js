@@ -700,10 +700,12 @@
       if (sTop > 600)
       {
         $('.scroll_on_top').show('slow');
+        $('#show_pages .actiongroup, #presPanel1 .actiongroup').addClass('actiongroup-fixed');
       }
       else 
       {
         $('.scroll_on_top').hide('slow');
+        $('#show_pages .actiongroup, #presPanel1 .actiongroup').removeClass('actiongroup-fixed');
       }
     });
   }

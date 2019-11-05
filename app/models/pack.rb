@@ -318,7 +318,6 @@ class Pack < ActiveRecord::Base
 
         set_pages_count
         save
-        
     else
       FileUtils.rm self.original_document.content.path, :force =>  true
     end

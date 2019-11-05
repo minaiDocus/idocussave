@@ -83,7 +83,6 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
     }
   });
 }
-
 //refresh the edited or selected preseizures (param ids must be an array)
 function refreshPreseizures(ids){
   if(window.preseizuresLoaderLocked)
@@ -116,6 +115,7 @@ function refreshPreseizures(ids){
         elem.html($(htmlDoc).find('#show_preseizures #lists_preseizures_content .preseizure#'+id).html());
 
         initEventOnPreseizuresRefresh();
+        initEventOnPreseizuresAccountRefresh();
         window.initEventOnHoverOnInformation();
 
         //auto open details
@@ -137,7 +137,6 @@ function refreshPreseizures(ids){
 }
 
 function getPreseizureAccount(manual_id=[]){
-
   $('.content_details .list_preseizure_id').each(function(){
       var tab_id = $(this).val().replace(/[[\]]/g,"").replace(/\s/g,"").split(',');
       var li     = $(this).closest("li").attr("id");
@@ -151,7 +150,7 @@ function getPreseizureAccount(manual_id=[]){
       $.each(tab_id, function( index, id ){        
 
         var elem = $(".preseizure_description #div_"+id);
-                
+
         var exist = (elem.html() != '' && elem.html() != null && elem.html() != undefined) ? true : false;  
 
         var found = verif_count_preseizure.find(function(elem){ return elem == id});
@@ -165,31 +164,28 @@ function getPreseizureAccount(manual_id=[]){
             type: "GET",
             success: function(data){
               logAfterAction();
+
               var html = elem.html(data);
-              html.show();             
+              html.show();
+
               elem.removeClass("preseizure_selected active");
               if ($("#"+li+" .tab").length > 0)
-              {
                 $("#span_"+id).removeClass("preseizure_selected");
-              }
+
               if (tab_id.length == 1 && manual_id.length == 0) {
-                elem.css('margin-top','1%');                            
+                elem.css('margin-top','1%');
                 $(".check_"+id).show();
               }
               else if (manual_id.length != 0) {
                 if (verif_count_preseizure.length == 1)
-                {                    
                   $(".check_"+id).show();
-                }                    
-              }              
-              
-              if (!$('#span_'+id+".tab_preseizure_id").hasClass('tab_active') && $("#"+li+" .tab").length > 0) 
-              {
+              }
+
+              if (!$('#span_'+id+".tab_preseizure_id").hasClass('tab_active') && $("#"+li+" .tab").length > 0)
                 html.hide();
-              }   
-              window.preseizuresSelected = [];
-              $(".check_modif_preseizure input").attr('checked',false);
-               togglePreseizureAction();
+
+              handlePreseizureSelection(id, 'unselect');
+              togglePreseizureAction();
               initEventOnPiecesRefresh();
               initEventOnPreseizuresAccountRefresh();
               initEventOnPreseizuresRefresh();
@@ -342,8 +338,8 @@ function handlePreseizureSelection(id, type='toggle'){
   }
 
   if(window.preseizuresSelected.length > 0){
-    $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', 'border: 2px solid #B1D837; padding: 5px');
-    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px');
+    $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', 'border: 2px solid #058acd; padding: 5px; border-radius: 3px');
+    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', 'border: 2px solid #058acd; padding: 5px 2px 5px 5px; border-radius: 3px');
   }
   else{
     $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', '');
@@ -354,4 +350,31 @@ function handlePreseizureSelection(id, type='toggle'){
     $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').removeClass('hide');
   else
     $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
+}
+
+function togglePreseizureAction(){  
+  if ($(".preseizure_selected.active").length > 1){
+    
+    if ($(".tip_edit_multiple").html() == '')
+    {
+      $(".tip_edit_multiple").append('<i class="icon-edit"></i>');
+    }
+    $(".tip_edit_multiple").removeClass("hide");
+    $(".tip_edit_multiple").css({'border' : '2px solid #058acd', 'padding' : '4px 4px 6px 4px', 'border-radius' : '3px'});
+    $(".do-exportSelectedPreseizures").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+    $(".do-deliverAllPreseizure").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+  }
+  else if ($(".preseizure_selected.active").length >= 1){      
+    $(".tip_edit_multiple").addClass("hide");
+    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-exportSelectedPreseizures").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+    $(".do-deliverAllPreseizure").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+  }
+  else 
+  { 
+    $(".tip_edit_multiple").addClass("hide");   
+    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".do-deliverAllPreseizure").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+  }
 }

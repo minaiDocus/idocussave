@@ -28,6 +28,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
+  scope :not_deleted,                   -> { joins(:piece) } #IMPORTANT: piece model has default scope so the inner join inherit that scope which is deleted_at presence
 
   scope :blocked_duplicates,            -> { unscoped.where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
   scope :potential_duplicates,          -> { unscoped.where.not(duplicate_detected_at: nil) }

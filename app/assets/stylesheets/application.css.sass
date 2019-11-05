@@ -285,13 +285,13 @@
 
 .scroll_on_top
   position: fixed
-  bottom: 50px
+  bottom: 67px
   padding: 10px
   border-radius: 50%
   background-color: #e8e7e7
   right: 1%
   opacity: 0.6
-  z-index: 9000
+  z-index: 20
   cursor: pointer
 
 .scroll_on_top:hover
@@ -478,6 +478,17 @@
 /*** Pages ***/
 #show_pages, #show_pieces
   background-color: #E1E1E1
+
+#show_pages, #presPanel1
+  .actiongroup-fixed
+    position: fixed
+    right: calc(1% + 50px)
+    bottom: 67px
+    z-index: 20
+    background-color: #e1e1e1
+    padding: 10px
+    border: 1px solid #999
+    border-radius: 3px
 
 .pages
   height: 100%
@@ -908,7 +919,7 @@
 /*** Preseizures ***/
 
 .preseizure_selected  
-  border: 1px solid #058acd !important
+  border: 2px solid #058acd !important
 
 #preseizuresList
   display: none
@@ -923,7 +934,7 @@
     #lists_preseizures
       margin-top: 10px
       .selected
-        border: 3px solid #B1D837!important
+        border: 3px solid #058acd!important
       .preseizure
         background-color: #FFF
         border: 1px solid rgb(221,221,221)

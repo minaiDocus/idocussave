@@ -31,7 +31,7 @@ var initEventOnPreseizuresRefresh = function(){
   $("a.tip_deliver").unbind('click');
   $("a.tip_deliver").click(function(e){
     e.preventDefault();
-    var software_used = $('.content_details .software_used').text() || '';
+    var software_used = $('.software_used').text() || '';
     if(confirm("Vous êtes sur le point d'envoyer une écriture vers "+software_used+", Etes-vous sûr ?"))
       deliverPreseizures($(this));
   });
@@ -163,15 +163,12 @@ $('#preseizuresModals #preseizureEdition #editPreseizureSubmit').click(function(
     },
     success: function(data){
       logAfterAction();
+
       if (window.currentView == 'pieces')
-      {
-        getPreseizureAccount([id]);        
-      }
+        getPreseizureAccount([id]);
       else 
-      {
-        refreshPreseizures([id]);      
-      }
-      
+        refreshPreseizures([id]);
+
       if(data.error == '')
         $('#preseizuresModals #preseizureEdition').modal('hide');
       else
@@ -200,8 +197,11 @@ $('#preseizuresModals #preseizureAccountEdition #editPreseizureAccountSubmit').c
     success: function(data){
       logAfterAction();
 
-      getPreseizureAccount([id]);
-      
+      if (window.currentView == 'pieces')
+        getPreseizureAccount([id]);
+      else 
+        refreshPreseizures([id]);
+
       if(data.error == ''){
         $('#preseizuresModals #preseizureAccountEdition').modal('hide');        
       }
@@ -259,8 +259,11 @@ $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").cli
       if(data.error == '')
       {
         $('#preseizuresModals #editSelectedPreseizures').modal('hide');
-        getPreseizureAccount(window.preseizuresSelected);  
-        togglePreseizureAction();
+
+        if (window.currentView == 'pieces')
+          getPreseizureAccount(window.preseizuresSelected);
+        else 
+          refreshPreseizures(window.preseizuresSelected);
       }
       else
       {

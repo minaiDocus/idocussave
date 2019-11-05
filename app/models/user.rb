@@ -379,7 +379,7 @@ class User < ActiveRecord::Base
   end
 
   def uses_non_api_softwares?
-    uses_coala? || uses_quadratus? || uses_cegid? || uses_csv_descriptor?
+    uses_coala? || uses_quadratus? || uses_cegid? || uses_csv_descriptor? || uses_fec_agiris?
   end
 
   def uses_ibiza?

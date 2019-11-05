@@ -199,7 +199,7 @@ class Account::DocumentsController < Account::AccountController
       render json: { success: true }, status: 200
     else
       if params[:ids].present?
-        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
+        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(id: params[:ids])
       elsif params[:id]
         if params[:type] == 'report'
           reports = Pack::Report.where(id: params[:id])
@@ -207,7 +207,7 @@ class Account::DocumentsController < Account::AccountController
           reports = Pack.find(params[:id]).try(:reports)
         end
 
-        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
+        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
       end
 
       if preseizures.present?
@@ -278,16 +278,16 @@ class Account::DocumentsController < Account::AccountController
     params64 = params64.split('&')
 
     export_type = params64[0].presence
-    export_ids = params64[1].presence
+    export_ids = params64[1].presence.try(:split, ',')
     export_format = params64[2].presence
 
     if export_ids && export_type == 'preseizure'
-      preseizures = Pack::Report::Preseizure.where("id IN (#{export_ids})")
+      preseizures = Pack::Report::Preseizure.not_deleted.where(id: export_ids)
     elsif export_ids && export_type == 'report'
-      preseizures = Pack::Report.where(id: export_ids).first.preseizures
+      preseizures = Pack::Report.where(id: export_ids).first.preseizures.not_deleted
     elsif export_ids && export_type == 'pack'
       reports     = Pack.where(id: export_ids).first.reports
-      preseizures = Pack::Report::Preseizure.where(report_id: reports.collect(&:id))
+      preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
     preseizures = preseizures.by_position
@@ -346,14 +346,21 @@ class Account::DocumentsController < Account::AccountController
           render text: 'Aucun résultat'
         end
       when 'xls_coala'
-        if preseizures.any? && user.organization.is_coala_used && user.try(:uses_coala?)
+        if preseizures.any? && user.try(:uses_coala?)
           file_path = CoalaZipService.new(user, preseizures, {preseizures_only: true, to_xls: true}).execute
           send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
         else
           render text: 'Aucun résultat'
         end
+      when 'txt_fec_agiris'
+        if preseizures.any? && user.try(:uses_fec_agiris?)
+          file_path = FecAgirisTxtService.new(preseizures).execute
+          send_file(file_path, type: 'application/txt', filename: File.basename(file_path), x_sendfile: true)
+        else
+          render action: 'select_to_download'
+        end
       when 'csv_cegid'
-        if preseizures.any? && user.uses_cegid?
+        if preseizures.any? && user.try(:uses_cegid?)
           file_path = CegidZipService.new(user, preseizures).execute
           send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
         else

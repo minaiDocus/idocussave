@@ -48,11 +48,12 @@ function getPieces(url,title,by_preseizure=null) {
       data = data.trim();
 
       logAfterAction();
-      window.preseizuresSelected = [];
 
       // window.piecesPage == 2 means that we fetched the first result from page 1
       if(window.piecesPage == 2)
       {
+        window.preseizuresSelected = [];
+
         if(data != 'none')
           $("#panel1 > .content").html(data);
         else
@@ -79,16 +80,14 @@ function getPieces(url,title,by_preseizure=null) {
 
       $("#show_pages #lists_pieces_content > ul > li:not(:visible)").fadeIn(1500);
 
-      {
-        initEventOnPiecesRefresh();
-        synchroniseSelected();
-        initEventOnPreseizuresRefresh();
-        getPreseizureAccount();
-        initEventOnHoverOnInformation();
+      initEventOnPiecesRefresh();
+      synchroniseSelected();
+      initEventOnPreseizuresRefresh();
+      getPreseizureAccount();
+      initEventOnHoverOnInformation();
 
-        $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
-        $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
-      }
+      $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
+      $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
 
       $("#pageslist .thumb img").load(function(){
         $(this).parent('.thumb').css('background', 'none');
@@ -192,9 +191,19 @@ function selectPage(link) {
 
   if ($("li.selected").length > 0)
   {
-    $(".compta_analysis_edition, .composer, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
-   
+    if ($("li.selected").length >= 2)
+    {
+      $(".composer").show();
+      $(".composer").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+    }
+    else
+    {
+      $(".composer").hide();
+      $(".composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    }
+
+    $(".compta_analysis_edition, .delete_piece_composition").show();
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
   }
   else 
   {
@@ -334,46 +343,24 @@ function deletePiece(piece){
 }
 
 function deletePieceComposition(){
-  if ($('li[id^="document_"].selected').length > 0)
+  var elements = $('li[id^="document_"].selected')
+  if (elements.length > 0)
   {  
     $('#confirmDeletePiece').off();
+
+    $('#confirmDeletePiece .message_confirm').html('Voulez-vous vraiment supprimer la pièce séléctionnée ? ');
+    if(elements.length > 1)
+      $('#confirmDeletePiece .message_confirm').html('Voulez-vous vraiment supprimer les ' + elements.length + ' pièces séléctionnées ? ');
+
     $('#confirmDeletePiece').modal('show').on('click','#deletebutton',function(e){
       e.preventDefault();
       var piece_id   = [];
-      $('li[id^="document_"].selected').each(function(i){
+      elements.each(function(i){
         tmp_this     = $(this).attr('id'); 
         piece_id_tmp = tmp_this.split('_');
         piece_id.push(piece_id_tmp[1]);       
       });
       actionDeletePiece(piece_id); 
     });
-  }
- }
-
-function togglePreseizureAction()
-{  
-  if ($(".preseizure_selected.active").length > 1){
-    
-    if ($(".tip_edit_multiple").html() == '')
-    {
-      $(".tip_edit_multiple").append('<i class="icon-edit"></i>');
-    }
-    $(".tip_edit_multiple").removeClass("hide");
-    $(".tip_edit_multiple").css({'border' : '1px solid #058acd', 'padding' : '4px 4px 6px 4px', 'border-radius' : '3px'});
-    $(".do-exportSelectedPreseizures").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-    $(".do-deliverAllPreseizure").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-  }
-  else if ($(".preseizure_selected.active").length >= 1){      
-    $(".tip_edit_multiple").addClass("hide");
-    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-exportSelectedPreseizures").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-    $(".do-deliverAllPreseizure").css({'border' : '1px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-  }
-  else 
-  { 
-    $(".tip_edit_multiple").addClass("hide");   
-    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-deliverAllPreseizure").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
   }
 }
