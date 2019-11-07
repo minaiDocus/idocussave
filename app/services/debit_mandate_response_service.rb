@@ -16,8 +16,8 @@ class DebitMandateResponseService
     begin
       fetch_order_infos
 
-      if @order_reference && @order_reference.try(:[], 'state') == 'closed.completed'
-        @errors = 'Vous avez déjà configurer votre prélèvement'
+      if @debit_mandate.configured? || (@order_reference && @order_reference.try(:[], 'state') == 'closed.completed')
+        @errors = "Vous avez déjà configurer votre prélèvement. Pour toutes modifications ou renouvellement de compte, veuillez contacter notre équipe d'assistance au support@idocus.com"
       else
         @order_reference = client.create_sepa_order @debit_mandate unless @order_reference && @order_reference.try(:[], 'state') == 'open.running'
         @checkout_iframe_64 = client.get_checkout_frame
