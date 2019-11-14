@@ -63,6 +63,157 @@ var initEventOnPreseizuresRefresh = function(){
     $("#"+document_li_id+" #div_"+id[1]).show();
     $(this).addClass("tab_active");
   });
+
+  $("div.entries table td.account").unbind('click');
+  $('div.entries table td.account').on("click",function(e){
+    var edit_content     = $(this).find('.edit_account');
+    var content_account  = $(this).find('.content_account');
+    var input            = edit_content.children();
+    if (input.length > 0)
+    {
+      edit_content.show();
+      content_account.hide();
+      input.unbind('focusout');
+      input.blur().focus().focusout(function(){
+        var new_value = $(this).val();
+        if (new_value == "")
+        {
+          edit_content.hide();
+          content_account.show();
+        }
+        else
+        {
+          var account_id = $(this).closest("tr").find('.account_id_hidden').val();
+          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          updateAccountEntry(account_id,new_value,"account",id);
+        }
+      });
+    }
+  });
+
+  $("div.entries table td.entry").unbind('click');
+  $('div.entries table td.entry').click(function(e){
+    var edit_content    = $(this).find('.edit_amount');
+    var content_amount  = $(this).find('.content_amount');
+    var input           = edit_content.find('input').first();
+    if (input.length > 0)
+    {
+      edit_content.show();
+      content_amount.hide();
+      input.unbind('focusout');
+      input.blur().focus().focusout(function(){
+        var new_value   = $(this).val();
+        if (new_value == "")
+        {
+          edit_content.hide();
+          content_amount.show();
+        }
+        else
+        {
+          var account_id = $(this).closest("tr").find('.entry_id_hidden').val();
+          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          updateAccountEntry(account_id,new_value,"entry",id);
+        }
+      });
+    }
+  });
+
+  $('div.entries table td.entry').mouseover(function(){
+    if ($('.is_collaborator').val() == '1')
+    {
+      $(this).find('.content_amount span').show();
+    }
+  }).mouseout(function(){
+    $(this).find('.content_amount span').hide();
+  });
+
+  $('.debit_or_credit').unbind('click');
+  $('.debit_or_credit').click(function(e){
+    e.stopPropagation();
+    var entry_type = $(this).closest('td').find('.entry_type').val();
+    var account_id = $(this).closest("tr").find('.entry_id_hidden').val();
+    var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+    if (entry_type == 1)
+    {
+      updateAccountEntry(account_id,2,"credit_to_debit",id);
+    }
+    else
+    {
+      updateAccountEntry(account_id,1,"credit_to_debit",id);
+    }
+  });
+
+  $("table.information tbody tr td.third_party").unbind('click');
+  $("table.information tbody tr td.third_party").click(function(e){
+    var edit_third_party = $(this).find('.edit_content_third_party');
+    var content_account  = $(this).find('.content_third_party');
+    var input            = edit_third_party.children();
+    if (input.length > 0)
+    {
+      edit_third_party.show();
+      content_account.hide();
+      input.unbind('focusout');
+      input.blur().focus().focusout(function(){
+        var new_third_party = $(this).val();
+        if (new_third_party == "")
+        {
+          edit_third_party.hide();
+          content_account.show();
+        }
+        else
+        {
+          edit_third_party.find('input').prop("placeholder",new_third_party);
+          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          updatePreseizureInformation("","",new_third_party,id);
+        }
+      });
+    }
+  });
+
+  $("table.information tbody tr td.date").unbind('click');
+  $("table.information tbody tr td.date").click(function(e){
+    var id_name          = $(this).attr('id');
+    var edit_third_party = $(this).find('.edit_content_'+id_name);
+    var content_account  = $(this).find('.content_'+id_name);
+    var input            = edit_third_party.children();
+    if (input.length > 0)
+    {
+      var new_value      = "";
+      edit_third_party.show();
+      content_account.hide();
+      input.addClass('date datepicker');
+      input.unbind('focusout');
+      input.off("changeDate");
+      input.datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation: 'bottom auto' }).on('changeDate', function(e){
+        e.stopPropagation();
+        new_value = $(this).val();
+        if (new_value != "")
+        {
+          edit_third_party.find('input').prop("placeholder",new_value);
+          content_account.text(new_value);
+          edit_third_party.hide();
+          content_account.show();
+          $('.datepicker').hide();
+          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          if (id_name == "date")
+          {
+            updatePreseizureInformation(new_value,"","",id);
+          }
+          else
+          {
+            updatePreseizureInformation("",new_value,"",id);
+          }
+        }
+      }).blur().focus();
+        input.focusout(function(){
+          if ($(this).val() == "")
+          {
+            edit_third_party.hide();
+            content_account.show();
+          }
+        });
+    }
+  });
 }
 
 var initEventOnPreseizuresAccountRefresh = function(){

@@ -164,13 +164,19 @@ class Account::DocumentsController < Account::AccountController
       render json: { error: '' }, status: 200
     else
       preseizure = Pack::Report::Preseizure.find params[:id]
-
       error = ''
+      if params[:partial_update].present?
+        preseizure.date           = params[:date]          if params[:date].present?
+        preseizure.deadline_date  = params[:deadline_date] if params[:deadline_date].present?
+        preseizure.third_party    = params[:third_party]   if params[:third_party].present?
 
-      preseizure.assign_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
-      preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
+        error = preseizure.errors.full_messages unless preseizure.save
+      else
+        preseizure.assign_attributes params[:pack_report_preseizure].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
+        preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
 
-      error = preseizure.errors.full_messages unless preseizure.save
+        error = preseizure.errors.full_messages unless preseizure.save
+      end
 
       render json: { error: error }, status: 200
     end
@@ -231,17 +237,17 @@ class Account::DocumentsController < Account::AccountController
       render json: { error: '' }, status: 200
     else
       error = ''
-      params[:account_id].each do |id|
-        account = Pack::Report::Preseizure::Account.find id
-        error = account.errors.full_messages unless account.number = params[:entry_account_number][id]
-        error = account.errors.full_messages unless account.lettering = params[:entry_account_lettrage][id]
+      if params[:type] == "account"
+        account = Pack::Report::Preseizure::Account.find params[:id_account]
+        error = account.errors.full_messages unless account.number = params[:new_value]
         account.save
-      end
-
-      params[:entry_id].each do |id|
-        entry = Pack::Report::Preseizure::Entry.find id
-        error = entry.errors.full_messages unless entry.type = params[:entry_type][id]
-        error = entry.errors.full_messages unless entry.amount = params[:entry_amount_number][id]
+      elsif params[:type] == "entry"
+        entry = Pack::Report::Preseizure::Entry.find params[:id_account]
+        error = entry.errors.full_messages unless entry.amount = params[:new_value]
+        entry.save
+      else
+        entry = Pack::Report::Preseizure::Entry.find params[:id_account]
+        error = entry.errors.full_messages unless entry.type = params[:new_value]
         entry.save
       end      
 

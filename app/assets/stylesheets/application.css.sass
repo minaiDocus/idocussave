@@ -283,6 +283,15 @@
 .margin3
   margin: 0px 1px 1px 5px
 
+.margin0
+  margin: 0 !important
+
+.text-center
+  text-align: center !important
+
+.padding0
+  padding: 0 !important
+
 .scroll_on_top
   position: fixed
   bottom: 67px
@@ -708,9 +717,38 @@
               color: cadetblue
             .choose_action_preseizure
               cursor: pointer
+          table
+            .date
+              width: 20%
+              input
+                width: 90% !important
+            .third_party
+              width: 20%
+              input
+                width: 90% !important
+            .erreur
+              width: 20%
         .content_preseizure .entries, .content_preseizure .analytics
           text-align: left
-          
+          table .account
+            width: 50%
+          table .entry
+            width: 25%
+          .edit_account
+            input
+              width: 90% !important
+          .edit_amount
+            input
+              width: 90% !important
+              display: inline
+            div.input-group-append
+              display: inline
+          .content_amount
+            span
+              cursor: pointer
+            .content_amount_number
+              display: inline
+
         .no_preseizure 
           border: 1px solid #CCC
           padding: 54px
@@ -961,11 +999,41 @@
             font-weight: bold
         .informations
           margin-bottom: 10px
-          .date
-            width: 20%
+
         .content_details
           border-top: 1px solid rgb(221,221,221)
           padding: 10px
+        table
+          .date
+            width: 20%
+            input
+              width: 90% !important
+          .third_party
+            width: 20%
+            input
+              width: 90% !important
+          .erreur
+            width: 20%
+      .content_preseizure .entries, .content_preseizure .analytics
+        text-align: left
+        table .account
+          width: 50%
+        table .entry
+          width: 25%
+        .edit_account
+          input
+            width: 90% !important
+        .edit_amount
+          input
+            width: 90% !important
+            display: inline
+          div.input-group-append
+            display: inline
+        .content_amount
+          span
+            cursor: pointer
+          .content_amount_number
+            display: inline
   #presPanel2
     #preseizuresFilterForm
       .control-group

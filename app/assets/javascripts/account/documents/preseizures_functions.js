@@ -93,7 +93,7 @@ function refreshPreseizures(ids){
   var url = "/account/documents/"+document_id+"?source="+source+"&fetch=preseizures&page=1";
 
   ids.forEach(function(id) {
-    var elem = $(".preseizure#"+id);
+    var elem = $(".preseizure#div_"+id);
     url += "&preseizure_ids="+id;
 
     $.ajax({
@@ -112,7 +112,7 @@ function refreshPreseizures(ids){
         var parser = new DOMParser();
         var htmlDoc = parser.parseFromString(data, 'text/html');
 
-        elem.html($(htmlDoc).find('#show_preseizures #lists_preseizures_content .preseizure#'+id).html());
+        elem.html($(htmlDoc).find('#show_preseizures #lists_preseizures_content .preseizure#div_'+id).html());
 
         initEventOnPreseizuresRefresh();
         initEventOnPreseizuresAccountRefresh();
@@ -289,7 +289,7 @@ function deliverPreseizures(link='all'){
     ids  = window.preseizuresSelected;
     data = { ids: ids };
     ids.forEach(function(elem){
-      $('#show_preseizures #lists_preseizures .preseizure#'+elem+' a.tip_deliver').remove();
+      $('#show_preseizures #lists_preseizures .preseizure#div_'+elem+' a.tip_deliver').remove();
     });
   }
   else
@@ -317,24 +317,25 @@ function deliverPreseizures(link='all'){
   });
 }
 
-function handlePreseizureSelection(id, type='toggle'){
+function handlePreseizureSelection(id_tmp, type='toggle'){
+  var id = id_tmp.split('_')[1];
   var found = window.preseizuresSelected.find(function(elem){ return elem == id });
 
   if( found && (type == 'unselect' || type == 'toggle') )
   {//already selected
     window.preseizuresSelected = window.preseizuresSelected.filter(function(elem){ return elem != id});
-    $('#lists_preseizures .preseizure#'+id).removeClass('selected');
+    $('#lists_preseizures .preseizure#div_'+id).removeClass('selected');
 
-    $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').addClass('icon-ok');
-    $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').removeClass('icon-ban-circle');
+    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').addClass('icon-ok');
+    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').removeClass('icon-ban-circle');
   }
   else if( !found && (type == 'select' || type == 'toggle') )
   {//not selected
     window.preseizuresSelected.push(id);
-    $('#lists_preseizures .preseizure#'+id).addClass('selected');
+    $('#lists_preseizures .preseizure#div_'+id).addClass('selected');
 
-    $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').addClass('icon-ban-circle');
-    $('#lists_preseizures .preseizure#'+id+' .actionbox a.tip_selection i').removeClass('icon-ok');
+    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').addClass('icon-ban-circle');
+    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').removeClass('icon-ok');
   }
 
   if(window.preseizuresSelected.length > 0){
@@ -377,4 +378,50 @@ function togglePreseizureAction(){
     $(".do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
     $(".do-deliverAllPreseizure").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
   }
+}
+
+function updateAccountEntry(id_account,new_value,type,id)
+{
+  $.ajax({
+    url: '/account/documents/preseizure/account/'+id+'/update',
+    data: {id_account:id_account,new_value:new_value,type:type},
+    dataType: "json",
+    type: "POST",
+    beforeSend: function() {
+      logBeforeAction("Traitement en cours");
+    },
+    success: function(data){
+      logAfterAction();
+      initEventOnHoverOnInformation();
+      if (window.currentView == 'pieces')
+        getPreseizureAccount([id]);
+      else
+        refreshPreseizures([id]);
+    },
+    error: function(data){
+      logAfterAction();
+      $('.content_preseizure').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+    }
+  });
+}
+
+function updatePreseizureInformation(date="",deadline_date="",third_party="",id="")
+{
+  $.ajax({
+    url: '/account/documents/preseizure/'+id+'/update',
+    data: {date:date,deadline_date:deadline_date,third_party:third_party,partial_update:1},
+    dataType: "json",
+    type: "POST",
+    beforeSend: function() {
+      logBeforeAction("Traitement en cours");
+    },
+    success: function(data){
+      logAfterAction();
+      initEventOnHoverOnInformation();
+      if (window.currentView == 'pieces')
+        getPreseizureAccount([id]);
+      else
+        refreshPreseizures([id]);
+    }
+  });
 }

@@ -6,70 +6,111 @@
     - else 
       = @preseizure.piece_name  
   %span.choose_action_preseizure
-    - if (@user.collaborator? && @software != '' && @preseizure.is_not_delivered? && !@preseizure.is_locked)    
-      %a.tip_deliver.pull-right.do-tooltip.margin3{href: '#', title: "Livraison écriture comptable (#{@software_human_name})", data: {id: @preseizure.id}}
-        %i.icon-refresh
     - if @user.collaborator?
-      %a.pull-right.tip_edit.margin3{href: '#', title: "Edition", data: {id: @preseizure.id}}
+      %a.pull-right.tip_edit.margin3.do-tooltip{href: '#', title: "Edition", data: {id: @preseizure.id}}
         %i.icon-edit
-%table.table.table-striped.table-condensed.margin0bottom
+    - if (@user.collaborator? && @software != '' && @preseizure.is_not_delivered? && !@preseizure.is_locked)
+      %a.tip_deliver.pull-right.margin3.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: @preseizure.id}}
+        %i.icon-refresh
+%table.table.table-striped.table-condensed.margin0bottom.information
   %thead
     %tr
-      %th.date Date de création
-      %th.date Date de modification
-      %th.date= "Date de dernière envoi #{@software_human_name}"
-      %th= "Message d'erreur d'envoi #{@software_human_name}"
+      %th.date.text-center Date
+      %th.date.text-center Date d'échéance
+      %th.date.text-center= "Date de dernière envoi #{@software_human_name}"
+      %th.third_party.text-center Nom de tiers
+      %th.erreur.text-center
+        = "Message d'erreur d'envoi #{@software_human_name}"
   %tbody    
     %tr
-      %td.date= @preseizure.created_at.try(:to_formatted_s, :db) 
-      %td.date= @preseizure.updated_at.try(:to_formatted_s, :db)
-      %td.date= @preseizure.delivery_tried_at.try(:to_formatted_s, :db)
-      %td= @software != '' ? @preseizure.get_delivery_message_of(@software) : ''
+      %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+        .content_date
+          = @preseizure.date.try(:to_formatted_s, :db)
+        .edit_content_date.hide
+          %input.edit_content_date_number.margin0bottom{type: :text, placeholder: @preseizure.date.try(:to_formatted_s, :db), readonly: :readonly} 
+      %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+        .content_deadline_date
+          = @preseizure.deadline_date.try(:to_formatted_s, :db)
+        .edit_content_deadline_date.hide
+          %input.edit_content_deadline_date_number.margin0{type: :text, placeholder: @preseizure.deadline_date.try(:to_formatted_s, :db), readonly: :readonly} 
+      %td.date.text-center= @preseizure.delivery_tried_at.try(:to_formatted_s, :db)
+      %td.third_party.text-center{title: "#{@preseizure.third_party}"}
+        .content_third_party
+          = @preseizure.third_party.try(:[],0,35)
+        .edit_content_third_party.hide
+          %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party}
+      - software_erreur = @software != '' ? @preseizure.get_delivery_message_of(@software) : ''
+      %td.text-center{title: software_erreur}
+        = software_erreur.try(:[],0,35)
 
 %p{style: 'text-align: left;margin: 6px 0px 4px;'}
   Unité monétaire:
-  %strong= @unit 
-  %a.tip_edit_entry_account.margin3{href: '#', title: "Edition compte-montant", data: {id: @preseizure.id}}
-    %i.icon-edit{style: "margin-top: -2px;"}  
+  %strong= @unit
+  %input.preseizure_id{type: :hidden, value: @preseizure.id}
 .row-fluid
   .entries{ class: (@data_analytics.any? ? 'span6' : 'span12') }
     - if @data_analytics.any?
-      %strong Ecritures     
+      %strong Ecritures
     %table.table.table-striped.table-condensed.table-bordered.margin0bottom
       %thead
         %tr
           %th.account Numéro de compte                 
-          %th.entry Débit
-          %th.entry Crédit          
+          %th.entry.text-center Débit
+          %th.entry.text-center Crédit
       %tbody.entries
         - @preseizure_entries.each do |entry|
           %tr
-            %td.account= entry.account.number
+            %td.account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+              .content_account
+                = entry.account.number
+              - if @user.collaborator?
+                .edit_account.hide
+                  %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number}
             - if @user.collaborator?
               %input.account_id_hidden{type: :hidden, value: entry.account.id}
-            %td.entry
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}"}
               - if entry.type == 1
-                = entry.amount
-            %td.entry
+                .content_amount
+                  .content_amount_number
+                    = entry.amount
+                  - if @user.collaborator?
+                    %span.debit_or_credit.hide.pull-right
+                      %i.icon-arrow-right
+                - if @user.collaborator?
+                  .edit_amount.hide
+                    %input.margin0{type: :text, placeholder: entry.amount}
+                    %input.entry_type{type: :hidden, value: entry.type}
+
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}"}
               - if entry.type == 2
-                = entry.amount
+                .content_amount
+                  - if @user.collaborator?
+                    %span.debit_or_credit.hide.pull-left
+                      %i.icon-arrow-left
+                  &nbsp;&nbsp;
+                  .content_amount_number
+                    = entry.amount
+                - if @user.collaborator?
+                  .edit_amount.hide
+                    %input.margin0{type: :text, placeholder: entry.amount}
+                    %input.entry_type{type: :hidden, value: entry.type}
             - if @user.collaborator?
-              %input.account_id_hidden{type: :hidden, value: entry.id}              
+              %input.entry_id_hidden{type: :hidden, value: entry.id}
   - if @data_analytics.any?
     .analytics.span6
       %strong Analyse comptable
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom
         %thead
           %tr
-            %th Analyse
-            %th Axe
-            %th Ventilation
-            %th Montant ventilé
+            %th.text-center Analyse
+            %th.text-center Axe
+            %th.text-center Ventilation
+            %th.text-center Montant ventilé
         %tbody.entries
           - @data_analytics.each do |analysis|
             %tr
-              %td= analysis[:name]
-              %td
+              %td.text-center= analysis[:name]
+              %td.text-center
                 %ul
                   -if analysis[:axis1].present?
                     %li= analysis[:axis1]
@@ -77,5 +118,5 @@
                     %li= analysis[:axis2]
                   -if analysis[:axis3].present?
                     %li= analysis[:axis3]
-              %td= analysis[:ventilation] + " %"
-              %td= @pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)
+              %td.text-center= analysis[:ventilation] + " %"
+              %td.text-center= @pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)

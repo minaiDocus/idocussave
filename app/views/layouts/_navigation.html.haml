@@ -30,7 +30,7 @@
   - unless organizations_suspended? && @user.active?
     %li.dropdown{ class: ('active' if ['documents'].include? controller_name) }
       %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-        Mes factures
+        Mes documents
         %b.caret
       %ul.dropdown-menu
         %li{ class: ('active' if controller_name == 'documents') }

@@ -39,7 +39,7 @@
           %span{ class: 'tab-nav selected', id: 'view_packs' }
             Documents
           %span{ class: 'tab-nav', id: 'view_reports' }
-            Opérations
+            Opé. bancaires
         .packsList
           .actions.clearfix
             %h3.pull-left
@@ -76,6 +76,7 @@
       #pageslist.well
         %input.href_download{type: :hidden, value: ""}
         %input.href_download_zip{type: :hidden, value: ""}
+        %input.is_collaborator{type: :hidden, value: "#{@user.collaborator? ? 1 : 0}"}
         = render partial: '/account/documents/pieces/index'
       #preseizuresList
         = render partial: '/account/documents/preseizures/index'
