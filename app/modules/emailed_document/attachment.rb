@@ -6,7 +6,14 @@ class EmailedDocument::Attachment
     @file_name = file_name
     @user      = user
     @file_path = get_file_path
-    DocumentTools.remove_pdf_security(processed_file_path, processed_file_path) if is_printable_only?
+    if protected?
+      _tmp_protected = "#{File.dirname(processed_file_path)}/not_protected.pdf"
+      DocumentTools.remove_pdf_security processed_file_path, _tmp_protected
+      if File.exist? _tmp_protected
+        FileUtils.rm processed_file_path
+        FileUtils.mv _tmp_protected, processed_file_path
+      end
+    end
   end
 
 
@@ -30,6 +37,14 @@ class EmailedDocument::Attachment
 
   def original_extension
     File.extname(name).downcase
+  end
+
+  def protected?
+    if @protected.nil?
+      @protected = DocumentTools.protected? processed_file_path
+    else
+      @protected
+    end
   end
 
   # syntactic sugar ||= does not store false/nil value
@@ -83,7 +98,7 @@ class EmailedDocument::Attachment
   end
 
   def fingerprint
-    @fingerprint ||= DocumentTools.checksum @file_path
+    @fingerprint ||= DocumentTools.checksum processed_file_path
   end
 
   def valid?(without_self=false)
