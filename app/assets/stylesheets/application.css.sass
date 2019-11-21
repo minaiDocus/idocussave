@@ -286,6 +286,9 @@
 .margin0
   margin: 0 !important
 
+.color_red
+  color: red  
+
 .text-center
   text-align: center !important
 
@@ -717,17 +720,29 @@
               color: cadetblue
             .choose_action_preseizure
               cursor: pointer
+          .information_section                        
+            display: inline-block     
+            float: left
+            margin: 0 !important
+          .other_information
+            display: inline-block
+            float: left
+            margin-left: 1% !important
+            padding-top: 1px
+            border-left: 2px solid #609fa1
+            margin-top: 1%
+            padding-left: 1%
+            text-align: left
+            min-height: 42px
           table
             .date
               width: 20%
               input
                 width: 90% !important
             .third_party
-              width: 20%
+              width: 80%
               input
-                width: 90% !important
-            .erreur
-              width: 20%
+                width: 90% !important            
         .content_preseizure .entries, .content_preseizure .analytics
           text-align: left
           table .account
@@ -737,6 +752,29 @@
           .edit_account
             input
               width: 90% !important
+            .suggestion_account_list              
+              border: 1px solid #CCC
+              padding: 5px
+              position: absolute
+              background-color: white
+              width: 18%
+              margin-top: 1px
+              border-radius: 3px
+              ul
+                margin: 0
+                li
+                  position: relative
+                  float: left
+                  width: 98%
+                  height: auto
+                  margin-bottom: 3px
+                  cursor: pointer
+                  text-align: left
+                  padding: 0 3px
+                  box-shadow: none
+                li:hover 
+                  background-color: #879ca6
+                  color: #FFF
           .edit_amount
             input
               width: 90% !important
@@ -747,8 +785,7 @@
             span
               cursor: pointer
             .content_amount_number
-              display: inline
-
+              display: inline            
         .no_preseizure 
           border: 1px solid #CCC
           padding: 54px
@@ -978,6 +1015,20 @@
         border: 1px solid rgb(221,221,221)
         margin: 10px 25px
         padding: 10px
+        .information_section                        
+          display: inline-block     
+          float: left
+          margin: 0 !important
+        .other_information
+          display: inline-block
+          float: left
+          margin-left: 1% !important
+          padding-top: 1px
+          border-left: 2px solid #609fa1
+          margin-top: 1%
+          padding-left: 1%
+          text-align: left
+          min-height: 42px
         .piece_number
           cursor: pointer
         a.label:hover
@@ -1023,6 +1074,20 @@
         .edit_account
           input
             width: 90% !important
+          .suggestion_account_list            
+            border: 1px solid #609fa1
+            padding: 5px
+            position: absolute
+            background-color: white
+            width: 18%
+            margin-top: 1px
+            border-radius: 3px
+            li
+              position: relative
+              float: left
+              width: 100%
+              height: auto
+              margin-bottom: 3px
         .edit_amount
           input
             width: 90% !important
@@ -1033,7 +1098,7 @@
           span
             cursor: pointer
           .content_amount_number
-            display: inline
+            display: inline          
   #presPanel2
     #preseizuresFilterForm
       .control-group

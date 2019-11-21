@@ -99,3 +99,11 @@
       %a{ :class=>"modal-close btn" } Fermer
       %a#validatePreseizuresExport.btn.btn-primary.hide{ href: '#', target: '_blank', data: { base_link: '/account/documents/export_preseizures' } } Valider
       / %input#validatePreseizuresExport.btn.btn-primary.hide{ :type => "button", :value => "Valider", href: '#' }
+.modal.fade{id: "alert_irregular_debit_credit"}
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } &times
+    %h3 Information
+  .modal-body.text-center
+    Vous êtes sur le point d'éditer une écriture qui est déjà livrée
+  .modal-footer
+    %input.btn.btn-primary{ :type => "button", "data-dismiss"=>"modal", value: "Fermer"}

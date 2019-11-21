@@ -425,3 +425,12 @@ function updatePreseizureInformation(date="",deadline_date="",third_party="",id=
     }
   });
 }
+
+function alertModificationPreseizureDelivered(id)
+{  
+  if ($("#alert_"+id).length == 0 && $("#delivered_"+id).val() == 1)
+  {
+    $("#alert_irregular_debit_credit").modal("show");    
+    $("#wrap").append('<input type="hidden" id="alert_'+id+'" value="1">');
+  }  
+}

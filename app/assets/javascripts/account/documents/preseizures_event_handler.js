@@ -64,57 +64,135 @@ var initEventOnPreseizuresRefresh = function(){
     $(this).addClass("tab_active");
   });
 
-  $("div.entries table td.account").unbind('click');
-  $('div.entries table td.account').on("click",function(e){
-    var edit_content     = $(this).find('.edit_account');
-    var content_account  = $(this).find('.content_account');
+  $("div.entries table td.account .content_account").unbind('click');
+  $('div.entries table td.account .content_account').on("click",function(e){
+    e.stopPropagation();
+    var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+    alertModificationPreseizureDelivered(id);
+    var edit_content     = $(this).parent().find('.edit_account');    
+    var content_account  = $(this);
     var input            = edit_content.children();
     if (input.length > 0)
     {
       edit_content.show();
       content_account.hide();
       input.unbind('focusout');
-      input.blur().focus().focusout(function(){
+      input.select();
+      input.blur().focus().focusout(function(){        
         var new_value = $(this).val();
-        if (new_value == "")
+        if (new_value == $(this).attr('placeholder') || new_value == "")
         {
           edit_content.hide();
           content_account.show();
+          if (new_value == "")
+          {
+            $(this).val($(this).attr('placeholder'));
+          }
         }
         else
         {
           var account_id = $(this).closest("tr").find('.account_id_hidden').val();
-          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          
           updateAccountEntry(account_id,new_value,"account",id);
         }
-      });
+      }).on('keypress',function(e) {          
+            if(e.which == 13) {               
+              var new_value = $(this).val();
+              if (new_value == $(this).attr('placeholder') || new_value == "")
+              {
+                edit_content.hide();
+                content_account.show();
+                if (new_value == "")
+                {
+                  $(this).val($(this).attr('placeholder'));
+                }
+              }
+              else
+              {
+                var account_id = $(this).closest("tr").find('.account_id_hidden').val();                
+                updateAccountEntry(account_id,new_value,"account",id);
+              }          
+          };
+        }).on('keyup', function(e){
+          // if ($(this).val().length > 3)
+          // {
+          //   $.ajax({
+          //     url: '/account/documents/',
+          //     data: data,
+          //     dataType: "json",
+          //     type: "POST",              
+          //     success: function(data){
+          //       var html_autocomplete = input.parent().find('.suggestion_account_list');
+          //       html_autocomplete.removeClass('hide');
+          //       if(data.options.length > 0)
+          //       {
+          //         html_autocomplete.html(data);
+          //       }
+          //       else
+          //       {
+          //         html_autocomplete.html("<ul><li>Pas de résultat</li></ul>");
+          //       }
+          //     }              
+          //   });            
+          // }
+          // else 
+          // {
+          //   input.parent().find('.suggestion_account_list').addClass('hide');
+          // }
+        });
     }
   });
 
-  $("div.entries table td.entry").unbind('click');
-  $('div.entries table td.entry').click(function(e){
-    var edit_content    = $(this).find('.edit_amount');
-    var content_amount  = $(this).find('.content_amount');
+  $("div.entries table td.entry .content_amount").unbind('click');
+  $('div.entries table td.entry .content_amount').click(function(e){
+    e.stopPropagation();
+    var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+    alertModificationPreseizureDelivered(id);
+    var edit_content    = $(this).parent().find('.edit_amount');
+    var content_amount  = $(this);
     var input           = edit_content.find('input').first();
     if (input.length > 0)
     {
       edit_content.show();
       content_amount.hide();
       input.unbind('focusout');
+      input.select();
       input.blur().focus().focusout(function(){
         var new_value   = $(this).val();
-        if (new_value == "")
+        if (new_value == $(this).attr('placeholder') || new_value == "")
         {
           edit_content.hide();
           content_amount.show();
+          if (new_value == "")
+          {
+            $(this).val($(this).attr('placeholder'));
+          }
         }
         else
         {
-          var account_id = $(this).closest("tr").find('.entry_id_hidden').val();
-          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          var account_id = $(this).closest("tr").find('.entry_id_hidden').val();          
           updateAccountEntry(account_id,new_value,"entry",id);
         }
-      });
+      }).on('keypress',function(e) {
+            if(e.which == 13) {               
+              var new_value   = $(this).val();
+              if (new_value == $(this).attr('placeholder') || new_value == "")
+              {
+                edit_content.hide();
+                content_amount.show();
+                if (new_value == "")
+                {
+                  $(this).val($(this).attr('placeholder'));
+                }
+              }
+              else
+              {
+                var account_id = $(this).closest("tr").find('.entry_id_hidden').val();
+                var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+                updateAccountEntry(account_id,new_value,"entry",id);
+              }        
+          };
+        });
     }
   });
 
@@ -130,9 +208,10 @@ var initEventOnPreseizuresRefresh = function(){
   $('.debit_or_credit').unbind('click');
   $('.debit_or_credit').click(function(e){
     e.stopPropagation();
-    var entry_type = $(this).closest('td').find('.entry_type').val();
-    var account_id = $(this).closest("tr").find('.entry_id_hidden').val();
     var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+    alertModificationPreseizureDelivered(id);
+    var entry_type = $(this).closest('td').find('.entry_type').val();
+    var account_id = $(this).closest("tr").find('.entry_id_hidden').val();    
     if (entry_type == 1)
     {
       updateAccountEntry(account_id,2,"credit_to_debit",id);
@@ -143,22 +222,28 @@ var initEventOnPreseizuresRefresh = function(){
     }
   });
 
-  $("table.information tbody tr td.third_party").unbind('click');
-  $("table.information tbody tr td.third_party").click(function(e){
-    var edit_third_party = $(this).find('.edit_content_third_party');
-    var content_account  = $(this).find('.content_third_party');
+  $("table.information tbody tr td.third_party .content_third_party").unbind('click');
+  $("table.information tbody tr td.third_party .content_third_party").click(function(e){
+    e.stopPropagation();
+    var edit_third_party = $(this).parent().find('.edit_content_third_party');
+    var content_account  = $(this);
     var input            = edit_third_party.children();
     if (input.length > 0)
     {
       edit_third_party.show();
       content_account.hide();
       input.unbind('focusout');
+      input.select();
       input.blur().focus().focusout(function(){
         var new_third_party = $(this).val();
-        if (new_third_party == "")
+        if (new_third_party == $(this).attr('placeholder') || new_third_party == "")
         {
           edit_third_party.hide();
           content_account.show();
+          if (new_third_party == "")
+          {
+            $(this).val($(this).attr('placeholder'));
+          }
         }
         else
         {
@@ -166,26 +251,54 @@ var initEventOnPreseizuresRefresh = function(){
           var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
           updatePreseizureInformation("","",new_third_party,id);
         }
-      });
+      }).on('keypress',function(e) {
+            if(e.which == 13) {               
+              var new_third_party = $(this).val();
+              if (new_third_party == $(this).attr('placeholder') || new_third_party == "" )
+              {
+                edit_third_party.hide();
+                content_account.show();
+                if (new_third_party == "")
+                {
+                  $(this).val($(this).attr('placeholder'));
+                }
+              }
+              else
+              {
+                edit_third_party.find('input').prop("placeholder",new_third_party);
+                var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+                updatePreseizureInformation("","",new_third_party,id);
+              }        
+          };
+        });
     }
   });
 
+  $(".datepicker-years .year,.datepicker-months .month, .focused, .datepicker-switch, .next, .prev, .datepicker, .table-condensed, .dow").unbind('click'); 
   $("table.information tbody tr td.date").unbind('click');
   $("table.information tbody tr td.date").click(function(e){
+    e.stopPropagation();    
+    var td = $(this);
     var id_name          = $(this).attr('id');
     var edit_third_party = $(this).find('.edit_content_'+id_name);
     var content_account  = $(this).find('.content_'+id_name);
     var input            = edit_third_party.children();
+
     if (input.length > 0)
     {
+      $('.editable_date').hide()
+      $('.label_date').show()
+
       var new_value      = "";
+
       edit_third_party.show();
       content_account.hide();
-      input.addClass('date datepicker');
       input.unbind('focusout');
+      
       input.off("changeDate");
-      input.datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation: 'bottom auto' }).on('changeDate', function(e){
-        e.stopPropagation();
+      var id = input.closest(".content_preseizure").attr('id').split('_')[1];           
+      input.datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation : 'bottom auto'}).on('changeDate', function(e){
+        e.stopPropagation();        
         new_value = $(this).val();
         if (new_value != "")
         {
@@ -193,8 +306,7 @@ var initEventOnPreseizuresRefresh = function(){
           content_account.text(new_value);
           edit_third_party.hide();
           content_account.show();
-          $('.datepicker').hide();
-          var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+          $('.datepicker').hide();          
           if (id_name == "date")
           {
             updatePreseizureInformation(new_value,"","",id);
@@ -204,14 +316,14 @@ var initEventOnPreseizuresRefresh = function(){
             updatePreseizureInformation("",new_value,"",id);
           }
         }
-      }).blur().focus();
-        input.focusout(function(){
-          if ($(this).val() == "")
-          {
-            edit_third_party.hide();
-            content_account.show();
-          }
-        });
+      }).blur().focus().focusout(function(e){
+        var visible = $('div.datepicker.datepicker-dropdown').is(':visible')
+
+        if(!visible){
+          edit_third_party.hide();
+          content_account.show();
+        }
+      });  
     }
   });
 }

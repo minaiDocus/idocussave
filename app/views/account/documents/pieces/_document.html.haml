@@ -22,7 +22,7 @@
     
     .piece_image
       %input{ type: :hidden, name: :page_number, value: document.position }
-      %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }   
+      %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }         
           
       .pagethumb 
         .zoom.custom_popover{title: 'Visualiser la pièce', "data-content" => html_piece_view(document)}              

@@ -12,45 +12,65 @@
     - if (@user.collaborator? && @software != '' && @preseizure.is_not_delivered? && !@preseizure.is_locked)
       %a.tip_deliver.pull-right.margin3.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: @preseizure.id}}
         %i.icon-refresh
-%table.table.table-striped.table-condensed.margin0bottom.information
-  %thead
-    %tr
-      %th.date.text-center Date
-      %th.date.text-center Date d'échéance
-      %th.date.text-center= "Date de dernière envoi #{@software_human_name}"
-      %th.third_party.text-center Nom de tiers
-      %th.erreur.text-center
-        = "Message d'erreur d'envoi #{@software_human_name}"
-  %tbody    
-    %tr
-      %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-        .content_date
-          = @preseizure.date.try(:to_formatted_s, :db)
-        .edit_content_date.hide
-          %input.edit_content_date_number.margin0bottom{type: :text, placeholder: @preseizure.date.try(:to_formatted_s, :db), readonly: :readonly} 
-      %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-        .content_deadline_date
-          = @preseizure.deadline_date.try(:to_formatted_s, :db)
-        .edit_content_deadline_date.hide
-          %input.edit_content_deadline_date_number.margin0{type: :text, placeholder: @preseizure.deadline_date.try(:to_formatted_s, :db), readonly: :readonly} 
-      %td.date.text-center= @preseizure.delivery_tried_at.try(:to_formatted_s, :db)
-      %td.third_party.text-center{title: "#{@preseizure.third_party}"}
-        .content_third_party
-          = @preseizure.third_party.try(:[],0,35)
-        .edit_content_third_party.hide
-          %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party}
-      - software_erreur = @software != '' ? @preseizure.get_delivery_message_of(@software) : ''
-      %td.text-center{title: software_erreur}
-        = software_erreur.try(:[],0,35)
 
-%p{style: 'text-align: left;margin: 6px 0px 4px;'}
+.information_section{ class: "#{@preseizure.delivery_tried_at.present? ? 'span9' : 'span12'}" }
+  %table.table.table-striped.table-condensed.margin0bottom.information
+    %thead
+      %tr
+        %th.date.text-center Date
+        %th.date.text-center Date d'échéance
+        %th.third_party.text-center Nom de tiers        
+    %tbody    
+      %tr
+        %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+          .content_date.label_date
+            = @preseizure.date.try(:to_formatted_s, :db)
+          - if @user.collaborator?
+            .edit_content_date.editable_date.hide
+              %input.edit_content_date_number.margin0bottom{type: :text, value: @preseizure.date.try(:to_date), readonly: :readonly} 
+        %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+          .content_deadline_date.label_date
+            = @preseizure.deadline_date.try(:to_formatted_s, :db)
+          - if @user.collaborator?
+            .edit_content_deadline_date.editable_date.hide
+              %input.edit_content_deadline_date_number.margin0{type: :text, value: @preseizure.deadline_date.try(:to_date), readonly: :readonly}
+        %td.third_party.text-center{title: "#{@preseizure.third_party}"}
+          .content_third_party
+            = @preseizure.third_party.try(:[],0,35)             
+          - if @user.collaborator?
+            .edit_content_third_party.hide
+              %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
+- if @preseizure.delivery_tried_at.present?
+  .other_information.span3
+    %p      
+      Dernière envoi  
+      %strong
+        = @software_human_name      
+      le : 
+      = @preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
+    - software_erreur = @software != '' ? @preseizure.get_delivery_message_of(@software) : ''    
+    - if software_erreur.present?
+      %p
+        Message d'erreur (
+        %strong
+          = @software_human_name                 
+        ) :
+        %span{title: software_erreur}
+          = software_erreur.try(:[],0,25)
+%p{style: 'text-align: left;margin: 6px 0px 8px;padding-top: 1%;clear:both;'}
   Unité monétaire:
   %strong= @unit
   %input.preseizure_id{type: :hidden, value: @preseizure.id}
+  %input.delivered_preseizure{type: :hidden, value: "#{@preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{@preseizure.id}"}
 .row-fluid
   .entries{ class: (@data_analytics.any? ? 'span6' : 'span12') }
     - if @data_analytics.any?
-      %strong Ecritures
+      %strong 
+        Ecritures
+    %span.color_red.pull-right{class: "#{@irregular_debit_credit_somme ? '' : 'hide' }"} 
+      %i.icon-info-sign
+      balance non équilibrée
+
     %table.table.table-striped.table-condensed.table-bordered.margin0bottom
       %thead
         %tr
@@ -65,10 +85,11 @@
                 = entry.account.number
               - if @user.collaborator?
                 .edit_account.hide
-                  %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number}
+                  %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number, value: entry.account.number}
+                  .suggestion_account_list.hide                    
             - if @user.collaborator?
               %input.account_id_hidden{type: :hidden, value: entry.account.id}
-            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}"}
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{@irregular_debit_credit_somme ? 'color_red' : '' }"}
               - if entry.type == 1
                 .content_amount
                   .content_amount_number
@@ -78,10 +99,10 @@
                       %i.icon-arrow-right
                 - if @user.collaborator?
                   .edit_amount.hide
-                    %input.margin0{type: :text, placeholder: entry.amount}
+                    %input.margin0{type: :text, placeholder: entry.amount , value: entry.amount}
                     %input.entry_type{type: :hidden, value: entry.type}
 
-            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}"}
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{@irregular_debit_credit_somme ? 'color_red' : '' }"}
               - if entry.type == 2
                 .content_amount
                   - if @user.collaborator?
@@ -92,7 +113,7 @@
                     = entry.amount
                 - if @user.collaborator?
                   .edit_amount.hide
-                    %input.margin0{type: :text, placeholder: entry.amount}
+                    %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
                     %input.entry_type{type: :hidden, value: entry.type}
             - if @user.collaborator?
               %input.entry_id_hidden{type: :hidden, value: entry.id}

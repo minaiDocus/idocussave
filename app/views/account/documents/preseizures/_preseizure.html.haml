@@ -18,16 +18,12 @@
       %a.tip_selection.pull-right.do-tooltip{href: '#', title: "Sélection", data: {id: "div_#{preseizure.id}"}}
         %i.icon-ok
   .informations.row-fluid
-    .span12
+    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'span9' : 'span12'}" }
       %table.table.table-striped.table-condensed.margin0bottom.information
         %thead
           %tr
             %th.date.text-center Date
-            %th.date.text-center Date d'échéance
-            %th.date.text-center= "Date de dernière envoi #{@software_human_name}"
-            %th.third_party.text-center Nom de tiers
-            %th.erreur.text-center
-              = "Message d'erreur d'envoi #{@software_human_name}"
+            %th.date.text-center Date d'échéance                        
         %tbody
           %tr
             %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
@@ -35,25 +31,40 @@
                 = preseizure.date.try(:to_formatted_s, :db)
               - if @user.collaborator?
                 .edit_content_date.hide
-                  %input.edit_content_date_number.margin0bottom{type: :text, placeholder: preseizure.date.try(:to_formatted_s, :db), readonly: :readonly}
+                  %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
             %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
               .content_deadline_date
                 = preseizure.deadline_date.try(:to_formatted_s, :db)
               - if @user.collaborator?
                 .edit_content_deadline_date.hide
-                  %input.edit_content_deadline_date_number.margin0{type: :text, placeholder: preseizure.deadline_date.try(:to_formatted_s, :db), readonly: :readonly}
-            %td.date.text-center= preseizure.delivery_tried_at.try(:to_formatted_s, :db)
-            %td.third_party.text-center{title: "#{preseizure.third_party}"}
-              .content_third_party
-                = preseizure.third_party.to_s[0..35]
-              - if @user.collaborator?
-                .edit_content_third_party.hide
-                  %input.edit_content_third_party_number.margin0{type: :text, placeholder: preseizure.third_party}
-            %td.text-center
-              - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software).to_s : ''
-              = software_erreur[0,35]
+                  %input.edit_content_deadline_date_number.margin0{type: :text, value: preseizure.deadline_date.try(:to_date), placeholder: preseizure.deadline_date.try(:to_date), readonly: :readonly}
+    - if preseizure.delivery_tried_at.present?
+      .other_information.span3
+        %p      
+          Dernière envoi  
+          %strong
+            = @software_human_name      
+          le : 
+          = preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
+        - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''    
+        - if software_erreur.present?
+          %p
+            Message d'erreur (
+            %strong
+              = @software_human_name                 
+            ) :
+            %span{title: software_erreur}
+              = software_erreur.try(:[],0,25)            
   .content_detail
     - preseizure_entries = preseizure.entries
+    - debit_value = credit_value = 0    
+    - irregular_debit_credit_somme = false    
+    - preseizure_entries.each do |entry|
+      - if entry.type == 1
+        - debit_value += entry.amount.to_f
+      - else 
+        - credit_value += entry.amount.to_f      
+    - irregular_debit_credit_somme = true if debit_value != credit_value
     - pre_tax_amount = preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
     - data_analytics = analytics_of preseizure
     
@@ -61,10 +72,14 @@
       Unité monétaire:
       %strong= preseizure.try(:unit) || 'EUR' 
       %input#preseizure_id{type: :hidden, value: preseizure.id}
+      %input.delivered_preseizure{type: :hidden, value: "#{preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{preseizure.id}"}
     .row-fluid
       .entries{ class: (data_analytics.any? ? 'span6' : 'span12') }
         - if data_analytics.any?
-          %strong Ecritures     
+          %strong Ecritures
+        %span.color_red.pull-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"} 
+          %i.icon-info-sign
+          balance non équilibrée     
         %table.table.table-striped.table-condensed.table-bordered.margin0bottom
           %thead
             %tr
@@ -79,9 +94,9 @@
                     = entry.account.number
                   - if @user.collaborator?
                     .edit_account.hide
-                      %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number}
+                      %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number , value: entry.account.number}
                 %input.account_id_hidden{type: :hidden, value: entry.account.id}
-                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}"}
+                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
                   - if entry.type == 1
                     .content_amount
                       .content_amount_number
@@ -91,10 +106,10 @@
                           %i.icon-arrow-right
                     - if @user.collaborator?
                       .edit_amount.hide
-                        %input.margin0{type: :text, placeholder: entry.amount}
+                        %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
                         %input.entry_type{type: :hidden, value: entry.type}
 
-                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}"}
+                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
                   - if entry.type == 2
                     .content_amount
                       - if @user.collaborator?
@@ -105,7 +120,7 @@
                         = entry.amount
                     - if @user.collaborator?
                       .edit_amount.hide
-                        %input.margin0{type: :text, placeholder: entry.amount}
+                        %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
                         %input.entry_type{type: :hidden, value: entry.type}
                 - if @user.collaborator?
                   %input.entry_id_hidden{type: :hidden, value: entry.id}
