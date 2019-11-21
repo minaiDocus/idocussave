@@ -1,13 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrievedBankingOperationsController < Account::Organization::RetrieverController
   def index
-    bank_account_ids = @customer.bank_accounts.used.map(&:id)
-    operations = @customer.operations.retrieved.where(
-      Operation.arel_table[:bank_account_id].in(bank_account_ids).or(
-        Operation.arel_table[:processed_at].not_eq(nil)
-      )
-    )
-    @operations = Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account).page(params[:page]).per(params[:per_page])
+    @operations = operations
     @waiting_operations_count = waiting_operations.count
   end
 
@@ -22,6 +16,18 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
     end
     redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])
   end
+
+  def unlock_operations
+    if operations.present? && params[:banking_operation_contains].present?
+      count = operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(:is_locked => false)
+      if count > 0
+        flash[:success] = "#{count} débloquée(s) avec succès."
+      else
+        flash[:error] = "Aucune opération a été débloquée."
+      end
+    end
+    redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])    
+  end 
 
 private
 
@@ -42,6 +48,16 @@ private
     end
   end
   helper_method :sort_direction
+
+  def operations
+    bank_account_ids = @customer.bank_accounts.used.map(&:id)
+    operations = @customer.operations.retrieved.where(
+      Operation.arel_table[:bank_account_id].in(bank_account_ids).or(
+        Operation.arel_table[:processed_at].not_eq(nil)
+      )
+    )
+    Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account).page(params[:page]).per(params[:per_page])
+  end
 
   def waiting_operations
     bank_account_ids = @customer.bank_accounts.used.map(&:id)
