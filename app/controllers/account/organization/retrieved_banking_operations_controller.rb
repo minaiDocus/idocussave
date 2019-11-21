@@ -19,11 +19,11 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
 
   def unlock_operations
     if operations.present? && params[:banking_operation_contains].present?
-      count = operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(:is_locked => false)
+      count = operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
       if count > 0
-        flash[:success] = "#{count} débloquée(s) avec succès."
+        flash[:success] = "#{count} opération(s) débloquée(s) avec succès."
       else
-        flash[:error] = "Aucune opération a été débloquée."
+        flash[:error] = "Aucune opération n'a été débloquée."
       end
     end
     redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])    
