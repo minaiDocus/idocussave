@@ -33,6 +33,8 @@ Idocus::Application.routes.draw do
   post '/account/documents/deliver_preseizures',           controller: 'account/documents', action: 'deliver_preseizures'
   post '/account/documents/update_multiple_preseizures',   controller: 'account/documents', action: 'update_multiple_preseizures'
 
+  post '/account/preseizure_accounts/accounts_list',       controller: 'account/preseizure_accounts', action: 'accounts_list'
+
   get '/account/pre_assignment_delivery_errors',  controller: 'account/pre_assignment_delivery_errors', action: 'index'
 
   get '/account/pre_assignment_blocked_duplicates',  controller: 'account/pre_assignment_blocked_duplicates', action: 'index'

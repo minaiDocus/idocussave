@@ -78,4 +78,12 @@ class Operation < ActiveRecord::Base
   def retrieved?
     api_name.in? %w(budgea fiduceo)
   end
+
+  def credit?
+    self.amount < 0
+  end
+
+  def debit?
+    self.amount >= 0
+  end
 end

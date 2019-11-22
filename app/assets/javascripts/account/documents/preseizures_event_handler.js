@@ -68,33 +68,36 @@ var initEventOnPreseizuresRefresh = function(){
   $('div.entries table td.account .content_account').on("click",function(e){
     e.stopPropagation();
     var id = $(this).closest(".content_preseizure").attr('id').split('_')[1];
+    var account_id = $(this).closest("tr").find('.account_id_hidden').val();
     alertModificationPreseizureDelivered(id);
     var edit_content     = $(this).parent().find('.edit_account');    
     var content_account  = $(this);
     var input            = edit_content.children();
     if (input.length > 0)
     {
+      window.input_can_focusout = true;
       edit_content.show();
       content_account.hide();
       input.unbind('focusout');
       input.select();
-      input.blur().focus().focusout(function(){        
-        var new_value = $(this).val();
-        if (new_value == $(this).attr('placeholder') || new_value == "")
-        {
-          edit_content.hide();
-          content_account.show();
-          if (new_value == "")
+      input.blur().focus().focusout(function(){
+        if(window.input_can_focusout){
+          var new_value = $(this).val();
+          if (new_value == $(this).attr('placeholder') || new_value == "")
           {
-            $(this).val($(this).attr('placeholder'));
+            edit_content.hide();
+            content_account.show();
+            if (new_value == "")
+            {
+              $(this).val($(this).attr('placeholder'));
+            }
+          }
+          else
+          {
+            updateAccountEntry(account_id,new_value,"account",id);
           }
         }
-        else
-        {
-          var account_id = $(this).closest("tr").find('.account_id_hidden').val();
-          
-          updateAccountEntry(account_id,new_value,"account",id);
-        }
+
       }).on('keypress',function(e) {          
             if(e.which == 13) {               
               var new_value = $(this).val();
@@ -108,37 +111,14 @@ var initEventOnPreseizuresRefresh = function(){
                 }
               }
               else
-              {
-                var account_id = $(this).closest("tr").find('.account_id_hidden').val();                
+              {               
                 updateAccountEntry(account_id,new_value,"account",id);
               }          
           };
         }).on('keyup', function(e){
-          // if ($(this).val().length > 3)
-          // {
-          //   $.ajax({
-          //     url: '/account/documents/',
-          //     data: data,
-          //     dataType: "json",
-          //     type: "POST",              
-          //     success: function(data){
-          //       var html_autocomplete = input.parent().find('.suggestion_account_list');
-          //       html_autocomplete.removeClass('hide');
-          //       if(data.options.length > 0)
-          //       {
-          //         html_autocomplete.html(data);
-          //       }
-          //       else
-          //       {
-          //         html_autocomplete.html("<ul><li>Pas de résultat</li></ul>");
-          //       }
-          //     }              
-          //   });            
-          // }
-          // else 
-          // {
-          //   input.parent().find('.suggestion_account_list').addClass('hide');
-          // }
+          var value  = $(this).val()
+          var params = { preseizure_id: id, account_id: account_id, value: value }
+          accountAutocompletion($(this), params)
         });
     }
   });
@@ -274,10 +254,9 @@ var initEventOnPreseizuresRefresh = function(){
     }
   });
 
-  $(".datepicker-years .year,.datepicker-months .month, .focused, .datepicker-switch, .next, .prev, .datepicker, .table-condensed, .dow").unbind('click'); 
   $("table.information tbody tr td.date").unbind('click');
   $("table.information tbody tr td.date").click(function(e){
-    e.stopPropagation();    
+    e.stopPropagation();
     var td = $(this);
     var id_name          = $(this).attr('id');
     var edit_third_party = $(this).find('.edit_content_'+id_name);
@@ -325,6 +304,18 @@ var initEventOnPreseizuresRefresh = function(){
         }
       });  
     }
+  });
+
+  $(".suggestion_account_list ul li").unbind('click').unbind('mouseout').unbind('mouseover');
+  $(".suggestion_account_list ul li").on('click',function(e){
+    e.preventDefault();
+    $(this).closest(".edit_account").find('input').val($(this).attr('id')).blur().focus();
+    $(this).closest(".suggestion_account_list").hide();
+    return false;
+  }).on('mouseover', function(e){
+    window.input_can_focusout = false
+  }).on('mouseout', function(e){
+    window.input_can_focusout = true
   });
 }
 

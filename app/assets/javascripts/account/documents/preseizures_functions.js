@@ -380,7 +380,7 @@ function togglePreseizureAction(){
   }
 }
 
-function updateAccountEntry(id_account,new_value,type,id)
+function updateAccountEntry(id_account,new_value,type,id,source)
 {
   $.ajax({
     url: '/account/documents/preseizure/account/'+id+'/update',
@@ -433,4 +433,49 @@ function alertModificationPreseizureDelivered(id)
     $("#alert_irregular_debit_credit").modal("show");    
     $("#wrap").append('<input type="hidden" id="alert_'+id+'" value="1">');
   }  
+}
+
+function accountAutocompletion(input, params = {value: '', preseizure_id: 0, account_id: 0}){
+  var html_autocomplete = input.parent().find('.suggestion_account_list');
+  initEventOnPreseizuresRefresh();
+  if(params.value.length > 0)
+  {
+    if (html_autocomplete.children().length == 0)
+    {
+      $.ajax({
+        url: '/account/preseizure_accounts/accounts_list',
+        data: params,
+        type: "POST",
+        success: function(data){
+          html_autocomplete.show();
+          html_autocomplete.html(data);
+          html_autocomplete.find('ul').children().hide();
+          var result_found = html_autocomplete.find('ul').children('[id*='+params.value+']');
+
+          if(result_found.length > 0)
+            result_found.show();
+          else
+            html_autocomplete.find('.no_result').show();
+          initEventOnPreseizuresRefresh();
+        }
+      });
+    }
+    else
+    {
+      html_autocomplete.hide();
+      html_autocomplete.find('ul').children().hide();
+      var result_found = html_autocomplete.find('ul').children('[id*='+params.value+']');
+
+      if(result_found.length > 0)
+        result_found.show();
+      else
+        html_autocomplete.find('.no_result').show();
+      html_autocomplete.show();
+      initEventOnPreseizuresRefresh();
+    }
+  }
+  else
+  {
+    html_autocomplete.addClass('hide');
+  }
 }

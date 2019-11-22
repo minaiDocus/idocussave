@@ -1,0 +1,6 @@
+%ul
+  %li.no_result{ style: 'display:none' } Aucune suggestion
+  - @accounts_name.each do |account|
+    - if account.present?
+      %li.account_name{ id: "#{account}"}
+        = account

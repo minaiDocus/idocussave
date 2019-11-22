@@ -46,7 +46,7 @@
             = @software_human_name      
           le : 
           = preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
-        - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''    
+        - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''   
         - if software_erreur.present?
           %p
             Message d'erreur (
@@ -95,6 +95,7 @@
                   - if @user.collaborator?
                     .edit_account.hide
                       %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number , value: entry.account.number}
+                      .suggestion_account_list.hide
                 %input.account_id_hidden{type: :hidden, value: entry.account.id}
                 %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
                   - if entry.type == 1

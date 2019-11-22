@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::PreseizureAccountsController < Account::OrganizationController
   before_filter :account_params, only: :udpate
+  skip_before_filter :load_organization, only: :accounts_list
 
   def index
     if params[:pack_report_id].present?
@@ -26,6 +27,13 @@ class Account::PreseizureAccountsController < Account::OrganizationController
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end
+  end
+
+  def accounts_list
+    account        = Pack::Report::Preseizure::Account.find params[:account_id]
+    @accounts_name = account.get_similar_accounts
+
+    render partial: 'account/preseizure_accounts/accounts_list'
   end
 
 private

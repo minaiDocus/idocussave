@@ -753,13 +753,18 @@
             input
               width: 90% !important
             .suggestion_account_list              
-              border: 1px solid #CCC
+              border: 1px solid rgba(183, 204, 217, 0.8)
               padding: 5px
               position: absolute
               background-color: white
               width: 18%
               margin-top: 1px
               border-radius: 3px
+              -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+              -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+              box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+              max-height: 150px
+              overflow-y: auto
               ul
                 margin: 0
                 li
@@ -775,6 +780,11 @@
                 li:hover 
                   background-color: #879ca6
                   color: #FFF
+                li.no_result
+                  color: #000
+                  font-style: italic
+                li.no_result:hover
+                  background-color: #CCC
           .edit_amount
             input
               width: 90% !important
@@ -1075,19 +1085,38 @@
           input
             width: 90% !important
           .suggestion_account_list            
-            border: 1px solid #609fa1
+            border: 1px solid rgba(183, 204, 217, 0.8)
             padding: 5px
             position: absolute
             background-color: white
             width: 18%
             margin-top: 1px
             border-radius: 3px
-            li
-              position: relative
-              float: left
-              width: 100%
-              height: auto
-              margin-bottom: 3px
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+            max-height: 150px
+            overflow-y: auto
+            ul
+              margin: 0
+              li
+                position: relative
+                float: left
+                width: 98%
+                height: auto
+                margin-bottom: 3px
+                cursor: pointer
+                text-align: left
+                padding: 0 3px
+                box-shadow: none
+              li:hover
+                background-color: #879ca6
+                color: #FFF
+              li.no_result
+                color: #000
+                font-style: italic
+              li.no_result:hover
+                background-color: #CCC
         .edit_amount
           input
             width: 90% !important

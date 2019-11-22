@@ -26,4 +26,71 @@ class Pack::Report::Preseizure::Account < ActiveRecord::Base
       nil
     end
   end
+
+  # get all accounts wich have the same rules as "self" ( is used for autocompletion )
+  def get_similar_accounts
+    accounts_name   = []
+    preseizure      = self.preseizure
+    accounting_plan = preseizure.user.accounting_plan
+    entry           = self.entries.first
+
+    if preseizure.piece
+      journal = preseizure.report.journal({ name_only: false })
+      compta_type = journal.compta_type
+
+      fetch_customer = entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'VT'
+      fetch_provider = entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'AC'
+
+      accounts_name << journal.anomaly_account
+
+      if fetch_provider || fetch_customer
+        accounts_name << journal.meta_account_number
+
+        if fetch_customer
+          accounts_name << accounting_plan.customers.collect(&:third_party_account)
+        else
+          accounts_name << accounting_plan.providers.collect(&:third_party_account)
+        end
+      else
+        accounts_name << journal.meta_charge_account
+
+        if entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'AC'
+          accounts_name << accounting_plan.providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+        elsif entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'VT'
+          accounts_name << accounting_plan.customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+        end
+      end
+
+      if self.type == Pack::Report::Preseizure::Account::TVA
+        accounts_name << journal.vat_account
+        accounts_name << journal.vat_account_10
+        accounts_name << journal.vat_account_8_5
+        accounts_name << journal.vat_account_5_5
+        accounts_name << journal.vat_account_2_1
+
+        accounts_name << accounting_plan.vat_accounts.collect(&:account_number)
+      end
+    elsif preseizure.operation
+      match_rules  = []
+      operation    = preseizure.operation
+      bank_account = operation.try(:bank_account)
+      rules        = preseizure.user.account_number_rules
+      target       = operation.credit? ? 'credit' : 'debit'
+
+      match_rules = rules.select{ |rule| rule.rule_target == 'both' || rule.rule_target == target }.collect(&:third_party_account) if rules
+
+      accounts_name << bank_account.try(:accounting_number) || 512_000
+      accounts_name << bank_account.try(:temporary_account) || 471_000
+      accounts_name << match_rules
+
+      if operation.credit?
+        accounts_name << accounting_plan.providers.collect(&:third_party_account)
+      else #debit
+        accounts_name << accounting_plan.customers.collect(&:third_party_account)
+      end
+    end
+
+    accounts_name = accounts_name.flatten
+    accounts_name.compact
+  end
 end

@@ -15,7 +15,7 @@ class AccountNumberFinderService
     @accounting_plan = nil
 
     label  = @operation.label
-    target = @operation.amount < 0 ? 'credit' : 'debit'
+    target = @operation.credit? ? 'credit' : 'debit'
 
     number =  self.class.find_with_rules(@rules, label, target) if @rules.any?
     number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty? || @user.options.try(:skip_accounting_plan_finder)
@@ -33,7 +33,7 @@ class AccountNumberFinderService
 
 
   def find_or_update_accounting_plan
-    if @operation.amount < 0 #credit
+    if @operation.credit?
       accounts = @user.accounting_plan.reload.providers
     else #debit
       accounts = @user.accounting_plan.reload.customers
@@ -44,7 +44,7 @@ class AccountNumberFinderService
     elsif @user.accounting_plan.last_checked_at.nil? || @user.accounting_plan.last_checked_at <= 5.minutes.ago
       UpdateAccountingPlan.new(@user).execute
 
-      if @operation.amount < 0 #credit
+      if @operation.credit?
         @user.accounting_plan.reload.providers
       else #debit
         @user.accounting_plan.reload.customers
