@@ -18,8 +18,10 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
   end
 
   def unlock_operations
-    if operations.present? && params[:banking_operation_contains].present?
-      count = operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
+    @operations = operations(false)
+
+    if @operations.present? && params[:banking_operation_contains].present?
+      count = @operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
       if count > 0
         flash[:success] = "#{count} opération(s) débloquée(s) avec succès."
       else
@@ -49,14 +51,17 @@ private
   end
   helper_method :sort_direction
 
-  def operations
+  def operations(with_page=true)
     bank_account_ids = @customer.bank_accounts.used.map(&:id)
     operations = @customer.operations.retrieved.where(
       Operation.arel_table[:bank_account_id].in(bank_account_ids).or(
         Operation.arel_table[:processed_at].not_eq(nil)
       )
     )
-    Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account).page(params[:page]).per(params[:per_page])
+    ops = Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account)
+    ops = ops.page(params[:page]).per(params[:per_page]) if with_page
+
+    ops
   end
 
   def waiting_operations
