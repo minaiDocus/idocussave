@@ -53,8 +53,8 @@
             %strong
               = @software_human_name                 
             ) :
-            %span{title: software_erreur}
-              = software_erreur.try(:[],0,25)            
+            %span.error_message{title: software_erreur}
+              = software_erreur
   .content_detail
     - preseizure_entries = preseizure.entries
     - debit_value = credit_value = 0    

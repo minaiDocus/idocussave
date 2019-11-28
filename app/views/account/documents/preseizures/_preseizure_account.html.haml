@@ -42,7 +42,7 @@
               %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
 - if @preseizure.delivery_tried_at.present?
   .other_information.span3
-    %p      
+    %p
       Dernière envoi  
       %strong
         = @software_human_name      
@@ -55,8 +55,8 @@
         %strong
           = @software_human_name                 
         ) :
-        %span{title: software_erreur}
-          = software_erreur.try(:[],0,25)
+        %span.error_message{title: software_erreur}
+          = software_erreur
 %p{style: 'text-align: left;margin: 6px 0px 8px;padding-top: 1%;clear:both;'}
   Unité monétaire:
   %strong= @unit
