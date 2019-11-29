@@ -7,7 +7,7 @@
         %h3.float-left
           = @customer.info
         - if @customer.last_configuration_step.present?
-          = link_to glyphicon('wrench') + ' Reprendre la configuration', resume_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+          = link_to glyphicon('wrench') + ' Reprendre la configuration', resume_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary margin1left'
       .float-right
         - if @customer.active?
           = link_to glyphicon('x') + ' Clôturer le dossier', account_close_confirm_account_organization_customer_path(@organization, @customer), class: 'btn btn-danger'

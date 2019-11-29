@@ -36,9 +36,9 @@
                   %tr
                     %td Ce dossier utilise un format d'export .csv ? (personnalisable)
                     %td= f.check_box :is_csv_descriptor_used, style: "position:unset"
-        .card-footer  
-          .form-actions.margin0bottom
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
-            = f.submit t('actions.next_step'), class: 'btn btn-primary'
+          .card-footer
+            .form-actions.margin0bottom
+              = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+              = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+              = f.submit t('actions.next_step'), class: 'btn btn-primary'
 = javascript_include_tag 'account/customers'

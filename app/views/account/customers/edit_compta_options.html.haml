@@ -28,6 +28,6 @@
             = f.submit t('actions.submit'), class: 'btn btn-primary'
             = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn btn-light'
           - else
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
             = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
             = f.submit t('actions.next_step'), class: 'btn btn-primary'
