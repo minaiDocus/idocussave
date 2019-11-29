@@ -37,7 +37,7 @@
                 .edit_content_date.hide
                   %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
     - if preseizure.delivery_tried_at.present?
-      .other_information.span4
+      .other_information.col-md-3
         %p      
           Dernière envoi  
           %strong

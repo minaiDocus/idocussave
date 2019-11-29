@@ -329,7 +329,7 @@ class Account::DocumentsController < Account::AccountController
     if pack && File.exist?(pack.archive_file_path)
       send_file(pack.archive_file_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
     else
-      render text: 'File unavalaible'
+      render plain: 'File unavalaible'
     end
   end
 

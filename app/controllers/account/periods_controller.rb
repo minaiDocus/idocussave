@@ -25,7 +25,7 @@ private
           flash[:error] = t('authorization.unessessary_rights')
           redirect_to account_reporting_path
         end
-        format.json { render text: 'Unauthorized', status: :unauthorized }
+        format.json { render plain: 'Unauthorized', status: :unauthorized }
       end
     end
   end

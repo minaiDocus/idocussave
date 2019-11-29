@@ -17,12 +17,12 @@ class RetrieversController < ApiController
         retrieved_data.user = account.user
         retrieved_data.json_content = params.except(:controller, :action)
         retrieved_data.save
-        render text: '', status: :ok
+        render plain: '', status: :ok
       else
-        render text: '', status: :unauthorized
+        render plain: '', status: :unauthorized
       end
     else
-      render text: '', status: :unauthorized
+      render plain: '', status: :unauthorized
     end
   end
 

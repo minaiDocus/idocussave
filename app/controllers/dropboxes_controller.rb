@@ -14,7 +14,7 @@ class DropboxesController < ApplicationController
   end
 
   def verify
-    render text: params[:challenge] and return if params[:challenge].present?
-    render text: 'challenge parameter is missing'
+    render plain: params[:challenge] and return if params[:challenge].present?
+    render plain: 'challenge parameter is missing'
   end
 end
