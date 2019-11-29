@@ -27,10 +27,6 @@ gem 'airbrake', '4.3.8'
 gem 'sentry-raven'
 
 
-# APM
-gem 'elastic-apm'
-
-
 # Image / File processing
 gem 'barby'
 gem 'prawn', '1.0.0rc1'
@@ -155,6 +151,12 @@ gem 'redcarpet'
 gem 'audited', '~> 4.5'
 
 gem 'ruby-progressbar', require: false
+
+
+group :production do
+  # APM
+  gem 'elastic-apm' 
+end
 
 group :development, :test do
   gem 'byebug'
