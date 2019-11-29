@@ -17,7 +17,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
       file_name = @document.metadata['name'] + '.pdf'
       send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
@@ -26,10 +26,10 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
       if File.exist?(@document.piece.content.path)
         send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
       else
-        render nothing: true, status: 404
+        render body: nil, status: 404
       end
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 

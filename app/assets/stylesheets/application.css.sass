@@ -343,6 +343,27 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
   -moz-box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
   box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
 
+.border_action_preseizure
+  border: 2px solid #058acd
+  padding: 5px
+  border-radius: 3px
+
+.border_action_piece_preseizure
+  border: 2px solid #058acd
+  padding: 4px 4px 6px 4px
+  border-radius: 3px
+
+.border_piece_action
+  border: 2px solid #b1d837
+  padding: 4px 2px 6px 6px
+  border-radius: 3px
+
+.word_wrap
+  display: inline-block
+  width: 33%
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
 
 /*** Action bar ***/
 
@@ -565,6 +586,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
         margin: 10px
         display: block
         float  : left
+        color: white
       .preseizure_label
         padding: 10px
         display: block
@@ -596,71 +618,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
         .image_piece
           display: block
           position: absolute
-          margin: 4px 5px      
-        .toolbar
-          z-index: 11
-          display: none !important
-          position: absolute
-          float: left
-          left: 3px
-          bottom: 3px
-          width: 70px
-          height: 27px
-          +border-bottom-left-radius(2px)
-          background: url("/assets/application/gray_blank.png")
-          ul
-            display: block !important
-            position: relative !important
-            width: 63px
-            height: 19px
-            left: 2px
-            top: 4px
-            li, li a
-              display: block !important
-              position: relative !important
-              width: 19px
-              height: 19px
-              float: right
-              margin-left: 2px
-              margin-right: 0px
-              counter-increment: none
-            li
-              a
-                background: url("/assets/application/sprite_page_toolbar.png")
-              a.edit
-                background-position: 0px 0px
-              a.edit:hover
-                background-position: 0px -19px
-              a.delete
-                background-position: -19px 0px
-              a.delete:hover
-                background-position: -19px -19px
-              a.download
-                background-position: -38px 0px
-              a.download:hover
-                background-position: -38px -19px
-              a.select
-                background-position: -57px 0px
-              a.select:hover
-                background-position: -57px -19px
-              a.select:active
-                background-position: -76px 0px
-              a.delete_piece
-                background: url("/assets/glyphicons-halflings.png") no-repeat
-                background-position: -454px 3px
-                background-color: #E3E5E5
-                border-radius: 1.5px
-              a.delete_piece:hover
-                background-position: -454px 3px
-        .piece_number
-          z-index: 11
-          position: absolute
-          float: left
-          left: 6px
-          top: 5px
-          cursor: pointer
-        a.label:hover
-          color: #c9dd03 !important         
+          margin: -2px                
         .zoom
           z-index: 11
           display: block                    
@@ -682,33 +640,11 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           width: 96px
           height: 136px
           margin: 9px auto 0px auto
-          .thumb
-            display: block
-            position: absolute
-            z-index: 8
-            width: 92px
-            height: 133px
-            background: url("/assets/application/spinner_gray.gif")
-            background-position: 50% 50%
-            background-repeat: no-repeat
-            img
-              display: block !important
-              position: relative !important
-              width: 92px
-              height: 133px
-          .stamp
-            display: block
-            position: absolute
-            transform: rotate(35deg)
-            right: 10px
-            z-index: 9
-            img
-              display: block !important
-              position: relative !important
-              height: 26px
-              width: 50px
         .foot
           margin-top: 30px
+          img
+            max-width: 100%
+
       .preseizure_description 
         margin: 1%
         width: 86%
@@ -729,7 +665,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
             margin-bottom: -1px
             .tab
               border: 1px solid #e1e1e1
-              padding: 3px
+              padding: 3px 3px 0px 2px
               border-bottom: none
               margin-right: 2px
               cursor: pointer
@@ -744,10 +680,10 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
               background-color: #DBDBDB
             .check_modif_preseizure 
               width: 10%
-              display: block
+              display: inline-block
               float: left
               margin-right: 10%
-              margin-top: -1px
+              margin-top: 0
 
         .content_preseizure
           border: 1px solid #CCC
@@ -760,12 +696,30 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
             .preseizure_name
               font-weight: bold
               color: cadetblue
+              input
+                margin-top: -2px
+                margin-left: 5px
+                float: left
+                display: none
+              span
+                float: left
+                margin-top: -2px
             .choose_action_preseizure
               cursor: pointer
           .information_section                        
-            display: inline-block     
+            display: inline-block
             float: left
             margin: 0 !important
+            margin-top: 5px !important
+            table 
+              .date
+                width: 20%
+                input
+                  width: 90% !important
+              .third_party
+                width: 80%
+                input
+                  width: 90% !important
           .other_information
             display: inline-block
             float: left
@@ -791,7 +745,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
             .third_party
               width: 80%
               input
-                width: 90% !important            
+                width: 90% !important
         .content_preseizure .entries, .content_preseizure .analytics
           text-align: left
           table .account
@@ -801,40 +755,6 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           .edit_account
             input
               width: 90% !important
-            .suggestion_account_list              
-              border: 1px solid rgba(183, 204, 217, 0.8)
-              padding: 5px
-              position: absolute
-              background-color: white
-              width: 18%
-              margin-top: 1px
-              border-radius: 3px
-              -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-              -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-              box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-              max-height: 150px
-              overflow-y: auto
-              z-index: 9
-              ul
-                margin: 0
-                li
-                  position: relative
-                  float: left
-                  width: 98%
-                  height: auto
-                  margin-bottom: 3px
-                  cursor: pointer
-                  text-align: left
-                  padding: 0 3px
-                  box-shadow: none
-                li:hover 
-                  background-color: #879ca6
-                  color: #FFF
-                li.no_result
-                  color: #000
-                  font-style: italic
-                li.no_result:hover
-                  background-color: #CCC
           .edit_amount
             input
               width: 90% !important
@@ -868,7 +788,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
       position: absolute
       float: right
       cursor: pointer
-      right: 13px
+      right: 4px
       top: 13px
       width: 33px
       height: 33px
@@ -881,9 +801,6 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
       background-position: 6px -183px
       background-repeat: no-repeat
       display: block
-      /* width: 96px */
-      /* height: 136px */
-      /* margin: 9px */
       width: 98%
       height: 100%
       margin: 9px auto 0px auto
@@ -900,18 +817,7 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           display: block !important
           position: relative !important
           width: 100%
-          height: 100%
-      .stamp
-        display: block
-        position: absolute
-        transform: rotate(35deg)
-        right: 7px
-        z-index: 9
-        img
-          display: block !important
-          position: relative !important
-          height: 26px
-          width: 50px
+          height: 100%      
       .foot
         z-index: 8
         display: block
@@ -942,21 +848,25 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
    
   ul li:hover
     .zoom
-      display: block !important        
+      display: block !important
+      margin: 2px -1px !important
     .toolbar
       display: block !important
     .pagethumb
       padding: 2px
       width: 98%
       height: 100%
-      border: 1px solid #aaa
+      border: 2px solid #a6a6a6
       background: none
       background-color: #FFF
-      border-radius: 10px 0px
+      border-radius: 3px
       margin: 0px auto
+      -webkit-box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
+      -moz-box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
+      box-shadow: 0px 3px 15px -4px rgba(0,0,0,0.75)
       .thumb
-        left: 7px
-        top: 5px
+        left: 3px
+        top: 12px
         width: 90%
         height: 95%
     .stamp
@@ -1057,6 +967,40 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
     ul.list
       margin: 0 0 0 25px
 
+/** Suggestion List**/
+.suggestion_account_list
+  border: 1px solid rgba(183, 204, 217, 0.8)
+  padding: 5px
+  position: absolute
+  background-color: white
+  width: 28%
+  margin-top: 1px
+  border-radius: 3px
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
+  max-height: 150px
+  overflow-y: auto
+  ul
+    margin: 0
+    li
+      position: relative
+      float: left
+      width: 98%
+      height: auto
+      margin-bottom: 3px !important
+      cursor: pointer
+      text-align: left !important
+      padding: 0 3px
+      box-shadow: none !important
+    li:hover
+      background-color: #879ca6 !important
+      color: #FFF
+    li.no_result
+      color: #000
+      font-style: italic !important
+    li.no_result:hover
+      background-color: #CCC
 
 /*** Preseizures ***/
 
@@ -1074,6 +1018,8 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           margin: 1px
   #show_preseizures
     #lists_preseizures
+      #lists_preseizures_content
+      padding: 1px
       margin-top: 10px
       .selected
         border: 3px solid #058acd!important
@@ -1085,10 +1031,20 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
         -webkit-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
         -moz-box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
         box-shadow: 0px 0px 16px -2px rgba(0,0,0,0.47)
+        .title
+          a
+            color: white
+            font-size: 10px
+            cursor: initial
+        .preseizure_label a
+            font-weight: bold
+            color: #0088cc
+            cursor: initial
         .information_section                        
           display: inline-block     
           float: left
           margin: 0 !important
+          margin-top: 5px !important
         .other_information
           display: inline-block
           float: left
@@ -1163,40 +1119,6 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
         .edit_account
           input
             width: 90% !important
-          .suggestion_account_list            
-            border: 1px solid rgba(183, 204, 217, 0.8)
-            padding: 5px
-            position: absolute
-            background-color: white
-            width: 18%
-            margin-top: 1px
-            border-radius: 3px
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6)
-            max-height: 150px
-            overflow-y: auto
-            z-index: 9
-            ul
-              margin: 0
-              li
-                position: relative
-                float: left
-                width: 98%
-                height: auto
-                margin-bottom: 3px
-                cursor: pointer
-                text-align: left
-                padding: 0 3px
-                box-shadow: none
-              li:hover
-                background-color: #879ca6
-                color: #FFF
-              li.no_result
-                color: #000
-                font-style: italic
-              li.no_result:hover
-                background-color: #CCC
         .edit_amount
           input
             width: 90% !important

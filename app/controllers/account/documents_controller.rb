@@ -392,7 +392,7 @@ class Account::DocumentsController < Account::AccountController
     end
 
     respond_to do |format|
-      format.html { render nothing: true, status: 200 }
+      format.html { render body: nil, status: 200 }
       format.json { render json: true, status: :ok }
     end
   end
@@ -407,7 +407,7 @@ class Account::DocumentsController < Account::AccountController
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
@@ -427,7 +427,7 @@ class Account::DocumentsController < Account::AccountController
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
@@ -441,7 +441,7 @@ class Account::DocumentsController < Account::AccountController
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: @piece.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
@@ -454,7 +454,7 @@ class Account::DocumentsController < Account::AccountController
       mime_type = 'application/pdf'           
       send_file(filepath, type: mime_type, filename: @pack.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 

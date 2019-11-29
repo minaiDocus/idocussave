@@ -12,7 +12,7 @@ class ReturnLabelsController < ApplicationController
 
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 

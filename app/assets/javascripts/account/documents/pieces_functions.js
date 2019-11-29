@@ -170,7 +170,10 @@ function showPage(link,view="init") {
   var id = li.attr("id").split("_")[1];
   var page_number = (li.prevAll().length + 1);
 
-  var data_content = '<div style="width: 750px; padding: 10px"><input type="hidden" class="showPage" value="'+id+'"><div class="actiongroup span4 aligncenter" style="margin:1% 25%;"><a class="do-prevPage left btn" href="#"><i class="icon-arrow-left"></i></a>&nbsp; '+page_number+' &nbsp;<a class="do-nextPage right btn" href="#"><i class="icon-arrow-right"></i></a></div><div><iframe src="'+url+'" class="piece_view" style="width:100%;min-height:550px; max-height: 600px"></iframe></div></div>';
+  var data_content = $('.data-content-view-pdf .content');
+  data_content.find('.showPage').val(id);
+  data_content.find('.page_number').text(page_number);
+  data_content.find('.iframe-content iframe').prop('src',url);
   
   if (view == "init")
   {
@@ -181,7 +184,8 @@ function showPage(link,view="init") {
     $("#PdfViewerDialog .modal-body .view-content").html('<img src="/assets/application/spinner_gray_alpha.gif" alt="Chargement">Chargement en cours . . . ');
   }
   
-  $("#PdfViewerDialog .modal-body .view-content").html(data_content); 
+  $("#PdfViewerDialog .modal-body .view-content").html('');
+  data_content.clone().appendTo("#PdfViewerDialog .modal-body .view-content");
   initEventOnPiecesRefresh();
 }
 
@@ -195,32 +199,30 @@ function selectPage(link) {
     if ($("li.selected").length >= 2)
     {
       $(".composer").show();
-      $(".composer").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
     }
     else
     {
       $(".composer").hide();
-      $(".composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
     }
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").addClass('border_piece_action');
   }
   else 
   {
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").removeClass('border_piece_action');
   } 
 
   if (li.hasClass('selected'))
   {
-    link.find('i').addClass('icon-ban-circle');
-    link.find('i').removeClass('icon-ok');
+    link.find('.do-selectPage-check-icon').addClass('hide');
+    link.find('.do-selectPage-ban-icon').removeClass('hide');
   }
   else 
   {
-    link.find('i').removeClass('icon-ban-circle');
-    link.find('i').addClass('icon-ok');
+    link.find('.do-selectPage-check-icon').removeClass('hide');
+    link.find('.do-selectPage-ban-icon').addClass('hide');
   }
 
   countSelectedPieces();

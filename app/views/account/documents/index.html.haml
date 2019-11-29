@@ -2,7 +2,7 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
+  .row
     .col-md-12
       #documents_actions
         .actionbar.box.medium-shadow.clearfix{style: 'padding: 14px 10px 5px 10px'}
@@ -82,7 +82,7 @@
         = render partial: '/account/documents/preseizures/index'
       .scroll_on_top.hide
         %span
-          %i.icon-arrow-up 
+          = glyphicon('arrow-top')
 
 - if @pack
   #pack{ data: { name: @pack.name.sub(' all', ''), id: @pack.id } }

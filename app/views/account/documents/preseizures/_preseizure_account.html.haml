@@ -1,88 +1,89 @@
 .preseizure_head  
-  %span.pull-left.preseizure_name.check_modif_preseizure
-    %input{class: "check_#{@preseizure.id} ",id: "_#{@preseizure.id}", type: :checkbox, style: "margin-top: -2px;margin-left: 5px;display:none;"}  
-    - if @ibiza
-      = IbizaAPI::Utils.description(@preseizure, @ibiza.description, @ibiza.description_separator) || @preseizure.piece_name
-    - else 
-      = @preseizure.piece_name  
+  %span.float-left.preseizure_name.check_modif_preseizure
+    %input{class: "check_#{@preseizure.id} ",id: "_#{@preseizure.id}", type: :checkbox}
+    %span
+      - if @ibiza
+        = IbizaAPI::Utils.description(@preseizure, @ibiza.description, @ibiza.description_separator) || @preseizure.piece_name
+      - else
+        = @preseizure.piece_name
   %span.choose_action_preseizure
     - if @user.collaborator?
-      %a.pull-right.tip_edit.margin3.do-tooltip{href: '#', title: "Edition", data: {id: @preseizure.id}}
-        %i.icon-edit
+      %a.float-right.tip_edit.margin3.do-tooltip{href: '#', title: "Edition", data: {id: @preseizure.id}}
+        = glyphicon('pencil', {color: "fill: rgb(62, 47, 36);"})
     - if (@user.collaborator? && @software != '' && @preseizure.is_not_delivered? && !@preseizure.is_locked)
-      %a.tip_deliver.pull-right.margin3.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: @preseizure.id}}
-        %i.icon-refresh
-
-.information_section{ class: "#{@preseizure.delivery_tried_at.present? ? 'span9' : 'span12'}" }
-  %table.table.table-striped.table-condensed.margin0bottom.information
-    %thead
-      %tr
-        %th.date.text-center Date
-        %th.date.text-center Date d'échéance
-        %th.third_party.text-center Nom de tiers        
-    %tbody    
-      %tr
-        %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-          .content_date.label_date
-            = @preseizure.date.try(:to_date)
-          - if @user.collaborator?
-            .edit_content_date.editable_date.hide
-              %input.edit_content_date_number.margin0bottom{type: :text, value: @preseizure.date.try(:to_date), readonly: :readonly} 
-        %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-          .content_deadline_date.label_date
-            = @preseizure.deadline_date.try(:to_date)
-          - if @user.collaborator?
-            .edit_content_deadline_date.editable_date.hide
-              %input.edit_content_deadline_date_number.margin0{type: :text, value: @preseizure.deadline_date.try(:to_date), readonly: :readonly}
-        %td.third_party.text-center{title: "#{@preseizure.third_party}"}
-          .content_third_party
-            = @preseizure.third_party.try(:[],0,35)             
-          - if @user.collaborator?
-            .edit_content_third_party.hide
-              %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
-- if @preseizure.delivery_tried_at.present?
-  .other_information.span3
-    %p
-      Dernière envoi  
-      %strong
-        = @software_human_name      
-      le : 
-      = @preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
-    - software_erreur = @software != '' ? @preseizure.get_delivery_message_of(@software) : ''    
-    - if software_erreur.present?
+      %a.tip_deliver.float-right.margin3.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: @preseizure.id}}
+        = glyphicon('loop-circular', {color: "fill: rgb(62, 47, 36);"})
+.row{style: 'margin-top: 15px;'}
+  .information_section{ class: "#{@preseizure.delivery_tried_at.present? ? 'col-sm-9' : 'col-sm-12'}" }
+    %table.table.table-striped.table-condensed.margin0bottom.information
+      %thead
+        %tr
+          %th.date.text-center Date
+          %th.date.text-center Date d'échéance
+          %th.third_party.text-center Nom de tiers
+      %tbody
+        %tr
+          %td.date.text-center#date
+            .content_date.label_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+              = @preseizure.date.try(:to_formatted_s, :db)
+            - if @user.collaborator?
+              .edit_content_date.editable_date.hide
+                %input.edit_content_date_number.margin0bottom{type: :text, value: @preseizure.date.try(:to_date), readonly: :readonly} 
+          %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+            .content_deadline_date.label_date
+              = @preseizure.deadline_date.try(:to_formatted_s, :db)
+            - if @user.collaborator?
+              .edit_content_deadline_date.editable_date.hide
+                %input.edit_content_deadline_date_number.margin0{type: :text, value: @preseizure.deadline_date.try(:to_date), readonly: :readonly}
+          %td.third_party.text-center{title: "#{@preseizure.third_party}"}
+            .content_third_party.word_wrap
+              = @preseizure.third_party
+            - if @user.collaborator?
+              .edit_content_third_party.hide
+                %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
+  - if @preseizure.delivery_tried_at.present?
+    .other_information.col-sm-2
       %p
-        Message d'erreur (
+        Dernière envoi
         %strong
-          = @software_human_name                 
-        ) :
-        %span.error_message{title: software_erreur}
-          = software_erreur
+          = @software_human_name      
+        le :
+        = @preseizure.delivery_tried_at.try(:to_formatted_s, :db)
+      - software_erreur = @software != '' ? @preseizure.get_delivery_message_of(@software) : ''
+      - if software_erreur.present?
+        %p
+          Message d'erreur (
+          %strong
+            = @software_human_name
+          ) :
+          %span.error_message{title: software_erreur}
+            = software_erreur
 %p{style: 'text-align: left;margin: 6px 0px 8px;padding-top: 1%;clear:both;'}
   Unité monétaire:
   %strong= @unit
   %input.preseizure_id{type: :hidden, value: @preseizure.id}
   %input.delivered_preseizure{type: :hidden, value: "#{@preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{@preseizure.id}"}
   - irregular_debit_credit_somme = verif_debit_credit_somme_of @preseizure_entries
-.row-fluid
+.row
   .entries{ class: (@data_analytics.any? ? 'col-md-6' : 'col-md-12') }
     - if @data_analytics.any?
       %strong 
         Ecritures
     %span.color_red.pull-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
-      %i.icon-info-sign
+      = glyphicon('info')
       balance non équilibrée
 
     %table.table.table-striped.table-condensed.table-bordered.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.account Numéro de compte
           %th.entry.text-center Débit
           %th.entry.text-center Crédit          
       %tbody.entries
         - @preseizure_entries.each do |entry|
           %tr
-            %td.account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-              .content_account
+            %td.account
+              .content_account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
                 = entry.account.number
               - if @user.collaborator?
                 .edit_account.hide
@@ -96,8 +97,8 @@
                   .content_amount_number
                     = entry.amount.to_f
                   - if @user.collaborator?
-                    %span.debit_or_credit.hide.pull-right
-                      %i.icon-arrow-right
+                    %span.debit_or_credit.hide.float-right
+                      = glyphicon('arrow-thick-right')
                 - if @user.collaborator?
                   .edit_amount.hide
                     %input.margin0{type: :text, placeholder: entry.amount , value: entry.amount}
@@ -107,8 +108,8 @@
               - if entry.type == 2
                 .content_amount
                   - if @user.collaborator?
-                    %span.debit_or_credit.hide.pull-left
-                      %i.icon-arrow-left
+                    %span.debit_or_credit.hide.float-left
+                      = glyphicon('arrow-thick-left')
                   &nbsp;&nbsp;
                   .content_amount_number
                     = entry.amount.to_f

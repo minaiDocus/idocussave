@@ -12,7 +12,7 @@ class Account::InvoicesController < Account::OrganizationController
       type = invoice.content_content_type || 'application/pdf'
       send_file(invoice.content.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 end

@@ -499,7 +499,7 @@ $('#preseizuresModals #preseizureEntryEdition #editPreseizureEntrySubmit').click
 });
 
 $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").click(function(e){
-  e.preventDefault();  
+  e.preventDefault();
   $.ajax({
     url: '/account/documents/update_multiple_preseizures',
     data: { ids: window.preseizuresSelected, preseizures_attributes: $('#preseizuresModals #editSelectedPreseizures #preseizuresEditionForm').serializeObject() },

@@ -12,23 +12,24 @@
           %a.do-tooltip.piece_tag{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
             = glyphicon('tag')
           %a.delete_piece_composition.margin3.do-tooltip.hide{href: '#', title: 'Supprimer les pièces' }
-            %i.icon-trash
+            = glyphicon('trash')
           %a.composer.margin3.do-tooltip.hide{"data-toggle" => "modal", :href => "#compositionDialog", :title => "Composer"}
-            %i.icon-random
-          %a.compta_analysis_edition.margin3.do-tooltip.hide{"data-toggle" => "modal", :href => "#comptaAnalysisEdition", :title => "Editer compta analytique" } 
-            %i.icon-edit
+            = glyphicon('random')
+          %a.compta_analysis_edition.margin3.do-tooltip.hide{"data-toggle" => "modal", :href => "#comptaAnalysisEdition", :title => "Editer compta analytique" }
+            = glyphicon('pencil')
           %a.download.margin3.do-tooltip{ :title => "Télécharger", :target => "_blank" }
-            %i.icon-download-alt
+            = glyphicon('data-transfer-download')
           %a.zip_download.margin3.do-tooltip{ :title => "Télécharger une archive zip", :target => "_blank" }
-            %i.icon-download          
+            = glyphicon('cloud-download')
           |           
           - if (@user.collaborator? && @software != '' && @need_delivery != 'no')
             %a.do-deliverAllPreseizure.do-tooltip.margin3{href: '#', title: "Livraison écriture comptable (#{@software_human_name})"}
-              %i.icon-refresh
+              = glyphicon('loop-circular')
           - if (@user.collaborator?) 
             %a.tip_edit_multiple.do-editSelectedPreseizures.do-tooltip.margin3.hide{"data-toggle"=>"modal", :href => "#editSelectedPreseizures", :title => "Edition multiple"}
+              = glyphicon('brush')
           %a.do-exportSelectedPreseizures.do-tooltip.margin3{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
-            %i.icon-share-alt          
+            = glyphicon('share')
           |                        
           %a.do-selectAllPages.do-tooltip.margin3{:href => "#", :title => "Tous"}
             = glyphicon('check')
@@ -42,3 +43,15 @@
       .loader.margin1top.float-left
         .feedback.inactive
           %span.out Aucun traitement
+
+.data-content-view-pdf.hide
+  .content{style: "width: 750px; padding: 10px"}
+    %input{type: "hidden", class: "showPage", value: ""}
+      .actiongroup.span4.aligncenter{style: "margin:1% 2%;"}
+        %a.do-prevPage.left.btn.btn-info{href: "#"}
+          = glyphicon('arrow-thick-left')
+        %span.page_number
+        %a.do-nextPage.right.btn.btn-info{href: "#"}
+          = glyphicon('arrow-thick-right')
+        .iframe-content
+          %iframe.piece_view{src: "", style: "width:100%;min-height:550px; max-height: 600px; margin-top: 6px;"}

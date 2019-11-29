@@ -17,8 +17,8 @@ var initEventOnPiecesRefresh = function(){
     $("#show_pages li.pages").each(function(index,li){
       if (!$(li).hasClass("selected")) {
         $(li).addClass("selected");             
-        $(this).find('a.do-selectPage i').addClass('icon-ban-circle');
-        $(this).find('a.do-selectPage i').removeClass('icon-ok');                 
+        $(this).find('.do-selectPage-check-icon').addClass('hide');
+        $(this).find('.do-selectPage-ban-icon').removeClass('hide');
         addPage($(li));        
       }
     });
@@ -27,7 +27,7 @@ var initEventOnPiecesRefresh = function(){
       $('.composer').show();
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .tip_edit_multiple").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .tip_edit_multiple").addClass('border_piece_action');
   });
 
   $(".do-unselectAllPages").unbind('click');
@@ -35,22 +35,22 @@ var initEventOnPiecesRefresh = function(){
     e.preventDefault();
     $("#show_pages li.pages").removeClass("selected");
     $("#show_pages li.pages").each(function(index,li){
-      $(this).find('a.do-selectPage i').removeClass('icon-ban-circle');
-      $(this).find('a.do-selectPage i').addClass('icon-ok');        
+      $(this).find('.do-selectPage-check-icon').removeClass('hide');
+      $(this).find('.do-selectPage-ban-icon').addClass('hide');
       removePage($(li));
     });
     window.preseizuresSelected = [];
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").removeClass('border_piece_action');
     $(".content_preseizure, .tab").removeClass('preseizure_selected active');
     $('input[type="checkbox"').prop('checked',false);
     $(".tip_edit_multiple").addClass('hide');
-
   });  
 
   $("a.do-nextPage").unbind('click');
   $("a.do-nextPage").click(function(e){
     e.preventDefault();
+    e.stopPropagation();
     var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.next().children(".do-showPage");
@@ -61,6 +61,7 @@ var initEventOnPiecesRefresh = function(){
   $("a.do-prevPage").unbind('click');
   $("a.do-prevPage").click(function(e){
     e.preventDefault();
+    e.stopPropagation();
     var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.prev().children(".do-showPage")
@@ -94,6 +95,7 @@ var initEventOnPiecesRefresh = function(){
       $("#span"+_id).addClass("preseizure_selected");
       $("#div"+_id).addClass("preseizure_selected active");
     }           
+
     handlePreseizureSelection(_id);
     togglePreseizureAction();
   });

@@ -8,7 +8,7 @@ class Account::NotificationsController < Account::AccountController
 
   def latest
     if organizations_suspended?
-      render nothing: true
+      render body: nil
     else
       render partial: 'notifications', layout: false, locals: { notifications: @notifications }
     end
