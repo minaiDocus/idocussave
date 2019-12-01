@@ -10,6 +10,8 @@
       = sprintf '%03d', document.position
     %span.preseizure_label.tip_details.each.do-tooltip
       = document.name
+    = document_delivery_label(document) if preseizures.count > 0
+
     %span.choose_action_piece     
       %a.pull-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
         %i.icon-trash       
