@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class GeneratePreAssignmentExportService
-  def initialize(preseizures)
+  def initialize(preseizures, export_type = nil)
+    @export_type = export_type
     @all_preseizures = Array(preseizures)
   end
 
@@ -67,14 +68,58 @@ class GeneratePreAssignmentExportService
     end
   end
 
+  def generate_on_demand
+    @report = @all_preseizures.first.report
+    @preseizures = @all_preseizures
+
+    case @export_type
+    when 'csv'
+      create_pre_assignment_export_for 'csv_descriptor'
+
+      generate_csv_descriptor_export(false)
+    when 'xml_ibiza'
+      create_pre_assignment_export_for 'ibiza'
+      
+      generate_ibiza_export
+    when 'zip_quadratus'
+      create_pre_assignment_export_for 'quadratus'
+
+      generate_quadratus_export
+    when 'zip_coala'
+      create_pre_assignment_export_for 'coala'
+
+      generate_coala_export(true)
+    when 'xls_coala'
+      create_pre_assignment_export_for 'coala'
+
+      generate_coala_export
+    when 'txt_fec_agiris'
+      create_pre_assignment_export_for 'fec_agiris'
+
+      generate_fec_agiris_export
+    when 'csv_cegid'
+      create_pre_assignment_export_for 'cegid'
+
+      generate_cegid_export
+    end
+
+    @export
+  end
+
 private
 
-  def generate_coala_export
+  def generate_coala_export(zip = nil)
     begin
-      file_zip = CoalaZipService.new(@report.user, @preseizures, {to_xls: true}).execute
-      POSIX::Spawn.system("unzip -o #{file_zip} -d #{file_path}")
-      rename_export 'coala'
-      @export.got_success "#{file_real_name}.xls"
+      if zip
+        file_zip = CoalaZipService.new(@report.user, @preseizures, {to_xls: true}).execute
+        rename_export 'coala'
+        @export.got_success "#{file_real_name}.zip"
+      else
+        file_zip = CoalaZipService.new(@report.user, @preseizures, {preseizures_only: true, to_xls: true}).execute
+        POSIX::Spawn.system("unzip -o #{file_zip} -d #{file_path}")
+        rename_export 'coala'
+        @export.got_success "#{file_real_name}.xls"
+      end
     rescue => e
       @export.got_error e
     end
@@ -119,13 +164,17 @@ private
     end
   end
 
-  def generate_csv_descriptor_export
+  def generate_csv_descriptor_export(with_file = true)
     begin
       data = PreseizuresToCsv.new(@report.user, @preseizures).execute
       File.open("#{file_path}/#{file_real_name}.csv", 'w') { |file| file.write(data) }
-      @preseizures.each do |preseizure|
-        FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+
+      if with_file
+        @preseizures.each do |preseizure|
+          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+        end
       end
+
       @export.got_success "#{file_real_name}.csv"
     rescue => e
       @export.got_error e

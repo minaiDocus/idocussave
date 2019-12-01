@@ -308,80 +308,14 @@ class Account::DocumentsController < Account::AccountController
     report      = preseizures.first.try(:report)
     user        = preseizures.first.try(:user)
 
-    case export_format
-      when 'csv'
-        if preseizures.any? && user.try(:uses_csv_descriptor?)
-          data = PreseizuresToCsv.new(user, preseizures).execute
+    if preseizures.any? && export_format.in?(%w(csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid))
+      export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
 
-          send_data(data, type: 'text/csv', filename: "#{report.name.tr(' ', '_')}.csv")
-        else
-          render text: 'Aucun résultat'
-        end
-      when 'xml_ibiza'
-        if current_user.is_admin
-          if preseizures.any?
-            file_name = "#{report.name.tr(' ', '_')}.xml"
-
-            ibiza = user.organization.ibiza
-
-            if ibiza.try(:configured?) && user.try(:ibiza_id) && user.try(:uses_ibiza?)
-              date = DocumentTools.to_period(report.name)
-
-              exercise = IbizaExerciseFinder.new(user, date, ibiza).execute
-              if exercise
-                data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
-
-                send_data(data, type: 'application/xml', filename: file_name)
-              else
-                render text: 'Traitement impossible'
-              end
-            else
-              render text: 'Traitement impossible'
-            end
-          else
-            render text: 'Aucun résultat'
-          end
-        end
-      when 'zip_quadratus'
-        if preseizures.any? && user.try(:uses_quadratus?)
-          file_path = QuadratusZipService.new(preseizures).execute
-
-          logger.info(file_path.inspect)
-
-          send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
-        else
-          render text: 'Aucun résultat'
-        end
-      when 'zip_coala'
-        if preseizures.any? && user.try(:uses_coala?)
-          file_path = CoalaZipService.new(user, preseizures, {to_xls: true}).execute
-          send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
-        else
-          render text: 'Aucun résultat'
-        end
-      when 'xls_coala'
-        if preseizures.any? && user.try(:uses_coala?)
-          file_path = CoalaZipService.new(user, preseizures, {preseizures_only: true, to_xls: true}).execute
-          send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
-        else
-          render text: 'Aucun résultat'
-        end
-      when 'txt_fec_agiris'
-        if preseizures.any? && user.try(:uses_fec_agiris?)
-          file_path = FecAgirisTxtService.new(preseizures).execute
-          send_file(file_path, type: 'application/txt', filename: File.basename(file_path), x_sendfile: true)
-        else
-          render action: 'select_to_download'
-        end
-      when 'csv_cegid'
-        if preseizures.any? && user.try(:uses_cegid?)
-          file_path = CegidZipService.new(user, preseizures).execute
-          send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
-        else
-          render text: 'Aucun résultat'
-        end
-      else
-        render text: 'Traitement impossible'
+      send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
+    elsif !export_format.in?(%w(csv xml_ibiza zip_quadratus zip_cola xls_coala txt_fec_agiris csv_cegid))
+      render text: 'Traitement impossible : le format est incorrect.'
+    else
+      render text: 'Aucun résultat'
     end
   end
 
