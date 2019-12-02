@@ -5,11 +5,13 @@
   .card
     .card-header
       - if @customer.configured?
-          %h3
-            Edition des options Knowings du client : 
-            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'fs-origin'
+        %h3
+          Edition des options Knowings du client :
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'fs-origin'
       - else
-          %h3 Configuration de la GED pour le dossier : #{@customer}
+        %h3
+          Configuration de la GED pour le dossier :
+          %span.text-info.fs-origin= @customer
 
     = simple_form_for @customer, url: update_knowings_options_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |f|
       .card-body
@@ -19,6 +21,6 @@
         .form-actions
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ged'), class: 'btn btn-light'
           - else
             = f.submit t('actions.finish'), class: 'btn btn-primary'

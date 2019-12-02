@@ -1,6 +1,8 @@
 #customer.edit_softwares_selection
-  .box
-    = render 'steps'
+  - unless @customer.configured?
+    .box
+      = render 'steps'
+
   .card
     .card-header
       %h3
@@ -32,6 +34,10 @@
                   %tr
                     %td Ce dossier utilise Cegid ?
                     %td= f.check_box :is_cegid_used, style: "position:unset"
+                - if @organization.is_fec_agiris_used
+                  %tr
+                    %td Ce dossier utilise Fec Agiris ?
+                    %td= f.check_box :is_fec_agiris_used, style: "position:unset"
                 -if @organization.is_csv_descriptor_used
                   %tr
                     %td Ce dossier utilise un format d'export .csv ? (personnalisable)

@@ -1,6 +1,7 @@
 #order.new
   - unless @customer.configured?
-    = render 'account/customers/steps'
+    .box
+      = render 'account/customers/steps'
   .card
     .card-header
       %h3

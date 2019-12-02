@@ -240,6 +240,7 @@
           list.append(data);
 
           packs_count = $("input[name=packs_count]").val();
+
           $("#documentslist .packsList h3").text(packs_count + " lot(s)");
 
           $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
@@ -248,22 +249,23 @@
           initEventOnPackOrReportRefresh();
           window.initEventOnHoverOnInformation();
 
-        setTimeout(function(){ 
-          window.datasLoaderLocked = false; 
-          if(then_reports)
-            getReports();
-        }, 1000);
-      },
-      error: function(data){
-        logAfterAction();
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
-        setTimeout(function(){ 
-          window.datasLoaderLocked = false;
-          if(thenReports)
-            getReports();
-         }, 1000);
-      }
-    });
+          setTimeout(function(){
+            window.datasLoaderLocked = false;
+            if(then_reports)
+              getReports();
+          }, 1000);
+        },
+        error: function(data){
+          logAfterAction();
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+          setTimeout(function(){
+            window.datasLoaderLocked = false;
+            if(thenReports)
+              getReports();
+           }, 1000);
+        }
+      });
+    }, 500);
   }
 
   //fetch lists of report (operation reports)

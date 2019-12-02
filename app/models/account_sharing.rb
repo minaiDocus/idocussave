@@ -10,7 +10,7 @@ class AccountSharing < ApplicationRecord
   validate :uniqueness_of_sharing
 
   scope :approved, -> { where(is_approved: true) }
-  scope :pending,  -> { unscoped.where(is_approved: false) }
+  scope :pending,  -> { where(is_approved: false) }
 
   default_scope -> { where(is_approved: true) }
 

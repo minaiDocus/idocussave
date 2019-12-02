@@ -35,8 +35,8 @@
   .card-footer
     .form-actions
       - if @customer && !@customer.configured?
-        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
-        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
         = f.submit t('actions.next_step'), class: 'btn btn-primary'
       - else
         = f.submit t('actions.submit'), class: 'btn btn-primary'

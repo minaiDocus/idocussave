@@ -2,7 +2,9 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
   # GET /account/pre_assignment_blocked_duplicates
   def index    
     @duplicates = Pack::Report::Preseizure
-      .blocked_duplicates.where(user_id: account_ids)
+      .unscoped
+      .blocked_duplicates
+      .where(user_id: account_ids)
       .search(search_terms(params[:duplicate_contains]))
       .order("#{sort_real_column} #{sort_direction}")
       .page(params[:page])

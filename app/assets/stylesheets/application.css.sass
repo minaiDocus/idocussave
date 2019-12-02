@@ -343,6 +343,18 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
   -moz-box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
   box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75)
 
+.step_navigation
+  .step
+    margin: 1%
+    color: #b0b1b3
+    float: left
+    &.active
+      color: #584528
+    .number
+      font-size: 18px
+    .title
+      font-size: 12px
+
 .border_action_preseizure
   border: 2px solid #058acd
   padding: 5px
@@ -1037,6 +1049,8 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
             cursor: initial
         .actionbox
           padding-right: 0
+          a
+            padding: 2px
         .preseizure_label a
             font-weight: bold
             color: #0088cc
@@ -1071,18 +1085,6 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           padding: 5px
           margin: 0
           background-color: whitesmoke
-          .actionbox
-            .stamp
-              float: left
-              width: 55px
-              img
-                width: 100%
-            .stamp:hover
-              position: absolute
-              width: 135px
-              z-index: 20
-            a
-              padding: 3px
           .preseizure_label
             margin-left: 10px
             font-weight: bold
@@ -1091,15 +1093,21 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
           .stamp_image_content
             padding-top: 1%
             cursor: pointer
+            .stamp_head
+              padding-top: 1%
+              img
+                width: 100%
             .stamp_head:hover
               padding: 0
               position: absolute
-              width: 7%
+              width: 150%
 
         .content_details
           background-color: #fff
           border-top: 1px solid rgb(221,221,221)
           padding: 10px
+        .content_detail
+          padding: 5px
           /*** <<<<<<< HEAD ***/
         table
           .date

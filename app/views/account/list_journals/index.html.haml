@@ -1,16 +1,15 @@
 #list_journals
-  = render 'account/customers/steps'
-  .row-fluid
-    .span12.box
-      %h3 Création des journaux comptables pour le dossier : #{@customer}
-      .aligncenter.margin1top
-        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-        - unless last_step?
-          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-        = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
 
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
+      %h3
+        Création des journaux comptables pour le dossier :
+        %span.text-info.fs-origin= @customer
+
+    .card-body
       - if @customer.subscription.is_mail_package_active
         Rappel: il est nécessaire de créer vos journaux comptables afin de créer les chemises correspondantes lors de la commande de votre kit.
         %br
@@ -25,3 +24,9 @@
           - @journals.each do |journal|
             %li= journal.name + journal.description
       = link_to icon_new + 'Créer un journal comptable', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
+    .card-footer
+      = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+      - unless last_step?
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+      = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+

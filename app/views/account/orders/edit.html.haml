@@ -1,6 +1,8 @@
 #order.edit
-  - unless @customer.configured?
-    = render 'account/customers/steps'
+  .box
+    - unless @customer.configured?
+      = render 'account/customers/steps'
+
   .card
     .card-header
       %h3

@@ -361,20 +361,20 @@ function handlePreseizureSelection(id_tmp, type='toggle'){
 
 function togglePreseizureAction(){  
   if ($(".preseizure_selected.active").length > 1){
-    $(".tip_edit_multiple").addClass('border_action_piece_preseizure').removeClass("hide");
-    $(".do-exportSelectedPreseizures").addClass('border_action_piece_preseizure');
-    $(".do-deliverAllPreseizure").addClass('border_action_piece_preseizure');
+    $(".tip_edit_multiple").addClass('border_action_preseizure').removeClass("hide");
+    $(".do-exportSelectedPreseizures").addClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").addClass('border_action_preseizure');
   }
   else if ($(".preseizure_selected.active").length >= 1){
-    $(".tip_edit_multiple").removeClass('border_action_piece_preseizure').addClass('hide');
-    $(".do-exportSelectedPreseizures").addClass('border_action_piece_preseizure');
-    $(".do-deliverAllPreseizure").addClass('border_action_piece_preseizure');
+    $(".tip_edit_multiple").removeClass('border_action_preseizure').addClass('hide');
+    $(".do-exportSelectedPreseizures").addClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").addClass('border_action_preseizure');
   }
   else 
   {
-    $(".tip_edit_multiple").removeClass('border_action_piece_preseizure').addClass('hide');
-    $(".do-exportSelectedPreseizures").removeClass('border_action_piece_preseizure');
-    $(".do-deliverAllPreseizure").removeClass('border_action_piece_preseizure');
+    $(".tip_edit_multiple").removeClass('border_action_preseizure').addClass('hide');
+    $(".do-exportSelectedPreseizures").removeClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").removeClass('border_action_preseizure');
   }
 }
 

@@ -27,7 +27,7 @@ var initEventOnPiecesRefresh = function(){
       $('.composer').show();
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .tip_edit_multiple").addClass('border_piece_action');
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").addClass('border_piece_action');
   });
 
   $(".do-unselectAllPages").unbind('click');
@@ -41,7 +41,8 @@ var initEventOnPiecesRefresh = function(){
     });
     window.preseizuresSelected = [];
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").removeClass('border_piece_action');
+    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure").removeClass('border_piece_action');
+    $(".do-exportSelectedPreseizures, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").removeClass('border_action_preseizure');
     $(".content_preseizure, .tab").removeClass('preseizure_selected active');
     $('input[type="checkbox"').prop('checked',false);
     $(".tip_edit_multiple").addClass('hide');

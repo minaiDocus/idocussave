@@ -30,9 +30,9 @@ class Pack::Report::Preseizure < ApplicationRecord
   scope :by_position,                   -> { order(position: :asc) }
   scope :not_deleted,                   -> { joins(:piece) } #IMPORTANT: piece model has default scope so the inner join inherit that scope which is deleted_at presence
 
-  scope :blocked_duplicates,            -> { unscoped.where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
-  scope :potential_duplicates,          -> { unscoped.where.not(duplicate_detected_at: nil) }
-  scope :approved_duplicates,           -> { unscoped.where.not(marked_as_duplicate_at: nil) }
+  scope :blocked_duplicates,            -> { where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
+  scope :potential_duplicates,          -> { where.not(duplicate_detected_at: nil) }
+  scope :approved_duplicates,           -> { where.not(marked_as_duplicate_at: nil) }
   scope :disapproved_duplicates,        -> { where.not(duplicate_unblocked_at: nil) }
 
   default_scope { where(is_blocked_for_duplication: false) }

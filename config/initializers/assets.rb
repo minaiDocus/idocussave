@@ -16,7 +16,7 @@ Rails.application.config.assets.precompile += %w( account/profiles.css account/a
                                                   account/subscriptions.css account/groups.css account/collaborators.css account/journals.css account/account_number_rules.css account/paper_set_orders.css
                                                   account/invoices.css account/customers.css account/file_naming_policies.css account/organization_addresses.css account/organization_period_options.css 
                                                   account/csv_descriptors.css account/orders.css account/bank_accounts.css account/rights.css account/retrievers.css account/pre_assignment_ignored.css 
-                                                  account/pre_assignment_blocked_duplicates.css account/pre_assignment_delivery_errors.css )
+                                                  account/pre_assignment_blocked_duplicates.css account/pre_assignment_delivery_errors.css account/suspended.css )
 
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
                                                   admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js )

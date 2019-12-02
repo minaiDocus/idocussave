@@ -1,17 +1,17 @@
 #csv_descriptors.edit
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+
   .card
-    .card-header.clearfix
+    .card-header
       - if @customer.configured?
         %h3 
           Edition du format d’export .csv du client : 
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor'), class: 'fs-origin'
       - else
-        .float-left
-          %h3 
-            Format d’export .csv pour le dossier : 
-            %span.fs-origin.text-info= @customer
-        .float-right
-          = render 'account/customers/steps'
-
+        %h3
+          Format d’export .csv pour le dossier :
+          %span.fs-origin.text-info= @customer
 
     = render partial: 'account/csv_descriptors/form'

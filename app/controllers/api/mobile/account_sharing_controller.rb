@@ -216,7 +216,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def account_sharing_request_customer
-    @user.account_sharings.pending.where(collaborator_id: @user.id).map do |account_sharing|
+    @user.account_sharings.unscoped.pending.where(collaborator_id: @user.id).map do |account_sharing|
       { id_idocus: account_sharing.id, name: account_sharing.account.info }
     end
   end

@@ -1,6 +1,7 @@
 #bank_accounts
   - unless @customer.configured?
-    = render 'account/customers/steps'
+    .box
+      = render 'account/customers/steps'
 
   .card
     .card-header
@@ -32,13 +33,9 @@
             .input-prepend.date.datepicker
               %span.add-on
                 %i.icon-th
-<<<<<<< HEAD
               = text_field_tag @bank_account.start_date.present? ? 'bank_account[start_date_disabled]' : 'bank_account[start_date]', @bank_account.start_date, { style: 'width: 180px; left: -3px;', disabled: @bank_account.start_date.present? }
               - if @bank_account.start_date.present?
                 = hidden_field_tag 'bank_account[start_date]', @bank_account.start_date
-=======
-              = text_field_tag 'bank_account[start_date]', @bank_account.start_date, class: 'input-small'
->>>>>>> 61d6c78... WIP: upgrade rails5 #009
             - if @bank_account.operations.count >= 1
               %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.order(date: :asc).first.date.strftime("%d/%m/%Y")}
         = f.input :lock_old_operation, required: true, hint: "Ne s'applique qu'après un mois depuis la création de ce compte bancaire dans iDocus"

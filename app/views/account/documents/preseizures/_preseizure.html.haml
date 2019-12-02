@@ -2,7 +2,7 @@
 
 .preseizure.content_preseizure{ id: "div_#{preseizure.id}", style: 'display: none' }
   .name.row
-    .col-md-9.title.padding1
+    .col-md-11.title.padding1
       %a.badge.badge-info.do-tooltip{ title: "position" }
         = sprintf '%03d', preseizure.position || 0
       %span.preseizure_label 
@@ -11,7 +11,7 @@
             = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
           - else
             = preseizure.piece_name
-    .col-md-3.actionbox.padding1
+    .col-md-1.actionbox.padding1
       %a.tip_edit.float-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
         = glyphicon('pencil')
       - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
@@ -23,7 +23,7 @@
         .do-selectPage-ban-icon.hide
           = glyphicon('ban')
   .informations.row
-    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'col-md-9' : 'col-md-12'}" }
+    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'col-md-6' : 'col-md-9'}" }
       %table.table.table-striped.table-condensed.margin0bottom.information
         %thead
           %tr
@@ -37,7 +37,7 @@
                 .edit_content_date.hide
                   %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
     - if preseizure.delivery_tried_at.present?
-      .other_information.col-md-3
+      .other_information.col-md-4
         %p      
           Dernière envoi  
           %strong
@@ -54,9 +54,9 @@
             %span.error_message{title: software_erreur}
               = software_erreur
     - else
-      .span1
+      .col-md-1
     - if stamp_url.present?
-      .stamp_image_content.span1{class: "#{preseizure.delivery_tried_at.present? ? '' : 'ml-14'}"}
+      .stamp_image_content.col-md-1{class: "#{preseizure.delivery_tried_at.present? ? '' : 'ml-14'}"}
         .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
   .content_detail
     - preseizure_entries = preseizure.entries

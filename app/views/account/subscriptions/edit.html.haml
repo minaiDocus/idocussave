@@ -1,4 +1,7 @@
 ﻿#subscriptions.edit
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
   .card
     .card-header
       - if @customer.configured?
@@ -10,8 +13,6 @@
           %h3
             Sélection forfait(s)/option(s) pour le dossier : 
             %span.text-info.fs-origin= @customer
-        .float-right
-          = render 'account/customers/steps'
 
     = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { id: 'subscription_package_form', class: 'form-horizontal' }, data: { is_recently_created: @customer.recently_created? } do |f|
       .card-body
