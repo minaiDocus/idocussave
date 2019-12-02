@@ -87,7 +87,7 @@ var initEventOnPiecesRefresh = function(){
       $("#span"+span_id).addClass("preseizure_selected");    
       $("#div_"+div_id[1]).addClass("preseizure_selected active");
     }           
-    handlePreseizureSelection(div_id[1]);
+    handlePreseizureSelection(span_id);
     togglePreseizureAction();
   });
 

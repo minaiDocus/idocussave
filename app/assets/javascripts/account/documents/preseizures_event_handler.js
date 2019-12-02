@@ -518,6 +518,7 @@ $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").cli
           getPreseizureAccount(window.preseizuresSelected);
         else 
           refreshPreseizures(window.preseizuresSelected);
+        window.preseizuresSelected = []
       }
       else
       {
