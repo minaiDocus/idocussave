@@ -43,7 +43,7 @@ class GeneratePreAssignmentExportService
 
       if valid_coala?
         create_pre_assignment_export_for 'coala'
-        generate_coala_export
+        generate_coala_export(true, true)
       end
 
       if valid_cegid?
@@ -79,7 +79,7 @@ class GeneratePreAssignmentExportService
       generate_csv_descriptor_export(false)
     when 'xml_ibiza'
       create_pre_assignment_export_for 'ibiza'
-      
+
       generate_ibiza_export
     when 'zip_quadratus'
       create_pre_assignment_export_for 'quadratus'
@@ -96,11 +96,11 @@ class GeneratePreAssignmentExportService
     when 'txt_fec_agiris'
       create_pre_assignment_export_for 'fec_agiris'
 
-      generate_fec_agiris_export
+      generate_fec_agiris_export(false)
     when 'csv_cegid'
       create_pre_assignment_export_for 'cegid'
 
-      generate_cegid_export
+      generate_cegid_export(false)
     end
 
     @export
@@ -108,45 +108,60 @@ class GeneratePreAssignmentExportService
 
 private
 
-  def generate_coala_export(zip = nil)
+  def generate_coala_export(to_zip = false, unzip_result = false)
     begin
-      if zip
-        file_zip = CoalaZipService.new(@report.user, @preseizures, {to_xls: true}).execute
-        rename_export 'coala'
-        @export.got_success "#{file_real_name}.zip"
+      file = CoalaZipService.new(@report.user, @preseizures, {preseizures_only: !to_zip, to_xls: true}).execute
+
+      if to_zip
+        if unzip_result
+          POSIX::Spawn.system("unzip -o #{file} -d #{file_path}")
+          rename_export 'coala'
+          @export.got_success "#{file_real_name}.xls"
+        else
+          final_file_name = "#{file_real_name}.zip"
+          FileUtils.mv file, "#{file_path}/#{final_file_name}"
+          @export.got_success "#{final_file_name}"
+        end
       else
-        file_zip = CoalaZipService.new(@report.user, @preseizures, {preseizures_only: true, to_xls: true}).execute
-        POSIX::Spawn.system("unzip -o #{file_zip} -d #{file_path}")
-        rename_export 'coala'
-        @export.got_success "#{file_real_name}.xls"
+        final_file_name = "#{file_real_name}.xls"
+        FileUtils.mv file, "#{file_path}/#{final_file_name}"
+        @export.got_success "#{final_file_name}"
       end
     rescue => e
       @export.got_error e
     end
   end
 
-  def generate_cegid_export
+  def generate_cegid_export(with_file = true)
     begin
       file_csv = CegidZipService.new(@report.user, @preseizures).execute
       final_file_name = "#{file_real_name}.csv"
       FileUtils.mv file_csv, "#{file_path}/#{final_file_name}"
-      @preseizures.each do |preseizure|
-        FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+
+      if with_file
+        @preseizures.each do |preseizure|
+          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+        end
       end
+
       @export.got_success "#{final_file_name}"
     rescue => e
       @export.got_error e
     end
   end
 
-  def generate_fec_agiris_export
+  def generate_fec_agiris_export(with_file = true)
     begin
       file_txt = FecAgirisTxtService.new(@preseizures).execute
       final_file_name = "#{file_real_name}.txt"
       FileUtils.mv file_txt, "#{file_path}/#{final_file_name}"
-      @preseizures.each do |preseizure|
-        FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+
+      if with_file
+        @preseizures.each do |preseizure|
+          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+        end
       end
+
       @export.got_success "#{final_file_name}"
     rescue => e
       @export.got_error e

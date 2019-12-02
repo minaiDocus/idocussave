@@ -27,20 +27,19 @@ module Account::DocumentsHelper
   end
 
   def document_delivery_label(document)
-    delivered = true
+    label = ['Non récupéré', 'warning']
 
     document.preseizures.each do |preseizure|
-      delivered = false unless preseizure.is_delivered? || preseizure.is_exported?
-      break unless delivered
+      if preseizure.is_delivered?
+        label = ['Transmis', 'success']
+      elsif preseizure.is_exported?
+        label = ['Téléchargé', 'success']
+      end
+
+      break unless label[0] == 'Non récupéré'
     end
 
-    if delivered
-      label = document.preseizures.first.is_delivered? ? 'Transmis' : 'Téléchargé'
-
-      "<span class='preseizure_status label label-success'>#{label}</span>".html_safe
-    else
-      "<span class='preseizure_status label label-warning'>Non récupéré</span>".html_safe
-    end
+    content_tag :span, label[0], class: "preseizure_status label label-#{label[1]}"
   end
 
   def analytics_of(preseizure)

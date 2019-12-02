@@ -308,11 +308,17 @@ class Account::DocumentsController < Account::AccountController
     report      = preseizures.first.try(:report)
     user        = preseizures.first.try(:user)
 
-    if preseizures.any? && export_format.in?(%w(csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid))
+    supported_format = %w(csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid)
+
+    if preseizures.any? && export_format.in?(supported_format)
       export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
 
-      send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
-    elsif !export_format.in?(%w(csv xml_ibiza zip_quadratus zip_cola xls_coala txt_fec_agiris csv_cegid))
+      if export.error?
+        render text: "Traitement impossible : #{export.error_message}"
+      else
+        send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
+      end
+    elsif !export_format.in?(supported_format)
       render text: 'Traitement impossible : le format est incorrect.'
     else
       render text: 'Aucun résultat'
