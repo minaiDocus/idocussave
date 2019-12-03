@@ -108,15 +108,16 @@ function refreshPreseizures(ids){
       success: function(data){
         logAfterAction();
         data = data.trim();
-
         var parser = new DOMParser();
         var htmlDoc = parser.parseFromString(data, 'text/html');
 
         elem.html($(htmlDoc).find('#show_preseizures #lists_preseizures_content .preseizure#div_'+id).html());
+        elem.removeClass("selected");
 
         initEventOnPreseizuresRefresh();
         initEventOnPreseizuresAccountRefresh();
         window.initEventOnHoverOnInformation();
+        handlePreseizureSelection('', '');
 
         //auto open details
         setTimeout(function() {
@@ -428,7 +429,7 @@ function updatePreseizureInformation(date="",deadline_date="",third_party="",id=
 
 function alertModificationPreseizureDelivered(id)
 {  
-  if ($("#alert_"+id).length == 0 && $("#delivered_"+id).val() == 1)
+  if ($("#alert_"+id).length == 0 && $("#delivered_"+id).val() == 1 && $(".is_collaborator").val() == 1)
   {
     $("#alert_irregular_debit_credit").modal("show");    
     $("#wrap").append('<input type="hidden" id="alert_'+id+'" value="1">');

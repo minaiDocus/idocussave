@@ -519,6 +519,7 @@ $("#preseizuresModals #editSelectedPreseizures #validatePreseizuresEdition").cli
         else 
           refreshPreseizures(window.preseizuresSelected);
         window.preseizuresSelected = []
+        $('input[type="checkbox"]').prop("checked",false);
       }
       else
       {

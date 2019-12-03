@@ -91,6 +91,7 @@ class Pack::Report::Preseizure::Account < ActiveRecord::Base
     end
 
     accounts_name = accounts_name.flatten
+    accounts_name = accounts_name.uniq
     accounts_name.compact
   end
 end

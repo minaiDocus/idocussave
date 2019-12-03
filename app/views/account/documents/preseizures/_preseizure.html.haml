@@ -1,3 +1,5 @@
+- stamp_url = preseizure.get_state_to :image
+
 .preseizure.content_preseizure{ id: "div_#{preseizure.id}", style: 'display: none' }
   .name.row-fluid
     .span9.title.padding1
@@ -18,35 +20,29 @@
       %a.tip_selection.pull-right.do-tooltip{href: '#', title: "Sélection", data: {id: "div_#{preseizure.id}"}}
         %i.icon-ok
   .informations.row-fluid
-    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'span9' : 'span12'}" }
+    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'span6' : 'span9'}" }
       %table.table.table-striped.table-condensed.margin0bottom.information
         %thead
           %tr
             %th.date.text-center Date
-            %th.date.text-center Date d'échéance                        
         %tbody
           %tr
             %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
               .content_date
-                = preseizure.date.try(:to_formatted_s, :db)
+                = preseizure.date.try(:to_date)
               - if @user.collaborator?
                 .edit_content_date.hide
                   %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
-            %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-              .content_deadline_date
-                = preseizure.deadline_date.try(:to_formatted_s, :db)
-              - if @user.collaborator?
-                .edit_content_deadline_date.hide
-                  %input.edit_content_deadline_date_number.margin0{type: :text, value: preseizure.deadline_date.try(:to_date), placeholder: preseizure.deadline_date.try(:to_date), readonly: :readonly}
     - if preseizure.delivery_tried_at.present?
-      .other_information.span3
+      .other_information.span4
         %p      
           Dernière envoi  
           %strong
             = @software_human_name      
           le : 
           = preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
-        - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''   
+        - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''
+
         - if software_erreur.present?
           %p
             Message d'erreur (
@@ -55,16 +51,14 @@
             ) :
             %span.error_message{title: software_erreur}
               = software_erreur
+    - else
+      .span1
+    - if stamp_url.present?
+      .stamp_image_content.span1{class: "#{preseizure.delivery_tried_at.present? ? '' : 'ml-14'}"}
+        .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
   .content_detail
     - preseizure_entries = preseizure.entries
-    - debit_value = credit_value = 0    
-    - irregular_debit_credit_somme = false    
-    - preseizure_entries.each do |entry|
-      - if entry.type == 1
-        - debit_value += entry.amount.to_f
-      - else 
-        - credit_value += entry.amount.to_f      
-    - irregular_debit_credit_somme = true if debit_value != credit_value
+    - irregular_debit_credit_somme = verif_debit_credit_somme_of preseizure_entries
     - pre_tax_amount = preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
     - data_analytics = analytics_of preseizure
     

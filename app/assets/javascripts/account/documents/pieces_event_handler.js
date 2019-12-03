@@ -23,7 +23,7 @@ var initEventOnPiecesRefresh = function(){
       }
     });
     $(".compta_analysis_edition, .composer, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});  
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures ").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
   });
 
   $(".do-unselectAllPages").unbind('click');
@@ -37,7 +37,11 @@ var initEventOnPiecesRefresh = function(){
     });
     window.preseizuresSelected = [];
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".content_preseizure, .tab").removeClass('preseizure_selected active');
+    $('input[type="checkbox"').prop('checked',false);
+    $(".tip_edit_multiple").addClass('hide');
+
   });  
 
   $("a.do-nextPage").unbind('click');
@@ -74,20 +78,19 @@ var initEventOnPiecesRefresh = function(){
 
   $(".check_modif_preseizure input").unbind('click');
   $(".check_modif_preseizure input").click(function(e) {
-    var span_id = $(this).attr('id');
-    var div_id = span_id.split('_');
+    var _id = $(this).attr('id');
     
-    if ($("#div_"+div_id[1]).hasClass("preseizure_selected active"))
+    if ($("#div"+_id).hasClass("preseizure_selected active"))
     {     
-      $("#span"+span_id).removeClass("preseizure_selected");    
-      $("#div_"+div_id[1]).removeClass("preseizure_selected active");
+      $("#span"+_id).removeClass("preseizure_selected");
+      $("#div"+_id).removeClass("preseizure_selected active");
     }
     else 
     {      
-      $("#span"+span_id).addClass("preseizure_selected");    
-      $("#div_"+div_id[1]).addClass("preseizure_selected active");
+      $("#span"+_id).addClass("preseizure_selected");
+      $("#div"+_id).addClass("preseizure_selected active");
     }           
-    handlePreseizureSelection(span_id);
+    handlePreseizureSelection(_id);
     togglePreseizureAction();
   });
 
@@ -225,7 +228,7 @@ $('#analysis_validate').on('click', function(){
           setTimeout(function(){ $('#comptaAnalysisEdition').modal('hide') }, 2000)
         }
 
-        $("#comptaAnalysisEdition .length_alert").html(full_message)
+        $("#comptaAnalysisEdition .length_alert").html(full_message);
       },
       error: function(data){
         logAfterAction();

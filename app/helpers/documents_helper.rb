@@ -263,4 +263,19 @@ module DocumentsHelper
       {}
     end
   end
+
+  def verif_debit_credit_somme_of(preseizure_entries)
+    debit_value = credit_value   = 0
+    irregular_debit_credit_somme = false
+    preseizure_entries.each do |entry|
+      if entry.type == 1
+        debit_value += entry.amount.to_f
+      else
+        credit_value += entry.amount.to_f
+      end
+    end
+    irregular_debit_credit_somme = true if debit_value != credit_value
+
+  irregular_debit_credit_somme
+  end
 end

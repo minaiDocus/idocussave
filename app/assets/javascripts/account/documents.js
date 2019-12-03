@@ -202,65 +202,65 @@
       filter = window.getParamsFromFilter();
       window.setParamsFilterText();
     }
+    setTimeout(function(e){
+      var view = $("select[name=document_owner_list]").val();
+      var per_page = $("select[name=per_page]").val();
 
-    var view = $("select[name=document_owner_list]").val();
-    var per_page = $("select[name=per_page]").val();
-
-    if (view == 'current_delivery') {
-      $('a.delivery').hide();
-    } else {
-      $('a.delivery').show();
-    }
-
-    $("#panel1 .header h3").text('Pieces');
-    $("#panel1 > .content").html("");
-
-    $("#presPanel1 .header h3").text('Ecritures comptables')
-    $("#presPanel1 > .content").html("")
-
-    var Url = "/account/documents/packs?page="+page+"&view="+view+"&per_page="+per_page+'&'+filter;
-    window.currentLink = null;
-
-    $.ajax({
-      url: encodeURI(Url),
-      data: "",
-      dataType: "html",
-      type: "GET",
-      beforeSend: function() {
-        logBeforeAction("Traitement en cours");
-      },
-      success: function(data) {
-        logAfterAction();
-        var list = $("#documentslist .packsList .content");
-        list.children("*").remove();
-        list.append(data);
-
-        packs_count = $("input[name=packs_count]").val();
-        
-        $("#documentslist .packsList h3").text(packs_count + " lot(s)");
-
-        $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
-        $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
-
-        initEventOnPackOrReportRefresh();
-        window.initEventOnHoverOnInformation();
-
-        setTimeout(function(){ 
-          window.datasLoaderLocked = false; 
-          if(then_reports)
-            getReports();
-        }, 1000);
-      },
-      error: function(data){
-        logAfterAction();
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
-        setTimeout(function(){ 
-          window.datasLoaderLocked = false;
-          if(thenReports)
-            getReports();
-         }, 1000);
+      if (view == 'current_delivery') {
+        $('a.delivery').hide();
+      } else {
+        $('a.delivery').show();
       }
-    });
+
+      $("#panel1 .header h3").text('Pieces');
+      $("#panel1 > .content").html("");
+
+      $("#presPanel1 .header h3").text('Ecritures comptables')
+      $("#presPanel1 > .content").html("")
+      console.log("1 " + view);
+      var Url = "/account/documents/packs?page="+page+"&view="+view+"&per_page="+per_page+'&'+filter;
+      window.currentLink = null;
+
+      $.ajax({
+        url: encodeURI(Url),
+        data: "",
+        dataType: "html",
+        type: "GET",
+        beforeSend: function() {
+          logBeforeAction("Traitement en cours");
+        },
+        success: function(data) {
+          logAfterAction();
+          var list = $("#documentslist .packsList .content");
+          list.children("*").remove();
+          list.append(data);
+
+          packs_count = $("input[name=packs_count]").val();
+          $("#documentslist .packsList h3").text(packs_count + " lot(s)");
+
+          $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+          $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px");
+
+          initEventOnPackOrReportRefresh();
+          window.initEventOnHoverOnInformation();
+
+          setTimeout(function(){
+            window.datasLoaderLocked = false;
+            if(then_reports)
+              getReports();
+          }, 1000);
+        },
+        error: function(data){
+          logAfterAction();
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+          setTimeout(function(){
+            window.datasLoaderLocked = false;
+            if(thenReports)
+              getReports();
+           }, 1000);
+        }
+      });
+    },500);
   }
 
   //fetch lists of report (operation reports)

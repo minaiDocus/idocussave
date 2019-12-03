@@ -65,6 +65,8 @@
                 - if @organization.is_active
                   %li{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
                     = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization)
+                %li
+                  = link_to 'Pre-affectation', account_documents_path
                 %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
                   = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
                 %li{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }

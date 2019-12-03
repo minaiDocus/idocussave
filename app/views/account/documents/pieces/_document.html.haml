@@ -36,7 +36,7 @@
       - if size > 0 
         .content_details         
           %input{type: :hidden, class: :list_preseizure_id, value: preseizures.ids}      
-          .tab_preseizures
+          .tab_preseizures{class: "#{size == 1 ? 'hide' : ''} "}
             - active = nil
             - preseizures.each do |preseizure| 
               - if @ibiza
