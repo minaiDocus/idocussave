@@ -34,6 +34,7 @@ class AccountingWorkflow::RetrievePreAssignments
       end
 
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
+      not_blocked_pre_assignments = not_blocked_pre_assignments.select{|pres| !pres.has_deleted_piece? }
       if not_blocked_pre_assignments.size > 0
         CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
         GeneratePreAssignmentExportService.new(not_blocked_pre_assignments).execute
@@ -73,7 +74,7 @@ class AccountingWorkflow::RetrievePreAssignments
       journal = piece.user.account_book_types.where(name: piece.pack.name.split[1]).first if piece
 
       errors = []
-      errors << "Piece #{xml_piece['name']} unknown" unless piece
+      errors << "Piece #{xml_piece['name']} unknown or deleted" unless piece
       errors << "Journal not found" unless journal
       errors << "Piece #{xml_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
@@ -108,7 +109,7 @@ class AccountingWorkflow::RetrievePreAssignments
         if _ignoring_reason.present?
           _ignored = true
 
-          NotifyPreAssignmentIgnoredPiece.new(piece, 5.minutes).execute
+          NotifyPreAssignmentIgnoredPiece.new(piece, 5.minutes).execute unless piece.is_deleted?
         else
           xml_piece.css('preseizure').each do |data|
             pre_assignments << create_preseizure(piece, report, data)
@@ -171,7 +172,7 @@ class AccountingWorkflow::RetrievePreAssignments
     preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
     unless DetectPreseizureDuplicate.new(preseizure).execute
-      NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
+      NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute unless preseizure.has_deleted_piece?
     end
 
     preseizure

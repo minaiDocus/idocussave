@@ -217,7 +217,7 @@
 
       $("#presPanel1 .header h3").text('Ecritures comptables')
       $("#presPanel1 > .content").html("")
-      console.log("1 " + view);
+
       var Url = "/account/documents/packs?page="+page+"&view="+view+"&per_page="+per_page+'&'+filter;
       window.currentLink = null;
 
@@ -620,12 +620,20 @@
       if(window.datasLoaderLocked || window.piecesLoaderLocked || window.preseizuresLoaderLocked)
         return false;
 
-      if(window.currentTargetFilter == 'all')
+      if(window.currentTargetFilter == 'all'){
         getPacks(1, true);
-      else if (window.currentLink != null && window.currentLink != undefined)
-        getPreseizures(window.currentLink, 1, null, true);
-      else
+      }
+      else if (window.currentLink != null && window.currentLink != undefined){
+        var source = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack'
+
+        if(source == 'pack')
+          showPieces(window.currentLink)
+        else
+          getPreseizures(window.currentLink, 1, null)
+      }
+      else{
         alert('Vous devez selectionner un lot pour ce type de filtre!');
+      }
     });
 
     $('#documents_actions #initPackFilter, #packFilterModal #initPackFilterModal').click(function(){
@@ -634,10 +642,17 @@
         return false;
 
       $('#packFilterModal #packFilterForm')[0].reset();
-      if(window.currentTargetFilter == 'selected' && window.currentLink != null && window.currentLink != undefined)
-        getPreseizures(window.currentLink, 1, null, true);
-      else
+      if(window.currentTargetFilter == 'selected' && window.currentLink != null && window.currentLink != undefined){
+        var source = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack'
+
+        if(source == 'pack')
+          showPieces(window.currentLink)
+        else
+          getPreseizures(window.currentLink, 1, null)
+      }
+      else{
         getPacks(1, true);
+      }
     });
 
     $('#documentslist .subView #view_packs').click(function(){

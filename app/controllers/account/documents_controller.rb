@@ -56,7 +56,6 @@ class Account::DocumentsController < Account::AccountController
     else
       if params[:by_all].present?
         params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
-        params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
       end
 
       options = { page: params[:page], per_page: params[:per_page] }
@@ -568,12 +567,10 @@ private
 
 
   def show_pack_pieces
-
     pack = Pack.find params[:id]
     
     if params[:by_all].present?
       params[:by_piece] = params[:by_piece].present? ? params[:by_piece].merge(params[:by_all]) : params[:by_all]
-      params[:by_preseizure] = params[:by_preseizure].present? ? params[:by_preseizure].merge(params[:by_all]) : params[:by_all]
     end
     
     if(params[:piece_id].present?)

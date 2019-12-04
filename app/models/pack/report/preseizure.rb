@@ -247,6 +247,10 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     @marked_as_duplicate_by_user ||= User.find_by id: marked_as_duplicate_by_user_id
   end
 
+  def has_deleted_piece?
+    self.piece.try(:deleted_at).try(:present?) ? true : false
+  end
+
   def delivered_to(software)
     return true if is_delivered_to?(software)
 

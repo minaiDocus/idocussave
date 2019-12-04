@@ -229,6 +229,9 @@ class Pack::Piece < ActiveRecord::Base
     name.split[1]
   end
 
+  def is_deleted?
+    self.deleted_at.present?
+  end
 
   def scanned?
     origin == 'scan'
