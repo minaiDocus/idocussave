@@ -73,7 +73,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.created_at, '%Y-%m-%d') #{options[:created_at_operation].tr('012', ' ><')}= ?", options[:created_at])                        if options[:created_at].present?
     preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.date, '%Y-%m-%d') #{options[:date_operation].tr('012', ' ><')}= ?", options[:date])                                          if options[:date].present?
     preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.delivery_tried_at, '%Y-%m-%d') #{options[:delivery_tried_at_operation].tr('012', ' ><')}= ?", options[:delivery_tried_at])   if options[:delivery_tried_at].present?
-    preseizures = preseizures.where("pack_report_preseizures.amount #{options[:amount_operation].tr('012', ' ><')}= ?", options[:amount])                                                             if options[:amount].present?
+    preseizures = preseizures.where("pack_report_preseizures.cached_amount #{options[:amount_operation].tr('012', ' ><')}= ?", options[:amount])                                                      if options[:amount].present?
     preseizures = preseizures.where("pack_report_preseizures.position #{options[:position_operation].tr('012', ' ><')}= ?", options[:position])                                                       if options[:position].present?
 
     preseizures = preseizures.where(piece_number: options[:piece_number]) if options[:piece_number].present?

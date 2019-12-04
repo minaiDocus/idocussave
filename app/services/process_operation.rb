@@ -81,6 +81,8 @@ class ProcessOperation
             entry.amount     = CurrencyRateService.convert_operation_amount operation
             entry.save
 
+            preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
+
             preseizures << preseizure
             to_deliver_preseizures << preseizure
             operation.update_attribute(:processed_at, Time.now)
