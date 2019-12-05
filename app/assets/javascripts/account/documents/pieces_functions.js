@@ -123,6 +123,7 @@ function getPieces(url,title,by_preseizure=null) {
 // show or hide selection field
 function toogleSelectionBox(){
   $('#selectionsBox').addClass('hide');
+  countSelectedPieces();
 }
 
 // add page to the selection field
@@ -221,6 +222,8 @@ function selectPage(link) {
     link.find('i').removeClass('icon-ban-circle');
     link.find('i').addClass('icon-ok');
   }
+
+  countSelectedPieces();
 }
 
 // remove the document from selection, given by link
@@ -363,4 +366,15 @@ function deletePieceComposition(){
       actionDeletePiece(piece_id); 
     });
   }
+}
+
+function countSelectedPieces(){
+  var selected_items = $("#show_pages li.pages.selected").length;
+  var total_count = $('#show_pages .head .pieces_total_count').text() || '0';
+
+  var selected_htm = "<strong class='selected_items_info' style='margin-right: 15px'>" + selected_items + " / " + total_count + " pièce(s) séléctionnée(s)</strong>";
+
+  $('#show_pages .head .actiongroup .selected_items_info').remove();
+  if(selected_items > 0)
+    $('#show_pages .head .actiongroup a:first').before(selected_htm);
 }

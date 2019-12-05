@@ -22,8 +22,12 @@ var initEventOnPiecesRefresh = function(){
         addPage($(li));        
       }
     });
-    $(".compta_analysis_edition, .composer, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures ").css({'border' : '1px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+
+    if($("#show_pages li.pages.selected").length > 1)
+      $('.composer').show();
+
+    $(".compta_analysis_edition, .delete_piece_composition").show();
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .tip_edit_multiple").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
   });
 
   $(".do-unselectAllPages").unbind('click');

@@ -160,6 +160,7 @@
   function show_preseizures_view(){
     window.currentView = 'preseizures';
 
+    $('#presPanel1 .header .actiongroup .selected_items_info').remove();
     $("#preseizuresList #presPanel1").attr("style","min-height:"+$("#documentslist").height()+"px;");
     $("#preseizuresList").fadeIn('slow');
     $("#pageslist").hide();

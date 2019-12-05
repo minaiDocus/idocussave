@@ -352,6 +352,8 @@ function handlePreseizureSelection(id_tmp, type='toggle'){
     $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').removeClass('hide');
   else
     $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
+
+  countSelectedPreseizures();
 }
 
 function togglePreseizureAction(){  
@@ -479,4 +481,15 @@ function accountAutocompletion(input, params = {value: '', preseizure_id: 0, acc
   {
     html_autocomplete.addClass('hide');
   }
+}
+
+function countSelectedPreseizures(){
+  var selected_items = $("#show_preseizures .preseizure.selected").length;
+  var total_count = $('#show_preseizures h4').text().replace('écriture(s) comptable(s)', '').trim() || '0';
+
+  var selected_htm = "<strong class='selected_items_info' style='margin-right: 15px'>" + selected_items + " / " + total_count + " écriture(s) séléctionnée(s)</strong>";
+
+  $('#presPanel1 .header .actiongroup .selected_items_info').remove();
+  if(selected_items > 0)
+    $('#presPanel1 .header .actiongroup a:first').before(selected_htm);
 }
