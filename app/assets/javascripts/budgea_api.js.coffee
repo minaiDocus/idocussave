@@ -500,22 +500,21 @@ class Idocus.BudgeaApi
 
       count = keys.length || 0
       if self.encryptor != undefined && self.encryptor != null && count > 0
-        # for k in keys
-        #   if !except.includes(k)
-        #       self.encrypt(data[k], k).then(
-        #         (encrypted)->
-        #           _k = encrypted.key
-        #           _value = encrypted.response
-        #           data[_k] = _value
-        #           count--
-        #           if count <= 0
-        #             resolve(data)
-        #       )
-        #   else
-        #     count--
-        #     if count <= 0
-        #       resolve(data)
-        resolve(data)
+        for k in keys
+          if !except.includes(k)
+              self.encrypt(data[k], k).then(
+                (encrypted)->
+                  _k = encrypted.key
+                  _value = encrypted.response
+                  data[_k] = _value
+                  count--
+                  if count <= 0
+                    resolve(data)
+              )
+          else
+            count--
+            if count <= 0
+              resolve(data)
       else
         resolve(data)
     )
