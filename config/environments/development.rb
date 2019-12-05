@@ -24,6 +24,9 @@ Idocus::Application.configure do
 
   config.active_record.raise_in_transactional_callbacks = true
 
+
+  config.cache_store = :dalli_store, { namespace: 'iDocus_development' }
+
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.

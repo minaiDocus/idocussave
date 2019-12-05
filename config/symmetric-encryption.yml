@@ -6,11 +6,47 @@
 # can be placed directly in the source code.
 # And therefore no RSA private key is required
 development:         &development_defaults
-  key:               1234567890ABCDEF1234567890ABCDEF
-  iv:                1234567890ABCDEF
-  cipher_name:       aes-128-cbc
-  encoding:          :base64strict
-  always_add_header: true
+  private_rsa_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEpAIBAAKCAQEA7HKhvksLPvTFC8NAYsvTBNY5hNPlNDakp511h3WjKQy1VWpq
+    tLp6rT9OC6BCpcBVnvShV2VzeBJz7wOCaAlRy3lCT69FKozebw8nXy2A5FgxtiNC
+    DBQG6oi8yjqqDin3b/vEgCWxRjNUCCBLRULlBvql6Yjpckuh2+OHb4ZABYLSocX2
+    YkrnL6JOr9APuzy+fi9IS6C+skiP7IKY2wlQ0nLIGxXBNq9J1UkuKMQcogKSAWs3
+    z9+e/H3Vqq8HxW3ZrqTQ2LkXcDCj/wEZUGE0vqWXlvyX42rjSlzuHml1nsfZuQCy
+    XL7iRcPU+BTQkuU+QQ3as91hYQaCHhXla9+kBwIDAQABAoIBAD3MhDvBT3In9Wxq
+    nuRzk3a7KxNtcoWgFo78l6BM/dUXzjlB9BvCdZfcaOCfBWxfBcHi/FxkVra2U/jP
+    eQEKFofQ7KT5EWHaqbRrSIYW1Y5ZAr0xH+0aOuiHzpgolxPWoiZxrl0z/M51UexB
+    zIqQvl2Bm2WbdDB8VhSrtlVOyGLn2smayNM2OnluS8WEDJL7bC7nV5jeDeoZiR+3
+    EM/dReKx3pGBw4L5I8mjEFVb5VNY34fSJdX8ZgKggEFe5NBDk7PoX9rqoJZ7yYcs
+    P5X+QiGHPsSTYsFps7b7ozOZlpkfIozXQe03EErB4qBRq/jTA3CM5S2YtS+9nsyk
+    AYf2gLECgYEA/le5mPOUnG4qhHHTpLnD8KjKfkQh0PZ6E6ADcfFPHRwTMepdKf3H
+    wy3oaiZmk+sCCWZBRxuSXBAOH+6cvJkmf/OGPukpNyZB4e/xWO/qB6j8jxqxwvdi
+    uTRKjoxPyf1ZxTPsxSssIo6wB0bm1xbD7E4YKhFioz/1bNSXY0872ykCgYEA7f0O
+    UP94+cWJWQxihhJJGIafny16MbfPNusf3fr87+AqF9YOpWjPRe22nNDoVjnBrM74
+    LVnNxu+ghfxow9rV1zDA7PbGADm56S/AIDusGJFXyRMmJpY1X1OU8tqtqC66WfyK
+    FqUpRYJY58TQO4lEc+0vkAvcfStxFZyrFn2Lm68CgYEA4kelxaAfvTR9+ytRwiHL
+    YxaoYMG43DIM1dzsc7jeS+WoZiY+EJfJ26nCNn5HkJ3qR/aDaQHsqp9WEa62H0yZ
+    5ggAjYPeuUP+JUbVj+ySZ5I+cAqtz+lMGb2d/0hxzCDsdvgFVD1enLgZf7/iq8WD
+    NX8dHIAvI1JJxTM2JJJfjFECgYAHnIBItuL3mgm6f1rnTs5nqmaQgLPXwzktWHe8
+    cbqFMXYnLQFq6N84LVIZ0dScbVx0Wmo1iRm7sw4/OsNfADC2oSiKa5oJh88aVhye
+    60mlv4A/Pg2KTmOGmPW6jqPfLR9ooVsJPl8Dihet0e2W+dzmmD9dLAPxPOJw/oG6
+    RmmgoQKBgQDAUUMsYqe+Xv5VOCLeEOgoo9SPm7Iu077ney2cQq7otBo0tJa0lanT
+    z25BhvoOKROkBtLFTzCyLK8sJqYatJGi1u+Wg9n7Tzp7K9CRqRr15/pDhkXmUuH3
+    YJhXg9JQLHiuidkyOjaCbtpgjcMDOU3VGZ2GiQfjuJJUJ0jJkNmcag==
+    -----END RSA PRIVATE KEY-----
+
+
+  # List Symmetric Key files in the order of current / latest first
+  ciphers:
+    -
+      # Filename containing Symmetric Encryption Key encrypted using the
+      # RSA public key derived from the private key above
+      key_filename:      /Users/toto/Projects/idocus/main/config/idocus_production.key
+      iv_filename:       /Users/toto/Projects/idocus/main/config/keys/idocus_production.iv
+      cipher_name:       aes-256-cbc
+      encoding:          :base64strict
+      version:           1
+      always_add_header: true
 
 local:
   <<: *development_defaults

@@ -269,9 +269,9 @@ module DocumentsHelper
     irregular_debit_credit_somme = false
     preseizure_entries.each do |entry|
       if entry.type == 1
-        debit_value += entry.amount.to_f
+        debit_value += entry.amount
       else
-        credit_value += entry.amount.to_f
+        credit_value += entry.amount
       end
     end
     irregular_debit_credit_somme = true if debit_value != credit_value
