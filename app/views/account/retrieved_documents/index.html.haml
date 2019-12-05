@@ -5,13 +5,15 @@
         .span6
           %h3 Documents (#{@documents.total_count})
         .span6
-          = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
-    .filter.box{ class: ('hide' if @is_filter_empty) }
+          %a{ href: '#', class: 'btn pull-right toggle_filter' }
+            %i.icon-filter
+            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
+    .filter.box{ style: ('display: none' if @is_filter_empty) }
       = form_tag account_retrieved_documents_path, method: :get, class: 'form form-vertical margin0bottom' do
         = hidden_field_tag :direction, sort_direction
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
-        %table.table-condensed
+        %table.table.table-condensed.table-striped.table-bordered.table-filter
           %thead
             %tr
               - if params[:document_contains] && params[:document_contains][:transaction_id]

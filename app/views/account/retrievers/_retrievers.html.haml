@@ -23,21 +23,13 @@
           %td= retriever_presenter.service_name
           %td= retriever_presenter.name
           %td= retriever_presenter.journal.try(:name) || '-'
-          %td.retriever_state!= retriever_presenter.state(scope)
+          %td.retriever_state{class: "state_field_#{retriever.id}"}!= retriever_presenter.state(scope)
           %td
-            - if @customer.present?
-              - if retriever.ready? || retriever.error?
-                - if retriever.budgea_id.present?
-                  = retriever_presenter.action_link(@organization, @customer)
-                = link_to icon_edit, edit_account_organization_customer_retriever_path(@organization, @customer, retriever), title: 'Editer', rel: 'tooltip'
-              - if retriever.ready? || retriever.error? || retriever.unavailable?
-                = link_to icon_destroy, account_organization_customer_retriever_path(@organization, @customer, retriever), data: { method: :delete, confirm: t('actions.confirm') }, title: 'Supprimer', rel: 'tooltip'
-            - else
-              = icon_link_to '#', { icon: 'info-sign' }, { rel: 'popover', data: { 'original-title' => 'Date de création/modification', content: "#{l(retriever.created_at)}<br>#{l(retriever.updated_at)}", placement: 'left' } }
-              - if retriever.ready? || retriever.error?
-                - if retriever.budgea_id.present?
-                  = retriever_presenter.action_link
-                = link_to icon_edit, edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip'
-              - if retriever.ready? || retriever.error? || retriever.unavailable?
-                = link_to icon_destroy, account_retriever_path(retriever), data: { method: :delete, confirm: t('actions.confirm') }, title: 'Supprimer', rel: 'tooltip'
+            = icon_link_to '#', { icon: 'info-sign' }, { rel: 'popover', data: { 'original-title' => 'Date de création/modification', content: "#{l(retriever.created_at)}<br>#{l(retriever.updated_at)}", placement: 'left' } }
+            - if retriever.ready? || retriever.error? || retriever.waiting_additionnal_info?
+              - if retriever.budgea_id.present?
+                = retriever_presenter.action_link
+              = link_to icon_edit, edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip'
+            - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
+              = link_to icon_destroy, '#', class: "destroy_retriever destroy_retriever_#{retriever.id}", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
 = render partial: 'account/retrievers/list_options'

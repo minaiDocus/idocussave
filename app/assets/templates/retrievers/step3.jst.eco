@@ -1,0 +1,36 @@
+<form class="simple_form retriever_form form form-horizontal" novalidate="novalidate" id="accounts_selection" action="" accept-charset="UTF-8" method="post">
+  <div id='information'></div>
+  <strong id='info_selection'>Séléctionnez vos comptes banquaire parmis la liste suivante:</strong>
+  <table class='table table-bordered table-condensed table-striped margin1top margin0bottom'>
+    <thead>
+      <tr>
+        <th><input type='checkbox' name='' id='master_checkbox' /> </th>
+        <th>Nom du compte</th>
+        <th>Numéro de compte</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @loading: %>
+        <tr><td colspan='3'><div class="feedback active"></div></td></tr>
+      <% else: %>
+        <% for account in @accounts : %>
+          <% checked = '' %>
+          <% if @my_accounts.includes( String(account.get('id')) ): %>
+            <% checked = 'checked' %>
+          <% end %>
+          <tr>
+            <td><input type='checkbox' class='checkbox' name='accounts[]' value='<%= account.get('id') %>' <%= checked %>/></td>
+            <td><%= account.get('name') %></td>
+            <td><%= account.get('number') %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  <div class="form-actions">
+    <div class="actions">
+      <input name="commit_selection" value="Valider" class="btn btn-primary" id="retriever_selection_commit" type="button">
+      <a class="btn" href="/account/retrievers">Annuler</a>
+    </div>
+  </div>
+</form>

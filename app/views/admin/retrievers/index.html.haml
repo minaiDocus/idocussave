@@ -87,8 +87,6 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th F
-                %th B
                 %th= sortable :created_at,   'Créé le'
                 %th= sortable :updated_at,   'Modifié le'
                 %th= sortable :user_id,      t('activerecord.models.user.name')
@@ -103,8 +101,6 @@
               - @retrievers.each do |retriever|
                 - present retriever do |retriever_presenter|
                   %tr
-                    %td= retriever_presenter.fiduceo_state
-                    %td= retriever_presenter.budgea_state
                     %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
                     %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
                     %td= link_to retriever.user.code, [:admin, retriever.user]

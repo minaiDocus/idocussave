@@ -1,14 +1,17 @@
+= hidden_field_tag :retriever_budgea_config, @bi_config
 .row-fluid
   .span12
     .box
       .row-fluid
         .span6
-          %h3 Mes automates (#{@retrievers.size})
+          %h3 Mes automates (#{@retrievers.total_count})
         .span6
-          = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
+          %a{ href: '#', class: 'btn pull-right toggle_filter' }
+            %i.icon-filter
+            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
           / Information obsolète
           / = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }
-    .filter.box{ class: ('hide' if @is_filter_empty) }
+    .filter.box{ style: ('display: none' if @is_filter_empty) }
       = form_tag account_retrievers_path, method: :get, class: 'retriever_search form form-inline margin0bottom' do
         = label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name') + ' :'
         = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')

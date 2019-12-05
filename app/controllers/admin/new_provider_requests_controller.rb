@@ -13,12 +13,6 @@ class Admin::NewProviderRequestsController < Admin::AdminController
   def edit
   end
 
-  def start_process
-    @new_provider_request.start_process
-    RequestNewProvider.delay.execute(@new_provider_request.id)
-    flash[:notice] = 'Statut changé avec succès.'
-    redirect_to admin_new_provider_requests_path
-  end
 
   def reject
     if params[:new_provider_request] && params[:new_provider_request][:message].present?

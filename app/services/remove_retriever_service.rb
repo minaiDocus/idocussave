@@ -15,10 +15,8 @@ class RemoveRetrieverService
 
   def execute
     @user.temp_documents.wait_selection.destroy_all
-    @user.retrievers.each(&:destroy)
-    if @user.bank_accounts.any?
-      Operation.where(bank_account_id: @user.bank_accounts.map(&:id)).update_all(api_id: nil)
-      DestroyBankAccountsWorker.perform_in(1.day, @user.bank_accounts.map(&:id))
+    @user.retrievers.each do |retriever|
+      DestroyBudgeaConnection.disable_accounts(retriever.id) if retriever.destroy_connection
     end
     if @user.budgea_account.present?
       client = Budgea::Client.new(@user.budgea_account.access_token)

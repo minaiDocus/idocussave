@@ -8,11 +8,8 @@
       .pull-left
         %h2 Demande de nouveau fournisseur par le client : #{@new_provider_request.user}
       .pull-right
-        - if @new_provider_request.pending?
-          = link_to icon_ok + ' Démarrer le traitement', start_process_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn', data: { confirm: t('actions.confirm') }
         - if @new_provider_request.processing?
           = link_to icon_ok + ' Accepter', accept_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
-        - if @new_provider_request.pending? || @new_provider_request.processing?
           = link_to icon_not_ok + ' Rejeter', edit_admin_new_provider_request_path(@new_provider_request), class: 'btn btn-danger'
         = link_to t('actions.return'), admin_new_provider_requests_path, class: 'btn'
 

@@ -1,0 +1,31 @@
+<form class='ido_form' id='ido_form' action='' method='post'>
+  <input type="hidden" name="ido_connector_id" id="ido_connector_id" value="<%= @connector.get('id') %>" />
+  <input type="hidden" name="ido_budgea_id" id="ido_budgea_id" value="<%= @budgea_id %>" />
+  <input type="hidden" name="ido_connector_name" id="ido_connector_name" value="<%= @connector.get('name') %>" />
+  <input type="hidden" name="ido_capabilities" id="field_ido_capabilities" value="<%= @connector.get("capabilities").join("_") %>" />
+</form>
+
+<form class='simple_form retriever_form form form-horizontal' novalidate='novalidate' id='connector_fields' action='' accept-charset='UTF-8' method='post'>
+  <div id='information'></div>
+  <div class="control-group required">
+    <label class="required control-label">Type de connecteur</label>
+    <div class="controls" style="margin-top:5px">
+      <strong><%= @connector.get_type() %></strong>
+    </div>
+  </div>
+  <%- @connector.basic_fields() %>
+  <%- @connector.information_fields() %>
+  <div class="contact_fields hide" id="contact_fields">
+    <hr class='margin0top margin2bottom'>
+    <div style='margin-bottom: 16px'>
+      <h5 style='float:left;margin:0 10px;'>Informations de contact</h5><span>(Obligatoire pour les comptes de type professionnels)</span>
+    </div>
+    <%- @connector.contact_fields() %>
+  </div>
+  <div class="form-actions">
+    <div class="actions">
+      <input name="commit" value="Valider" class="btn btn-primary" id="retriever_commit" type="button">
+      <a class="btn" href="/account/retrievers">Annuler</a>
+    </div>
+  </div>
+</form>

@@ -23,19 +23,13 @@ class RetrieverPresenter < BasePresenter
         end
       end
     elsif retriever.waiting_additionnal_info?
-      if scope == :account
-        h.link_to "En attente de l'utilisateur", h.waiting_additionnal_info_account_retriever_path(retriever), class: 'btn btn-mini'
-      elsif scope == :collaborator
-        h.link_to "En attente de l'utilisateur", h.waiting_additionnal_info_account_organization_customer_retriever_path(user.organization, user, retriever), class: 'btn btn-mini'
-      elsif scope == :admin
-        h.content_tag :span, "En attente de l'utilisateur", class: 'label'
-      end
+      h.content_tag :span, "Inforamtion de connexion manquante", class: 'label'
     elsif retriever.configuring? || retriever.running?
       h.content_tag :span, 'Synchronisation en cours', class: 'label'
     elsif retriever.destroying?
       h.content_tag :span, 'Suppression en cours', class: 'label'
     elsif retriever.unavailable?
-      content = h.content_tag :span, formatted_state, class: 'label'
+      content = formatted_state({class: 'label'})
       if scope == :account
         content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-mini')
       elsif scope == :collaborator
@@ -46,20 +40,13 @@ class RetrieverPresenter < BasePresenter
     else
       label_type = 'success'   if retriever.ready?
       label_type = 'important' if retriever.error?
-      h.content_tag :span, formatted_state, class: "label label-#{label_type}"
+      formatted_state({class: "label label-#{label_type}"})
     end
   end
 
   def action_link(organization=nil, customer=nil)
     if retriever.ready? or retriever.error?
-      title = 'Lancer la récupération'
-      title = 'Réessayer maintenant' if retriever.error?
-      if organization.present?
-        url = h.run_account_organization_customer_retriever_path(organization, customer, retriever)
-      else
-        url = h.run_account_retriever_path(retriever)
-      end
-      h.link_to icon(icon: 'download'), url, data: { method: :post, confirm: t('actions.confirm') }, title: title, rel: 'tooltip'
+      h.link_to icon(icon: 'refresh'), '#', class: "trigger_retriever trigger_retriever_#{retriever.id}", data: { id: retriever.id }, title: "Synchroniser", rel: 'tooltip'
     else
       ''
     end
@@ -72,30 +59,6 @@ class RetrieverPresenter < BasePresenter
       'Documents'
     elsif retriever.bank?
       'Op. bancaires'
-    end
-  end
-
-  def fiduceo_state
-    if retriever.fiduceo_connection_not_configured?
-      '-'
-    elsif retriever.fiduceo_connection_successful?
-      icon_ok
-    elsif retriever.fiduceo_connection_failed?
-      icon_not_ok
-    else
-      icon_refresh
-    end
-  end
-
-  def budgea_state
-    if retriever.budgea_connection_not_configured?
-      '-'
-    elsif retriever.budgea_connection_successful?
-      icon_ok
-    elsif retriever.budgea_connection_failed?
-      icon_not_ok
-    else
-      icon_refresh
     end
   end
 

@@ -12,7 +12,7 @@ class SyncBudgeaConnection
   end
 
   def execute
-    if @retriever.connector.is_budgea_active?
+    if @retriever.budgea_connector_id.present?
       if @retriever.destroying?
         DestroyBudgeaConnection.execute(@retriever)
       else
@@ -71,9 +71,9 @@ private
       @params = {}
       if @retriever.budgea_id.nil?
         if @retriever.bank?
-          @params[:id_bank] = @retriever.connector.budgea_id
+          @params[:id_bank] = @retriever.budgea_connector_id
         else
-          @params[:id_provider] = @retriever.connector.budgea_id
+          @params[:id_provider] = @retriever.budgea_connector_id
         end
       end
 

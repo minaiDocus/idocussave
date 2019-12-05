@@ -9,16 +9,17 @@ class Budgea
     end
 
     def config=(new_config)
-      config.domain        = new_config['domain']        if new_config['domain']
-      config.client_id     = new_config['client_id']     if new_config['client_id']
-      config.client_secret = new_config['client_secret'] if new_config['client_secret']
-      config.redirect_uri  = new_config['redirect_uri']  if new_config['redirect_uri']
-      config.proxy         = new_config['proxy']         if new_config['proxy']
+      config.domain         = new_config['domain']          if new_config['domain']
+      config.client_id      = new_config['client_id']       if new_config['client_id']
+      config.client_secret  = new_config['client_secret']   if new_config['client_secret']
+      config.redirect_uri   = new_config['redirect_uri']    if new_config['redirect_uri']
+      config.encryption_key = new_config['encryption_key']  if new_config['encryption_key']
+      config.proxy          = new_config['proxy']           if new_config['proxy']
     end
   end
 
   class Configuration
-    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy
+    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy, :encryption_key
   end
 
   class Client
@@ -36,27 +37,6 @@ class Budgea
       }
       # NOTE access_token is used only for limiting the scope of a request to the user only, because we could use the couple client_id/client_secret or manage_token to do all the request since it's all server side
       @access_token = access_token
-    end
-
-    def create_user
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/auth/init',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        body:  authentification_params
-      )
-      @response = @request.run
-      if @response.code == 200
-        result = JSON.parse(@response.body)
-        if result['type'] == 'permanent'
-          @access_token = result['auth_token']
-        else
-          false
-        end
-      else
-        false
-      end
     end
 
     def destroy_user
@@ -79,29 +59,6 @@ class Budgea
       end
     end
 
-    def get_banks
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/banks?expand=fields',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        params:  authentification_params
-      )
-      run_and_parse_response 'banks'
-    end
-
-    def get_providers
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/providers?expand=fields',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        params:  authentification_params
-      )
-      # NOTE it is really 'banks' here...
-      run_and_parse_response 'banks'
-    end
-
     def get_categories
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/categories',
@@ -111,16 +68,6 @@ class Budgea
         params:  authentification_params
       )
       run_and_parse_response 'categories'
-    end
-
-    def get_profiles
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/profiles',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response 'profiles'
     end
 
     def get_new_access_token(user_id)
@@ -145,82 +92,7 @@ class Budgea
       @response.code == 200
     end
 
-    def request_new_connector(params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/connectors',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        body:  authentification_params.merge(params)
-      )
-      run_and_parse_response
-    end
-
-    def create_connection(params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/connections',
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:  params
-      )
-      run_and_parse_response
-    end
-
-    def update_connection(id, params)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:    params
-      )
-      run_and_parse_response
-    end
-
-    def destroy_connection(id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :delete,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      @response = @request.run
-      @response.code == 200
-    end
-
-    def trigger_connection(id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{id}",
-        method:  :put,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response
-    end
-
-    def get_all_accounts(connexion_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts?all",
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response 'accounts'
-    end
-
-    def activate_account(connexion_id, account_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts/#{account_id}?all",
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:  { disabled: 0 }
-      )
-      run_and_parse_response 'accounts'
-    end
-
-    def get_accounts
+    def get_accounts ##used by transaction fetcher
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',
         method:  :get,
@@ -230,7 +102,7 @@ class Budgea
       run_and_parse_response 'accounts'
     end
 
-    def get_transactions(account_id, min_date=nil, max_date=nil)
+    def get_transactions(account_id, min_date=nil, max_date=nil) ##used by transaction fetcher
       request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions#{request_filters}",
@@ -239,19 +111,6 @@ class Budgea
         headers: headers
       )
       run_and_parse_response 'transactions'
-    end
-
-    def get_documents(connection_id=nil)
-      path = '/users/me'
-      path += "/connections/#{connection_id}" if connection_id
-      path += '/documents'
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + path,
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      run_and_parse_response 'documents'
     end
 
     def get_file(document_id)
@@ -303,6 +162,8 @@ class Budgea
                            'Site web indisponible.'
                          when 'bug'
                            'Service indisponible.'
+                         when 'config'
+                           result['description']
                          when 'actionNeeded'
                            'Veuillez confirmer les nouveaux termes et conditions.'
                          else

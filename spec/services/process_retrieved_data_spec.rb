@@ -18,12 +18,12 @@ describe ProcessRetrievedData do
       r_new_operations: 'now'
     )
     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
-    @connector = FactoryGirl.create :connector
     @retriever = Retriever.new
     @retriever.user           = @user
     @retriever.budgea_id      = 7
-    @retriever.connector      = @connector
+    @retriever.budgea_connector_id = 40
     @retriever.name           = 'Connecteur de test'
+    @retriever.service_name   = 'Connecteur de test'
     @retriever.journal        = @journal
     @retriever.state          = 'ready'
     @retriever.budgea_state   = 'successful'
@@ -35,7 +35,7 @@ describe ProcessRetrievedData do
     DatabaseCleaner.clean
   end
 
-  context 'no preexisting bank account' do
+  context 'no preexisting bank account', :bank_accounts_nil do
     it 'does not create any bank account' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
@@ -63,7 +63,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'a bank account already exist' do
+  context 'a bank account already exist', :bank_accounts_exist do
     before(:each) do
       @bank_account = BankAccount.new
       @bank_account.user      = @user
@@ -281,7 +281,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context '2 bank accounts already exist' do
+  context '2 bank accounts already exist', :two_bank_accounts do
     before(:each) do
       @bank_account = BankAccount.new
       @bank_account.user      = @user
@@ -324,7 +324,7 @@ describe ProcessRetrievedData do
       expect(@operation2.label).to eq '[CB] RESTO 33.5€'
 
       expect(@operation3.api_id).to eq '2'
-      expect(@operation3.label).to eq 'Paypal 7.58€'
+      expect(@operation3.label).to eq "Paypal 7.58€ #{@operation3.bank_account.number}"
 
       expect(@user.notifications.count).to eq 1
       expect(@user.notifications.first.message).to match(/^3/)
@@ -403,7 +403,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'a configured and used bank account exists' do
+  context 'a configured and used bank account exists', :configured_bank_account do
     before(:each) do
       @bank_account = BankAccount.new
       @bank_account.user              = @user
@@ -558,7 +558,7 @@ describe ProcessRetrievedData do
     end
 
     it 'locks 1 old operation' do
-      Timecop.freeze(Time.local(2017,3,15))
+      Timecop.freeze(Time.local(2017,6,15))
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
@@ -580,7 +580,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'no preexisting document' do
+  context 'no preexisting document', :document_nil do
     before(:each) do
       budgea_account = BudgeaAccount.new
       budgea_account.user = @user
@@ -648,7 +648,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'a document already exist' do
+  context 'a document already exist', :document_exist do
     before(:each) do
       budgea_account = BudgeaAccount.new
       budgea_account.user = @user
@@ -692,7 +692,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'retriever state is ready' do
+  context 'retriever state is ready', :retriever_states do
     it 'changes state to error' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
@@ -737,9 +737,9 @@ describe ProcessRetrievedData do
 
       @retriever.reload
       expect(@retriever).to be_error
-      expect(@retriever.error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
+      expect(@retriever.error_message).to eq 'Please confirm the new terms and conditions'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
+      expect(@retriever.budgea_error_message).to eq 'Please confirm the new terms and conditions'
       expect(@user.notifications.count).to eq 1
       expect(@user.notifications.first.title).to eq 'Automate - Une action est nécessaire'
     end
@@ -762,7 +762,7 @@ describe ProcessRetrievedData do
     end
   end
 
-  context 'retriever state is error' do
+  context 'retriever state is error', :retriever_states_2 do
     before(:each) do
       @retriever.fail_budgea_connection
       @retriever.update(error_message: 'something', budgea_error_message: 'something')
