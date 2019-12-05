@@ -25,6 +25,11 @@ class Api::Mobile::DataLoaderController < MobileApiController
     render json: { publishing: data_loaded[:datas], total: data_loaded[:total], nb_pages: data_loaded[:nb_pages] }, status: 200
   end
 
+  def load_preseizures
+    data_loaded = preseizures_collection
+    render json: { preseizures: data_loaded[:datas], total: data_loaded[:total], nb_pages: data_loaded[:nb_pages] }, status: 200
+  end
+
   def load_stats
     if verify_rights_stats
       filters = params[:paper_process_contains]
@@ -107,8 +112,25 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def get_packs
+    filter = params[:filter]
+
+    if filter[:by_all].present?
+        filter[:by_piece] = filter[:by_piece].present? ? filter[:by_piece].merge(filter[:by_all]) : filter[:by_all]
+        filter[:by_preseizure] = filter[:by_preseizure].present? ? filter[:by_preseizure].merge(filter[:by_all]) : filter[:by_all]
+    end
+
     options = { page: params[:page], per_page: 20 }
-    options[:sort] = true unless params[:filter].present?
+    options[:sort] = true
+
+    options[:piece_created_at] = filter[:by_piece].try(:[], :created_at)
+    options[:piece_created_at_operation] = filter[:by_piece].try(:[], :created_at_operation)
+
+    options[:piece_position] = filter[:by_piece].try(:[], :position)
+    options[:piece_position_operation] = filter[:by_piece].try(:[], :position_operation)
+
+    options[:name] = filter[:by_pack].try(:[], :pack_name)
+    options[:tags] = filter[:by_piece].try(:[], :tags)
+
     options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
       _user = accounts.find(params[:view])
       _user ? [_user.id] : []
@@ -116,19 +138,83 @@ class Api::Mobile::DataLoaderController < MobileApiController
       account_ids
     end
 
-    packs = Pack.search(params[:filter], options)
+    piece_ids = Pack::Report::Preseizure.where(user_id: options[:owner_ids], operation_id: ['', nil]).filter_by(filter[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if filter[:by_preseizure].present?
+
+    options[:piece_ids] = piece_ids if piece_ids.present?
+
+    packs = Pack.search(filter.try(:[], :by_piece).try(:[], :content), options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
 
     loaded_packs = packs.map do |pack|
+      software =  get_software_info pack.user
+      preseizures_infos = get_preseizures_infos pack
+
       {
+        #pack infos
         id:         pack.id,
+        type:       'pack',
         name:       pack.name.sub(' all', ''),
         created_at: pack.created_at,
         updated_at: pack.updated_at,
-        owner_id:   pack.owner_id
+        owner_id:   pack.owner_id,
+        #preseizure infos
+        is_delivered:                (pack.reports.select{|r| r.is_delivered?}.size > 0),
+        first_preseizure_created_at: preseizures_infos.try(:min_created_at),
+        last_preseizure_created_at:  preseizures_infos.try(:max_created_at),
+        last_delivery_tried_at:      preseizures_infos.try(:max_delivery_tried_at),
+        last_delivery_message:       pack.get_delivery_message_of(software[:name]).to_s,
+        software_name:               software[:name],
+        software_human_name:         software[:human_name],
       }
     end
 
     render json: { packs: loaded_packs, nb_pages: packs.total_pages, total: packs.total_count }, status:200
+  end
+
+  def get_reports
+    filter = params[:filter]
+    options = {}
+    options[:user_ids] = if params[:view].present? && params[:view] != 'all'
+      _user = accounts.find(params[:view])
+      _user ? [_user.id] : []
+    else
+      account_ids
+    end
+
+    if filter[:by_all].present?
+      filter[:by_preseizure] = filter[:by_preseizure].present? ? filter[:by_preseizure].merge(filter[:by_all]) : filter[:by_all]
+    end
+
+    options[:name] = filter[:by_pack].try(:[], :pack_name)
+
+    reports_ids = Pack::Report::Preseizure.where(user_id: options[:user_ids]).where('operation_id > 0').filter_by(filter[:by_preseizure]).distinct.pluck(:report_id).presence || [0] if filter[:by_preseizure].present?
+    options[:ids] = reports_ids if reports_ids.present?
+
+    reports = Pack::Report.preseizures.joins(:preseizures).where(pack_id: nil).search(options).distinct.order(updated_at: :desc).page(params[:page] || 1).per(20)
+
+    loaded_reports = reports.map do |report|
+      software =  get_software_info report.user
+      preseizures_infos = get_preseizures_infos report
+
+      {
+        #report infos
+        id:         report.id,
+        type:       'report',
+        name:       report.name.sub('all', '').strip,
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        owner_id:   report.user_id,
+        #Preseizure infos
+        is_delivered:                report.is_delivered?,
+        first_preseizure_created_at: preseizures_infos.try(:min_created_at),
+        last_preseizure_created_at:  preseizures_infos.try(:max_created_at),
+        last_delivery_tried_at:      preseizures_infos.try(:max_delivery_tried_at),
+        last_delivery_message:       report.get_delivery_message_of(software[:name]).to_s,
+        software_name:               software[:name],
+        software_human_name:         software[:human_name],
+      }
+    end
+
+    render json: { reports: loaded_reports, nb_pages: reports.total_pages, total: reports.total_count }, status:200
   end
 
   private
@@ -144,16 +230,27 @@ class Api::Mobile::DataLoaderController < MobileApiController
     packs = all_packs.order(updated_at: :desc).limit(5)
 
     loaded = packs.map do |pack|
+      software =  get_software_info pack.user
+      preseizures_infos = get_preseizures_infos pack
+
       {
         id:          pack.id,
         pack_id:     pack.id,
-        name:        pack.name.sub(' all', ''),
+        name:        pack.name.sub('all', '').strip,
         created_at:  pack.created_at,
         updated_at:  pack.updated_at,
         owner_id:    pack.owner_id,
         page_number: 0,
         message:     '',
-        type:        'pack'
+        type:        'pack',
+        #Preseizure infos
+        is_delivered:                (pack.reports.select{|r| r.is_delivered?}.size > 0),
+        first_preseizure_created_at: preseizures_infos.try(:min_created_at),
+        last_preseizure_created_at:  preseizures_infos.try(:max_created_at),
+        last_delivery_tried_at:      preseizures_infos.try(:max_delivery_tried_at),
+        last_delivery_message:       pack.get_delivery_message_of(software[:name]).to_s,
+        software_name:               software[:name],
+        software_human_name:         software[:human_name],
       }
     end
   end
@@ -162,16 +259,28 @@ class Api::Mobile::DataLoaderController < MobileApiController
     temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
 
     loaded = temp_packs.map do |tmp_pack|
+      pack = Pack.find_by_name(tmp_pack.name)
+      software =  get_software_info tmp_pack.user
+      preseizures_infos = pack ? get_preseizures_infos(pack) : nil
+
       {
         id:          tmp_pack.id,
-        pack_id:     Pack.find_by_name(tmp_pack.name).try(:id) || 0,
+        pack_id:     pack.try(:id) || 0,
         name:        tmp_pack.basename,
         created_at:  tmp_pack.created_at,
         updated_at:  tmp_pack.updated_at,
         owner_id:    tmp_pack.user_id,
         page_number: tmp_pack.temp_documents.not_published.sum(:pages_number).to_i,
         message:     '',
-        type:        'temp_pack'
+        type:        'temp_pack',
+        #Preseizure infos
+        is_delivered:                (pack)? (pack.reports.select{|r| r.is_delivered?}.size > 0) : true,
+        first_preseizure_created_at: preseizures_infos.try(:min_created_at),
+        last_preseizure_created_at:  preseizures_infos.try(:max_created_at),
+        last_delivery_tried_at:      preseizures_infos.try(:max_delivery_tried_at),
+        last_delivery_message:       (pack)? pack.get_delivery_message_of(software[:name]).to_s : nil,
+        software_name:               software[:name],
+        software_human_name:         software[:human_name],
       }
     end
   end
@@ -198,12 +307,26 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def documents_collection
-    documents = Pack::Piece.search(params[:filter],
-      pack_id:  params[:id],
-      page:     params[:page],
-      per_page: 20,
-      sort:     true
-    ).order(position: :asc).includes(:pack)
+    filter = params[:filter]
+
+    pack = Pack.where(id: params[:id]).first!
+
+    if filter[:by_all].present?
+      filter[:by_piece] = filter[:by_piece].present? ? filter[:by_piece].merge(filter[:by_all]) : filter[:by_all]
+      filter[:by_preseizure] = filter[:by_preseizure].present? ? filter[:by_preseizure].merge(filter[:by_all]) : filter[:by_all]
+    end
+
+    piece_ids = pack.preseizures.filter_by(filter[:by_preseizure]).distinct.pluck(:piece_id).presence || [0] if filter[:by_preseizure].present?
+
+    documents = pack.pieces
+
+    documents = documents.where(id: piece_ids) if piece_ids.present?
+    documents = documents.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%") if filter[:by_piece].try(:[], :content)
+    documents = documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{filter[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", filter[:by_piece][:created_at]) if filter[:by_piece].try(:[], :created_at) 
+    documents = documents.where("position #{filter[:by_piece][:position_operation].tr('012', ' ><')}= ?", filter[:by_piece][:position]) if filter[:by_piece].try(:[], :position)
+    documents = documents.where("tags LIKE ?", "%#{filter[:by_piece][:tags]}%") if filter[:by_piece].try(:[], :tags)
+
+    documents = documents.order(position: :desc).includes(:pack).page(params[:page]).per(20)
 
     data_collected = documents.collect do |document|
         thumb = File.exist?(document.content.path(:medium)) ? { id: document.id, style: 'medium', filter: document.content_file_name } : false
@@ -222,7 +345,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def temp_documents_collection
-    @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
+    @pack = Pack.where(id: params[:id]).first!
     temp_documents = []
 
     unless @pack.is_fully_processed || params[:filter].presence
@@ -244,5 +367,84 @@ class Api::Mobile::DataLoaderController < MobileApiController
     end
 
     { datas: data_collected, nb_pages: temp_documents.try(:total_pages).to_i, total: temp_documents.try(:total_count).to_i }
+  end
+
+  def preseizures_collection
+    filter = params[:filter]
+
+    if params[:type] == 'pack'
+      source = Pack.where(id: params[:id]).first!
+    else
+      source = Pack::Report.where(id: params[:id]).first!
+    end
+
+    if filter[:by_piece].present?
+      pieces = source.pieces
+      pieces = pieces.where("pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?", "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%") if filter[:by_piece].try(:[], :content)
+      pieces = pieces.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{filter[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", filter[:by_piece][:created_at]) if filter[:by_piece].try(:[], :created_at) 
+      pieces = pieces.where("position #{filter[:by_piece][:position_operation].tr('012', ' ><')}= ?", filter[:by_piece][:position]) if filter[:by_piece].try(:[], :position)
+      pieces = pieces.where("tags LIKE ?", "%#{filter[:by_piece][:tags]}%") if filter[:by_piece].try(:[], :tags)
+      piece_ids = pieces.distinct.pluck(:id).presence || [0]
+    end
+    
+    preseizures = source.preseizures
+
+    preseizures = preseizures.where(piece_id: piece_ids) if piece_ids.present?
+
+    preseizures = preseizures.filter_by(filter[:by_preseizure]).order(position: :desc).distinct.page(params[:page]).per(15)
+
+    data_collected = preseizures.collect do |preseizure|
+      software =  get_software_info preseizure.user
+
+      piece = preseizure.piece
+      thumb = false
+      large = false
+      if piece
+        thumb = File.exist?(piece.content.path(:medium)) ? { id: piece.id, style: 'medium', filter: piece.content_file_name } : false
+        large = { id: piece.id, style: 'original', filter: piece.content_file_name }
+      end
+
+      name = preseizure.piece_name
+      if ibiza = preseizure.try(:organization).try(:ibiza)
+        name = IbizaAPI::Utils.description(preseizure, ibiza.description, ibiza.description_separator) || preseizure.piece_name
+      end
+          
+
+      {
+        id:       preseizure.id,
+        thumb:    thumb,
+        large:    large,
+        name:     name,
+        position: preseizure.position,
+        state:    preseizure.get_state_to(:text),
+        software_name: software[:name],
+        software_human_name: software[:human_name],
+        is_delivered: preseizure.is_delivered?,
+        error_message: preseizure.get_delivery_message_of(software[:name]),
+        date: preseizure.date,
+        deadline_date: preseizure.deadline_date,
+        created_at:  preseizure.created_at,
+        updated_at:  preseizure.updated_at,
+        delivery_tried_at: preseizure.delivery_tried_at,
+        actionOnSelect: 'edition'
+      }
+    end
+
+    { datas: data_collected, nb_pages: preseizures.try(:total_pages).to_i, total: preseizures.try(:total_count).to_i }
+  end
+
+  def get_software_info(user)
+    software =  if user.try(:uses_ibiza?)
+                  { human_name: 'Ibiza', name: 'ibiza' }
+                elsif user.try(:uses_exact_online?)
+                  { human_name: 'Exact Online', name: 'exact_online' }
+                else
+                  { human_name: '', name: '' }
+                end
+    software
+  end
+
+  def get_preseizures_infos(pack_or_report)
+    pack_or_report.preseizures.select('MIN(pack_report_preseizures.created_at) as min_created_at', 'MAX(pack_report_preseizures.created_at) as max_created_at', 'MAX(pack_report_preseizures.delivery_tried_at) as max_delivery_tried_at').first
   end
 end
