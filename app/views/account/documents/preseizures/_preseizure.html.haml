@@ -95,7 +95,7 @@
                   - if entry.type == 1
                     .content_amount
                       .content_amount_number
-                        = entry.amount
+                        = entry.amount.to_f
                       - if @user.collaborator?
                         %span.debit_or_credit.hide.pull-right
                           %i.icon-arrow-right
@@ -112,7 +112,7 @@
                           %i.icon-arrow-left
                       &nbsp;&nbsp;
                       .content_amount_number
-                        = entry.amount
+                        = entry.amount.to_f
                     - if @user.collaborator?
                       .edit_amount.hide
                         %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}

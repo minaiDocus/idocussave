@@ -129,16 +129,7 @@ class Account::DocumentsController < Account::AccountController
 
     @unit = @preseizure.try(:unit) || 'EUR'
     @preseizure_entries = @preseizure.entries
-    debit_value = credit_value = 0    
-    @irregular_debit_credit_somme = false    
-    @preseizure_entries.each do |entry|
-        if entry.type == 1
-          debit_value += entry.amount.to_f
-        else 
-          credit_value += entry.amount.to_f
-        end
-    end
-    @irregular_debit_credit_somme = true if debit_value != credit_value
+
     @pre_tax_amount = @preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0    
     analytics = @preseizure.analytic_reference
     @data_analytics = []

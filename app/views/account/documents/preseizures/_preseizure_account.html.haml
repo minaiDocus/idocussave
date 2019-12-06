@@ -62,12 +62,13 @@
   %strong= @unit
   %input.preseizure_id{type: :hidden, value: @preseizure.id}
   %input.delivered_preseizure{type: :hidden, value: "#{@preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{@preseizure.id}"}
+  - irregular_debit_credit_somme = verif_debit_credit_somme_of @preseizure_entries
 .row-fluid
   .entries{ class: (@data_analytics.any? ? 'span6' : 'span12') }
     - if @data_analytics.any?
       %strong 
         Ecritures
-    %span.color_red.pull-right{class: "#{@irregular_debit_credit_somme ? '' : 'hide' }"} 
+    %span.color_red.pull-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
       %i.icon-info-sign
       balance non équilibrée
 
@@ -89,11 +90,11 @@
                   .suggestion_account_list.hide                    
             - if @user.collaborator?
               %input.account_id_hidden{type: :hidden, value: entry.account.id}
-            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{@irregular_debit_credit_somme ? 'color_red' : '' }"}
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
               - if entry.type == 1
                 .content_amount
                   .content_amount_number
-                    = entry.amount
+                    = entry.amount.to_f
                   - if @user.collaborator?
                     %span.debit_or_credit.hide.pull-right
                       %i.icon-arrow-right
@@ -102,7 +103,7 @@
                     %input.margin0{type: :text, placeholder: entry.amount , value: entry.amount}
                     %input.entry_type{type: :hidden, value: entry.type}
 
-            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{@irregular_debit_credit_somme ? 'color_red' : '' }"}
+            %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
               - if entry.type == 2
                 .content_amount
                   - if @user.collaborator?
@@ -110,7 +111,7 @@
                       %i.icon-arrow-left
                   &nbsp;&nbsp;
                   .content_amount_number
-                    = entry.amount
+                    = entry.amount.to_f
                 - if @user.collaborator?
                   .edit_amount.hide
                     %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
