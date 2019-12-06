@@ -29,7 +29,7 @@ class NotifyDetectedPreseizureDuplicate
     notification.user        = user
     notification.notice_type = 'detected_preseizure_duplication'
     notification.title       = count == 1 ? 'Pré-affectation bloqué' : 'Pré-affectations bloqués'
-    notification.url         = account_pre_assignment_blocked_duplicates_url
+    notification.url         = Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path
     notification.message = if count == 1
       "1 pré-affectation est susceptible d'être un doublon et a été bloqué."
     else
