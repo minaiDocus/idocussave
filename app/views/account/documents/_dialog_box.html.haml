@@ -34,6 +34,10 @@
           = label_tag 'by_piece[tags]', "Tags", class: 'control-label'
           .controls
             = text_field_tag 'by_piece[tags]'
+        .control-group
+          = label_tag 'by_piece[state_piece]', "Etat pièce", class: 'control-label'
+          .controls
+            = select_tag 'by_piece[state_piece]', options_for_select([['',''],['En attente validation analytique', 'waiting_analytics'], ['Ignorée', 'ignored,truly_ignored'], ['Pré-saisie en cours', 'processing']]), include_blank: false, class: 'select_operation'
       .by_preseizure_filter.box
         %span.label.label-warning
           Attention :

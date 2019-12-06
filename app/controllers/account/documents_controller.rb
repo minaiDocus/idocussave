@@ -70,6 +70,8 @@ class Account::DocumentsController < Account::AccountController
       options[:name] = params[:by_pack].try(:[], :pack_name)
       options[:tags] = params[:by_piece].try(:[], :tags)
 
+      options[:pre_assignment_state] = params[:by_piece].try(:[], :state_piece)
+
       options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
         _user = accounts.find(params[:view])
         _user ? [_user.id] : []
@@ -82,6 +84,7 @@ class Account::DocumentsController < Account::AccountController
       options[:piece_ids] = piece_ids if piece_ids.present?
 
       @packs = Pack.search(params.try(:[], :by_piece).try(:[], :content), options).distinct.order(updated_at: :desc).page(options[:page]).per(options[:per_page])
+
     end
   end
 
@@ -517,6 +520,7 @@ private
         @documents = @documents.where("DATE_FORMAT(created_at, '%Y-%m-%d') #{params[:by_piece][:created_at_operation].tr('012', ' ><')}= ?", params[:by_piece][:created_at]) if params[:by_piece].try(:[], :created_at) 
         @documents = @documents.where("position #{params[:by_piece][:position_operation].tr('012', ' ><')}= ?", params[:by_piece][:position]) if params[:by_piece].try(:[], :position)
         @documents = @documents.where("tags LIKE ?", "%#{params[:by_piece][:tags]}%") if params[:by_piece].try(:[], :tags)
+        @documents = @documents.where(pre_assignment_state: params[:by_piece][:state_piece].try(:split, ',')) if params[:by_piece].try(:[], :state_piece)
       end
 
       @documents = @documents.order(position: :desc).includes(:pack).page(params[:page]).per(5)

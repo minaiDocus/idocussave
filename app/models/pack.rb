@@ -74,6 +74,8 @@ class Pack < ActiveRecord::Base
     query = query.joins(:pieces).where("DATE_FORMAT(pack_pieces.created_at, '%Y-%m-%d') #{options[:piece_created_at_operation].tr('012', ' ><')}= ?", options[:piece_created_at]) if options[:piece_created_at]
     query = query.joins(:pieces).where("pack_pieces.position #{options[:piece_position_operation].tr('012', ' ><')}= ?", options[:piece_position]) if options[:piece_position].present?
 
+    query = query.joins(:pieces).where(pack_pieces: { pre_assignment_state: options[:pre_assignment_state].try(:split, ',') }) if options[:pre_assignment_state].present?
+
     query = query.order(updated_at: :desc) if options[:sort] == true
 
     query.distinct.page(page).per(per_page)
