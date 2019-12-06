@@ -7,7 +7,7 @@ class RetrieverNotification
 
   def notify_wrong_pass
     users.map do |user|
-      if user.notify.r_wrong_pass
+      if user.notify.try(:r_wrong_pass)
         notification = Notification.new
         notification.user        = user
         notification.url         = url_for user
@@ -41,7 +41,7 @@ class RetrieverNotification
 
   def notify_website_unavailable
     users.map do |user|
-      if user.notify.r_site_unavailable
+      if user.notify.try(:r_site_unavailable)
         notification = Notification.new
         notification.user        = user
         notification.url         = url_for user
@@ -58,7 +58,7 @@ class RetrieverNotification
   end
 
   def notify_action_needed
-    if @retriever.user.notify.r_action_needed
+    if @retriever.user.notify.try(:r_action_needed)
       notification = Notification.new
       notification.user        = @retriever.user
       notification.notice_type = 'retriever_action_needed'
@@ -72,7 +72,7 @@ class RetrieverNotification
 
   def notify_bug
     users.each do |user|
-      if user.notify.r_bug
+      if user.notify.try(:r_bug)
         notification = Notification.new
         notification.user        = user
         notification.url         = url_for user
@@ -90,9 +90,9 @@ class RetrieverNotification
 
   def notify_new_documents(new_documents_count)
     users.map do |user|
-      if user.notify.r_new_documents_now?
+      if user.notify.try(:r_new_documents_now?)
         create_new_documents_notification user, new_documents_count
-      elsif user.notify.r_new_documents_delayed?
+      elsif user.notify.try(:r_new_documents_delayed?)
         Notify.update_counters user.notify.id, r_new_documents_count: new_documents_count
       end
     end
@@ -122,9 +122,9 @@ class RetrieverNotification
 
   def notify_new_operations(new_operations_count)
     users.map do |user|
-      if user.notify.r_new_operations_now?
+      if user.notify.try(:r_new_operations_now?)
         create_new_operations_notification user, new_operations_count
-      elsif user.notify.r_new_operations_delayed?
+      elsif user.notify.try(:r_new_operations_delayed?)
         Notify.update_counters user.notify.id, r_new_operations_count: new_operations_count
       end
     end
@@ -168,15 +168,15 @@ class RetrieverNotification
     def notify_summary_updates
       Notify.where('r_new_documents_count > 0').find_each do |notify|
         ActiveRecord::Base.transaction do
-          RetrieverNotification.new.create_new_documents_notification notify.user, notify.r_new_documents_count, true
-          Notify.update_counters notify.id, r_new_documents_count: -notify.r_new_documents_count
+          RetrieverNotification.new.create_new_documents_notification notify.user, notify.try(:r_new_documents_count), true
+          Notify.update_counters notify.id, r_new_documents_count: -notify.try(:r_new_documents_count)
         end
       end
 
       Notify.where('r_new_operations_count > 0').find_each do |notify|
         ActiveRecord::Base.transaction do
-          RetrieverNotification.new.create_new_operations_notification notify.user, notify.r_new_operations_count, true
-          Notify.update_counters notify.id, r_new_operations_count: -notify.r_new_operations_count
+          RetrieverNotification.new.create_new_operations_notification notify.user, notify.try(:r_new_operations_count), true
+          Notify.update_counters notify.id, r_new_operations_count: -notify.try(:r_new_operations_count)
         end
       end
 
@@ -203,11 +203,7 @@ class RetrieverNotification
   end
 
   def url_for(user)
-    if user.is_prescriber
-      account_organization_customer_retrievers_url(@retriever.user.organization, @retriever.user)
-    else
-      account_retrievers_url(account_id: @retriever.user.id)
-    end
+    account_retrievers_url(account_id: @retriever.user.id)
   end
 
   def default_url_options

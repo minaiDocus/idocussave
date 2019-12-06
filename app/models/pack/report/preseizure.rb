@@ -252,7 +252,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def has_deleted_piece?
-    self.piece.try(:deleted_at).try(:present?) ? true : false
+    self.piece.try(:delete_at).try(:present?) ? true : false
   end
 
   def delivered_to(software)

@@ -1,5 +1,7 @@
 class UpdateConnectorsList
   def self.execute
+    return false
+    #Not used anymore just keep the code in case
     logger = Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
 
     BudgeaConnector.flush_all_cache

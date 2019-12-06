@@ -230,7 +230,7 @@ class Pack::Piece < ActiveRecord::Base
   end
 
   def is_deleted?
-    self.deleted_at.present?
+    self.delete_at.present?
   end
 
   def scanned?
