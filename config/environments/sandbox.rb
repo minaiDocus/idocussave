@@ -65,7 +65,7 @@ Idocus::Application.configure do
 
   # Generate digests for assets URLs
   # config.assets.digest = true
-  config.assets.digest = false
+  config.assets.digest = true
 
   # Adding js files
   config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)
