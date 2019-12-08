@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
-ruby '2.6.1'
+ruby '2.6.5'
 
 gem 'rake'
-gem 'rails', '5.2.2'
+gem 'rails', '5.2.4'
 
 
 # Object state management
@@ -63,9 +63,11 @@ gem 'dalli'
 
 # Deployment
 gem 'capistrano'
+gem 'slackistrano'
 gem 'capistrano-rvm'
 gem 'capistrano-rails'
 gem 'capistrano_colors', require: false
+
 
 
 # Validators
