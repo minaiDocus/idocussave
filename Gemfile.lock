@@ -172,6 +172,7 @@ GEM
       eco-source
       execjs
     eco-source (1.1.0.rc.1)
+    ed25519 (1.2.4)
     ejs (1.1.1)
     elastic-apm (3.3.0)
       concurrent-ruby (~> 1.0)
@@ -621,6 +622,7 @@ DEPENDENCIES
   devise
   dropbox_api
   eco
+  ed25519
   elastic-apm
   factory_bot_rails
   ftpd

@@ -62,6 +62,7 @@ gem 'dalli'
 
 
 # Deployment
+gem 'ed25519'
 gem 'capistrano'
 gem 'slackistrano'
 gem 'capistrano-rvm'
