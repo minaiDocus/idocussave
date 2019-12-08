@@ -64,6 +64,7 @@ gem 'dalli'
 # Deployment
 gem 'ed25519'
 gem 'capistrano'
+gem 'bcrypt_pbkdf'
 gem 'slackistrano'
 gem 'capistrano-rvm'
 gem 'capistrano-rails'
