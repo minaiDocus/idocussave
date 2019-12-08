@@ -103,6 +103,9 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    capistrano-slackify (2.10.3)
+      capistrano (>= 3.2.0)
+      multi_json
     capistrano_colors (0.5.5)
     capybara (3.29.0)
       addressable
@@ -520,8 +523,6 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    slackistrano (4.0.1)
-      capistrano (>= 3.8.1)
     socksify (1.7.1)
     spreadsheet (1.2.5)
       ruby-ole (>= 1.0)
@@ -612,6 +613,7 @@ DEPENDENCIES
   capistrano
   capistrano-rails
   capistrano-rvm
+  capistrano-slackify
   capistrano_colors
   capybara
   chunky_png
@@ -672,7 +674,6 @@ DEPENDENCIES
   sidekiq-unique-jobs
   simple_form
   simplecov
-  slackistrano
   spring
   spring-commands-rspec
   sprockets
