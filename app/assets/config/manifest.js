@@ -1,1 +1,1 @@
-{}
+//= link favicon.ico
