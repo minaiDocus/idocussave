@@ -18,7 +18,6 @@ db/schema.rb
 
 config/deploy/production.rb
 config/deploy/sandbox.rb
-config/deploy/staging.rb
 
 config/secrets.yml
 config/elastic_apm.yml
