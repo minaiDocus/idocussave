@@ -65,10 +65,10 @@ gem 'dalli'
 gem 'ed25519'
 gem 'capistrano'
 gem 'bcrypt_pbkdf'
-gem 'slackistrano'
 gem 'capistrano-rvm'
 gem 'capistrano-rails'
 gem 'capistrano_colors', require: false
+gem 'capistrano-slackify'
 
 
 

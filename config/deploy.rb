@@ -29,10 +29,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/ftp_delivery.yml'
 )
 
-set :slackistrano, {
-  channel: '#deployments',
-  webhook: 'https://hooks.slack.com/services/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'
-}
+set :slack_url, 'https://hooks.slack.com/services/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'
+
 
 namespace :deploy do
   after :finished, :restart_passenger do

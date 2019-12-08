@@ -2,7 +2,7 @@ set :deploy_to, '/home/deploy/staging'
 
 set :linked_dirs, fetch(:linked_dirs, []).push('files')
 
-set :repo_url, 'git@192.168.0.38:idocus'
+set :repo_url, 'git@github.com:i-docus/main.git'
 
 set :branch, 'upgrade-rails5'
 
