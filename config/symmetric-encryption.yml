@@ -60,8 +60,8 @@ production: &production_defaults
     -
       # Filename containing Symmetric Encryption Key encrypted using the
       # RSA public key derived from the private key above
-      key_filename:      /data/idocus/deploy/production/shared/keys/idocus_production.key
-      iv_filename:       /data/idocus/deploy/production/shared/keys/idocus_production.iv
+      key_filename:      keys/idocus_production.key
+      iv_filename:       keys/idocus_production.iv
       cipher_name:       aes-256-cbc
       encoding:          :base64strict
       version:           1
