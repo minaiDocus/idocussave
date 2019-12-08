@@ -10,7 +10,7 @@
 # Set custom APM Server URL (default: http://localhost:8200)
 # server_url: 'http://localhost:8200'
 
-service_name: 'idocus-main'
+service_name: 'idocus-main-rails5'
 secret_token: 'S3ntry@1d02019!'
 server_url: 'https://apm.idocus.com'
 api_buffer_size: 1024
