@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, only: [:login_user!]
   before_action :set_raven_context
   before_action :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
-  around_action :catch_error if %w(staging sandbox production test).include?(Rails.env)
+  around_action :catch_error if %w(sandbox production test).include?(Rails.env)
   around_action :log_visit
 
   def after_sign_in_path_for(resource_or_scope)
