@@ -172,20 +172,16 @@ class ApplicationController < ActionController::Base
         format.json { render json: { error: 'Not Found' }, status: :not_found }
       end
     rescue Budgea::Errors::ServiceUnavailable => e
-      Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|
         format.html { render '/503', status: :service_unavailable, layout: 'inner' }
         format.json { render json: { error: 'Service Unavailable' }, status: :service_unavailable }
       end
     rescue => e
-      Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|
         format.html { render '/500', status: :internal_server_error, layout: (@user ? 'inner' : 'error') }
         format.json { render json: { error: 'Internal Server Error' }, status: :internal_server_error }
       end
     end
-  rescue ActionController::UnknownFormat
-    render status: :bad_request, text: 'Bad Request'
   end
 
   def authenticate_admin_user!

@@ -102,7 +102,6 @@ class AutoPreAssignedInvoicePieces
       end
     rescue => e
       logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}"
-      Airbrake.notify e
     end
   end
 

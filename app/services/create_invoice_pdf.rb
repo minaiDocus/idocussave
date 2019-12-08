@@ -297,7 +297,6 @@ class CreateInvoicePdf
       end
     rescue => e
       logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
-      Airbrake.notify e
     end
   end
 

@@ -165,15 +165,6 @@ describe AutoPreAssignedInvoicePieces do
 	  		expect(File.exist?(@log_file)).to be true
 	  		expect(log_content).to match /errors :/i
 	  	end
-
-	  	it 'returns airbrake notification' do
-	  		allow_any_instance_of(Invoice).to receive(:present?).and_raise('error')
-
-	  		expect(Airbrake).to receive(:notify).once
-
-	  		auto_pre_assigned_invoice_piece = AutoPreAssignedInvoicePieces.new(@piece)
-	  		auto_pre_assigned_invoice_piece.execute
-	  	end
 	  end
   end
 end

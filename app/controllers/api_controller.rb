@@ -77,7 +77,6 @@ class ApiController < ApplicationController
            ActiveRecord::RecordNotFound
       respond_with_not_found
     rescue => e
-      Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|
         format.xml  { render xml:  "<message>Internal Error</message>", status: 500 }
         format.json { render json: { message: "Internal Error" },       status: 500 }

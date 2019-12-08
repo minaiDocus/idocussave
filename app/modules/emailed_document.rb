@@ -49,7 +49,6 @@ class EmailedDocument
         rescue => e
           is_ok = false
           mail.skip_deletion
-          Airbrake.notify(e)
         end
       end
     rescue SocketError => e
@@ -147,7 +146,6 @@ class EmailedDocument
           email.update_attribute(:is_error_notified, true)
         end
         if rescue_error
-          Airbrake.notify e
           email
         else
           raise e
