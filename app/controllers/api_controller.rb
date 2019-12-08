@@ -72,8 +72,7 @@ class ApiController < ApplicationController
   def catch_error
     begin
       yield
-    rescue ActionController::UnknownController,
-           ActionController::RoutingError,
+    rescue ActionController::RoutingError,
            AbstractController::ActionNotFound,
            ActiveRecord::RecordNotFound
       respond_with_not_found
