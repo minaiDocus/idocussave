@@ -2,4 +2,12 @@
 //= link application.css
 //= link application.js
 //= link logo/tiny_logo.png
+//= link application/ftp_logo.png
+//= link application/box_logo.png
+//= link application/icon-xls.png
+//= link application/icon-csv.png
+//= link application/icon-pdf.png
+//= link application/processing.png
+//= link application/dropbox_logo.png
 //= link application/contact_number.png
+//= link application/googledrive_logo.png
