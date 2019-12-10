@@ -7,6 +7,7 @@
 //= link application/icon-xls.png
 //= link application/icon-csv.png
 //= link application/icon-pdf.png
+//= link application/budgealogo.png
 //= link application/processing.png
 //= link application/dropbox_logo.png
 //= link application/contact_number.png
