@@ -67,6 +67,8 @@ GEM
     barby (0.6.8)
     bcrypt (3.1.13)
     bcrypt_pbkdf (1.0.1)
+    bearer-agent (0.2.12)
+      rack (>= 1.0)
     better_errors (2.5.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -603,6 +605,7 @@ DEPENDENCIES
   backbone-on-rails
   barby
   bcrypt_pbkdf
+  bearer-agent
   better_errors
   binding_of_caller
   bootsnap

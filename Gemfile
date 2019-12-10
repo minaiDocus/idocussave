@@ -190,3 +190,6 @@ group :test do
   gem 'webmock'
   gem 'ftpd', require: false
 end
+
+# API monitoring ; Keep it a the end of the file
+gem 'bearer-agent'
