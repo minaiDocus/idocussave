@@ -290,9 +290,9 @@ class Account::DocumentsController < Account::AccountController
     export_format = params64[2].presence
 
     if export_ids && export_type == 'preseizure'
-      preseizures = Pack::Report::Preseizure.not_deleted.where(id: export_ids)
+      preseizures = Pack::Report::Preseizure.where(id: export_ids)
     elsif export_ids && export_type == 'report'
-      preseizures = Pack::Report.where(id: export_ids).first.preseizures.not_deleted
+      preseizures = Pack::Report.where(id: export_ids).first.preseizures
     elsif export_ids && export_type == 'pack'
       reports     = Pack.where(id: export_ids).first.reports
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
