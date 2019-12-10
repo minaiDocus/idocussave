@@ -39,7 +39,7 @@ module Account::DocumentsHelper
       break unless label[0] == 'Non récupéré'
     end
 
-    content_tag :span, label[0], class: "preseizure_status label label-#{label[1]}"
+    content_tag :span, label[0], class: "preseizure_status badge badge-#{label[1]}"
   end
 
   def analytics_of(preseizure)

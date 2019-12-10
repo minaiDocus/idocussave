@@ -12,3 +12,9 @@
 //= link application/dropbox_logo.png
 //= link application/contact_number.png
 //= link application/googledrive_logo.png
+//= link application/preaff_deliv.png
+//= link application/preaff_dupl.png
+//= link application/preaff_err.png
+//= link application/preaff_ignored.png
+//= link application/preaff_deliv_pending.png
+//= link application/preaff_pending.png
