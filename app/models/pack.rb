@@ -308,10 +308,17 @@ class Pack < ActiveRecord::Base
 
   def recreate_original_document
     pieces = self.pieces.by_position
+    sleep_counter = 5
 
-    if pieces.present?    
-        pieces.each do |piece| 
+    if pieces.present?
+        pieces.each do |piece|
           append(piece.content.path, true)
+          #add a sleeping time to prevent disk access overload
+          sleep_counter -= 1
+          if sleep_counter <= 0
+            sleep(10)
+            sleep_counter = 5
+          end
         end
 
         temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
