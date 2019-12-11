@@ -414,6 +414,7 @@ Idocus::Application.routes.draw do
 
     resources :retrieved_banking_operations, only: %W(index) do
       post 'force_processing', on: :collection
+      post 'unlock_operations', on: :collection
     end
 
     resources :retrieved_documents do

@@ -253,26 +253,11 @@ class Pack < ActiveRecord::Base
     info
   end
 
-  def append(file_path, overwrite_original = false)
-    target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
-    target_file_path = overwrite_original ? original_document.content.path.to_s.gsub('.pdf', '_2.pdf') : original_document.content.path
+  def append(file_path, overwrite_original = false, tmp_dir = nil)
+    return _append(file_path, tmp_dir, overwrite_original) if tmp_dir
 
     Dir.mktmpdir do |dir|
-      if File.exist? target_file_path.to_s
-        merged_file_path = File.join(dir, target_file_name)
-        Pdftk.new.merge([target_file_path, file_path], merged_file_path)
-      else
-        new_file_name = target_file_name
-        merged_file_path = File.join(dir, new_file_name)
-        FileUtils.copy file_path, merged_file_path
-      end
-
-      if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
-        original_document.content = open(merged_file_path)
-        original_document.save
-      elsif overwrite_original
-        FileUtils.copy merged_file_path, target_file_path
-      end
+      _append(file_path, dir, overwrite_original)
     end
   end
 
@@ -311,8 +296,9 @@ class Pack < ActiveRecord::Base
     sleep_counter = 5
 
     if pieces.present?
+      Dir.mktmpdir do |dir|
         pieces.each do |piece|
-          append(piece.content.path, true)
+          append(piece.content.path, true, dir)
           #add a sleeping time to prevent disk access overload
           sleep_counter -= 1
           if sleep_counter <= 0
@@ -320,15 +306,44 @@ class Pack < ActiveRecord::Base
             sleep_counter = 5
           end
         end
+      end
 
-        temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
+      temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
 
-        FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+      FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
-        set_pages_count
-        save
+      set_pages_count
+      save
     else
       FileUtils.rm self.original_document.content.path, :force =>  true
+    end
+  end
+
+  private
+
+  def _append(file_path, dir, overwrite_original = false)
+    target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
+    target_file_path = overwrite_original ? original_document.content.path.to_s.gsub('.pdf', '_2.pdf') : original_document.content.path
+
+    merged_file_path = File.join(dir, target_file_name)
+    FileUtils.rm merged_file_path if File.exist? merged_file_path
+
+    if File.exist? target_file_path.to_s
+      Pdftk.new.merge([target_file_path, file_path], merged_file_path)
+    else
+      FileUtils.copy file_path, merged_file_path
+    end
+
+    if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
+      original_document.content = open(merged_file_path)
+      original_document.save
+    elsif overwrite_original
+      begin
+        FileUtils.copy merged_file_path, target_file_path
+      rescue
+        FileUtils.rm target_file_path
+        raise
+      end
     end
   end
 end
