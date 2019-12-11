@@ -8,7 +8,7 @@ set :repo_url, 'git@192.168.0.38:idocus'
 
 set :branch, 'upgrade-rails5'
 
-set :rvm_ruby_version, '2.6.1'
+set :rvm_ruby_version, '2.6.5'
 
 server '192.168.0.38', user: 'serveurlocal', roles: %w{app db web}
 

@@ -38,34 +38,38 @@
             = link_to glyphicon('x'), account_retrievers_path, class: 'btn btn-light'
 
 #syncConfirm.modal.hide.fade{data: { backdrop: "static" }}
-  .modal-header
-    %h3 Synchronisation
-  .modal-body
-    %p Voulez vous vraiment lancer la synchronisation de cet automate ?
-    %strong.badge.badge-warning.fs-origin La synchronisation peut prendre un moment, veuillez ne pas quitter la page avant la fin du processus
-  .modal-footer
-    .controls
-      .loading.float-right.hide
-        .feedback.active
-          %span Traitement en cours veuillez rester sur la page ...
-      .buttonsAction
-        =button_tag "J’accepte la transmission de mes transactions à Idocus", type: 'button', id:'sync_confirm_button', class: 'btn-primary btn float-right'
-        =button_tag "Annuler", type: 'button', id: 'sync_cancel_button', class: 'btn-secondary btn float-right', style: 'margin-right: 7px'
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Synchronisation
+      .modal-body
+        %p Voulez vous vraiment lancer la synchronisation de cet automate ?
+        %strong.badge.badge-warning.fs-origin La synchronisation peut prendre un moment, veuillez ne pas quitter la page avant la fin du processus
+      .modal-footer
+        .controls
+          .loading.float-right.hide
+            .feedback.active
+              %span Traitement en cours veuillez rester sur la page ...
+          .buttonsAction
+            =button_tag "J’accepte la transmission de mes transactions à Idocus", type: 'button', id:'sync_confirm_button', class: 'btn-primary btn float-right'
+            =button_tag "Annuler", type: 'button', id: 'sync_cancel_button', class: 'btn-secondary btn float-right', style: 'margin-right: 7px'
 
 #delConfirm.modal.hide.fade{data: { backdrop: "static" }}
-  .modal-header
-    %h3 Suppression
-  .modal-body
-    %p Voulez vous vraiment supprimer cet automate ?
-    %strong.badge.badge-warning.fs-origin La suppression peut prendre un moment, veuillez ne pas quitter la page avant la fin du processus
-  .modal-footer
-    .controls
-      .loading.float-right.hide
-        .feedback.active
-          %span Traitement en cours veuillez rester sur la page ...
-      .buttonsAction
-        =button_tag "Supprimer!", type: 'button', id:'del_confirm_button', class: 'btn-danger btn float-right'
-        =button_tag "Annuler", type: 'button', id: 'del_cancel_button', class: 'btn-secondary btn float-right', style: 'margin-right: 7px'
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Suppression
+      .modal-body
+        %p Voulez vous vraiment supprimer cet automate ?
+        %strong.badge.badge-warning.fs-origin La suppression peut prendre un moment, veuillez ne pas quitter la page avant la fin du processus
+      .modal-footer
+        .controls
+          .loading.float-right.hide
+            .feedback.active
+              %span Traitement en cours veuillez rester sur la page ...
+          .buttonsAction
+            =button_tag "Supprimer!", type: 'button', id:'del_confirm_button', class: 'btn-danger btn float-right'
+            =button_tag "Annuler", type: 'button', id: 'del_cancel_button', class: 'btn-secondary btn float-right', style: 'margin-right: 7px'
 
 #retrievers_security_informations.modal.fade
   .modal-dialog
