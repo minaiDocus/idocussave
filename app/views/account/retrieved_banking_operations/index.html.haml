@@ -44,6 +44,8 @@
                 %td= select_tag 'banking_operation_contains[pre_assigned]', options_for_select({"" => "", "Oui" => "pre_assigned", "Non" => "not_pre_assigned", "En attente" => "is_waiting"}, (params[:banking_operation_contains][:pre_assigned] rescue nil)), class: 'input-medium'
               %td
                 = submit_tag t('filters.action'), class: 'btn btn-primary'
+                - if current_user.is_admin && params[:banking_operation_contains].present?
+                  = link_to 'Débloquer les opérations', unlock_operations_account_retrieved_banking_operations_path(banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Êtes-vous sûr de vouloir débloquer ces opérations?"}
                 = link_to icon(icon: 'remove'), account_retrieved_banking_operations_path, class: 'btn', title: t('filters.reset')
     .box
       = render partial: 'shared/list_options', locals: { collection: @operations }
