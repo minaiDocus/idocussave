@@ -102,17 +102,22 @@ jQuery ->
             self = $(this)
 
             fClose = () ->
+              $('#syncConfirm.modal #loading').addClass('hide')
+              $('#syncConfirm.modal #buttonsAction').removeClass('hide')
               $('#syncConfirm.modal').modal('hide')
 
             onConfirm = () ->
-              fClose()
               id = self.attr('data-id')
               releaseRetrieversTimer(id)
+              $('#syncConfirm.modal #loading').removeClass('hide')
+              $('#syncConfirm.modal #buttonsAction').addClass('hide')
               $('.state_field_'+id).html('<span class="label">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                   $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
               )
