@@ -207,15 +207,17 @@ class Account::DocumentsController < Account::AccountController
       render json: { success: true }, status: 200
     else
       if params[:ids].present?
-        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(id: params[:ids])
+        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
       elsif params[:id]
         if params[:type] == 'report'
           reports = Pack::Report.where(id: params[:id])
+          preseizures = Pack::Report::Preseizure.not_delivered.not_locked if reports.present?
         else
           reports = Pack.find(params[:id]).try(:reports)
+          preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked if reports.present?
         end
 
-        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
+        preseizures = preseizures.where(report_id: reports.collect(&:id)) if reports.present?
       end
 
       if preseizures.present?
