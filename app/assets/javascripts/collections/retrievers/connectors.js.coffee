@@ -10,22 +10,21 @@ class Idocus.Collections.Connectors extends Backbone.Collection
   fetch_all: ()->
     self = this
     promise = new Promise((resolve, reject)->
-      connectors_cache = self.common.getCache('connectors')
-      if connectors_cache != ''
-        setTimeout(
-          ()->
-            self.reset(connectors_cache)
-            resolve()
-          1500
-        )
-      else
-        Idocus.budgeaApi.get_connectors().then(
-          (datas)->
+      connectors_cache = self.common.getCache('connectors') || []
+
+      # 1 times out of 2, connectors fetcher get different connector's count
+      #Temporary fix : Set in cache | Get, the maximum connectors fetched
+      Idocus.budgeaApi.get_connectors().then(
+        (datas)->
+          if connectors_cache.length < datas.length
             self.common.setCache('connectors', datas, 15)
             self.reset(datas)
-            resolve()
-          (error)-> reject(error)
-        )
+          else
+            self.common.setCache('connectors', connectors_cache, 15)
+            self.reset(connectors_cache)
+          resolve()
+        (error)-> reject(error)
+      )
     )
 
   find: (field, operator, pattern) ->
