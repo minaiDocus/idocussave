@@ -40,26 +40,25 @@ class ApplicationController < ActionController::Base
 
   def load_user(name = :@user)
     user = nil
+
     if current_user && current_user.is_admin
       if params[:user_code].present? || session[:user_code].present?
-        member = nil
-        user = User.find_by_code(params[:user_code].presence || session[:user_code].presence)
-        user || (member = Member.find_by_code(params[:user_code].presence || session[:user_code].presence))
-        user ||= member.try(:user)
+        user = User.get_by_code(params[:user_code].presence || session[:user_code].presence)
         user ||= current_user
         prev_user_code = session[:user_code]
         session[:user_code] = if user == current_user
           nil
         else
-          member.try(:code) || user.code
+          params[:user_code].presence || session[:user_code].presence
         end
 
         if user.collaborator? && prev_user_code != session[:user_code] && request.path.match(/^\/account\/organizations/)
-          organization = (member || user.memberships.first).organization
-          redirect_to account_organization_path(organization)
+          collab = Collaborator.new(user)
+          redirect_to account_organization_path(collab.organization)
         end
       end
     end
+
     user ||= current_user
     instance_variable_set name, user
   end
