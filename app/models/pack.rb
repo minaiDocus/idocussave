@@ -293,12 +293,15 @@ class Pack < ActiveRecord::Base
 
   def recreate_original_document
     pieces = self.pieces.by_position
+    success = false
     sleep_counter = 5
 
     if pieces.present?
       Dir.mktmpdir do |dir|
         pieces.each do |piece|
-          append(piece.content.path, true, dir)
+          success = append(piece.content.path, true, dir)
+
+          break unless success
           #add a sleeping time to prevent disk access overload
           sleep_counter -= 1
           if sleep_counter <= 0
@@ -308,12 +311,14 @@ class Pack < ActiveRecord::Base
         end
       end
 
-      temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
+      if success
+        temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
 
-      FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+        FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
-      set_pages_count
-      save
+        set_pages_count
+        save
+      end
     else
       FileUtils.rm self.original_document.content.path, :force =>  true
     end
@@ -340,9 +345,10 @@ class Pack < ActiveRecord::Base
     elsif overwrite_original
       begin
         FileUtils.copy merged_file_path, target_file_path
+        return true
       rescue
-        FileUtils.rm target_file_path
-        raise
+        FileUtils.rm target_file_path if File.exist? target_file_path
+        return false
       end
     end
   end
