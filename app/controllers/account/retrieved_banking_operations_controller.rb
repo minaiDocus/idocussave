@@ -19,8 +19,8 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
   end
 
   def unlock_operations
-    if operations.present? && params[:banking_operation_contains].present?
-      count = operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
+    if operations(false).present? && params[:banking_operation_contains].present?
+      count = operations(false).locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
       if count > 0
         flash[:success] = "#{count} opération(s) débloquée(s) avec succès."
       else
@@ -33,7 +33,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
 
 private
 
-  def operations
+  def operations(with_page=true)
     return @operations unless @operations.nil?
 
     bank_account_ids = @account.bank_accounts.used.map(&:id)
@@ -44,7 +44,8 @@ private
       )
     )
 
-    @operations = Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account).page(params[:page]).per(params[:per_page])
+    @operations = Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account)
+    @operations = @operations.page(params[:page]).per(params[:per_page]) if with_page
   end
 
   def sort_column

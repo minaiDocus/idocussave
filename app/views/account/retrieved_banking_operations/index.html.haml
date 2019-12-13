@@ -69,6 +69,6 @@
               %td= operation.category
               %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || '€'}"
-              - if @user.collaborator?
+              - if current_user.collaborator?
                 %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
