@@ -28,6 +28,8 @@ class Pack < ApplicationRecord
   has_many :remote_files, dependent: :destroy
   has_many :preseizures, through: :reports
 
+  has_one_attached :cloud_content
+
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pack/:id/download'
   do_not_validate_attachment_file_type :content

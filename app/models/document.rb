@@ -10,6 +10,8 @@ class Document < ApplicationRecord
 
   belongs_to :pack, optional: true
 
+  has_one_attached :cloud_content
+
   has_attached_file :content,
                             styles: {
                               thumb: ['46x67>', :png],

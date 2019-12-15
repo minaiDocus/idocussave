@@ -11,6 +11,7 @@ class Email < ApplicationRecord
 
   validates_uniqueness_of :message_id
 
+  has_one_attached :cloud_original_content
 
   has_attached_file :original_content,
                             path: ':rails_root/files/:rails_env/:class/:attachment/:filename',

@@ -35,6 +35,7 @@ gem 'paperclip'
 gem 'chunky_png'  # required by barby
 gem 'haml'
 gem 'prawn-qrcode'
+gem 'activestorage-openstack'
 
 
 # View render and utils

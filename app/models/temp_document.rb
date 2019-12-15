@@ -20,6 +20,9 @@ class TempDocument < ApplicationRecord
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
+  has_one_attached :cloud_content
+  has_one_attached :cloud_raw_content
+
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/:filename',
                               url: '/account/documents/processing/:id/download/:style'
@@ -235,11 +238,6 @@ class TempDocument < ApplicationRecord
       elsif contains[:retriever_id]
         retriever = user.retrievers.find(contains[:retriever_id])
         collection = collection.where(retriever_id: retriever.id)
-      end
-
-      if contains[:transaction_id]
-        transaction = user.fiduceo_transactions.find(contains[:transaction_id])
-        documents = collection.where(fiduceo_id: transaction.retrieved_document_ids)
       end
     end
 

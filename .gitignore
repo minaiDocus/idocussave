@@ -34,6 +34,7 @@ config/pdftk.yml
 config/smtp.yml
 config/budgea.yml
 config/fiduceo.yml
+config/storage.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
 config/symmetric-encryption.yml

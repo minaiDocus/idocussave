@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class CmsImage < ApplicationRecord
+  has_one_attached :cloud_content
+  
   has_attached_file :content,
                             styles: {
                               thumb: ['96x96>', :png]

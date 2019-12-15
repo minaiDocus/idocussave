@@ -19,7 +19,6 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/secrets.yml',
   'config/dematbox.yml',
   'config/budgea.yml',
-  'config/fiduceo.yml',
   'config/dematbox_service_api.yml',
   'config/knowings.yml',
   'config/emailed_document.yml',

@@ -18,6 +18,8 @@ class Pack::Piece < ApplicationRecord
   belongs_to :organization
   belongs_to :analytic_reference, inverse_of: :pieces, optional: true
 
+  has_one_attached :cloud_content
+
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pieces/:id/download/:style'

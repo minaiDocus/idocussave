@@ -4,6 +4,8 @@ class RetrievedData < ApplicationRecord
 
   serialize :processed_connection_ids, Array
 
+  has_one_attached :cloud_content
+
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/content/:id/:filename'
   do_not_validate_attachment_file_type :content
 
