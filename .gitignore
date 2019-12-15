@@ -1,3 +1,4 @@
+.DS_Store
 .rspec
 .idea/
 .envrc
@@ -5,6 +6,7 @@
 ./doc/
 log/
 tmp/
+keys/
 /data/
 /files/
 public/system
