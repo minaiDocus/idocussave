@@ -4,7 +4,7 @@
       .row
         .col-6
           - if @user.inactive?
-            %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
+            %span.badge.badge-danger.float-left.margin1right.closed_account Dossier clôturé
           %h2= @user.info
 
         .col-6.alignright
@@ -63,8 +63,8 @@
             %th.first= t('activerecord.models.scanning_provider.name')
             %td
               - if @user.scanning_provider
-                .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
-                .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
+                .float-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
+                .float-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
     .col-8
       %table.table.table-striped.table-bordered.table-condensed
         %tbody

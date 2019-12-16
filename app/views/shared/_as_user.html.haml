@@ -1,6 +1,6 @@
 - if current_user.is_admin?
-  .row-fluid
-    .span12.box
+  .row
+    .col-md-12.box
       - if action_name == 'index' || (controller_name == 'organizations' && action_name == 'show') || (controller_name == 'reporting' && action_name == 'show') || controller_name == 'profiles'
         %form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
           = label_tag :user_code, 'Visualiser et agir en tant que :', class: 'mr-sm-2'
@@ -9,5 +9,5 @@
           = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first&.code]), class: 'btn btn-light'
       - else
         Visualiser et agir en tant que :
-        %span.label.label-default #{current_user_info}
+        %span.badge #{current_user_info}
         = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first&.code]), class: 'btn btn-light'

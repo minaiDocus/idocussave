@@ -276,17 +276,17 @@
             .row
               .col-md-7
                 %b Pré-saisie comptable activée pour le dossier :
-                %span.label{ class: 'label-' + (@customer.options.is_preassignment_authorized ? 'success' : 'important') }
+                %span.badge{ class: 'badge-' + (@customer.options.is_preassignment_authorized ? 'success' : 'danger') }
                   = @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
                 - unless @customer.options.is_preassignment_authorized
                   %i.margin1left
                     = link_to '(Activer la pré-saisie comptable)', edit_account_organization_customer_subscription_path(@organization, @customer)
                 %br
                 %b Nombre de journaux comptables utilisés :
-                %span.label= @customer.account_book_types.count
+                %span.badge= @customer.account_book_types.count
                 %br
                 %b Nombre de journaux comptables autorisés :
-                %span.label= @customer.options.max_number_of_journals
+                %span.badge= @customer.options.max_number_of_journals
                 - if @customer.options.max_number_of_journals < 10
                   %i.margin1left
                     = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)
@@ -456,12 +456,12 @@
                       %th Etat
                       %td{colspan: 2, width: '17%'}
                         - if @customer.try(:exact_online).try(:fully_configured?)
-                          %span.label.label-success OK
+                          %span.badge.badge-success OK
                           = link_to 'Supprimer la liaison', unsubscribe_account_exact_online_path(u: Base64.encode64(@customer.id.to_s)), method: 'POST', data: { confirm: t('actions.confirm') }, class: 'btn btn-danger margin1left'
                         - elsif !@customer.try(:exact_online).try(:api_keys_present?)
-                          %span.label.label-danger Clé api non renseigné
+                          %span.badge.badge-danger Clé api non renseigné
                         - elsif !@customer.try(:exact_online).try(:linked?)
-                          %span.label.label-danger Liaison non établie
+                          %span.badge.badge-danger Liaison non établie
                           = link_to 'Configurer la liaison', authenticate_account_exact_online_path(customer_id: @customer.id), class: 'btn btn-primary margin1left'
                     %tr
                       %th= t('activerecord.models.exact_online.attributes.user_name')
@@ -550,9 +550,9 @@
                     %tr
                       %th Générer automatiquement l'export des écritures et pièces ?
                       %td= @customer.try(:softwares).try(:cegid_auto_deliver?) ? t('yes_value') : t('no_value')
-                .row-fluid
-                  .span12
-                    = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'cegid'), class: 'btn btn-primary pull-right'
+                .row
+                  .col-md-12
+                    = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'cegid'), class: 'btn btn-primary float-right'
           - if @organization.is_fec_agiris_used
             #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
               %h4.margin1bottom Activation Fec Agiris
@@ -576,9 +576,9 @@
                       %tr
                         %th Générer automatiquement l'export des écritures et pièces ?
                         %td= @customer.try(:softwares).try(:fec_agiris_auto_deliver?) ? t('yes_value') : t('no_value')
-                  .row-fluid
-                    .span12
-                      = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_agiris'), class: 'btn btn-primary pull-right'
+                  .row
+                    .col-md-12
+                      = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_agiris'), class: 'btn btn-primary float-right'
           - if @organization.is_csv_descriptor_used
             #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               %h4.margin1bottom Activation Fichier d'export personnalisé (.csv)

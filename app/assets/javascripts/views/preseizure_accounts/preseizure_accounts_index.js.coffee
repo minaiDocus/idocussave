@@ -13,7 +13,7 @@ class Idocus.Views.PreseizureAccountsIndex extends Backbone.View
 
   render: ->
     @$el.html(@template({@collection, unit: 'EUR'}))
-    @$el.find('#tab_accounts').before('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
+    @$el.find('#tab_accounts').before('<div class="feedback float-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     this
 
   setResults: ->

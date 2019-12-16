@@ -78,15 +78,17 @@
     = render partial: 'sidebar'
 
   #showPieces.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3 Différence
-    .modal-body
-      .row
-        .col-6.aligncenter
-          %h3 Doublon
-        .col-6.aligncenter
-          %h3 Original
-      .aligncenter
-        %iframe.duplicate{ src: '' }
-        %iframe.original{ src: '' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %a.close{ data: { dismiss: :modal } } ×
+          %h3 Différence
+        .modal-body
+          .row
+            .col-6.aligncenter
+              %h3 Doublon
+            .col-6.aligncenter
+              %h3 Original
+          .aligncenter
+            %iframe.duplicate{ src: '' }
+            %iframe.original{ src: '' }

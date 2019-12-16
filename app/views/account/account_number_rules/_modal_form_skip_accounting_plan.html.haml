@@ -14,6 +14,6 @@
             %br
             = select_tag 'account_list', options_for_select(@list_accounts, @list_skiped_accounting_plan), include_blank: false, multiple: true, class: 'searchable-option-list'
         .modal-footer
-          .parentFeedback.hide.pull-left
+          .parentFeedback.hide.float-left
             .feedback.active
           %input#skipAccountingPlanButton.btn.btn-primary{ :type => "button", :value => "Valider" }

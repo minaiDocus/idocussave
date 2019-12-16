@@ -89,7 +89,7 @@ class Idocus.Models.Common
   action_loading: (el, load)->
     if load
       el.find('.form-actions .actions').css(display: 'none')
-      el.find('.form-actions .actions').after('<div class="feedback pull-left active"></div>')
+      el.find('.form-actions .actions').after('<div class="feedback float-left active"></div>')
     else
       el.find('.form-actions .actions').css(display: 'block')
       el.find('.form-actions .feedback').remove()

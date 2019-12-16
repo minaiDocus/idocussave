@@ -30,9 +30,9 @@
               = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option,["tous","all"]), :class => "view_for wauto margin05left margin0bottom"
             .other_filter.clearfix
               .per_page.float-right
-                = label_tag :per_page, "par :", :class => "margin1left pull-left"
+                = label_tag :per_page, "par :", :class => "margin1left float-left"
                 = select_tag :per_page, options_for_select([["20",20],["40",40],["60",60]]), :class => "per_page w50 margin1left"
-              %a{ href:'#packFilterModal', title:'plus de filtre', style: 'margin-right: 5px', class: 'btn btn-primary pull-left', data: {toggle: :modal} }
+              %a{ href:'#packFilterModal', title:'plus de filtre', style: 'margin-right: 5px', class: 'btn btn-primary float-left', data: {toggle: :modal} }
                 = glyphicon('excerpt', { class: 'mr-sm-1', color: '#fff' })
                 Plus de filtre
         .subView

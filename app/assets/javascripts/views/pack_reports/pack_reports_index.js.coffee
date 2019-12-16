@@ -23,7 +23,7 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
 
   render: ->
     @$el.html(@template(@collection))
-    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
+    @$el.children('ul').prepend('<div class="feedback float-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     @setPackReports()
     @$el.find('select[name=view]').val(@view)
     this
@@ -62,7 +62,7 @@ class Idocus.Views.PackReportsIndex extends Backbone.View
     data = { view: @view, page: @page }
     @$el.children('ul').html('')
     @$el.find('.pagination').remove()
-    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
+    @$el.children('ul').prepend('<div class="feedback float-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     if @query != ''
       data['filter'] = @query
       @collection

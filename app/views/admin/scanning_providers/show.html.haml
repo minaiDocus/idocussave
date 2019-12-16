@@ -38,9 +38,9 @@
             %thead
               %tr
                 %th
-                  .pull-left
+                  .float-left
                     %h3 Liste des clients
-                  .pull-right
+                  .float-right
                     %h3= @scanning_provider.customers.count
             %tbody
               - @scanning_provider.customers.order(code: :asc).each do |customer|

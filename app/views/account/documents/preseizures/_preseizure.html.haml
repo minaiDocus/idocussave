@@ -73,7 +73,7 @@
       .entries.col-sm-12
         - if data_analytics.any?
           %strong Ecritures
-        %span.color_red.pull-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
+        %span.color_red.float-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
           = glyphicon('info')
           balance non équilibrée     
         %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -99,7 +99,7 @@
                       .content_amount_number
                         = entry.amount.to_f
                       - if @user.collaborator?
-                        %span.debit_or_credit.hide.pull-right
+                        %span.debit_or_credit.hide.float-right
                           = glyphicon('arrow-thick-right')
                     - if @user.collaborator?
                       .edit_amount.hide
@@ -110,7 +110,7 @@
                   - if entry.type == 2
                     .content_amount
                       - if @user.collaborator?
-                        %span.debit_or_credit.hide.pull-left                          
+                        %span.debit_or_credit.hide.float-left                          
                           = glyphicon('arrow-thick-left')
                       &nbsp;&nbsp;
                       .content_amount_number

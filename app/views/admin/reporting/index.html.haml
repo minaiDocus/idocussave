@@ -88,8 +88,10 @@
                     \-
 
   #showInvoice.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3
-    .modal-body
-      %iframe{ :src => '' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %a.close{ data: { dismiss: :modal } } ×
+          %h3
+        .modal-body
+          %iframe{ :src => '' }

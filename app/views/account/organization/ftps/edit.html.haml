@@ -1,18 +1,18 @@
-.row-fluid
-  .span12.box
+.row
+  .col-ms-12.box
     %h3 Edition de la configuration FTP
 
-.row-fluid
-  .span12.box
+.row
+  .col-ms-12.box
     = simple_form_for @ftp, url: account_organization_ftps_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
-      .row-fluid
-        .span5
+      .row
+        .col-md-5
           = f.input :host
           = f.input :port, as: :integer
           = f.input :is_passive, as: :boolean
           = f.input :login
           = f.input :password
-        .span7
+        .col-md-7
           = f.input :root_path, input_html: { class: 'input-xlarge' }
           .control-group
             = label_tag :input_path, "Chemin d'import", class: 'control-label'

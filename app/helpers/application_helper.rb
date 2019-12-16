@@ -123,12 +123,12 @@ module ApplicationHelper
 
 
   def label_ok(is_current = false)
-    content_tag(:span, icon_ok, class: "label #{is_current ? 'label-success' : ''}", style: 'margin-left:2px;margin-right:2px;')
+    content_tag(:span, icon_ok, class: "badge #{is_current ? 'badge-success' : ''}", style: 'margin-left:2px;margin-right:2px;')
   end
 
 
   def label_not_ok(is_current = false)
-    content_tag(:span, icon_not_ok, class: "label #{!is_current ? 'label-important' : ''}", style: 'margin-left:2px;margin-right:2px;')
+    content_tag(:span, icon_not_ok, class: "badge #{!is_current ? 'badge-danger' : ''}", style: 'margin-left:2px;margin-right:2px;')
   end
 
 

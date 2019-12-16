@@ -7,9 +7,9 @@
 
   .row
     .col-12.panel
-      .pull-left
+      .float-left
         %h2 Demande de nouveau fournisseur par le client : #{@new_provider_request.user}
-      .pull-right
+      .float-right
         - if @new_provider_request.processing?
           = link_to icon_ok + ' Accepter', accept_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
           = link_to icon_not_ok + ' Rejeter', edit_admin_new_provider_request_path(@new_provider_request), class: 'btn btn-danger'

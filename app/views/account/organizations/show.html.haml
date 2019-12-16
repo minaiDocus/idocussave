@@ -200,9 +200,9 @@
                     %th Etat
                     %td
                       - if @organization.ftp.try(:configured?)
-                        %span.label.label-success OK
+                        %span.badge.badge-success OK
                       - else
-                        %span.label Non configuré
+                        %span.badge Non configuré
                   %tr
                     %th Hôte
                     %td= @organization.ftp.try(:host) || 'ftp://ftp.example.com'
@@ -230,17 +230,17 @@
                     %th Statut de la liaison
                     %td
                       - if @organization.mcf_settings.try(:access_token).present?
-                        %span.label.label-success OK
+                        %span.badge.badge-success OK
                       - else
-                        %span.label.label-default Non configuré
+                        %span.badge.badge-default Non configuré
                   - if @organization.mcf_settings.try(:access_token).present?
                     %tr
                       %th Livraison activé ?
                       %td
                         - if @organization.mcf_settings.try(:is_delivery_activated)
-                          %span.label.label-success= t('yes_value')
+                          %span.badge.badge-success= t('yes_value')
                         - else
-                          %span.label.label-important= t('no_value')
+                          %span.badge.badge-important= t('no_value')
                   %tr
                     %th Chemin de livraison
                     %td= @organization.mcf_settings.try(:delivery_path_pattern) || McfSettings.new.delivery_path_pattern

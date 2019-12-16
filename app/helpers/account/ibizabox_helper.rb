@@ -29,11 +29,11 @@ module Account::IbizaboxHelper
   def ibizabox_state_label(state)
     case state
     when 'processing'
-      'label label-warning'
+      'badge badge-warning'
     when 'ready'
-      'label label-success'
+      'badge badge-success'
     when 'inactive'
-      'label'
+      'badge'
     end
   end
 end
