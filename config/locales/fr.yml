@@ -994,6 +994,7 @@ fr:
           vat_ratio: Ratio TVA
           dematbox_count: Nombre d'iDocus'Box
           paper_set_casing_size: Taille d'enveloppe
+          paper_set_casing_count: Nombre d'enveloppes
           paper_set_folder_count: Nombre de chemise
           paper_set_start_date: Date de début
           paper_set_end_date: Date de fin

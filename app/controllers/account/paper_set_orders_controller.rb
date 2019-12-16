@@ -76,7 +76,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   end
 
   def select_for_orders
-    @customers = customers.active.joins(:subscription).where("is_mail_package_active = ? or is_annual_package_active = ?", true, true)
+    @customers = customers.active.joins(:subscription).where("period_duration != 3").where("is_mail_package_active = ? or is_annual_package_active = ?", true, true)
   end
 
   def order_multiple
@@ -95,7 +95,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @orders = []
     if params[:orders].any?
       params[:orders].each do |param_order|
-        order_attributes           = param_order.permit(:user_id, :paper_set_casing_size, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
+        order_attributes           = param_order.permit(:user_id, :paper_set_casing_count, :paper_set_casing_size, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
         order                      = Order.new(order_attributes)
         order.type                 = 'paper_set'
         order.address              = order.user.paper_set_shipping_address.try(:dup)
@@ -170,6 +170,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   def order_params
     attributes = [
       :user_id,
+      :paper_set_casing_count,
       :paper_set_casing_size,
       :paper_set_folder_count,
       :paper_set_start_date,

@@ -18,9 +18,11 @@ class Idocus.Collections.Connectors extends Backbone.Collection
         (datas)->
           if connectors_cache.length < datas.length
             self.common.setCache('connectors', datas, 15)
+            console.log('datas')
             self.reset(datas)
           else
             self.common.setCache('connectors', connectors_cache, 15)
+            console.log('cache')
             self.reset(connectors_cache)
           resolve()
         (error)-> reject(error)
