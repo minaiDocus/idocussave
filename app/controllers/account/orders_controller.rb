@@ -66,7 +66,11 @@ class Account::OrdersController < Account::OrganizationController
         next_configuration_step
       end
     else
-      render :new
+      if @order.period_duration == 3 && !@customer.configured?
+        next_configuration_step
+      else
+        render :new
+      end
     end
   end
 
@@ -200,6 +204,7 @@ class Account::OrdersController < Account::OrganizationController
   def paper_set_order_params
     attributes = [
       :paper_set_casing_size,
+      :paper_set_casing_count,
       :paper_set_folder_count,
       :paper_set_start_date,
       :paper_set_end_date,
