@@ -37,7 +37,7 @@ class NotifyPreAssignmentDeliveryFailure
         notification.user        = user
         notification.notice_type = 'pre_assignment_delivery_failure'
         notification.title       = deliveries.size == 1 ? 'Livraison de pré-affectation échouée' : 'Livraisons de pré-affectation échouées'
-        notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignment_delivery_errors_url organization, ActionMailer::Base.default_url_options
+        notification.url         = Rails.application.routes.url_helpers.account_pre_assignment_delivery_errors_path
 
         groups = deliveries.group_by(&:pack_name)
         if groups.size == 1

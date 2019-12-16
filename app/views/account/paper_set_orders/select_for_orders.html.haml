@@ -11,6 +11,7 @@
   .row-fluid
     .span12.box
       %p Veuillez sélectionner les clients pour lesquels vous voulez commander un Kit Courrier.
+      %span.label.label-warning{style: 'font-size: 14px'} La commande de kit courrier pour les dossiers en abonnement trimestriel n'est plus valide pour l'année prochaine (2020)
       = form_tag(order_multiple_account_organization_paper_set_orders_path(@organization), method: :post) do
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
           %thead

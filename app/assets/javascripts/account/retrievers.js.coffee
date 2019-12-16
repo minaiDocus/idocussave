@@ -85,34 +85,54 @@ jQuery ->
 
           $('.destroy_retriever').bind 'click', (e)->
             e.preventDefault()
-            if confirm('Voulez-vous vraiment supprimer cette automate?')
-              id = $(this).attr('data-id')
+            self = $(this)
+
+            fClose = () ->
+              $('#delConfirm.modal .loading').addClass('hide')
+              $('#delConfirm.modal .buttonsAction').removeClass('hide')
+              $('#delConfirm.modal').modal('hide')
+
+            onConfirm = () ->
+              id = self.attr('data-id')
               releaseRetrieversTimer(id)
+              $('#delConfirm.modal .loading').removeClass('hide')
+              $('#delConfirm.modal .buttonsAction').addClass('hide')
               $('.state_field_'+id).html('<span class="label">Suppression en cours</span>')
               budgeaApi.delete_connection(id).then(
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                   $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
               )
+
+            $('#delConfirm.modal').modal('show')
+            $("#delConfirm.modal #del_confirm_button").unbind().one('click', onConfirm)
+            $("#delConfirm.modal #del_cancel_button").unbind().one("click", fClose)
 
           $('.trigger_retriever').bind 'click', (e)->
             e.preventDefault()
             self = $(this)
 
             fClose = () ->
+              $('#syncConfirm.modal .loading').addClass('hide')
+              $('#syncConfirm.modal .buttonsAction').removeClass('hide')
               $('#syncConfirm.modal').modal('hide')
 
             onConfirm = () ->
-              fClose()
               id = self.attr('data-id')
               releaseRetrieversTimer(id)
-              $('.state_field_'+id).html('<span class="label">Synchronisation en cours</span>')
+              $('#syncConfirm.modal .loading').removeClass('hide')
+              $('#syncConfirm.modal .buttonsAction').addClass('hide')
+              $('.state_field_'+id).html('<span class="label fs-origin label-secondary">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                 ()->
+                  fClose()
                   refreshRetrievers(id)
                   $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
               )

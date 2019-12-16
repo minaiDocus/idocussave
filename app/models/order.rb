@@ -19,6 +19,7 @@ class Order < ActiveRecord::Base
   validates_presence_of  :address,              if: proc { |o| o.address_required? }
   validates_presence_of  :vat_ratio
   validates_presence_of  :period_duration,      if: proc { |o| o.paper_set? }
+  validates_presence_of  :paper_set_casing_count, if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_set_end_date,   if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_return_address, if: proc { |o| o.paper_set? && o.address_required? }
   validates_presence_of  :paper_set_start_date, if: proc { |o| o.paper_set? }

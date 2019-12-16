@@ -6,7 +6,7 @@ class NotifyPreAssignmentIgnoredPiece
 
   def execute
     @piece.user.prescribers.each do |collaborator|
-      next unless collaborator.notify.pre_assignment_ignored_piece
+      next unless collaborator.notify.try(:pre_assignment_ignored_piece)
       Notify.update_counters collaborator.notify.id, pre_assignment_ignored_piece_count: 1
       NotifyPreAssignmentIgnoredPieceWorker.perform_in(@time_delay, collaborator.id)
     end
@@ -25,7 +25,7 @@ class NotifyPreAssignmentIgnoredPiece
     notification.user        = user
     notification.notice_type = 'pre_assignment_ignored_piece'
     notification.title       = count == 1 ? 'Pièce ignorée à la pré-affectation' : 'Pièces ignorées à la pré-affectation'
-    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignment_ignored_index_url(user_collab.organization, ActionMailer::Base.default_url_options)
+    notification.url         = Rails.application.routes.url_helpers.account_pre_assignment_ignored_path
     notification.message = if count == 1
       "1 pièce a été ignorée à la pré-affectation"
     else

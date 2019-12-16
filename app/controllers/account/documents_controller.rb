@@ -207,15 +207,17 @@ class Account::DocumentsController < Account::AccountController
       render json: { success: true }, status: 200
     else
       if params[:ids].present?
-        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(id: params[:ids])
+        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
       elsif params[:id]
         if params[:type] == 'report'
           reports = Pack::Report.where(id: params[:id])
+          preseizures = Pack::Report::Preseizure.not_delivered.not_locked if reports.present?
         else
           reports = Pack.find(params[:id]).try(:reports)
+          preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked if reports.present?
         end
 
-        preseizures = Pack::Report::Preseizure.not_deleted.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
+        preseizures = preseizures.where(report_id: reports.collect(&:id)) if reports.present?
       end
 
       if preseizures.present?
@@ -290,9 +292,9 @@ class Account::DocumentsController < Account::AccountController
     export_format = params64[2].presence
 
     if export_ids && export_type == 'preseizure'
-      preseizures = Pack::Report::Preseizure.not_deleted.where(id: export_ids)
+      preseizures = Pack::Report::Preseizure.where(id: export_ids)
     elsif export_ids && export_type == 'report'
-      preseizures = Pack::Report.where(id: export_ids).first.preseizures.not_deleted
+      preseizures = Pack::Report.where(id: export_ids).first.preseizures
     elsif export_ids && export_type == 'pack'
       reports     = Pack.where(id: export_ids).first.reports
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))

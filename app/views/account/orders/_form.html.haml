@@ -29,10 +29,16 @@
   - else
     .aligncenter.margin2bottom
       %b Commande d’un kit complet pour envoi du courrier à iDocus
+    - if @order.period_duration == 3
+      .row-fluid
+        .span12
+          %span.label.label-warning{style: 'font-size: 14px'} La commande de kit courrier pour les dossiers en abonnement trimestriel n'est plus valide pour l'année prochaine (2020)
     .row-fluid
       .span4
         = f.hidden_field :period_duration
         = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
+        = f.input :paper_set_casing_count, collection: [], include_blank: true
+        = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
         = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
         = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
         = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
@@ -65,7 +71,8 @@
       %b.total_price{ style: 'font-size:20px' }
   .form-actions.margin0bottom
     - if @customer.configured?
-      = f.submit 'Commander', class: 'btn btn-primary'
+      -if @order.period_duration != 3
+        = f.submit 'Commander', class: 'btn btn-primary'
       = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'btn'
     - else
       = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
