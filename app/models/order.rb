@@ -19,6 +19,7 @@ class Order < ActiveRecord::Base
   validates_presence_of  :address,              if: proc { |o| o.address_required? }
   validates_presence_of  :vat_ratio
   validates_presence_of  :period_duration,      if: proc { |o| o.paper_set? }
+  validates_presence_of  :paper_set_casing_count, if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_set_end_date,   if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_return_address, if: proc { |o| o.paper_set? && o.address_required? }
   validates_presence_of  :paper_set_start_date, if: proc { |o| o.paper_set? }
@@ -191,7 +192,8 @@ class Order < ActiveRecord::Base
   private
 
   def paper_set_starting_date
-    start_date = created_at.try(:to_date) || (Date.today.month < 12 ? Date.today : 1.month.from_now.to_date)
+    #Order paper set for the new year is only available from the 15th of december
+    start_date = (Date.today.day >= 15 && Date.today.month == 12) ? 1.month.from_now.to_date : Date.today
 
     case period_duration
     when 1

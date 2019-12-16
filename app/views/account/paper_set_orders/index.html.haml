@@ -30,7 +30,7 @@
                   %td= link_to "#{order.user_code}", account_organization_customer_path(@organization, order.user_id, tab: 'orders')
                   %td= truncate(order.company, length: 20, separator: ' ')
                   %td
-                    = order.paper_set_casing_size.to_s + 'g' + ' - ' + order.paper_set_folder_count.to_s + ' chm - '
+                    = order.paper_set_casing_size.to_s + 'g - ' + order.paper_set_casing_count.to_s + ' env - ' + order.paper_set_folder_count.to_s + ' chm - '
                     = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
                     à
                     = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
