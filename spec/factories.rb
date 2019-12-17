@@ -60,14 +60,16 @@ FactoryBot.define do
 
     factory :period_document do
       sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
-      pack_id { 1 }
+      #pack_id { 1 }
+      pack
       user_id { 1 }
       organization_id { 1 }
       period_id { 1 }
     end
 
     factory :pack do
-      name { 'AC0000 AC 201812 ALL' }
+      #name { 'AC0000 AC 201812 ALL' }
+      sequence(:name) { |n| "AC0000 AC 201812 ALL#{n}" }
       original_document_id { "1550058" }
       content_url { "/account/documents/1550058/download/original?15238" }
       pages_count { 2 }
@@ -156,7 +158,8 @@ FactoryBot.define do
       sequence(:number) { |n| "#{'%04d' % n}" }
       type_name { "test" }
       user_id { 1 }
-      retriever_id { 1 }
+      #retriever_id { 1 }
+      retriever
     end
 
     factory :retriever do

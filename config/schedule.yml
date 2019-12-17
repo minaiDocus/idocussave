@@ -95,6 +95,12 @@ McfProcessorWorker:
   queue: default
   cron: '0 */5 * * * *'
 
+## Erase records every year (created_at < 2.years.ago
+# DatabaseCleanerWorker:
+#   queue: default
+#   cron: 0 0 1 1 *
+
+
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults
