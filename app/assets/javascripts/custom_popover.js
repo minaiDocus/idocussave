@@ -2,7 +2,7 @@
 
 function setPosition(elem) {
   var popover = elem.find('.my_custom_popover_wrapper');
-  var marg_left = 33;
+  var marg_left = elem.outerWidth() || 15;
   var marg_top = -25;
   var marg_size = 70;
 
