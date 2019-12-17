@@ -10,8 +10,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS%0001_TS_201301.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.file_name_with_position).to eq('TS_0001_TS_201301_002.pdf')
   end
@@ -24,8 +24,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS%0001_TS_201301_001.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.file_name_with_position).to eq('TS_0001_TS_201301_002.pdf')
   end
@@ -38,8 +38,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS0001_TS_201301_000.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.is_a_cover?).to be true
   end
@@ -52,8 +52,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS0001_TS_201301_000.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.is_a_cover?).to be true
   end
@@ -66,8 +66,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS0001_TS_201301_000.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.is_a_cover?).to be false
   end
@@ -80,8 +80,8 @@ describe TempDocument do
       original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
       file_path = File.join(dir, 'TS0001_TS_201301_000.pdf')
       FileUtils.cp original_file_path, file_path
-      temp_document.content = open file_path
-      temp_document.save
+      # temp_document.content = open file_path
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
     end
     expect(temp_document.is_a_cover?).to be false
   end

@@ -24,7 +24,7 @@
                 %td= l(document.created_at)
                 %td= document.journal
                 %td= link_to document.original_file_name, account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
-                %td= link_to document.piece.content_file_name, piece_account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank' if document.piece
+                %td= link_to document.piece.cloud_content_object.filename, piece_account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank' if document.piece
                 %td.pages= document.pages_number
         = render partial: 'shared/list_options', locals: { collection: @documents }
     = render 'sidebar'

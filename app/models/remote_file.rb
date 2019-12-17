@@ -148,7 +148,7 @@ class RemoteFile < ApplicationRecord
 
 
   def local_path
-    temp_path.presence || remotable.content.path
+    temp_path.presence || remotable.cloud_content_object.path
   end
 
 

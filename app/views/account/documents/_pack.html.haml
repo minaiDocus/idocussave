@@ -5,7 +5,7 @@
     - if @user.active?
       %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
         = glyphicon('check')
-    %a.do-tooltip.download.hide{ :href => pack.content_url, :title => "Télécharger", :target => "_blank" }
+    %a.do-tooltip.download.hide{ :href => pack.cloud_content_object.url, :title => "Télécharger", :target => "_blank" }
       = glyphicon('collapse-down')
     %a.do-tooltip.zip_download.hide{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :target => "_blank"}
       = glyphicon('data-transfer-download')

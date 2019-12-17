@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Pack::Piece < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/pieces/:id/download/:style'}
+
   serialize :tags
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
@@ -36,6 +38,8 @@ class Pack::Piece < ApplicationRecord
   end
 
   before_destroy do |piece|
+    piece.cloud_content.purge
+
     current_analytic = piece.analytic_reference
     current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ pieces: [piece.id] })
   end
@@ -150,39 +154,40 @@ class Pack::Piece < ApplicationRecord
     return true if piece.is_finalized
 
     self.extract_content(piece)
-    self.generate_thumbs(piece)
+    # self.generate_thumbs(piece)
 
     piece.update(is_finalized: true)
   end
 
   def self.generate_thumbs(piece)
-    begin
-      piece.content.reprocess!
-      piece.save
-    rescue => e
-      true
-    end
+    true
+    # begin
+    #   piece.content.reprocess!
+    #   piece.save
+    # rescue => e
+    #   true
+    # end
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
   end
 
   def correct_pdf_signature
-    sign_piece if DocumentTools.remake_pdf(self.content.path)
+    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
   end
 
   def sign_piece
-    to_sign_file = File.dirname(self.content.path) + '/signed.pdf'
-    FileUtils.cp self.content.path, to_sign_file
+    content_file = self.cloud_content_object
+    to_sign_file = File.dirname(content_file.path) + '/signed.pdf'
 
-    DocumentTools.sign_pdf(to_sign_file, self.content.path)
-    FileUtils.rm to_sign_file
+    DocumentTools.sign_pdf(content_file.path, to_sign_file)
+    self.cloud_content.attach(io: File.open(to_sign_file), filename: "#{name}.pdf") if self.save
   end
 
   def self.extract_content(piece)
     begin
-      path = if piece.content.queued_for_write[:original]
-               piece.content.queued_for_write[:original].path
-             else
-               piece.content.path
-             end
+      path = piece.cloud_content_object.path
 
       POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
 
@@ -270,7 +275,7 @@ class Pack::Piece < ApplicationRecord
     return self.pages_number if self.pages_number > 0
 
     begin
-      self.pages_number = DocumentTools.pages_number(self.content.path)
+      self.pages_number = DocumentTools.pages_number(self.cloud_content_object.path)
       save
     rescue
       0
@@ -315,7 +320,6 @@ class Pack::Piece < ApplicationRecord
   end
 
   private
-
 
   def set_number
     self.number = DbaSequence.next('Piece') unless number

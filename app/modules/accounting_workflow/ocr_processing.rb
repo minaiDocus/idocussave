@@ -3,7 +3,7 @@ module AccountingWorkflow::OcrProcessing
     def send_document(temp_document_id)
       temp_document = TempDocument.find_by_id(temp_document_id)
       if temp_document && temp_document.ocr_needed?
-        FileUtils.cp temp_document.content.path, input_path.join(temp_document.file_name_with_position)
+        FileUtils.cp temp_document.cloud_content_object.path, input_path.join(temp_document.file_name_with_position)
       end
     end
 
@@ -11,19 +11,22 @@ module AccountingWorkflow::OcrProcessing
       valid_temp_documents.each do |temp_document, file_path|
         temp_document.with_lock do
           if temp_document.ocr_needed? && File.exists?(file_path)
-            temp_document.raw_content           = File.open(temp_document.content.path)
+            # temp_document.raw_content           = File.open(temp_document.cloud_content_object.path)
 
             dir                                 = Dir.mktmpdir
-            temp_document_file_path             = File.join(dir, temp_document.content_file_name)
+            temp_document_file_path             = File.join(dir, temp_document.cloud_content_object.filename)
             FileUtils.cp file_path, temp_document_file_path
 
-            temp_document.content               = File.open(temp_document_file_path)
+            # temp_document.content               = File.open(temp_document_file_path)
             temp_document.is_ocr_layer_applied  = true
 
             # INFO : Blank pages are removed, so we need to reassign pages_number
             temp_document.pages_number = DocumentTools.pages_number file_path
 
-            temp_document.save
+            content_file = temp_document.cloud_content_object
+            temp_document.cloud_raw_content.attach(io: File.open(content_file.path), filename: File.basename(content_file.path)) if temp_document.save
+            temp_document.cloud_content.attach(io: File.open(temp_document_file_path), filename: File.basename(temp_document_file_path))
+
 
             if (temp_document.scanned? || temp_document.pages_number > 2) && temp_document.temp_pack.is_bundle_needed? && !temp_document.from_ibizabox?
               temp_document.bundle_needed

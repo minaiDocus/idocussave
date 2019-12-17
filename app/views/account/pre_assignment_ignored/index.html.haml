@@ -50,7 +50,7 @@
                     - else
                       %b En cours de renvoi à la pré-affectation
                   %td
-                    = link_to glyphicon('eye'), '#', class: ("do-showPieces custom_popover piece_" + ind.to_s), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.content.url, content: html_piece_view(piece) }
+                    = link_to glyphicon('eye'), '#', class: ("do-showPieces custom_popover piece_" + ind.to_s), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.cloud_content_object.url, content: html_piece_view(piece) }
           = glyphicon('arrow-top')
           = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
           = submit_tag 'Marquer la séléction comme vu', name: 'confirm_ignorance', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}

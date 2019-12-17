@@ -90,22 +90,22 @@ class Api::Mobile::DataLoaderController < MobileApiController
     if params[:force_temp_document] == 'true'
       document = TempDocument.find(params[:id])
       owner    = document.temp_pack.user
-      filepath = document.content.path(style)
+      filepath = document.cloud_content_object.path(style)
     else
       begin
         document = Pack::Piece.find(params[:id])
         owner    = document.user
-        filepath = document.content.path(style)
+        filepath = document.cloud_content_object.path(style)
       rescue
         document = TempDocument.find(params[:id])
         owner    = document.temp_pack.user
-        filepath = document.content.path(style)
+        filepath = document.cloud_content_object.path(style)
       end
     end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: document.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render json: { error: true, message: 'file not found' }, status: 404
     end
@@ -329,12 +329,12 @@ class Api::Mobile::DataLoaderController < MobileApiController
     documents = documents.order(position: :desc).includes(:pack).page(params[:page]).per(20)
 
     data_collected = documents.collect do |document|
-        thumb = File.exist?(document.content.path(:medium)) ? { id: document.id, style: 'medium', filter: document.content_file_name } : false
+        thumb = File.exist?(document.cloud_content_object.path(:medium)) ? { id: document.id, style: 'medium', filter: document.cloud_content_object.filename } : false
 
         {
           id:       document.id,
           thumb:    thumb,
-          large:    { id: document.id, style: 'original', filter: document.content_file_name },
+          large:    { id: document.id, style: 'original', filter: document.cloud_content_object.filename },
           position: document.position,
           state:    document.get_state_to(:text),
           actionOnSelect:  document.user.uses_ibiza_analytics? ? 'ibiza_analytics' : ''
@@ -354,12 +354,12 @@ class Api::Mobile::DataLoaderController < MobileApiController
     end
 
     data_collected = temp_documents.collect do |temp_document|      
-      thumb = File.exist?(temp_document.content.path(:medium)) ? { id: temp_document.id, style: 'medium', filter: temp_document.content_file_name } : false
+      thumb = File.exist?(temp_document.cloud_content_object.path(:medium)) ? { id: temp_document.id, style: 'medium', filter: temp_document.cloud_content_object.filename } : false
 
       {
         id:              temp_document.id,
         thumb:           thumb,
-        large:           { id: temp_document.id, style: 'original', filter: temp_document.content_file_name },
+        large:           { id: temp_document.id, style: 'original', filter: temp_document.cloud_content_object.filename },
         position:        '',
         state:           'none',
         actionOnSelect:  ''
@@ -400,8 +400,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
       thumb = false
       large = false
       if piece
-        thumb = File.exist?(piece.content.path(:medium)) ? { id: piece.id, style: 'medium', filter: piece.content_file_name } : false
-        large = { id: piece.id, style: 'original', filter: piece.content_file_name }
+        thumb = File.exist?(piece.cloud_content_object.path(:medium)) ? { id: piece.id, style: 'medium', filter: piece.cloud_content_object.filename } : false
+        large = { id: piece.id, style: 'original', filter: piece.cloud_content_object.filename }
       end
 
       name = preseizure.piece_name

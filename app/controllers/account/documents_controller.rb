@@ -348,7 +348,7 @@ class Account::DocumentsController < Account::AccountController
       files_path = packs.map do |pack|
         document = pack.original_document
         if document && (pack.owner.in?(accounts) || curent_user.try(:is_admin))
-          document.content.path('original')
+          document.cloud_content_object.path
         else
           nil
         end
@@ -401,11 +401,11 @@ class Account::DocumentsController < Account::AccountController
   def download_processing
     document = TempDocument.find(params[:id])
     owner    = document.temp_pack.user
-    filepath = document.content.path(params[:style].presence)
+    filepath = document.cloud_content_object.path(params[:style].presence)
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin))
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: document.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
@@ -416,16 +416,16 @@ class Account::DocumentsController < Account::AccountController
     begin
       document = params[:id].size > 20 ? Document.find_by_mongo_id(params[:id]) : Document.find(params[:id])
       owner    = document.pack.owner
-      filepath = document.content.path(params[:style].presence)
+      filepath = document.cloud_content_object.path(params[:style].presence)
     rescue
       document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
       owner    = document.temp_pack.user
-      filepath = document.content.path(params[:style].presence)
+      filepath = document.cloud_content_object.path(params[:style].presence)
     end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: document.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
@@ -435,11 +435,11 @@ class Account::DocumentsController < Account::AccountController
   def piece
     # NOTE : support old MongoDB id for pieces uploaded to iBiZa, in CSV export or others
     @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.find(params[:id])
-    filepath = @piece.content.path(params[:style].presence || :original)
+    filepath = @piece.cloud_content_object.path(params[:style].presence || :original)
 
     if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: @piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: @piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
@@ -448,11 +448,11 @@ class Account::DocumentsController < Account::AccountController
   # GET /account/documents/pack/:id/download
   def pack
     @pack = Pack.find params[:id]
-    filepath = @pack.content.path
+    filepath = @pack.cloud_content_object.path
 
     if File.exist?(filepath) && (@pack.owner.in?(accounts) || current_user.try(:is_admin))
       mime_type = 'application/pdf'           
-      send_file(filepath, type: mime_type, filename: @pack.content_file_name, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: @pack.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end

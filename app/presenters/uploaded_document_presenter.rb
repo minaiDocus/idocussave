@@ -12,7 +12,7 @@ class UploadedDocumentPresenter
 
       file[:created_at] = I18n.l(temp_document.created_at)
       file[:name]       = temp_document.original_file_name
-      file[:new_name]   = temp_document.content_file_name
+      file[:new_name]   = temp_document.cloud_content_object.filename
 
       if temp_document.state == 'bundle_needed'
         file[:message] = 'Vos documents sont en-cours de traitement, ils seront visibles dans quelques heures dans votre espace'

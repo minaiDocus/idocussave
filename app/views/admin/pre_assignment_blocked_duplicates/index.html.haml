@@ -66,7 +66,7 @@
                   %br
                   = l object.similar_preseizure.date, format: '%d %b %Y'
                 %td
-                  = link_to icon_show, '#', class: 'do-showPieces', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.content.url, original_url: object.similar_preseizure.piece.content.url }
+                  = link_to icon_show, '#', class: 'do-showPieces', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.cloud_content_object.url, original_url: object.similar_preseizure.piece.cloud_content_object.url }
                 %td
                   %b Doublon
                   %br

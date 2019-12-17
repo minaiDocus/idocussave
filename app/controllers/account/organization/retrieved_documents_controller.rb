@@ -13,9 +13,9 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
   end
 
   def show
-    if File.exist?(@document.content.path)
+    if File.exist?(@document.cloud_content_object.path)
       file_name = @document.metadata['name'] + '.pdf'
-      send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
+      send_file(@document.cloud_content_object.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
@@ -23,8 +23,8 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 
   def piece
     if @document.piece
-      if File.exist?(@document.piece.content.path)
-        send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      if File.exist?(@document.piece.cloud_content_object.path)
+        send_file(@document.piece.cloud_content_object.path, type: 'application/pdf', filename: @document.piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
       else
         render body: nil, status: 404
       end

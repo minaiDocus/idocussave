@@ -34,8 +34,8 @@
                 %td= l file.created_at
                 %td= file.dematbox_doc_id
                 %td= file.delivered_by
-                %td= file.content_file_name
-                %td= file_size file.content_file_size
+                %td= file.cloud_content_object.filename
+                %td= file_size file.cloud_content_object.size
                 %td= I18n.l(file.dematbox_notified_at) rescue nil
                 %td= TempDocument.state_machine.states[file.state].human_name
         %br

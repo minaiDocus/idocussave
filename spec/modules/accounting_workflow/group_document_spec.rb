@@ -455,7 +455,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 3
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 1
-        expect(DocumentTools.pages_number(new_temp_document.content.path)).to eq 4
+        expect(DocumentTools.pages_number(new_temp_document.cloud_content_object.path)).to eq 4
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy
@@ -513,9 +513,9 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 5
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 3
-        expect(DocumentTools.pages_number(document_1.content.path)).to eq 2
-        expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
-        expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
+        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 2
+        expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 2
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_002.pdf'))).to be_truthy
@@ -579,9 +579,9 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 5
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 3
-        expect(DocumentTools.pages_number(document_1.content.path)).to eq 2
-        expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
-        expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
+        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 2
+        expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 2
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_002.pdf'))).to be_truthy
@@ -645,9 +645,9 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 5
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 3
-        expect(DocumentTools.pages_number(document_1.content.path)).to eq 3
-        expect(DocumentTools.pages_number(document_2.content.path)).to eq 3
-        expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
+        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 3
+        expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 3
+        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 2
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_002.pdf'))).to be_truthy
@@ -757,10 +757,10 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 10
         expect(@temp_pack.temp_documents.bundled.count).to eq 6
         expect(@temp_pack.temp_documents.ready.count).to eq 4
-        expect(DocumentTools.pages_number(document_1.content.path)).to eq 4
-        expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
-        expect(DocumentTools.pages_number(document_3.content.path)).to eq 4
-        expect(DocumentTools.pages_number(document_4.content.path)).to eq 8
+        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_4.cloud_content_object.path)).to eq 8
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '02')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy

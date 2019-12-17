@@ -63,7 +63,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.user                        = @temp_pack.user
     temp_document.organization                = @temp_pack.organization
     temp_document.position                    = @temp_pack.next_document_position
-    temp_document.content                     = open file_path
+    # temp_document.content                     = open file_path
     temp_document.pages_number                = DocumentTools.pages_number file_path
     temp_document.is_an_original              = false
     temp_document.is_a_cover                  = original_temp_document.is_a_cover?
@@ -73,6 +73,11 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.scan_bundling_document_ids  = bundling_document_ids
     temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
 
-    temp_document.save && temp_document.ready
+    if temp_document.save && temp_document.ready
+      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path))
+      true
+    else
+      false
+    end
   end
 end

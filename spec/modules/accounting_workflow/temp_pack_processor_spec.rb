@@ -95,7 +95,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 3 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(3)
           end
         end
 
@@ -448,7 +448,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 4 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(4)
           end
         end
 
@@ -1874,7 +1874,7 @@ describe AccountingWorkflow::TempPackProcessor do
             subject { @pack.pieces.by_position[0] }
 
             it 'pages number should eq 2' do
-              expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
+              expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(2)
             end
 
             describe '#name' do
@@ -2039,7 +2039,7 @@ describe AccountingWorkflow::TempPackProcessor do
             subject { @pack.pieces.by_position[5] }
 
             it 'pages number should eq 2' do
-              expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
+              expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(2)
             end
 
             describe '#name' do
@@ -2249,7 +2249,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 4 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(4)
           end
         end
 
@@ -2728,7 +2728,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 6 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(6)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(6)
           end
         end
 
@@ -3346,7 +3346,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 3 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(3)
           end
         end
 

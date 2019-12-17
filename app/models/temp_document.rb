@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class TempDocument < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/processing/:id/download/:style'}
+
   serialize :scan_bundling_document_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
@@ -35,14 +37,13 @@ class TempDocument < ApplicationRecord
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  before_content_post_process :is_thumb_generated
+  # before_content_post_process :is_thumb_generated
 
-
-  after_create do |temp_document|
-    unless Rails.env.test?
-      TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
-    end
-  end
+  # after_create do |temp_document|
+  #   unless Rails.env.test?
+  #     TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
+  #   end
+  # end
 
   after_save do |temp_document|
     unless Rails.env.test?
@@ -51,6 +52,9 @@ class TempDocument < ApplicationRecord
   end
 
   before_destroy do |temp_document|
+    temp_document.cloud_content.purge
+    temp_document.cloud_raw_content.purge
+
     current_analytic = temp_document.analytic_reference
     current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ temp_documents: [temp_document.id] })
   end
@@ -198,12 +202,13 @@ class TempDocument < ApplicationRecord
 
 
   def self.generate_thumbs(id)
-    temp_document = TempDocument.find(id)
+    return true
+    # temp_document = TempDocument.find(id)
 
-    temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
-    temp_document.content.reprocess!
+    # temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
+    # temp_document.content.reprocess!
 
-    temp_document.save
+    # temp_document.save
   end
 
 
@@ -270,9 +275,16 @@ class TempDocument < ApplicationRecord
     collection
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def cloud_raw_content_object
+    CustomActiveStorageObject.new(self, :cloud_raw_content)
+  end
 
   def name_with_position
-    name = File.basename content_file_name, '.*'
+    name = File.basename self.cloud_content_object.filename, '.*'
     name.sub!(/_\d+\z/, '') if scanned?
 
     "#{name}_%0#{AccountingWorkflow::TempPackProcessor::POSITION_SIZE}d" % position
@@ -280,7 +292,7 @@ class TempDocument < ApplicationRecord
 
 
   def file_name_with_position
-    extension = File.extname(content_file_name)
+    extension = File.extname(self.cloud_content_object.filename)
 
     "#{name_with_position}#{extension}"
   end
@@ -326,7 +338,6 @@ class TempDocument < ApplicationRecord
       false
     end
   end
-
 
   def corruption_notified
     self.is_corruption_notified = true

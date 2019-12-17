@@ -277,7 +277,7 @@
 
                           - invoice  = @user.organization.invoices.where("created_at > ? AND created_at < ?", start_time, end_time).first
                           - if invoice
-                            - if invoice.content.try(:url)
+                            - if invoice.cloud_content_object.try(:url)
                               %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                               %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
             - if @user.collaborator?

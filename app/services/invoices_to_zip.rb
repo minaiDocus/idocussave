@@ -15,7 +15,7 @@ class InvoicesToZip
 
     @invoice_ids.each do |invoice_id|
       invoice = Invoice.find invoice_id
-      filepath = invoice.content.path
+      filepath = invoice.cloud_content_object.path
 
       next unless File.exist?(filepath)
 

@@ -11,16 +11,16 @@ module Account::DocumentsHelper
   end
 
   def document_thumb_url(document)
-    if File.exist?(document.content.path(:medium))
-      document.content.url(:medium)
+    if File.exist?(document.cloud_content_object.path(:medium))
+      document.cloud_content_object.url(:medium)
     else
       'application/processing.png'
     end
   end
 
   def temp_document_thumb_url(document)
-    if File.exist?(document.content.path(:medium))
-      document.content.url(:medium)
+    if File.exist?(document.cloud_content_object.path(:medium))
+      document.cloud_content_object.url(:medium)
     else
       'application/processing.png'
     end

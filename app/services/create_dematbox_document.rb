@@ -17,17 +17,19 @@ class CreateDematboxDocument
   def execute
     if valid?
       if @service_id == DematboxServiceApi.config.service_id.to_s
-        @temp_document.raw_content          = File.open(@temp_document.content.path)
-        @temp_document.content              = file
+        # @temp_document.raw_content          = File.open(@temp_document.content.path)
+        # @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
         @temp_document.dematbox_box_id      = @params['box_id']
         @temp_document.dematbox_service_id  = @params['service_id']
         @temp_document.is_ocr_layer_applied = true
 
-        @temp_document.save
+        content_file = @temp_document.cloud_content_object
+        @temp_document.cloud_raw_content.attach(io: File.open(content_file.path), filename: File.basename(content_file.path)) if @temp_document.save
+        @temp_document.cloud_content.attach(io: File.open(file.path), filename: File.basename(file.path))
 
         # INFO : Blank pages are removed, so we need to reassign pages_number
-        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.content.path)
+        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)
 
         @temp_document.save
 
@@ -68,7 +70,7 @@ class CreateDematboxDocument
 
   def file_name
     if upload?
-      @temp_document.content_file_name
+      @temp_document.cloud_content_object.filename
     else
       "#{user.code}_#{journal}_#{period}.pdf"
     end

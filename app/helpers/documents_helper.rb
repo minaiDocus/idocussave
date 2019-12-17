@@ -177,7 +177,7 @@ module DocumentsHelper
   def html_piece_view(piece)
     contents = ''
     contents += content_tag :h4, "Pièce n° #{piece.position} - #{piece.name}"
-    contents += content_tag :div, content_tag(:iframe, "", :src => piece.content.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
+    contents += content_tag :div, content_tag(:iframe, "", :src => piece.cloud_content_object.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
     content_tag :div, contents, style: 'width: 750px; padding: 10px;z-index:200'
   end 
 

@@ -30,7 +30,7 @@
               %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
               %td= link_to document.metadata['name'] + '.pdf', account_organization_customer_retrieved_document_path(@organization, @customer, document)
               %td
-                = link_to document.piece.content_file_name, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
+                = link_to document.piece.cloud_content_object.filename, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
               %td.pages= document.pages_number
               %td.amount= document.metadata['amount'].to_s + ' €'
       = render partial: 'shared/list_options', locals: { collection: @documents }

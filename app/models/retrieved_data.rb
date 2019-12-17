@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class RetrievedData < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => ''}
+
   belongs_to :user
 
   serialize :processed_connection_ids, Array
@@ -12,6 +14,10 @@ class RetrievedData < ApplicationRecord
   scope :processed,     -> { where(state: 'processed') }
   scope :not_processed, -> { where(state: 'not_processed') }
   scope :error,         -> { where(state: 'error') }
+
+  before_destroy do |retrieved_data|
+    retrieved_data.cloud_content.purge
+  end
 
   state_machine initial: :not_processed do
     state :not_processed
@@ -36,11 +42,16 @@ class RetrievedData < ApplicationRecord
   end
 
   def json_content=(data)
-    self.content = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
-    self.content_file_name = 'data.blob'
+    # self.content = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
+    # self.content_file_name = 'data.blob'
+    self.cloud_content.attach(io: StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data))), filename: 'data.blob')
   end
 
   def json_content
-    Oj.load(SymmetricEncryption.decrypt(File.read(content.path)))
+    Oj.load(SymmetricEncryption.decrypt(File.read(cloud_content_object.path)))
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
   end
 end

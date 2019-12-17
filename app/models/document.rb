@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Document < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/:id/download/:style'}
+
   serialize :tags
 
 
@@ -36,10 +38,13 @@ class Document < ApplicationRecord
 
   before_create :init_tags
 
+  before_destroy do |document|
+    document.cloud_content.purge
+  end
 
   after_create do |document|
     unless document.mixed? || Rails.env.test?
-      Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
+      # Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
       Document.delay_for(10.seconds, queue: :low).extract_content(document.id)
     end
   end
@@ -109,22 +114,19 @@ class Document < ApplicationRecord
 
 
   def self.generate_thumbs(id)
-    document = Document.find(id)
-    document.dirty = false
+    true
+    # document = Document.find(id)
+    # document.dirty = false
 
-    document.content.reprocess!
+    # document.content.reprocess!
 
-    document.save
+    # document.save
   end
 
 
   def self.extract_content(id)
     document = Document.find(id)
-    path = if document.content.queued_for_write[:original]
-             document.content.queued_for_write[:original].path
-           else
-             document.content.path
-           end
+    path = document.cloud_content_object.path
 
     POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
 
@@ -144,6 +146,9 @@ class Document < ApplicationRecord
     document.save
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
 
   def get_token
     if token.present?
@@ -164,11 +169,10 @@ class Document < ApplicationRecord
     Dir.mktmpdir do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([self.content.path, file_path], merged_file_path)
+      Pdftk.new.merge([self.cloud_content_object.path, file_path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.content = open(merged_file_path)
-        save
+        self.cloud_content.attach(io: File.open(merged_file_path), filename: content_file_name) if save
       end
     end
   end
@@ -178,11 +182,10 @@ class Document < ApplicationRecord
     Dir.mktmpdir do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([file_path, self.content.path], merged_file_path)
+      Pdftk.new.merge([file_path, self.cloud_content_object.path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.content = open(merged_file_path)
-        save
+        self.cloud_content.attach(io: File.open(merged_file_path), filename: content_file_name) if save
       end
     end
   end

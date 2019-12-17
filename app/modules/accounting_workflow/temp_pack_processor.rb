@@ -32,7 +32,6 @@ class AccountingWorkflow::TempPackProcessor
         Dir.mktmpdir do |dir|
           
           ## Initialization
-
           is_a_cover = temp_document.is_a_cover?
           basename = pack.name.sub(' all', '')
           piece_position = is_a_cover ? 0 : current_piece_position
@@ -41,7 +40,7 @@ class AccountingWorkflow::TempPackProcessor
           piece_file_path = File.join(dir, piece_file_name)
           original_file_path = File.join(dir, 'original.pdf')
 
-          FileUtils.cp temp_document.content.path, original_file_path
+          FileUtils.cp temp_document.cloud_content_object.path, original_file_path
 
           DocumentTools.correct_pdf_if_needed original_file_path
 
@@ -58,27 +57,27 @@ class AccountingWorkflow::TempPackProcessor
           piece.user                  = user
           piece.pack                  = pack
           piece.name                  = piece_name
-          piece.content               = open(piece_file_path)
+          # piece.content               = open(piece_file_path)
           piece.origin                = temp_document.delivery_type
           piece.temp_document         = temp_document
           piece.is_a_cover            = is_a_cover
           piece.position              = piece_position
           piece.pages_number          = pages_number
           piece.analytic_reference_id = temp_document.analytic_reference_id
-          piece.save
+          piece.cloud_content.attach(io: File.open(piece_file_path), filename: piece_file_name) if piece.save
           
           ##Temp fix issue imagemagick v 6 thumb generation (The piece will not have a thumb)
           ## REMOVE THIS after imagemagick upgrade
-          if !piece.valid? && !piece.persisted?
-            DocumentTools.correct_pdf_if_needed piece_file_path
-            piece.content = open(piece_file_path)
-            piece.save
+          # if !piece.valid? && !piece.persisted?
+          #   DocumentTools.correct_pdf_if_needed piece_file_path
+          #   piece.content = open(piece_file_path)
+          #   piece.save
 
-            if piece.valid? && piece.persisted?
-              Pack::Piece.extract_content piece
-              piece.update(is_finalized: true)
-            end
-          end
+          #   if piece.valid? && piece.persisted?
+          #     Pack::Piece.extract_content piece
+          #     piece.update(is_finalized: true)
+          #   end
+          # end
           ##Temp fix issue imagemagick
 
           if temp_document.api_name == 'invoice_auto'
@@ -133,7 +132,7 @@ class AccountingWorkflow::TempPackProcessor
 
           ## Original document
           if pack.original_document.present?
-            if pack.original_document.content_file_size.to_i < 400.megabytes
+            if pack.original_document.cloud_content_object.size.to_i < 400.megabytes
               if is_a_cover
                 pack.prepend piece_file_path
               else
@@ -151,16 +150,18 @@ class AccountingWorkflow::TempPackProcessor
               page_name = DocumentTools.name_with_position(basename + " #{suffix}", position, POSITION_SIZE)
               page_file_name = DocumentTools.file_name(page_name)
               page_file_path = File.join(dir, page_file_name)
+              page_file_signed_path = File.join(dir, page_file_name.gsub('.pdf', '_signed.pdf'))
               FileUtils.mv file_path, page_file_path
 
               page                = Document.new
               page.pack           = pack
               page.position       = is_a_cover ? (index - 2) : (current_page_position - 1)
-              page.content        = open(page_file_path)
+              # page.content        = open(page_file_path)
               page.origin         = temp_document.delivery_type
               page.is_a_cover     = is_a_cover
-              page.save
-              DocumentTools.sign_pdf(page_file_path, page.content.path)
+              
+              DocumentTools.sign_pdf(page_file_path, page_file_signed_path)
+              page.cloud_content.attach(io: File.open(page_file_signed_path), filename: page_file_name) if page.save
 
               current_page_position += 1 unless is_a_cover
             end
@@ -189,10 +190,11 @@ class AccountingWorkflow::TempPackProcessor
     pack.save
     Reporting.update(pack)
 
-    piece_files_path = (added_pieces + invoice_pieces).map { |e| e.content.path }
-    piece_files_path.in_groups_of(50).each do |group|
-      DocumentTools.archive(pack.archive_file_path, group)
-    end
+    #Do not archive piece's files any more because of active storage
+    # piece_files_path = (added_pieces + invoice_pieces).map { |e| e.cloud_content_object.path }
+    # piece_files_path.in_groups_of(50).each do |group|
+    #   DocumentTools.archive(pack.archive_file_path, group)
+    # end
 
     pieces_to_pre_assigned = []
 

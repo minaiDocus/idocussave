@@ -95,7 +95,8 @@ class Pack::Report::Preseizure < ApplicationRecord
   end
 
   def piece_content_url
-    piece.try(:content).try(:url)
+    return nil unless piece
+    piece.cloud_content_object.try(:url) if piece
   end
 
   def journal_name

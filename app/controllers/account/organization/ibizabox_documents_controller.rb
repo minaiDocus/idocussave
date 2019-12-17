@@ -11,8 +11,8 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
   end
 
   def show
-    if File.exist?(@document.content.path)
-      send_file(@document.content.path, type: 'application/pdf', filename: @document.original_file_name, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@document.cloud_content_object.path)
+      send_file(@document.cloud_content_object.path, type: 'application/pdf', filename: @document.original_file_name, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
@@ -20,8 +20,8 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
 
   def piece
     if @document.piece
-      if File.exist?(@document.piece.content.path)
-        send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      if File.exist?(@document.piece.cloud_content_object.path)
+        send_file(@document.piece.cloud_content_object.path, type: 'application/pdf', filename: @document.piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
       else
         render body: nil, status: 404
       end
@@ -44,7 +44,7 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
         ibizabox_folder.ready if ibizabox_folder.waiting_selection?
       end
       documents.each do |document|
-        if DocumentTools.need_ocr?(document.content.path)
+        if DocumentTools.need_ocr?(document.cloud_content_object.path)
           document.ocr_needed
         else
           document.ready

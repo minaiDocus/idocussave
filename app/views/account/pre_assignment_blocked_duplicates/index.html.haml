@@ -68,7 +68,7 @@
                     %br
                     = l object.similar_preseizure.date, format: '%d %b %Y'
                   %td
-                    = link_to glyphicon('eye'), '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.content.url, original_url: object.similar_preseizure.piece.content.url, content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.content.url}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{object.similar_preseizure.piece.content.url}' style='width:470px; height:483px;'></iframe></div>"  }
+                    = link_to glyphicon('eye'), '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.cloud_content_object.url, original_url: object.similar_preseizure.piece.cloud_content_object.url, content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.cloud_content_object.url}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{object.similar_preseizure.piece.cloud_content_object.url}' style='width:470px; height:483px;'></iframe></div>"  }
                   %td
                     %b Doublon
                     %br

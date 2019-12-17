@@ -90,10 +90,10 @@
               %tr
                 %td.center
                   %b= index+1
-                %td= link_to image_tag(cms_image.content.url), cms_image.content.url, target: :_blank
+                %td= link_to image_tag(cms_image.cloud_content_object.url), cms_image.cloud_content_object.url, target: :_blank
                 %td
-                  = link_to cms_image.name, cms_image.content.url, target: :_blank
+                  = link_to cms_image.name, cms_image.cloud_content_object.url, target: :_blank
                   %br
-                  = cms_image.content.url
+                  = cms_image.cloud_content_object.url
                 %td.center
                   = link_to 'supprimer', [:admin, cms_image], method: :delete, data: { confirm: t('actions.confirm') }

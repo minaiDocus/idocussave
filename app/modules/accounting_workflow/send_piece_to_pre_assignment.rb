@@ -45,6 +45,6 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
     _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}_recycle.pdf" : @piece.name.tr(' ', '_') + '.pdf'
 
-    POSIX::Spawn.system("cp #{@piece.temp_document.content.path} #{File.join(dir, _piece_name)}")
+    POSIX::Spawn.system("cp #{@piece.temp_document.cloud_content_object.path} #{File.join(dir, _piece_name)}")
   end
 end

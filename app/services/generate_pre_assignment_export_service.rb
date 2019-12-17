@@ -140,7 +140,7 @@ private
 
       if with_file
         @preseizures.each do |preseizure|
-          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+          FileUtils.cp preseizure.piece.cloud_content_object.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece
         end
       end
 
@@ -158,7 +158,7 @@ private
 
       if with_file
         @preseizures.each do |preseizure|
-          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+          FileUtils.cp preseizure.piece.cloud_content_object.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece
         end
       end
 
@@ -186,7 +186,7 @@ private
 
       if with_file
         @preseizures.each do |preseizure|
-          FileUtils.cp preseizure.piece.content.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece.try(:content).try(:path)
+          FileUtils.cp preseizure.piece.cloud_content_object.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece
         end
       end
 
