@@ -19,6 +19,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
   end
 
   def unlock_operations
+    operations(false)
     if operations(false).present? && params[:banking_operation_contains].present?
       count = operations(false).locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
       if count > 0
