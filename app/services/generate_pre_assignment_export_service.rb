@@ -215,7 +215,7 @@ private
   end
 
   def file_previous_name
-    @report.name.tr(' ', '_')
+    @report.name.tr(' ', '_').tr('%', '_')
   end
 
   def file_real_name
