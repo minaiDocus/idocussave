@@ -85,8 +85,11 @@ class Invoice < ApplicationRecord
     File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
   end
 
-  private
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
 
+  private
 
   def set_number
     unless number
@@ -94,9 +97,5 @@ class Invoice < ApplicationRecord
       txt = DbaSequence.next('invoice_' + prefix)
       self.number = prefix + ('%0.4d' % txt)
     end
-  end
-
-  def cloud_content_object
-    CustomActiveStorageObject.new(self, :cloud_content)
   end
 end
