@@ -44,7 +44,7 @@
             &nbsp;
             .input-group
               .input-group-prepend
-                %span.input-group-text >=
+                %span.input-group-text <=
                 = text_field_tag 'order_contains[price_in_cents_wo_vat][<=]', (params[:order_contains][:price_in_cents_wo_vat]['<='] rescue ''), class: 'form-control'
         .form-group
           .label-section

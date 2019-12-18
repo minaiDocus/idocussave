@@ -42,10 +42,7 @@
           = render partial: 'shared/list_options', locals: { collection: @events }
 
     = form_tag admin_events_path, method: :get, class: 'form-filter' do
-      = hidden_field_tag :direction, sort_direction
-      = hidden_field_tag :sort,      sort_column
-      = hidden_field_tag :per_page,  per_page
-      .card.retractable-filter.focusable
+      .card.retractable-filter
         .card-header.clearfix
           .float-left
             %h3 Filtres
@@ -53,6 +50,9 @@
             %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
         .retractable-filter-content
           .card-body
+            = hidden_field_tag :direction, sort_direction
+            = hidden_field_tag :sort,      sort_column
+            = hidden_field_tag :per_page,  per_page
             .form-group
               .label-section
                 .badge.badge-info.fs-origin
