@@ -41,7 +41,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
       if ids.size == registered_ids.size
         subscriptions = Subscription.where(user_id: ids)
 
-        subscriptions.update_all(_params)
+        subscriptions.update_all(_params.to_s)
 
         periods = Period.where(subscription_id: subscriptions.map(&:id)).where('start_date <= ? AND end_date >= ?', Date.today, Date.today)
 

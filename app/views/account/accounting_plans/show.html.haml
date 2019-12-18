@@ -35,7 +35,7 @@
                 = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
                   .form-group.clearfix.float-left
                     .control-section
-                      = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }
+                      = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
                   .form-actions.float-left.margin1left
                     = submit_tag 'Importer', class: 'btn btn-primary'
                 .links
@@ -66,7 +66,7 @@
                 = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
                   .form-group.clearfix.float-left
                     .control-section
-                      = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }
+                      = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
                   .form-actions.float-left.margin1left
                     = submit_tag 'Importer', class: 'btn btn-primary'
                 .links

@@ -45,7 +45,7 @@ class IbizaboxImport
     @user    = folder.user
     @journal = folder.journal
     @journal_ref = @journal.pseudonym.presence || @journal.name
-    @initial_documents_count = folder.temp_documents(true).size
+    @initial_documents_count = folder.temp_documents.size
   end
 
   def execute

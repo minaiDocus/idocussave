@@ -67,7 +67,6 @@ class Account::SubscriptionsController < Account::OrganizationController
 
 
   def load_subscription
-    debugger
     @subscription = @customer.subscription
   end
 
