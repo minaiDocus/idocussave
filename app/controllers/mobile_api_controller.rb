@@ -14,7 +14,7 @@ class MobileApiController < ApplicationController
   def authenticate_mobile_user
     @user = User.where(authentication_token: params[:auth_token]).first
 
-    if @user && Devise.secure_compare(@user.authentication_token, params[:auth_token])
+    if @user && Devise.secure_compare(@user.get_authentication_token, params[:auth_token])
       sign_in(@user, store: false)
       @user
     end

@@ -275,6 +275,10 @@ class User < ApplicationRecord
     update_attribute(:email_code, get_new_email_code)
   end
 
+  def get_authentication_token
+    update_authentication_token unless self.authentication_token.present?
+    self.reload.authentication_token
+  end
 
   def get_new_authentication_token
     begin

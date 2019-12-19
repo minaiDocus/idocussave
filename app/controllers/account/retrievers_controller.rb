@@ -73,8 +73,7 @@ private
   end
 
   def load_retriever_edition
-    @account.update_authentication_token unless @account.authentication_token.present?
-    @user_token = @account.authentication_token
+    @user_token = @account.get_authentication_token
     @bi_token = @account.try(:budgea_account).try(:access_token)
     @journals = @account.account_book_types.map do |journal|
       "#{journal.id}:#{journal.name}"

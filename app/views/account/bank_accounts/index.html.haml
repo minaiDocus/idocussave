@@ -12,7 +12,7 @@
         = form_tag account_bank_accounts_path, method: :get, class: 'form form-selection form-horizontal' do
           = hidden_field_tag 'retriever_budgea_config', @bi_config
           = hidden_field_tag 'retriever_bi_token', @account.budgea_account.try(:access_token)
-          = hidden_field_tag 'retriever_user_token', @account.authentication_token
+          = hidden_field_tag 'retriever_user_token', @account.get_authentication_token
           = hidden_field_tag 'bank_account_contains[retriever_budgea_id]', @retriever.budgea_id if @retriever.try(:linked?)
           = hidden_field_tag 'bank_account_ids[]'
           %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin2bottom.table-detachable-head

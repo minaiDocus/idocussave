@@ -324,3 +324,4 @@ jQuery ->
     text = $(this).attr('title')
     $('#retrievers #account_id_form').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
     $('#retrievers .hint_selection').delay(2500).fadeOut('fast')
+
