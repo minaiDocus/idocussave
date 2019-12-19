@@ -13,7 +13,7 @@ class Admin::EmailedDocumentsController < Admin::AdminController
   def show
     @email = Email.find(params[:id])
 
-    file_path = @email.original_content.path
+    file_path = @email.cloud_original_content_object.path
 
     if file_path.present? && File.exist?(file_path)
       file_name = File.basename(file_path)

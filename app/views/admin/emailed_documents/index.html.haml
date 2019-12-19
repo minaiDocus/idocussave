@@ -46,7 +46,7 @@
                   - if email.errors_list.try(:any?)
                     = link_to glyphicon('warning'), show_errors_admin_emailed_document_path(email), title: 'Afficher les erreurs'
                     &nbsp;
-                  - if email.original_content.try(:path).present?
+                  - if email.cloud_original_content_object.try(:path).present?
                     = link_to glyphicon('data-transfer-download'), admin_emailed_document_path(email), title: 'Télécharger le mail original'
         %br
         .row

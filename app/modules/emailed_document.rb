@@ -93,7 +93,8 @@ class EmailedDocument
           f.write mail.to_s
         end
 
-        email.update_attribute(:original_content, File.open(file_path))
+        # email.update_attribute(:original_content, File.open(file_path))
+        email.cloud_original_content.attach(io: File.open(file_path), filename: "#{email.id}.eml")
       end
     end
 

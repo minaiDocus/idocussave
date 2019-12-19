@@ -17,7 +17,11 @@ class CustomActiveStorageObject
   def url(style = '')
     if as_attached.attached?
       return nil unless @base_url
-      @base_url.gsub(':id', @object.id.to_s).gsub(':style', style.to_s)
+      @base_url.gsub(':id', @object.id.to_s)
+               .gsub(':style', style.to_s)
+               .gsub(':filename', @object.try(:filename).to_s)
+               .gsub(':basename', @object.try(:basename).to_s)
+               .gsub(':extension', @object.try(:extension).to_s)
     else
       pc_attached.url(style.to_sym)
     end

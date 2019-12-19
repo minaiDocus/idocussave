@@ -1,5 +1,5 @@
 class McfDocument < ApplicationRecord
-  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/processing/:id/download/:style'}
+  ATTACHMENTS_URLS={'cloud_content' => ''}
   RETAKE_RETRY = 3
   RETAKE_TIME  = 10.minutes 
 
@@ -13,6 +13,10 @@ class McfDocument < ApplicationRecord
   scope :not_delivered_and_not_notified,  -> { where("state = 'not_delivered' AND is_notified = false") }
   scope :not_processable,                 -> { where("state = 'not_processable' AND is_generated = true") }
   scope :not_processable_and_not_notified,-> { where("state = 'not_processable' AND is_notified = false") }
+
+  before_destroy do |document|
+    document.cloud_content.purge
+  end
 
   state_machine initial: :ready do
     state :ready
@@ -52,7 +56,7 @@ class McfDocument < ApplicationRecord
     if(user)
       mcf_doc = McfDocument.find_by_access_token(params[:access_token])
 
-      new_params      = { 
+      new_params      = {
                           code: params[:code],
                           journal: params[:journal].upcase,
                           file64: nil,
@@ -71,7 +75,7 @@ class McfDocument < ApplicationRecord
       mcf_doc.state = 'ready'
 
       byte_response_decoded = (params[:file64].present?)? StringIO.open(Base64.decode64(params[:file64])) : nil
-      mcf_doc.cloud_content.attach(io: byte_response_decoded), filename: params[:original_file_name]) if mcf_doc.save && byte_response_decoded.present?
+      mcf_doc.cloud_content.attach(io: byte_response_decoded, filename: params[:original_file_name]) if mcf_doc.save && byte_response_decoded.present?
     end
     mcf_doc || nil
   end
