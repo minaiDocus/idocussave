@@ -16,6 +16,7 @@ coverage/
 doc_data.txt
 .sass-cache
 db/schema.rb
+/storage/
 
 
 config/deploy/production.rb

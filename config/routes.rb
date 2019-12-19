@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get '/account' => redirect('/account/documents')
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
-  get '/account/documents/processing/:id/download/:style', controller: 'account/documents', action: 'download_processing'
+  get '/account/documents/processing/:id/download(/:style)', controller: 'account/documents', action: 'download_processing'
   get '/account/documents/pieces/:id/download(/:style)',   controller: 'account/documents', action: 'piece'
   get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
