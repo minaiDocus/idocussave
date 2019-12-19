@@ -123,7 +123,8 @@ class Organization < ApplicationRecord
     organizations = Organization.all
     organizations = organizations.where(is_active:    (contains[:is_active] == '1'))    unless contains[:is_active].blank?
     organizations = organizations.where(is_test:      (contains[:is_test] == '1'))      unless contains[:is_test].blank?
-    organizations = organizations.where(created_at:   contains[:created_at])            unless contains[:created_at].blank?
+    #TODO: create filter by date
+    # organizations = organizations.where(created_at:   contains[:created_at])            unless contains[:created_at].blank?
     organizations = organizations.where(is_for_admin: (contains[:is_for_admin] == '1')) unless contains[:is_for_admin].blank?
     organizations = organizations.where(is_suspended: (contains[:is_suspended] == '1')) unless contains[:is_suspended].blank?
 
