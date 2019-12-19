@@ -129,9 +129,9 @@ class Organization < ApplicationRecord
 
     if contains[:is_without_address].present?
       if contains[:is_without_address] == '1'
-        organizations = organizations.where('addresses.is_for_billing' => { '$nin' => [true] })
+        organizations = organizations.joins(:addresses).where('addresses.is_for_billing' => { '$nin' => [true] })
       else
-        organizations = organizations.where('addresses.is_for_billing' => true)
+        organizations = organizations.joins(:addresses).where('addresses.is_for_billing' => true)
       end
     end
 

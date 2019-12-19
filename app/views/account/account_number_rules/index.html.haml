@@ -23,39 +23,39 @@
                 = 'Supprimer les règles'
               %a{ href:'#skipAccountingPlan', title:'Paramètres avancées', style: 'margin-left: 20px', class: 'btn btn-secondary btn-filter', data: {toggle: :modal} }
                 = 'Paramètres avancés'
-        = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
-        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
-          %thead
-            %tr.bg-brown.text-white
-              %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
-              %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
-              %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
-              %th= t('activerecord.models.account_number_rule.attributes.rule_type')
-              %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
-              %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
-              %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
-              %th Actions
-          %tbody.retractable.slidedown
-            - @account_number_rules.each do |rule|
-              %tr
-                %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
-                %td= rule.name
-                %td
-                  = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
-                  - if rule.affect == 'user'
-                    - if rule.users.size == 1
-                      (#{rule.users.first.code})
-                    - else
-                      (#{rule.users.size})
-                %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
-                %td= rule.categorization
-                %td= rule.content
-                %td= rule.third_party_account
-                %td
-                  = link_to glyphicon('plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-light', title: 'Créer une règle en se basant sur cette règle'
-                  = link_to glyphicon('eye'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Voir'
-                  = link_to glyphicon('pencil'), edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Editer'
-                  = link_to glyphicon('x'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+          = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
+          %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
+                %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
+                %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
+                %th= t('activerecord.models.account_number_rule.attributes.rule_type')
+                %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
+                %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
+                %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
+                %th Actions
+            %tbody.retractable.slidedown
+              - @account_number_rules.each do |rule|
+                %tr
+                  %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
+                  %td= rule.name
+                  %td
+                    = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                    - if rule.affect == 'user'
+                      - if rule.users.size == 1
+                        (#{rule.users.first.code})
+                      - else
+                        (#{rule.users.size})
+                  %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
+                  %td= rule.categorization
+                  %td= rule.content
+                  %td= rule.third_party_account
+                  %td
+                    = link_to glyphicon('plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-light', title: 'Créer une règle en se basant sur cette règle'
+                    = link_to glyphicon('eye'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Voir'
+                    = link_to glyphicon('pencil'), edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', title: 'Editer'
+                    = link_to glyphicon('x'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
         = render partial: 'shared/list_options', locals: { collection: @account_number_rules }
     = render partial: 'sidebar'
   = render partial: 'modal_form_skip_accounting_plan'

@@ -443,7 +443,7 @@
                       %th= t('activerecord.models.organization.attributes.is_coala_used')
                       %td{width: '40%'} Cette option permet de selectionner/utiliser Coala dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
-                    %tr
+                    %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_coala_auto_deliver')
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_coala_auto_deliver, as: 'boolean', label: 'oui?'
@@ -463,7 +463,7 @@
                       %th= t('activerecord.models.organization.attributes.is_exact_online_used')
                       %td{width: '40%'} Cette option permet de selectionner/utiliser Exact Online dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte exact online).
                       %td{width: '5%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_used }
-                    %tr
+                    %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_exact_online_auto_deliver')
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.
                       %td{width: '5%'}= f.input :is_exact_online_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_auto_deliver }
@@ -483,7 +483,7 @@
                       %th= t('activerecord.models.organization.attributes.is_quadratus_used')
                       %td{width: '40%'} Cette option permet de selectionner/utiliser Quadratus dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
-                    %tr
+                    %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_quadratus_auto_deliver')
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_quadratus_auto_deliver, as: 'boolean', label: 'oui?'
@@ -503,7 +503,7 @@
                       %th= t('activerecord.models.organization.attributes.is_cegid_used')
                       %td{width: '30%'} Cette option permet de selectionner/utiliser Cegid dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_cegid_used, as: 'boolean', label: 'oui?'
-                    %tr
+                    %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_cegid_auto_deliver')
                       %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_cegid_auto_deliver, as: 'boolean', label: 'oui?'
@@ -543,7 +543,7 @@
                       %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
                       %td{width: '40%'} Cette option permet de selectionner/utiliser un format d'export personnalisé dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
-                    %tr
+                    %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_csv_descriptor_auto_deliver')
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_csv_descriptor_auto_deliver, as: 'boolean', label: 'oui?'

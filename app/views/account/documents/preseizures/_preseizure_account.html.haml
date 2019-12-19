@@ -25,13 +25,13 @@
         %tr
           %td.date.text-center#date
             .content_date.label_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-              = @preseizure.date.try(:to_formatted_s, :db)
+              = @preseizure.date.try(:to_date)
             - if @user.collaborator?
               .edit_content_date.editable_date.hide
                 %input.edit_content_date_number.margin0bottom{type: :text, value: @preseizure.date.try(:to_date), readonly: :readonly} 
           %td.date.text-center#deadline_date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
             .content_deadline_date.label_date
-              = @preseizure.deadline_date.try(:to_formatted_s, :db)
+              = @preseizure.deadline_date.try(:to_date)
             - if @user.collaborator?
               .edit_content_deadline_date.editable_date.hide
                 %input.edit_content_deadline_date_number.margin0{type: :text, value: @preseizure.deadline_date.try(:to_date), readonly: :readonly}

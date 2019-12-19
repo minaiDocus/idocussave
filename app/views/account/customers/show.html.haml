@@ -493,16 +493,17 @@
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.try(:softwares).try(:is_coala_used)
-                %hr
-                %h4.margin2top.margin1bottom Configuration Coala
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th Générer automatiquement l'export des écritures et pièces ?
-                      %td= @customer.try(:softwares).try(:coala_auto_deliver?) ? t('yes_value') : t('no_value')
-                .row
-                  .col-md-12
-                    = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'coala'), class: 'btn btn-primary float-right'
+                .hide
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Coala
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td= @customer.try(:softwares).try(:coala_auto_deliver?) ? t('yes_value') : t('no_value')
+                  .row
+                    .col-md-12
+                      = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'coala'), class: 'btn btn-primary float-right'
           - if @organization.is_quadratus_used
             #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
               %h4.margin1bottom Activation Quadratus
@@ -518,16 +519,17 @@
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.try(:softwares).try(:is_quadratus_used)
-                %hr
-                %h4.margin2top.margin1bottom Configuration Quadratus
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th Générer automatiquement l'export des écritures et pièces ?
-                      %td= @customer.try(:softwares).try(:quadratus_auto_deliver?) ? t('yes_value') : t('no_value')
-                .row
-                  .col-md-12
-                    = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'quadratus'), class: 'btn btn-primary float-right'
+                .hide
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Quadratus
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td= @customer.try(:softwares).try(:quadratus_auto_deliver?) ? t('yes_value') : t('no_value')
+                  .row
+                    .col-md-12
+                      = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'quadratus'), class: 'btn btn-primary float-right'
           - if @organization.is_cegid_used
             #cegid.tab-pane.fade{ class: ('active' if params[:tab] == 'cegid') }
               %h4.margin1bottom Activation Cegid
@@ -543,16 +545,17 @@
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.try(:softwares).try(:is_cegid_used)
-                %hr
-                %h4.margin2top.margin1bottom Configuration Cegid
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th Générer automatiquement l'export des écritures et pièces ?
-                      %td= @customer.try(:softwares).try(:cegid_auto_deliver?) ? t('yes_value') : t('no_value')
-                .row
-                  .col-md-12
-                    = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'cegid'), class: 'btn btn-primary float-right'
+                .hide
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Cegid
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td= @customer.try(:softwares).try(:cegid_auto_deliver?) ? t('yes_value') : t('no_value')
+                  .row
+                    .col-md-12
+                      = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'cegid'), class: 'btn btn-primary float-right'
           - if @organization.is_fec_agiris_used
             #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
               %h4.margin1bottom Activation Fec Agiris
@@ -594,31 +597,32 @@
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.uses_csv_descriptor?
-                %hr
-                %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th Générer automatiquement l'export des écritures et pièces ?
-                      %td
-                        .alignright
-                          %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
-                          -if @user.leader? || @user.manage_customers
-                            = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
-                    %tr
-                      %th 
-                        - if @customer.softwares.use_own_csv_descriptor_format
-                          Ce dossier utilise son propre format de fichier d'export .csv.
-                        - else
-                          Ce dossier utilise le format de fichier d'export .csv de l'organisation.
-                      %td
-                        - if @user.leader? || @user.manage_customers
+                .hide
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td
                           .alignright
-                            - if @customer.softwares.use_own_csv_descriptor_format
-                              = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
-                              = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
-                            - else
-                              = link_to 'Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
+                            %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
+                            -if @user.leader? || @user.manage_customers
+                              = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
+                      %tr
+                        %th
+                          - if @customer.softwares.use_own_csv_descriptor_format
+                            Ce dossier utilise son propre format de fichier d'export .csv.
+                          - else
+                            Ce dossier utilise le format de fichier d'export .csv de l'organisation.
+                        %td
+                          - if @user.leader? || @user.manage_customers
+                            .alignright
+                              - if @customer.softwares.use_own_csv_descriptor_format
+                                = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
+                                = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
+                              - else
+                                = link_to 'Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
           #accounting_plan.tab-pane.fade{ class: ('active show' if params[:tab] == 'accounting_plan') }
             - if @customer.active?
               = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary'

@@ -3,9 +3,9 @@ class Order < ApplicationRecord
   attr_accessor :address_required
   self.inheritance_column = :_type_disabled
 
-  has_one :address, as: :locatable
-  has_one :paper_return_address, as: :locatable, class_name: 'Address'
-  has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess'
+  has_one :address, as: :locatable, :dependent => :destroy
+  has_one :paper_return_address, as: :locatable, class_name: 'Address', :dependent => :destroy
+  has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess', :dependent => :destroy
 
   belongs_to :user, optional: true
   belongs_to :period, optional: true
@@ -31,7 +31,7 @@ class Order < ApplicationRecord
   validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
 
 
-  accepts_nested_attributes_for :address, :paper_return_address
+  accepts_nested_attributes_for :address, :paper_return_address, allow_destroy: true
 
 
   scope :pending,    -> { where(state: 'pending') }
