@@ -45,7 +45,7 @@ class IbizaboxImport
     @user    = folder.user
     @journal = folder.journal
     @journal_ref = @journal.pseudonym.presence || @journal.name
-    @initial_documents_count = folder.temp_documents.size
+    @initial_documents_count = folder.temp_documents.reload.size
   end
 
   def execute
@@ -60,7 +60,7 @@ class IbizaboxImport
         @folder.save
       end
     end
-    is_new_document_present =  @folder.temp_documents(true).size > @initial_documents_count
+    is_new_document_present =  @folder.temp_documents.reload.size > @initial_documents_count
 
     if @folder.is_selection_needed && is_new_document_present && @folder.wait_selection
       @folder.update_attribute(:is_selection_needed, false)
