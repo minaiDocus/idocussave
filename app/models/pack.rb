@@ -288,7 +288,7 @@ class Pack < ApplicationRecord
       end
 
       if DocumentTools.modifiable?(merged_file_path)
-        original_document.cloud_content.attach(io: File.open(merged_file_path), filename: new_file_name) if original_document.save
+        original_document.cloud_content_object.attach(File.open(merged_file_path), new_file_name) if original_document.save
       end
     end
   end
@@ -327,7 +327,7 @@ class Pack < ApplicationRecord
       if success
         temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
 
-        original_document.cloud_content.attach(io: File.open(temp_file_path), filename: self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+        original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
         set_pages_count
         save
@@ -354,7 +354,7 @@ class Pack < ApplicationRecord
     end
 
     if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
-      original_document.cloud_content.attach(io: File.open(merged_file_path), filename: target_file_name) if original_document.save
+      original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if original_document.save
     elsif overwrite_original
       begin
         FileUtils.copy merged_file_path, target_file_path

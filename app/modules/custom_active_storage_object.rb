@@ -5,6 +5,20 @@ class CustomActiveStorageObject
     @base_url  = @object.class::ATTACHMENTS_URLS[attachment.to_s]
   end
 
+  def attach(io, filename)
+    if as_attached.attached?
+      begin
+        FileUtils.rm path, force: true
+      rescue
+        nil
+      end
+
+      as_attached.purge
+    end
+
+    as_attached.attach(io: io, filename: filename)
+  end
+
   def path(style = '')
     if as_attached.attached?
       generate_file style

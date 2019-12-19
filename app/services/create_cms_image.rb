@@ -11,7 +11,7 @@ class CreateCmsImage
       FileUtils.cp original_path, file_path
 
       # cms_image.content = open(file_path)
-      cms_image.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if cms_image.save
+      cms_image.cloud_content_object.attach(File.open(file_path), File.basename(file_path)) if cms_image.save
     end
 
     cms_image

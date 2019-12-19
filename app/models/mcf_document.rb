@@ -75,7 +75,7 @@ class McfDocument < ApplicationRecord
       mcf_doc.state = 'ready'
 
       byte_response_decoded = (params[:file64].present?)? StringIO.open(Base64.decode64(params[:file64])) : nil
-      mcf_doc.cloud_content.attach(io: byte_response_decoded, filename: params[:original_file_name]) if mcf_doc.save && byte_response_decoded.present?
+      mcf_doc.cloud_content_object.attach(byte_response_decoded, params[:original_file_name]) if mcf_doc.save && byte_response_decoded.present?
     end
     mcf_doc || nil
   end

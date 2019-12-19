@@ -275,7 +275,7 @@ class CreateInvoicePdf
     end
 
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
-    @invoice.cloud_content.attach(io: File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), filename: "#{@invoice.number}.pdf") if @invoice.save
+    @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
     auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end

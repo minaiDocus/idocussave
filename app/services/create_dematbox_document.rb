@@ -25,8 +25,8 @@ class CreateDematboxDocument
         @temp_document.is_ocr_layer_applied = true
 
         content_file = @temp_document.cloud_content_object
-        @temp_document.cloud_raw_content.attach(io: File.open(content_file.path), filename: File.basename(content_file.path)) if @temp_document.save
-        @temp_document.cloud_content.attach(io: File.open(file.path), filename: File.basename(file.path))
+        @temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if @temp_document.save
+        @temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path))
 
         # INFO : Blank pages are removed, so we need to reassign pages_number
         @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)

@@ -44,7 +44,7 @@ class RetrievedData < ApplicationRecord
   def json_content=(data)
     # self.content = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
     # self.content_file_name = 'data.blob'
-    self.cloud_content.attach(io: StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data))), filename: 'data.blob')
+    self.cloud_content_object.attach(StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data))), 'data.blob')
   end
 
   def json_content

@@ -40,7 +40,7 @@ class AddTempDocumentToTempPack
       temp_document.retriever_service_name = options[:retriever_service_name] if options[:retriever_service_name]
       temp_document.retriever_name         = options[:retriever_name]         if options[:retriever_name]
 
-      temp_document.cloud_content.attach(io: File.open(file.path), filename: File.basename(file.path)) if temp_document.save
+      temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path)) if temp_document.save
 
       if user.uses_ibiza_analytics?
         if options[:analytic].present?

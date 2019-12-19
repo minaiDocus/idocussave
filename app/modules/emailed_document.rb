@@ -94,7 +94,7 @@ class EmailedDocument
         end
 
         # email.update_attribute(:original_content, File.open(file_path))
-        email.cloud_original_content.attach(io: File.open(file_path), filename: "#{email.id}.eml")
+        email.cloud_original_content_object.attach(File.open(file_path), "#{email.id}.eml")
       end
     end
 

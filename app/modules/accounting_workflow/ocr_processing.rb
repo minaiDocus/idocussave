@@ -24,8 +24,8 @@ module AccountingWorkflow::OcrProcessing
             temp_document.pages_number = DocumentTools.pages_number file_path
 
             content_file = temp_document.cloud_content_object
-            temp_document.cloud_raw_content.attach(io: File.open(content_file.path), filename: File.basename(content_file.path)) if temp_document.save
-            temp_document.cloud_content.attach(io: File.open(temp_document_file_path), filename: File.basename(temp_document_file_path))
+            temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if temp_document.save
+            temp_document.cloud_content_object.attach(File.open(temp_document_file_path), File.basename(temp_document_file_path))
 
 
             if (temp_document.scanned? || temp_document.pages_number > 2) && temp_document.temp_pack.is_bundle_needed? && !temp_document.from_ibizabox?

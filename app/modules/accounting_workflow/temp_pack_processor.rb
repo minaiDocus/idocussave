@@ -64,7 +64,7 @@ class AccountingWorkflow::TempPackProcessor
           piece.position              = piece_position
           piece.pages_number          = pages_number
           piece.analytic_reference_id = temp_document.analytic_reference_id
-          piece.cloud_content.attach(io: File.open(piece_file_path), filename: piece_file_name) if piece.save
+          piece.cloud_content_object.attach(File.open(piece_file_path), piece_file_name) if piece.save
           
           ##Temp fix issue imagemagick v 6 thumb generation (The piece will not have a thumb)
           ## REMOVE THIS after imagemagick upgrade
@@ -161,14 +161,14 @@ class AccountingWorkflow::TempPackProcessor
               page.is_a_cover     = is_a_cover
               
               DocumentTools.sign_pdf(page_file_path, page_file_signed_path)
-              page.cloud_content.attach(io: File.open(page_file_signed_path), filename: page_file_name) if page.save
+              page.cloud_content_object.attach(File.open(page_file_signed_path), page_file_name) if page.save
 
               current_page_position += 1 unless is_a_cover
             end
           end
           current_piece_position += 1 unless is_a_cover
 
-          piece.try(:sign_piece)
+          # piece.try(:sign_piece)
         end
 
         published_temp_documents << temp_document

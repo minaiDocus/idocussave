@@ -74,7 +74,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
 
     if temp_document.save && temp_document.ready
-      temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path))
+      temp_document.cloud_content_object.attach(File.open(file_path), File.basename(file_path))
       true
     else
       false

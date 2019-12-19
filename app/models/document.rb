@@ -172,7 +172,7 @@ class Document < ApplicationRecord
       Pdftk.new.merge([self.cloud_content_object.path, file_path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.cloud_content.attach(io: File.open(merged_file_path), filename: content_file_name) if save
+        self.cloud_content_object.attach(File.open(merged_file_path), content_file_name) if save
       end
     end
   end
@@ -185,7 +185,7 @@ class Document < ApplicationRecord
       Pdftk.new.merge([file_path, self.cloud_content_object.path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.cloud_content.attach(io: File.open(merged_file_path), filename: content_file_name) if save
+        self.cloud_content_object.attach(File.open(merged_file_path), content_file_name) if save
       end
     end
   end
