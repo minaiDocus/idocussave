@@ -13,6 +13,7 @@ class Document < ApplicationRecord
   belongs_to :pack, optional: true
 
   has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content,
                             styles: {
@@ -42,9 +43,9 @@ class Document < ApplicationRecord
     document.cloud_content.purge
   end
 
-  after_create do |document|
+  after_create_commit do |document|
     unless document.mixed? || Rails.env.test?
-      # Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
+      Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
       Document.delay_for(10.seconds, queue: :low).extract_content(document.id)
     end
   end
@@ -114,13 +115,20 @@ class Document < ApplicationRecord
 
 
   def self.generate_thumbs(id)
-    true
-    # document = Document.find(id)
-    # document.dirty = false
+    document = Document.find(id)
 
-    # document.content.reprocess!
+    base_file_name = document.cloud_content.filename.to_s.gsub('.pdf', '')
 
-    # document.save
+    document.is_thumb_generated = true
+
+    image = MiniMagick::Image.read(document.cloud_content.download).format('png').resize('92x133')
+    
+
+    document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                 filename: "#{base_file_name}.png", 
+                                                 content_type: "image/png")
+
+    document.save
   end
 
 

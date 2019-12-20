@@ -31,7 +31,7 @@ class Pack::Piece < ApplicationRecord
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  after_create do |piece|
+  after_create_commit do |piece|
     unless Rails.env.test?
       Pack::Piece.delay_for(10.seconds, queue: :low).finalize_piece(piece.id)
     end
@@ -160,13 +160,20 @@ class Pack::Piece < ApplicationRecord
   end
 
   def self.generate_thumbs(piece)
-    true
-    # begin
-    #   piece.content.reprocess!
-    #   piece.save
-    # rescue => e
-    #   true
-    # end
+    piece = Pack::Piece.find(id)
+
+    base_file_name = piece.cloud_content.filename.to_s.gsub('.pdf', '')
+
+    piece.is_thumb_generated = true
+
+    image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
+    
+
+    piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                 filename: "#{base_file_name}.png", 
+                                                 content_type: "image/png")
+
+    piece.save
   end
 
   def cloud_content_object

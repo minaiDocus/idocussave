@@ -1,4 +1,6 @@
 # -*- encoding : UTF-8 -*-
+require 'mini_magick'
+
 class TempDocument < ApplicationRecord
   ATTACHMENTS_URLS={'cloud_content' => '/account/documents/processing/:id/download/:style'}
 
@@ -24,6 +26,7 @@ class TempDocument < ApplicationRecord
 
   has_one_attached :cloud_content
   has_one_attached :cloud_raw_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/:filename',
@@ -39,11 +42,11 @@ class TempDocument < ApplicationRecord
 
   # before_content_post_process :is_thumb_generated
 
-  # after_create do |temp_document|
-  #   unless Rails.env.test?
-  #     TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
-  #   end
-  # end
+  after_create_commit do |temp_document|
+    unless Rails.env.test?
+      TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
+    end
+  end
 
   after_save do |temp_document|
     unless Rails.env.test?
@@ -202,13 +205,20 @@ class TempDocument < ApplicationRecord
 
 
   def self.generate_thumbs(id)
-    return true
-    # temp_document = TempDocument.find(id)
+    temp_document = TempDocument.find(id)
 
-    # temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
-    # temp_document.content.reprocess!
+    base_file_name = temp_document.cloud_content.filename.to_s.gsub('.pdf', '')
 
-    # temp_document.save
+    temp_document.is_thumb_generated = true
+
+    image = MiniMagick::Image.read(temp_document.cloud_content.download).format('png').resize('92x133')
+    
+
+    temp_document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                 filename: "#{base_file_name}.png", 
+                                                 content_type: "image/png")
+
+    temp_document.save
   end
 
 

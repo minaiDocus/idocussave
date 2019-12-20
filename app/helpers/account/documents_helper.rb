@@ -10,17 +10,20 @@ module Account::DocumentsHelper
     1
   end
 
+
+  #### TO REFACTOR : DUPLICATED ####
   def document_thumb_url(document)
-    if File.exist?(document.cloud_content_object.path(:medium))
-      document.cloud_content_object.url(:medium)
+    if document.cloud_content_thumbnail.attached?
+      document.cloud_content_thumbnail.service_url
     else
       'application/processing.png'
     end
   end
 
+  #### TO REFACTOR : DUPLICATED ####
   def temp_document_thumb_url(document)
-    if File.exist?(document.cloud_content_object.path(:medium))
-      document.cloud_content_object.url(:medium)
+    if document.cloud_content_thumbnail.attached?
+      document.cloud_content_thumbnail.service_url
     else
       'application/processing.png'
     end

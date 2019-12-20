@@ -33,9 +33,10 @@ gem 'barby'
 gem 'prawn'
 gem 'paperclip'
 gem 'chunky_png'  # required by barby
-gem 'haml'
+gem 'mini_magick'
 gem 'prawn-qrcode'
 gem 'activestorage-openstack'
+
 
 
 # View render and utils
@@ -106,6 +107,7 @@ gem 'backbone-on-rails'
 
 
 # Frontend tools
+gem 'haml'
 gem 'ckeditor'
 gem 'bootstrap-datepicker-rails'
 
