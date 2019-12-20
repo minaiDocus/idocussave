@@ -123,16 +123,19 @@ class Organization < ApplicationRecord
     organizations = Organization.all
     organizations = organizations.where(is_active:    (contains[:is_active] == '1'))    unless contains[:is_active].blank?
     organizations = organizations.where(is_test:      (contains[:is_test] == '1'))      unless contains[:is_test].blank?
-    #TODO: create filter by date
-    # organizations = organizations.where(created_at:   contains[:created_at])            unless contains[:created_at].blank?
+
+    contains[:created_at].each { |compare,date| organizations = organizations.where("organizations.created_at #{compare} ? ", "#{date}")} unless contains[:created_at].blank?
+
     organizations = organizations.where(is_for_admin: (contains[:is_for_admin] == '1')) unless contains[:is_for_admin].blank?
     organizations = organizations.where(is_suspended: (contains[:is_suspended] == '1')) unless contains[:is_suspended].blank?
 
     if contains[:is_without_address].present?
+      org_ids = Address.where(is_for_billing: true, locatable_type: 'Organization').select('locatable_id').distinct
+
       if contains[:is_without_address] == '1'
-        organizations = organizations.joins(:addresses).where('addresses.is_for_billing' => { '$nin' => [true] })
+        organizations = organizations.where.not(id: org_ids)
       else
-        organizations = organizations.joins(:addresses).where('addresses.is_for_billing' => true)
+        organizations = organizations.where(id: org_ids)
       end
     end
 
