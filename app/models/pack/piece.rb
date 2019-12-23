@@ -21,6 +21,7 @@ class Pack::Piece < ApplicationRecord
   belongs_to :analytic_reference, inverse_of: :pieces, optional: true
 
   has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
@@ -154,7 +155,7 @@ class Pack::Piece < ApplicationRecord
     return true if piece.is_finalized
 
     self.extract_content(piece)
-    # self.generate_thumbs(piece)
+    self.generate_thumbs(piece)
 
     piece.update(is_finalized: true)
   end
@@ -162,16 +163,15 @@ class Pack::Piece < ApplicationRecord
   def self.generate_thumbs(piece)
     piece = Pack::Piece.find(id)
 
-    base_file_name = piece.cloud_content.filename.to_s.gsub('.pdf', '')
+    base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
 
     piece.is_thumb_generated = true
 
     image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
-    
 
     piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
-                                                 filename: "#{base_file_name}.png", 
-                                                 content_type: "image/png")
+                                         filename: "#{base_file_name}.png", 
+                                         content_type: "image/png")
 
     piece.save
   end
