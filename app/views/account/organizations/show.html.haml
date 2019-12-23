@@ -200,9 +200,9 @@
                     %th Etat
                     %td
                       - if @organization.ftp.try(:configured?)
-                        %span.badge.badge-success OK
+                        %span.badge.badge-success.fs-origin OK
                       - else
-                        %span.badge Non configuré
+                        %span.badge.badge-secondary.fs-origin Non configuré
                   %tr
                     %th Hôte
                     %td= @organization.ftp.try(:host) || 'ftp://ftp.example.com'

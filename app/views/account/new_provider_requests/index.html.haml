@@ -25,7 +25,6 @@
               %td.name= new_provider_request.name
               %td.url= new_provider_request.url
               %td.email= new_provider_request.email
-              %td.hide.login= new_provider_request.login
               %td.hide.types= new_provider_request.types
               %td.hide.description= new_provider_request.description
               %td
@@ -52,14 +51,12 @@
                 %th= t('activerecord.models.new_provider_request.attributes.name')
                 %th= t('activerecord.models.new_provider_request.attributes.url')
                 %th= t('activerecord.models.new_provider_request.attributes.email')
-                %th= t('activerecord.models.new_provider_request.attributes.login')
                 %th= t('activerecord.models.new_provider_request.attributes.types')
             %tbody
               %tr
                 %td.name
                 %td.url
                 %td.email
-                %td.login
                 %td.types
         %div
           %label.head= t('activerecord.models.new_provider_request.attributes.description') + ':'

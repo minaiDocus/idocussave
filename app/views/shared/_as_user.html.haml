@@ -9,5 +9,5 @@
           = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first&.code]), class: 'btn btn-light'
       - else
         Visualiser et agir en tant que :
-        %span.badge #{current_user_info}
+        %span.badge.badge-secondary.fs-origin #{current_user_info}
         = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.memberships.first&.code]), class: 'btn btn-light'

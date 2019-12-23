@@ -8,8 +8,20 @@
           = f.input :name
           = f.input :url
           = f.input :email
-          = f.input :login, placeholder: '... si différent de Email'
-          = f.input :password, required: true
+          .form-group.clearfix.login.new_provider_request_login
+            .label-section
+              %label.login.control-label{ for: 'new_provider_request_login' }
+                %abbr{ title: 'champ_requis' } *
+                Identifiant
+            .control-section
+              = text_field_tag 'new_provider_request[login]', nil, placeholder: '... si différent de Email', class: 'form-control string url'
+          .form-group.clearfix.required.password.new_provider_request_password
+            .label-section
+              %label.password.required.control-label{ for: 'new_provider_request_password' }
+                %abbr{ title: 'champ_requis' } *
+                Mot de passe
+            .control-section
+              = text_field_tag 'new_provider_request[password]', nil, required: true, class: 'form-control string url required'
           = f.input :types, hint: 'Document, opération bancaire, les deux, autres...'
           = f.input :description, as: :text
         .col-md-6

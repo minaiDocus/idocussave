@@ -1,12 +1,12 @@
 .card.retractable-filter
-  = form_tag admin_invoices_path, method: :get do
-    .card-header.clearfix
-      .float-left
-        %h3 Filtres
-      .float-right.margin1left
-        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
-    .retractable-filter-content
-      .card-body
+  .card-header.clearfix
+    .float-left
+      %h3 Filtres
+    .float-right.margin1left
+      %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+  .retractable-filter-content
+    .card-body
+      = form_tag admin_invoices_path, method: :get do
         = hidden_field_tag :direction, sort_direction
         = hidden_field_tag :sort, sort_column
         = hidden_field_tag :per_page, per_page
@@ -50,23 +50,24 @@
         .form-action
           = submit_tag t('filters.action'), class: 'btn btn-primary'
           = link_to t('filters.reset'), admin_invoices_path, class: 'btn btn-outline-secondary'
-        %hr
-        %h3 Ordre de prélèvement
-        = form_tag debit_order_admin_invoices_path do
-          .form-group
-            .label-section
-              = label_tag 'date', 'Date'
-            .control-section
-              .input-group
-                .input-group-prepend
-                  %span.input-group-text= glyphicon('calendar')
-                = text_field_tag :invoice_date, '', class: 'form-control date datepicker'
-          .form-group
-            .label-section
-              = label_tag 'prel', 'Date de prélv.'
-            .control-section
-              .input-group
-                .input-group-prepend
-                  %span.input-group-text= glyphicon('calendar')
-                = text_field_tag :debit_date, '', class: 'form-control date datepicker'
+      %hr
+      %h3 Ordre de prélèvement
+      = form_tag debit_order_admin_invoices_path do
+        .form-group
+          .label-section
+            = label_tag 'date', 'Date'
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text= glyphicon('calendar')
+              = text_field_tag :invoice_date, '', class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'prel', 'Date de prélv.'
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text= glyphicon('calendar')
+              = text_field_tag :debit_date, '', class: 'form-control date datepicker'
+        .form-action
           = submit_tag 'Générer le fichier CSV', class: 'btn btn-primary'
