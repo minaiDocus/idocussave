@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Admin::RetrieverServicesController < Admin::AdminController
   def index
     @providers = Connector.budgea.providers.order(name: :asc)

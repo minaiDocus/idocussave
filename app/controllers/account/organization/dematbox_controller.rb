@@ -1,9 +1,9 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::DematboxController < Account::OrganizationController
   before_action :load_customer
   before_action :verify_access
   before_action :load_dematbox
-
 
   # POST /account/organizations/:organization_id/customers/:customer_id/dematbox
   def create
@@ -13,7 +13,6 @@ class Account::Organization::DematboxController < Account::OrganizationControlle
 
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'idocus_box')
   end
-
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/dematbox
   def destroy
@@ -33,7 +32,6 @@ class Account::Organization::DematboxController < Account::OrganizationControlle
       redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
-
 
   def load_dematbox
     @dematbox = @customer.dematbox || Dematbox.create(user_id: @customer.id)

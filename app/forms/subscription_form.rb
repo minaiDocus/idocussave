@@ -1,11 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class SubscriptionForm
   def initialize(subscription, requester = nil, request = nil)
     @subscription = subscription
     @requester    = requester
     @request      = request
   end
-
 
   def submit(params)
     dont_apply_now = !(@subscription.user.recently_created? || (@requester.is_admin && params[:is_to_apply_now] == '1'))
@@ -17,42 +17,54 @@ class SubscriptionForm
           @subscription.is_basic_package_to_be_disabled     = params[:is_basic_package_active]     == '0'
         else
           @subscription.is_basic_package_active             = params[:is_basic_package_active]     == '1'
-          @subscription.is_basic_package_to_be_disabled     = false if @subscription.is_basic_package_to_be_disabled
+          if @subscription.is_basic_package_to_be_disabled
+            @subscription.is_basic_package_to_be_disabled     = false
+          end
         end
 
         if @subscription.is_mail_package_active && dont_apply_now
           @subscription.is_mail_package_to_be_disabled      = params[:is_mail_package_active]      == '0'
         else
           @subscription.is_mail_package_active              = params[:is_mail_package_active]      == '1'
-          @subscription.is_mail_package_to_be_disabled      = false if @subscription.is_mail_package_to_be_disabled
+          if @subscription.is_mail_package_to_be_disabled
+            @subscription.is_mail_package_to_be_disabled      = false
+          end
         end
 
         if @subscription.is_scan_box_package_active && dont_apply_now
           @subscription.is_scan_box_package_to_be_disabled  = params[:is_scan_box_package_active]  == '0'
         else
           @subscription.is_scan_box_package_active          = params[:is_scan_box_package_active]  == '1'
-          @subscription.is_scan_box_package_to_be_disabled  = false if @subscription.is_scan_box_package_to_be_disabled
+          if @subscription.is_scan_box_package_to_be_disabled
+            @subscription.is_scan_box_package_to_be_disabled  = false
+          end
         end
 
         if @subscription.is_retriever_package_active && dont_apply_now
           @subscription.is_retriever_package_to_be_disabled = params[:is_retriever_package_active] == '0'
         else
           @subscription.is_retriever_package_active         = params[:is_retriever_package_active] == '1'
-          @subscription.is_retriever_package_to_be_disabled = false if @subscription.is_retriever_package_to_be_disabled
+          if @subscription.is_retriever_package_to_be_disabled
+            @subscription.is_retriever_package_to_be_disabled = false
+          end
         end
 
         if @subscription.is_mini_package_active && dont_apply_now
           @subscription.is_mini_package_to_be_disabled      = params[:is_mini_package_active]      == '0'
         else
           @subscription.is_mini_package_active              = params[:is_mini_package_active]      == '1'
-          @subscription.is_mini_package_to_be_disabled      = false if @subscription.is_mini_package_to_be_disabled
+          if @subscription.is_mini_package_to_be_disabled
+            @subscription.is_mini_package_to_be_disabled      = false
+          end
         end
 
         if @subscription.is_micro_package_active && dont_apply_now
           @subscription.is_micro_package_to_be_disabled      = params[:is_micro_package_active]      == '0'
         else
           @subscription.is_micro_package_active              = params[:is_micro_package_active]      == '1'
-          @subscription.is_micro_package_to_be_disabled      = false if @subscription.is_micro_package_to_be_disabled
+          if @subscription.is_micro_package_to_be_disabled
+            @subscription.is_micro_package_to_be_disabled = false
+          end
         end
       end
     else
@@ -100,7 +112,9 @@ class SubscriptionForm
         @subscription.is_pre_assignment_to_be_disabled = params[:is_pre_assignment_active] == 'false'
       else
         @subscription.is_pre_assignment_active = params[:is_pre_assignment_active] == 'true'
-        @subscription.is_pre_assignment_to_be_disabled = false if @subscription.is_pre_assignment_to_be_disabled
+        if @subscription.is_pre_assignment_to_be_disabled
+          @subscription.is_pre_assignment_to_be_disabled = false
+        end
       end
     else
       @subscription.is_pre_assignment_active = false
@@ -131,7 +145,9 @@ class SubscriptionForm
 
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
       EvaluateSubscription.new(@subscription, @requester, @request).execute
-      PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
+      if is_new
+        PeriodBillingService.new(@subscription.current_period).fill_past_with_0
+      end
       UpdatePeriod.new(@subscription.current_period).execute
       true
     else
@@ -143,11 +159,11 @@ class SubscriptionForm
 
   def set_special_excess_values
     if @subscription.is_mini_package_active
-      values =  {
-                  max_upload_pages_authorized: 600,
-                  max_preseizure_pieces_authorized: 300,
-                  max_expense_pieces_authorized: 300
-                }
+      values = {
+        max_upload_pages_authorized: 600,
+        max_preseizure_pieces_authorized: 300,
+        max_expense_pieces_authorized: 300
+      }
 
       @subscription.assign_attributes(values)
     end

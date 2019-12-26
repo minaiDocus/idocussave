@@ -1,19 +1,20 @@
+# frozen_string_literal: true
+
 class Account::CollaboratorsController < Account::OrganizationController
   before_action :verify_rights
-  before_action :load_member, except: %w(index new create)
+  before_action :load_member, except: %w[index new create]
 
   # GET /account/organizations/:organization_id/collaborators
   def index
-    @members = @organization.members.
-      search(search_terms(params[:user_contains])).
-      order(sort_column => sort_direction).
-      page(params[:page]).
-      per(params[:per_page])
+    @members = @organization.members
+                            .search(search_terms(params[:user_contains]))
+                            .order(sort_column => sort_direction)
+                            .page(params[:page])
+                            .per(params[:per_page])
   end
 
   # GET /account/organizations/:organization_id/collaborators/:id
-  def show
-  end
+  def show; end
 
   # GET /account/organizations/:organization_id/collaborators/new
   def new
@@ -33,8 +34,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/collaborators/:id/edit
-  def edit
-  end
+  def edit; end
 
   # PUT /account/organizations/:organization_id/collaborators/:id
   def update
@@ -78,7 +78,7 @@ class Account::CollaboratorsController < Account::OrganizationController
         member = Member.create(
           organization: related_organization,
           user: @member.user,
-          role: 'collaborator', #new collaborator for mutli-organization must have collaborator role by default
+          role: 'collaborator', # new collaborator for mutli-organization must have collaborator role by default
           code: @member.code.sub(/^#{base_code}/, new_base_code)
         )
 
@@ -139,7 +139,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   def verify_rights
     if @user.leader? || @user.manage_collaborators
-      if action_name.in?(%w(new create destroy edit update)) && !@organization.is_active
+      if action_name.in?(%w[new create destroy edit update]) && !@organization.is_active
         flash[:error] = t('authorization.unessessary_rights')
         redirect_to account_organization_path(@organization)
       end
@@ -156,14 +156,16 @@ class Account::CollaboratorsController < Account::OrganizationController
   def member_params
     attributes = [:code, { group_ids: [] }]
     attributes << :role if @user.leader?
-    user_attributes = [:id, :company, :first_name, :last_name]
-    user_attributes << :email if action_name.in?(%w(new create)) || (not @member.user.admin?)
+    user_attributes = %i[id company first_name last_name]
+    if action_name.in?(%w[new create]) || !@member.user.admin?
+      user_attributes << :email
+    end
     attributes << { user_attributes: user_attributes }
     params.require(:member).permit(*attributes)
   end
 
   def sort_column
-    if params[:sort].in? %w(created_at code role)
+    if params[:sort].in? %w[created_at code role]
       params[:sort]
     else
       'created_at'
@@ -172,7 +174,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   helper_method :sort_column
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'

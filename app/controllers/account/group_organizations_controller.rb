@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Account::GroupOrganizationsController < Account::AccountController
   before_action :verify_if_an_admin?
-  before_action :load_organization_group, except: %w(index new create)
+  before_action :load_organization_group, except: %w[index new create]
 
   def index
     @organization_groups = OrganizationGroup.all.page(params[:page]).per(params[:per_page]).order(created_at: :desc)
@@ -20,8 +22,7 @@ class Account::GroupOrganizationsController < Account::AccountController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @organization_group.update(organization_group_params)
@@ -41,7 +42,7 @@ class Account::GroupOrganizationsController < Account::AccountController
   private
 
   def verify_if_an_admin?
-    if not @user.admin?
+    unless @user.admin?
       redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end

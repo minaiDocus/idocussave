@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class Account::Organization::AccountSharingsController < Account::OrganizationController
-  before_action :load_account_sharing, only: [:accept, :destroy]
+  before_action :load_account_sharing, only: %i[accept destroy]
 
   def index
-    @account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
-      order(sort_column => sort_direction).
-      page(params[:page]).
-      per(params[:per_page])
+    @account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains]))
+                                      .order(sort_column => sort_direction)
+                                      .page(params[:page])
+                                      .per(params[:per_page])
     @account_sharing_groups = []
     @guest_collaborators = @organization.guest_collaborators
   end
@@ -36,7 +38,7 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
     redirect_to account_organization_account_sharings_path(@organization)
   end
 
-private
+  private
 
   def account_sharing_params
     params.require(:account_sharing).permit(:collaborator_id, :account_id)

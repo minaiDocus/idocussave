@@ -1,18 +1,19 @@
+# frozen_string_literal: true
+
 class Account::GroupsController < Account::OrganizationController
-  before_action :verify_rights, except: %w(index show)
-  before_action :load_group, except: %w(index new create)
+  before_action :verify_rights, except: %w[index show]
+  before_action :load_group, except: %w[index new create]
 
   # GET /account/organizations/:organization_id/groups
   def index
-    @groups = @user.groups.search(search_terms(params[:group_contains])).
-      order(sort_column => sort_direction).
-      page(params[:page]).
-      per(params[:per_page])
+    @groups = @user.groups.search(search_terms(params[:group_contains]))
+                   .order(sort_column => sort_direction)
+                   .page(params[:page])
+                   .per(params[:per_page])
   end
 
   # GET /account/organizations/:organization_id/groups/:id
-  def show
-  end
+  def show; end
 
   # GET /account/organizations/:organization_id/groups/new
   def new
@@ -33,8 +34,7 @@ class Account::GroupsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/groups/:id/edit
-  def edit
-  end
+  def edit; end
 
   # PUT /account/organizations/:organization_id/groups/:id
   def update
@@ -62,7 +62,7 @@ class Account::GroupsController < Account::OrganizationController
 
   def verify_rights
     unless @user.leader? && @organization.is_active
-      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && !@user.manage_groups) || !@organization.is_active
+      if action_name.in?(%w[new create destroy]) || (action_name.in?(%w[edit update]) && !@user.manage_groups) || !@organization.is_active
         flash[:error] = t('authorization.unessessary_rights')
 
         redirect_to account_organization_path(@organization)

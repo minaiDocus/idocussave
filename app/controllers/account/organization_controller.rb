@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::OrganizationController < ApplicationController
   include Account::Organization::ConfigurationSteps
 
@@ -15,7 +17,7 @@ class Account::OrganizationController < ApplicationController
   protected
 
   def verify_if_a_collaborator
-    if not @user.collaborator?
+    unless @user.collaborator?
       redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end

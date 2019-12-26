@@ -1,13 +1,13 @@
-﻿# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::AddressesController < Account::AccountController
   before_action :verify_access
-  before_action :load_address, only: %w(edit update destroy)
+  before_action :load_address, only: %w[edit update destroy]
 
   # GET /account/addresses
   def index
     @addresses = @user.addresses.all
   end
-
 
   # GET /account/addresses/new
   def new
@@ -16,7 +16,6 @@ class Account::AddressesController < Account::AccountController
     @address.first_name = @user.first_name
     @address.last_name  = @user.last_name
   end
-
 
   # POST /account/addresses
   def create
@@ -29,11 +28,8 @@ class Account::AddressesController < Account::AccountController
     end
   end
 
-
   # POST /account/addresses/:address_id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/addresses/:address_id
   def update
@@ -44,7 +40,6 @@ class Account::AddressesController < Account::AccountController
       render :edit
     end
   end
-
 
   # DELETE /account/addresses/:address_id
   def destroy
@@ -62,11 +57,9 @@ class Account::AddressesController < Account::AccountController
     end
   end
 
-
   def load_address
     @address = @user.addresses.find(params[:id])
   end
-
 
   def address_params
     params.require(:address).permit(

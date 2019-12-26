@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PeriodsController < Account::AccountController
   layout false
 
@@ -12,7 +13,7 @@ class Account::PeriodsController < Account::AccountController
     end
   end
 
-private
+  private
 
   def load_period
     @period = Period.find(params[:id])

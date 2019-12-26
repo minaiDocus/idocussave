@@ -1,13 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::OrganizationCsvDescriptorsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_csv_descriptor
 
-
   # GET account/organizations/:organization_id/csv_descriptor/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/csv_descriptor
   def update

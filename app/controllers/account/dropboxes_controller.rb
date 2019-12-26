@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::DropboxesController < Account::AccountController
   before_action :verify_authorization
   before_action :load_dropbox
@@ -14,21 +16,23 @@ class Account::DropboxesController < Account::AccountController
       begin
         auth_bearer = @authenticator.get_token params[:code], redirect_uri: callback_account_dropbox_url
         begin
-          DropboxApi::Client.new(@dropbox.access_token).revoke_token if @dropbox.is_configured?
+          if @dropbox.is_configured?
+            DropboxApi::Client.new(@dropbox.access_token).revoke_token
+          end
         rescue DropboxApi::Errors::HttpError => e
           raise unless e.message.match /HTTP 401/
         end
 
         @dropbox.update(
-          access_token:      auth_bearer.token,
-          dropbox_id:        auth_bearer.params['uid'],
-          delta_cursor:      nil,
+          access_token: auth_bearer.token,
+          dropbox_id: auth_bearer.params['uid'],
+          delta_cursor: nil,
           delta_path_prefix: nil,
-          changed_at:        Time.now
+          changed_at: Time.now
         )
 
         flash[:success] = 'Votre compte Dropbox a été configuré avec succès.'
-      rescue => e
+      rescue StandardError => e
         if e.class.name == 'OAuth2::Error'
           flash[:error] = "Impossible de configurer votre compte Dropbox. L'autorisation a peut être expiré."
         else
@@ -40,7 +44,7 @@ class Account::DropboxesController < Account::AccountController
     redirect_to account_profile_path(panel: 'efs_management')
   end
 
-private
+  private
 
   def verify_authorization
     unless @user.find_or_create_external_file_storage.is_dropbox_basic_authorized?

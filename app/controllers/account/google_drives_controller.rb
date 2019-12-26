@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::GoogleDrivesController < Account::AccountController
   before_action :verify_authorization
   before_action :load_google_doc
@@ -38,7 +40,7 @@ class Account::GoogleDrivesController < Account::AccountController
     redirect_to account_profile_path(panel: 'efs_management')
   end
 
-private
+  private
 
   def verify_authorization
     unless @user.find_or_create_external_file_storage.is_google_docs_authorized?

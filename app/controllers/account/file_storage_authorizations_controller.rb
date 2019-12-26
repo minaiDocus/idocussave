@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::FileStorageAuthorizationsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_someone
@@ -5,8 +7,7 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
   before_action :load_url_path
 
   # GET /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations/edit
-  def edit
-  end
+  def edit; end
 
   # PUT /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations
   def update
@@ -27,12 +28,12 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
   def user_params
     params.require(:user).permit(
       :is_dropbox_extended_authorized,
-      external_file_storage_attributes: [
-        :id,
-        :is_dropbox_basic_authorized,
-        :is_google_docs_authorized,
-        :is_ftp_authorized,
-        :is_box_authorized
+      external_file_storage_attributes: %i[
+        id
+        is_dropbox_basic_authorized
+        is_google_docs_authorized
+        is_ftp_authorized
+        is_box_authorized
       ]
     )
   end

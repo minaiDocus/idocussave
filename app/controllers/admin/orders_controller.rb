@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::OrdersController < Admin::AdminController
   helper_method :sort_column, :sort_direction
 
@@ -13,19 +14,15 @@ class Admin::OrdersController < Admin::AdminController
     @orders = @orders.page(params[:page]).per(params[:per_page])
   end
 
-
   private
-
 
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
 
-
   def sort_direction
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
 end
-

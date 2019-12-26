@@ -1,12 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ComptaController < ApplicationController
   before_action :authenticate
   before_action :load_users
 
   # GET /compta
-  def index
-  end
-
+  def index; end
 
   # GET /compta/:user_id
   def show
@@ -15,16 +14,14 @@ class ComptaController < ApplicationController
 
   private
 
-
   def authenticate
     authenticate_or_request_with_http_basic do |name, password|
-      compta_operators = [{"username":"gabriel","password":"C0wbjA78"},{"username":"ft","password":"idocompta"}]
-      compta_operators.select do |operator|
-        'gabriel' == name && 'C0wbjA78' == password
+      compta_operators = [{ "username": 'gabriel', "password": 'C0wbjA78' }, { "username": 'ft', "password": 'idocompta' }]
+      compta_operators.select do |_operator|
+        name == 'gabriel' && password == 'C0wbjA78'
       end.first.present?
     end
   end
-
 
   def load_users
     organization_ids = Organization.active.pluck(:id)

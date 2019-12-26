@@ -1,21 +1,23 @@
+# frozen_string_literal: true
+
 class Account::PreAssignmentBlockedDuplicatesController < Account::AccountController
   # GET /account/pre_assignment_blocked_duplicates
-  def index    
+  def index
     @duplicates = Pack::Report::Preseizure
-      .unscoped
-      .blocked_duplicates
-      .where(user_id: account_ids)
-      .search(search_terms(params[:duplicate_contains]))
-      .order("#{sort_real_column} #{sort_direction}")
-      .page(params[:page])
-      .per(params[:per_page])
+                  .unscoped
+                  .blocked_duplicates
+                  .where(user_id: account_ids)
+                  .search(search_terms(params[:duplicate_contains]))
+                  .order("#{sort_real_column} #{sort_direction}")
+                  .page(params[:page])
+                  .per(params[:per_page])
   end
 
   # POST /account/pre_assignment_blocked_duplicates/update_multiple
   def update_multiple
     preseizures = Pack::Report::Preseizure.blocked_duplicates.where(user_id: account_ids, id: params[:duplicate_ids])
 
-    if preseizures.size > 0
+    if !preseizures.empty?
       if params.keys.include?('unblock') && !params.keys.include?('approve_block')
         count = UnblockPreseizures.new(preseizures.map(&:id), @user).execute
 
@@ -24,7 +26,9 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
       elsif params.keys.include?('approve_block') && !params.keys.include?('unblock')
         count = preseizures.update_all(marked_as_duplicate_at: Time.now, marked_as_duplicate_by_user_id: @user.id)
 
-        flash[:success] = '1 pré-affectation a été marqué comme étant un doublon.' if count == 1
+        if count == 1
+          flash[:success] = '1 pré-affectation a été marqué comme étant un doublon.'
+        end
         flash[:success] ||= "#{count} pré-affectations ont été marqués comme étant des doublons."
       end
     else
@@ -37,7 +41,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
   private
 
   def sort_column
-    if params[:sort].in? %w(created_at piece_name piece_number third_party amount date)
+    if params[:sort].in? %w[created_at piece_name piece_number third_party amount date]
       params[:sort]
     else
       'created_at'
@@ -49,11 +53,12 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
     column = sort_column
     return 'pack_pieces.name' if column == 'piece_name'
     return 'cached_amount' if column == 'amount'
+
     column
   end
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'

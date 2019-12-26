@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::NewsController < Account::AccountController
   layout false
 
@@ -9,6 +11,6 @@ class Account::NewsController < Account::AccountController
   private
 
   def target_audience
-    @user.is_prescriber ? %w(everyone collaborators) : %w(everyone customers)
+    @user.is_prescriber ? %w[everyone collaborators] : %w[everyone customers]
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::McfUsersController < Account::OrganizationController
   before_action :load_mcf_settings
   before_action :verify_rights

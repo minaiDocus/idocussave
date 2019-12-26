@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::MobileReportingController < Admin::AdminController
   def index
     date_params
@@ -32,10 +33,12 @@ class Admin::MobileReportingController < Admin::AdminController
   private
 
   def date_params
-    return "#{@year_params}#{@month_params}" if @year_params.present? && @month_params.present?
+    if @year_params.present? && @month_params.present?
+      return "#{@year_params}#{@month_params}"
+    end
 
-    @year_params = params[:year].present? ? params[:year].to_s : Date.today.strftime("%Y").to_s
-    @month_params = params[:month].present? ? params[:month].to_s : Date.today.strftime("%m").to_s
+    @year_params = params[:year].present? ? params[:year].to_s : Date.today.strftime('%Y').to_s
+    @month_params = params[:month].present? ? params[:month].to_s : Date.today.strftime('%m').to_s
 
     "#{@year_params}#{@month_params}"
   end

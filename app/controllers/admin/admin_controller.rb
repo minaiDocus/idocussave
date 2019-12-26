@@ -1,8 +1,8 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::AdminController < ApplicationController
   before_action :login_user!
   before_action :verify_admin_rights
-
 
   layout 'admin'
 
@@ -11,7 +11,6 @@ class Admin::AdminController < ApplicationController
     @new_provider_requests = NewProviderRequest.not_processed.order(created_at: :desc).includes(:user).limit(5)
     @unbillable_organizations = Organization.billed.select { |e| e.billing_address.nil? }
   end
-
 
   # GET /admin/ocr_needed_temp_packs
   def ocr_needed_temp_packs
@@ -26,7 +25,6 @@ class Admin::AdminController < ApplicationController
 
     render partial: 'process', locals: { collection: @ocr_needed_temp_packs }
   end
-
 
   # GET /admin/bundle_needed_temp_packs
   def bundle_needed_temp_packs
@@ -43,7 +41,6 @@ class Admin::AdminController < ApplicationController
     render partial: 'process', locals: { collection: @bundle_needed_temp_packs }
   end
 
-
   # GET /admin/bundling_temp_packs
   def bundling_temp_packs
     @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
@@ -59,7 +56,6 @@ class Admin::AdminController < ApplicationController
     render partial: 'process', locals: { collection: @bundling_temp_packs }
   end
 
-
   # GET /admin/processing_temp_packs
   def processing_temp_packs
     @processing_temp_packs = TempPack.not_processed.map do |temp_pack|
@@ -74,7 +70,6 @@ class Admin::AdminController < ApplicationController
 
     render partial: 'process', locals: { collection: @processing_temp_packs }
   end
-
 
   # GET /admin/currently_being_delivered_packs
   def currently_being_delivered_packs
@@ -99,7 +94,6 @@ class Admin::AdminController < ApplicationController
     render partial: 'process', locals: { collection: @currently_being_delivered_packs }
   end
 
-
   # GET /admin/failed_packs_delivery
   def failed_packs_delivery
     pack_ids = RemoteFile.not_processed.not_retryable.pluck(:pack_id)
@@ -123,13 +117,11 @@ class Admin::AdminController < ApplicationController
     render partial: 'process', locals: { collection: @failed_packs_delivery }
   end
 
-
   # GET /admin/blocked_pre_assignments
   def blocked_pre_assignments
     @blocked_pre_assignments = PendingPreAssignmentService.pending.select { |e| e.message.present? }
     render partial: 'process', locals: { collection: @blocked_pre_assignments }
   end
-
 
   # GET /admin/awaiting_pre_assignments
   def awaiting_pre_assignments
@@ -137,7 +129,6 @@ class Admin::AdminController < ApplicationController
 
     render partial: 'process', locals: { collection: @awaiting_pre_assignments }
   end
-
 
   # GET /admin/reports_delivery
   def reports_delivery
@@ -153,7 +144,6 @@ class Admin::AdminController < ApplicationController
     render partial: 'process', locals: { collection: @reports_delivery }
   end
 
-
   # GET /admin/failed_reports_delivery
   def failed_reports_delivery
     @failed_reports_delivery = Pack::Report.failed_delivery(nil, 200)
@@ -162,7 +152,6 @@ class Admin::AdminController < ApplicationController
   end
 
   private
-
 
   def verify_admin_rights
     redirect_to root_url unless current_user.is_admin

@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 module Admin::DematboxesHelper
   def dematbox_state(state)
     case state
@@ -13,7 +14,6 @@ module Admin::DematboxesHelper
     end
   end
 
-
   def dematbox_type(type)
     if type == 'service'
       'Service'
@@ -23,7 +23,6 @@ module Admin::DematboxesHelper
       ''
     end
   end
-
 
   def dematbox_period(boolean)
     boolean ? 'Actuelle' : 'Précédente'

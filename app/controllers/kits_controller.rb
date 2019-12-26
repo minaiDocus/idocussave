@@ -1,6 +1,6 @@
-# -*- encoding : UTF-8 -*-
-class KitsController < PaperProcessesController
+# frozen_string_literal: true
 
+class KitsController < PaperProcessesController
   # GET /kits
   def index
     paper_processes = PaperProcess.kits.where('created_at >= ? AND created_at <= ?', @current_time.beginning_of_month, @current_time.end_of_month)
@@ -18,7 +18,6 @@ class KitsController < PaperProcessesController
       end
     end
   end
-
 
   # POST /kits
   def create

@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 class Admin::NewsController < Admin::AdminController
-  before_action :load_news, except: %w(index new create)
+  before_action :load_news, except: %w[index new create]
 
   def index
     @news = News.search(search_terms(params[:news_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
-  def show
-  end
+  def show; end
 
   def new
     @news = News.new
@@ -22,8 +23,7 @@ class Admin::NewsController < Admin::AdminController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @news.update(news_params)

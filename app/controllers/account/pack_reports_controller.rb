@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PackReportsController < Account::OrganizationController
   before_action :load_report, except: :index
 
@@ -12,7 +13,9 @@ class Account::PackReportsController < Account::OrganizationController
         preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id).presence || [0])
         preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
 
-        @pack_reports = @pack_reports.where(id: preseizures.pluck(:report_id).presence || [0]) unless params[:view] == 'delivered' || params[:view] == 'not_delivered'
+        unless params[:view] == 'delivered' || params[:view] == 'not_delivered'
+          @pack_reports = @pack_reports.where(id: preseizures.pluck(:report_id).presence || [0])
+        end
       else
         @pack_reports = @pack_reports.where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
         preseizures = Pack::Report::Preseizure.where(report_id: @pack_reports.pluck(:id).presence || [0])
@@ -32,34 +35,30 @@ class Account::PackReportsController < Account::OrganizationController
     @pack_reports_count = @pack_reports.total_count
   end
 
-
   # POST /account/organizations/:organization_id/pack_reports/deliver
   def deliver
     preseizures = @report.preseizures.by_position.not_locked.not_delivered
 
-    CreatePreAssignmentDeliveryService.new(preseizures, ['ibiza', 'exact_online']).execute
+    CreatePreAssignmentDeliveryService.new(preseizures, %w[ibiza exact_online]).execute
 
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end
   end
 
-
   # GET /account/organizations/:organization_id/pack_reports/select_to_download
-  def select_to_download
-  end
-
+  def select_to_download; end
 
   # POST /account/organizations/:organization_id/pack_reports/:id/download
   def download
     preseizures = @report.preseizures.where(id: params[:download].try(:[], :preseizure_ids) || []).by_position
-    
+
     case params[:download].try(:[], :format)
     when 'csv'
       if preseizures.any? && @report.user.uses_csv_descriptor?
         data = PreseizuresToCsv.new(@report.user, preseizures).execute
 
-        send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_').tr('%', '_')}.csv", x_sendfile: true, :disposition => 'inline')
+        send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_').tr('%', '_')}.csv", x_sendfile: true, disposition: 'inline')
       else
         unless @report.user.uses_csv_descriptor?
           flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation et paramètres client avant d'utiliser cette fonctionnalité."
@@ -80,7 +79,7 @@ class Account::PackReportsController < Account::OrganizationController
             if exercise
               data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza)
 
-              send_data(data, type: 'application/xml', filename: file_name, x_sendfile: true, :disposition => 'inline')
+              send_data(data, type: 'application/xml', filename: file_name, x_sendfile: true, disposition: 'inline')
             else
               render :select_to_download
             end
@@ -103,14 +102,14 @@ class Account::PackReportsController < Account::OrganizationController
       end
     when 'zip_coala'
       if @report.user.uses_coala?
-        file_path = CoalaZipService.new(@report.user, preseizures, {to_xls: true}).execute
+        file_path = CoalaZipService.new(@report.user, preseizures, to_xls: true).execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
     when 'xls_coala'
       if @organization.is_coala_used
-        file_path = CoalaZipService.new(@report.user, preseizures, {preseizures_only: true, to_xls: true}).execute
+        file_path = CoalaZipService.new(@report.user, preseizures, preseizures_only: true, to_xls: true).execute
         send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'

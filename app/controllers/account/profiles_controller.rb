@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::ProfilesController < Account::AccountController
   # GET /account/profile
   def show
@@ -10,7 +11,7 @@ class Account::ProfilesController < Account::AccountController
           client = DropboxImport::Client.new(DropboxApi::Client.new(@external_file_storage.dropbox_basic.access_token))
           begin
             @dropbox_account = client.get_current_account
-          rescue
+          rescue StandardError
             @dropbox_account = nil
           end
         end
@@ -27,9 +28,9 @@ class Account::ProfilesController < Account::AccountController
         @user.password_confirmation = params[:user][:password_confirmation]
 
         if @user.save
-          flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
+          flash[:notice] = 'Votre mot de passe a été mis à jour avec succès'
         else
-          flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
+          flash[:alert] = 'Une erreur est survenue lors de la mise à jour de votre mot de passe'
         end
       else
         flash[:alert] = "Votre ancien mot de passe n'a pas été saisi correctement"
@@ -38,7 +39,7 @@ class Account::ProfilesController < Account::AccountController
       params[:user].reject! { |key, _value| key == 'password' || key == 'password_confirmation' }
 
       if @user.update(user_params)
-        flash[:success] = "Modifié avec succès."
+        flash[:success] = 'Modifié avec succès.'
       else
         flash[:error] = 'Impossible de sauvegarder.'
       end
@@ -55,30 +56,30 @@ class Account::ProfilesController < Account::AccountController
 
   def user_params
     params.require(:user).permit(
-      notify_attributes: [
-        :id,
-        :to_send_docs,
-        :published_docs,
-        :reception_of_emailed_docs,
-        :r_wrong_pass,
-        :r_site_unavailable,
-        :r_action_needed,
-        :r_bug,
-        :r_no_bank_account_configured,
-        :r_new_documents,
-        :r_new_operations,
-        :document_being_processed,
-        :paper_quota_reached,
-        :new_pre_assignment_available,
-        :dropbox_invalid_access_token,
-        :dropbox_insufficient_space,
-        :ftp_auth_failure,
-        :detected_preseizure_duplication,
-        :pre_assignment_ignored_piece,
-        :new_scanned_documents,
-        :pre_assignment_delivery_errors,
-        :mcf_document_errors,
-        :pre_assignment_export,
+      notify_attributes: %i[
+        id
+        to_send_docs
+        published_docs
+        reception_of_emailed_docs
+        r_wrong_pass
+        r_site_unavailable
+        r_action_needed
+        r_bug
+        r_no_bank_account_configured
+        r_new_documents
+        r_new_operations
+        document_being_processed
+        paper_quota_reached
+        new_pre_assignment_available
+        dropbox_invalid_access_token
+        dropbox_insufficient_space
+        ftp_auth_failure
+        detected_preseizure_duplication
+        pre_assignment_ignored_piece
+        new_scanned_documents
+        pre_assignment_delivery_errors
+        mcf_document_errors
+        pre_assignment_export
       ]
     )
   end

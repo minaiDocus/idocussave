@@ -1,16 +1,15 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::CustomerAddressesController < Account::OrganizationController
   before_action :load_customer
   before_action :verify_if_customer_is_active
   before_action :redirect_to_current_step
-  before_action :load_address, only: %w(edit update destroy)
-
+  before_action :load_address, only: %w[edit update destroy]
 
   # GET /account/organizations/:organization_id/customers/:customer_id/addresses
   def index
     @addresses = @customer.addresses.all
   end
-
 
   # /account/organizations/:organization_id/customers/:customer_id/addresses/new
   def new
@@ -18,7 +17,6 @@ class Account::CustomerAddressesController < Account::OrganizationController
     @address.first_name = @customer.first_name
     @address.last_name  = @customer.last_name
   end
-
 
   # POST /account/organizations/:organization_id/customers/:customer_id/addresses
   def create
@@ -32,9 +30,7 @@ class Account::CustomerAddressesController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/customers/:customer_id/addresses/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/addresses/:id
   def update
@@ -45,7 +41,6 @@ class Account::CustomerAddressesController < Account::OrganizationController
       render :edit
     end
   end
-
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/addresses/:id
   def destroy
@@ -61,7 +56,6 @@ class Account::CustomerAddressesController < Account::OrganizationController
     @customer = customers.find params[:customer_id]
   end
 
-
   def verify_if_customer_is_active
     if @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
@@ -69,11 +63,9 @@ class Account::CustomerAddressesController < Account::OrganizationController
     end
   end
 
-
   def load_address
     @address = @customer.addresses.find(params[:id])
   end
-
 
   def address_params
     params.require(:address).permit(

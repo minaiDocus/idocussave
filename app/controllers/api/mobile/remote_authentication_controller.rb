@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::RemoteAuthenticationController < ApplicationController
   respond_to :json
 
@@ -9,12 +11,12 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     code = 200 # neutral code
     message = 'Ping success'
 
-    #(code 500 for automatically logout app mobile)
-      if (build_code.to_i < 6 || build_code.nil?)
-        code = 500 
-        message = "Le service iDocus actuel nécessite une version plus récente de l'application; Veuillez mettre à jour votre application iDocus s'il vous plaît. Merci."
-      end
-    #(code 500 for automatically logout app mobile)
+    # (code 500 for automatically logout app mobile)
+    if build_code.to_i < 6 || build_code.nil?
+      code = 500
+      message = "Le service iDocus actuel nécessite une version plus récente de l'application; Veuillez mettre à jour votre application iDocus s'il vous plaît. Merci."
+    end
+    # (code 500 for automatically logout app mobile)
 
     render json: { success: true, message: message, code: code }, status: 200
   end
@@ -33,9 +35,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
       resource.get_authentication_token
 
       user = resource
-      if resource.collaborator?
-        resource = Collaborator.new resource
-      end
+      resource = Collaborator.new resource if resource.collaborator?
 
       user.code = resource.try(:code) || '-'
       user.organization_id = resource.try(:organization).try(:id) || '0'
@@ -56,6 +56,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
 
   def ensure_params_exist
     return unless params[:user_login].blank?
+
     render json: { error: true, message: 'Paramètre non valide' }, status: 422
   end
 

@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 class Account::FtpsController < Account::AccountController
   before_action :verify_authorization
   before_action :load_ftp
 
-  def edit
-  end
+  def edit; end
 
   def update
     @ftp.assign_attributes(ftp_params)
@@ -24,7 +25,7 @@ class Account::FtpsController < Account::AccountController
     redirect_to account_profile_path(anchor: 'ftp', panel: 'efs_management')
   end
 
-private
+  private
 
   def verify_authorization
     unless @user.find_or_create_external_file_storage.is_ftp_authorized?

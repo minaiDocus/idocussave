@@ -1,18 +1,15 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::DematboxesController < Admin::AdminController
   before_action :load_dematbox, except: :index
-
 
   # GET /admin/dematboxes
   def index
     @dematboxes = Dematbox.order(created_at: :desc).includes(:user)
   end
 
-
   # GET /admin/dematboxes/:id
-  def show
-  end
-
+  def show; end
 
   # DELETE /admin/dematboxes/:id
   def destroy
@@ -22,7 +19,6 @@ class Admin::DematboxesController < Admin::AdminController
 
     redirect_to admin_dematboxes_path
   end
-
 
   # POST /admin/dematboxes/:id/subscribe
   def subscribe
@@ -34,7 +30,6 @@ class Admin::DematboxesController < Admin::AdminController
   end
 
   private
-
 
   def load_dematbox
     @dematbox = Dematbox.find(params[:id])

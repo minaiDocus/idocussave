@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class DropboxesController < ApplicationController
   skip_before_action :verify_authenticity_token
 
@@ -14,7 +15,7 @@ class DropboxesController < ApplicationController
   end
 
   def verify
-    render plain: params[:challenge] and return if params[:challenge].present?
+    render(plain: params[:challenge]) && return if params[:challenge].present?
     render plain: 'challenge parameter is missing'
   end
 end

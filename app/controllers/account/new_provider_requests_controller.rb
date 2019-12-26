@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::NewProviderRequestsController < Account::RetrieverController
   before_action :load_budgea_config
 
@@ -27,8 +28,8 @@ class Account::NewProviderRequestsController < Account::RetrieverController
     end
   end
 
-private
-  
+  private
+
   def new_provider_request_params
     params.require(:data_local).permit(:name, :url, :email, :login, :types, :description)
   end
@@ -45,13 +46,12 @@ private
 
   def load_budgea_config
     bi_config = {
-                  url:    "https://#{Budgea.config.domain}/2.0",
-                  c_id:   Budgea.config.client_id,
-                  c_ps:   Budgea.config.client_secret,
-                  c_ky:   Budgea.config.encryption_key ? Base64.encode64(Budgea.config.encryption_key.to_json.to_s) : '',
-                  proxy:  Budgea.config.proxy
-                }.to_json
+      url: "https://#{Budgea.config.domain}/2.0",
+      c_id: Budgea.config.client_id,
+      c_ps: Budgea.config.client_secret,
+      c_ky: Budgea.config.encryption_key ? Base64.encode64(Budgea.config.encryption_key.to_json.to_s) : '',
+      proxy: Budgea.config.proxy
+    }.to_json
     @bi_config = Base64.encode64(bi_config.to_s)
   end
-
 end

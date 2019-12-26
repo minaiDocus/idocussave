@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::EmailedDocumentsController < Account::AccountController
   before_action :verify_rights
 

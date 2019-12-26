@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::CsvDescriptorsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_customer
@@ -16,7 +17,6 @@ class Account::CsvDescriptorsController < Account::OrganizationController
     end
   end
 
-
   # PUT account/organizations/:organization_id/customers/:customer_id/csv_descriptor
   def update
     if @csv_descriptor.update(csv_descriptor_params)
@@ -32,14 +32,12 @@ class Account::CsvDescriptorsController < Account::OrganizationController
     end
   end
 
-
   # PUT /account/organizations/:organization_id/customers/:customer_id/csv_descriptor/activate
   def activate
     @customer.softwares.update_attribute(:use_own_csv_descriptor_format, true)
 
     redirect_to edit_account_organization_customer_csv_descriptor_path(@organization, @customer, template: true)
   end
-
 
   # PUT  /account/organizations/:organization_id/customers/:customer_id/csv_descriptor/deactivate
   def deactivate
@@ -50,7 +48,6 @@ class Account::CsvDescriptorsController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
   end
 
-
   private
 
   def verify_rights
@@ -60,16 +57,13 @@ class Account::CsvDescriptorsController < Account::OrganizationController
     end
   end
 
-
   def load_customer
     @customer = customers.find params[:customer_id]
   end
 
-
   def load_csv_descriptor
     @csv_descriptor = @customer.csv_descriptor!
   end
-
 
   def csv_descriptor_params
     params.require(:csv_descriptor).permit(:directive, :comma_as_number_separator)

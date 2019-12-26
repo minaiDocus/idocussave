@@ -1,7 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ReturnLabelsController < ApplicationController
   before_action :authenticate
-
 
   # GET /scans/return_labels
   def show
@@ -16,10 +16,9 @@ class ReturnLabelsController < ApplicationController
     end
   end
 
-
   # GET /scans/return_labels/new
   def new
-    #@scanned_by = @user.scanning_provider.name if @user || nil 'ppp'
+    # @scanned_by = @user.scanning_provider.name if @user || nil 'ppp'
     @scanned_by = 'ppp'
 
     @return_labels = ReturnLabels.new(scanned_by: @scanned_by, time: @current_time)
@@ -29,7 +28,6 @@ class ReturnLabelsController < ApplicationController
     end
   end
 
-  
   # POST /scans/return_labels
   def create
     if params[:return_labels] && params[:return_labels][:customers]
@@ -41,13 +39,12 @@ class ReturnLabelsController < ApplicationController
 
   private
 
-
   def authenticate
-    unless current_user && current_user.is_admin
+    unless current_user&.is_admin
       authenticate_or_request_with_http_basic do |name, password|
-        operators = [{"username":"ppp","password":"QIuVMP5dwMExgrYqClLc","scanning_provider":"ppp","is_return_labels_authorized":true}]
-        @user = operators.select do |operator|
-          'ppp' == name && 'QIuVMP5dwMExgrYqClLc' == password
+        operators = [{ "username": 'ppp', "password": 'QIuVMP5dwMExgrYqClLc', "scanning_provider": 'ppp', "is_return_labels_authorized": true }]
+        @user = operators.select do |_operator|
+          name == 'ppp' && password == 'QIuVMP5dwMExgrYqClLc'
         end.first
         @user.present?
       end

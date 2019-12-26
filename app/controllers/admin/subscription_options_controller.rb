@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::SubscriptionOptionsController < Admin::AdminController
-  before_action :load_subscription_option, except: %w(new create index)
+  before_action :load_subscription_option, except: %w[new create index]
 
   # GET /admin/subscription_options
   def index
@@ -11,7 +12,6 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
   def new
     @subscription_option = SubscriptionOption.new
   end
-
 
   # POST /admin/subscription_options
   def create
@@ -26,11 +26,8 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
     end
   end
 
-
   # GET /admin/subscription_options/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /admin/subscription_options/:id
   def update
@@ -43,7 +40,6 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
       render :edit
     end
   end
-
 
   # DELETE /admin/subscription_options/:id
   def destroy

@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::UsersController < Account::AccountController
   def edit
     @user = current_user
@@ -8,9 +9,9 @@ class Account::UsersController < Account::AccountController
     @user = current_user
     if @user.valid_password?(params[:user][:current_password])
       if @user.update(user_params)
-        flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
+        flash[:notice] = 'Votre mot de passe a été mis à jour avec succès'
       else
-        flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
+        flash[:alert] = 'Une erreur est survenue lors de la mise à jour de votre mot de passe'
       end
     else
       flash[:alert] = "Votre ancien mot de passe n'a pas été saisi correctement"
@@ -19,7 +20,7 @@ class Account::UsersController < Account::AccountController
     redirect_to edit_account_user_path(@user)
   end
 
-private
+  private
 
   def user_params
     params.require(:user).permit(:current_password, :password, :password_confirmation)

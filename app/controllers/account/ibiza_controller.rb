@@ -1,8 +1,8 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::IbizaController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_ibiza, except: :create
-
 
   # POST /account/organizations/:organization_id/ibiza
   def create
@@ -22,11 +22,8 @@ class Account::IbizaController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/ibiza/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/ibiza
   def update
@@ -52,11 +49,9 @@ class Account::IbizaController < Account::OrganizationController
     end
   end
 
-
   def load_ibiza
     @ibiza = @organization.ibiza
   end
-
 
   def ibiza_params
     params.require(:ibiza).permit(:access_token, :access_token_2, :is_auto_deliver, :is_analysis_activated, :is_analysis_to_validate, :description_separator, :piece_name_format_sep, :voucher_ref_target).tap do |whitelist|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::CompositionsController < Account::AccountController
   # POST /account/compositions
   def create
@@ -28,7 +30,7 @@ class Account::CompositionsController < Account::AccountController
   # DELETE /account/compositions/reset
   def reset
     @composition = @user.composition
-    @composition.update_attribute(:document_ids, []) if @composition
+    @composition&.update_attribute(:document_ids, [])
 
     respond_to do |format|
       format.json { render json: @composition, status: :ok }

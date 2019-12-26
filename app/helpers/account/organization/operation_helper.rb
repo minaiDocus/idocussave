@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::Organization::OperationHelper
   def is_operation_pre_assigned(operation)
     if operation.processed_at.present?

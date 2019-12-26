@@ -1,8 +1,9 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::UsersController < Admin::AdminController
   helper_method :sort_column, :sort_direction
 
-  before_action :load_user, only: %w(show update send_reset_password_instructions)
+  before_action :load_user, only: %w[show update send_reset_password_instructions]
 
   # GET /admin/users
   def index
@@ -23,11 +24,8 @@ class Admin::UsersController < Admin::AdminController
     end
   end
 
-
   # GET /admin/users/:id
-  def show
-  end
-
+  def show; end
 
   # PUT /admin/users/:id
   def update
@@ -46,7 +44,6 @@ class Admin::UsersController < Admin::AdminController
     end
   end
 
-
   # GET /admin/users/search_by_code
   def search_by_code
     tags = []
@@ -54,7 +51,7 @@ class Admin::UsersController < Admin::AdminController
     full_info = params[:full_info].present?
 
     if params[:q].present?
-      users = User.where("code LIKE ?", "%#{params[:q]}%").order(code: :asc).limit(10)
+      users = User.where('code LIKE ?', "%#{params[:q]}%").order(code: :asc).limit(10)
 
       users = users.prescribers if params[:prescriber].present?
 
@@ -67,7 +64,6 @@ class Admin::UsersController < Admin::AdminController
       format.json { render json: tags.to_json, status: :ok }
     end
   end
-
 
   # GET /admin/users/:id/send_reset_password_instructions
   def send_reset_password_instructions
@@ -83,7 +79,6 @@ class Admin::UsersController < Admin::AdminController
   def load_user
     @user = User.find params[:id]
   end
-
 
   def user_params
     params.require(:user).permit(
@@ -103,12 +98,10 @@ class Admin::UsersController < Admin::AdminController
     )
   end
 
-
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
-
 
   def sort_direction
     params[:direction] || 'desc'

@@ -1,16 +1,17 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PaperSetOrdersController < Account::OrganizationController
   before_action :verify_rights
-  before_action :load_order_and_customer, only: %w(edit update destroy)
-  before_action :verify_if_customer_can_order_paper_sets, only: %w(edit update)
-  before_action :verify_editability, only: %w(edit update destroy)
+  before_action :load_order_and_customer, only: %w[edit update destroy]
+  before_action :verify_if_customer_can_order_paper_sets, only: %w[edit update]
+  before_action :verify_editability, only: %w[edit update destroy]
 
   # GET /account/organizations/:organization_id/paper_set_orders
   def index
     @orders = @organization.orders.paper_sets.where(user_id: customer_ids)
     @orders = Order.search_for_collection(@orders, search_terms(params[:order_contains]))
     @orders_count = @orders.count
-    @orders = @orders.joins(:user).select("orders.*, users.code as user_code, users.company as company, users.id as user_id").order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
+    @orders = @orders.joins(:user).select('orders.*, users.code as user_code, users.company as company, users.id as user_id').order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
   end
 
   # GET /account/organizations/:organization_id/paper_set_orders/new?template=
@@ -30,7 +31,6 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order.paper_set_annual_end_date
   end
 
-
   # POST /account/organizations/:organization_id/paper_set_orders/create
   def create
     @order                  = Order.new(order_params)
@@ -45,7 +45,6 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/paper_set_orders/:id
   def edit
     @order.address                    ||= @customer.paper_set_shipping_address.try(:dup)
@@ -53,7 +52,6 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order.build_address              if @order.address.nil?
     @order.build_paper_return_address if @order.paper_return_address.nil?
   end
-
 
   # PUT /account/organizations/:organization_id/paper_set_orders/:id
   def update
@@ -67,7 +65,6 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     end
   end
 
-
   # DELETE /account/organizations/:organization_id/paper_set_orders/:id
   def destroy
     DestroyOrder.new(@order).execute
@@ -76,7 +73,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   end
 
   def select_for_orders
-    @customers = customers.active.joins(:subscription).where("period_duration != 3").where("is_mail_package_active = ? or is_annual_package_active = ?", true, true)
+    @customers = customers.active.joins(:subscription).where('period_duration != 3').where('is_mail_package_active = ? or is_annual_package_active = ?', true, true)
   end
 
   def order_multiple
@@ -116,7 +113,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   private
 
   def sort_column
-    if params[:sort].in? %w(created_at user_code company state)
+    if params[:sort].in? %w[created_at user_code company state]
       params[:sort]
     else
       'created_at'
@@ -124,9 +121,8 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   end
   helper_method :sort_column
 
-
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'
@@ -153,7 +149,9 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   def verify_if_customer_can_order_paper_sets
     authorized = true
     authorized = false unless @customer.active?
-    authorized = false unless @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
+    unless @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
+      authorized = false
+    end
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_paper_set_orders_path(@organization)
@@ -179,26 +177,26 @@ class Account::PaperSetOrdersController < Account::OrganizationController
       paper_return_address_attributes: address_attributes
     ]
 
-    attributes << :type if action_name.in?(%w(new create))
+    attributes << :type if action_name.in?(%w[new create])
     params.require(:order).permit(*attributes)
   end
 
   def address_attributes
-    [
-      :first_name,
-      :last_name,
-      :email,
-      :phone,
-      :company,
-      :company_number,
-      :address_1,
-      :address_2,
-      :city,
-      :zip,
-      :building,
-      :place_called_or_postal_box,
-      :door_code,
-      :other
+    %i[
+      first_name
+      last_name
+      email
+      phone
+      company
+      company_number
+      address_1
+      address_2
+      city
+      zip
+      building
+      place_called_or_postal_box
+      door_code
+      other
     ]
   end
 
@@ -216,7 +214,6 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     address.save
   end
 
-
   def copy_back_address
     copy_back_paper_return_address
 
@@ -232,5 +229,4 @@ class Account::PaperSetOrdersController < Account::OrganizationController
 
     address.save
   end
-
 end

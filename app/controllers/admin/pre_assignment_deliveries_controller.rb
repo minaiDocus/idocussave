@@ -1,14 +1,15 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::PreAssignmentDeliveriesController < Admin::AdminController
   # GET /admin/pre_assignment_deliveries
   def index
     case params[:software]
-      when 'ibiza'
-        ibiza_deliveries
-      when 'exact_online'
-        exact_online_deliveries
-      else
-        ibiza_deliveries
+    when 'ibiza'
+      ibiza_deliveries
+    when 'exact_online'
+      exact_online_deliveries
+    else
+      ibiza_deliveries
     end
 
     @pre_assignment_deliveries_count = @pre_assignment_deliveries.count
@@ -16,14 +17,12 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
     @pre_assignment_deliveries = @pre_assignment_deliveries.page(params[:page]).per(params[:per_page])
   end
 
-
   # GET /admin/pre_assignment_deliveries/:id
   def show
     @delivery = PreAssignmentDelivery.find params[:id]
   end
 
   private
-
 
   def ibiza_deliveries
     @pre_assignment_deliveries_software = 'Ibiza'

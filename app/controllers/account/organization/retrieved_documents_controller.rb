@@ -1,15 +1,16 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::RetrievedDocumentsController < Account::Organization::RetrieverController
-  before_action :load_document, except: %w(index select validate)
+  before_action :load_document, except: %w[index select validate]
 
   def index
     @documents = TempDocument.search_for_collection(
-        @customer.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
-      )
-      .includes(:retriever, :piece)
-      .order(order_param)
-      .page(params[:page])
-      .per(params[:per_page])
+      @customer.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
+    )
+                             .includes(:retriever, :piece)
+                             .order(order_param)
+                             .page(params[:page])
+                             .per(params[:per_page])
   end
 
   def show
@@ -35,13 +36,13 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 
   def select
     @documents = TempDocument.search_for_collection(
-        @customer.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
-      )
-      .wait_selection
-      .includes(:retriever, :piece)
-      .order(order_param)
-      .page(params[:page])
-      .per(params[:per_page])
+      @customer.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
+    )
+                             .wait_selection
+                             .includes(:retriever, :piece)
+                             .order(order_param)
+                             .page(params[:page])
+                             .per(params[:per_page])
 
     if params[:document_contains].try(:[], :retriever_id).present?
       @retriever = @customer.retrievers.find(params[:document_contains][:retriever_id])
@@ -69,14 +70,14 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
     redirect_to select_account_organization_customer_retrieved_documents_path(@organization, @customer, document_contains: params[:document_contains])
   end
 
-private
+  private
 
   def load_document
     @document = @customer.temp_documents.retrieved.find(params[:id])
   end
 
   def sort_column
-    if params[:sort].in? %w(created_at retriever_id date name pages_number amount)
+    if params[:sort].in? %w[created_at retriever_id date name pages_number amount]
       params[:sort]
     else
       'created_at'
@@ -85,7 +86,7 @@ private
   helper_method :sort_column
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'
@@ -94,7 +95,7 @@ private
   helper_method :sort_direction
 
   def order_param
-    if sort_column.in?(%w(date name amount))
+    if sort_column.in?(%w[date name amount])
       "temp_document_metadata.#{sort_column} #{sort_direction}"
     else
       { sort_column => sort_direction }

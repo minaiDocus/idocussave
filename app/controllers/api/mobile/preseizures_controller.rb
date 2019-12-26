@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::PreseizuresController < MobileApiController
   respond_to :json
 
@@ -6,43 +8,47 @@ class Api::Mobile::PreseizuresController < MobileApiController
 
     unit = preseizure.try(:unit) || 'EUR'
     preseizure_entries = preseizure.entries
-    pre_tax_amount = preseizure_entries.select{ |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
-    
+    pre_tax_amount = preseizure_entries.select { |entry| entry.account.type == 2 }.try(:first).try(:amount) || 0
+
     analytics = preseizure.analytic_reference
     data_analytics = []
-    if analytics 
+    if analytics
       3.times do |i|
         j = i + 1
         references = analytics.send("a#{j}_references")
         name       = analytics.send("a#{j}_name")
-        if references.present?
-          references = JSON.parse(references)
-          references.each do |ref|
-            data_analytics << { name: name, ventilation: ref['ventilation'], axis1: ref['axis1'], axis2: ref['axis2'], axis3: ref['axis3'] } if name.present? && ref['ventilation'].present? && (ref['axis1'].present? || ref['axis2'].present? || ref['axis3'].present?)
-          end
+        next unless references.present?
+
+        references = JSON.parse(references)
+        references.each do |ref|
+          if name.present? && ref['ventilation'].present? && (ref['axis1'].present? || ref['axis2'].present? || ref['axis3'].present?)
+            data_analytics << { name: name, ventilation: ref['ventilation'], axis1: ref['axis1'], axis2: ref['axis2'], axis3: ref['axis3'] }
+            end
         end
       end
     end
 
-    render json: { pre_tax_amount: pre_tax_amount, preseizure: preseizure, preseizure_entries: preseizure_entries, preseizure_accounts: preseizure.accounts, analytics: data_analytics, accountCompletion: accountCompletionOf(preseizure) }, status:200
+    render json: { pre_tax_amount: pre_tax_amount, preseizure: preseizure, preseizure_entries: preseizure_entries, preseizure_accounts: preseizure.accounts, analytics: data_analytics, accountCompletion: accountCompletionOf(preseizure) }, status: 200
   end
 
   def deliver
     if params[:ids].present?
       preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
     elsif params[:id]
-      if params[:type] == 'report'
-        reports = Pack::Report.where(id: params[:id])
-      else
-        reports = Pack.find(params[:id]).try(:reports)
-      end
+      reports = if params[:type] == 'report'
+                  Pack::Report.where(id: params[:id])
+                else
+                  Pack.find(params[:id]).try(:reports)
+                end
 
-      preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id)) if reports.present?
+      if reports.present?
+        preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(report_id: reports.collect(&:id))
+      end
     end
 
     if preseizures.present?
-      preseizures.group_by(&:report_id).each do |report_id, preseizures_by_report|
-        CreatePreAssignmentDeliveryService.new(preseizures_by_report, ['ibiza', 'exact_online']).execute
+      preseizures.group_by(&:report_id).each do |_report_id, preseizures_by_report|
+        CreatePreAssignmentDeliveryService.new(preseizures_by_report, %w[ibiza exact_online]).execute
       end
     end
 
@@ -55,7 +61,9 @@ class Api::Mobile::PreseizuresController < MobileApiController
 
     preseizures.each do |preseizure|
       preseizure.assign_attributes params[:datas].permit(:date, :deadline_date, :third_party, :operation_label, :piece_number, :amount, :currency, :conversion_rate, :observation)
-      preseizure.update_entries_amount if preseizure.conversion_rate_changed? || preseizure.amount_changed?
+      if preseizure.conversion_rate_changed? || preseizure.amount_changed?
+        preseizure.update_entries_amount
+      end
       error = preseizure.errors.full_messages unless preseizure.save
     end
 
@@ -70,7 +78,9 @@ class Api::Mobile::PreseizuresController < MobileApiController
     entry = Pack::Report::Preseizure::Entry.find params[:id]
 
     error = ''
-    error = entry.errors.full_messages unless entry.update_attributes params[:datas].permit(:type, :amount)
+    unless entry.update_attributes params[:datas].permit(:type, :amount)
+      error = entry.errors.full_messages
+    end
 
     if error.present?
       render json: { error: true, message: error }, status: 200
@@ -83,7 +93,9 @@ class Api::Mobile::PreseizuresController < MobileApiController
     account = Pack::Report::Preseizure::Account.find params[:id]
 
     error = ''
-    error = account.errors.full_messages unless account.update_attributes params[:datas].permit(:number, :lettering)
+    unless account.update_attributes params[:datas].permit(:number, :lettering)
+      error = account.errors.full_messages
+    end
 
     if error.present?
       render json: { error: true, message: error }, status: 200

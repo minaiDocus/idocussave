@@ -1,10 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::OrdersController < Account::OrganizationController
   before_action :load_customer
   before_action :verify_rights
   before_action :redirect_to_current_step
-  before_action :load_order, only: %w(edit update destroy)
-  before_action :verify_editability, only: %w(edit update destroy)
+  before_action :load_order, only: %w[edit update destroy]
+  before_action :verify_editability, only: %w[edit update destroy]
 
   # GET /account/organizations/:organization_id/customers/:customer_id/orders/new
   def new
@@ -40,7 +41,6 @@ class Account::OrdersController < Account::OrganizationController
     @order.paper_return_address ||= Address.new
   end
 
-
   # POST /account/organizations/:organization_id/customers/:customer_id/orders
   def create
     @order = Order.new(order_params)
@@ -49,7 +49,9 @@ class Account::OrdersController < Account::OrganizationController
       copy_back_address
 
       if @customer.configured?
-        flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
+        flash[:success] = "La commande de #{@order.dematbox_count} scanner#{if @order.dematbox_count > 1
+                                                                              's'
+                                                                            end} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
 
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
       else
@@ -74,11 +76,8 @@ class Account::OrdersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/orders/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/orders/:id
   def update
@@ -102,13 +101,14 @@ class Account::OrdersController < Account::OrganizationController
     end
   end
 
-
   # DELETE /account/organizations/:organization_id/customers/:customer_id/orders/:id
   def destroy
     DestroyOrder.new(@order).execute
 
     if @order.dematbox?
-      flash[:success] = "Votre commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
+      flash[:success] = "Votre commande de #{@order.dematbox_count} scanner#{if @order.dematbox_count > 1
+                                                                               's'
+                                                                             end} iDocus'Box d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
     else
       flash[:success] = "Votre commande de Kit envoi courrier d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
     end
@@ -128,15 +128,21 @@ class Account::OrdersController < Account::OrganizationController
     authorized = true
     authorized = false unless @user.leader? || @user.manage_customers
     authorized = false unless @customer.active?
-    authorized = false unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
+    unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
+      authorized = false
+    end
 
-    if action_name.in?(%w(new create))
+    if action_name.in?(%w[new create])
       if !params[:order].present?
         authorized = false
       else
-        authorized = false if params[:order][:type].in?(['dematbox', nil]) && !subscription.is_scan_box_package_active
+        if params[:order][:type].in?(['dematbox', nil]) && !subscription.is_scan_box_package_active
+          authorized = false
+        end
 
-        authorized = false if params[:order][:type] == 'paper_set' && !subscription.is_mail_package_active && !subscription.is_annual_package_active
+        if params[:order][:type] == 'paper_set' && !subscription.is_mail_package_active && !subscription.is_annual_package_active
+          authorized = false
+        end
       end
     end
     unless authorized
@@ -158,7 +164,6 @@ class Account::OrdersController < Account::OrganizationController
     end
   end
 
-
   def order_params
     case (@order.try(:type) || params[:order].try(:[], :type))
     when 'dematbox'
@@ -168,26 +173,24 @@ class Account::OrdersController < Account::OrganizationController
     end
   end
 
-
   def address_attributes
-    [
-      :first_name,
-      :last_name,
-      :email,
-      :phone,
-      :company,
-      :company_number,
-      :address_1,
-      :address_2,
-      :city,
-      :zip,
-      :building,
-      :place_called_or_postal_box,
-      :door_code,
-      :other
+    %i[
+      first_name
+      last_name
+      email
+      phone
+      company
+      company_number
+      address_1
+      address_2
+      city
+      zip
+      building
+      place_called_or_postal_box
+      door_code
+      other
     ]
   end
-
 
   def dematbox_order_params
     attributes = [
@@ -195,11 +198,10 @@ class Account::OrdersController < Account::OrganizationController
       address_attributes: address_attributes
     ]
 
-    attributes << :type if action_name.in?(%w(new create))
+    attributes << :type if action_name.in?(%w[new create])
 
     params.require(:order).permit(*attributes)
   end
-
 
   def paper_set_order_params
     attributes = [
@@ -212,11 +214,10 @@ class Account::OrdersController < Account::OrganizationController
       paper_return_address_attributes: address_attributes
     ]
 
-    attributes << :type if action_name.in?(%w(new create))
+    attributes << :type if action_name.in?(%w[new create])
 
     params.require(:order).permit(*attributes)
   end
-
 
   def copy_back_address
     copy_back_paper_return_address if @order.paper_set?
@@ -243,7 +244,6 @@ class Account::OrdersController < Account::OrganizationController
 
     address.save
   end
-
 
   def copy_back_paper_return_address
     address = @customer.paper_return_address

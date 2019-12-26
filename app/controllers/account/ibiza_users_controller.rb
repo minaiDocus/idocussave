@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::IbizaUsersController < Account::OrganizationController
   before_action :load_ibiza
   before_action :verify_rights
@@ -12,22 +13,20 @@ class Account::IbizaUsersController < Account::OrganizationController
       users = Rails.cache.read([:ibiza, @ibiza.id, :users])
     end
 
-    if users
-      result = users.map do |user|
-        { name: user.name, id: user.id }
-      end
-    else
-      result = []
-    end
+    result = if users
+               users.map do |user|
+                 { name: user.name, id: user.id }
+               end
+             else
+               []
+             end
 
     respond_to do |format|
       format.json { render json: result }
     end
   end
 
-
   private
-
 
   def verify_rights
     unless @ibiza.try(:configured?)
@@ -35,7 +34,6 @@ class Account::IbizaUsersController < Account::OrganizationController
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def load_ibiza
     @ibiza = @organization.ibiza

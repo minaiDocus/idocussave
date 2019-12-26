@@ -1,15 +1,16 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::RetrievedDocumentsController < Account::RetrieverController
-  before_action :load_document, only: %w(show piece)
+  before_action :load_document, only: %w[show piece]
 
   def index
     @documents = TempDocument.search_for_collection(
-        @account.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
-      )
-      .includes(:retriever, :piece)
-      .order(order_param)
-      .page(params[:page])
-      .per(params[:per_page])
+      @account.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
+    )
+                             .includes(:retriever, :piece)
+                             .order(order_param)
+                             .page(params[:page])
+                             .per(params[:per_page])
     @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
 
@@ -36,13 +37,13 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
 
   def select
     @documents = TempDocument.search_for_collection(
-        @account.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
-      )
-      .wait_selection
-      .includes(:retriever, :piece)
-      .order(order_param)
-      .page(params[:page])
-      .per(params[:per_page])
+      @account.temp_documents.retrieved.joins(:metadata2), search_terms(params[:document_contains])
+    )
+                             .wait_selection
+                             .includes(:retriever, :piece)
+                             .order(order_param)
+                             .page(params[:page])
+                             .per(params[:per_page])
 
     if params[:document_contains].try(:[], :retriever_id).present?
       @retriever = @account.retrievers.find(params[:document_contains][:retriever_id])
@@ -78,7 +79,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   end
 
   def sort_column
-    if params[:sort].in? %w(created_at retriever_id date name pages_number amount)
+    if params[:sort].in? %w[created_at retriever_id date name pages_number amount]
       params[:sort]
     else
       'created_at'
@@ -87,7 +88,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   helper_method :sort_column
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'
@@ -96,7 +97,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   helper_method :sort_direction
 
   def order_param
-    if sort_column.in?(%w(date name amount))
+    if sort_column.in?(%w[date name amount])
       "temp_document_metadata.#{sort_column} #{sort_direction}"
     else
       { sort_column => sort_direction }

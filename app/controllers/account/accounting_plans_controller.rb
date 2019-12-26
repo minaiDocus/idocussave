@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::AccountingPlansController < Account::OrganizationController
   before_action :load_customer
   before_action :verify_rights
@@ -7,14 +8,10 @@ class Account::AccountingPlansController < Account::OrganizationController
   before_action :load_accounting_plan
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
-  def show
-  end
-
+  def show; end
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/:id
   def update
@@ -27,14 +24,12 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import_model
   def import_model
     data = "NOM_TIERS;COMPTE_TIERS;COMPTE_CONTREPARTIE;CODE_TVA\n"
 
     send_data(data, type: 'plain/text', filename: "modèle d'import.csv")
   end
-
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import
   def import
@@ -59,7 +54,6 @@ class Account::AccountingPlansController < Account::OrganizationController
     redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
 
-
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_providers
   def destroy_providers
     @accounting_plan.providers.clear
@@ -70,7 +64,6 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
-
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_customers
   def destroy_customers
@@ -89,7 +82,6 @@ class Account::AccountingPlansController < Account::OrganizationController
     @customer = customers.find params[:customer_id]
   end
 
-
   def verify_if_customer_is_active
     if @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
@@ -98,11 +90,9 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
-
   def load_accounting_plan
     @accounting_plan = @customer.accounting_plan
   end
-
 
   def verify_rights
     unless (@user.leader? || @user.manage_customers) && !@customer.uses_api_softwares?
@@ -110,7 +100,6 @@ class Account::AccountingPlansController < Account::OrganizationController
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def accounting_plan_params
     attributes = {}

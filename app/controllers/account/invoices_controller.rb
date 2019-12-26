@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::InvoicesController < Account::OrganizationController
   def show
     @invoices = @organization.invoices.order(created_at: :desc).page(params[:page])
@@ -10,7 +12,7 @@ class Account::InvoicesController < Account::OrganizationController
     if invoice && invoice.organization == @organization && File.exist?(invoice.cloud_content_object.path) && authorized
       filename = File.basename invoice.cloud_content_object.path
       # type = invoice.content_content_type || 'application/pdf'
-      #find a way to get active storage mime type
+      # find a way to get active storage mime type
       type = 'application/pdf'
       send_file(invoice.cloud_content_object.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else

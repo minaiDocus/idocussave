@@ -1,13 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::FileSendingKitsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_file_sending_kit
 
-
   # GET /account/organizations/:organization_id/file_sending_kit/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/file_sending_kit
   def update
@@ -19,11 +17,8 @@ class Account::FileSendingKitsController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/file_sending_kit/select
-  def select
-  end
-
+  def select; end
 
   # POST /account/organizations/:organization_id/file_sending_kit/generate
   def generate
@@ -32,10 +27,11 @@ class Account::FileSendingKitsController < Account::OrganizationController
     @file_sending_kit.organization.customers.active.order(code: :asc).each do |client|
       value = begin
                 params[:users][client.id.to_s][:is_checked]
-              rescue
+              rescue StandardError
                 nil
               end
       next unless value == 'true'
+
       unless client.paper_set_shipping_address && client.paper_return_address
         without_shipping_address << client
       end
@@ -43,12 +39,18 @@ class Account::FileSendingKitsController < Account::OrganizationController
     end
 
     is_logo_present = true
-    is_logo_present = false unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
-    is_logo_present = false unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
-    is_logo_present = false unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
+    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
+      is_logo_present = false
+    end
+    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
+      is_logo_present = false
+    end
+    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
+      is_logo_present = false
+    end
 
     if without_shipping_address.count == 0 && is_logo_present
-      FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1' ? true : false)
+      FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1')
       flash[:notice] = 'Généré avec succès.'
     else
       flash[:error] = ''
@@ -60,32 +62,34 @@ class Account::FileSendingKitsController < Account::OrganizationController
       end
       unless is_logo_present
         flash[:error] << '</br></br>' if without_shipping_address.count != 0
-        flash[:error] << 'Logo central introuvable.</br>' unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
-        flash[:error] << 'Logo gauche introuvable.</br>' unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
-        flash[:error] << 'Logo droite introuvable.</br>' unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
+        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
+          flash[:error] << 'Logo central introuvable.</br>'
+        end
+        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
+          flash[:error] << 'Logo gauche introuvable.</br>'
+        end
+        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
+          flash[:error] << 'Logo droite introuvable.</br>'
+        end
       end
     end
     redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
   end
-
 
   # GET /account/organizations/:organization_id/file_sending_kit/folders
   def folders
     send_pdf('folders.pdf')
   end
 
-
   # GET /account/organizations/:organization_id/file_sending_kit/mails
   def mails
     send_pdf('mails.pdf')
   end
 
-
   # GET /account/organizations/:organization_id/file_sending_kit/customer_labels
   def customer_labels
     send_pdf('customer_labels.pdf')
   end
-
 
   # GET /account/organizations/:organization_id/file_sending_kit/workshop_labels
   def workshop_labels
@@ -101,11 +105,9 @@ class Account::FileSendingKitsController < Account::OrganizationController
     end
   end
 
-
   def load_file_sending_kit
     @file_sending_kit = @organization.find_or_create_file_sending_kit
   end
-
 
   def file_sending_kit_params
     params.require(:file_sending_kit).permit(
@@ -123,7 +125,6 @@ class Account::FileSendingKitsController < Account::OrganizationController
       :right_logo_width
     )
   end
-
 
   def send_pdf(filename)
     filepath = File.join([Rails.root, 'files', Rails.env, 'kit', filename])

@@ -1,12 +1,13 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Documents::UploadsController < Account::AccountController
   def create
     data = nil
-    if params[:file_code].present?
-      customer = accounts.active.find_by_code(params[:file_code])
-    else
-      customer = @user
-    end
+    customer = if params[:file_code].present?
+                 accounts.active.find_by_code(params[:file_code])
+               else
+                 @user
+               end
 
     if customer.try(:options).try(:is_upload_authorized)
       uploaded_document = UploadedDocument.new(params[:files][0].tempfile,

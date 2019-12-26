@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::ProfileHelper
   def ibiza_state(state)
     t('activerecord.models.ibiza.attributes.states.' + (state.presence || 'none'))
