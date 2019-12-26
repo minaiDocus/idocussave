@@ -9,7 +9,7 @@ module Admin::ReportingHelper
   end
 
   def periods_at(date, organization, user_ids)
-    periods = Period.where('user_id IN (?) OR organization_id = ?', user_ids, organization.id).where("start_date <= ? AND end_date >= ?", date, date)
+    periods = Period.includes(:billings).where('user_id IN (?) OR organization_id = ?', user_ids, organization.id).where("start_date <= ? AND end_date >= ?", date, date)
 
     [periods.where(is_centralized: true), periods.where(is_centralized: false)]
   end

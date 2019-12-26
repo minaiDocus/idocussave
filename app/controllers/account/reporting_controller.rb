@@ -4,7 +4,7 @@ class Account::ReportingController < Account::AccountController
     @year = Integer(params[:year]) rescue Time.now.year
 
     date = Date.parse("#{@year}-01-01")
-    periods = Period.where(user_id: account_ids).
+    periods = Period.includes(:billings, :user, :subscription).where(user_id: account_ids).
       where('start_date >= ? AND end_date <= ?', date, date.end_of_year).
       order(start_date: :asc)
     @periods_by_users = periods.group_by { |period| period.user.id }.each do |user, periods|

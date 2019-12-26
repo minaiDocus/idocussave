@@ -28,7 +28,7 @@ class Admin::ReportingController < Admin::AdminController
                 with_organization_info = true
               end
 
-              periods = Period.where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).
+              periods = Period.includes(:billings).where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).
                 where("start_date >= ? AND end_date <= ?", date, date.end_of_year).
                 order(start_date: :asc)
 

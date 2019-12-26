@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
 
     if current_user && current_user.is_admin
       if params[:user_code].present? || session[:user_code].present?
-        user = User.get_by_code(params[:user_code].presence || session[:user_code].presence)
+        user = User.includes(:options, :softwares, :organization).get_by_code(params[:user_code].presence || session[:user_code].presence)
         user ||= current_user
         prev_user_code = session[:user_code]
         session[:user_code] = if user == current_user
@@ -150,6 +150,10 @@ class ApplicationController < ActionController::Base
 
   def format_price(price_in_cents)
     format_price_00(price_in_cents).gsub(/,00/, '')
+  end
+
+  def current_user
+    @current_user ||= super && User.includes(:options, :softwares, :organization).find(@current_user.id)
   end
 
   protected
