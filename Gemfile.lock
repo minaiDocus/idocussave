@@ -90,6 +90,9 @@ GEM
       railties (>= 3.0)
     bson (4.6.0)
     builder (3.2.3)
+    bullet (6.0.2)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     byebug (11.0.1)
     cairo (1.16.4)
       native-package-installer (>= 1.0.3)
@@ -594,6 +597,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
+    uniform_notifier (1.13.0)
     validate_url (1.0.8)
       activemodel (>= 3.0.0)
       public_suffix
@@ -633,6 +637,7 @@ DEPENDENCIES
   bootstrap
   bootstrap-datepicker-rails
   bson
+  bullet
   byebug
   capistrano
   capistrano-rails

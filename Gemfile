@@ -180,6 +180,7 @@ group :development, :test do
   gem 'libnotify'
   gem 'rack-mini-profiler'
   gem 'rails-i18n'
+  gem 'bullet'
 end
 
 group :test do
