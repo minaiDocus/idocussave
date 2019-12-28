@@ -26,7 +26,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/slimpay.yml',
   'config/pdftk.yml',
   'config/smtp.yml',
-  'config/ftp_delivery.yml'
+  'config/ftp_delivery.yml',
+  'config/storage.yml'
 )
 
 set :slack_url, 'https://hooks.slack.com/services/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'
