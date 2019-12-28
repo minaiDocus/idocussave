@@ -8,4 +8,4 @@ set :branch, 'master'
 
 set :rvm_ruby_version, '2.6.5'
 
-server 'legacy.idocus.com', user: 'deploy', roles: %w{app db web}
+server 'legacy.idocus.com', user: 'idocus', roles: %w{app db web}
