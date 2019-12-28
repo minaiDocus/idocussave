@@ -119,8 +119,6 @@ class Document < ApplicationRecord
 
     base_file_name = document.cloud_content.filename.to_s.gsub('.pdf', '')
 
-    document.is_thumb_generated = true
-
     image = MiniMagick::Image.read(document.cloud_content.download).format('png').resize('92x133')
     
 

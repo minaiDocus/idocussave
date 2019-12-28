@@ -165,8 +165,6 @@ class Pack::Piece < ApplicationRecord
 
     base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
 
-    piece.is_thumb_generated = true
-
     image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
 
     piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
