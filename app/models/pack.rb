@@ -31,6 +31,7 @@ class Pack < ApplicationRecord
   has_many :preseizures, through: :reports
 
   has_one_attached :cloud_content
+  has_one_attached :cloud_archive
 
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pack/:id/download'

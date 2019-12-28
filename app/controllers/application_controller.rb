@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   if %w[staging sandbox production].include?(Rails.env)
     before_action :redirect_to_https
   end
-  around_action :catch_error if %w[sandbox production test].include?(Rails.env)
+  #around_action :catch_error if %w[sandbox production test].include?(Rails.env)
   around_action :log_visit
 
   def after_sign_in_path_for(resource_or_scope)
