@@ -4,7 +4,9 @@ class CreateDematboxDocument
 
 
   def initialize(args)
-    @params = Hash[args.map { |k, v| [k.to_s.underscore, v] }]
+    @params = args.permit!
+
+    raise @params.inspect
 
     @doc_id          = @params['doc_id']
     @service_id      = @params['service_id']
