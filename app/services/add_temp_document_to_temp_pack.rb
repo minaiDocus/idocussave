@@ -19,7 +19,7 @@ class AddTempDocumentToTempPack
     if options[:delivery_type] != 'retriever' || !temp_document.persisted?
 
       temp_document.user                 = user
-      temp_document.content              = file
+      # temp_document.content              = file
       temp_document.original_fingerprint = options[:original_fingerprint] if options[:original_fingerprint]
       temp_document.position             = temp_pack.next_document_position unless temp_document.position
       temp_document.temp_pack            = temp_pack
@@ -40,7 +40,7 @@ class AddTempDocumentToTempPack
       temp_document.retriever_service_name = options[:retriever_service_name] if options[:retriever_service_name]
       temp_document.retriever_name         = options[:retriever_name]         if options[:retriever_name]
 
-      temp_document.save
+      temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path)) if temp_document.save
 
       if user.uses_ibiza_analytics?
         if options[:analytic].present?
@@ -62,7 +62,7 @@ class AddTempDocumentToTempPack
       end
 
       if options[:is_content_file_valid]
-        temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
+        temp_document.pages_number = DocumentTools.pages_number(temp_document.cloud_content_object.path)
 
         temp_document.save
 
@@ -71,7 +71,7 @@ class AddTempDocumentToTempPack
         else
           if temp_document.from_ibizabox? && options[:wait_selection]
             temp_document.wait_selection
-          elsif DocumentTools.need_ocr?(temp_document.content.path)
+          elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
             temp_document.ocr_needed
             NotifyDocumentBeingProcessed.new(temp_document).execute
           elsif temp_pack.is_bundle_needed? && !temp_document.from_ibizabox? && (temp_document.scanned? || temp_document.pages_number > 2)

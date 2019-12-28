@@ -1,13 +1,18 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::ReportingController < Account::AccountController
   def show
-    @year = Integer(params[:year]) rescue Time.now.year
+    @year = begin
+              Integer(params[:year])
+            rescue StandardError
+              Time.now.year
+            end
 
     date = Date.parse("#{@year}-01-01")
-    periods = Period.where(user_id: account_ids).
-      where('start_date >= ? AND end_date <= ?', date, date.end_of_year).
-      order(start_date: :asc)
-    @periods_by_users = periods.group_by { |period| period.user.id }.each do |user, periods|
+    periods = Period.includes(:billings, :user, :subscription).where(user_id: account_ids)
+                    .where('start_date >= ? AND end_date <= ?', date, date.end_of_year)
+                    .order(start_date: :asc)
+    @periods_by_users = periods.group_by { |period| period.user.id }.each do |_user, periods|
       periods.sort_by!(&:start_date)
     end
 

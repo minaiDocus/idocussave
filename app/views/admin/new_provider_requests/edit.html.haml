@@ -1,14 +1,16 @@
 #new_provider_request.edit
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid
-    .span12.panel
+  %br
+
+  .row
+    .col-12.panel
       %h3 Raison du rejet
 
-  .row-fluid
-    .span12.panel
+  .row
+    .col-12.panel
       = simple_form_for @new_provider_request, url: reject_admin_new_provider_request_path(@new_provider_request), html: { class: 'form form-horizontal margin0 padding1top' } do |f|
         = f.input :message, as: 'text', input_html: {  :style =>"width:100%" }
         .form-actions.margin0bottom

@@ -49,7 +49,6 @@ class EmailedDocument
         rescue => e
           is_ok = false
           mail.skip_deletion
-          Airbrake.notify(e)
         end
       end
     rescue SocketError => e
@@ -94,7 +93,8 @@ class EmailedDocument
           f.write mail.to_s
         end
 
-        email.update_attribute(:original_content, File.open(file_path))
+        # email.update_attribute(:original_content, File.open(file_path))
+        email.cloud_original_content_object.attach(File.open(file_path), "#{email.id}.eml")
       end
     end
 
@@ -147,7 +147,6 @@ class EmailedDocument
           email.update_attribute(:is_error_notified, true)
         end
         if rescue_error
-          Airbrake.notify e
           email
         else
           raise e

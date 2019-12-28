@@ -1,32 +1,32 @@
 # -*- encoding : utf-8 -*-
-FactoryGirl.define do
+FactoryBot.define do
   ####################
   # Global factories #
   ####################
     factory :user do
       sequence(:email) { |n| "user#{n}@example.com" }
-      password '123456'
+      password { '1234567' }
       sequence(:first_name) { |n| "User#{n}" }
-      last_name 'TEST'
-      company 'TeSt'
+      last_name { 'Test' }
+      company { 'Test' }
       sequence(:code) { |n| is_prescriber ? nil : "TS#{'%04d' % n}" }
       sequence(:email_code) { |n| "%08d" % n }
-      factory :admin do
-        is_admin true
-        is_prescriber true
+      trait :admin do
+        is_admin { true }
+        is_prescriber { true }
       end
-      factory :prescriber do
-        is_prescriber true
+      trait :prescriber do
+        is_prescriber { true }
       end
-      factory :fake_prescriber do
-        is_prescriber true
-        is_fake_prescriber true
+      trait :fake_prescriber do
+        is_prescriber { true }
+        is_fake_prescriber { true }
       end
-      factory :operator do
-        is_operator true
+      trait :operator do
+        is_operator { true }
       end
-      factory :guest do
-        is_guest true
+      trait :guest do
+        is_guest { true }
       end
     end
 
@@ -37,21 +37,21 @@ FactoryGirl.define do
 
     factory :account_book_type do
       sequence(:name) { |n| "J#{n}" }
-      description '(description)'
-      factory :journal_with_preassignment do
-        entry_type 2
-        vat_account '123'
-        anomaly_account '123'
-        account_number '123'
-        charge_account '123'
+      description { '(description)' }
+      trait :journal_with_preassignment do
+        entry_type { 2 }
+        vat_account { '123' }
+        anomaly_account { '123' }
+        account_number { '123' }
+        charge_account { '123' }
       end
     end
 
     factory :period do
-      start_date "2018-04-01"
-      end_date "2018-04-30"
-      duration 1
-      subscription_id 1
+      start_date { "2018-04-01" }
+      end_date { "2018-04-30" }
+      duration { 1 }
+      subscription_id { 1 }
     end
 
   #######################
@@ -60,55 +60,70 @@ FactoryGirl.define do
 
     factory :period_document do
       sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
+      #pack_id { 1 }
+      pack
+      user_id { 1 }
+      organization_id { 1 }
+      period_id { 1 }
     end
 
     factory :pack do
-      name 'AC0000 AC 201812 ALL'
-      original_document_id "1550058"
-      content_url "/account/documents/1550058/download/original?15238"
-      pages_count 2
-      is_fully_processed true
+      #name { 'AC0000 AC 201812 ALL' }
+      sequence(:name) { |n| "AC0000 AC 201812 ALL#{n}" }
+      original_document_id { "1550058" }
+      content_url { "/account/documents/1550058/download/original?15238" }
+      pages_count { 2 }
+      is_fully_processed { true }
+      owner_id { 1 }
+      organization_id { 1 }
     end
 
     factory :report, :class => Pack::Report do
       organization factory: :organization
       user factory: :user
-      type 'FLUX'
-      name 'AC0000 AC 201812'
+      type { 'FLUX' }
+      name { 'AC0000 AC 201812' }
     end
 
     factory :piece, :class => Pack::Piece  do
       sequence(:name)   { |n| "AC0000 AC 201812 0#{n}" }
       sequence(:number) { |n| "#{'%04d' % n}" }
-      is_a_cover false
-      origin "upload"
+      is_a_cover { false }
+      origin { "upload" }
       sequence(:position) {|n| n + 1 }
-      content_file_name "test.pdf"
-      content_content_type "application/pdf"
-      content_file_size 33928
-      content_updated_at Time.now
-      content_fingerprint "0ac66f058d5eaddbe233670cf214780b"
+      content_file_name { "test.pdf" }
+      content_content_type { "application/pdf" }
+      content_file_size { 33928 }
+      content_updated_at { Time.now }
+      content_fingerprint { "0ac66f058d5eaddbe233670cf214780b" }
+      user_id { 1 }
+      pack_id { 1 }
+      organization_id { 1 }
     end
 
     factory :preseizure, :class => Pack::Report::Preseizure do
-      piece         factory: :piece
-      user          factory: :user
-      organization  factory: :organization
-      piece_number  12345
-      amount        500.25
-      date          { Time.now }
-      position      1
+      piece_id         { 1 }
+      user_id          { 1 }
+      organization_id  { 1 }
+      report_id        { 1 }
+      piece_number     { 12345 }
+      amount           { 500.25 }
+      date             { Time.now }
+      position         { 1 }
     end
 
     factory :account, :class => Pack::Report::Preseizure::Account do
-      type 2
+      type { 2 }
       sequence(:number) { |n| "ABCD#{'%04d' % n}" }
+      preseizure_id { 1 }
     end
 
     factory :entry, :class => Pack::Report::Preseizure::Entry do
-      type 1
+      type { 1 }
       sequence(:number) { |n| "ABCD#{'%04d' % n}" }
-      amount 500.25
+      amount { 500.25 }
+      account_id { 1 }
+      preseizure_id { 1 }
     end
 
   ######################
@@ -118,16 +133,18 @@ FactoryGirl.define do
     factory :file_sending_kit do
       sequence(:title) { |n| "Kit #{n}"}
       sequence(:position) { |n| n }
-      logo_path "404.png"
-      left_logo_path "404.png"
-      right_logo_path "404.png"
+      logo_path { "404.png" }
+      left_logo_path { "404.png" }
+      right_logo_path { "404.png" }
+      organization_id { 1 }
     end
 
     factory :knowings do
-      username 'test@example.com'
-      password 'secret'
-      url 'http://knowings.fr'
-      is_active true
+      username { 'test@example.com' }
+      password { 'secret' }
+      url { 'http://knowings.fr' }
+      is_active { true }
+      organization_id { 1 }
     end
 
   #####################################
@@ -139,8 +156,10 @@ FactoryGirl.define do
       sequence(:bank_name) { |n| "test_#{n}" }
       sequence(:name) { |n| "test_#{n}" }
       sequence(:number) { |n| "#{'%04d' % n}" }
-      type_name "test"
-      user factory: :user
+      type_name { "test" }
+      user_id { 1 }
+      #retriever_id { 1 }
+      retriever
     end
 
     factory :retriever do
@@ -148,12 +167,13 @@ FactoryGirl.define do
       sequence(:name) { |n| "test_#{n}" }
       sequence(:service_name) { |n| "test_#{n}" }
       sync_at { Time.now }
-      state 'ready'
-      budgea_state 'successful'
-      journal_name 'AC'
+      state { 'ready' }
+      budgea_state { 'successful' }
+      journal_name { 'AC' }
       journal factory: :account_book_type
-      capabilities ['bank', 'provider']
-      budgea_connector_id 40
+      capabilities { ['bank', 'provider'] }
+      budgea_connector_id { 40 }
+      user_id { 1 }
     end
 
     # factory :connector do

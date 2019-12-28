@@ -2,10 +2,7 @@
 class DocumentTools
   def self.system(command)
     success = nil
-
-    silence_stream(STDOUT) do
-      success = POSIX::Spawn.system(command)
-    end
+    success = POSIX::Spawn.system(command)
 
     success
   end
@@ -13,10 +10,7 @@ class DocumentTools
 
   def self.pages_number(file_path)
     document = nil
-
-    silence_stream(STDERR) do
-      document = Poppler::Document.new(file_path)
-    end
+    document = Poppler::Document.new(file_path)
 
     document.pages.count
   end
@@ -55,10 +49,7 @@ class DocumentTools
     if completed? file_path, strict
       begin
         document = nil
-
-        silence_stream(STDERR) do
-          document = Poppler::Document.new(file_path)
-        end
+        document = Poppler::Document.new(file_path)
 
         document.permissions.full?
       rescue GLib::Error
@@ -74,10 +65,7 @@ class DocumentTools
     is_ok = true
 
     begin
-      silence_stream(STDERR) do
-        Poppler::Document.new(file_path)
-      end
-
+      Poppler::Document.new(file_path)
     rescue GLib::Error
       is_ok = false
     end
@@ -98,11 +86,8 @@ class DocumentTools
 
 
   def self.printable?(file_path)
-    silence_stream(STDERR) do
-      document = Poppler::Document.new(file_path)
-
-      document.permissions.ok_to_print?
-    end
+    document = Poppler::Document.new(file_path)
+    document.permissions.ok_to_print?
 
     rescue GLib::Error
       false
@@ -110,11 +95,8 @@ class DocumentTools
 
 
   def self.is_printable_only?(file_path)
-    silence_stream(STDERR) do
-      document = Poppler::Document.new(file_path)
-
-      document.permissions.ok_to_print? && !document.permissions.full?
-    end
+    document = Poppler::Document.new(file_path)
+    document.permissions.ok_to_print? && !document.permissions.full?
 
     rescue GLib::Error
       nil

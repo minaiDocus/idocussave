@@ -1,41 +1,43 @@
 #groups
-  .row-fluid.margin1bottom
-    .span12.box
-      .pull-left
-        %h3 Liste des groupes (#{@groups.total_count})
-      .pull-right
-        - if @user.leader? && @organization.is_active
-          = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
-  .row-fluid
-    .span9.box
-      = render partial: 'shared/list_options', locals: { collection: @groups }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des groupes 
+            %span.badge.badge-info= @groups.total_count
+        .float-right
+          - if @user.leader? && @organization.is_active
+            = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
+
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @groups }
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th= sortable :name, t('activerecord.models.group.attributes.name')
+              %th= t('activerecord.models.group.attributes.collaborators_count')
+              %th= t('activerecord.models.group.attributes.customers_count')
+              %th= t('actions.name')
+          %tbody.retractable.slidedown
+            - @groups.each do |group|
               %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th= sortable :name, t('activerecord.models.group.attributes.name')
-                %th= t('activerecord.models.group.attributes.collaborators_count')
-                %th= t('activerecord.models.group.attributes.customers_count')
-                %th.last= t('actions.name')
-            %tbody
-              - @groups.each do |group|
-                %tr
-                  %td= l(group.created_at)
-                  %td= link_to group.name, account_organization_group_path(@organization, group)
-                  %td= group.collaborators.count
-                  %td= group.customers.count
-                  %td.last
-                    - if @organization.is_active
-                      - if @user.leader? || @user.manage_groups
-                        = icon_link_to edit_account_organization_group_path(@organization, group), { icon: 'edit' }, { class: 'btn btn-mini' }
-                      - if @user.leader?
-                        - if group.is_dropbox_authorized
-                          - confirm = "Attention ! la suppression de ce groupe entraîne l'arrêt du déversement automatique de ses documents dans votre dropbox. Voulez-vous continuer ?"
-                        - else
-                          - confirm = 'Etês vous sûr ?'
-                        = icon_link_to account_organization_group_path(@organization, group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: confirm } }
-      = render partial: 'shared/list_options', locals: { collection: @groups }
-    .span3.box
-      = render partial: 'sidebar'
+                %td= l(group.created_at)
+                %td= link_to group.name, account_organization_group_path(@organization, group)
+                %td= group.collaborators.count
+                %td= group.customers.count
+                %td
+                  - if @organization.is_active
+                    - if @user.leader? || @user.manage_groups
+                      = link_to 'editer', edit_account_organization_group_path(@organization, group), class: 'btn btn-light'
+                    - if @user.leader?
+                      - if group.is_dropbox_authorized
+                        - confirm = "Attention ! la suppression de ce groupe entraîne l'arrêt du déversement automatique de ses documents dans votre dropbox. Voulez-vous continuer ?"
+                      - else
+                        - confirm = 'Etês vous sûr ?'
+                      = link_to 'supprimer', account_organization_group_path(@organization, group), class: 'btn btn-light', data: { method: 'DELETE', confirm: confirm }
+        = render partial: 'shared/list_options', locals: { collection: @groups }
+    = render partial: 'sidebar'

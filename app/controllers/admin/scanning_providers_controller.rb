@@ -1,18 +1,17 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::ScanningProvidersController < Admin::AdminController
-  before_filter :load_scanning_provider, except: %w(index new create)
+  before_action :load_scanning_provider, except: %w[index new create]
 
   # GET /admin/scanning_providers
   def index
     @scanning_providers = ScanningProvider.all.page(params[:page]).per(params[:per_page])
   end
 
-
   # GET /admin/scanning_providers/new
   def new
     @scanning_provider = ScanningProvider.new
   end
-
 
   # POST /admin/scanning_providers
   def create
@@ -27,11 +26,8 @@ class Admin::ScanningProvidersController < Admin::AdminController
     end
   end
 
-
   # GET /admin/scanning_providers/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /admin/scanning_providers/:id
   def update
@@ -45,7 +41,6 @@ class Admin::ScanningProvidersController < Admin::AdminController
     end
   end
 
-
   # DELETE /admin/scanning_providers/:id
   def destroy
     @scanning_provider.destroy
@@ -55,11 +50,9 @@ class Admin::ScanningProvidersController < Admin::AdminController
 
   private
 
-
   def load_scanning_provider
     @scanning_provider = ScanningProvider.find(params[:id])
   end
-
 
   def scanning_provider_params
     params.require(:scanning_provider).permit(

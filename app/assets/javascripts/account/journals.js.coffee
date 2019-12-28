@@ -1,35 +1,35 @@
 update_form = ->
   if parseInt($("#account_book_type_entry_type").val()) > 1
-    $('.pre-assignment-attributes').show()
+    $('.pre-assignment-attributes').fadeIn('slow')
   else
-    $('.pre-assignment-attributes').hide()
+    $('.pre-assignment-attributes').fadeOut('fast')
 
 create_prev_button = (i) ->
   step_name = 'step' + i
-  $('#' + step_name + 'commands').append("<a href='#' id='" + step_name + "Prev' class='prev'>< Précédent</a>")
+  $('#' + step_name + 'commands').append("<a href='#' id='" + step_name + "Prev' class='prev btn btn-secondary'>< Précédent</a>")
 
   $('#' + step_name + 'Prev').bind 'click', (e) ->
     $('#' + step_name).hide()
-    $('#step' + (i - 1)).show()
-    $('.form-actions').hide()
+    $('#step' + (i - 1)).fadeIn('slow')
+    $('.form-actions input[type="submit"]').attr('disabled', 'disabled');
 
 create_next_button = (i, count) ->
   step_name = 'step' + i;
-  $('#' + step_name + 'commands').append("<a href='#' id='" + step_name + "Next' class='next'>Suivant ></a>")
+  $('#' + step_name + 'commands').append("<a href='#' id='" + step_name + "Next' class='next btn btn-secondary'>Suivant ></a>")
 
   $('#' + step_name + "Next").bind 'click', (e) ->
     $('#' + step_name).hide()
-    $('#step' + (i + 1)).show()
+    $('#step' + (i + 1)).fadeIn('slow')
     if (i + 2 == count)
-      $('.form-actions').show()
+      $('.form-actions input[type="submit"]').removeAttr('disabled');
 
 form_to_wizard = ->
-  steps = $('form').find('fieldset')
+  steps = $('form').find('.step')
   count = steps.size()
   if (count == 1)
-    $('.form-actions').show()
+    $('.form-actions input[type="submit"]').removeAttr('disabled');
   else
-    $('.form-actions').hide()
+    $('.form-actions input[type="submit"]').attr('disabled', 'disabled');
     steps.each (i) ->
       $(this).wrap("<div id='step" + i + "'></div>")
       $(this).append("<div id='step" + i + "commands' class='commands'></div>")
@@ -44,7 +44,7 @@ form_to_wizard = ->
         create_prev_button(i)
         create_next_button(i, count)
 
-      $(this).show()
+      $(this).fadeIn('slow')
 
 jQuery ->
   if $('#journal form').length > 0

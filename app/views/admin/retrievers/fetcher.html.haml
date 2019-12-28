@@ -1,46 +1,46 @@
 #retrievers
-  .row-fluid
-    .span12
-      = render 'layouts/admin/retriever/navigation'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid
-    .span12
+  .card
+    .card-header
       %h3 Récupération de transactions utilisateur Budgea
 
-  .row-fluid
-    .span12
-      .filter.panel.margin1top
-        = form_tag fetcher_admin_retrievers_path, method: :post, class: 'form form-vertical margin0bottom' do
-          = hidden_field_tag :post_action_budgea_fetcher, true
+    .card-body
+      = form_tag fetcher_admin_retrievers_path, method: :post, class: 'form form-vertical margin0bottom' do
+        = hidden_field_tag :post_action_budgea_fetcher, true
 
-          %table.table.table-condensed.margin0bottom
-            %thead
-              %tr
-                %th.field.text_field= label_tag 'budgea_fetcher_contains[user_code]', 'Code client'
-                %th.field.text_field= label_tag 'budgea_fetcher_contains[account_ids]', 'Liste compte bancaire (IDs)'
-                %th.field.date_field= label_tag 'budgea_fetcher_contains[min_date]', 'Date de début'
-                %th.field.date_field= label_tag 'budgea_fetcher_contains[max_date]', 'Date de fin'
-                %th
-            %tbody
-              %tr
-                %td.field.text_field= text_field_tag 'budgea_fetcher_contains[user_code]', (params[:budgea_fetcher_contains][:user_code] rescue '')
-                %td.field.text_field
-                  = text_field_tag 'budgea_fetcher_contains[account_ids]', (params[:budgea_fetcher_contains][:account_ids] rescue ''), style: 'width: 350px'
-                  %p.help-block ID(s) de compte séparés par virgule (exemple: 123456, 987654)
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'budgea_fetcher_contains[min_date]', (params[:budgea_fetcher_contains][:min_date] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'budgea_fetcher_contains[max_date]', (params[:budgea_fetcher_contains][:max_date] rescue '')
-                %td
-                  = submit_tag 'Lancer la récupération', name: nil, class: 'btn btn-primary'
+        %table.table.table-condensed.margin0bottom
+          %thead
+            %tr
+              %th.field.text_field= label_tag 'budgea_fetcher_contains[user_code]', 'Code client'
+              %th.field.text_field= label_tag 'budgea_fetcher_contains[account_ids]', 'Liste compte bancaire (IDs)'
+              %th.field.date_field= label_tag 'budgea_fetcher_contains[min_date]', 'Date de début'
+              %th.field.date_field= label_tag 'budgea_fetcher_contains[max_date]', 'Date de fin'
+              %th
+          %tbody
+            %tr
+              %td.field.text_field
+                = text_field_tag 'budgea_fetcher_contains[user_code]', (params[:budgea_fetcher_contains][:user_code] rescue ''), class: 'form-control'
+              %td.field.text_field
+                = text_field_tag 'budgea_fetcher_contains[account_ids]', (params[:budgea_fetcher_contains][:account_ids] rescue ''), class: 'form-control'
+                %p.help-block ID(s) de compte séparés par virgule (exemple: 123456, 987654)
+              %td.field.date_field
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text= glyphicon('calendar')
+                  = text_field_tag 'budgea_fetcher_contains[min_date]', (params[:budgea_fetcher_contains][:min_date] rescue ''), class: 'form-control date datepicker'
+              %td.field.date_field
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text= glyphicon('calendar')
+                  = text_field_tag 'budgea_fetcher_contains[max_date]', (params[:budgea_fetcher_contains][:max_date] rescue ''), class: 'form-control date datepicker'
+              %td
+                = submit_tag 'Lancer la récupération', name: nil, class: 'btn btn-primary'
 
-  - if @message
-    .row-fluid
-      .span12{style: "background-color:#000; padding:12px; color:#FFF!important"}
-        = simple_format(@message) || ''
+    - if @message
+      .row
+        .col-md-12{style: "background-color:#000; padding:12px; color:#FFF!important"}
+          = simple_format(@message) || ''

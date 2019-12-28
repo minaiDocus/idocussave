@@ -1,69 +1,87 @@
 #accounting_plan
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Plan comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        .pull-left
-          %h3 Plan comptable pour le dossier : #{@customer}
-        .pull-right
-          = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .row
+    .col-md-12
+      .box
+        - if @customer.configured?
+          %h3
+            Plan comptable du client : 
+            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
+        - else
+          .float-left
+            %h3
+              Plan comptable pour le dossier : 
+              %span.text-info.fs-origin= @customer
+          .float-right
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+            = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
-  .row-fluid
-    .span6.box
-      .pull-left.margin1bottom
-        %h3 Fournisseurs
-      .pull-left.margin1bottom.margin1left
-        = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
-      .pull-left.margin1bottom
-        = link_to icon_destroy, destroy_providers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les fournisseurs', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
-      .pull-right.alignright.margin1bottom
-        = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form form-horizontal margin0bottom' do
-          = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
-          = submit_tag 'Importer', class: 'btn btn-primary'
-        = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_customer_accounting_plan_path(@organization, @customer)
-      %table.table.table-striped.table-condensed.table-bordered.margin0bottom
-        %thead
-          %tr
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
-            %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
-            %th= t('activerecord.models.accounting_plan_item.attributes.code')
-        %tbody
-          - @accounting_plan.providers.each do |provider|
-            %tr
-              %td= provider.third_party_name
-              %td= provider.third_party_account
-              %td= provider.conterpart_account
-              %th= provider.code
-    .span6.box
-      .pull-left.margin1bottom
-        %h3 Clients
-      .pull-left.margin1bottom.margin1left
-        = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
-      .pull-left.margin1bottom
-        = link_to icon_destroy, destroy_customers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les clients', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
-      .pull-right.alignright.margin1bottom
-        = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form form-horizontal margin0bottom' do
-          = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
-          = submit_tag 'Importer', class: 'btn btn-primary'
-        = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_customer_accounting_plan_path(@organization, @customer)
-      %table.table.table-striped.table-condensed.table-bordered.margin0bottom
-        %thead
-          %tr
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
-            %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
-            %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
-            %th= t('activerecord.models.accounting_plan_item.attributes.code')
-        %tbody
-          - @accounting_plan.customers.each do |customer|
-            %tr
-              %td= customer.third_party_name
-              %td= customer.third_party_account
-              %td= customer.conterpart_account
-              %td= customer.code
+  .row
+    .col-md-12
+      .box
+        .row
+          .col-md-6
+            .box.bg-light.height_groups.groups_1
+              .float-left.margin1bottom
+                %h3 Fournisseurs
+              .float-left.margin1bottom.margin1left
+                = link_to glyphicon('pencil'), edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary', title: 'editer'
+              .float-left.margin1bottom
+                = link_to glyphicon('x'), destroy_providers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary margin1left', title: 'supprimer tous les fournisseurs', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
+              .float-right.alignright.margin1bottom
+                = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+                  .form-group.clearfix.float-left
+                    .control-section
+                      = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  .form-actions.float-left.margin1left
+                    = submit_tag 'Importer', class: 'btn btn-primary'
+                .links
+                  = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_customer_accounting_plan_path(@organization, @customer)
+              %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom.table-detachable-head.bg-white
+                %thead
+                  %tr.bg-brown.text-white
+                    %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.code')
+                %tbody
+                  - @accounting_plan.providers.each do |provider|
+                    %tr
+                      %td= provider.third_party_name
+                      %td= provider.third_party_account
+                      %td= provider.conterpart_account
+                      %th= provider.code
+          .col-md-6
+            .box.bg-light.height_groups.groups_1
+              .float-left.margin1bottom
+                %h3 Clients
+              .float-left.margin1bottom.margin1left
+                = link_to glyphicon('pencil'), edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary', title: 'editer'
+              .float-left.margin1bottom
+                = link_to glyphicon('x'), destroy_customers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary margin1left', title: 'supprimer tous les clients', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
+              .float-right.alignright.margin1bottom
+                = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+                  .form-group.clearfix.float-left
+                    .control-section
+                      = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  .form-actions.float-left.margin1left
+                    = submit_tag 'Importer', class: 'btn btn-primary'
+                .links
+                  = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_customer_accounting_plan_path(@organization, @customer)
+              %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom.table-detachable-head.bg-white
+                %thead
+                  %tr.bg-brown.text-white
+                    %th= t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                    %th= t('activerecord.models.accounting_plan_item.attributes.code')
+                %tbody
+                  - @accounting_plan.customers.each do |customer|
+                    %tr
+                      %td= customer.third_party_name
+                      %td= customer.third_party_account
+                      %td= customer.conterpart_account
+                      %td= customer.code

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PackDivider < ActiveRecord::Base
+class PackDivider < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
 

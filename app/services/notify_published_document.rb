@@ -8,9 +8,9 @@ class NotifyPublishedDocument
     users = [@user, @user.collaborators, @user.prescribers].flatten.compact
 
     users.each do |user|
-      next unless user.notify.published_docs?
+      next unless user.notify.try(:published_docs?)
       Notifiable.create(notify: user.notify, notifiable: @temp_document, label: 'published')
-      next unless user.notify.published_docs_now?
+      next unless user.notify.try(:published_docs_now?)
       NotifyPublishedDocumentWorker.perform_in(1.minute, user.id)
     end
 

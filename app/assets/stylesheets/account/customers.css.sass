@@ -7,12 +7,10 @@
       vertical-align: middle
     .active_state
       text-align: center
-      width: 16px
+      width: 52px
     .date
-      width: 75px
+      width: 220px
       text-align: center
-    .user_info
-      width: 400px
     .info a
       font-size: 11px
       font-weight: bold
@@ -26,6 +24,13 @@
     .update_request_state
       text-align: center
       width: 16px
+  .retractable-filter
+    .check_boxes
+      .checkbox
+        margin: 0px !important
+        label
+          padding-top: 5px
+          margin: auto
 
 #customer
   form
@@ -34,9 +39,6 @@
         padding-left: 0
         input[type="checkbox"]
           margin-left: 0
-    h4
-      margin-left: 160px
-      margin-bottom: 20px
     .radio
       padding-left: 0
   .closed_account
@@ -55,25 +57,6 @@
       background: url("/assets/application/spinner_gray_alpha.gif")
       background-repeat: no-repeat
       background-position: left center
-  &.edit.knowings
-    form
-      .control-label
-        width: 260px
-      .controls
-        margin-left: 280px
-      .form-actions
-        padding-left: 280px
-  &.edit_period_options
-    form
-      .control-label
-        width: 440px
-      .controls
-        width: 230px
-        margin-left: 460px
-        input
-          width: 30px
-      .form-actions
-        padding-left: 460px
   &.edit.mcf
     .error
       position: relative
@@ -82,3 +65,15 @@
     .chosen-search
       input[type=text]
         width: 100% !important
+
+.step_navigation
+  .step
+    margin: 1%
+    color: #b0b1b3
+    float: left
+    &.active
+      color: #584528
+    .number
+      font-size: 18px
+    .title
+      font-size: 12px

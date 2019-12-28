@@ -1,8 +1,9 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Report::PreseizuresController < Account::AccountController
   layout false
 
-  before_filter :load_report, :verify_rights
+  before_action :load_report, :verify_rights
 
   private
 

@@ -1,17 +1,18 @@
-%table.table.table-striped.table-condensed{ data: { total: collection.count }}
+.retractable-content
+%table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner{ data: { total: collection.count }}
   %thead
-    %tr
-      %th.date Date
-      %th.name Lot
-      %th.count Nb.
-      %th.message Origine / Service / Message
+    %tr.bg-brown.text-white
+      %th.aligncenter Date
+      %th.aligncenter Lot
+      %th.aligncenter Nb.
+      %th.aligncenter Origine / Service / Message
   %tbody
     - total = 0
     - if collection.count > 0
       - collection.each do |object|
         - total = total + object.document_count
         %tr
-          %td.date
+          %td.aligncenter
             - if object.date
               - if object.date.today?
                 = l(object.date, format: '%H:%M')
@@ -19,13 +20,13 @@
                 = l(object.date, format: '%d %b %Y %H:%M')
             - else
               \-
-          %td.name= object.name
-          %td.count= object.document_count
-          %td.message= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
+          %td.aligncenter= object.name
+          %td.aligncenter= object.document_count
+          %td.aligncenter= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
       %tr
         %td
         %td
-        %td.count
+        %td.aligncenter
           %strong= total
         %td
     - else

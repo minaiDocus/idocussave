@@ -45,7 +45,7 @@ class CoalaZipService
       @preseizures.each do |preseizure|
         entry = preseizure.entries.first
         file_name = preseizure.coala_piece_name + '.pdf'
-        FileUtils.cp preseizure.piece.content.path, File.join(dir, file_name) if preseizure.type.nil? && File.exist?(preseizure.piece.try(:content).try(:path).to_s)
+        FileUtils.cp preseizure.piece.cloud_content_object.path, File.join(dir, file_name) if preseizure.type.nil? && File.exist?(preseizure.piece.cloud_content_object.try(:path).to_s)
       end
       file_path = File.join(dir, base_name + '.zip')
       Dir.chdir dir

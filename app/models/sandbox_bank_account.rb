@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class SandboxBankAccount < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :retriever
+class SandboxBankAccount < ApplicationRecord
+  belongs_to :user, optional: true
+  belongs_to :retriever, optional: true
   has_many :sandbox_operations, dependent: :nullify
 
   # field :api_id

@@ -1,9 +1,9 @@
 .row-fluid
-  .span12
+  .col-sm-12
     %h4 Derniers documents récupérés via les automates
-    %table.table.table-striped.table-condensed.table-bordered.margin1top.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin1top.margin1bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           %th Service
           %th Nom original
@@ -20,12 +20,12 @@
               %td= temp_document.piece.try(:name) || temp_document.temp_pack.name.sub(' all', '')
               - if @user.is_prescriber
                 %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)
-.row-fluid.margin1top
-  .span12
+.row-fluid.margin3top
+  .col-sm-12
     %h4 Dernières opérations récupérées
     %table.table.table-striped.table-condensed.table-bordered.margin1top.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date Op.
           %th Service
           %th Compte

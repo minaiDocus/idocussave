@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe 'API V1 Authorization' do
   before(:all) do
-    @user = FactoryGirl.create :user, code: 'TS%0001'
+    @user = FactoryBot.create :user, code: 'TS%0001'
     @user.update_authentication_token
 
-    @admin = FactoryGirl.create :admin
+    @admin = FactoryBot.create :admin
     @admin.update_authentication_token
   end
 
@@ -57,7 +57,7 @@ describe 'API V1 Authorization' do
     end
 
     it 'visiting pre_assignments #index as operator should be authorized' do
-      operator = FactoryGirl.create :operator
+      operator = FactoryBot.create :operator
       operator.update_authentication_token
 
       get '/api/v1/pre_assignments', format: 'json', access_token: operator.authentication_token

@@ -8,8 +8,8 @@ Idocus::Application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local       = false
-  config.action_controller.perform_caching = true
+  config.consider_all_requests_local       = true
+  config.action_controller.perform_caching = false
 
   # Specifies the header that your server uses for sending files
   config.action_dispatch.x_sendfile_header = 'X-Sendfile'
@@ -50,10 +50,6 @@ Idocus::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-
-  config.active_record.raise_in_transactional_callbacks = true
-
-  config.active_record.dump_schema_after_migration = false
 
   # Compress JavaScript and CSS
   config.assets.js_compress = :uglifier

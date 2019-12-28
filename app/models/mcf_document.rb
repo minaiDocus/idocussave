@@ -1,8 +1,11 @@
-class McfDocument < ActiveRecord::Base
+class McfDocument < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => ''}
   RETAKE_RETRY = 3
   RETAKE_TIME  = 10.minutes 
 
   belongs_to :user
+
+  has_one_attached :cloud_content
 
   scope :to_retake,                       -> { where(state: 'needs_retake') }
   scope :processed_but_not_moved,         -> { where("state = 'processed' AND is_moved = false") }
@@ -10,6 +13,10 @@ class McfDocument < ActiveRecord::Base
   scope :not_delivered_and_not_notified,  -> { where("state = 'not_delivered' AND is_notified = false") }
   scope :not_processable,                 -> { where("state = 'not_processable' AND is_generated = true") }
   scope :not_processable_and_not_notified,-> { where("state = 'not_processable' AND is_notified = false") }
+
+  before_destroy do |document|
+    document.cloud_content.purge
+  end
 
   state_machine initial: :ready do
     state :ready
@@ -49,24 +56,32 @@ class McfDocument < ActiveRecord::Base
     if(user)
       mcf_doc = McfDocument.find_by_access_token(params[:access_token])
 
+      new_params      = {
+                          code: params[:code],
+                          journal: params[:journal].upcase,
+                          file64: nil,
+                          original_file_name: params[:original_file_name],
+                          access_token: params[:access_token]
+                        }
       if mcf_doc
-        mcf_doc.update(params)
-        mcf_doc.is_generated = false
+        mcf_doc.update(new_params)
         mcf_doc.is_moved = false
       else
-        mcf_doc = McfDocument.create(params)
+        mcf_doc = McfDocument.create(new_params)
       end
 
-      mcf_doc.user = user
+      mcf_doc.is_generated = true
+      mcf_doc.user  = user
       mcf_doc.state = 'ready'
 
-      mcf_doc.save
+      byte_response_decoded = (params[:file64].present?)? StringIO.open(Base64.decode64(params[:file64])) : nil
+      mcf_doc.cloud_content_object.attach(byte_response_decoded, params[:original_file_name]) if mcf_doc.save && byte_response_decoded.present?
     end
     mcf_doc || nil
   end
 
-  def file64_decoded
-    (self.file64.present?)? Base64.decode64(self.file64) : nil
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
   end
 
   def file_name

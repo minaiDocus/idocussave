@@ -6,8 +6,8 @@ describe 'Micro package subscription' do
     after(:each)  { DatabaseCleaner.clean }
 
     before(:each) do
-      @organization = FactoryGirl.create(:organization)
-      @user = FactoryGirl.create(:user)
+      @organization = FactoryBot.create(:organization)
+      @user = FactoryBot.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
       @organization.customers << @user
     end
@@ -199,8 +199,8 @@ describe 'Micro package subscription' do
     after(:all)  { DatabaseCleaner.clean }
 
     before(:all) do
-      @organization = FactoryGirl.create(:organization)
-      @user = FactoryGirl.create(:user)
+      @organization = FactoryBot.create(:organization)
+      @user = FactoryBot.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
       @organization.customers << @user
     end

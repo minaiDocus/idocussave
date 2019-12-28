@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodBilling < ActiveRecord::Base
+class PeriodBilling < ApplicationRecord
   belongs_to :period
 
   validate :uniqueness_of_order

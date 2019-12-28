@@ -1,12 +1,13 @@
 #retrieved_documents.select
   - unless @customer.configured?
-    = render 'account/customers/steps'
+    .box
+      = render 'account/customers/steps'
 
-  .row-fluid
-    .span12.box
+  .row
+    .col-md-12.box
       %h3 Sélection de documents restant à intégrer du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@documents.total_count})
   .row-fluid
-    .span9.box{ style: 'padding-bottom:0;' }
+    .col-md-9.box{ style: 'padding-bottom:0;' }
       = form_tag validate_account_organization_customer_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
         = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
@@ -41,5 +42,5 @@
         = render 'shared/list_options', collection: @documents
         .form-actions
           = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
-    .span3.box
+    .col-md-3.box
       = render 'sidebar'

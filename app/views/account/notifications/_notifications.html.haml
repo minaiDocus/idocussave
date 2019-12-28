@@ -1,8 +1,8 @@
 #unread_notification_count{ data: { count: @user.notifications.not_read.count } }
 - @notifications.each do |notification|
   %li.notification{ class: ('active' unless notification.is_read ) }
-    .row-fluid
-      .media.span12
+    .row
+      .media.col-md-12
         .media-body
           %a{ href: link_through_account_notification_path(notification) }
             %strong.notification-title= notification.title

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Composition < ActiveRecord::Base
+class Composition < ApplicationRecord
   belongs_to :user
 
   serialize :document_ids, Array
@@ -27,7 +27,7 @@ class Composition < ActiveRecord::Base
       temp_paths = []
 
       documents.each do |document|
-        temp_file = open(document.content.path)
+        temp_file = open(document.cloud_content_object.path)
         temp_files << temp_file
         temp_paths << File.expand_path(temp_file.path)
       end

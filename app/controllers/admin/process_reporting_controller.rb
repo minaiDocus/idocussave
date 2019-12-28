@@ -1,12 +1,13 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::ProcessReportingController < Admin::AdminController
-  #GET /admin/process_reporting
+  # GET /admin/process_reporting
   def index
     year  = params[:year].present?  ? params[:year].to_i  : Time.now.year
     month = params[:month].present? ? params[:month].to_i : Time.now.month
 
     @time = Time.local(year, month)
 
-    @organizations = Organization.order(name: :asc)
+    @organizations = Organization.includes(:customers).order(name: :asc)
   end
 end

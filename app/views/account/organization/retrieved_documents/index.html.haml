@@ -1,14 +1,15 @@
 #retrieved_documents
   - unless @customer.configured?
-    = render 'account/customers/steps'
+    .box
+      = render 'account/customers/steps'
 
-  .row-fluid
-    .span12.box
+  .row
+    .col-md-12.box
       %h3 Liste des documents du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@documents.total_count})
   .row-fluid
-    .span9.box
+    .col-md-9.box
       = render partial: 'shared/list_options', locals: { collection: @documents }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin1bottom
         %thead
           %tr
             %th= sortable :created_at,         'Date de la récupération'
@@ -18,7 +19,7 @@
             %th Nom iDocus
             %th.pages= sortable :pages_number, 'Nb. pages'
             %th.amount= sortable :amount,      'Montant'
-        %tbody
+        %tbody.retractable.slidedown
           - @documents.each do |document|
             %tr
               %td= l(document.created_at)
@@ -29,9 +30,9 @@
               %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
               %td= link_to document.metadata['name'] + '.pdf', account_organization_customer_retrieved_document_path(@organization, @customer, document)
               %td
-                = link_to document.piece.content_file_name, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
+                = link_to document.piece.cloud_content_object.filename, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
               %td.pages= document.pages_number
               %td.amount= document.metadata['amount'].to_s + ' €'
       = render partial: 'shared/list_options', locals: { collection: @documents }
-    .span3.box
+    .col-md-3.box
       = render 'sidebar'

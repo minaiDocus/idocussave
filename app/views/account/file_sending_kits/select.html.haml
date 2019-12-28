@@ -1,27 +1,29 @@
-.row-fluid
-  .span12.box
+.card
+  .card-header
     %h3 Sélection des options du kit d'envoi de documents
-
-.row-fluid
-  .span12.box
-    = form_tag generate_account_organization_file_sending_kit_path(@organization), class: 'form form-horizontal margin0' do
-      %table.table.table-striped.table-condensed
-        %tr
-          %th Sélection
-          %th Nom
-          %th Début (Mois)
-          %th Durée (Mois)
-        - @organization.customers.active.order(code: :asc).each do |client|
-          %tr
-            %td= check_box_tag "users[#{client.id}][is_checked]", "true", false
-            %td= client.info
-            %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
-            %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
-      .control-group.boolean
-        = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'
-        .controls
+  = form_tag generate_account_organization_file_sending_kit_path(@organization), class: 'form-horizontal label-auto' do
+    .card-body.clearfix
+      %table.table.table-striped.table-condensed.table-bordered-inner.table-detachable-head
+        %thead
+          %tr.bg-brown.text-white
+            %th{style: 'width: 66px'} Sélection
+            %th Nom
+            %th Début (Mois)
+            %th Durée (Mois)
+        %tbody
+          - @organization.customers.active.order(code: :asc).each do |client|
+            %tr
+              %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", false
+              %td= client.info
+              %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
+              %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+      .form-group.boolean
+        .label-section
+          = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'
+        .control-section
           %label.checkbox
             = check_box_tag 'one_workshop_labels_page_per_customer', 1, false, type: 'checkbox', class: 'boolean'
+    .card-footer
       .form-actions.margin0bottom
         = submit_tag t('actions.submit'), class: 'btn btn-primary'
-        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'file_sending_kit'), class: 'btn'
+        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'file_sending_kit'), class: 'btn btn-light'

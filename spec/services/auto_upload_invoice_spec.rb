@@ -86,15 +86,6 @@ describe CreateInvoicePdf do
 					expect(File.exist?(@log_file)).to be true
 		  		expect(log_content).to match /existe déjà/
 		  	end
-
-		  	it 'returns airbrake notification', :airbrake_error do
-		  		allow(User).to receive(:find_by_code).and_raise('error')
-
-		  		expect(Airbrake).to receive(:notify).once
-
-		  		create_invoice_pdf = CreateInvoicePdf.new(@invoice)
-		  		create_invoice_pdf.auto_upload_last_invoice
-		  	end
 		  end
     end
   end

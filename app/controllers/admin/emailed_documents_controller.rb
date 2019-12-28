@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::EmailedDocumentsController < Admin::AdminController
   # GET /admin/emailed_documents
   def index
@@ -13,31 +14,28 @@ class Admin::EmailedDocumentsController < Admin::AdminController
   def show
     @email = Email.find(params[:id])
 
-    file_path = @email.original_content.path
+    file_path = @email.cloud_original_content_object.path
 
     if file_path.present? && File.exist?(file_path)
       file_name = File.basename(file_path)
 
       send_file(file_path, type: 'message/rfc822', filename: file_name, x_sendfile: true)
     else
-      raise ActionController::RoutingError.new('Not Found')
+      raise ActionController::RoutingError, 'Not Found'
     end
   end
 
-
-  #GET /admin/emailed_documents/:id/show_errors
+  # GET /admin/emailed_documents/:id/show_errors
   def show_errors
     @email = Email.find(params[:id])
   end
 
   private
 
-
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
-
 
   def sort_direction
     params[:direction] || 'desc'

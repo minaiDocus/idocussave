@@ -1,9 +1,9 @@
 .label{ style: 'padding:3px 5px 3px' }
   Informations
-.row-fluid
-  .span7
+.row
+  .col-md-7
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
-      %tbody
+      %tbody.retractable.slidedown
         %tr
           %th.first= t('activerecord.models.common.attributes.created_at')
           %td= l(@user.created_at)

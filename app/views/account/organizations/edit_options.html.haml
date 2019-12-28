@@ -1,11 +1,11 @@
 #organizations.container-fluid
   .edit_options
-    .row-fluid
-      .span12.box
+    .row
+      .col-md-12.box
         %h3 Edition des options globales (pour toutes les organisations)
 
-    .row-fluid
-      .span12.box
+    .row
+      .col-md-12.box
         = form_tag update_options_account_organizations_path, method: 'patch', class: 'form form-horizontal margin0' do |f|
           %fieldset
             %legend Journaux comptables

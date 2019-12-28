@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PreAssignmentDeliveryErrorsController < Account::AccountController
   # GET /account/pre_assignment_delivery_errors
   def index

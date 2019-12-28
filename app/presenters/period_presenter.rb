@@ -191,7 +191,7 @@ class PeriodPresenter
       _invoices = (@period.organization || @period.user).invoices.where("created_at >= ? AND created_at <= ?", start_time, end_time)
 
       _invoices = _invoices.map do |invoice|
-        { number: invoice.number, link: invoice.content.url }
+        { number: invoice.number, link: invoice.cloud_content_object.url }
       end
     end
 

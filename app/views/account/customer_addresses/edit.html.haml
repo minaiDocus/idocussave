@@ -1,13 +1,10 @@
-#address.edit.row-fluid
-  .span12
-    .row-fluid
-      .span12.box
-        .row-fluid
-          .span12
-            .pull-left
-              %h3 Edition d'adresse pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses')}
-            .pull-right
-              = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@organization, @customer), class: 'btn btn-primary'
-    .row-fluid
-      .span12.box
-        = render partial: 'form'
+#address.edit
+  .card
+    .card-header.clearfix
+      .float-left
+        %h3 
+          Edition d'adresse pour le client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses'), class: 'fs-origin'
+      .float-right
+        = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@organization, @customer), class: 'btn btn-primary'
+    = render partial: 'form'

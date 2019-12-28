@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::CollaboratorsHelper
   def organization_role_options
     [
@@ -12,8 +14,11 @@ module Account::CollaboratorsHelper
     organizations.uniq.sort_by(&:name)
   end
 
-  def organization_invoice_path(invoice_id, organization_id=nil)
-    return "/account/organizations/#{organization_id}/invoices/download/#{invoice_id}" unless organization_id.nil?
+  def organization_invoice_path(invoice_id, organization_id = nil)
+    unless organization_id.nil?
+      return "/account/organizations/#{organization_id}/invoices/download/#{invoice_id}"
+    end
+
     "#{download_account_organization_invoices_path}/#{invoice_id}"
   end
 end

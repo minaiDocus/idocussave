@@ -5,13 +5,13 @@ describe OrganizationBillingAmountService do
   it 'returns 5000' do
     Timecop.freeze Time.local(2015)
     # First customer, monthly
-    customer1 = FactoryGirl.create(:user, code: 'TS%0001')
+    customer1 = FactoryBot.create(:user, code: 'TS%0001')
     subscription = customer1.find_or_create_subscription
     option = SubscriptionOption.create(name: 'Option', price_in_cents_wo_vat: 2500, period_duration: 0)
     subscription.options << option
     UpdatePeriodPriceService.new(subscription.current_period).execute
     # Second customer, quarterly
-    customer2 = FactoryGirl.create(:user, code: 'TS%0002')
+    customer2 = FactoryBot.create(:user, code: 'TS%0002')
     subscription2 = customer2.find_or_create_subscription
     subscription2.update_attribute(:period_duration, 3)
     option2 = SubscriptionOption.create(name: 'Option 2', price_in_cents_wo_vat: 3000, period_duration: 0)

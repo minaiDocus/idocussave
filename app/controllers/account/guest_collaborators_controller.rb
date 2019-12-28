@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 class Account::GuestCollaboratorsController < Account::OrganizationController
-  before_action :load_guest_collaborator, only: %w(edit update destroy)
+  before_action :load_guest_collaborator, only: %w[edit update destroy]
 
   def index
     @account_sharings = AccountSharing.unscoped.where(account_id: customers)
     @account_sharing_groups = []
-    @guest_collaborators = @organization.guest_collaborators.
-      search(search_terms(params[:guest_collaborator_contains])).
-      order(sort_column => sort_direction).
-      page(params[:page]).
-      per(params[:per_page])
+    @guest_collaborators = @organization.guest_collaborators
+                                        .search(search_terms(params[:guest_collaborator_contains]))
+                                        .order(sort_column => sort_direction)
+                                        .page(params[:page])
+                                        .per(params[:per_page])
   end
 
   def new
@@ -25,8 +27,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     @guest_collaborator.update(edit_user_params)
@@ -49,11 +50,11 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
     full_info = params[:full_info].present?
     if params[:q].present?
       users = @organization.users.active.where(
-        "code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
+        'code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t',
         t: params[:q].split.join('|')
-      ).order(code: :asc).select do |user|
+      ).order(code: :asc).reject do |user|
         str = [user.code, user.email, user.company, user.first_name, user.last_name].join(' ')
-        !params[:q].split.detect { |e| !str.match(/#{e}/i) }
+        params[:q].split.detect { |e| !str.match(/#{e}/i) }
       end
 
       unless @user.leader?
@@ -72,7 +73,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
     end
   end
 
-private
+  private
 
   def load_guest_collaborator
     @guest_collaborator = @organization.guest_collaborators.find params[:id]

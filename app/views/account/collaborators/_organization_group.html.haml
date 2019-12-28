@@ -1,15 +1,16 @@
 - if multi_organizations? || @member.user.memberships.count > 1
-  #organization_group.tab-pane{ class: ('active' if params[:tab] == 'organization_group') }
+  #organization_group.tab-pane.fade{ class: ('active show' if params[:tab] == 'organization_group') }
     - if @user.leader?
       %p Gérer les accès du collaborateur aux différentes organisations. Supprimer l'accès à une organisation ne supprime pas le compte, seulement les droits d'accès à l'organisation.
 
-    %table.table.table-striped.table-condensed
+    %table.table.table-striped.table-condensed.table-detachable-head.table-bordered-inner
       %thead
-        %th Organisation
-        %th Code
-        %th Rôle
-        - if @user.leader?
-          %th Action
+        %tr.bg-brown.text-white
+          %th Organisation
+          %th Code
+          %th Rôle
+          - if @user.leader?
+            %th Action
       %tbody
         - accessible_organizations_for_user(@member.user).each do |organization|
           %tr
@@ -21,7 +22,7 @@
               - if @user.leader?
                 %td
                   - if membership.organization == @organization
-                    = link_to icon_destroy + "Retirer l'accès à cette organisation", remove_from_organization_account_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
+                    = link_to "Retirer l'accès à cette organisation", remove_from_organization_account_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn btn-light', data: { method: :delete, confirm: t('actions.confirm') }
                   - else
                     %i Ne peut pas supprimer l'accès de ce collaborateur à cette organisation.
             - else
@@ -29,4 +30,4 @@
               %td
                 %i N'est pas membre de cette organisation
               - if @user.leader?
-                %td= link_to icon_new + "Ajouter l'accès à cette organisation", add_to_organization_account_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn btn-mini', data: { method: :post, confirm: t('actions.confirm') }
+                %td= link_to "Ajouter l'accès à cette organisation", add_to_organization_account_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn btn-light', data: { method: :post, confirm: t('actions.confirm') }

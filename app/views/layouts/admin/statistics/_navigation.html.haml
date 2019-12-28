@@ -1,7 +1,6 @@
-.navbar
-  .navbar-inner
-    %ul.nav
-      %li{ class: ('active' if controller_name == 'subscriptions') }
-        = link_to 'Reporting', admin_subscriptions_path
-      %li{ class: ('active' if controller_name == 'mobile_reporting') }
-        = link_to 'Reporting Mobile', admin_mobile_reporting_index_path
+%ul.nav
+  %li{ class: ('active' if controller_name == 'subscriptions') }
+    = link_to 'Reporting', admin_subscriptions_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: ('active' if controller_name == 'mobile_reporting') }
+    = link_to 'Reporting Mobile', admin_mobile_reporting_index_path, class: 'btn btn-secondary'

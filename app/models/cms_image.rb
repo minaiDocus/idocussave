@@ -1,5 +1,8 @@
 # -*- encoding : UTF-8 -*-
-class CmsImage < ActiveRecord::Base
+class CmsImage < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => ''}
+  has_one_attached :cloud_content
+  
   has_attached_file :content,
                             styles: {
                               thumb: ['96x96>', :png]
@@ -9,8 +12,15 @@ class CmsImage < ActiveRecord::Base
                             use_timestamp: false
   do_not_validate_attachment_file_type :content
 
+  before_destroy do |cms_image|
+    cms_image.cloud_content.purge
+  end
 
   def name
     original_file_name || content_file_name
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
   end
 end

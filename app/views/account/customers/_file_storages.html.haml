@@ -1,14 +1,14 @@
 - if user.active?
   - external_file_storage = user.find_or_create_external_file_storage.reload
-  %table.table.table-striped.table-condensed
+  %table.table.table-striped.table-condensed.table-bordered-inner.table-detachable-head
     %thead
-      %tr
+      %tr.bg-brown.text-white
         %th Service
         %th Autorisé ?
         %th Configuré ?
         %th Utilisé ?
         %th Chemin de livraison
-    %tbody
+    %tbody.retractable.slidedown
       %tr
         %th Dropbox Extended
         %td= icon_tag user.is_dropbox_extended_authorized

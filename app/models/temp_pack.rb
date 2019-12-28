@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class TempPack < ActiveRecord::Base
+class TempPack < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name
 
@@ -7,7 +7,7 @@ class TempPack < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :organization
-  belongs_to :document_delivery
+  belongs_to :document_delivery, optional: true
 
 
 

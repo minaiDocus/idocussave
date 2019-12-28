@@ -1,9 +1,11 @@
-= simple_form_for @guest_collaborator, url: guest_collaborator_form_url(@organization, @guest_collaborator), html: { class: 'form form-horizontal margin0' } do |f|
-  - if action_name.in?(%w(new create))
-    = f.input :email
-  = f.input :company
-  = f.input :first_name
-  = f.input :last_name
-  .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    = link_to t('actions.cancel'), account_organization_guest_collaborators_path(@organization), class: 'btn'
+= simple_form_for @guest_collaborator, url: guest_collaborator_form_url(@organization, @guest_collaborator), html: { class: 'form-horizontal' } do |f|
+  .card-body
+    - if action_name.in?(%w(new create))
+      = f.input :email
+    = f.input :company
+    = f.input :first_name
+    = f.input :last_name
+  .card-footer
+    .form-actions.margin0bottom
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
+      = link_to t('actions.cancel'), account_organization_guest_collaborators_path(@organization), class: 'btn btn-light'

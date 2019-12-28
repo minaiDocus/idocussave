@@ -2,136 +2,147 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
-    .span3
-      .row-fluid
-        .span12
+  .row.retractable.with-menu
+    .retractable-menu
+      .row
+        .col-md-12
           = render partial: 'layouts/account/me/navigation'
 
-    .span9
+    .col-md-12.retractable-content
       - unless organizations_suspended? && @user.active?
-        #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
-          .span12
-            .well.change_pass_parent
-              %h3.aligncenter Changer mon mot de passe
-              %br/
-              .change_pass
-                = form_for true_user, url: account_profile_path do |f|
+        #change_password.row.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
+          .col-md-12
+            = form_for true_user, url: account_profile_path do |f|
+              .card
+                .card-header
+                  %h3 Changer mon mot de passe
+                .card-body
                   - if flash[:alert].present?
                     .alert-container
-                      .alert.alert-error
+                      .alert.alert-danger
                         %a{ class: 'close', 'data-dismiss' => 'alert' } ×
                         %span
                           %ul
                             %li
                               Mots de passe invalides
-
-                  = f.label 'Mot de passe actuel :'
-                  = f.password_field :current_password, label: 'Ancien mot de passe'
-                  = f.label 'Nouveau mot de passe :'
-                  = f.password_field :password, label: 'Nouveau mot de passe'
-                  = f.label 'Confirmation du mot de passe :'
-                  = f.password_field :password_confirmation, label: 'Confirmation du nouveau mot de passe'
+                  .form-group.clearfix
+                    .label-section
+                      = f.label 'Mot de passe actuel :'
+                    .control-section
+                      = f.password_field :current_password, label: 'Ancien mot de passe', class: 'form-control'
+                  .form-group.clearfix
+                    .label-section
+                      = f.label 'Nouveau mot de passe :'
+                    .control-section
+                      = f.password_field :password, label: 'Nouveau mot de passe', class: 'form-control'
+                  .form-group.clearfix
+                    .label-section
+                      = f.label 'Confirmation du mot de passe :'
+                    .control-section
+                      = f.password_field :password_confirmation, label: 'Confirmation du nouveau mot de passe', class: 'form-control'
+                .card-footer
                   = f.submit 'Modifier', class: 'btn btn-primary'
 
         - if @user.active? && !@user.is_prescriber && @user.organization.is_active
-          #account_sharing.row-fluid.pan{ class: (@active_panel == 'account_sharing' ? 'active' : '')}
-            .span12.well
-              .row-fluid
-                .span12
-                  %h3.aligncenter Partage de compte
-              - unless @user.is_guest
-                %h4 Liste des contacts avec qui je partage mon compte :
-                %ul
-                  - if @user.inverse_account_sharings.size > 0
-                    - @user.inverse_account_sharings.each do |account_sharing|
+          #account_sharing.row.pan{ class: (@active_panel == 'account_sharing' ? 'active' : '')}
+            .col-md-12
+              .card
+                .card-header
+                  %h3 Partage de compte
+                .card-body
+                  - unless @user.is_guest
+                    %h4 Liste des contacts avec qui je partage mon compte :
+                    %ul
+                      - if @user.inverse_account_sharings.size > 0
+                        - @user.inverse_account_sharings.each do |account_sharing|
+                          %li
+                            = account_sharing.collaborator.info
+                            = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage de votre compte avec \"#{account_sharing.collaborator.info}\" ?" }
+                      - else
+                        %li
+                          %i{ style: 'color:gray' } Aucun
+                    = link_to 'Partager mon compte avec un contact', new_account_account_sharing_path, class: 'btn btn-primary'
+                    %br
+                    %br
+                  %h4 Liste des dossiers qui me sont partagés :
+                  %ul
+                    - if @user.account_sharings.size > 0
+                      - @user.account_sharings.each do |account_sharing|
+                        %li
+                          = account_sharing.account.info
+                          = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de ne plus vouloir accéder au dossier \"#{account_sharing.account.info}\" ?" }
+                    - else
                       %li
-                        = account_sharing.collaborator.info
-                        = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage de votre compte avec \"#{account_sharing.collaborator.info}\" ?" }
-                  - else
-                    %li
-                      %i{ style: 'color:gray' } Aucun
-                = link_to 'Partager mon compte avec un contact', new_account_account_sharing_path, class: 'btn btn-primary'
-                %br
-                %br
-              %h4 Liste des dossiers qui me sont partagés :
-              %ul
-                - if @user.account_sharings.size > 0
-                  - @user.account_sharings.each do |account_sharing|
-                    %li
-                      = account_sharing.account.info
-                      = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de ne plus vouloir accéder au dossier \"#{account_sharing.account.info}\" ?" }
-                - else
-                  %li
-                    %i{ style: 'color:gray' } Aucun
-              %h4 Liste des mes demandes d'accès :
-              %ul
-                - if @user.account_sharings.pending.select { |e| e.collaborator == @user }.size > 0
-                  - @user.account_sharings.pending.select { |e| e.collaborator == @user }.each do |account_sharing|
-                    %li
-                      = account_sharing.account.info
-                      = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de ne plus vouloir accéder au dossier \"#{account_sharing.account.info}\" ?" }
-                - else
-                  %li
-                    %i{ style: 'color:gray' } Aucun
-              = link_to "Demander l'accès à un dossier", new_request_account_account_sharings_path, class: 'btn btn-primary'
+                        %i{ style: 'color:gray' } Aucun
+                  %h4 Liste des mes demandes d'accès :
+                  %ul
+                    - if @user.account_sharings.unscoped.pending.select { |e| e.collaborator == @user }.size > 0
+                      - @user.account_sharings.unscoped.pending.select { |e| e.collaborator == @user }.each do |account_sharing|
+                        %li
+                          = account_sharing.account.info
+                          = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de ne plus vouloir accéder au dossier \"#{account_sharing.account.info}\" ?" }
+                    - else
+                      %li
+                        %i{ style: 'color:gray' } Aucun
+                  = link_to "Demander l'accès à un dossier", new_request_account_account_sharings_path, class: 'btn btn-primary'
 
           - unless @user.is_guest
-            #addresses_management.row-fluid.pan{ class: (@active_panel == 'addresses_management' ? 'active' : '')}
-              .span12.well
-                .row-fluid
-                  .span12
-                    %h3.aligncenter Gestion des adresses
-                %br
-                .row-fluid
-                  .span4
-                    = render partial: 'account/addresses/address', locals: { address: @user.paper_return_address, single: true, type: 'paper_return' }
-                  .span4
-                    = render partial: 'account/addresses/address', locals: { address: @user.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
-                  .span4
-                    = render partial: 'account/addresses/address', locals: { address: @user.dematbox_shipping_address, single: true, type: 'dematbox_shipping' }
-                .row-fluid
-                  .span12.aligncenter.margin1top
-                    = link_to 'Configurer', account_addresses_path, class: 'btn'
+            #addresses_management.row.pan{ class: (@active_panel == 'addresses_management' ? 'active' : '')}
+              .col-md-12
+                .card
+                  .card-header
+                    %h3 Gestion des adresses
+                  .card-body
+                    .row
+                      .col-md-4
+                        = render partial: 'account/addresses/address', locals: { address: @user.paper_return_address, single: true, type: 'paper_return' }
+                      .col-md-4
+                        = render partial: 'account/addresses/address', locals: { address: @user.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
+                      .col-md-4
+                        = render partial: 'account/addresses/address', locals: { address: @user.dematbox_shipping_address, single: true, type: 'dematbox_shipping' }
+                    .row
+                      .col-md-12.aligncenter.margin1top
+                        = link_to 'Configurer', account_addresses_path, class: 'btn btn-primary'
 
       - if @user.active?
         - if @user.organization.is_active
           - unless organizations_suspended?
-            #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
-              .span12.well
-                %h3.aligncenter Stockage externe des documents
-                Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
-                %br
-                - if @external_file_storage.authorized > 0
-                  %br
-                  - if @external_file_storage.is_dropbox_basic_authorized?
-                    - service_number = ExternalFileStorage::F_DROPBOX
-                    - is_service_used = @external_file_storage.is_used?(service_number)
-                    #dropbox.well
-                      .row-fluid
-                        .span1
-                          = check_box_tag :enable_dropbox, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
-                          %div{ style: 'float:left; text-align:center; width:50px' }
-                            %a.logo= image_tag 'application/dropbox_logo.png', :alt => 'logo'
-                            %b DROPBOX
-                        .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                          - if @external_file_storage.dropbox_basic.is_configured?
-                            %h5
-                              Votre compte iDocus est connecté à votre compte Dropbox.
-                              = link_to 'Paramètres.', authorize_url_account_dropbox_path
-                          - else
-                            %h5
-                              Pour connecter iDocus à votre compte Dropbox,
-                              = link_to ' cliquez ici.', authorize_url_account_dropbox_path
-                              %br
-                              iDocus va créer un premier dossier « Applications » puis « iDocus ».
-                          #{"."}
-                      .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                        .span12
-                          .row-fluid
-                            .span6.margin2top
+            #efs_management.row.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
+              .col-md-12
+                .card
+                  .card-header
+                    %h3 Stockage externe des documents
+                  .card-body
+                    Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
+                    %br
+                    - if @external_file_storage.authorized > 0
+                      %br
+                      - if @external_file_storage.is_dropbox_basic_authorized?
+                        - service_number = ExternalFileStorage::F_DROPBOX
+                        - is_service_used = @external_file_storage.is_used?(service_number)
+                        #dropbox.box.bg-light
+                          .row
+                            .col-md-1
+                              = check_box_tag :enable_dropbox, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                              %div{ style: 'float:left; text-align:center; width:62px' }
+                                %a.logo= image_tag 'application/dropbox_logo.png', :alt => 'logo'
+                                %b DROPBOX
+                            .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                              - if @external_file_storage.dropbox_basic.is_configured?
+                                %h5
+                                  Votre compte iDocus est connecté à votre compte Dropbox.
+                                  = link_to 'Paramètres.', authorize_url_account_dropbox_path
+                              - else
+                                %h5
+                                  Pour connecter iDocus à votre compte Dropbox,
+                                  = link_to ' cliquez ici.', authorize_url_account_dropbox_path
+                                  %br
+                                  iDocus va créer un premier dossier « Applications » puis « iDocus ».
+                              #{"."}
+                          .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                            .col-md-6.margin2top
                               = render partial: 'storage_form', locals: { storage: @external_file_storage.dropbox_basic }
-                            .span6.margin2top
+                            .col-md-6.margin2top
                               - if @dropbox_account
                                 %h4 Information de compte
                                 Nom utilisateur: 
@@ -148,224 +159,243 @@
                               %br
                               La récupération de votre dossier d’import se fait automatiquement. Tous les documents récupérés par iDocus sont retirés du dossier.
 
-                  - if @external_file_storage.is_google_docs_authorized?
-                    - service_number = ExternalFileStorage::F_GOOGLE_DOCS
-                    - is_service_used = @external_file_storage.is_used?(service_number)
-                    #google_drive.well
-                      .row-fluid
-                        .span1
-                          = check_box_tag :enable_google_docs, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
-                          %div{ style: 'float:left; text-align:center; width:50px' }
-                            %a.logo= image_tag 'application/googledrive_logo.png', alt: 'logo'
-                            %b GOOGLE DRIVE (Beta)
-                        .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                          - if @external_file_storage.google_doc.is_configured?
-                            %h5
-                              Votre compte iDocus est connecté à votre compte Google Drive.
-                              = link_to 'Paramètres.', authorize_url_account_google_drive_path, method: :post
-                          - else
-                            %h5
-                              Pour connecter iDocus à votre compte Google Drive,
-                              = link_to ' cliquez ici.', authorize_url_account_google_drive_path, method: :post
-                          #{"."}
-                      .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                        .span12
-                          .margin2top
-                            = render partial: 'storage_form', locals: { storage: @external_file_storage.google_doc }
+                      - if @external_file_storage.is_google_docs_authorized?
+                        - service_number = ExternalFileStorage::F_GOOGLE_DOCS
+                        - is_service_used = @external_file_storage.is_used?(service_number)
+                        #google_drive.box.bg-light
+                          .row
+                            .col-md-1
+                              = check_box_tag :enable_google_docs, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                              %div{ style: 'float:left; text-align:center; width:62px' }
+                                %a.logo= image_tag 'application/googledrive_logo.png', alt: 'logo'
+                                %b GOOGLE DRIVE (Beta)
+                            .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                              - if @external_file_storage.google_doc.is_configured?
+                                %h5
+                                  Votre compte iDocus est connecté à votre compte Google Drive.
+                                  = link_to 'Paramètres.', authorize_url_account_google_drive_path, method: :post
+                              - else
+                                %h5
+                                  Pour connecter iDocus à votre compte Google Drive,
+                                  = link_to ' cliquez ici.', authorize_url_account_google_drive_path, method: :post
+                              #{"."}
+                          .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                            .col-md-12
+                              .margin2top
+                                = render partial: 'storage_form', locals: { storage: @external_file_storage.google_doc }
 
-                  - if @external_file_storage.is_ftp_authorized?
-                    - service_number = ExternalFileStorage::F_FTP
-                    - is_service_used = @external_file_storage.is_used?(service_number)
-                    #ftp.well
-                      .row-fluid
-                        .span1
-                          = check_box_tag :enable_ftp, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
-                          %div{ style: 'float:left; text-align:center; width:50px' }
-                            %a.logo= image_tag 'application/ftp_logo.png', alt: 'logo'
-                            %b FTP
-                        .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                          - if @external_file_storage.ftp.is_configured?
-                            %h5
-                              Votre compte iDocus est connecté à votre compte FTP.
-                              = link_to 'Configurer', edit_account_ftp_path
-                              ou
-                              = link_to 'supprimer mes paramètres.', account_ftp_path, method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
-                          - else
-                            %h5
-                              Pour connecter iDocus à votre compte FTP,
-                              = link_to ' cliquez ici.', edit_account_ftp_path
-                          \.
-                      .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                        .span12
-                          .margin2top
-                            = render partial: 'storage_form', locals: { storage: @external_file_storage.ftp }
+                      - if @external_file_storage.is_ftp_authorized?
+                        - service_number = ExternalFileStorage::F_FTP
+                        - is_service_used = @external_file_storage.is_used?(service_number)
+                        #ftp.box.bg-light
+                          .row
+                            .col-md-1
+                              = check_box_tag :enable_ftp, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                              %div{ style: 'float:left; text-align:center; width:62px' }
+                                %a.logo= image_tag 'application/ftp_logo.png', alt: 'logo'
+                                %b FTP
+                            .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                              - if @external_file_storage.ftp.is_configured?
+                                %h5
+                                  Votre compte iDocus est connecté à votre compte FTP.
+                                  = link_to 'Configurer', edit_account_ftp_path
+                                  ou
+                                  = link_to 'supprimer mes paramètres.', account_ftp_path, method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
+                              - else
+                                %h5
+                                  Pour connecter iDocus à votre compte FTP,
+                                  = link_to ' cliquez ici.', edit_account_ftp_path
+                              \.
+                          .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                            .col-md-12
+                              .margin2top
+                                = render partial: 'storage_form', locals: { storage: @external_file_storage.ftp }
 
-                  - if @external_file_storage.is_box_authorized?
-                    - service_number = ExternalFileStorage::F_BOX
-                    - is_service_used = @external_file_storage.is_used?(service_number)
-                    #box.well
-                      .row-fluid
-                        .span1
-                          = check_box_tag :enable_box, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
-                          %div{ style: 'float:left; text-align:center; width:50px' }
-                            %a.logo= image_tag 'application/box_logo.png', alt: 'logo'
-                            %b Box.com
-                        .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                          - if @external_file_storage.box.is_configured?
-                            %h5
-                              Votre compte iDocus est connecté à votre compte Box.com.
-                              = link_to 'Paramètres.', authorize_url_account_box_path
-                          - else
-                            %h5
-                              Pour connecter iDocus à votre compte Box,
-                              = link_to ' cliquez ici.', authorize_url_account_box_path
-                          #{"."}
-                      .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                        .span12
-                          .margin2top
-                            = render partial: 'storage_form', locals: { storage: @external_file_storage.box }
+                      - if @external_file_storage.is_box_authorized?
+                        - service_number = ExternalFileStorage::F_BOX
+                        - is_service_used = @external_file_storage.is_used?(service_number)
+                        #box.box.bg-light
+                          .row
+                            .col-md-1
+                              = check_box_tag :enable_box, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                              %div{ style: 'float:left; text-align:center; width:62px' }
+                                %a.logo= image_tag 'application/box_logo.png', alt: 'logo'
+                                %b Box.com
+                            .col-md-11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                              - if @external_file_storage.box.is_configured?
+                                %h5
+                                  Votre compte iDocus est connecté à votre compte Box.com.
+                                  = link_to 'Paramètres.', authorize_url_account_box_path
+                              - else
+                                %h5
+                                  Pour connecter iDocus à votre compte Box,
+                                  = link_to ' cliquez ici.', authorize_url_account_box_path
+                              #{"."}
+                          .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                            .col-md-12
+                              .margin2top
+                                = render partial: 'storage_form', locals: { storage: @external_file_storage.box }
 
-            - if @user.is_dematbox_authorized
-              #idocus_box.row-fluid.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
-                .span12
-                  .well
-                    %h3.aligncenter.margin2bottom iDocus'Box
-                    - if @user.dematbox.try(:is_configured)
-                      %h4.margin1bottom Liste des services
-                      - if @user.dematbox.try(:services).try(:any?)
-                        %table.table.table-striped.table-bordered.table-condensed.margin0bottom
-                          %thead
-                            %tr
-                              %th Groupe
-                              %th Nom
-                          %tbody
-                            - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
-                              %tr
-                                %td= service.group_name
-                                %td= service.name
-                      - elsif @user.account_book_types.size == 0
-                        %p Pas de journaux paramétrés.
-                      .alignright
-                        = link_to icon_destroy + ' Déconnecter le Scanner', account_dematbox_path, method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
-                    - elsif @user.dematbox.try(:beginning_configuration_at).present?
-                      Configuration en cours...veuillez recharger votre page dans quelques secondes.
-                    - else
-                      Appairez ici un scanner iDocus'Box (Produit Sagemcom).
-                      %br
-                      Afin d'appairer le scanner, merci de suivre les instructions du
-                      = link_to "mode d'emploi Sagemcom", docs_download_path(name: 'Livret_utilisation_Dematbox.pdf')
-                      fournit lors de la livraison.
-                      %br
-                      Merci d'inscrire le code d'appairage dans le champ ci-dessous :
-                      = form_tag account_dematbox_path, method: :post, class: 'form-inline margin2top' do
-                        = label_tag :pairing_code, 'Code appairage'
-                        = text_field_tag :pairing_code, '', style: 'width:75px;'
-                        = submit_tag t('actions.submit'), class: 'btn btn-primary'
+                      - if @user.is_dematbox_authorized
+                        #idocus_box.bg-light.row.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
+                          .col-md-12
+                            .box
+                              %h3.aligncenter.margin2bottom iDocus'Box
+                              - if @user.dematbox.try(:is_configured)
+                                %h4.margin1bottom Liste des services
+                                - if @user.dematbox.try(:services).try(:any?)
+                                  %table.table.table-striped.table-bordered.table-condensed.margin0bottom
+                                    %thead
+                                      %tr
+                                        %th Groupe
+                                        %th Nom
+                                    %tbody
+                                      - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
+                                        %tr
+                                          %td= service.group_name
+                                          %td= service.name
+                                - elsif @user.account_book_types.size == 0
+                                  %p Pas de journaux paramétrés.
+                                .alignright
+                                  = link_to icon_destroy + ' Déconnecter le Scanner', account_dematbox_path, method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
+                              - elsif @user.dematbox.try(:beginning_configuration_at).present?
+                                Configuration en cours...veuillez recharger votre page dans quelques secondes.
+                              - else
+                                Appairez ici un scanner iDocus'Box (Produit Sagemcom).
+                                %br
+                                Afin d'appairer le scanner, merci de suivre les instructions du
+                                = link_to "mode d'emploi Sagemcom", docs_download_path(name: 'Livret_utilisation_Dematbox.pdf')
+                                fournit lors de la livraison.
+                                %br
+                                Merci d'inscrire le code d'appairage dans le champ ci-dessous :
+                                = form_tag account_dematbox_path, method: :post, class: 'form-inline margin2top' do
+                                  = label_tag :pairing_code, 'Code appairage'
+                                  = text_field_tag :pairing_code, '', style: 'width:75px;'
+                                  = submit_tag t('actions.submit'), class: 'btn btn-primary'
 
-            #subscription_options.row-fluid.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
-              .span12
-                .well
-                  %h3.aligncenter.margin2bottom Notifications et remontées d'alertes
-                  = simple_form_for true_user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
-                    = f.simple_fields_for :notify do |o|
-                      %h4.margin2left.margin1bottom Générale
-                      = hidden_field_tag :panel, 'subscription_options'
-                      - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
-                        = o.input :to_send_docs, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
-                      = o.input :published_docs, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
-                      - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
-                        = o.input :reception_of_emailed_docs, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail.", wrapper: :inline_checkbox
-                      - if @user.options.try(:is_upload_authorized) || @user.options.try(:is_dematbox_authorized) || @user.is_prescriber
-                        = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox
-                      - if @user.is_prescriber
-                        = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint pour l'un de mes clients.", wrapper: :inline_checkbox
-                      - elsif @user.is_guest || @user.subscription.is_mail_package_active || @user.subscription.is_annual_package_active
-                        = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
-                      - if @user.is_prescriber
-                        = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
-                        = o.input :mcf_document_errors, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'il y a des erreurs de récupération de documents venant de MCF (My Company Files)", wrapper: :inline_checkbox
-                      - unless @user.is_prescriber
-                        = o.input :new_scanned_documents, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mes documents papier ont été reçu.", wrapper: :inline_checkbox
-                      - if @user.is_prescriber
-                        %hr
-                        %h4.margin2left.margin1bottom Pré-affectation
-                        = o.input :pre_assignment_export, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des exports d'écritures comptables sont disponibles dans iDocus.", wrapper: :inline_checkbox
-                        = o.input :detected_preseizure_duplication, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des doublons de pré-affectation sont bloqués/débloqués.", wrapper: :inline_checkbox
-                        = o.input :pre_assignment_ignored_piece, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des pièces sont ignorées à la pré-affectation.", wrapper: :inline_checkbox
-                        = o.input :pre_assignment_delivery_errors, label: "Lorsqu'une livraison de pré-affectation a échouée", collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
-                      %hr
-                      %h4.margin2left.margin1bottom Livraison Dropbox
-                      = o.input :dropbox_invalid_access_token, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox est déconnecté.", wrapper: :inline_checkbox
-                      = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox n'a plus d'espace.", wrapper: :inline_checkbox
-                      %hr
-                      %h4.margin2left.margin1bottom
-                        - if @user.is_prescriber
-                          Import/Export FTP
-                        - else
-                          Livraison FTP
-                      = o.input :ftp_auth_failure, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon FTP est déconnecté.", wrapper: :inline_checkbox
-                      - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
-                        %hr
-                        %h4.margin2left.margin1bottom Automate
-                        = o.input :r_wrong_pass, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un mot de passe est invalide pour un automate.", wrapper: :inline_checkbox
-                        = o.input :r_site_unavailable, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un site web est indisponible pour un automate.", wrapper: :inline_checkbox
-                        = o.input :r_action_needed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'une action est nécessaire pour un automate.", wrapper: :inline_checkbox
-                        = o.input :r_bug, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un automate ne fonctionne pas.", wrapper: :inline_checkbox
-                        - if @user.is_prescriber
-                          = o.input :r_no_bank_account_configured, as: :boolean, label: "oui, je veux recevoir une notification lorsque aucun compte bancaire n'est configuré pour un automate bancaire.", wrapper: :inline_checkbox
-                        = o.input :r_new_documents, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
-                        = o.input :r_new_operations, label: 'Lorsque de nouvelles opérations sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
-                    .form-actions.padding0bottom
-                      = f.submit 'Valider', class: 'btn btn-primary'
+            #subscription_options.row.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
+              .col-md-12
+                = simple_form_for true_user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
+                  .card
+                    .card-header
+                      %h3 Notifications et remontées d'alertes
+                    .card-body
+                      = f.simple_fields_for :notify do |o|
+                        %ul.nav.nav-tabs
+                          %li.nav-item
+                            %a.nav-link.active{ href: '#so_tabs_general', role: 'tab', "data-toggle" => "tab" } Générale
+                          - if @user.is_prescriber
+                            %li.nav-item
+                              %a.nav-link{ href: '#so_tabs_pre_assignment', role: 'tab', "data-toggle" => "tab" } Pré-affectation
+                          %li.nav-item
+                            %a.nav-link{ href: '#so_tabs_dropbox', role: 'tab', "data-toggle" => "tab" } Livraison Dropbox
+                          %li.nav-item
+                            %a.nav-link{ href: '#so_tabs_ftp', role: 'tab', "data-toggle" => "tab" }
+                              - if @user.is_prescriber
+                                Import/Export FTP
+                              - else
+                                Livraison FTP
+                          - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
+                            %li.nav-item
+                              %a.nav-link{ href: '#so_tabs_retrievers', role: 'tab', "data-toggle" => "tab" } Automate
+                        .tab-content{ style: "min-height: 250px" }
+                          #so_tabs_general.tab-pane.box.bg-light.fade.show.active.border-top-0{ role: "tabpanel" }
+                            = hidden_field_tag :panel, 'subscription_options'
+                            - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
+                              = o.input :to_send_docs, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
+                            = o.input :published_docs, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                            - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
+                              = o.input :reception_of_emailed_docs, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail.", wrapper: :inline_checkbox
+                            - if @user.options.try(:is_upload_authorized) || @user.options.try(:is_dematbox_authorized) || @user.is_prescriber
+                              = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox
+                            - if @user.is_prescriber
+                              = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint pour l'un de mes clients.", wrapper: :inline_checkbox
+                            - elsif @user.is_guest || @user.subscription.is_mail_package_active || @user.subscription.is_annual_package_active
+                              = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
+                            - if @user.is_prescriber
+                              = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
+                              = o.input :mcf_document_errors, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'il y a des erreurs de récupération de documents venant de MCF (My Company Files)", wrapper: :inline_checkbox
+                            - unless @user.is_prescriber
+                              = o.input :new_scanned_documents, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mes documents papier ont été reçu.", wrapper: :inline_checkbox
+                          - if @user.is_prescriber
+                            #so_tabs_pre_assignment.tab-pane.box.bg-light.fade.border-top-0{ role: "tabpanel" }
+                              = o.input :pre_assignment_export, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des exports d'écritures comptables sont disponibles dans iDocus.", wrapper: :inline_checkbox
+                              = o.input :detected_preseizure_duplication, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des doublons de pré-affectation sont bloqués/débloqués.", wrapper: :inline_checkbox
+                              = o.input :pre_assignment_ignored_piece, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des pièces sont ignorées à la pré-affectation.", wrapper: :inline_checkbox
+                              = o.input :pre_assignment_delivery_errors, label: "Lorsqu'une livraison de pré-affectation a échouée", collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                          #so_tabs_dropbox.tab-pane.box.bg-light.fade.border-top-0{ role: "tabpanel" }
+                            = o.input :dropbox_invalid_access_token, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox est déconnecté.", wrapper: :inline_checkbox
+                            = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox n'a plus d'espace.", wrapper: :inline_checkbox
+                          #so_tabs_ftp.tab-pane.box.bg-light.fade.border-top-0{ role: "tabpanel" }
+                            = o.input :ftp_auth_failure, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon FTP est déconnecté.", wrapper: :inline_checkbox
+                          - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
+                            #so_tabs_retrievers.tab-pane.box.bg-light.fade.border-top-0{ role: "tabpanel" }
+                              = o.input :r_wrong_pass, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un mot de passe est invalide pour un automate.", wrapper: :inline_checkbox
+                              = o.input :r_site_unavailable, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un site web est indisponible pour un automate.", wrapper: :inline_checkbox
+                              = o.input :r_action_needed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'une action est nécessaire pour un automate.", wrapper: :inline_checkbox
+                              = o.input :r_bug, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un automate ne fonctionne pas.", wrapper: :inline_checkbox
+                              - if @user.is_prescriber
+                                = o.input :r_no_bank_account_configured, as: :boolean, label: "oui, je veux recevoir une notification lorsque aucun compte bancaire n'est configuré pour un automate bancaire.", wrapper: :inline_checkbox
+                              = o.input :r_new_documents, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                              = o.input :r_new_operations, label: 'Lorsque de nouvelles opérations sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                    .card-footer
+                      .form-actions
+                        = f.submit 'Valider', class: 'btn btn-primary'
 
             - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
               - period_service = PeriodService.new user: @user, current_time: Time.now.beginning_of_month
-              #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
-                .span12
-                  .well
-                    %h3.aligncenter Adresse email d'envoi de documents
-                    %br
-                    Vous pouvez envoyer vos pièces comptables par mail.
-                    %br
-                    La plateforme iDocus intégrera les pièces jointes (#{UploadedDocument.valid_extensions}) de votre mail.
-                    %br
-                    %br
-                    Règles d'utilisation :
-                    %ul
-                      %li
-                        Format de l’objet du mail : [libellé court du journal comptable] [période]
-                        - if @user.account_book_types.first && period_service.names.first
+              #emailed_documents.row.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
+                .col-md-12
+                  .card
+                    .card-header
+                      %h3 Adresse email d'envoi de documents
+                    .card-body
+                      .row
+                        .col-md-6
+                          Vous pouvez envoyer vos pièces comptables par mail.
                           %br
-                          exemple :
-                          %b
-                            %i #{@user.account_book_types.first.name} #{period_service.names.first}
-                      %li
-                        La somme des tailles des pièces jointes de votre mail ne doit pas dépasser
-                        %b 10 Mo
-                        \.
-                    Vos journaux comptables accessibles :
-                    %ul
-                      - @user.account_book_types.each do |journal|
-                        %li
-                          %b= journal.name
-                          = "(#{journal.description.sub(/\A\s*\(/,'').sub(/\)\s*\z/,'')})"
-                    Vos périodes actuellement accessibles :
-                    %ul
-                      - period_service.names.each do |name|
-                        %li
-                          %b= name
-                    Voici votre adresse personnalisée à laquelle vous devez envoyer vos pièces :
-                    %b{ style: 'font-size: 16px;' }
-                      = "#{@user.email_code}@fw.idocus.com"
-                    = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-mini btn-primary', data: { method: :post }, style: 'position:relative;top:-2px;'
+                          La plateforme iDocus intégrera les pièces jointes (#{UploadedDocument.valid_extensions}) de votre mail.
+                          %br
+                          %br
+                          %h4 Règles d'utilisation :
+                          %ul
+                            %li
+                              Format de l’objet du mail : [libellé court du journal comptable] [période]
+                              - if @user.account_book_types.first && period_service.names.first
+                                %br
+                                exemple :
+                                %b
+                                  %i #{@user.account_book_types.first.name} #{period_service.names.first}
+                            %li
+                              La somme des tailles des pièces jointes de votre mail ne doit pas dépasser
+                              %b 10 Mo
+                              \.
+                        .col-md-6
+                          %h4 Vos journaux comptables accessibles :
+                          %ul
+                            - @user.account_book_types.each do |journal|
+                              %li
+                                %b= journal.name
+                                = "(#{journal.description.sub(/\A\s*\(/,'').sub(/\)\s*\z/,'')})"
+                          %h4 Vos périodes actuellement accessibles :
+                          %ul
+                            - period_service.names.each do |name|
+                              %li
+                                %b= name
+                      .row
+                        .col-md-12
+                          Voici votre adresse personnalisée à laquelle vous devez envoyer vos pièces :
+                          %b{ style: 'font-size: 16px;' }
+                            = "#{@user.email_code}@fw.idocus.com"
+                          = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-mini btn-primary', data: { method: :post }, style: 'position:relative;top:-2px;'
 
         - if !@user.organization.is_active && @user.leader?
-          #active_organization.row-fluid.pan{ class: (@active_panel == 'active_organization' ? 'active' : '')}
-            .span12
-              .well
-                .aligncenter
+          #active_organization.row.pan{ class: (@active_panel == 'active_organization' ? 'active' : '')}
+            .col-md-12
+              .card
+                .card-header
                   %h3 Réactiver mon compte client
-                  %br
+                .card-body
                   Pour réactiver votre compte client veuillez envoyer un courriel à
                   = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
 

@@ -1,7 +1,8 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ScansController < PaperProcessesController
-  before_filter :load_scanned_by
-  before_filter :load_resource, only: :index
+  before_action :load_scanned_by
+  before_action :load_resource, only: :index
 
   # GET /scans
   def index
@@ -27,22 +28,22 @@ class ScansController < PaperProcessesController
 
       @document = PeriodDocument.where(name: params[:period_document][:name]).order(created_at: :desc).first
 
-      if @document.nil? || (@document && @document.period && @document.period.end_date < Date.today)
+      if @document.nil? || (@document&.period && @document.period.end_date < Date.today)
         @document = PeriodDocument.new
       end
 
       @document.assign_attributes(period_document_params)
 
       if @document.persisted? && @document.valid?
-        session[:document]        = nil
-        session[:old_document]  = @document.reload
+        session[:document] = nil
+        session[:old_document] = @document.reload
         session[:new_document] = {}
-        session[:new_document][:name]        = params[:period_document][:name]
+        session[:new_document][:name] = params[:period_document][:name]
         session[:new_document][:oversized]  = params[:period_document][:oversized].to_i
         session[:new_document][:paperclips] = params[:period_document][:paperclips].to_i
       else
-        @document.user  = User.where(code: @document.name.split[0]).first
-        @document.scanned_at  = Time.now
+        @document.user = User.where(code: @document.name.split[0]).first
+        @document.scanned_at = Time.now
         @document.scanned_by = @scanned_by
         @document.organization = @document.user.try(:organization)
 
@@ -74,10 +75,10 @@ class ScansController < PaperProcessesController
   def add
     document = PeriodDocument.find(params[:id])
 
-    document.oversized    += params[:oversized].to_i
-    document.paperclips    += params[:paperclips].to_i
-    document.updated_at   = Time.now
-    document.scanned_at  = Time.now
+    document.oversized += params[:oversized].to_i
+    document.paperclips += params[:paperclips].to_i
+    document.updated_at = Time.now
+    document.scanned_at = Time.now
     document.scanned_by = @scanned_by
 
     document.save
@@ -101,7 +102,7 @@ class ScansController < PaperProcessesController
 
     document.oversized     = params[:oversized].to_i
     document.paperclips    = params[:paperclips].to_i
-    document.scanned_at  = Time.now
+    document.scanned_at = Time.now
     document.scanned_by = @scanned_by
 
     document.save
@@ -130,7 +131,7 @@ class ScansController < PaperProcessesController
 
   # REFACTOR
   def is_return_labels_authorized?
-    #(@user && @user['is_return_labels_authorized']) || current_user
+    # (@user && @user['is_return_labels_authorized']) || current_user
     true
   end
   helper_method :is_return_labels_authorized?
@@ -143,17 +144,17 @@ class ScansController < PaperProcessesController
 
   def load_resource
     @all_documents = PeriodDocument.where('scanned_at >= ? AND scanned_at <= ?', @current_time.beginning_of_month, @current_time.end_of_month).where.not(scanned_at: nil)
-    #@all_documents = @all_documents.where(scanned_by: @scanned_by) if @scanned_by.present?
+    # @all_documents = @all_documents.where(scanned_by: @scanned_by) if @scanned_by.present?
 
     @groups = @all_documents.group_by { |e| e.scanned_at.day }
 
     @documents = PeriodDocument.where('scanned_at >= ? AND scanned_at <= ?', @current_time.beginning_of_day, @current_time.end_of_day).where.not(scanned_at: nil).order(scanned_at: :desc)
-    #@documents = @documents.where(scanned_by: @scanned_by) if @scanned_by.present?
+    # @documents = @documents.where(scanned_by: @scanned_by) if @scanned_by.present?
   end
 
   def reset_waiting_document
-    session[:document]        = nil
-    session[:old_document]  = nil
+    session[:document] = nil
+    session[:old_document] = nil
     session[:new_document] = nil
   end
 
@@ -163,8 +164,8 @@ class ScansController < PaperProcessesController
 
       paper_process.type            = 'scan'
       paper_process.user            = document.user
-      paper_process.pack_name         = document.name
-      paper_process.organization        = document.user.try(:organization)
+      paper_process.pack_name = document.name
+      paper_process.organization = document.user.try(:organization)
       paper_process.customer_code   = document.user.try(:code)
       paper_process.period_document = document
 

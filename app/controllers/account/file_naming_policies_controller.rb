@@ -1,13 +1,11 @@
-# -*- encoding : UTF-8 -*-
-class Account::FileNamingPoliciesController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_file_naming_policy
+# frozen_string_literal: true
 
+class Account::FileNamingPoliciesController < Account::OrganizationController
+  before_action :verify_rights
+  before_action :load_file_naming_policy
 
   # GET /account/organizations/:organization_id/file_naming_policy/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/file_naming_policy
   def update
@@ -19,20 +17,19 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
     end
   end
 
-
   # PUT /account/organizations/:organization_id/file_naming_policy/preview
   def preview
     @file_naming_policy.assign_attributes(file_naming_policy_params)
     if @file_naming_policy.valid?
-      file_name = CustomFileNameService.new(@file_naming_policy).execute(user_code:      'TS%00001',
-                                                                         user_company:   'iDocus',
-                                                                         journal:        'AC',
-                                                                         period:         '201501',
-                                                                         piece_number:   '001',
-                                                                         third_party:    'Google',
+      file_name = CustomFileNameService.new(@file_naming_policy).execute(user_code: 'TS%00001',
+                                                                         user_company: 'iDocus',
+                                                                         journal: 'AC',
+                                                                         period: '201501',
+                                                                         piece_number: '001',
+                                                                         third_party: 'Google',
                                                                          invoice_number: '001002',
-                                                                         invoice_date:   '2015-01-02',
-                                                                         extension:      '.pdf')
+                                                                         invoice_date: '2015-01-02',
+                                                                         extension: '.pdf')
     else
       file_name = 'invalide'
     end
@@ -51,11 +48,9 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
     end
   end
 
-
   def load_file_naming_policy
     @file_naming_policy = @organization.foc_file_naming_policy
   end
-
 
   def file_naming_policy_params
     params.require(:file_naming_policy).permit(

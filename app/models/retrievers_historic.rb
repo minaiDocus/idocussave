@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RetrieversHistoric < ActiveRecord::Base
+class RetrieversHistoric < ApplicationRecord
   belongs_to :user
 
   scope :banks,          -> { where("capabilities LIKE '%bank%'") }

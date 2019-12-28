@@ -274,9 +274,8 @@ class CreateInvoicePdf
       pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
     end
 
-    @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
-
-    @invoice.save
+    # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
+    @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
     auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end
@@ -285,8 +284,8 @@ class CreateInvoicePdf
     begin
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
 
-      file = File.new @invoice.content.path
-      content_file_name = @invoice.content_file_name
+      file = File.new @invoice.cloud_content_object.path
+      content_file_name = @invoice.cloud_content_object.filename
 
       uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
 
@@ -297,7 +296,6 @@ class CreateInvoicePdf
       end
     rescue => e
       logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
-      Airbrake.notify e
     end
   end
 

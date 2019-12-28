@@ -20,7 +20,7 @@ describe CreateDematboxDocument do
         'text' => nil
       }
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       dematbox = Dematbox.new
       dematbox.user = @user
       service = DematboxSubscribedService.new

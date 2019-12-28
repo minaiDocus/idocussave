@@ -35,7 +35,7 @@ end; nil
 
 # Problem : "MVN%#NBT" has an invalid character in his/her code
 
-class GroupsUsers < ActiveRecord::Base
+class GroupsUsers < ApplicationRecord
   belongs_to :group
   belongs_to :user
 end

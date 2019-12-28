@@ -1,11 +1,12 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::RetrieverController < Account::AccountController
   layout 'layouts/account/retrievers'
 
   before_action :verify_rights
   before_action :load_account
 
-private
+  private
 
   def verify_rights
     unless accounts.any? && @user.organization.is_active

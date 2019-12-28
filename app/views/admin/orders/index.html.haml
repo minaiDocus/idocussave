@@ -1,43 +1,52 @@
 #orders
-  .row-fluid.margin1bottom
-    .span12
-      %h3 Liste des commandes de scanner iDocus'Box et de Kit envoi courrier (#{@orders_count})
+  .row
+    .col.md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Liste des commandes de scanner iDocus'Box et de Kit envoi courrier
+            %span.badge.badge-info= @orders_count
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-        %thead
-          %tr
-            %th= sortable :created_at, t('activerecord.models.common.attributes.created_at'), { order_contains: @order_contains }
-            %th= sortable :user_id, 'Client', { order_contains: @order_contains }
-            %th= sortable :type, t('activerecord.models.order.attributes.type'), { order_contains: @order_contains }
-            %th Quantité
-            %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: @order_contains }
-            %th Adresse de livraison
-            %th= sortable :state, t('activerecord.models.order.attributes.state'), { order_contains: @order_contains }
-        %tbody
-          - @orders.each do |order|
-            %tr
-              %td= l order.created_at
-              %td= link_to "#{order.user.code} - #{order.user.company}", account_organization_customer_path(order.organization, order.user, tab: 'orders')
-              - if order.dematbox?
-                %td iDocus'Box
-                %td= order.dematbox_count
-                %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
-              - else
-                %td Kit envoi courrier
-                %td
-                  = order.paper_set_casing_size.to_s + 'g'
-                  %br
-                  = order.paper_set_folder_count.to_s + ' chemises'
-                  %br
-                  = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
-                  à
-                  = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
-                %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
-              %td= order.address.try(:long_info)
-              %td= Order.state_machine.states[order.state].human_name
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-    .span3
-      = render partial: 'sidebar'
+  .row.retractable.with-filter
+    .col.md-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @orders }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at'), { order_contains: @order_contains }
+              %th= sortable :user_id, 'Client', { order_contains: @order_contains }
+              %th= sortable :type, t('activerecord.models.order.attributes.type'), { order_contains: @order_contains }
+              %th Quantité
+              %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: @order_contains }
+              %th Adresse de livraison
+              %th= sortable :state, t('activerecord.models.order.attributes.state'), { order_contains: @order_contains }
+          %tbody.retractable.slidedown
+            - @orders.each do |order|
+              %tr
+                %td= l order.created_at
+                %td= link_to "#{order.user.code} - #{order.user.company}", account_organization_customer_path(order.organization, order.user, tab: 'orders')
+                - if order.dematbox?
+                  %td iDocus'Box
+                  %td= order.dematbox_count
+                  %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                - else
+                  %td Kit envoi courrier
+                  %td
+                    = order.paper_set_casing_size.to_s + 'g'
+                    %br
+                    = order.paper_set_folder_count.to_s + ' chemises'
+                    %br
+                    = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                    à
+                    = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                  %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                %td= order.address.try(:long_info)
+                %td= Order.state_machine.states[order.state].human_name
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @orders }
+    = render partial: 'sidebar'

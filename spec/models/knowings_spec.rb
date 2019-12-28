@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Knowings do
 
   before :each do
-    @knowings = FactoryGirl.create(:knowings)
+    @knowings = FactoryBot.create(:knowings)
   end
 
   it 'should be created successfully' do

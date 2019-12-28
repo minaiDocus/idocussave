@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::CompositionsController < Account::AccountController
   # POST /account/compositions
   def create
@@ -21,14 +23,14 @@ class Account::CompositionsController < Account::AccountController
       filename = File.basename(filepath)
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
   # DELETE /account/compositions/reset
   def reset
     @composition = @user.composition
-    @composition.update_attribute(:document_ids, []) if @composition
+    @composition&.update_attribute(:document_ids, [])
 
     respond_to do |format|
       format.json { render json: @composition, status: :ok }

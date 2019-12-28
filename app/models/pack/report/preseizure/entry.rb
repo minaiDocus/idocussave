@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report::Preseizure::Entry < ActiveRecord::Base
+class Pack::Report::Preseizure::Entry < ApplicationRecord
   DEBIT  = 1
   CREDIT = 2
 

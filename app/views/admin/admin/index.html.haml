@@ -1,54 +1,47 @@
 #dashboard
-  .row-fluid
-    .span8
-      .panel
-        .panel-header
-          %h3 Flux de traitement
-        %hr.margin0top
-        .panel-body
-          .tabbable.tabs-left
-            %ul.nav.nav-tabs
-              %li
-                %a{ href: '#ocr_needed_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success OCR
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#bundle_needed_temp_packs', data: { toggle: 'tab' } }
-                  %span.label Regroupement
-                  %span.badge -
-              %li.active
-                %a{ href: '#bundling_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Regroupement
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#processing_temp_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Publication
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#currently_being_delivered_packs', data: { toggle: 'tab' } }
-                  %span.label.label-success Livraison
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#failed_packs_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-important Livraison
-                  %span.badge.badge-important -
-              %li
-                %a{ href: '#blocked_pre_assignments', data: { toggle: 'tab' } }
-                  %span.label Pré-affectation
-                  %span.badge -
-              %li
-                %a{ href: '#awaiting_pre_assignments', data: { toggle: 'tab' } }
-                  %span.label.label-success Pré-affectation
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#reports_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-success Livr. Pré-aff.
-                  %span.badge.badge-success -
-              %li
-                %a{ href: '#failed_reports_delivery', data: { toggle: 'tab' } }
-                  %span.label.label-important Livr. Pré-aff.
-                  %span.badge.badge-important -
-            .tab-content
+  .row
+    .col-md-7
+      .box.height_groups.groups_1
+        %h3 Flux de traitement
+
+        %hr
+
+        .row
+          .col-sm-4
+            .box.bg-menu.small-shadow
+              #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
+                %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin OCR
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-secondary.fs-origin Regroupement
+                  %span.float-right.badge.badge-tags.badge-pill.badge-secondary.fs-origin -
+                %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Regroupement
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Publication
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-currently_being_delivered_packs.nav-link{"aria-controls": "v-currently_being_delivered_packs", "aria-selected": "false", "data-toggle": "pill", href: "#v-currently_being_delivered_packs", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Livraison
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-danger.fs-origin Livraison
+                  %span.float-right.badge.badge-tags.badge-pill.badge-danger.fs-origin -
+                %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-secondary.fs-origin Pré-affectation
+                  %span.float-right.badge.badge-tags.badge-pill.badge-secondary.fs-origin -
+                %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_pre_assignments", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Pré-affectation
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-reports_delivery.nav-link{"aria-controls": "v-reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#reports_delivery", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Livr. Pré-aff.
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
+                %a#v-failed_reports_delivery.nav-link{"aria-controls": "v-failed_reports_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_reports_delivery", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-danger.fs-origin Livr. Pré-aff.
+                  %span.span.float-right.badge.badge-tags.badge-pill.badge-danger.fs-origin -
+          .col-sm-8
+            #v-pills-tabContent.tab-content
               #ocr_needed_temp_packs.tab-pane
               #bundle_needed_temp_packs.tab-pane
               #bundling_temp_packs.tab-pane.active
@@ -59,168 +52,182 @@
               #awaiting_pre_assignments.tab-pane
               #reports_delivery.tab-pane
               #failed_reports_delivery.tab-pane
-    .span4
-      - cache 'admin_right_panels', expires_in: 5.minutes do
-        .row-fluid
-          .span6
-            %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
-            %table.table.table-striped.table-condensed.table-bordered
-              %tbody
-                %tr
-                  %th Corrompus
-                  %td= StatisticsManager.get_statistic('unreadable_temp_documents_count')
-                %tr
-                  %th Bloqués
-                  %td= StatisticsManager.get_statistic('locked_temp_documents_count')
-                %tr
-                  %th En attente de sélection
-                  %td= StatisticsManager.get_statistic('wait_selection_temp_documents_count')
-                %tr
-                  %th OCR
-                  %td= StatisticsManager.get_statistic('ocr_needed_temp_documents_count')
-                %tr
-                  %th A regrouper
-                  %td= StatisticsManager.get_statistic('bundle_needed_temp_documents_count')
-                %tr
-                  %th Prêt à être intégrés
-                  %td= StatisticsManager.get_statistic('ready_temp_documents_count')
-                %tr
-                  %th Traités
-                  %td= StatisticsManager.get_statistic('processed_temp_documents_count')
-          .span6
-            %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
+
+    .col-md-5
+      .box.height_groups.groups_1
+        - cache 'admin_right_panels', expires_in: 5.minutes do
+          .row
+            .col-sm-6
+              %h4
+                %strong
+                  %u Traitement des documents
+              %table.table.table-striped.table-condensed.table-bordered
+                %tbody
+                  %tr
+                    %th Corrompus
+                    %td= StatisticsManager.get_statistic('unreadable_temp_documents_count')
+                  %tr
+                    %th Bloqués
+                    %td= StatisticsManager.get_statistic('locked_temp_documents_count')
+                  %tr
+                    %th En attente de sélection
+                    %td= StatisticsManager.get_statistic('wait_selection_temp_documents_count')
+                  %tr
+                    %th OCR
+                    %td= StatisticsManager.get_statistic('ocr_needed_temp_documents_count')
+                  %tr
+                    %th A regrouper
+                    %td= StatisticsManager.get_statistic('bundle_needed_temp_documents_count')
+                  %tr
+                    %th Prêt à être intégrés
+                    %td= StatisticsManager.get_statistic('ready_temp_documents_count')
+                  %tr
+                    %th Traités
+                    %td= StatisticsManager.get_statistic('processed_temp_documents_count')
+            .col-sm-6
+              %h4
+                %strong
+                  %u Livraison des documents
+              %table.table.table-striped.table-condensed.table-bordered
+                %thead
+                  %tr.bg-brown.text-white
+                    %th Service
+                    %th Restant
+                    %th Echoué
+                %tbody
+                  %tr
+                    %td Dropbox Ext.
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_extended_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_extended_remote_files_count')
+                  %tr
+                    %td Dropbox
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_remote_files_count')
+                  %tr
+                    %td Google Drive
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_google_drive_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_google_drive_remote_files_count')
+                  %tr
+                    %td Box
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_box_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_box_remote_files_count')
+                  %tr
+                    %td FTP
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_ftp_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_ftp_remote_files_count')
+                  %tr
+                    %td Knowings
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
+          .row
+            .col-sm-6
+              %h4
+                %strong
+                  %u Récupérateurs automatiques
+              %table.table.table-striped.table-condensed.table-bordered
+                %tbody
+                  %tr
+                    %th Total récupérateurs
+                    %td= StatisticsManager.get_statistic('retrievers_count')
+                  %tr
+                    %th Total client (Actif)
+                    %td
+                      = StatisticsManager.get_statistic('retriever_users_count')
+                      (#{StatisticsManager.get_statistic('active_retriever_users_count')})
+                  %tr
+                    %th= Retriever.state_machine.states['ready'].human_name
+                    %td= StatisticsManager.get_statistic('retrievers_ready_count')
+                  %tr
+                    %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
+                    %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
+                  %tr
+                    %th= 'En erreur'
+                    %td= StatisticsManager.get_statistic('retrievers_errors_count')
+                  %tr
+                    %th Données en cours de tr.
+                    %td
+                      = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
+                      (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
+            .col-sm-6
+              %h4
+                %strong
+                  %u Etat des pages
+              %table.table.table-striped.table-condensed.table-bordered
+                %tbody
+                  %tr
+                    %th Total
+                    %td= StatisticsManager.get_statistic('documents_count')
+                  %tr
+                    %th Numérisés
+                    %td= StatisticsManager.get_statistic('scanned_documents_count')
+                  %tr
+                    %th Téléversés (OCR)
+                    %td
+                      = StatisticsManager.get_statistic('uploaded_documents_count')
+                      (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
+                  %tr
+                    %th Num. Dematbox
+                    %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
+                  %tr
+                    %th Auto
+                    %td= StatisticsManager.get_statistic('retrieved_documents_count')
+                  %tr
+                    %th Vignettes rest.
+                    %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
+                  %tr
+                    %th Extractions rest.
+                    %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
+          .row
+            .col-sm-12
+              %h4.label
+                %strong
+                  %u Opérations bancaires
+              .row
+                .col-6
+                  %table.table.table-striped.table-condensed.table-bordered
+                    %tbody
+                      %tr
+                        %th Total
+                        %td= StatisticsManager.get_statistic('operations_count')
+                      %tr
+                        %th Automate
+                        %td= StatisticsManager.get_statistic('retrieved_operations_count')
+                      %tr
+                        %th Import
+                        %td= StatisticsManager.get_statistic('other_operations_count')
+                .col-6
+                  %table.table.table-striped.table-condensed.table-bordered
+                    %tbody
+                      %tr
+                        %th Traités
+                        %td= StatisticsManager.get_statistic('processed_operations_count')
+                      %tr
+                        %th En attente
+                        %td= StatisticsManager.get_statistic('not_processed_not_locked_operations_count')
+                      %tr
+                        %th Bloqués
+                        %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
+        .row
+          .col-sm-12
+            %h4
+              %strong
+                %u Demande de nouveaux fournisseurs en cours
             %table.table.table-striped.table-condensed.table-bordered
               %thead
-                %tr
-                  %th Service
-                  %th Restant
-                  %th Echoué
+                %tr.bg-brown.text-white
+                  %th Date
+                  %th Client
+                  %th Nom
+                  %th Etat
               %tbody
-                %tr
-                  %td Dropbox Ext.
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_extended_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_extended_remote_files_count')
-                %tr
-                  %td Dropbox
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_remote_files_count')
-                %tr
-                  %td Google Drive
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_google_drive_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_google_drive_remote_files_count')
-                %tr
-                  %td Box
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_box_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_box_remote_files_count')
-                %tr
-                  %td FTP
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_ftp_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_ftp_remote_files_count')
-                %tr
-                  %td Knowings
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
-        .row-fluid
-          .span6
-            %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
-            %table.table.table-striped.table-condensed.table-bordered
-              %tbody
-                %tr
-                  %th Total récupérateurs
-                  %td= StatisticsManager.get_statistic('retrievers_count')
-                %tr
-                  %th Total client (Actif)
-                  %td
-                    = StatisticsManager.get_statistic('retriever_users_count')
-                    (#{StatisticsManager.get_statistic('active_retriever_users_count')})
-                %tr
-                  %th= Retriever.state_machine.states['ready'].human_name
-                  %td= StatisticsManager.get_statistic('retrievers_ready_count')
-                %tr
-                  %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
-                  %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
-                %tr
-                  %th= 'En erreur'
-                  %td= StatisticsManager.get_statistic('retrievers_errors_count')
-                %tr
-                  %th Données en cours de tr.
-                  %td
-                    = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
-                    (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
-          .span6
-            %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
-            %table.table.table-striped.table-condensed.table-bordered
-              %tbody
-                %tr
-                  %th Total
-                  %td= StatisticsManager.get_statistic('documents_count')
-                %tr
-                  %th Numérisés
-                  %td= StatisticsManager.get_statistic('scanned_documents_count')
-                %tr
-                  %th Téléversés (OCR)
-                  %td
-                    = StatisticsManager.get_statistic('uploaded_documents_count')
-                    (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
-                %tr
-                  %th Num. Dematbox
-                  %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
-                %tr
-                  %th Auto
-                  %td= StatisticsManager.get_statistic('retrieved_documents_count')
-                %tr
-                  %th Vignettes rest.
-                  %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
-                %tr
-                  %th Extractions rest.
-                  %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
-        .row-fluid
-          .span12
-            %h3.label{ style: 'padding:3px 5px 3px;' } Opérations bancaires
-            .row-fluid
-              .span6
-                %table.table.table-striped.table-condensed.table-bordered
-                  %tbody
-                    %tr
-                      %th Total
-                      %td= StatisticsManager.get_statistic('operations_count')
-                    %tr
-                      %th Automate
-                      %td= StatisticsManager.get_statistic('retrieved_operations_count')
-                    %tr
-                      %th Import
-                      %td= StatisticsManager.get_statistic('other_operations_count')
-              .span6
-                %table.table.table-striped.table-condensed.table-bordered
-                  %tbody
-                    %tr
-                      %th Traités
-                      %td= StatisticsManager.get_statistic('processed_operations_count')
-                    %tr
-                      %th En attente
-                      %td= StatisticsManager.get_statistic('not_processed_not_locked_operations_count')
-                    %tr
-                      %th Bloqués
-                      %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
-      .row-fluid
-        .span12
-          %h3.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs en cours
-          %table.table.table-striped.table-condensed.table-bordered
-            %thead
-              %th Date
-              %th Client
-              %th Nom
-              %th Etat
-            %tbody
-              - @new_provider_requests.each do |new_provider_request|
-                %tr
-                  %td= l(new_provider_request.created_at, format: '%e %b %H:%M')
-                  %td= link_to new_provider_request.user.code, account_new_provider_requests_path(user_code: new_provider_request.user.code)
-                  %td= new_provider_request.name
-                  %td= new_provider_request_state(new_provider_request)
-      .row-fluid
-        .span12
-          %h3.label{ style: 'padding:3px 5px 3px;' } Organisations facturées n'ayant pas d'adresse de facturation
-          .well
+                - @new_provider_requests.each do |new_provider_request|
+                  %tr
+                    %td= l(new_provider_request.created_at, format: '%e %b %H:%M')
+                    %td= link_to new_provider_request.user.code, account_new_provider_requests_path(user_code: new_provider_request.user.code)
+                    %td= new_provider_request.name
+                    %td= new_provider_request_state(new_provider_request)
+        .row
+          .col-sm-12
+            %h4 Organisations facturées n'ayant pas d'adresse de facturation
             - @unbillable_organizations.each do |organization|
-              = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'label label-important'
+              = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'badge badge-danger fs-origin'

@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Piece < ActiveRecord::Base
+class Pack::Piece < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/pieces/:id/download/:style'}
+
   serialize :tags
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
@@ -16,7 +18,10 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :user
   belongs_to :pack, inverse_of: :pieces
   belongs_to :organization
-  belongs_to :analytic_reference, inverse_of: :pieces
+  belongs_to :analytic_reference, inverse_of: :pieces, optional: true
+
+  has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
@@ -27,13 +32,15 @@ class Pack::Piece < ActiveRecord::Base
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  after_create do |piece|
+  after_create_commit do |piece|
     unless Rails.env.test?
       Pack::Piece.delay_for(10.seconds, queue: :low).finalize_piece(piece.id)
     end
   end
 
   before_destroy do |piece|
+    piece.cloud_content.purge
+
     current_analytic = piece.analytic_reference
     current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ pieces: [piece.id] })
   end
@@ -154,33 +161,41 @@ class Pack::Piece < ActiveRecord::Base
   end
 
   def self.generate_thumbs(piece)
-    begin
-      piece.content.reprocess!
-      piece.save
-    rescue => e
-      true
-    end
+    piece = Pack::Piece.find(id)
+
+    base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
+
+    piece.is_thumb_generated = true
+
+    image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
+
+    piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                         filename: "#{base_file_name}.png", 
+                                         content_type: "image/png")
+
+    piece.save
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
   end
 
   def correct_pdf_signature
-    sign_piece if DocumentTools.remake_pdf(self.content.path)
+    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
   end
 
   def sign_piece
-    to_sign_file = File.dirname(self.content.path) + '/signed.pdf'
-    FileUtils.cp self.content.path, to_sign_file
+    content_file_path = self.cloud_content_object.path
+    to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
 
-    DocumentTools.sign_pdf(to_sign_file, self.content.path)
-    FileUtils.rm to_sign_file
+    DocumentTools.sign_pdf(content_file_path, to_sign_file)
+
+    self.cloud_content_object.attach(File.open(to_sign_file), "#{self.cloud_content_object.filename}.pdf") if self.save
   end
 
   def self.extract_content(piece)
     begin
-      path = if piece.content.queued_for_write[:original]
-               piece.content.queued_for_write[:original].path
-             else
-               piece.content.path
-             end
+      path = piece.cloud_content_object.path
 
       POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
 
@@ -268,7 +283,7 @@ class Pack::Piece < ActiveRecord::Base
     return self.pages_number if self.pages_number > 0
 
     begin
-      self.pages_number = DocumentTools.pages_number(self.content.path)
+      self.pages_number = DocumentTools.pages_number(self.cloud_content_object.path)
       save
     rescue
       0
@@ -313,7 +328,6 @@ class Pack::Piece < ActiveRecord::Base
   end
 
   private
-
 
   def set_number
     self.number = DbaSequence.next('Piece') unless number

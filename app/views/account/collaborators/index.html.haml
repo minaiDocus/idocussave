@@ -1,36 +1,35 @@
 #collaborators
-  .row-fluid
-    .span12.box
-      .row-fuild
-        .span12
-          .pull-left
-            %h3 Liste des collaborateurs (#{@members.total_count})
-          .pull-right
-            -if @organization.is_active
-              = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des collaborateurs 
+            %span.badge.badge-info= @members.total_count
+        .float-right
+          -if @organization.is_active
+            = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 
-  .row-fluid
-    .span9.box
-      = render partial: 'shared/list_options', locals: { collection: @members }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
-            %thead
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @members }
+        %table.table.table-condensed.table-striped.users_list.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
+              %th= sortable :role, t('activerecord.models.member.attributes.role')
+              %th Action
+          %tbody.retractable.slidedown
+            - @members.each do |member|
               %tr
-                %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
-                %th= sortable :role, t('activerecord.models.member.attributes.role')
-                %th Action
-            %tbody
-              - @members.each do |member|
-                %tr
-                  %td.date= l member.created_at
-                  %td.user_info
-                    %span.info= link_to member.info, account_organization_collaborator_path(@organization, member)
-                  %td= t('activerecord.models.member.attributes.role_values.' + member.role)
-                  %td
-                    - if @organization.is_active && !member.user.is_admin && (@user.leader? || member.collaborator?)
-                      = link_to icon_destroy, account_organization_collaborator_path(@organization, member), class: 'btn btn-danger btn-mini', data: { method: :delete, confirm: "Êtes-vous sûr de vouloir supprimer ce compte définitivement ? Cette action est irréversible." }
-      = render partial: 'shared/list_options', locals: { collection: @members }
-    .span3.box
-      = render partial: 'sidebar'
+                %td.date= l member.created_at
+                %td.user_info
+                  %span.info= link_to member.info, account_organization_collaborator_path(@organization, member)
+                %td= t('activerecord.models.member.attributes.role_values.' + member.role)
+                %td
+                  - if @organization.is_active && !member.user.is_admin && (@user.leader? || member.collaborator?)
+                    = link_to 'supprimer', account_organization_collaborator_path(@organization, member), class: 'btn btn-light', data: { method: :delete, confirm: "Êtes-vous sûr de vouloir supprimer ce compte définitivement ? Cette action est irréversible." }
+        = render partial: 'shared/list_options', locals: { collection: @members }
+    = render partial: 'sidebar'

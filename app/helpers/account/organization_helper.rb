@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::OrganizationHelper
   def collaborator_form_url(organization, member)
     if action_name == 'new' || !member.persisted?
@@ -7,7 +9,6 @@ module Account::OrganizationHelper
     end
   end
 
-
   def customer_form_url(organization, customer)
     if action_name == 'new' || !customer.persisted?
       account_organization_customers_url(organization)
@@ -16,7 +17,6 @@ module Account::OrganizationHelper
     end
   end
 
-
   def customer_address_form_url(organization, customer, address)
     if action_name == 'new' || !address.persisted?
       account_organization_customer_addresses_path(organization, customer)
@@ -24,7 +24,6 @@ module Account::OrganizationHelper
       account_organization_customer_address_url(organization, customer, address)
     end
   end
-
 
   def journal_form_url(organization, customer, journal)
     if action_name == 'new' || !journal.persisted?
@@ -41,7 +40,6 @@ module Account::OrganizationHelper
       end
     end
   end
-
 
   def exercise_form_url(organization, customer, exercise)
     if action_name == 'new' || !exercise.persisted?
@@ -73,11 +71,11 @@ module Account::OrganizationHelper
   end
 
   def inside_organization?
-    request.path =~ /organizations/ && !((controller_name == 'organizations' && action_name.in?(%w(index new create))) || controller_name == 'group_organizations')
+    request.path =~ /organizations/ && !((controller_name == 'organizations' && action_name.in?(%w[index new create])) || controller_name == 'group_organizations')
   end
 
-  def preseizure_date_options(with_organization_option=false)
-    options = with_organization_option ? [[t("activerecord.models.user_options.attributes.preseizure_date_option_organization"), -1]] : []
+  def preseizure_date_options(with_organization_option = false)
+    options = with_organization_option ? [[t('activerecord.models.user_options.attributes.preseizure_date_option_organization'), -1]] : []
 
     UserOptions::PRESEIZURE_DATE_OPTIONS.each_with_index do |type, index|
       options << [t("activerecord.models.user_options.attributes.#{type}"), index]
@@ -88,44 +86,44 @@ module Account::OrganizationHelper
 
   def debit_mandate_countries
     [
-      ["Allemagne", "DE"],
-      ["Autriche", "AT"],
-      ["Belgique", "BE"],
-      ["Bulgarie", "BG"],
-      ["Chypre", "CY"],
-      ["Danemark", "DK"],
-      ["Espagne", "ES"],
-      ["Estonie", "EE"],
-      ["Finlande", "FI"],
-      ["France", "FR"],
-      ["Gibraltar", "GI"],
-      ["Grêce", "GR"],
-      ["Guadeloupe", "GP"],
-      ["Guyane Française", "GF"],
-      ["Hungary", "HU"],
-      ["Irlande", "IE"],
-      ["Islande", "IS"],
-      ["Italie", "IT"],
-      ["Lettonie", "LV"],
-      ["Liechtenstein", "LI"],
-      ["Lituanie", "LT"],
-      ["Luxembourg", "LU"],
-      ["Malte", "MT"],
-      ["Martinique", "MQ"],
-      ["Monaco", "MC"],
-      ["Norvège", "NO"],
-      ["Pays-Bas", "NL"],
-      ["Pologne", "PL"],
-      ["Portugal", "PT"],
-      ["Roumanie", "RO"],
-      ["Royaume-Uni", "GB"],
-      ["République Tchêque", "CZ"],
-      ["Réunion", "RE"],
-      ["Slovaquie", "SK"],
-      ["Slovénie", "SI"],
-      ["Suisse", "CH"],
-      ["Suède", "SE"],
-      ["Iles Aland", "AX"]
+      %w[Allemagne DE],
+      %w[Autriche AT],
+      %w[Belgique BE],
+      %w[Bulgarie BG],
+      %w[Chypre CY],
+      %w[Danemark DK],
+      %w[Espagne ES],
+      %w[Estonie EE],
+      %w[Finlande FI],
+      %w[France FR],
+      %w[Gibraltar GI],
+      %w[Grêce GR],
+      %w[Guadeloupe GP],
+      ['Guyane Française', 'GF'],
+      %w[Hungary HU],
+      %w[Irlande IE],
+      %w[Islande IS],
+      %w[Italie IT],
+      %w[Lettonie LV],
+      %w[Liechtenstein LI],
+      %w[Lituanie LT],
+      %w[Luxembourg LU],
+      %w[Malte MT],
+      %w[Martinique MQ],
+      %w[Monaco MC],
+      %w[Norvège NO],
+      %w[Pays-Bas NL],
+      %w[Pologne PL],
+      %w[Portugal PT],
+      %w[Roumanie RO],
+      %w[Royaume-Uni GB],
+      ['République Tchêque', 'CZ'],
+      %w[Réunion RE],
+      %w[Slovaquie SK],
+      %w[Slovénie SI],
+      %w[Suisse CH],
+      %w[Suède SE],
+      ['Iles Aland', 'AX']
     ]
   end
 end

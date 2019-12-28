@@ -1,8 +1,8 @@
 #receipts.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
-  .row-fluid
-    .span1
+  .row
+    .col-md-1
       = link_to 'Export CSV', receipts_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
-    .span11
+    .col-md-11
       .margin2bottom
         %table.table.table-bordered.navigation
           %tr.date_list
@@ -40,8 +40,8 @@
               - time = time + 1.day
   .alerts
     = render partial: 'shared/messages'
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       %table.table.table-bordered.condensed
         %tr
           %th.date            Heure

@@ -1,19 +1,19 @@
 #file_storage_authorizations.edit
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3
         Edition des autorisations des stockages externes pour le client :
-        = link_to @someone.info, @url_path
+        = link_to @someone.info, @url_path, class: 'fs-origin'
 
-  .row-fluid
-    .span12.box
-      = simple_form_for @someone, url: @put_url_path, html: { class: 'form form-horizontal margin0' } do |f|
+    = simple_form_for @someone, url: @put_url_path, html: { class: 'form-horizontal' } do |f|
+      .card-body
         = f.input :is_dropbox_extended_authorized, as: :boolean
         = f.simple_fields_for :external_file_storage do |sf|
           = sf.input :is_dropbox_basic_authorized, as: :boolean
           = sf.input :is_google_docs_authorized,   as: :boolean
           = sf.input :is_ftp_authorized,           as: :boolean
           = sf.input :is_box_authorized,           as: :boolean
+      .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), @url_path, class: 'btn'
+          = link_to t('actions.cancel'), @url_path, class: 'btn btn-light'

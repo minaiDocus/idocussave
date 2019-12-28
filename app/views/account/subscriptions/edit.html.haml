@@ -1,24 +1,28 @@
 ﻿#subscriptions.edit
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition de l'abonnement du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        %h3 Sélection forfait(s)/option(s) pour le dossier : #{@customer}
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3
+          Edition de l'abonnement du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'fs-origin'
+      - else
+        .float-left
+          %h3
+            Sélection forfait(s)/option(s) pour le dossier : 
+            %span.text-info.fs-origin= @customer
 
-  .row-fluid
-    .span12.box
-      = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { id: 'subscription_package_form', class: 'form form-horizontal margin0' }, data: { is_recently_created: @customer.recently_created? } do |f|
+    = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { id: 'subscription_package_form', class: 'form-horizontal' }, data: { is_recently_created: @customer.recently_created? } do |f|
+      .card-body
         - lock = ''
         - if @subscription.configured?
           - lock = @subscription.light_package? ? 'annual_package_locked' : 'ligth_package_locked'
-        %table.table
+        %table.table.table-subscriptions
           %tbody
             %tr.package{ class: "#{lock} #{'locked' if lock.present?}" }
-              %td.question
+              %td.question.bg-light.border-right-0
                 Quel(s) forfait(s) choisissez-vous pour le dossier ?
                 %br
                 %br
@@ -26,7 +30,7 @@
                   Pour consulter nos produits et leurs tarifs, rendez-vous dans le menu «
                   = link_to 'Produits et tarifs', docs_download_path(name: 'Guide&tarifs_2017_iDocus.pdf'), target: '_blank'
                   ». iDo'Basique est compris dans iDo'Courrier et iDo'Box.
-              %td
+              %td.bg-light.border-left-0
                 .package_choice
                   %label
                     = f.check_box :is_basic_package_active, class: 'light_package', disabled: @subscription.heavy_package?, data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
@@ -99,18 +103,36 @@
                     Non
 
         - if @user.is_admin
-          .well
-            .row-fluid
-              .span6
+          .row
+            .col-md-12
+              %a{ id: 'admin_options_button', href: '#', class: 'btn btn-secondary'} Afficher / Cacher les options
+          .box.bg-light.admin_options.hide
+            .row
+              .col-md-8
                 %h4.aligncenter Quelle(s) option(s) appliquer à ce dossier ?
-                %table.table.table-condensed.margin1top.extra_options.margin0bottom
-                  %tbody
-                    - SubscriptionOption.by_position.each do |option|
-                      %tr
-                        %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
-                        %td= label_tag "subscription_option_ids_#{option.id}", option.name
-                        %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
-              .span6
+                - sub_size     = SubscriptionOption.by_position.size
+                - count        = (sub_size / 2).ceil
+                - first_group  = SubscriptionOption.by_position[0...count]
+                - second_group = SubscriptionOption.by_position[count..sub_size]
+                .row
+                  .col-md-6
+                    %table.table.table-condensed.table-striped.margin1top.extra_options.margin0bottom
+                      %tbody
+                        - first_group.each do |option|
+                          %tr
+                            %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
+                            %td= label_tag "subscription_option_ids_#{option.id}", option.name
+                            %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
+                  .col-md-6
+                    %table.table.table-condensed.table-striped.margin1top.extra_options.margin0bottom
+                      %tbody
+                        - second_group.each do |option|
+                          %tr
+                            %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
+                            %td= label_tag "subscription_option_ids_#{option.id}", option.name
+                            %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
+
+              .col-md-4
                 %h4.aligncenter Quotas
                 %hr
                 %h4.aligncenter Feuilles
@@ -147,17 +169,17 @@
                 %br
                 = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
                 = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-            .row-fluid
-              .span12
-                %hr
-                = f.input :is_to_apply_now, as: :boolean, label: 'Appliquer tout de suite les options à la baisse ?'
+          .row
+            .col-md-12
+              = f.input :is_to_apply_now, as: :boolean, label: 'Appliquer tout de suite les options à la baisse ?'
         %hr
         .aligncenter
           %h4 Prix du forfait avec les options sélectionnées :
           %b.total_price{ style: 'font-size:20px' }
-        .form-actions.margin0bottom
+      .card-footer
+        .form-actions
           - if @customer.configured?
             = f.submit 'Valider', class: 'btn btn-primary'
-            = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'
+            = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn btn-light'
           - else
             = f.submit t('actions.next_step'), class: 'btn btn-primary'

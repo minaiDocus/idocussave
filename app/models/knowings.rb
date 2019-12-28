@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Knowings < ActiveRecord::Base
+class Knowings < ApplicationRecord
   belongs_to :organization
 
   attr_encrypted :url,      random_iv: true

@@ -1,9 +1,8 @@
-@import compass/css3
 @import bootstrap
-@import bootstrap-responsive
 @import margin-padding-control
-@import jquery.ui.all
+@import jquery-ui
 @import jquery.qtip.min
+@import jquery.fileupload
 @import jquery.fileupload-ui
 @import token-input
 @import token-input-facebook
@@ -13,6 +12,7 @@
 @import searchable-option-list
 @import chosen
 @import custom_popover
+@import retractable
 
 // Defaults
 
@@ -20,10 +20,17 @@ html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym,
 del, dfn, em, img, ins, kbd, q, samp, small, strike, strong tt, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td
   :font-size 11px
-  :font-family Arial, Helvetica, sans-serif !important
+  :font-family Arial, Helvetica, sans-serif  !important
+//general
+a
+  :cursor pointer
+  :color #0088cc
+a:hover
+  :color #35bdff
 
 h1, h2, h3, h4
   :color #584528
+
 h2
   :font-size 16px
 .container
@@ -31,71 +38,255 @@ h2
 .container  a, .container-fluid a
   :text-decoration none
 
-.navbar-inner
-  :background-color #3e2f24
-  :background-image none
-.navbar a, footer a
-  :color #c9dd03 !important
+input[type="radio"], input[type="checkbox"]
+  cursor: pointer
+  margin-right: 5px
+
+.navbar.navbar-static-top
+  position: fixed
+  z-index: 100
+  margin: 0
+  width: 100%
+  height: 30px
+
+nav.navbar
+  :background-image: url('application/bg_body_2.png')
+  :background-repeat: repeat
+  :background-attachment: fixed
+  :margin-bottom 20px
+  :padding-top: 0.1rem !important
+  :padding-bottom: 0.1rem !important
+  ul
+    list-style: none
+    margin-top: 0 !important
+    margin-bottom: 0 !important
+  .navbar-nav
+    .nav-link, .dropdown-item
+      text-decoration: none
+    .nav-item
+      :margin 0 5px
   :text-decoration none !important
-.navbar a:hover, footer a:hover
+nav.navbar a:hover, footer a:hover
   :text-decoration underline
-.navbar .logo
-  :width 76px
-  :height 36px
-  :float left
-  :display block
-  :padding 0
-  :margin 0 20px 4px 0
-  :background-color white
-  +border-radius(0 0 6px 6px)
-  +box-shadow(#ffffff 0 1px 0px inset)
-.navbar .logo img
-  :position relative
-  :top 7px
-  :left 11px
-.navbar p
-  :font-size 11px
-.navbar .dropdown-menu
-  background-color: #3e2f24
 
-.subnav
-  :display block
-  :margin-left 0
-  :margin-bottom 18px
-  :list-style none
-.subnav > li > a
-  :display block
-.subnav > li > ahover
-  :text-decoration none
-  :background-color #eeeeee
+nav.navbar .dropdown-menu
+  background-image: url('application/bg_body_2.png')
+  background-repeat: repeat
+  background-attachment: fixed
+.dropdown-item.active
+  background-color: rgba(0, 0, 0, 0.3);
 
-.navbar .subnav
-  :position relative
-  :left 0
-  :display block
-  :float left
-  :margin 0 10px 0 0
-.navbar .subnav.pull-right
-  :float right
-.navbar .subnav > li
-  :display block
-  :float left
-.navbar .subnav > li > a
-  :float none
-  :padding 10px 10px 11px
-  :line-height 19px
-  :color #999999
-  :text-decoration none
-  :text-shadow 0 -1px 0 rgba(0, 0, 0, 0.25)
-.navbar .subnav > li > ahover
-  :background-color transparent
-  :color #ffffff
-  :text-decoration none
-.navbar .subnav .active > a, .navbar .subnav .active > ahover
-  :color #ffffff
-  :text-decoration none
-  :background-color #222222
-  :background-color rgba(0, 0, 0, 0.5)
+//logo
+.navbar
+  .logo
+    width: 76px
+    height: 36px
+    float: left
+    display: block
+    padding: 0 !important
+    background-color: white
+    border-radius: (0 0 6px 6px)
+    box-shadow: (#ffffff 0 1px 0px inset)
+    img
+      position: relative
+      top: 7px
+      left: 11px
+
+//form
+/***** Form *****/
+/*** Global ***/
+select
+  width: auto
+/*** Error ***/
+label.error
+  color: #b94a48
+input.error, select.error, textarea.error
+  color: #b94a48
+  border-color: #b94a48
+input.error:focus, select.error:focus, textarea.error:focus
+  border-color: #953b39
+  +box-shadow(#d59392 0 0 6px)
+
+.form-group.error
+  label, .help-inline
+    color: #b94a48
+  .help-inline
+    margin: 0 5px
+  input, select, textarea
+    color: #b94a48
+    border-color: #b94a48
+  input:focus, select:focus, textarea:focus
+    border-color: #953b39
+    +box-shadow(#d59392 0 0 6px)
+
+.with_custom_controls
+  .form-group
+    margin-bottom: 0px !important
+
+form
+  .form-group
+    margin-bottom: 1.5rem
+  .form-group.radio_buttons, .form-group.check_boxes
+    .control-section
+      .help-block
+        display: block
+        margin-top: -14px
+      .checkbox
+        margin: 5px
+      .radio
+        margin: 1px
+      span.checkbox:first-of-type, span.radio:first-of-type
+        margin-left: 0px
+      span.checkbox:last-of-type, span.radio:last-of-type
+        margin-right: 0px
+      .radio, .checkbox
+        label
+          border: 1px solid #ddd
+          padding: 3px 5px
+          border-radius: 3px
+          cursor: pointer
+          width: 100px
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+          text-align: center
+          input[type="radio"], input[type="checkbox"]
+            display: none
+        label.checked
+          background-color: #007bff !important
+          border: 1px solid #007bff
+          color: #fff
+        label:hover
+          background-color: #eee
+  .label-section
+    .help-inline
+      text-decoration: underline
+      display: inline-block
+      line-height: 20px
+  .control-section
+    margin-left : 10px
+    input, select, .sol-inner-container
+      width: 100%
+      height: 31px
+      /*max-width: 400px*/
+    textarea
+      width: 100%
+      height: 100px
+      /*max-width: 400px*/
+    input[type="checkbox"], input[type="radio"]
+      width: auto !important
+    input[type="number"]
+      max-width: 80px
+    .checkbox
+      display: inline-block
+      cursor: pointer
+      input[type="checkbox"]
+        display: inline-block
+    .token-input-list-facebook
+      height: 36px !important
+      margin-top: 0px !important
+      border-radius: 3px
+      border-color: #bbb !important
+    .datepicker
+      padding-left: 0px !important
+      padding-right: 0px !important
+    .sol-selection
+      .sol-option
+        input, select, textarea
+          width: auto
+    .bootstrap-filestyle
+      input[type="text"]
+        width: 210px !important
+        height: 25px !important
+      label
+        cursor: pointer
+    .help-block
+      color: #666
+      display: inline-block
+      line-height: 20px
+
+form.form-horizontal
+  line-height: 25px
+  .form-group
+    .label-section
+      width: 250px
+      margin-right: 10px
+      float: left
+    .control-section
+      margin-left: 0px
+      float: left
+      width: calc(100% - 270px)
+form.form-horizontal.label-auto
+  .form-group
+    .label-section
+      width: auto
+    .control-section
+      width: auto
+form.form-horizontal.label-small
+  .form-group
+    .label-section
+      width: 100px
+    .control-section
+      width: calc(100% - 120px)
+form.form-horizontal.label-medium
+  .form-group
+    .label-section
+      width: 350px
+    .control-section
+      width: calc(100% - 370px)
+form.form-horizontal.label-large
+  .form-group
+    .label-section
+      width: 550px
+    .control-section
+      width: calc(100% - 570px)
+form.form-filter
+  .filter-date
+    input
+      width: 86.7%
+  .form-actions
+    text-align: right
+
+.box
+  margin-bottom: 10px
+  padding: 14px 19px 14px
+  border: 1px solid #DDD
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.065)
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
+
+//datepicker
+.datepicker
+  .add-on
+    display: inline
+    margin-top: 20px
+
+//pagination (overide bootstrap wich is not working)
+.pagination
+  .page-item
+    height: 19px
+    cursor: pointer
+    .page-link
+      border-radius: 3px
+      padding: 0 7px
+      color: #0088cc
+      font-weight: bold
+  .page-item:hover
+    border: 1px solid #dee2e6
+    background-color: #dee2e6
+    .page-link
+      background-color: #dee2e6 !important
+  .page-item.active
+    .page-link
+      background-color: #17a2b8!important
+      color: #fff
+.page-link-badge
+  :font-size inherit !important
+
+
+//modal
+.modal-dialog
+  max-width: 750px
 
 // WorkingClass
 .pull-none
@@ -107,6 +298,9 @@ h2
   :text-align right !important
 .tac, .aligncenter
   :text-align center !important
+
+.fs-origin
+  font-size: inherit
 
 .setredbg
   :background-color red !important
@@ -131,3 +325,110 @@ h2
   :background-color transparent !important
 .nobrd
   :border-width 0px !important
+
+.table-bordered-inner
+  th, td
+    border: 1px solid #dee2e6
+  tr
+    th:first-child, td:first-child
+      border-left: none !important
+    th:last-child, td:last-child
+      border-right: none !important
+  tr:first-child
+    th, td
+      border-top: none !important
+  tr:last-child
+    th, td
+      border-bottom: none !important
+
+.bg-menu
+  color: #E6F7FF
+  background-image: url('application/bg_body_2.png')
+  background-repeat: repeat
+  background-attachment: fixed
+  .nav-link
+    color: #fff
+  // disable: allow link to be clickable
+  .nav-link.disable
+    color: #6c757d
+  // disabled: disallow link to be clickable
+  .nav-link.disabled
+    color: #6c757d
+  .nav-item:hover
+    background-color: #d7d6d7 !important
+    .nav-link
+      color: #3e2f24 !important
+  .dropdown-menu .dropdown-item:hover
+    background-color: #d7d6d7 !important
+    color: #3e2f24 !important
+  .nav-item.active
+    background-color: #fff !important
+    .nav-link
+      color: #3e2f24 !important
+  .nav-header
+    border-bottom: 1px solid #fff
+    font-size: 12px
+    margin-top: 5px
+  .dropdown-menu
+    .nav-item.active
+      .dropdown-link
+        color: #3e2f24 !important
+
+.bg-dark, .table-dark, .bg-brown, .bg-brown-light
+  a
+    color: #CCE6FF
+  a:hover
+    color: #E6FFE6
+
+.nav-tabs
+  .dropdown
+    .dropdown-menu
+      .dropdown-item:hover
+        color: #fff !important
+  .nav-link.active
+    background-color: #d7d6d7 !important
+
+/* open iconic style */
+.oi-icon
+  width: 13px
+  height: 13px
+  display: inline
+
+/* shadows */
+.small-shadow
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.36),0 2px 10px 0 rgba(0,0,0,0.32) !important
+
+.medium-shadow
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.38),0 4px 15px 0 rgba(0,0,0,0.35) !important;
+
+.large-shadow
+  box-shadow: 0 12px 15px 0 rgba(0,0,0,0.44),0 17px 50px 0 rgba(0,0,0,0.39) !important;
+
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 1186px)
+  .navbar.navbar-static-top
+    height: auto
+  form.form-horizontal
+    line-height: 25px
+    .form-group
+      .label-section
+        width: 150px
+        margin-right: 10px
+        float: left
+      .control-section
+        margin-left: 0px
+        float: left
+        width: calc(100% - 170px)
+  form.form-horizontal.label-medium
+    .form-group
+      .label-section
+        width: 250px
+      .control-section
+        width: calc(100% - 270px)
+  form.form-horizontal.label-large
+    .form-group
+      .label-section
+        width: 450px
+      .control-section
+        width: calc(100% - 470px)

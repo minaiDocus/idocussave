@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::FirebaseNotificationController < MobileApiController
   before_action :load_notifications
 
@@ -6,12 +8,12 @@ class Api::Mobile::FirebaseNotificationController < MobileApiController
   def get_notifications
     data_loaded = @notifications.map do |notification|
       {
-        id:         notification.id,
-        user_id:    notification.user_id,
-        is_read:    notification.is_read,
+        id: notification.id,
+        user_id: notification.user_id,
+        is_read: notification.is_read,
         created_at: notification.created_at,
-        title:      notification.title,
-        message:    notification.message
+        title: notification.title,
+        message: notification.message
       }
     end
 
@@ -24,8 +26,10 @@ class Api::Mobile::FirebaseNotificationController < MobileApiController
   end
 
   def register_firebase_token
-    FirebaseToken.create_or_initialize(@user, params[:firebase_token], params[:platform], params[:version]) if params[:firebase_token].present?
-    @user.firebase_tokens.each do |token| token.delete_unless_valid end
+    if params[:firebase_token].present?
+      FirebaseToken.create_or_initialize(@user, params[:firebase_token], params[:platform], params[:version])
+    end
+    @user.firebase_tokens.each { |token| token.delete_unless_valid }
 
     MobileConnexion.log(@user, params[:platform], params[:version])
 

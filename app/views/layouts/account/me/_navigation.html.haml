@@ -1,27 +1,46 @@
-.well.sidebar-nav
-  %ul.nav.nav-list.dlink
+.box.medium-shadow.bg-menu.side-menu
+  %span.retractable-caret
+    %span.title Mon compte
+    %span.icon= glyphicon('caret-right')
+  %ul.nav.flex-column.nav-list.dlink
     - unless organizations_suspended? && @user.active?
-      %li{ class: ('active' if @active_panel == 'change_password') }
-        = link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
+      %li.nav-item{ class: ('active' if @active_panel == 'change_password') }
+        %a{ href: '#change_password', class: 'do-show nav-link' }
+          Changer mon mot de passe
+          = glyphicon('lock-locked', { class: 'float-right' })
       - if @user.active? && !@user.collaborator? && @user.organization.is_active
-        %li{ class: ('active' if @active_panel == 'account_sharing') }
-          = link_to 'Partage de compte', '#account_sharing', class: 'do-show'
+        %li.nav-item{ class: ('active' if @active_panel == 'account_sharing') }
+          %a{ href: '#account_sharing', class: 'do-show nav-link' }
+            Partage de compte
+            = glyphicon('folder', { class: 'float-right' })
         - unless @user.is_guest
-          %li{ class: ('active' if @active_panel == 'addresses_management') }
-            = link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
+          %li.nav-item{ class: ('active' if @active_panel == 'addresses_management') }
+            %a{ href: '#addresses_management', class: 'do-show nav-link' }
+              Gestion de mes adresses
+              = glyphicon('justify-left', { class: 'float-right' })
     - if @user.active?
       - if @user.organization.is_active
         - unless organizations_suspended?
-          %li{ class: ('active' if @active_panel == 'efs_management') }
-            = link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'
-          %li{ class: ('active' if @active_panel == 'subscription_options') }
-            = link_to "Notifications et remontées d'alertes", '#subscription_options', class: 'do-show'
+          %li.nav-item{ class: ('active' if @active_panel == 'efs_management') }
+            %a{ href: '#efs_management', class: 'do-show nav-link' }
+              Configurer les stockages externes
+              = glyphicon('hard-drive', { class: 'float-right' })
+          %li.nav-item{ class: ('active' if @active_panel == 'subscription_options') }
+            %a{ href: '#subscription_options', class: 'do-show nav-link' }
+              Notifications et remontées d'alertes
+              = glyphicon('audio', { class: 'float-right' })
           - if @user.is_dematbox_authorized
-            %li{ class: ('active' if @active_panel == 'idocus_box') }
-              = link_to "iDocus'Box", '#idocus_box', class: 'do-show'
+            %li.nav-item{ class: ('active' if @active_panel == 'idocus_box') }
+              %a{ href: '#idocus_box', class: 'do-show nav-link' }
+                iDocus'Box
+                = glyphicon('box', { class: 'float-right' })
           - if @user.options&.is_upload_authorized && !(@user.admin? || @user.collaborator?)
-            %li{ class: ('active' if @active_panel == 'emailed_documents') }
-              = link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
+            %li.nav-item{ class: ('active' if @active_panel == 'emailed_documents') }
+              %a{ href: '#emailed_documents', class: 'do-show nav-link' }
+                Adresse email d'envoi de documents
+                = glyphicon('envelope-closed', { class: 'float-right' })
       - if !@user.organization.is_active && @user.can_unsuspend?
-        %li{ class: ('active' if @active_panel == 'active_organization') }
-          = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
+        %li.nav-item{ class: ('active' if @active_panel == 'active_organization') }
+          %a{ href: '#active_organization', class: 'do-show nav-link' }
+            Réactiver mon compte client
+            = glyphicon('power-standby', { class: 'float-right' })

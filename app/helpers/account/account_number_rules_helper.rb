@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::AccountNumberRulesHelper
   def rule_target_options_for_select
     [

@@ -36,6 +36,7 @@ class ProcessRetrievedData
                   else
                     bank_account.retriever         = retriever
                     bank_account.api_id            = account['id']
+                    bank_account.number            = account['number']
                     bank_account.api_name          = 'budgea'
                     bank_account.name              = account['name']
                     bank_account.type_name         = account['type']

@@ -1,12 +1,14 @@
 #customer.edit.mcf
-  .row-fluid
-    .span12.box
-      %h3 Choix du dossier My Company Files à lier au dossier client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'mcf')}
+  .card
+    .card-header
+      %h3
+        Choix du dossier My Company Files à lier au dossier client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'mcf'), class: 'fs-origin'
 
-  .rwo-fluid
-    .span12.box
-      = simple_form_for @customer, url: update_mcf_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+    = simple_form_for @customer, url: update_mcf_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |f|
+      .card-body
         = f.input :mcf_storage, label: 'Sélectionner le dossier correspondant dans My Company Files', collection: [], input_html: { style: 'display:none', data: { original_value: @customer.mcf_storage, users_list_url: account_organization_mcf_users_path(@organization, format: 'json'), placeholder: 'Choisir un dossier' } }
-        .form-actions.margin0bottom
+      .card-footer 
+        .form-actions
           = f.submit t('actions.submit'), class: 'btn btn-primary', disabled: true
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'mcf'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'mcf'), class: 'btn btn-light'

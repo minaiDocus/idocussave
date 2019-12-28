@@ -1,12 +1,12 @@
-%h2 Modifier votre mot de passe
+%h2.aligncenter.font-weight-bold Modifier votre mot de passe
 
 %hr
 
 %p Utilisez le formulaire ci-dessous, pour modifier votre mot de passe.
 
-= simple_form_for resource, url: password_path(resource_name), method: 'patch', html: { class: 'form form-horizontal' } do |f|
+= simple_form_for resource, url: password_path(resource_name), method: 'patch' do |f|
   = f.hidden_field :reset_password_token
   = f.input :password, label: 'Nouveau mot de passe :'
   = f.input :password_confirmation, label: 'Confirmation du nouveau mot de passe :'
   .form-actions.padding0bottom
-    = f.submit 'Valider', class: 'btn btn-primary pull-left'
+    = f.submit 'Valider', class: 'btn btn-primary float-left'

@@ -1,27 +1,25 @@
 #paper_set_orders.select_to_order
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .row-fluid
-            .span5
-              %h3 Sélection des clients pour la commande multiple (#{@customers.size})
-            .span7.alignright
-              = link_to t('actions.return'), account_organization_paper_set_orders_path(@organization), class: 'btn'
-  .row-fluid
-    .span12.box
-      %p Veuillez sélectionner les clients pour lesquels vous voulez commander un Kit Courrier.
-      %span.label.label-warning{style: 'font-size: 14px'} La commande de kit courrier pour les dossiers en abonnement trimestriel n'est plus valide pour l'année prochaine (2020)
-      = form_tag(order_multiple_account_organization_paper_set_orders_path(@organization), method: :post) do
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+  .card
+    .card-header.clearfix
+      .float-left
+        %h3 
+          Sélection des clients pour la commande multiple
+          %span.badge.badge-info.fs-origin= @customers.size
+      .float-right
+        = link_to t('actions.return'), account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'
+    = form_tag(order_multiple_account_organization_paper_set_orders_path(@organization), method: :post) do
+      .card-body
+        %p Veuillez sélectionner les clients pour lesquels vous voulez commander un Kit Courrier.
+        %span.fs-origin.badge.badge-warning{style: 'font-size: 14px'} La commande de kit courrier pour les dossiers en abonnement trimestriel n'est plus valide pour l'année prochaine (2020)
+        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
           %thead
-            %tr
+            %tr.bg-brown.text-white
               %th.checkbox= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
               %th code
               %th société
               %th dernière commande
               %th dern. envel. retour
-          %tbody
+          %tbody.retractable.slidedown
             - @customers.each do |customer|
               - last_order = customer.orders.paper_sets.billed.last
               - paper_return = customer.paper_processes.returns.last
@@ -31,6 +29,7 @@
                 %td= truncate(customer.company, length: 20, separator: ' ')
                 %td= last_order ?  "#{last_order.paper_set_casing_size.to_s}g - #{last_order.paper_set_folder_count} chemises - #{paper_set_date_to_name(last_order.period_duration, last_order.paper_set_start_date)} à #{paper_set_date_to_name(last_order.period_duration, last_order.paper_set_end_date)}" : '-'
                 %td= paper_return ?  "#{paper_return.letter_type}g" : '-'
+      .card-footer
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_paper_set_orders_path(@organization), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'

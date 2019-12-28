@@ -1,20 +1,22 @@
 #new_provider_request
-  .row-fluid
-    .span12
+  .row
+    .col-12
       = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid
-    .span12.panel
-      .pull-left
+  %br
+
+  .row
+    .col-12.panel
+      .float-left
         %h2 Demande de nouveau fournisseur par le client : #{@new_provider_request.user}
-      .pull-right
+      .float-right
         - if @new_provider_request.processing?
           = link_to icon_ok + ' Accepter', accept_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
           = link_to icon_not_ok + ' Rejeter', edit_admin_new_provider_request_path(@new_provider_request), class: 'btn btn-danger'
         = link_to t('actions.return'), admin_new_provider_requests_path, class: 'btn'
 
-  .row-fluid
-    .span12
+  .row
+    .col-12
       %table.table.table-striped.table-condensed.table-bordered
         %tr
           %th= t('activerecord.models.common.attributes.created_at')

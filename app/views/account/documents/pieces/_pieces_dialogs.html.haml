@@ -1,285 +1,315 @@
 .modal.fade{ :id=>"uploadDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Téléverser des documents
-  .modal-body
-    %p{ :style => "text-align:right" }
-      Formats de fichiers acceptés :
-      - UploadedDocument::VALID_EXTENSION.each do |extension|
-        %span{ class: 'label label-info', style: 'margin-right:5px;' }= extension[1..-1]
-      %br
-      %br
-      %span.label.label-important ATTENTION
-      %span.red
-        \: Fichiers de plus de 100 pages ou plus de 10 mégas non acceptés. PDF protégés non acceptés.
-      %br
-      %br
-    %form#fileupload.form.form-horizontal{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
-      - if has_multiple_accounts?
-        .control-group
-          = label_tag :h_file_code, 'Code client : ', class: 'control-label'
-          .controls
-            = select_tag :h_file_code, options_for_select(file_upload_users_list.map{ |e| [e.short_info, e.code] }), include_blank: true, data: { placeholder: 'Choisir un client'}, id: :h_file_code
-            = hidden_field_tag :file_code
-      - else
-        = hidden_field_tag :h_file_code, @user.code
-      .control-group
-        = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label'
-        .controls
-          = select_tag :h_file_account_book_type, has_multiple_accounts? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type
-          = hidden_field_tag :file_account_book_type
-      .control-group.prev_period_offset
-        = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label'
-        .controls
-          = select_tag :h_file_prev_period_offset, has_multiple_accounts? ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field'
-          = hidden_field_tag :file_prev_period_offset
-          - if !@user.is_prescriber && @period_service.prev_expires_at
-            %span.help-block
-              %span.label.label-warning.margin1right
-                Attention :
-              Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période #{period_option_label(@period_service.period_duration, Time.now - @period_service.period_duration.month)} après le #{l(@period_service.prev_expires_at, format: '%d %B %Y à %H:%M')}.
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Téléverser des documents
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      .modal-body
+        %p{ :style => "text-align:center" }
+          Formats de fichiers acceptés :
+          - UploadedDocument::VALID_EXTENSION.each do |extension|
+            %span{ class: 'badge badge-info fs-origin', style: 'margin-right:5px;' }= extension[1..-1]
+          %br
+          %br
+          %span.fs-origin.badge.badge-danger ATTENTION
+          %span.red
+            \: Fichiers de plus de 100 pages ou plus de 10 mégas non acceptés. PDF protégés non acceptés.
+          %br
+          %br
+        %form#fileupload.form-horizontal.padding3left.padding2right{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
+          - if has_multiple_accounts?
+            .form-group.clearfix
+              .label-section
+                = label_tag :h_file_code, 'Code client : ', class: 'control-label'
+              .control-section
+                = select_tag :h_file_code, options_for_select(file_upload_users_list.map{ |e| [e.short_info, e.code] }), include_blank: true, data: { placeholder: 'Choisir un client'}, id: :h_file_code
+                = hidden_field_tag :file_code
           - else
-            %span.help-block{ style: 'display:none' }
-              %span.label.label-warning.margin1right
-                Attention :
-              Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période
-              %span.period
-              après le
-              %span.date
-              \.
-      - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || @user.uses_ibiza_analytics?)
-        .control-group#analytic_user_fields
-          .analytic_loading.hide
-            %span Chargement analytiques ...&nbsp;&nbsp;
-            .feedback.active
-          .with_compta_analysis.hide
-            = label_tag nil, 'Compta Analytique : ', class: 'control-label'
-            .controls
-              %a{ "data-toggle"=>"modal", :href => "#comptaAnalysisEdition", class: "btn btn-primary" }
-                Editer l'analyse
-              %br
-              %span.with_default_analysis.hide
-                %span.label.label-warning.margin1right
-                  Attention :
-                Une analyse par défaut existe pour ce journal, si vous n'éditez pas l'analyse actuelle, les documents uploadés seront affectés automatiquement à l'analyse par défaut.
-        .analytic_resume_box
-        = render 'shared/compta_analytics_hidden_fields'
+            = hidden_field_tag :h_file_code, @user.code
+          .form-group.clearfix
+            .label-section
+              = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label'
+            .control-section
+              = select_tag :h_file_account_book_type, has_multiple_accounts? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type
+              = hidden_field_tag :file_account_book_type
+              %span#compta_processable{ style: 'display: none; margin-top: 9px' }
+                %span.badge.badge-warning.fs-origin.margin1right
+                  Ce journal n'est pas paramétré pour une pré-saisie comptable.
+          .form-group.prev_period_offset.clearfix
+            .label-section
+              = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label'
+            .control-section
+              = select_tag :h_file_prev_period_offset, has_multiple_accounts? ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field'
+              = hidden_field_tag :file_prev_period_offset
+              - if !@user.is_prescriber && @period_service.prev_expires_at
+                %span.help-block{ style: 'margin-left: 0' }
+                  %span.fs-origin.badge.badge-warning.margin1right
+                    Attention :
+                  Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période #{period_option_label(@period_service.period_duration, Time.now - @period_service.period_duration.month)} après le #{l(@period_service.prev_expires_at, format: '%d %B %Y à %H:%M')}.
+              - else
+                %span.help-block{ style: 'display:none; margin-left: 0' }
+                  %span.fs-origin.badge.badge-warning.margin1right
+                    Attention :
+                  Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période
+                  %span.period
+                  après le
+                  %span.date
+                  \.
+          - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || @user.uses_ibiza_analytics?)
+            .form-group#analytic_user_fields.clearfix
+              .analytic_loading.hide
+                %span Chargement analytiques ...&nbsp;&nbsp;
+                .feedback.active
+              .with_compta_analysis.hide
+                .label-section
+                  = label_tag nil, 'Compta Analytique : ', class: 'control-label'
+                .control-section
+                  %a{ "data-toggle"=>"modal", :href => "#comptaAnalysisEdition", class: "btn btn-primary" }
+                    Editer l'analyse
+                  %br
+                  %span.with_default_analysis.help-block.hide
+                    %span.fs-origin.badge.badge-warning.margin1right
+                      Attention :
+                    Une analyse par défaut existe pour ce journal, si vous n'éditez pas l'analyse actuelle, les documents uploadés seront affectés automatiquement à l'analyse par défaut.
+            .analytic_resume_box
+            = render 'shared/compta_analytics_hidden_fields'
+            .row.fileupload-buttonbar
+              .col-md-6
+                .fileupload-progress
+                  .progress.progress-success.progress-striped.active.margin1top{ role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100" }
+                    .progress-bar{ style: 'width: 0%' }
+              .col-md-6.alignright
+                %span.btn.btn-secondary.fileinput-button
+                  %span Ajouter des fichiers ...
+                  %input{ type: 'file', name: 'files[]', multiple: true }
+                %button.btn.btn-primary.start{ type: 'submit' }
+                  Démarrer
+                %button.btn.btn-light.cancel{ type: 'reset' }
+                  Annuler
+            %br
+            %table.table.table-striped{ role: "presentation" }
+              %tbody.files{ data: { toggle: "modal-gallery", target: "#modal-gallery" } }
+      .modal-footer
+        %a{ :class=>"modal-close btn btn-light" } Fermer
       :plain
-        <div class="row fileupload-buttonbar">
-            <div class="span6">
-                <span class="btn btn-success fileinput-button">
-                    <span><i class="icon-plus icon-white"></i> Ajouter des fichiers...</span>
-                    <input type="file" name="files[]" multiple>
-                </span>
-                <button type="submit" class="btn btn-primary start">
-                    <i class="icon-upload icon-white"></i> Démarrer
-                </button>
-                <button type="reset" class="btn btn-warning cancel">
-                    <i class="icon-ban-circle icon-white"></i> Annuler
-                </button>
-            </div>
-            <div class="span6">
-                <div class="progress progress-success progress-striped active fade">
-                    <div class="bar" style="width:0%;"></div>
-                </div>
-            </div>
-        </div>
-        <br>
-        <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
-  .modal-footer
-    %a{ :class=>"modal-close btn" } Fermer
-  :plain
-    <script>
-      var fileUploadErrors = {
-        maxFileSize: 'File is too big',
-        minFileSize: 'File is too small',
-        acceptFileTypes: 'Filetype not allowed',
-        maxNumberOfFiles: 'Max number of files exceeded',
-        uploadedBytes: 'Uploaded bytes exceed file size',
-        emptyResult: 'Empty file upload result'
-      };
-    </script>
-    <script id="template-upload" type="text/html">
-    {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
-        <tr class="template-upload fade">
-            <td class="name">{%=file.name%}</td>
-            <td class="size">{%=o.formatFileSize(file.size)%}</td>
-            {% if (file.error) { %}
-                <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
-            {% } else if (o.files.valid && !i) { %}
-                <td>
-                    <div class="progress progress-success progress-striped active"><div class="bar" style="width:0%;"></div></div>
-                </td>
-                <td class="start">{% if (!o.options.autoUpload) { %}
-                    <button class="btn btn-primary">
-                        <i class="icon-upload icon-white"></i> Démarrer
+        <script>
+          var fileUploadErrors = {
+            maxFileSize: 'File is too big',
+            minFileSize: 'File is too small',
+            acceptFileTypes: 'Filetype not allowed',
+            maxNumberOfFiles: 'Max number of files exceeded',
+            uploadedBytes: 'Uploaded bytes exceed file size',
+            emptyResult: 'Empty file upload result'
+          };
+        </script>
+        <script id="template-upload" type="text/html">
+        {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+            <tr class="template-upload fade">
+                <td class="name">{%=file.name%}</td>
+                <td class="size">{%=o.formatFileSize(file.size)%}</td>
+                {% if (file.error) { %}
+                  <td class="error"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                {% } else { %}
+                  <td style="width:120px;">
+                      <div class="progress progress-success progress-striped active margin1top"><div class="progress-bar" style="width:0%;"></div></div>
+                  </td>
+                {% } %}
+                <td class="alignright">
+                  {% if (!i && !o.options.autoUpload && !file.error) { %}
+                    <button class="start btn btn-primary margin1right">
+                      Démarrer
                     </button>
-                {% } %}</td>
-            {% } else { %}
-                <td colspan="2"></td>
-            {% } %}
-            <td class="cancel">{% if (!i) { %}
-                <button class="btn btn-warning">
-                    <i class="icon-ban-circle icon-white"></i> Annuler
-                </button>
-            {% } %}</td>
-        </tr>
-    {% } %}
-    </script>
-    <script id="template-download" type="text/html">
-    {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
-        <tr class="template-download fade">
-            {% if (file.error) { %}
-                <td style="width:110px;"></td>
-                <td class="name">{%=file.name%}</td>
-                <td class="error" colspan="3"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
-            {% } else { %}
-                <td class="created_at" style="width:110px;">{%=file.created_at%}</td>
-                <td class="name">{%=file.name%}</td>
-                <td class="new_name">{%=file.new_name%}</td>
-                <td class="message" colspan="2">{%=file.message%}</td>
-            {% } %}
-        </tr>
-    {% } %}
-    </script>
+                  {% } %}
+                  {% if (!i) { %}
+                      <button class="cancel btn btn-light">
+                        Annuler
+                      </button>
+                  {% } %}
+                </td>
+            </tr>
+        {% } %}
+        </script>
+        <script id="template-download" type="text/html">
+        {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+            <tr class="template-download fade">
+                {% if (file.error) { %}
+                  <td class="name">{%=file.name%}</td>
+                  <td class="error" colspan="2"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                {% } else { %}
+                  <td class="name">{%=file.name%}</td>
+                  <td class="new_name">{%=file.new_name%}</td>
+                  <td class="message">
+                    {% if (file.message) { %}
+                      {%= file.message %}
+                    {% } else { %}
+                      <span class="badge badge-success fs-origin">Envoyé</span>
+                    {% } %}
+                  </td>
+                {% } %}
+                  <td class="alignright">
+                    <button class="cancel btn btn-light">
+                      Vu
+                    </button>
+                  </td>
+            </tr>
+        {% } %}
+        </script>
 
 .modal.fade{ :id=>"documentsTaggingDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Gestion des tags
-  %form
-    .modal-body
-      %p
-        Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
-        Pour en retirer ajouter '-' devant le tag.
-        %br
-        Nom du tags
-        %br
-        != text_field_tag :tags, nil, :id => "documentsTags"
-      %p.names_alert
-      %p.length_alert
-    .modal-footer
-      %a{ :class=>"modal-close btn" } Fermer
-      %input#documentsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Gestion des tags
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body
+          %p
+            Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+            Pour en retirer ajouter '-' devant le tag.
+            %br
+            %br
+            Nom du tags
+            %br
+            != text_field_tag :tags, nil, :id => "documentsTags", :style => 'width: 50%'
+          %p.names_alert
+          %p.length_alert
+        .modal-footer
+          %a{ :class=>"modal-close btn btn-light" } Fermer
+          %input#documentsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"pagesTaggingDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Gestion des tags
-  %form
-    .modal-body
-      %p
-        Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
-        Pour en retirer ajouter '-' devant le tag.
-        %br
-        Nom du tags
-        %br
-        != text_field_tag :tags, nil, :id => "pagesTags"
-      %p.names_alert
-      %p.length_alert
-    .modal-footer
-      %a{ :class=>"modal-close btn" } Fermer
-      %input#pagesTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Gestion des tags
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body
+          %p
+            Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+            Pour en retirer ajouter '-' devant le tag.
+            %br
+            %br
+            Nom du tags
+            %br
+            != text_field_tag :tags, nil, :id => "pagesTags", :style => 'width: 50%'
+          %p.names_alert
+          %p.length_alert
+        .modal-footer
+          %a{ :class=>"modal-close btn btn-ligth" } Fermer
+          %input#pagesTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"selectionTaggingDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Gestion des tags
-  %form
-    .modal-body
-      %p
-        Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
-        Pour en retirer ajouter '-' devant le tag.
-        %br
-        Nom du tags
-        %br
-        != text_field_tag :tags, nil, :id => "selectionsTags"
-      %p.names_alert
-      %p.length_alert
-    .modal-footer
-      %a{ :class=>"modal-close btn" } Fermer
-      %input#selectionsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Gestion des tags
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body
+          %p
+            Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+            Pour en retirer ajouter '-' devant le tag.
+            %br
+            %br
+            Nom du tags
+            %br
+            != text_field_tag :tags, nil, :id => "selectionsTags", :style => 'width: 50%'
+          %p.names_alert
+          %p.length_alert
+        .modal-footer
+          %a{ :class=>"modal-close btn btn-light" } Fermer
+          %input#selectionsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"compositionDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Composer
-  %form
-    .modal-body
-      %p
-        Nom de la composition
-        %br
-        != text_field_tag :composition, nil, :id => "composition_name"
-      %p.names_alert
-      %p.length_alert
-    .modal-footer
-      %a{ :class=>"modal-close btn" } Fermer
-      %input#compositionButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Composer
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body
+          %p
+            Nom de la composition
+            %br
+            != text_field_tag :composition, nil, :id => "composition_name", :style => 'width: 50%'
+          %p.names_alert
+          %p.length_alert
+        .modal-footer
+          %a{ :class=>"modal-close btn btn-light" } Fermer
+          %input#compositionButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"shareDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Envoyer vers mon stockage externe
-  %form
-    .modal-body
-      %p
-        .warn_all_file_selected
-          Attention !
-          %br
-          Vous n'avez sélectionné aucun fichier.
-          %br
-          Si vous validez cette fenêtre, vous allez envoyer vers vos services de stockage externe
-          %span.important
-            l'intégralité
-          de vos documents.
-        .warn_selected_file
-          En validant cette fenêtre, vous allez envoyer vers vos services de stockage externe le(s) document(s) que vous avez sélectionné(s).
-        Selon le volume, cette action peut prendre du temps.
-      != radio_button_tag :delivery_type, FileDelivery::RemoteFile::ALL, true, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{FileDelivery::RemoteFile::ALL}", "Document global et pièces séparées"
-      != radio_button_tag :delivery_type, FileDelivery::RemoteFile::ORIGINAL_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{FileDelivery::RemoteFile::ORIGINAL_ONLY}", "Document global seulement"
-      != radio_button_tag :delivery_type, FileDelivery::RemoteFile::PIECES_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{FileDelivery::RemoteFile::PIECES_ONLY}", "Pièces séparées seulement"
-    .modal-footer
-      %a#deliverButton.btn.btn-primary{ :href => "#" }
-        Valider
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Envoyer vers mon stockage externe
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body.clearfix
+          %p
+            .warn_all_file_selected
+              Attention !
+              %br
+              Vous n'avez sélectionné aucun fichier.
+              %br
+              Si vous validez cette fenêtre, vous allez envoyer vers vos services de stockage externe
+              %span.important
+                l'intégralité
+              de vos documents.
+            .warn_selected_file
+              En validant cette fenêtre, vous allez envoyer vers vos services de stockage externe le(s) document(s) que vous avez sélectionné(s).
+            Selon le volume, cette action peut prendre du temps.
+          != radio_button_tag :delivery_type, FileDelivery::RemoteFile::ALL, true, :style => "margin-right: 5px;"
+          != label_tag "delivery_type_#{FileDelivery::RemoteFile::ALL}", "Document global et pièces séparées"
+          != radio_button_tag :delivery_type, FileDelivery::RemoteFile::ORIGINAL_ONLY, false, :style => "margin-left: 10px; margin-right: 5px;"
+          != label_tag "delivery_type_#{FileDelivery::RemoteFile::ORIGINAL_ONLY}", "Document global seulement"
+          != radio_button_tag :delivery_type, FileDelivery::RemoteFile::PIECES_ONLY, false, :style => "margin-left: 10px; margin-right: 5px;"
+          != label_tag "delivery_type_#{FileDelivery::RemoteFile::PIECES_ONLY}", "Pièces séparées seulement"
+        .modal-footer
+          %a#deliverButton.btn.btn-primary{ :href => "#" }
+            Valider
 
 .modal.fade{ :id=>"comptaAnalysisEdition" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Edition Compta Analytique
-  .modal-body
-    %p.length_alert
-    - if @user.organization.ibiza.try(:configured?)
-      %form#compta_analytic_form_modal
-        = render 'shared/compta_analytics_hidden_fields'
-        = render 'shared/compta_analytics'
-  .modal-footer
-    .analytic_validation_loading.pull-left.hide
-      .feedback.active
-        Traitement en cours ...
-    %a#analysis_validate.btn.btn-primary.hide{ :href => "#" }
-      Valider
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Edition Compta Analytique
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      .modal-body
+        %p.length_alert
+        - if @user.organization.ibiza.try(:configured?)
+          %form#compta_analytic_form_modal
+            = render 'shared/compta_analytics_hidden_fields'
+            = render 'shared/compta_analytics'
+      .modal-footer
+        .analytic_validation_loading.float-left.hide
+          .feedback.active
+            Traitement en cours ...
+        %a#analysis_validate.btn.btn-primary.hide{ :href => "#" }
+          Valider
 
 .modal.fade{ :id=>"confirmDeletePiece" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } 
-    %h3 Information
-  %form
-    .modal-body
-      .message_confirm
-        Voulez-vous vraiment supprimer cette pièce ? 
-      .length_alert
-    .modal-footer
-      %a{ :class=>"modal-close btn" } Annuler
-      %input#deletebutton.btn.btn-primary{ :type => "button", :value => "Supprimer" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Information
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form
+        .modal-body
+          .message_confirm
+            Voulez-vous vraiment supprimer cette pièce ? 
+          .length_alert
+        .modal-footer
+          %a{ :class=>"modal-close btn" } Annuler
+          %input#deletebutton.btn.btn-primary{ :type => "button", :value => "Supprimer" }
 
-.modal.fade.wauto.hauto{ :id => "PdfViewerDialog", style: "top:40% !important; left:43% !important;"}
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Aperçu PDF
-  .modal-body{style: "max-height: none !important; padding:0;"}
-    .view-content.margin3
-  
-  .modal-footer
+.modal.fade.wauto.hauto{ :id => "PdfViewerDialog", style: "top:5% !important; left:34% !important;height: auto;"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3 Aperçu PDF
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      .modal-body{style: "max-height: none !important; padding:0;"}
+        .view-content.margin3
+      .modal-footer

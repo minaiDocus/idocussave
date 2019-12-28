@@ -1,10 +1,10 @@
 #paper_set_orders
   %h3 Liste des commandes de Kit Courriers (#{@orders_count})
-  .row-fluid
-    .span9
+  .row
+    .col-md-9
       = render partial: 'shared/list_options', locals: { collection: @orders }
-      .row-fluid
-        .span12
+      .row
+        .col-md-12
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
@@ -34,6 +34,6 @@
                   %td= Order.state_machine.states[order.state].human_name
                   %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
       = render partial: 'shared/list_options', locals: { collection: @orders }
-    .span3.box
-      .row-fluid
+    .col-md-3.box
+      .row
         = render partial: 'sidebar'

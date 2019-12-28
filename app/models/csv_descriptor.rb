@@ -1,6 +1,6 @@
-class CsvDescriptor < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :organization
+class CsvDescriptor < ApplicationRecord
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
 
   def directive_to_a

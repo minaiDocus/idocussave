@@ -1,4 +1,4 @@
-%h2 Réinitialiser mon mot de passe
+%h2.aligncenter.font-weight-bold Réinitialiser mon mot de passe
 
 %hr
 
@@ -8,7 +8,7 @@
   un mail qui vous indiquera la démarche à suivre pour réinitialiser votre mot de passe.
 %br
 
-= simple_form_for resource, url: password_path(resource_name), html: { class: 'form form-horizontal' } do |f|
+= simple_form_for resource, url: password_path(resource_name) do |f|
   = f.input :email, label: 'Votre adresse e-mail :'
   .form-actions.padding0bottom
-    = f.submit 'Valider', class: 'btn btn-primary pull-left'
+    = f.submit 'Valider', class: 'btn btn-primary float-left'

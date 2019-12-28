@@ -1,16 +1,17 @@
 #csv_descriptors.edit
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition du format d’export .csv du client: #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        %h3 Format d’export .csv pour le dossier : #{@customer}
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
 
-  .row-fluid
-    .span8.box
-      = render partial: 'account/csv_descriptors/form'
-    .span4.box
-      = render partial: 'account/csv_descriptors/legend'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3 
+          Edition du format d’export .csv du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor'), class: 'fs-origin'
+      - else
+        %h3
+          Format d’export .csv pour le dossier :
+          %span.fs-origin.text-info= @customer
+
+    = render partial: 'account/csv_descriptors/form'

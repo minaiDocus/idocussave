@@ -2,71 +2,76 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
-    .span12.well
-      .pull-left
-        %h3 Liste des pièces ignorées à la pré-affectation (#{@ignored_list.total_count})
-  .row-fluid
-    .span9.well
-      = render partial: 'shared/list_options', locals: { collection: @ignored_list }
-      = form_tag '/account/pre_assignment_ignored/update_ignored_pieces', method: :post, class: 'form form-vertical margin0bottom' do
-        %table.table.table-striped.table-condensed
-          %thead
-            %tr
-              %th= check_box_tag 'master_checkbox', 0, false
-              %th= sortable :created_at, 'Date de création'
-              %th= sortable :name, 'N° pièce'
-              %th= sortable :number, 'N° facture'
-              %th Nom de lot
-              %th Remarque
-              %th= sortable :pre_assignment_stat, 'Statut'
-              %th Pièces (PDF)
-          %tbody
-            - @ignored_list.each_with_index do |piece, ind|
-              %tr
-                %td
-                  - if piece.pre_assignment_ignored?
-                    = check_box_tag 'ignored_ids[]', piece.id, false, class: ('checkbox checker_piece_' + ind.to_s)
-                %td
-                  %b
-                    - if piece.created_at
-                      - if piece.created_at.today?
-                        = l(piece.created_at, format: '%H:%M')
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des pièces ignorées à la pré-affectation
+            %span.badge.badge-info.fs-origin= @ignored_list.total_count
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @ignored_list }
+        = form_tag '/account/pre_assignment_ignored/update_ignored_pieces', method: :post, class: 'margin1bottom' do
+          %table.table.table-striped.table-condensed.margin1top.margin1bottom.table-bordered-inner.table-detachable-head
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= sortable :created_at, 'Date de création'
+                %th= sortable :name, 'N° pièce'
+                %th= sortable :number, 'N° facture'
+                %th Nom de lot
+                %th Remarque
+                %th= sortable :pre_assignment_stat, 'Statut'
+                %th Pièces (PDF)
+            %tbody.retractable.slidedown
+              - @ignored_list.each_with_index do |piece, ind|
+                %tr
+                  %td
+                    - if piece.pre_assignment_ignored?
+                      = check_box_tag 'ignored_ids[]', piece.id, false, class: ('checkbox checker_piece_' + ind.to_s)
+                  %td
+                    %b
+                      - if piece.created_at
+                        - if piece.created_at.today?
+                          = l(piece.created_at, format: '%H:%M')
+                        - else
+                          = l(piece.created_at, format: '%d %b %Y %H:%M')
                       - else
-                        = l(piece.created_at, format: '%d %b %Y %H:%M')
+                        \-
+                  %td= piece.name
+                  %td= piece.number
+                  %td= piece.pack.name
+                  %td= piece.pre_assignment_comment
+                  %td
+                    - if piece.pre_assignment_ignored?
+                      %b Pré-affectation ignorée
                     - else
-                      \-
-                %td= piece.name
-                %td= piece.number
-                %td= piece.pack.name
-                %td= piece.pre_assignment_comment
-                %td
-                  - if piece.pre_assignment_ignored?
-                    %b Pré-affectation ignorée
-                  - else
-                    %b En cours de renvoi à la pré-affectation
-                %td
-                  = link_to icon_show, '#', class: ("do-showPieces custom_popover piece_" + ind.to_s), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.content.url, content: html_piece_view(piece) }
-        = content_tag :i, '', class: 'icon-arrow-up'
-        = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
-        = submit_tag 'Marquer la séléction comme vu', name: 'confirm_ignorance', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
+                      %b En cours de renvoi à la pré-affectation
+                  %td
+                    = link_to glyphicon('eye'), '#', class: ("do-showPieces custom_popover piece_" + ind.to_s), title: 'Voir la pièces', data: { piece_index: ind, piece_name: piece.name, piece_url: piece.cloud_content_object.url, content: html_piece_view(piece) }
+          = glyphicon('arrow-top')
+          = submit_tag 'Renvoyer et forcer la pré-affectation', name: 'force_pre_assignment', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
+          = submit_tag 'Marquer la séléction comme vu', name: 'confirm_ignorance', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
+        = render partial: 'shared/list_options', locals: { collection: @ignored_list }
+    = render partial: 'sidebar'
 
-      = render partial: 'shared/list_options', locals: { collection: @ignored_list }
-    .span3.well
-      = render partial: 'sidebar'
   #showPieces.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3 Pièce
-    .modal-body
-      .row-fluid
-        .span12.aligncenter
-          %h3.name
-        #navigation
-          = check_box_tag 'checker', 0, false, class: 'checkbox_checker'
-          %a.left.btn
-            %i.icon-arrow-left
-          %a.right.btn
-            %i.icon-arrow-right
-      .aligncenter
-        %iframe.piece{ src: '' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Pièce
+          %a.close{ data: { dismiss: :modal } } ×
+        .modal-body
+          .row
+            .col-md-12.aligncenter
+              %h3.name
+            #navigation
+              = check_box_tag 'checker', 0, false, class: 'checkbox_checker'
+              %a.left.btn.btn-light
+                = glyphicon('arrow-thick-left')
+              %a.right.btn.btn-light
+                = glyphicon('arrow-thick-right')
+          .aligncenter
+            %iframe.piece{ src: '' }

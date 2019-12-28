@@ -1,36 +1,49 @@
-#bank_accounts.select.row-fluid
-  .span12
-    .box
-      .row-fluid
-        .span6
-          %h3 Paramétrage des automates bancaires (#{@bank_accounts.select{|ba| ba.is_used}.try(:size).to_i})
-        .span6
-          %a{ href: '#', class: 'btn pull-right toggle_filter' }
-            %i.icon-filter
-            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
-    .filter.box{ style: ('display: none' if @is_filter_empty) }
-      = form_tag account_bank_accounts_path, method: :get, class: 'form form-inline margin0bottom' do
-        = label_tag 'bank_account_contains[retriever_budgea_id]', 'Banque'
-        = select_tag 'bank_account_contains[retriever_budgea_id]', options_for_select(@account.retrievers.linked.banks.map { |e| [e.service_name, e.budgea_id] }, (params[:bank_account_contains][:retriever_budgea_id] rescue nil)), include_blank: true
-        = submit_tag t('filters.action'), class: 'btn btn-primary'
-        = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
-    .box{ style: 'padding-bottom:0;' }
-      = form_tag '#', method: 'patch', class: 'form-selection form form-horizontal' do
-        = hidden_field_tag 'retriever_budgea_config', @bi_config
-        = hidden_field_tag 'retriever_bi_token', @account.budgea_account.try(:access_token)
-        = hidden_field_tag 'retriever_user_token', @account.authentication_token
-        = hidden_field_tag 'bank_account_contains[retriever_budgea_id]', @retriever.budgea_id if @retriever.try(:linked?)
-        = hidden_field_tag 'bank_account_ids[]'
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-          %thead
-            %tr
-              %th= check_box_tag 'master_checkbox', 0, false
-              %th= t('activerecord.models.bank_account.attributes.bank_name')
-              %th= t('activerecord.models.bank_account.attributes.name')
-              %th= t('activerecord.models.bank_account.attributes.number')
-          %tbody#all_accounts_list
-            %tr
-              %td{ colspan: 4 }
-                .feedback.active
-        .form-actions
-          = button_tag 'Valider les changements', class: 'btn-selection btn btn-primary'
+#bank_accounts.select
+  .box
+    .row
+      .col-md-12
+        %h3
+          Paramétrage des automates bancaires
+          %span.badge.badge-info.fs-origin= @bank_accounts.select{|ba| ba.is_used}.try(:size).to_i
+
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = form_tag account_bank_accounts_path, method: :get, class: 'form form-selection form-horizontal' do
+          = hidden_field_tag 'retriever_budgea_config', @bi_config
+          = hidden_field_tag 'retriever_bi_token', @account.budgea_account.try(:access_token)
+          = hidden_field_tag 'retriever_user_token', @account.get_authentication_token
+          = hidden_field_tag 'bank_account_contains[retriever_budgea_id]', @retriever.budgea_id if @retriever.try(:linked?)
+          = hidden_field_tag 'bank_account_ids[]'
+          %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin2bottom.table-detachable-head
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= t('activerecord.models.bank_account.attributes.bank_name')
+                %th= t('activerecord.models.bank_account.attributes.name')
+                %th= t('activerecord.models.bank_account.attributes.number')
+            %tbody#all_accounts_list
+              %tr
+                %td{ colspan: 4 }
+                  .feedback.active
+          .form-actions
+            = button_tag 'Valider les changements', class: 'btn-selection btn btn-primary'
+
+    .card.retractable-filter
+      = form_tag account_bank_accounts_path, method: :get, class: 'form-filter' do
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[retriever_budgea_id]', 'Banque'
+              .control-section
+                = select_tag 'bank_account_contains[retriever_budgea_id]', options_for_select(@account.retrievers.linked.banks.map { |e| [e.service_name, e.budgea_id] }, (params[:bank_account_contains][:retriever_budgea_id] rescue nil)), include_blank: true
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), account_bank_accounts_path, class: 'btn btn-light'

@@ -10,7 +10,8 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
   'tmp/barcode',
   'vendor/bundle',
   'public/system',
-  'data'
+  'data',
+  'keys'
 )
 
 set :linked_files, fetch(:linked_files, []).push(
@@ -18,7 +19,6 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/secrets.yml',
   'config/dematbox.yml',
   'config/budgea.yml',
-  'config/fiduceo.yml',
   'config/dematbox_service_api.yml',
   'config/knowings.yml',
   'config/emailed_document.yml',
@@ -26,8 +26,12 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/slimpay.yml',
   'config/pdftk.yml',
   'config/smtp.yml',
-  'config/ftp_delivery.yml'
+  'config/ftp_delivery.yml',
+  'config/storage.yml'
 )
+
+set :slack_url, 'https://hooks.slack.com/services/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'
+
 
 namespace :deploy do
   after :finished, :restart_passenger do

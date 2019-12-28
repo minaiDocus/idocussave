@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report::Expense < ActiveRecord::Base
+class Pack::Report::Expense < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   has_one    :observation, class_name: 'Pack::Report::Observation', inverse_of: :expense, dependent: :destroy
@@ -20,7 +20,7 @@ class Pack::Report::Expense < ActiveRecord::Base
 
   def to_row(_is_access_url = true)
     [
-      piece.content_file_name,
+      piece.cloud_content_object.filename,
       (begin
          date.strftime('%d/%m/%Y')
        rescue
@@ -36,7 +36,7 @@ class Pack::Report::Expense < ActiveRecord::Base
 
 
   def add_link(sheet, index, is_access_url)
-    sheet.add_hyperlink location: File.join(["https://my.idocus.com", (is_access_url ? piece.get_access_url : piece.content.url)]), ref: sheet.rows[index - 1].cells.second
+    sheet.add_hyperlink location: File.join(["https://my.idocus.com", (is_access_url ? piece.get_access_url : piece.cloud_content_object.url)]), ref: sheet.rows[index - 1].cells.second
   end
 
   def self.distinct_type
@@ -329,7 +329,7 @@ class Pack::Report::Expense < ActiveRecord::Base
       Pack::Report::Expense.pro.each do |pr|
         data = pr.to_row(is_access_url)
         (4..6).each { |i| data[i] = Pack::Report::Expense.format_price(data[i]) }
-        cell_link = make_cell(content: "<link href='#{File.join(["https://my.idocus.com", (is_access_url ? pr.piece.get_access_url : pr.piece.content.url)])}'>#{data[0]}</link>")
+        cell_link = make_cell(content: "<link href='#{File.join(["https://my.idocus.com", (is_access_url ? pr.piece.get_access_url : pr.piece.cloud_content_object.url)])}'>#{data[0]}</link>")
         data[0] = cell_link
         table([data], column_widths: widths, cell_style: { inline_format: true, border_color: 'FFFFFF', size: 8 }) do
           cells.column(4..6).style(total_cell)
@@ -366,7 +366,7 @@ class Pack::Report::Expense < ActiveRecord::Base
       Pack::Report::Expense.perso.each do |expense|
         data = expense.to_row(is_access_url)
         (4..6).each { |i| data[i] = Pack::Report::Expense.format_price(data[i]) }
-        cell_link = make_cell(content: "<link href='#{File.join(["https://my.idocus.com", (is_access_url ? expense.piece.get_access_url : expense.piece.content.url)])}'>#{data[0]}</link>")
+        cell_link = make_cell(content: "<link href='#{File.join(["https://my.idocus.com", (is_access_url ? expense.piece.get_access_url : expense.piece.cloud_content_object.url)])}'>#{data[0]}</link>")
         data[0] = cell_link
         table([data], column_widths: widths, cell_style: { inline_format: true, border_color: 'FFFFFF', size: 8 }) do
           cells.column(4..6).style(total_cell)

@@ -1,10 +1,11 @@
 %table.table.table-striped.table-condensed.margin0bottom
   %thead
-    %th Forfait
-    %th Description/Options
-    %th.price Prix HT
-    %th.price Prix TTC
-  %tbody
+    %tr.bg-brown.text-white
+      %th Forfait
+      %th Description/Options
+      %th.price Prix HT
+      %th.price Prix TTC
+  %tbody.retractable.slidedown
     - period = @subscription.current_period
     - if period
       - period.product_option_orders.by_position.each do |option|

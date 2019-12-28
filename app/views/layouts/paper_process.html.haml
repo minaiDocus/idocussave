@@ -28,7 +28,7 @@
                 %li{ class: ('active' if controller_name == 'returns') }
                   = link_to 'Retour', returns_path
             - if current_user
-              %p.navbar-text.pull-right
+              %p.navbar-text.float-right
                 Connecté en tant que
                 = link_to current_user.email, root_path
                 |

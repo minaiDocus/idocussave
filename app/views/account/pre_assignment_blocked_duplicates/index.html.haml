@@ -2,91 +2,96 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row-fluid
-    .span12.well
-      .pull-left
-        %h3 Liste des doublons de pré-affectation (#{@duplicates.total_count})
-  .row-fluid
-    .span9.well
-      = render partial: 'shared/list_options', locals: { collection: @duplicates }
-      = form_tag '/account/pre_assignment_blocked_duplicates/update_multiple', method: :post, class: 'form form-vertical margin0bottom' do
-        %table.table.table-striped.table-condensed
-          %thead
-            %tr
-              %th= check_box_tag 'master_checkbox', 0, false
-              %th= sortable :created_at, 'Date de création'
-              %th= sortable :piece_name, 'N° pièce'
-              %th= sortable :piece_number, 'N° facture'
-              %th= sortable :third_party, t('activerecord.models.pack_report_preseizure.attributes.third_party')
-              %th= sortable :amount, t('activerecord.models.pack_report_preseizure.attributes.amount')
-              %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
-              %th Pièces (PDF)
-              %th Statut
-          %tbody
-            - @duplicates.each do |object|
-              %tr
-                %td= check_box_tag 'duplicate_ids[]', object.id, false, class: 'checkbox'
-                %td
-                  %b
-                    - if object.created_at
-                      - if object.created_at.today?
-                        = l(object.created_at, format: '%H:%M')
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des doublons de pré-affectation
+            %span.badge.badge-info.fs-origin= @duplicates.total_count
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @duplicates }
+        = form_tag '/account/pre_assignment_blocked_duplicates/update_multiple', method: :post, class: 'margin1bottom' do
+          %table.table.table-striped.table-condensed.margin1top.margin1bottom.table-bordered-inner.table-detachable-head
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= sortable :created_at, 'Date de création'
+                %th= sortable :piece_name, 'N° pièce'
+                %th= sortable :piece_number, 'N° facture'
+                %th= sortable :third_party, t('activerecord.models.pack_report_preseizure.attributes.third_party')
+                %th= sortable :amount, t('activerecord.models.pack_report_preseizure.attributes.amount')
+                %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
+                %th Pièces (PDF)
+                %th Statut
+            %tbody.retractable.slidedown
+              - @duplicates.each do |object|
+                %tr
+                  %td= check_box_tag 'duplicate_ids[]', object.id, false, class: 'checkbox'
+                  %td
+                    %b
+                      - if object.created_at
+                        - if object.created_at.today?
+                          = l(object.created_at, format: '%H:%M')
+                        - else
+                          = l(object.created_at, format: '%d %b %Y %H:%M')
                       - else
-                        = l(object.created_at, format: '%d %b %Y %H:%M')
+                        \-
+                    %br
+                    - if object.similar_preseizure.created_at
+                      - if object.similar_preseizure.created_at.today?
+                        = l(object.similar_preseizure.created_at, format: '%H:%M')
+                      - else
+                        = l(object.similar_preseizure.created_at, format: '%d %b %Y %H:%M')
                     - else
                       \-
-                  %br
-                  - if object.similar_preseizure.created_at
-                    - if object.similar_preseizure.created_at.today?
-                      = l(object.similar_preseizure.created_at, format: '%H:%M')
-                    - else
-                      = l(object.similar_preseizure.created_at, format: '%d %b %Y %H:%M')
-                  - else
-                    \-
+                  %td
+                    %b= object.piece.name
+                    %br
+                    = object.similar_preseizure.piece.name
+                  %td
+                    %b= object.piece_number
+                    %br
+                    = object.similar_preseizure.piece_number
+                  %td
+                    %b= object.third_party
+                    %br
+                    = object.similar_preseizure.third_party
+                  %td
+                    %b= object.cached_amount.to_s + ' €'
+                    %br
+                    = object.similar_preseizure.cached_amount.to_s + ' €'
+                  %td
+                    %b= l object.date, format: '%d %b %Y'
+                    %br
+                    = l object.similar_preseizure.date, format: '%d %b %Y'
+                  %td
+                    = link_to glyphicon('eye'), '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.cloud_content_object.url, original_url: object.similar_preseizure.piece.cloud_content_object.url, content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.cloud_content_object.url}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{object.similar_preseizure.piece.cloud_content_object.url}' style='width:470px; height:483px;'></iframe></div>"  }
+                  %td
+                    %b Doublon
+                    %br
+                    Original
+          = glyphicon('arrow-top')
+          = submit_tag 'Débloquer ceux sélectionnés', name: 'unblock', class: 'btn btn-primary margin1right'
+          = submit_tag 'Marquer comme duplication ceux sélectionnés', name: 'approve_block', class: 'btn btn-primary'
 
-                %td
-                  %b= object.piece.name
-                  %br
-                  = object.similar_preseizure.piece.name
-                %td
-                  %b= object.piece_number
-                  %br
-                  = object.similar_preseizure.piece_number
-                %td
-                  %b= object.third_party
-                  %br
-                  = object.similar_preseizure.third_party
-                %td
-                  %b= object.cached_amount.to_s + ' €'
-                  %br
-                  = object.similar_preseizure.cached_amount.to_s + ' €'
-                %td
-                  %b= l object.date, format: '%d %b %Y'
-                  %br
-                  = l object.similar_preseizure.date, format: '%d %b %Y'
-                %td
-                  = link_to icon_show, '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.content.url, original_url: object.similar_preseizure.piece.content.url, content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.content.url}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{object.similar_preseizure.piece.content.url}' style='width:470px; height:483px;'></iframe></div>"  }
-                %td
-                  %b Doublon
-                  %br
-                  Original
-        = content_tag :i, '', class: 'icon-arrow-up'
-        = submit_tag 'Débloquer ceux sélectionnés', name: 'unblock', class: 'btn btn-primary margin1right'
-        = submit_tag 'Marquer comme duplication ceux sélectionnés', name: 'approve_block', class: 'btn btn-primary'
+        = render partial: 'shared/list_options', locals: { collection: @duplicates }
+    = render partial: 'sidebar'
 
-      = render partial: 'shared/list_options', locals: { collection: @duplicates }
-    .span3.well
-      = render partial: 'sidebar'
   #showPieces.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3 Différence
-    .modal-body
-      .row-fluid
-        .span6.aligncenter
-          %h3 Doublon
-        .span6.aligncenter
-          %h3 Original
-      .aligncenter
-        %iframe.duplicate{ src: '' }
-        %iframe.original{ src: '' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Différence
+          %a.close{ data: { dismiss: :modal } } ×
+        .modal-body
+          .row
+            .col-md-6.aligncenter
+              %h3 Doublon
+            .col-md-6.aligncenter
+              %h3 Original
+          .aligncenter
+            %iframe.duplicate{ src: '' }
+            %iframe.original{ src: '' }

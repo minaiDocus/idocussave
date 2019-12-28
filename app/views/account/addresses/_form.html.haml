@@ -1,29 +1,32 @@
-= simple_form_for [:account, @address], html: { class: 'form form-horizontal margin0' } do |f|
-  .row-fluid
-    .span6
-      = f.input :company
-      = f.input :first_name, required: true
-      = f.input :last_name,  required: true
-      = f.input :address_1,  required: true
-      = f.input :address_2
-      = f.input :city
-      = f.input :zip
-      - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
-        .dematbox_only{ style: 'display:none;' }
-          %hr
-          %h4 Pour la livraison de l'iDocus Box uniquement
-          = f.input :company_number, required: true
-          = f.input :phone,          required: true
-          = f.input :place_called_or_postal_box
-          = f.input :building
-          = f.input :door_code
-          = f.input :other
-    .span6
-      = f.input :is_for_paper_return,       as: :boolean
-      = f.input :is_for_paper_set_shipping, as: :boolean
-      - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
-        = f.input :is_for_dematbox_shipping,  as: :boolean
-  .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize
-    = link_to link_name, account_addresses_path, class: 'btn'
+.card.bg-light.border-top-0
+  = simple_form_for [:account, @address], html: { class: 'form-horizontal' } do |f|
+    .card-body
+      .row
+        .col-md-6
+          = f.input :company
+          = f.input :first_name, required: true
+          = f.input :last_name,  required: true
+          = f.input :address_1,  required: true
+          = f.input :address_2
+          = f.input :city
+          = f.input :zip
+          - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
+            .dematbox_only{ style: 'display:none;' }
+              %hr
+              %h4 Pour la livraison de l'iDocus Box uniquement
+              = f.input :company_number, required: true
+              = f.input :phone,          required: true
+              = f.input :place_called_or_postal_box
+              = f.input :building
+              = f.input :door_code
+              = f.input :other
+        .col-md-6
+          = f.input :is_for_paper_return,       as: :boolean
+          = f.input :is_for_paper_set_shipping, as: :boolean
+          - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
+            = f.input :is_for_dematbox_shipping,  as: :boolean
+    .card-footer
+      .form-actions.margin0bottom
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize
+        = link_to link_name, account_addresses_path, class: 'btn btn-light'

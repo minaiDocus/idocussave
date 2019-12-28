@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module Account::DocumentsHelper
-  def calculate_page_number(document)
+  def calculate_page_number(_document)
     # if document.is_a_cover
     #   document.position + 3
     # else
@@ -10,17 +12,19 @@ module Account::DocumentsHelper
     1
   end
 
+  #### TO REFACTOR : DUPLICATED ####
   def document_thumb_url(document)
-    if File.exist?(document.content.path(:medium))
-      document.content.url(:medium)
+    if document.cloud_content_thumbnail.attached?
+      document.cloud_content_thumbnail.service_url
     else
       'application/processing.png'
     end
   end
 
+  #### TO REFACTOR : DUPLICATED ####
   def temp_document_thumb_url(document)
-    if File.exist?(document.content.path(:medium))
-      document.content.url(:medium)
+    if document.cloud_content_thumbnail.attached?
+      document.cloud_content_thumbnail.service_url
     else
       'application/processing.png'
     end
@@ -31,30 +35,32 @@ module Account::DocumentsHelper
 
     document.preseizures.each do |preseizure|
       if preseizure.is_delivered?
-        label = ['Transmis', 'success']
+        label = %w[Transmis success]
       elsif preseizure.is_exported?
-        label = ['Téléchargé', 'success']
+        label = %w[Téléchargé success]
       end
 
       break unless label[0] == 'Non récupéré'
     end
 
-    content_tag :span, label[0], class: "preseizure_status label label-#{label[1]}"
+    content_tag :span, label[0], class: "preseizure_status text-white badge badge-#{label[1]}"
   end
 
   def analytics_of(preseizure)
     analytics = preseizure.analytic_reference
     data_analytics = []
-    if analytics 
+    if analytics
       3.times do |i|
         j = i + 1
         references = analytics.send("a#{j}_references")
         name       = analytics.send("a#{j}_name")
-        if references.present?
-          references = JSON.parse(references)
-          references.each do |ref|
-            data_analytics << { name: name, ventilation: ref['ventilation'], axis1: ref['axis1'], axis2: ref['axis2'], axis3: ref['axis3'] } if name.present? && ref['ventilation'].present? && (ref['axis1'].present? || ref['axis2'].present? || ref['axis3'].present?)
-          end
+        next unless references.present?
+
+        references = JSON.parse(references)
+        references.each do |ref|
+          if name.present? && ref['ventilation'].present? && (ref['axis1'].present? || ref['axis2'].present? || ref['axis3'].present?)
+            data_analytics << { name: name, ventilation: ref['ventilation'], axis1: ref['axis1'], axis2: ref['axis2'], axis3: ref['axis3'] }
+            end
         end
       end
     end

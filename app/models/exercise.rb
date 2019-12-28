@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Exercise < ActiveRecord::Base
+class Exercise < ApplicationRecord
   belongs_to :user
 
   validate              :uniqueness_of_date

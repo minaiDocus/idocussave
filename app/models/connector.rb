@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Connector < ActiveRecord::Base
+class Connector < ApplicationRecord
   audited
 
   has_many :retrievers

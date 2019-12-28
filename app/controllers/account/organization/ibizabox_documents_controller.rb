@@ -1,37 +1,38 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::IbizaboxDocumentsController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :load_document, except: %w(index select validate)
+  before_action :load_customer
+  before_action :load_document, except: %w[index select validate]
 
   def index
-    collection = @customer.temp_documents.from_ibizabox.joins([ibizabox_folder: :journal]).select("temp_documents.*, account_book_types.name as journal")
+    collection = @customer.temp_documents.from_ibizabox.joins([ibizabox_folder: :journal]).select('temp_documents.*, account_book_types.name as journal')
     @documents = TempDocument.search_ibizabox_collection(collection, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order("#{sort_column} #{sort_direction}")
     @documents_count = @documents.size
     @documents = @documents.page(params[:page]).per(params[:per_page])
   end
 
   def show
-    if File.exist?(@document.content.path)
-      send_file(@document.content.path, type: 'application/pdf', filename: @document.original_file_name, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@document.cloud_content_object.path)
+      send_file(@document.cloud_content_object.path, type: 'application/pdf', filename: @document.original_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
   def piece
     if @document.piece
-      if File.exist?(@document.piece.content.path)
-        send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      if File.exist?(@document.piece.cloud_content_object.path)
+        send_file(@document.piece.cloud_content_object.path, type: 'application/pdf', filename: @document.piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
       else
-        render nothing: true, status: 404
+        render body: nil, status: 404
       end
     else
-      render nothing: true, status: 404
+      render body: nil, status: 404
     end
   end
 
   def select
-    collection = @customer.temp_documents.wait_selection.from_ibizabox.joins([ibizabox_folder: :journal]).where("ibizabox_folders.state in ('waiting_selection','ready')").select("temp_documents.*, account_book_types.name as journal")
+    collection = @customer.temp_documents.wait_selection.from_ibizabox.joins([ibizabox_folder: :journal]).where("ibizabox_folders.state in ('waiting_selection','ready')").select('temp_documents.*, account_book_types.name as journal')
     @documents = TempDocument.search_ibizabox_collection(collection, search_terms(params[:document_contains])).includes(:piece).order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
   end
 
@@ -44,7 +45,7 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
         ibizabox_folder.ready if ibizabox_folder.waiting_selection?
       end
       documents.each do |document|
-        if DocumentTools.need_ocr?(document.content.path)
+        if DocumentTools.need_ocr?(document.cloud_content_object.path)
           document.ocr_needed
         else
           document.ready
@@ -59,14 +60,14 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
     redirect_to select_account_organization_customer_ibizabox_documents_path(@organization, @customer, document_contains: params[:document_contains])
   end
 
-private
+  private
 
   def load_document
     @document = @customer.temp_documents.from_ibizabox.find(params[:id])
   end
 
   def sort_column
-    if params[:sort].in? %w(created_at journal original_file_name pages_number)
+    if params[:sort].in? %w[created_at journal original_file_name pages_number]
       params[:sort]
     else
       'created_at'
@@ -75,7 +76,7 @@ private
   helper_method :sort_column
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'

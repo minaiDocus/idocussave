@@ -1,4 +1,4 @@
-class Settings < ActiveRecord::Base
+class Settings < ApplicationRecord
   serialize :notify_errors_to
   serialize :compta_operators
   serialize :paper_process_operators

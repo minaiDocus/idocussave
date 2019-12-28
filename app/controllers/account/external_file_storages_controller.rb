@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class Account::ExternalFileStoragesController < Account::AccountController
-  before_filter :load_external_file_storage
+  before_action :load_external_file_storage
 
   def use
     service   = params[:service].to_i
@@ -18,7 +20,7 @@ class Account::ExternalFileStoragesController < Account::AccountController
   end
 
   def update
-    service_name = [:dropbox_basic, :google_doc, :ftp, :box].select do |key|
+    service_name = %i[dropbox_basic google_doc ftp box].select do |key|
       params[key].present?
     end.first
 
@@ -34,7 +36,7 @@ class Account::ExternalFileStoragesController < Account::AccountController
     end
   end
 
-private
+  private
 
   def load_external_file_storage
     @external_file_storage = @user.find_or_create_external_file_storage

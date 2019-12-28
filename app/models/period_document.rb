@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodDocument < ActiveRecord::Base
+class PeriodDocument < ApplicationRecord
   has_one :report,        class_name: 'Pack::Report', inverse_of: :document, dependent: :delete, foreign_key: :document_id
   has_one :paper_process, class_name: 'PaperProcess',                        dependent: :delete
 

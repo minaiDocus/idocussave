@@ -7,7 +7,7 @@ describe User do
       User.destroy_all
       Subscription.destroy_all
 
-      @user = FactoryGirl.create(:user, first_name: 'user1', code: 'TS0001')
+      @user = FactoryBot.create(:user, first_name: 'user1', code: 'TS0001')
     end
 
     it ".create" do
@@ -32,8 +32,8 @@ describe User do
     before(:each) do
       User.destroy_all
 
-      @prescriber = FactoryGirl.create(:prescriber)
-      @fake_prescriber = FactoryGirl.create(:fake_prescriber)
+      @prescriber = FactoryBot.create(:prescriber)
+      @fake_prescriber = FactoryBot.create(:fake_prescriber)
     end
 
     it 'should find fake prescribers' do

@@ -1,29 +1,34 @@
 #scanning_providers
-  = render partial: 'navigation'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        = render partial: 'navigation'
 
-  .row-fluid
-    .span12
-      %h3 Liste des ateliers (#{@scanning_providers.count})
-
-  .row-fluid
-    .span9
+  .card
+    .card-header
+      %h3
+        Liste des ateliers 
+        .badge.badge-info.fs-origin #{@scanning_providers.count}
+    .card-body
       = render partial: 'shared/list_options', locals: { collection: @scanning_providers }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+      %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th= t('activerecord.models.common.attributes.created_at')
             %th= t('activerecord.models.scanning_provider.attributes.is_default')
             %th= t('activerecord.models.scanning_provider.attributes.name')
             %th= t('activerecord.models.scanning_provider.attributes.customers_count')
             %th Actions
-        %tbody
+        %tbody.retractable.slidedown
           - @scanning_providers.each do |scanning_provider|
             %tr
               %td= l(scanning_provider.created_at)
               %td= scanning_provider.is_default ? t('yes_value') : t('no_value')
               %td= link_to scanning_provider, admin_scanning_provider_path(scanning_provider)
               %td= scanning_provider.customers.count
-              %td
-                = icon_link_to edit_admin_scanning_provider_path(scanning_provider), { icon: 'edit' }
-                = icon_link_to admin_scanning_provider_path(scanning_provider), { icon: 'remove' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }
+              %td.text-center
+                = icon_link_to edit_admin_scanning_provider_path(scanning_provider), { icon: 'pencil' }
+                &nbsp;
+                = icon_link_to admin_scanning_provider_path(scanning_provider), { icon: 'trash' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }
+      %br
       = render partial: 'shared/list_options', locals: { collection: @scanning_providers }

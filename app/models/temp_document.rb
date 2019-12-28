@@ -1,5 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class TempDocument < ActiveRecord::Base
+require 'mini_magick'
+
+class TempDocument < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/processing/:id/download/:style'}
+
   serialize :scan_bundling_document_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
@@ -8,17 +12,21 @@ class TempDocument < ActiveRecord::Base
   serialize :metadata, Hash
 
   belongs_to :user
-  belongs_to :email
-  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
+  belongs_to :email, optional: true
+  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document, optional: true
   belongs_to :temp_pack
   belongs_to :organization
-  belongs_to :document_delivery
-  belongs_to :retriever
-  belongs_to :ibizabox_folder
-  belongs_to :analytic_reference
+  belongs_to :document_delivery, optional: true
+  belongs_to :retriever, optional: true
+  belongs_to :ibizabox_folder, optional: true
+  belongs_to :analytic_reference, optional: true
   has_many :notifiables, dependent: :destroy, as: :notifiable
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
+
+  has_one_attached :cloud_content
+  has_one_attached :cloud_raw_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/:filename',
@@ -32,10 +40,9 @@ class TempDocument < ActiveRecord::Base
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  before_content_post_process :is_thumb_generated
+  # before_content_post_process :is_thumb_generated
 
-
-  after_create do |temp_document|
+  after_create_commit do |temp_document|
     unless Rails.env.test?
       TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
     end
@@ -48,6 +55,9 @@ class TempDocument < ActiveRecord::Base
   end
 
   before_destroy do |temp_document|
+    temp_document.cloud_content.purge
+    temp_document.cloud_raw_content.purge
+
     current_analytic = temp_document.analytic_reference
     current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ temp_documents: [temp_document.id] })
   end
@@ -197,8 +207,15 @@ class TempDocument < ActiveRecord::Base
   def self.generate_thumbs(id)
     temp_document = TempDocument.find(id)
 
-    temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
-    temp_document.content.reprocess!
+    base_file_name = temp_document.cloud_content_object.filename.to_s.gsub('.pdf', '')
+
+    temp_document.is_thumb_generated = true
+
+    image = MiniMagick::Image.read(temp_document.cloud_content.download).format('png').resize('92x133')
+
+    temp_document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                 filename: "#{base_file_name}.png", 
+                                                 content_type: "image/png")
 
     temp_document.save
   end
@@ -236,11 +253,6 @@ class TempDocument < ActiveRecord::Base
         retriever = user.retrievers.find(contains[:retriever_id])
         collection = collection.where(retriever_id: retriever.id)
       end
-
-      if contains[:transaction_id]
-        transaction = user.fiduceo_transactions.find(contains[:transaction_id])
-        documents = collection.where(fiduceo_id: transaction.retrieved_document_ids)
-      end
     end
 
     if contains[:date]
@@ -272,9 +284,16 @@ class TempDocument < ActiveRecord::Base
     collection
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def cloud_raw_content_object
+    CustomActiveStorageObject.new(self, :cloud_raw_content)
+  end
 
   def name_with_position
-    name = File.basename content_file_name, '.*'
+    name = File.basename self.cloud_content_object.filename, '.*'
     name.sub!(/_\d+\z/, '') if scanned?
 
     "#{name}_%0#{AccountingWorkflow::TempPackProcessor::POSITION_SIZE}d" % position
@@ -282,7 +301,7 @@ class TempDocument < ActiveRecord::Base
 
 
   def file_name_with_position
-    extension = File.extname(content_file_name)
+    extension = File.extname(self.cloud_content_object.filename)
 
     "#{name_with_position}#{extension}"
   end
@@ -328,7 +347,6 @@ class TempDocument < ActiveRecord::Base
       false
     end
   end
-
 
   def corruption_notified
     self.is_corruption_notified = true

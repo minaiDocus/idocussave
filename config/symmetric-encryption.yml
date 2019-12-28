@@ -6,13 +6,16 @@
 # can be placed directly in the source code.
 # And therefore no RSA private key is required
 development:         &development_defaults
-  key:               1234567890ABCDEF1234567890ABCDEF
+  key:               1234567890ABCDEF
   iv:                1234567890ABCDEF
   cipher_name:       aes-128-cbc
   encoding:          :base64strict
   always_add_header: true
 
 local:
+  <<: *development_defaults
+
+idocus_r5:
   <<: *development_defaults
 
 test:
@@ -57,8 +60,8 @@ production: &production_defaults
     -
       # Filename containing Symmetric Encryption Key encrypted using the
       # RSA public key derived from the private key above
-      key_filename:      /data/idocus/deploy/production/shared/keys/idocus_production.key
-      iv_filename:       /data/idocus/deploy/production/shared/keys/idocus_production.iv
+      key_filename:      keys/idocus_production.key
+      iv_filename:       keys/idocus_production.iv
       cipher_name:       aes-256-cbc
       encoding:          :base64strict
       version:           1

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::NotificationsController < Account::AccountController
   skip_before_action :verify_suspension, only: :latest
   before_action :load_notifications, except: :link_through
@@ -8,7 +10,7 @@ class Account::NotificationsController < Account::AccountController
 
   def latest
     if organizations_suspended?
-      render nothing: true
+      render body: nil
     else
       render partial: 'notifications', layout: false, locals: { notifications: @notifications }
     end

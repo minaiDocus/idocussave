@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::RetrieversController < Admin::AdminController
   def index
     @retrievers = Retriever.search(search_terms(params[:retriever_contains])).order(sort_column => sort_direction).includes(:user, :journal)
@@ -10,13 +11,13 @@ class Admin::RetrieversController < Admin::AdminController
     if params[:post_action_budgea_fetcher]
       if params_fetcher_valid?
         @message = BudgeaTransactionFetcher.new(
-                                                  User.get_by_code(params[:budgea_fetcher_contains][:user_code]),
-                                                  params[:budgea_fetcher_contains][:account_ids].split(',').collect {|id| id.delete(' ')},
-                                                  params[:budgea_fetcher_contains][:min_date],
-                                                  params[:budgea_fetcher_contains][:max_date],
-                                                ).execute
+          User.get_by_code(params[:budgea_fetcher_contains][:user_code]),
+          params[:budgea_fetcher_contains][:account_ids].split(',').collect { |id| id.delete(' ') },
+          params[:budgea_fetcher_contains][:min_date],
+          params[:budgea_fetcher_contains][:max_date]
+        ).execute
       else
-        @message = "Paramètre manquant!!"
+        @message = 'Paramètre manquant!!'
       end
     end
   end
@@ -26,10 +27,10 @@ class Admin::RetrieversController < Admin::AdminController
     count = retrievers.count
     retrievers.each(&:run)
     flash[:notice] = "#{count} récupération(s) en cours."
-    redirect_to admin_retrievers_path(params.except(:authenticity_token))
+    redirect_to admin_retrievers_path(params.permit.except(:authenticity_token))
   end
 
-private
+  private
 
   def load_retriever
     @retriever = Retriever.find params[:id]
@@ -46,12 +47,9 @@ private
   helper_method :sort_direction
 
   def params_fetcher_valid?
-     [:user_code, :account_ids, :min_date, :max_date].each_with_object(params[:budgea_fetcher_contains]) do |key, obj|
-      unless obj[key].present?
-        return false
-      end
+    %i[user_code account_ids min_date max_date].each_with_object(params[:budgea_fetcher_contains]) do |key, obj|
+      return false unless obj[key].present?
     end
-    return true
+    true
   end
-
 end

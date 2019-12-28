@@ -29,7 +29,7 @@ describe AccountSharingRequest do
       request.code_or_email = 'TS%0001'
 
       expect(request.save).to eq true
-      pending_account_sharing = @contact.account_sharings.pending.first
+      pending_account_sharing = @contact.account_sharings.unscoped.pending.first
       expect(pending_account_sharing.account).to eq @customer
     end
 
@@ -42,7 +42,7 @@ describe AccountSharingRequest do
       request.code_or_email = 'TS%0001'
 
       expect(request.save).to eq true
-      pending_account_sharing = customer2.account_sharings.pending.first
+      pending_account_sharing = customer2.account_sharings.unscoped.pending.first
       expect(pending_account_sharing.account).to eq @customer
     end
 

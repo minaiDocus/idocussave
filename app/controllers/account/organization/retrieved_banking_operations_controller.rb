@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::RetrievedBankingOperationsController < Account::Organization::RetrieverController
   def index
     @operations = operations
@@ -9,11 +10,11 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
     # NOTE using update_all directly does not work because of the join with bank_account
     ids = waiting_operations.pluck(:id)
     count = Operation.where(id: ids).update_all(forced_processing_at: Time.now, forced_processing_by_user_id: current_user.id)
-    if count < 2
-      flash[:success] = "#{count} opération sera immédiatement pré-affecté."
-    else
-      flash[:success] = "#{count} opérations seront immédiatement pré-affectés."
-    end
+    flash[:success] = if count < 2
+                        "#{count} opération sera immédiatement pré-affecté."
+                      else
+                        "#{count} opérations seront immédiatement pré-affectés."
+                      end
     redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])
   end
 
@@ -21,17 +22,17 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
     @operations = operations(false)
 
     if @operations.present? && params[:banking_operation_contains].present?
-      count = @operations.locked.not_deleted.waiting_processing.where("is_coming = ? AND processed_at IS NULL", false).update_all(is_locked: false)
+      count = @operations.locked.not_deleted.waiting_processing.where('is_coming = ? AND processed_at IS NULL', false).update_all(is_locked: false)
       if count > 0
         flash[:success] = "#{count} opération(s) débloquée(s) avec succès."
       else
         flash[:error] = "Aucune opération n'a été débloquée."
       end
     end
-    redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])    
-  end 
+    redirect_to account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains])
+  end
 
-private
+  private
 
   def sort_column
     if params[:sort].in? ['date', 'bank_accounts.bank_name', 'bank_accounts.number', 'category', 'label', 'amount']
@@ -43,7 +44,7 @@ private
   helper_method :sort_column
 
   def sort_direction
-    if params[:direction].in? %w(asc desc)
+    if params[:direction].in? %w[asc desc]
       params[:direction]
     else
       'desc'
@@ -51,7 +52,7 @@ private
   end
   helper_method :sort_direction
 
-  def operations(with_page=true)
+  def operations(with_page = true)
     bank_account_ids = @customer.bank_accounts.used.map(&:id)
     operations = @customer.operations.retrieved.where(
       Operation.arel_table[:bank_account_id].in(bank_account_ids).or(

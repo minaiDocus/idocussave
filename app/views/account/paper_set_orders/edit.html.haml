@@ -1,9 +1,8 @@
 #paper_set_order.new
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3
-        Edition de la commande de Kit envoi courrier pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders')}
-  .row-fluid
-    .span12.box
-      = simple_form_for @order, url: account_organization_paper_set_order_path(@organization, @order), html: { class: 'form form-horizontal margin0' } do |f|
-        = render partial: 'form', locals: { f: f }
+        Edition de la commande de Kit envoi courrier pour le client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'fs-origin'
+    = simple_form_for @order, url: account_organization_paper_set_order_path(@organization, @order), html: { class: 'form-horizontal' } do |f|
+      = render partial: 'form', locals: { f: f }

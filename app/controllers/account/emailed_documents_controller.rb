@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::EmailedDocumentsController < Account::AccountController
-  before_filter :verify_rights
+  before_action :verify_rights
 
   # POST /account/emailed_documents/regenerate_code
   def regenerate_code

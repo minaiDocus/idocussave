@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Account::IbizaboxHelper
   def ibizabox_folder_state(folder)
     if folder.state == 'waiting_selection'
       link_to 'Sélectionner les documents', select_account_organization_customer_ibizabox_documents_path(@organization, @customer, document_contains: { journal: folder.journal.name }), class: 'btn btn-mini'
     else
-      content_tag('span',class: ibizabox_state_label(folder.state)) do
+      content_tag('span', class: ibizabox_state_label(folder.state)) do
         t('activerecord.models.ibizabox_folder.attributes.states.' + (folder.state.presence || 'none'))
       end
     end
@@ -20,7 +22,9 @@ module Account::IbizaboxHelper
         ref_ibiza = node.at_css('ref').try(:content)
         ref_folder = folder.journal.pseudonym.presence || folder.journal.name
 
-        return @is_accessible = true if (ref_folder == ref_ibiza && !ref_folder.nil? && node.at_css('presentInGed').try(:content).to_i == 1)
+        if ref_folder == ref_ibiza && !ref_folder.nil? && node.at_css('presentInGed').try(:content).to_i == 1
+          return @is_accessible = true
+        end
       end
     end
     @is_accessible
@@ -29,11 +33,11 @@ module Account::IbizaboxHelper
   def ibizabox_state_label(state)
     case state
     when 'processing'
-      'label label-warning'
+      'badge badge-warning'
     when 'ready'
-      'label label-success'
+      'badge badge-success'
     when 'inactive'
-      'label'
+      'badge'
     end
   end
 end

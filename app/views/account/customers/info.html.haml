@@ -1,9 +1,8 @@
 #info
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3 Assistant de création d’un dossier client
-  .row-fluid
-    .span12.box{ style: 'font-size:12p' }
+    .card-body{ style: 'font-size:12p' }
       Bienvenue sur l’assistant de création de dossier client.
       %br
       %br
@@ -19,4 +18,5 @@
       Bonne configuration!
       %br
       %br
+    .card-footer
       = link_to t('actions.next_step'), new_account_organization_customer_path(@organization), class: 'btn btn-primary'

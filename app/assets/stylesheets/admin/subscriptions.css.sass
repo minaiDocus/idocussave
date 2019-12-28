@@ -33,11 +33,6 @@
       color: #3E2F24
       font-size: 18px
       margin: 20px
-      animation: blinkingText 1s infinite
-      //Firefox 1+
-      -webkit-animation: blinkingText 1s infinite
-      //Safari 3-4
-      -moz-animation: blinkingText 1s infinite
     #accountsList
       width: 100%
       h4
@@ -52,42 +47,5 @@
           height: 30px
           float: left
           padding: 3px
-
-
-@keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
-
-//Firefox 1+
-@-webkit-keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
-
-//Safari 3-4
-@-moz-keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
+  #statistic_table
+    table-layout: fixed

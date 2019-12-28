@@ -5,7 +5,7 @@ jQuery ->
     e.preventDefault()
     $accountsDialog = $('#showAccounts')
     $accountsDialog.find('h3').text($(this).attr('title'))
-    $accountsDialog.find(".modal-body").html("<span class='loading'>Chargment en cours ...</loading>")
+    $accountsDialog.find(".modal-body").html("<span class='loading'>Chargment en cours ...</span>")
     $accountsDialog.modal()
     loadAccounts($(this).attr('type'), $accountsDialog)
 

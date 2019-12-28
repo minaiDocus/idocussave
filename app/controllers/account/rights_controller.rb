@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 class Account::RightsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_member
 
   # GET /account/organizations/:organization_id/collaborators/:collaborator_id/rights/edit
-  def edit
-  end
+  def edit; end
 
   # PUT /account/organizations/:organization_id/collaborators/:collaborator_id/rights
   def update

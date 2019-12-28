@@ -1,22 +1,26 @@
 #retriever_services
-  .row-fluid
-    .span12
-      = render 'layouts/admin/retriever/navigation'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid
-    .box.margin2bottom
-      %h3
-        Liste des automates disponibles
-        = link_to icon_refresh + ' Mettre à jour', admin_retriever_services_update_list_path, method: :post, class: 'btn btn-primary'
-    .box
-      .row-fluid
-        .span6
-          %h4 Documents (#{@providers.size})
-          %ul
-            - @providers.each do |provider|
-              %li= provider.name
-        .span6
-          %h4 Banques (#{@banks.size})
-          %ul
-            - @banks.each do |bank|
-              %li= bank.name
+  .card
+    .card-header.clearfix
+      .float-left
+        %h3 Liste des automates disponibles
+      .float-right
+        = link_to 'Mettre à jour', admin_retriever_services_update_list_path, method: :post, class: 'btn btn-primary'
+    .card-body
+      .row
+        .col-md-6
+          .box.bg-light.height_groups.groups_1
+            %h4 Documents (#{@providers.size})
+            %ul
+              - @providers.each do |provider|
+                %li= provider.name
+        .col-6
+          .box.bg-light.height_groups.groups_1
+            %h4 Banques (#{@banks.size})
+            %ul
+              - @banks.each do |bank|
+                %li= bank.name

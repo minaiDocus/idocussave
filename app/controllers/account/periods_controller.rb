@@ -1,8 +1,9 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PeriodsController < Account::AccountController
   layout false
 
-  before_filter :load_period, :verify_rights
+  before_action :load_period, :verify_rights
 
   # GET /account/periods
   def show
@@ -12,7 +13,7 @@ class Account::PeriodsController < Account::AccountController
     end
   end
 
-private
+  private
 
   def load_period
     @period = Period.find(params[:id])
@@ -25,7 +26,7 @@ private
           flash[:error] = t('authorization.unessessary_rights')
           redirect_to account_reporting_path
         end
-        format.json { render text: 'Unauthorized', status: :unauthorized }
+        format.json { render plain: 'Unauthorized', status: :unauthorized }
       end
     end
   end

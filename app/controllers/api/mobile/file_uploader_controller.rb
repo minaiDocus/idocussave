@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::FileUploaderController < MobileApiController
   include DocumentsHelper
 
@@ -12,7 +14,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def load_user_analytics
-    if(params[:user_id].present?)
+    if params[:user_id].present?
       @customer = User.find params[:user_id]
     elsif params[:pieces].present?
       load_default_analytic_by_params params[:pieces], 'piece'
@@ -21,25 +23,27 @@ class Api::Mobile::FileUploaderController < MobileApiController
     result = journal_analytic_references = pieces_analytic_references = {}
 
     if @customer && @customer.organization.ibiza.try(:configured?) && @customer.ibiza_id.present? && @customer.softwares.ibiza_compta_analysis_activated?
-      load_default_analytic_by_params params[:journal], 'journal' if params[:journal].present?
+      if params[:journal].present?
+        load_default_analytic_by_params params[:journal], 'journal'
+      end
 
       result = IbizaAnalytic.new(@customer.ibiza_id, @customer.organization.ibiza.access_token).list
-      journal_analytic_references = @journal? JournalAnalyticReferences.new(@journal).get_analytic_references : {}
-      pieces_analytic_references  = @pieces?  get_pieces_analytic_references : {}
+      journal_analytic_references = @journal ? JournalAnalyticReferences.new(@journal).get_analytic_references : {}
+      pieces_analytic_references  = @pieces ? get_pieces_analytic_references : {}
     end
 
     defaults = pieces_analytic_references.presence || journal_analytic_references.presence || ''
-    render json: { data: result.to_json.to_s, defaults: defaults.to_json.to_s  }, status: 200
+    render json: { data: result.to_json.to_s, defaults: defaults.to_json.to_s }, status: 200
   end
 
   def create
     data = nil
 
-    if params[:file_code].present?
-      customer = accounts.active.find_by_code(params[:file_code])
-    else
-      customer = @user
-    end
+    customer = if params[:file_code].present?
+                 accounts.active.find_by_code(params[:file_code])
+               else
+                 @user
+               end
 
     @uploaded_files = params[:files]
     @errors = []
@@ -69,7 +73,9 @@ class Api::Mobile::FileUploaderController < MobileApiController
 
         data = present(uploaded_document).to_json
 
-        set_errors_to_files(uploaded_document.full_error_messages) if uploaded_document.errors.any?
+        if uploaded_document.errors.any?
+          set_errors_to_files(uploaded_document.full_error_messages)
+        end
       else
         set_errors_to_files("Une erreur inatendue s'est produite, veuillez relancer l'upload svp")
       end
@@ -88,7 +94,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def set_pieces_analytics
-    pieces    = Pack::Piece.where(id: params[:pieces].presence || 0).where("pre_assignment_state != 'ready'")
+    pieces = Pack::Piece.where(id: params[:pieces].presence || 0).where("pre_assignment_state != 'ready'")
 
     messages = PiecesAnalyticReferences.new(pieces, parse_analytic_params).update_analytics
 
@@ -105,13 +111,13 @@ class Api::Mobile::FileUploaderController < MobileApiController
 
       result = {
         journals: user.account_book_types.order(:name).map(&:info),
-        periods:  options_for_period(period_service)
+        periods: options_for_period(period_service)
       }
 
       if period_service.prev_expires_at
         result[:message] = {
           period: period_option_label(period_service.period_duration, Time.now - period_service.period_duration.month),
-          date:   l(period_service.prev_expires_at, format: '%d %B %Y à %H:%M')
+          date: l(period_service.prev_expires_at, format: '%d %B %Y à %H:%M')
         }
       end
 
@@ -125,7 +131,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
 
     begin
       analytic_parsed = JSON.parse(params[:file_compta_analysis])
-    rescue
+    rescue StandardError
       analytic_parsed = params[:file_compta_analysis]
     end
 
@@ -133,38 +139,38 @@ class Api::Mobile::FileUploaderController < MobileApiController
     exist = false
 
     analytic_parsed.each_with_index do |a, l|
-      i = l+1
+      i = l + 1
       exist = true if a['analysis'].present?
 
-      analysis["#{i.to_s}"] = { 'name' => a['analysis'].presence || '' }
+      analysis[i.to_s] = { 'name' => a['analysis'].presence || '' }
       references = a['references']
 
-      if references.any?
-        references.each_with_index do |r, t|
-          j = t+1
-          analysis["#{i.to_s}#{j.to_s}"] =  {
-                                              'ventilation' => r['ventilation'].presence || 0,
-                                              'axis1'       => r['axis1'].presence || '',
-                                              'axis2'       => r['axis2'].presence || '',
-                                              'axis3'       => r['axis3'].presence || ''
-                                            }
-        end
+      next unless references.any?
+
+      references.each_with_index do |r, t|
+        j = t + 1
+        analysis["#{i}#{j}"] = {
+          'ventilation' => r['ventilation'].presence || 0,
+          'axis1' => r['axis1'].presence || '',
+          'axis2' => r['axis2'].presence || '',
+          'axis3' => r['axis3'].presence || ''
+        }
       end
     end
 
     exist ? analysis.with_indifferent_access : nil
   end
 
-  def load_default_analytic_by_params(param, type='journal')
-    @journal  = (param.present? && type == 'journal') ? @customer.account_book_types.where(name: param).first : nil
-    @pieces   = (param.present? && type == 'piece') ? Pack::Piece.where(id: param) : nil
+  def load_default_analytic_by_params(param, type = 'journal')
+    @journal  = param.present? && type == 'journal' ? @customer.account_book_types.where(name: param).first : nil
+    @pieces   = param.present? && type == 'piece' ? Pack::Piece.where(id: param) : nil
 
     if @pieces
       @customer = @pieces.first.user
       journal_name = @pieces.collect(&:journal).uniq || []
 
       if journal_name.size == 1 && !@journal
-        @journal  = @customer.account_book_types.where(name: journal_name.first).first || nil
+        @journal = @customer.account_book_types.where(name: journal_name.first).first || nil
       end
     end
   end
@@ -178,14 +184,14 @@ class Api::Mobile::FileUploaderController < MobileApiController
       analytic = @pieces.first.analytic_reference || nil
 
       if analytic
-        result =  {
-                    a1_name:       analytic['a1_name'].presence,
-                    a1_references: JSON.parse(analytic['a1_references']),
-                    a2_name:       analytic['a2_name'].presence,
-                    a2_references: JSON.parse(analytic['a2_references']),
-                    a3_name:       analytic['a3_name'].presence,
-                    a3_references: JSON.parse(analytic['a3_references']),
-                  }.with_indifferent_access
+        result = {
+          a1_name: analytic['a1_name'].presence,
+          a1_references: JSON.parse(analytic['a1_references']),
+          a2_name: analytic['a2_name'].presence,
+          a2_references: JSON.parse(analytic['a2_references']),
+          a3_name: analytic['a3_name'].presence,
+          a3_references: JSON.parse(analytic['a3_references'])
+        }.with_indifferent_access
       end
     end
     result
@@ -197,7 +203,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def create_pdf_file_from(file, original_filename)
-    @img_file_path = File.join(@dir, "tmp_img.pdf")
+    @img_file_path = File.join(@dir, 'tmp_img.pdf')
     tmp_file_path = file.path
 
     begin
@@ -206,13 +212,15 @@ class Api::Mobile::FileUploaderController < MobileApiController
         tmp_file_path = File.join(@dir, "resized_#{original_filename}")
         DocumentTools.resize_img(file.path, tmp_file_path)
       end
-    rescue => e
+    rescue StandardError => e
       tmp_file_path = file.path
     end
 
     DocumentTools.to_pdf(tmp_file_path, @img_file_path)
 
-    @errors << { filename: original_filename, errors: 'Image non supportée' } unless File.exist? @img_file_path
+    unless File.exist? @img_file_path
+      @errors << { filename: original_filename, errors: 'Image non supportée' }
+    end
   end
 
   def append_img_pdf_to_final_file
@@ -232,7 +240,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
   end
 
   def set_errors_to_files(message)
-    @errors = [] #reset @errors
+    @errors = [] # reset @errors
 
     @uploaded_files.each do |file|
       @errors << { filename: file.original_filename, errors: message }

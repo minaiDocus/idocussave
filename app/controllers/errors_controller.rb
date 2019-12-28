@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ErrorsController < ApplicationController
   def routing
-    raise ActionController::RoutingError.new('Not Found')
+    raise ActionController::RoutingError, 'Not Found'
   end
 end

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RemoteFile < ActiveRecord::Base
+class RemoteFile < ApplicationRecord
   DROPBOX          = 'Dropbox'.freeze
   DROPBOX_EXTENDED = 'Dropbox Extended'.freeze
   GOOGLE_DRIVE     = 'Google Drive'.freeze
@@ -9,11 +9,11 @@ class RemoteFile < ActiveRecord::Base
   MY_COMPANY_FILES = 'My Company Files'.freeze
   SERVICE_NAMES    = [DROPBOX, DROPBOX_EXTENDED, GOOGLE_DRIVE, FTP, BOX, KNOWINGS, MY_COMPANY_FILES].freeze
 
-  belongs_to :user
-  belongs_to :pack
-  belongs_to :group
+  belongs_to :user, optional: true
+  belongs_to :pack, optional: true
+  belongs_to :group, optional: true
   belongs_to :remotable, polymorphic: true
-  belongs_to :organization
+  belongs_to :organization, optional: true
 
 
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure', association_foreign_key: 'pack_report_preseizure_id'
@@ -148,7 +148,7 @@ class RemoteFile < ActiveRecord::Base
 
 
   def local_path
-    temp_path.presence || remotable.content.path
+    temp_path.presence || remotable.cloud_content_object.path
   end
 
 

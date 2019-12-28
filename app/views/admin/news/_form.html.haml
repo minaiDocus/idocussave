@@ -1,8 +1,10 @@
 = simple_nested_form_for [:admin, @news], html: { class: 'form form-horizontal padding1top margin0' } do |f|
-  = f.input :title
-  = f.input :target_audience, collection: news_target_audience_options, include_blank: false
-  = f.input :url, input_html: { class: 'span12' }
-  = f.input :body, as: :ckeditor, input_html: { ckeditor: { toolbar: 'news' } }
-  .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    = link_to t('actions.cancel'), admin_news_index_path, class: 'btn'
+  .card-body
+    = f.input :title
+    = f.input :target_audience, collection: news_target_audience_options, include_blank: false
+    = f.input :url, input_html: { class: 'span12' }
+    = f.input :body, as: :ckeditor, input_html: { ckeditor: { toolbar: 'news' } }
+  .card-footer
+    .form-actions.margin0bottom
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
+      = link_to t('actions.cancel'), admin_news_index_path, class: 'btn btn-light'

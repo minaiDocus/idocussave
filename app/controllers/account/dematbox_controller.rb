@@ -1,8 +1,8 @@
-# -*- encoding : UTF-8 -*-
-class Account::DematboxController < Account::AccountController
-  before_filter :verify_access
-  before_filter :load_dematbox
+# frozen_string_literal: true
 
+class Account::DematboxController < Account::AccountController
+  before_action :verify_access
+  before_action :load_dematbox
 
   # POST /account/dematboxes
   def create
@@ -10,7 +10,6 @@ class Account::DematboxController < Account::AccountController
     flash[:notice] = "Configuration de iDocus'Box en cours..."
     redirect_to account_profile_path(panel: 'idocus_box')
   end
-
 
   # DELETE /account/dematboxes
   def destroy
@@ -21,14 +20,12 @@ class Account::DematboxController < Account::AccountController
 
   private
 
-
   def verify_access
     unless @user.is_dematbox_authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_profile_path
     end
   end
-
 
   def load_dematbox
     @dematbox = @user.dematbox || Dematbox.create(user_id: @user.id)

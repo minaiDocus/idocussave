@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PreAssignmentExport < ActiveRecord::Base
+class PreAssignmentExport < ApplicationRecord
   belongs_to :user
   belongs_to :report, class_name: 'Pack::Report'
   belongs_to :organization
@@ -45,8 +45,6 @@ class PreAssignmentExport < ActiveRecord::Base
     self.error
     self.error_message = error.message.to_s
     self.save
-
-    Airbrake.notify error if airbrake_notify
   end
 
   def got_success(file_name)

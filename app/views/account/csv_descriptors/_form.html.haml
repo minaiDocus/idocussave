@@ -1,37 +1,45 @@
-.row-fluid.margin2bottom
-  .span12
-    .span12
-      Ajouter les champs souhaités.
-      %b
-        N’oubliez pas de mettre un champ « Séparateur » après chacun des champs sélectionnés.
-      %br
-        Le champ « Séparateur » est constitué d’un point-virgule (;) et est nécessaire après chaque champ.
-      %br
-      = link_to icon_new + ' Ajouter un champ', '#', class: 'btn add_field'
-      = link_to icon_destroy + ' Supprimer tous les champs', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn remove_all_fields'
-
 - url = account_organization_csv_descriptor_path(@organization)
 - url = account_organization_customer_csv_descriptor_path(@organization, @customer) if @customer.present?
-= simple_form_for @csv_descriptor, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
-  .row-fluid.margin2bottom
-    .span12.border
-      .span.fields
-        %ul.list
-          - @csv_descriptor.directive_to_a.each do |part|
-            = render partial: 'account/csv_descriptors/field', locals: { part: part }
-  .row-fluid
-    .span12
-      = f.input :directive, as: :hidden
-      = f.input :comma_as_number_separator, as: :boolean
-  .form-actions.margin0bottom
-    - if @customer && !@customer.configured?
-      = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-      = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-      = f.submit t('actions.next_step'), class: 'btn btn-primary'
-    - else
-      = f.submit t('actions.submit'), class: 'btn btn-primary'
-      - cancel_url = account_organization_path(@organization, tab: 'csv_descriptor')
-      - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') if @customer.present?
-      = link_to t('actions.cancel'), cancel_url, class: 'btn'
+= simple_form_for @csv_descriptor, url: url, html: { class: 'form-horizontal label-auto' } do |f|
+  .card-body
+    .row
+      .col-md-6
+        .row-fluid
+          .col-md-12
+            Ajouter les champs souhaités.
+            %b
+              Un « Séparateur » est ajouté automatiquement après chacun des champs sélectionnés.
+            %br
+              Le « Séparateur » est constitué d’un point-virgule 
+              %span.separator ;
+            .row
+              .col-md-6.padding1top
+                = link_to 'Ajouter un champ', '#', class: 'btn btn-primary add_field'
+                = link_to 'Supprimer tous les champs', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-primary remove_all_fields'
+              .col-md-6.clearfix
+                .float-right
+                  = f.input :directive, as: :hidden
+                  = f.input :comma_as_number_separator, as: :boolean
 
-.template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }
+        .row-fluid.margin2bottom
+          .col-md-12.clearfix.border.box.bg-light
+            .fields
+              %ul.list.clearfix
+                - @csv_descriptor.directive_to_a.each do |part|
+                  - unless part[0].to_s == 'separator'
+                    = render partial: 'account/csv_descriptors/field', locals: { part: part }
+
+        .template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }
+      .col-md-6
+        = render partial: 'account/csv_descriptors/legend'
+  .card-footer
+    .form-actions
+      - if @customer && !@customer.configured?
+        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        = f.submit t('actions.next_step'), class: 'btn btn-primary'
+      - else
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        - cancel_url = account_organization_path(@organization, tab: 'csv_descriptor')
+        - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') if @customer.present?
+        = link_to t('actions.cancel'), cancel_url, class: 'btn btn-light'

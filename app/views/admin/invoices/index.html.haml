@@ -1,50 +1,65 @@
 #invoices
-  .row-fluid
-    .span12.margin1bottom
-      %h3 Liste des factures (#{@invoices_count})
+  .row
+    .col-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Liste des factures
+            %span.badge.badge-info= @invoices_count
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @invoices }
-      = form_tag download_admin_invoices_path do |f|
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-          %thead
-            %tr
-              %th= check_box_tag 'check_all'
-              %th= sortable :number, t('activerecord.models.invoice.attributes.number')
-              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-              %th= sortable :organization_id, t('activerecord.models.organization.name') + ' / ' + t('activerecord.models.user.name')
-              %th.price= sortable :amount_in_cents_w_vat, t('activerecord.models.invoice.attributes.amount_w_vat')
-              %th.actions= t('actions.name')
-          %tbody
-            - @invoices.each do |invoice|
-              %tr
-                %td= check_box_tag "invoice_ids[]", invoice.id, false, class: 'invoices'
-                %td= invoice.number
-                %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
-                %td
-                  - if invoice.organization
-                    = link_to invoice.organization.name, account_organization_path(invoice.organization)
-                  - if invoice.user && !invoice.organization
-                    - if invoice.user.organization
-                      = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
-                    - else
-                      = invoice.user.code
-                %td.price
-                  - if invoice.amount_in_cents_w_vat
-                    = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
-                %td.actions
-                  = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                  = icon_link_to admin_invoice_path(invoice), { icon: 'download' }, { target: '_blank' }
-        %br
-        = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
-      = render partial: 'shared/list_options', locals: { collection: @invoices }
-    .span3
-      = render partial: 'sidebar'
+  .row.retractable.with-filter
+    .col-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @invoices }
+        = form_tag download_admin_invoices_path do |f|
+          %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'check_all'
+                %th= sortable :number, t('activerecord.models.invoice.attributes.number')
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :organization_id, t('activerecord.models.organization.name') + ' / ' + t('activerecord.models.user.name')
+                %th.price= sortable :amount_in_cents_w_vat, t('activerecord.models.invoice.attributes.amount_w_vat')
+                %th.actions= t('actions.name')
+            %tbody.retractable.slidedown
+              - @invoices.each do |invoice|
+                %tr
+                  %td= check_box_tag "invoice_ids[]", invoice.id, false, class: 'invoices'
+                  %td= invoice.number
+                  %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
+                  %td
+                    - if invoice.organization
+                      = link_to invoice.organization.name, account_organization_path(invoice.organization)
+                    - if invoice.user && !invoice.organization
+                      - if invoice.user.organization
+                        = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
+                      - else
+                        = invoice.user.code
+                  %td.price
+                    - if invoice.amount_in_cents_w_vat
+                      = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
+                  %td.actions
+                    = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                    = icon_link_to admin_invoice_path(invoice), { icon: 'data-transfer-download' }, { target: '_blank' }
+          %br
+          .row
+            .col.mb-4
+              .row
+                .col-md-8
+                  = render partial: 'shared/list_options', locals: { collection: @invoices }
+                .col-md-4
+                  .float-right
+                    = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
 
-  #showInvoice.modal.hide.fade
-    .modal-header
-      %a.close{ data: { dismiss: :modal } } ×
-      %h3
-    .modal-body
-      %iframe{ src: '' }
+    = render partial: 'sidebar'
+
+    #showInvoice.modal.hide.fade
+      .modal-dialog
+        .modal-content
+          .modal-header
+            %a.close{ data: { dismiss: :modal } } ×
+            %h3
+          .modal-body
+            %iframe{ src: '' }

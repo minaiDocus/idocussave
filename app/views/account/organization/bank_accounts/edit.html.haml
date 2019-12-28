@@ -1,31 +1,35 @@
 #bank_accounts
   - unless @customer.configured?
-    = render 'account/customers/steps'
+    .box
+      = render 'account/customers/steps'
 
-  .row-fluid
-    .span12.box
-      %h3 Edition d'un compte bancaire du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')}
-  .row-fluid
-    .span12.box
-      = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), html: { class: 'form form-horizontal margin0' } do |f|
+  .card
+    .card-header
+      %h3 
+        Edition d'un compte bancaire du client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'fs-origin'
+    = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), html: { class: 'form-horizontal label-medium' } do |f|
+      .card-body
         = f.input :number,            disabled: true
         = f.input :journal, required: true
         - if @customer.uses_ibiza?
           - if @organization.ibiza.configured?
             = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus'
           - else
-            .control-group
-              %label.control-label= t('simple_form.labels.bank_account.journal')
-              .controls
+            .form-group.clearfix
+              .label-section
+                %label= t('simple_form.labels.bank_account.journal')
+              .control-section
                 %select.select.disabled{ disabled: 'disabled' }
                 %p
                   = render 'shared/ibiza_not_configured_warning'
         = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@bank_account.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de valeur"
         = f.input :accounting_number, required: true
         = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
-        .control-group{ class: ('error' if @bank_account.errors.keys.include?(:start_date)) }
-          = label_tag 'bank_account[start_date]', content_tag(:abbr, '*', title: 'champ requis') + " Choisir la date de récupération de l'historique bancaire", class: 'control-label'
-          .controls
+        .form-group.clearfix{ class: ('error' if @bank_account.errors.keys.include?(:start_date)) }
+          .label-section
+            = label_tag 'bank_account[start_date]', content_tag(:abbr, '*', title: 'champ requis') + " Choisir la date de récupération de l'historique bancaire"
+          .control-section
             .input-prepend.date.datepicker
               %span.add-on
                 %i.icon-th
@@ -36,6 +40,7 @@
               %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.order(date: :asc).first.date.strftime("%d/%m/%Y")}
         = f.input :lock_old_operation, required: true, hint: "Ne s'applique qu'après un mois depuis la création de ce compte bancaire dans iDocus"
         = f.input :permitted_late_days, required: true
+      .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'btn btn-light'

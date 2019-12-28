@@ -48,9 +48,11 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
         var need_delivery = $('.need_delivery').text() || 'no';
 
         $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
-        $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').remove();
-        if(software_used != '' && need_delivery != 'no')
-          $('#presPanel1 .header .actiongroup').prepend('<a href="#" title="Livraison écriture comptable ('+software_used+')" class="do-deliverAllPreseizure do-tooltip"><i class="icon-refresh" /></a>');
+        $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').addClass('hide');
+        if(software_used != '' && need_delivery != 'no') {
+          $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').removeClass('hide');
+          $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('title', 'Livraison écriture comptable ('+software_used+')');
+        }
       }
       else if(data != 'none' && page > 1)
       {
@@ -76,7 +78,7 @@ function getPreseizures(link, page=1, by_piece=null, then_pieces=false){
     },
     error: function(data){
       logAfterAction();
-      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
       setTimeout(function(){
         window.preseizuresLoaderLocked = false;
       }, 1000);
@@ -149,7 +151,6 @@ function getPreseizureAccount(manual_id=[]){
       }
 
       $.each(tab_id, function( index, id ){        
-
         var elem = $(".preseizure_description #div_"+id);
 
         var exist = (elem.html() != '' && elem.html() != null && elem.html() != undefined) ? true : false;  
@@ -194,12 +195,12 @@ function getPreseizureAccount(manual_id=[]){
             error: function(data){
               logAfterAction();
               elem.html('');
-              $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+              $(".alerts").html("<div class='row'><div class='col-sm-12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
             }
           });
         }
       });
-    });  
+    });
 }
 
 function editPreseizure(id){
@@ -223,7 +224,7 @@ function editPreseizure(id){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -246,7 +247,7 @@ function editPreseizureAccount(id){
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureAccountEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureAccountEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -265,10 +266,11 @@ function editPreseizureEntry(id){
     success: function(data){
       logAfterAction();
       $('#preseizuresModals #preseizureEntryEdition .modal-body').html(data);
+      custom_radio_buttons();
     },
     error: function(data){
       logAfterAction();
-      $('#preseizuresModals #preseizureEntryEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('#preseizuresModals #preseizureEntryEdition .modal-body').html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -313,7 +315,7 @@ function deliverPreseizures(link='all'){
     },
     error: function(data){
       logAfterAction();
-      $('.alerts').html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('.alerts').html("<div class='row'><div class='col-sm-12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }
@@ -321,65 +323,58 @@ function deliverPreseizures(link='all'){
 function handlePreseizureSelection(id_tmp, type='toggle'){
   var id = id_tmp.split('_')[1];
   var found = window.preseizuresSelected.find(function(elem){ return elem == id });
-
+  var elt_check_or_ban = $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection');
+  var elt_action_group = $('#presPanel1 .header .actiongroup');
   if( found && (type == 'unselect' || type == 'toggle') )
   {//already selected
     window.preseizuresSelected = window.preseizuresSelected.filter(function(elem){ return elem != id});
     $('#lists_preseizures .preseizure#div_'+id).removeClass('selected');
 
-    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').addClass('icon-ok');
-    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').removeClass('icon-ban-circle');
+    elt_check_or_ban.find('.do-selectPage-ban-icon').addClass('hide');
+    elt_check_or_ban.find('.do-selectPage-check-icon').removeClass('hide');
   }
   else if( !found && (type == 'select' || type == 'toggle') )
   {//not selected
     window.preseizuresSelected.push(id);
     $('#lists_preseizures .preseizure#div_'+id).addClass('selected');
 
-    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').addClass('icon-ban-circle');
-    $('#lists_preseizures .preseizure#div_'+id+' .actionbox a.tip_selection i').removeClass('icon-ok');
+    elt_check_or_ban.find('.do-selectPage-ban-icon').removeClass('hide');
+    elt_check_or_ban.find('.do-selectPage-check-icon').addClass('hide');
   }
 
   if(window.preseizuresSelected.length > 0){
-    $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', 'border: 2px solid #058acd; padding: 5px; border-radius: 3px');
-    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', 'border: 2px solid #058acd; padding: 5px 2px 5px 5px; border-radius: 3px');
+    elt_action_group.find('.do-deliverAllPreseizure').addClass('border_action_preseizure');
+    elt_action_group.find('.do-exportSelectedPreseizures').addClass('border_action_preseizure');
   }
   else{
-    $('#presPanel1 .header .actiongroup .do-deliverAllPreseizure').attr('style', '');
-    $('#presPanel1 .header .actiongroup .do-exportSelectedPreseizures').attr('style', '');
+    elt_action_group.find('.do-deliverAllPreseizure').removeClass('border_action_preseizure');
+    elt_action_group.find('.do-exportSelectedPreseizures').removeClass('border_action_preseizure');
   }
 
   if(window.preseizuresSelected.length > 1)
-    $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').removeClass('hide');
+    elt_action_group.find('.do-editSelectedPreseizures').removeClass('hide');
   else
-    $('#presPanel1 .header .actiongroup .do-editSelectedPreseizures').addClass('hide');
+    elt_action_group.find('.do-editSelectedPreseizures').addClass('hide');
 
   countSelectedPreseizures();
 }
 
 function togglePreseizureAction(){  
   if ($(".preseizure_selected.active").length > 1){
-    
-    if ($(".tip_edit_multiple").html() == '')
-    {
-      $(".tip_edit_multiple").append('<i class="icon-edit"></i>');
-    }
-    $(".tip_edit_multiple").removeClass("hide");
-    $(".tip_edit_multiple").css({'border' : '2px solid #058acd', 'padding' : '4px 4px 6px 4px', 'border-radius' : '3px'});
-    $(".do-exportSelectedPreseizures").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-    $(".do-deliverAllPreseizure").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+    $(".tip_edit_multiple").addClass('border_action_preseizure').removeClass("hide");
+    $(".do-exportSelectedPreseizures").addClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").addClass('border_action_preseizure');
   }
-  else if ($(".preseizure_selected.active").length >= 1){      
-    $(".tip_edit_multiple").addClass("hide");
-    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-exportSelectedPreseizures").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
-    $(".do-deliverAllPreseizure").css({'border' : '2px solid #058acd', 'padding' : '4px 2px 6px 5px', 'border-radius' : '3px'});
+  else if ($(".preseizure_selected.active").length >= 1){
+    $(".tip_edit_multiple").removeClass('border_action_preseizure').addClass('hide');
+    $(".do-exportSelectedPreseizures").addClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").addClass('border_action_preseizure');
   }
   else 
-  { 
-    $(".tip_edit_multiple").addClass("hide");   
-    $(".tip_edit_multiple").html('').css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
-    $(".do-deliverAllPreseizure").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+  {
+    $(".tip_edit_multiple").removeClass('border_action_preseizure').addClass('hide');
+    $(".do-exportSelectedPreseizures").removeClass('border_action_preseizure');
+    $(".do-deliverAllPreseizure").removeClass('border_action_preseizure');
   }
 }
 
@@ -403,7 +398,7 @@ function updateAccountEntry(id_account,new_value,type,id,source)
     },
     error: function(data){
       logAfterAction();
-      $('.content_preseizure').prepend("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $('.content_preseizure').prepend("<div class='row'><div class='col-sm-12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
     }
   });
 }

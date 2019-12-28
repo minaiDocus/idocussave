@@ -1,5 +1,5 @@
-class AccountNumberRule < ActiveRecord::Base
-  belongs_to              :organization
+class AccountNumberRule < ApplicationRecord
+  belongs_to              :organization, optional: true
   has_and_belongs_to_many :users
 
 

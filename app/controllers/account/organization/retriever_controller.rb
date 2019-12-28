@@ -1,17 +1,15 @@
-# -*- encoding : UTF-8 -*-
-class Account::Organization::RetrieverController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
-  before_filter :verify_rights
+# frozen_string_literal: true
 
+class Account::Organization::RetrieverController < Account::OrganizationController
+  before_action :load_customer
+  before_action :redirect_to_current_step
+  before_action :verify_rights
 
   private
-
 
   def load_customer
     @customer = customers.find(params[:customer_id])
   end
-
 
   def verify_rights
     unless (@user.leader? || @user.manage_customers) && @customer.active? && @customer.options.is_retriever_authorized && @customer.organization.is_active

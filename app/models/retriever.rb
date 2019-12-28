@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class Retriever < ActiveRecord::Base
+class Retriever < ApplicationRecord
   attr_accessor :confirm_dyn_params, :check_journal
 
   belongs_to :user
-  belongs_to :journal,               class_name: 'AccountBookType'
+  belongs_to :journal, class_name: 'AccountBookType', optional: true
   has_many   :temp_documents
   has_many   :bank_accounts
 

@@ -1,12 +1,12 @@
 #mcf_settings.edit
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3 Configuration de My Company Files
-  .row-fluid
-    .span12.box
-      = simple_form_for @mcf_settings, url: account_organization_mcf_settings_path(@organization), html: { class: 'form form-horizontal margin0bottom' } do |f|
+    = simple_form_for @mcf_settings, url: account_organization_mcf_settings_path(@organization), html: { class: 'form form-horizontal margin0bottom' } do |f|
+      .card-body
         = f.input :is_delivery_activated, as: :boolean
         = f.input :delivery_path_pattern, hint: "Choisissez l’ordre de classement de vos documents en modifiant leur positionnement dans le champ ci-dessus.<br>Exemple : <b>/:account_book/:year:month/</b><br><br>Attention à respecter le contenu de chacun des champs:<br><b>:year</b> pour l'année du lot iDocus<br><b>:month</b> pour le mois du lot iDocus<br><b>:account_book</b> pour le journal comptable iDocus".html_safe
+      .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'mcf'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'mcf'), class: 'btn btn-light'

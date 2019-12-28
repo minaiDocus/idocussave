@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ExternalFileStorage < ActiveRecord::Base
+class ExternalFileStorage < ApplicationRecord
   SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings', 'My Company Files'].freeze
 
   F_DROPBOX     = 2

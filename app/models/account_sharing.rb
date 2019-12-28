@@ -1,8 +1,8 @@
-class AccountSharing < ActiveRecord::Base
-  belongs_to :organization
-  belongs_to :collaborator,  class_name: 'User'
-  belongs_to :account,       class_name: 'User'
-  belongs_to :authorized_by, class_name: 'User'
+class AccountSharing < ApplicationRecord
+  belongs_to :organization, optional: true
+  belongs_to :collaborator,  class_name: 'User', optional: true
+  belongs_to :account,       class_name: 'User', optional: true
+  belongs_to :authorized_by, class_name: 'User', optional: true
 
   validates_presence_of :organization, :collaborator, :account
   validate :type_of_collaborator
@@ -10,7 +10,7 @@ class AccountSharing < ActiveRecord::Base
   validate :uniqueness_of_sharing
 
   scope :approved, -> { where(is_approved: true) }
-  scope :pending,  -> { unscoped.where(is_approved: false) }
+  scope :pending,  -> { where(is_approved: false) }
 
   default_scope -> { where(is_approved: true) }
 

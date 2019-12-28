@@ -1,11 +1,10 @@
 .edit
-  .row-fluid
-    .span12.box
+  .card
+    .card-header
       %h3 Édition de l'organisation
 
-  .row-fluid
-    .span12.box
-      = simple_form_for [:account, @organization], html: { class: 'form form-horizontal margin0' } do |f|
+    = simple_form_for [:account, @organization], html: { class: 'form-horizontal label-medium' } do |f|
+      .card-body
         = hidden_field_tag :part, params[:part]
         - if params[:part] != 'other_software'
           = f.input :name
@@ -24,9 +23,10 @@
           = f.input :is_quadratus_used, as: 'boolean'
           = f.input :is_coala_used, as: 'boolean'
           = f.input :is_csv_descriptor_used, as: 'boolean'
+      .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           - if params[:part] != 'other_software'
-            = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn btn-light'
           - else
-            = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'other_software'), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'other_software'), class: 'btn btn-light'

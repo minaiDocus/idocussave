@@ -1,9 +1,9 @@
 #scans
-  .row-fluid
+  .row
     - if is_return_labels_authorized?
-      .span1
+      .col-md-1
         %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
-    .span1
+    .col-md-1
       = link_to 'Export CSV', scans_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
     %div{ class: (is_return_labels_authorized? ? 'span10' : 'span11') }
       .margin2bottom
@@ -41,8 +41,8 @@
                 - if @groups[time.day].present?
                   = @groups[time.day].size
               - time = time + 1.day
-  .row-fluid
-    .span12
+  .row
+    .col-md-12
       .alerts
         = render partial: 'shared/messages'
       - if session[:new_document] && @current_time.to_date == Date.today
@@ -126,9 +126,11 @@
 - #if (@user && @user['is_return_labels_authorized']) or current_user
 - if @user || current_user
   #returnLabelsDialog.modal.hide.fade
-    .modal-header
-      %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
-      %h3 Génération des étiquettes de retour
-    .modal-body
-      #returnLabelsForm
-      %iframe{ src: '', id: 'returnLabelsShow' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
+          %h3 Génération des étiquettes de retour
+        .modal-body
+          #returnLabelsForm
+          %iframe{ src: '', id: 'returnLabelsShow' }

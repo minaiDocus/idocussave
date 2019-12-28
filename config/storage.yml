@@ -1,0 +1,39 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+#Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+openstack_dev:
+  service: OpenStack
+  container: my-idocus-dev
+  credentials:
+    openstack_auth_url: https://storage.gra.cloud.ovh.net/v1/AUTH_bd194d1f5f0c48d280a477df19d58f8c/my-idocus-dev
+    openstack_username: 878527c752844eb995ec8354b8e8c355
+    openstack_api_key: cf58ac47f76e4990920bf2d28aa960c1
+    openstack_region: GRA
+    openstack_temp_url_key: 46b7d2c806bbcf5036ac90c34934829bad22e25eced8da81b9a97620da58a1c2c015c0fa747ccd7a3e6ea5186cf6e2c0af222717b97951ed9fba1fc49a2622af
+  connection_options: # optional
+    chunk_size: 2097152
+
+# Remember not to checkin your GCS keyfile to a repository
+# google:
+#   service: GCS
+#   project: your_project
+#   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
+#   bucket: your_own_bucket
+
+# Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
+# microsoft:
+#   service: AzureStorage
+#   storage_account_name: your_account_name
+#   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
+#   container: your_container_name
+
+# mirror:
+#   service: Mirror
+#   primary: local
+#   mirrors: [ amazon, google, microsoft ]

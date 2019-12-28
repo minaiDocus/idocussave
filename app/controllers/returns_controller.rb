@@ -1,6 +1,6 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ReturnsController < PaperProcessesController
-  
   # GET /returns
   def index
     paper_processes = PaperProcess.returns.where('created_at >= ? AND created_at <= ?', @current_time.beginning_of_month, @current_time.end_of_month)
@@ -18,7 +18,6 @@ class ReturnsController < PaperProcessesController
     end
   end
 
-  
   # POST /returns
   def create
     _params = paper_process_params
@@ -38,14 +37,14 @@ class ReturnsController < PaperProcessesController
     elsif @paper_process.save
       session[:return_paper_process] = nil
 
-      @paper_process.user               = User.find_by_code @paper_process.customer_code
-      @paper_process.organization    = @paper_process.user.try(:organization)
+      @paper_process.user = User.find_by_code @paper_process.customer_code
+      @paper_process.organization = @paper_process.user.try(:organization)
       @paper_process.save
 
       flash[:success] = 'Créé avec succès.'
     else
       session[:return_paper_process] = @paper_process
-      
+
       flash[:error] = 'Donnée(s) invalide(s).'
     end
     redirect_to returns_path

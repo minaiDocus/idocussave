@@ -1,24 +1,22 @@
-# -*- encoding : UTF-8 -*-
-class Account::OrganizationAddressesController < Account::OrganizationController
-  before_filter :load_address, only: %w(edit update destroy)
+# frozen_string_literal: true
 
+class Account::OrganizationAddressesController < Account::OrganizationController
+  before_action :load_address, only: %w[edit update destroy]
 
   # GET /account/organizations/:organization_id/addresses
   def index
     @addresses = @organization.addresses.all
   end
 
-
   # GET /account/organizations/:organization_id/addresses/new
   def new
     leader = @user.leader? ? @user : @organization.admins.first
 
     @address = Address.new(
-      last_name:  leader&.last_name,
+      last_name: leader&.last_name,
       first_name: leader&.first_name
     )
   end
-
 
   # POST /account/organizations/:organization_id/addresses
   def create
@@ -32,11 +30,8 @@ class Account::OrganizationAddressesController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/addresses/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/new
   def update
@@ -48,8 +43,6 @@ class Account::OrganizationAddressesController < Account::OrganizationController
     end
   end
 
-
-
   # DELETE /account/organizations/:organization_id/addresses/:id
   def destroy
     if @address.destroy
@@ -58,14 +51,11 @@ class Account::OrganizationAddressesController < Account::OrganizationController
     end
   end
 
-
   private
-
 
   def load_address
     @address = @organization.addresses.find(params[:id])
   end
-
 
   def address_params
     params.require(:address).permit(

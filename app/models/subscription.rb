@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Subscription < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :organization
+class Subscription < ApplicationRecord
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
 
   has_many :periods

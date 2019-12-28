@@ -16,7 +16,7 @@ class CreateBankAccount
           retriever.bank_accounts.update_all(is_used: false)
 
           bnk.each do |account|
-            bank_account = retriever.bank_accounts.where(api_id: account['id'], number: account['number'], name: account['name']).first || BankAccount.new
+            bank_account = retriever.bank_accounts.where('api_id = ? OR (name = ? AND number = ?)', account['id'], account['name'], account['number']).first || BankAccount.new
             bank_account.user              = user
             bank_account.retriever         = retriever
             bank_account.api_id            = account['id']

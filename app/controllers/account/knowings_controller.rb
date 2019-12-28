@@ -1,15 +1,14 @@
-# -*- encoding : UTF-8 -*-
-class Account::KnowingsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :verify_existant, only: %w(new create)
-  before_filter :load_knowings, only: %w(edit update)
+# frozen_string_literal: true
 
+class Account::KnowingsController < Account::OrganizationController
+  before_action :verify_rights
+  before_action :verify_existant, only: %w[new create]
+  before_action :load_knowings, only: %w[edit update]
 
   # GET /account/organizations/:organization_id/knowings/new
   def new
     @knowings = Knowings.new
   end
-
 
   # POST /account/organizations/:organization_id/knowings
   def create
@@ -29,9 +28,7 @@ class Account::KnowingsController < Account::OrganizationController
   end
 
   # POST /account/organizations/:organization_id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/knowings
   def update
@@ -53,7 +50,6 @@ class Account::KnowingsController < Account::OrganizationController
     end
   end
 
-
   private
 
   def verify_rights
@@ -63,18 +59,15 @@ class Account::KnowingsController < Account::OrganizationController
     end
   end
 
-
   def verify_existant
     if @organization.knowings.present?
       redirect_to account_organization_path(@organization)
     end
   end
 
-
   def load_knowings
     @knowings = @organization.knowings
   end
-
 
   def knowings_params
     _params = params.require(:knowings).permit(:username, :password, :url, :pole_name, :is_active, :is_third_party_included, :is_pre_assignment_state_included)

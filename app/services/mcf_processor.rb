@@ -35,21 +35,17 @@ class McfProcessor
 
   def initialize(mcf_document)
     @mcf_document = mcf_document
-    @access_token = mcf_document.access_token
-    @file64 = @mcf_document.file64_decoded
+    @access_token = @mcf_document.access_token
+    @file_path    = @mcf_document.cloud_content_object.path
   end
 
   def execute_process
     @mcf_document.processing
 
-    unless @file64.present?
+    unless File.exist? @file_path
       @mcf_document.needs_retake
     else
-      generate_file
-
-      process_file if file_generated?
-
-      FileUtils.remove_entry @tmp_dir
+      process_file
     end
   end
 
@@ -78,7 +74,7 @@ class McfProcessor
 
   def process_file
     if @mcf_document.user.try(:options).try(:is_upload_authorized)
-      uploaded_document = UploadedDocument.new(File.new(@file_path),
+      uploaded_document = UploadedDocument.new(File.open(@file_path, "r"),
                                                @mcf_document.original_file_name,
                                                @mcf_document.user,
                                                @mcf_document.journal,
@@ -113,27 +109,6 @@ class McfProcessor
     end
   end
 
-  def generate_file
-    begin
-        @tmp_dir = Dir.mktmpdir
-
-        @file_path = File.join(@tmp_dir, @mcf_document.original_file_name)
-        File.write @file_path, @file64.force_encoding('UTF-8') unless file_generated?
-        @mcf_document.update(is_generated: true)
-    rescue => e
-      notify_ungenerated_file e.message
-      @mcf_document.update(is_notified: true)
-      @mcf_document.got_error e.message
-
-      logger.info "[MCF][GENERATION ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}"
-      @file_path = nil
-    end
-  end
-
-  def file_generated?
-    @file_path.present? && File.exist?(@file_path)
-  end
-
   def move_file
     if @mcf_document.is_not_moved
       begin
@@ -145,17 +120,6 @@ class McfProcessor
         logger.info "[MCF][MOVE ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}"
         @mcf_document.update(is_moved: true) if e.message.match(/"Status"=>909/)
       end
-    end
-  end
-
-  def notify_ungenerated_file(error)
-    content = "MCF : fichier non générer : #{@mcf_document.id} - #{@mcf_document.original_file_name} - #{@access_token}\n"
-    content += "==>#{error}"
-
-    addresses = Array(Settings.first.notify_errors_to)
-
-    unless addresses.empty?
-     NotificationMailer.notify(addresses, '[iDocus-MCF] - Document non généré', content)
     end
   end
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ReminderEmail < ActiveRecord::Base
+class ReminderEmail < ApplicationRecord
   serialize :delivered_user_ids, Array
   serialize :processed_user_ids, Array
 

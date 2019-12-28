@@ -1,4 +1,4 @@
-class FirebaseToken < ActiveRecord::Base
+class FirebaseToken < ApplicationRecord
   belongs_to :user
 
   validates_presence_of :name, :user

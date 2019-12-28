@@ -1,22 +1,24 @@
-# -*- encoding : UTF-8 -*-
-class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index info new create search)
-  before_filter :verify_rights, except: 'index'
-  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
-  before_filter :redirect_to_current_step
-  before_filter :verify_if_account_can_be_closed, only: %w(account_close_confirm close_account)
+# frozen_string_literal: true
 
+class Account::CustomersController < Account::OrganizationController
+  before_action :load_customer, except: %w[index info new create search]
+  before_action :verify_rights, except: 'index'
+  before_action :verify_if_customer_is_active, only: %w[edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options]
+  before_action :redirect_to_current_step
+  before_action :verify_if_account_can_be_closed, only: %w[account_close_confirm close_account]
 
   # GET /account/organizations/:organization_id/customers
   def index
     respond_to do |format|
       format.html do
-        params[:user_contains][:group_ids] = params[:group_ids] if params[:group_ids].present?
-        @customers = customers.search(search_terms(params[:user_contains])).
-          order(sort_column => sort_direction).
-          page(params[:page]).
-          per(params[:per_page])
-        @periods = Period.where(user_id: @customers.pluck(:id)).where("start_date < ? AND end_date > ?", Date.today, Date.today).includes(:user, :product_option_orders)
+        if params[:group_ids].present?
+          params[:user_contains][:group_ids] = params[:group_ids]
+        end
+        @customers = customers.search(search_terms(params[:user_contains]))
+                              .order(sort_column => sort_direction)
+                              .page(params[:page])
+                              .per(params[:per_page])
+        @periods = Period.where(user_id: @customers.pluck(:id)).where('start_date < ? AND end_date > ?', Date.today, Date.today).includes(:user, :product_option_orders)
         @groups = @user.groups.order(name: :asc)
       end
 
@@ -35,11 +37,8 @@ class Account::CustomersController < Account::OrganizationController
     @customer.build_softwares if @customer.softwares.nil?
   end
 
-
   # GET /account/organizations/:organization_id/customers/info
-  def info
-  end
-
+  def info; end
 
   # GET /account/organizations/:organization_id/customers/new
   def new
@@ -47,7 +46,6 @@ class Account::CustomersController < Account::OrganizationController
     @customer.build_options
     @customer.build_softwares
   end
-
 
   # POST /account/organizations/:organization_id/customers
   def create
@@ -60,17 +58,14 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:id
-  def update    
+  def update
     if params[:user][:softwares_attributes].present?
       software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-      if software && software.persisted?
+      if software&.persisted?
         flash[:success] = 'Modifié avec succès.'
       else
         flash[:error] = 'Impossible de modifier.'
@@ -97,7 +92,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def update_software
     software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-    if software && software.persisted?
+    if software&.persisted?
       flash[:success] = 'Modifié avec succès.'
     else
       flash[:error] = 'Impossible de modifier.'
@@ -106,10 +101,10 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def edit_softwares_selection
-    unless @customer.configured?
-      @customer.build_softwares if @customer.softwares.nil?
-    else
+    if @customer.configured?
       redirect_to account_organization_customer_path(@organization, @customer)
+    else
+      @customer.build_softwares if @customer.softwares.nil?
     end
   end
 
@@ -151,9 +146,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
-  def edit_ibiza
-  end
-
+  def edit_ibiza; end
 
   # PUT /account/organizations/:organization_id/customers/:id/update_ibiza
   def update_ibiza
@@ -179,11 +172,8 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:id/edit_period_options
-  def edit_period_options
-  end
-
+  def edit_period_options; end
 
   # PUT /account/organizations/:organization_id/customers/:id/update_period_options
   def update_period_options
@@ -199,11 +189,8 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:id/edit_knowings_options
-  def edit_knowings_options
-  end
-
+  def edit_knowings_options; end
 
   # PUT /account/organizations/:organization_id/customers/:id/update_knowings_options
   def update_knowings_options
@@ -220,11 +207,8 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:id/edit_compta_options
-  def edit_compta_options
-  end
-
+  def edit_compta_options; end
 
   # PUT /account/organizations/:organization_id/customers/:id/update_compta_options
   def update_compta_options
@@ -241,8 +225,7 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-  def edit_mcf
-  end
+  def edit_mcf; end
 
   def upload_email_infos
     if @customer.options.try(:is_upload_authorized) && @customer.active?
@@ -256,8 +239,8 @@ class Account::CustomersController < Account::OrganizationController
   def show_mcf_errors
     order_by = params[:sort] || 'created_at'
     direction = params[:direction] || 'desc'
-    
-    @mcf_documents_error = @customer.mcf_documents.not_processable.order(order_by=>direction).page(params[:page]).per(20)
+
+    @mcf_documents_error = @customer.mcf_documents.not_processable.order(order_by => direction).page(params[:page]).per(20)
     render :show_mcf_errors
   end
 
@@ -280,9 +263,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/customers/:id/account_close_confirm
-  def account_close_confirm
-  end
-
+  def account_close_confirm; end
 
   # PUT /account/organizations/:organization_id/customers/:id/close_account
   def close_account
@@ -294,11 +275,8 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer)
   end
 
-
   # /account/organizations/:organization_id/customers/:id/account_reopen_confirm
-  def account_reopen_confirm
-  end
-
+  def account_reopen_confirm; end
 
   # PUT /account/organizations/:organization_id/customers/:id/reopen_account(.:format)
   def reopen_account
@@ -312,8 +290,7 @@ class Account::CustomersController < Account::OrganizationController
     full_info = params[:full_info].present?
     if params[:q].present?
       users = @user.leader? ? @organization.customers.active : @user.customers.active
-      users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
-      ).order(code: :asc).limit(10).select do |user|
+      users = users.where('code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t', t: params[:q].split.join('|')).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
         params[:q].split.detect { |e| !str.match(/#{e}/i) }.nil?
       end
@@ -329,28 +306,37 @@ class Account::CustomersController < Account::OrganizationController
 
   private
 
-
   def can_manage?
     @user.leader? || @user.manage_customers
   end
 
-
   def verify_rights
     authorized = true
     authorized = false unless can_manage?
-    authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
-    authorized = false if action_name.in?(%w(info new create destroy)) && !@organization.is_active
-    authorized = false if action_name.in?(%w(info new create)) && !(@user.leader? || @user.groups.any?)
-    authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
-    authorized = false if action_name.in?(%w(edit_ibiza update_ibiza)) && !@organization.ibiza.try(:configured?)
-    authorized = false if action_name.in?(%w(edit_exact_online update_exact_online)) && !@organization.is_exact_online_used
+    if action_name.in?(%w[account_close_confirm close_account]) && params[:close_now] == '1' && !@user.is_admin
+      authorized = false
+    end
+    if action_name.in?(%w[info new create destroy]) && !@organization.is_active
+      authorized = false
+    end
+    if action_name.in?(%w[info new create]) && !(@user.leader? || @user.groups.any?)
+      authorized = false
+    end
+    if action_name.in?(%w[edit_period_options update_period_options]) && !@customer.options.is_upload_authorized
+      authorized = false
+    end
+    if action_name.in?(%w[edit_ibiza update_ibiza]) && !@organization.ibiza.try(:configured?)
+      authorized = false
+    end
+    if action_name.in?(%w[edit_exact_online update_exact_online]) && !@organization.is_exact_online_used
+      authorized = false
+    end
 
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def verify_if_customer_is_active
     if @customer.inactive?
@@ -360,15 +346,13 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   def verify_if_account_can_be_closed
     if !@customer.subscription.commitment_end?(false) && !params[:close_now]
-      flash[:error] = "Ce dossier est souscrit à un forfait avec un engagement de 12 mois"
+      flash[:error] = 'Ce dossier est souscrit à un forfait avec un engagement de 12 mois'
 
       redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
-
 
   def user_params
     attributes = [
@@ -379,24 +363,25 @@ class Account::CustomersController < Account::OrganizationController
       :phone_number,
       { group_ids: [] },
       :manager_id,
-      { options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed] },
+      { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
       { softwares_attributes: [] }
     ]
 
-    attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format if @user.is_admin
+    if @user.is_admin
+      attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format
+    end
 
     attributes << :code if action_name == 'create'
 
     params.require(:user).permit(*attributes)
   end
 
-
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, softwares_attributes: [:id, :is_ibiza_auto_deliver, :is_ibiza_compta_analysis_activated, :is_ibiza_analysis_to_validate])
+    params.require(:user).permit(:ibiza_id, softwares_attributes: %i[id is_ibiza_auto_deliver is_ibiza_compta_analysis_activated is_ibiza_analysis_to_validate])
   end
 
   def exact_online_params
-    params.require(:user).permit(exact_online_attributes: [:id, :client_id, :client_secret], softwares_attributes: [:id, :is_exact_online_auto_deliver])
+    params.require(:user).permit(exact_online_attributes: %i[id client_id client_secret], softwares_attributes: %i[id is_exact_online_auto_deliver])
   end
 
   def period_options_params
@@ -414,21 +399,19 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-
   def knowings_options_params
     params.require(:user).permit(:knowings_code, :knowings_visibility)
   end
 
-
   def compta_options_params
-    params.require(:user).permit(options_attributes: [
-      :id,
-      :is_taxable,
-      :is_pre_assignment_date_computed,
-      :is_operation_processing_forced,
-      :is_operation_value_date_needed,
-      :preseizure_date_option
-    ])
+    params.require(:user).permit(options_attributes: %i[
+                                   id
+                                   is_taxable
+                                   is_pre_assignment_date_computed
+                                   is_operation_processing_forced
+                                   is_operation_value_date_needed
+                                   preseizure_date_option
+                                 ])
   end
 
   def mcf_params
@@ -439,18 +422,15 @@ class Account::CustomersController < Account::OrganizationController
     @customer = customers.find(params[:id])
   end
 
-
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
 
-
   def sort_direction
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
 
   def is_max_number_of_journals_reached?
     @customer.account_book_types.count >= @customer.options.max_number_of_journals

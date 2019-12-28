@@ -18,8 +18,8 @@ describe AccountingWorkflow::SendToGrouping do
       FileUtils.mkdir_p base_path.join('uploads')
       FileUtils.mkdir_p base_path.join('archives')
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
-      FactoryGirl.create(:journal_with_preassignment, user_id: @user.id, name: 'TS', description: 'TEST')
+      @user = FactoryBot.create(:user, code: 'TS0001')
+      FactoryBot.create(:journal_with_preassignment, user_id: @user.id, name: 'TS', description: 'TEST')
       file_with_2_pages = Rails.root.join('spec', 'support', 'files', '2pages.pdf')
       file_with_3_pages = Rails.root.join('spec', 'support', 'files', '3pages.pdf')
 

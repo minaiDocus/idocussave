@@ -1,15 +1,17 @@
 #collaborator_rights
-  .row-fluid
-    .span12.box
-      %h3 Edition des autorisations du collaborateur : #{ link_to @member.info, account_organization_collaborator_path(@organization, @member, tab: 'authorization') }
-  .row-fluid
-    .span12.box
-      = simple_form_for @member, url: account_organization_collaborator_rights_url(@organization, @member), html: { class: 'form form-horizontal margin0' } do |f|
+  .card
+    .card-header
+      %h3
+        Edition des autorisations du collaborateur : 
+        = link_to @member.info, account_organization_collaborator_path(@organization, @member, tab: 'authorization'), class: 'fs-origin'
+    = simple_form_for @member, url: account_organization_collaborator_rights_url(@organization, @member), html: { class: 'form form-horizontal margin0' } do |f|
+      .card-body
         = f.input :manage_collaborators,     as: :boolean
         = f.input :manage_customers,         as: :boolean
         = f.input :manage_groups,            as: :boolean
         = f.input :manage_journals,          as: :boolean
         = f.input :manage_customer_journals, as: :boolean
-        .form-actions.margin0bottom
+      .card-footer
+        .form-actions
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @member, tab: 'authorization'), class: 'btn'

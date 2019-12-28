@@ -3,6 +3,8 @@
   %head
     %title Idocus | BackOffice
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }/
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1"}/
+
     %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
     = csrf_meta_tag
     = stylesheet_link_tag 'admin'
@@ -23,16 +25,13 @@
     = javascript_include_tag 'admin/subscriptions' if params[:controller] == 'admin/subscriptions'
     = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          = render 'layouts/admin/navigation'
-    .container-fluid.wrapper.ad_dynamic_padding
+    = render 'layouts/admin/navigation'
+
+    .container-fluid.wrapper.mt-4.clearfix
       .content
-        .row-fluid
-          .span12
-            = render 'layouts/messages'
+        .row
+          = render 'layouts/messages'
         = yield
       .push
-    %footer.footer
+    %footer.fixed-bottom.footer.clearfix
       %p.copyright{ style: 'text-align:center;' } &copy; iDocus #{Time.now.year}

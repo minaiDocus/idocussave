@@ -1,42 +1,41 @@
 #customers
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .pull-left
-            %h3 Liste des clients (#{@customers.total_count})
-          .pull-right
-            - if (@user.leader? || @user.manage_customers) && @organization.is_active
-              = link_to icon_new + ' ' + t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
-  .row-fluid
-    .span9.box
-      = render partial: 'list_options'
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des clients 
+            %span.badge.badge-info= @customers.total_count
+        .float-right
+          - if (@user.leader? || @user.manage_customers) && @organization.is_active
+            = link_to t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = render partial: 'list_options'
+        %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
+          %thead
+            %tr.bg-brown.text-white
+              %th.active_state
+              %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
+          %tbody.retractable.slidedown
+            - @customers.each do |customer|
               %tr
-                %th
-                %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
-                %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
-            %tbody
-              - @customers.each do |customer|
-                %tr
-                  %td.active_state= icon(icon: 'remove') if customer.inactive?
-                  %td.date= l customer.created_at
-                  %td.user_info
-                    %span.info
-                      = link_to customer, account_organization_customer_path(@organization, customer)
-                    - unless params[:with_details] == "false"
-                      %ul.subscription_info
-                        - period = @periods.select { |e| e.user == customer }.first
-                        - if period
-                          - period.product_option_orders.each do |option|
-                            %li
-                              = option.group_title
-                              - if option.title.present?
-                                \:
-                                = option.title
-      = render partial: 'list_options'
-    .span3.box
-      = render partial: 'sidebar'
+                %td.active_state= glyphicon('x') if customer.inactive?
+                %td.date= l customer.created_at
+                %td
+                  %span.info
+                    = link_to customer, account_organization_customer_path(@organization, customer)
+                  - unless params[:with_details] == "false"
+                    %ul.subscription_info
+                      - period = @periods.select { |e| e.user == customer }.first
+                      - if period
+                        - period.product_option_orders.each do |option|
+                          %li
+                            = option.group_title
+                            - if option.title.present?
+                              \:
+                              = option.title
+        = render partial: 'list_options'
+    = render partial: 'sidebar'

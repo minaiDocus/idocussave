@@ -1,82 +1,96 @@
-#retrieved_documents.select.row-fluid
-  .span12
-    .box
-      .row-fluid
-        .span6
-          %h3 Sélection de documents restant à récupérer (#{@documents.total_count})
-        .span6
-          %a{ href: '#', class: 'btn pull-right toggle_filter' }
-            %i.icon-filter
-            %span= "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre"
-    .filter.box{ style: ('display: none' if @is_filter_empty) }
-      = form_tag select_account_retrieved_documents_path, method: :get, class: 'form form-vertical margin0bottom' do
-        = hidden_field_tag :direction, sort_direction
-        = hidden_field_tag :sort, sort_column
-        = hidden_field_tag :per_page, per_page
-        %table.table.table-condensed.table-striped.table-bordered.table-filter
-          %thead
-            %tr
-              %th= label_tag 'document_contains[service_name]', 'Service'
-              %th= label_tag 'document_contains[date][>=]',     'Date de début'
-              %th= label_tag 'document_contains[date][<=]',     'Date de fin'
-              %th= label_tag 'document_contains[name]',         'Nom original'
-              %th= label_tag 'document_contains[amount]',       'Montant'
-              %th
-          %tbody
-            %tr
-              %td
+#retrieved_documents.select
+  .box
+    .row
+      .col-md-12
+        %h3
+          Sélection de documents restant à récupérer 
+          %span.badge.badge-info.fs-origin= @documents.total_count
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = form_tag validate_account_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
+          = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
+          = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
+          = hidden_field_tag 'document_contains[date][>=]',     (params[:document_contains][:date]['>='] rescue '')
+          = hidden_field_tag 'document_contains[date][<=]',     (params[:document_contains][:date]['<='] rescue '')
+          = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
+          = hidden_field_tag 'document_contains[amount]',       (params[:document_contains][:amount] rescue '')
+          = render 'shared/list_options', collection: @documents
+          %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
+            %thead
+              %tr.bg-brown.text-white
+                %th= check_box_tag 'master_checkbox', 0, false
+                %th= sortable :created_at,         'Date de la récupération'
+                %th= sortable :retriever_id,       'Service'
+                %th= sortable :date,               'Date'
+                %th= sortable :name,               'Nom original'
+                %th.pages= sortable :pages_number, 'Nb. pages'
+                %th.amount= sortable :amount,      'Montant'
+            %tbody.retractable.slidedown
+              - @documents.each do |document|
+                %tr
+                  %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox'
+                  %td= l(document.created_at)
+                  %td
+                    - if document.retriever.nil?
+                      %span.label supprimé
+                    = document.retriever_name
+                  %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
+                  %td= link_to document.metadata['name'] + '.pdf', account_retrieved_document_path(document)
+                  %td.pages= document.pages_number
+                  %td.amount= document.metadata['amount'].to_s + ' €'
+          = render 'shared/list_options', collection: @documents
+          .form-actions
+            = glyphicon('arrow-top')
+            = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
+
+    .card.retractable-filter
+      = form_tag select_account_retrieved_documents_path, method: :get, class: 'form-filter' do
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group.clearfix
+              .label-section
+                = label_tag 'document_contains[service_name]', 'Service'
+              .control-section
                 - if @retriever
                   .label= @retriever.name
                   = hidden_field_tag 'document_contains[retriever_id]', @retriever.id
                 - else
-                  = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'input-medium'
-              %td
-                .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][>=]', (params[:document_contains][:date]['>='] rescue ''), class: 'input-small'
-                  %span.add-on
-                    %i.icon-th
-              %td
-                .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][<=]', (params[:document_contains][:date]['<='] rescue ''), class: 'input-small'
-                  %span.add-on
-                    %i.icon-th
-              %td= text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'input-medium'
-              %td= text_field_tag 'document_contains[amount]', (params[:document_contains][:amount] rescue ''), class: 'input-small'
-              %td
-                = submit_tag t('filters.action'), class: 'btn btn-primary'
-                = link_to icon(icon: 'remove'), select_account_retrieved_documents_path, class: 'btn', title: t('filters.reset')
-    .box{ style: 'padding-bottom:0;' }
-      = form_tag validate_account_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
-        = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
-        = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
-        = hidden_field_tag 'document_contains[date][>=]',     (params[:document_contains][:date]['>='] rescue '')
-        = hidden_field_tag 'document_contains[date][<=]',     (params[:document_contains][:date]['<='] rescue '')
-        = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
-        = hidden_field_tag 'document_contains[amount]',       (params[:document_contains][:amount] rescue '')
-        = render 'shared/list_options', collection: @documents
-        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-          %thead
-            %tr
-              %th= check_box_tag 'master_checkbox', 0, false
-              %th= sortable :created_at,         'Date de la récupération'
-              %th= sortable :retriever_id,       'Service'
-              %th= sortable :date,               'Date'
-              %th= sortable :name,               'Nom original'
-              %th.pages= sortable :pages_number, 'Nb. pages'
-              %th.amount= sortable :amount,      'Montant'
-          %tbody
-            - @documents.each do |document|
-              %tr
-                %td= check_box_tag "document_ids[]", document.id, false, class: 'checkbox'
-                %td= l(document.created_at)
-                %td
-                  - if document.retriever.nil?
-                    %span.label supprimé
-                  = document.retriever_name
-                %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
-                %td= link_to document.metadata['name'] + '.pdf', account_retrieved_document_path(document)
-                %td.pages= document.pages_number
-                %td.amount= document.metadata['amount'].to_s + ' €'
-        = render 'shared/list_options', collection: @documents
-        .form-actions
-          = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
+                  = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
+            .form-group.clearfix
+              .label-section
+                = label_tag 'document_contains[date][>=]', 'Date de début'
+              .control-section
+                .filter-date
+                  .input-append.date.datepicker
+                    %span.add-on.add-on.badge.badge-secondary.fs-origin.mr-md-1
+                      >=
+                    = text_field_tag 'document_contains[date][>=]', (params[:document_contains][:date]['>='] rescue '')
+            .form-group.clearfix
+              .label-section
+                = label_tag 'document_contains[date][<=]', 'Date de fin'
+              .control-section
+                .filter-date
+                  .input-append.date.datepicker
+                    %span.add-on.add-on.badge.badge-secondary.fs-origin.mr-md-1
+                      <=
+                    = text_field_tag 'document_contains[date][<=]', (params[:document_contains][:date]['<='] rescue '')
+            .form-group.clearfix
+              .label-section
+                = label_tag 'document_contains[name]', 'Nom original'
+              .control-section
+                = text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue '')
+            .form-group.clearfix
+              .label-section
+                = label_tag 'document_contains[amount]', 'Montant'
+              .control-section
+                = text_field_tag 'document_contains[amount]', (params[:document_contains][:amount] rescue '')
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), select_account_retrieved_documents_path, class: 'btn btn-light'

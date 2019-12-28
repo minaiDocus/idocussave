@@ -1,140 +1,123 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
-gem 'rake'
-gem 'rails', '4.2.7.1'
+ruby '2.6.5'
 
+gem 'rails', '5.2.4'
+gem 'rake'
 
 # Object state management
 gem 'state_machines-activerecord'
 
-
 # XML-RPC/SOAP
 gem 'savon'
-gem 'wash_out', git: 'git@github.com:Pikomu/wash_out.git', branch: 'removing_model_integration'
-
+gem 'wash_out'
 
 # Pagination
 gem 'kaminari'
 
-
 # Authentication
-gem 'oauth'
 gem 'devise'
-
+gem 'oauth'
 
 # Error handling
-gem 'airbrake', '4.3.8'
 gem 'sentry-raven'
 
-
 # Image / File processing
+gem 'activestorage-openstack'
 gem 'barby'
-gem 'prawn', '1.0.0rc1'
-gem 'paperclip', '~> 4.2.2'
-gem 'chunky_png'  # required by barby
-gem 'haml'
+gem 'chunky_png' # required by barby
+gem 'mini_magick'
+gem 'paperclip'
+gem 'prawn'
 gem 'prawn-qrcode'
 
-
 # View render and utils
-gem 'simple_form'
 gem 'nested_form'
-
+gem 'simple_form'
 
 # System libraries binding
 gem 'gio2'
+gem 'gobject-introspection'
 gem 'poppler'
-gem 'gobject-introspection', '~> 3.0.0'
-
 
 # Object renderer
-gem 'rabl', '0.11.6'
-
+gem 'rabl'
 
 # Query & Network management
 gem 'net-sftp'
 gem 'typhoeus'
 
-
 # Cache
 gem 'dalli'
 
-
 # Deployment
+gem 'bcrypt_pbkdf'
 gem 'capistrano'
-gem 'capistrano-rvm'
 gem 'capistrano-rails'
+gem 'capistrano-rvm'
+gem 'capistrano-slackify'
 gem 'capistrano_colors', require: false
-
+gem 'ed25519'
 
 # Validators
 gem 'validate_url'
 
-
 # Processes management
 gem 'posix-spawn'
-
 
 # Console tools
 gem 'hirb', require: false
 
-
 # Assets management
-gem 'therubyracer'
-gem 'uglifier', '>= 1.3.0'
-gem 'sprockets', '2.12.3'
-gem 'sprockets-rails', '2.3.1'
-
+gem 'mini_racer'
+gem 'sprockets'
+gem 'sprockets-rails'
+gem 'uglifier'
 
 # CSS Libraries and CSS Processors
-gem 'sass-rails', '4.0.5'
+gem 'bootstrap'
 gem 'compass-rails'
-gem 'bootstrap-sass', '2.0.4.2'
-
+gem 'sass-rails'
 
 # JS Libraries and JS processors
-gem 'eco'
+gem 'backbone-on-rails'
 gem 'coffee-rails'
-gem 'jquery-rails', '2.0.2'
-gem 'jquery-ui-rails', '1.1.0'
-gem 'backbone-on-rails', '0.9.9.0'
-
+gem 'eco'
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 # Frontend tools
-gem 'ckeditor'
 gem 'bootstrap-datepicker-rails'
-
+gem 'ckeditor'
+gem 'haml'
 
 # Charts
 gem 'd3_rails'
 
-
 # DB Adapter
-gem 'mysql2', '~> 0.4.10'
-
+gem 'mysql2'
 
 # Scheduling Jobs
 gem 'sidekiq'
-gem 'sidekiq-scheduler', '~> 2.0'
+gem 'sidekiq-scheduler'
 gem 'sidekiq-unique-jobs'
 
-
 # Data format
-gem 'oj'
-gem 'bson'
 gem 'ansi', require: false
 gem 'axlsx'
-gem 'to_xls'
+gem 'bson'
 gem 'hpricot'
-gem 'nokogiri', '~> 1.7'
-
+gem 'nokogiri'
+gem 'oj'
+gem 'to_xls'
 
 # External services
-gem 'ruby-box'
 gem 'dropbox_api'
-gem 'google_drive', '1.0.1'
-gem 'google-api-client', '0.8.2'
-
+gem 'google-api-client'
+gem 'google_drive'
+gem 'ruby-box'
 
 # Lock mechanism
 gem 'remote_lock'
@@ -148,39 +131,45 @@ gem 'symmetric-encryption'
 gem 'redcarpet'
 
 # Audit
-gem 'audited', '~> 4.5'
+gem 'audited'
 
 gem 'ruby-progressbar', require: false
 
+# Boot
+gem 'bootsnap'
 
 group :production do
   # APM
-  gem 'elastic-apm' 
+  gem 'elastic-apm'
 end
 
 group :development, :test do
-  gem 'byebug'
-  gem 'thin'
-  gem 'rspec-rails'
-  gem 'quiet_assets'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'meta_request'
+  gem 'bullet'
+  gem 'byebug'
   gem 'guard-livereload', require: false
+  gem 'libnotify'
+  gem 'meta_request'
+  gem 'rack-mini-profiler'
+  gem 'rails-i18n'
+  gem 'rspec-rails'
   gem 'spring'
   gem 'spring-commands-rspec'
-  gem 'libnotify'
-  gem 'rack-mini-profiler'
+  gem 'thin'
 end
 
 group :test do
-  gem 'factory_girl_rails'
-  gem 'simplecov', require: false
   gem 'capybara'
-  gem 'guard-rspec', require: false
   gem 'database_cleaner'
+  gem 'factory_bot_rails'
+  gem 'ftpd', require: false
+  gem 'guard-rspec', require: false
+  gem 'simplecov', require: false
   gem 'timecop'
   gem 'vcr'
   gem 'webmock'
-  gem 'ftpd', require: false
 end
+
+# API monitoring ; Keep it a the end of the file
+gem 'bearer-agent'

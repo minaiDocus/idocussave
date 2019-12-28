@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::OperationsController < MobileApiController
   respond_to :json
 
@@ -6,26 +8,30 @@ class Api::Mobile::OperationsController < MobileApiController
   def get_operations
     @customer = User.find params[:user_id]
     @filter = params[:filter] || {}
-    @filter[:date]['>='] = @filter.try(:[], 'date').try(:[], :start_date) if(@filter.try(:[], :date).try(:[], :start_date))
-    @filter[:date]['<='] = @filter.try(:[], 'date').try(:[], :end_date) if(@filter.try(:[], :date).try(:[], :end_date))
+    if @filter.try(:[], :date).try(:[], :start_date)
+      @filter[:date]['>='] = @filter.try(:[], 'date').try(:[], :start_date)
+    end
+    if @filter.try(:[], :date).try(:[], :end_date)
+      @filter[:date]['<='] = @filter.try(:[], 'date').try(:[], :end_date)
+    end
 
     if @customer
       direction = params[:order][:direction] ? 'asc' : 'desc'
 
-      case params[:order][:order_by]
-      when 'bank_accounts.bank_name'
-        order_by = 'bank_accounts.bank_name'
-      when 'bank_accounts.number'
-        order_by = 'bank_accounts.number'
-      when 'category'
-        order_by = 'category'
-      when 'label'
-        order_by = 'label'
-      when 'amount'
-        order_by = 'amount'
-      else
-        order_by = 'date'
-      end
+      order_by = case params[:order][:order_by]
+                 when 'bank_accounts.bank_name'
+                   'bank_accounts.bank_name'
+                 when 'bank_accounts.number'
+                   'bank_accounts.number'
+                 when 'category'
+                   'category'
+                 when 'label'
+                   'label'
+                 when 'amount'
+                   'amount'
+                 else
+                   'date'
+                 end
 
       bank_account_ids = @customer.bank_accounts.used.map(&:id)
       operations = @customer.operations.retrieved.where(
@@ -47,13 +53,13 @@ class Api::Mobile::OperationsController < MobileApiController
           category: operation.category,
           amount: operation.amount,
           pre_assigned: is_operation_pre_assigned(operation),
-          unit: operation.currency["symbol"] || '€'
+          unit: operation.currency['symbol'] || '€'
         }
       end
 
-      render json: { operations: result, nb_pages: operations.total_pages, total: operations.total_count, waiting_operations_count: waiting_operations_count }, status:200
+      render json: { operations: result, nb_pages: operations.total_pages, total: operations.total_count, waiting_operations_count: waiting_operations_count }, status: 200
     else
-      render json: { operations: [], nb_pages: 0, total: 0, waiting_operations_count: 0 }, status:200
+      render json: { operations: [], nb_pages: 0, total: 0, waiting_operations_count: 0 }, status: 200
     end
   end
 
@@ -64,7 +70,7 @@ class Api::Mobile::OperationsController < MobileApiController
       ids = waiting_operations.pluck(:id)
       count = Operation.where(id: ids).update_all(forced_processing_at: Time.now, forced_processing_by_user_id: current_user.id)
     end
-    render json: { success: true }, status:200
+    render json: { success: true }, status: 200
   end
 
   def get_customers_options
@@ -73,16 +79,16 @@ class Api::Mobile::OperationsController < MobileApiController
     options = []
     if @customers
       options = @customers.map do |customer|
-        if customer.subscription.try(:is_retriever_package_active)
-          {
-            user_id: customer.id,
-            force_pre_assignment: current_user.collaborator? && !customer.try(:options).try(:operation_processing_forced?),
-          }
-        end
+        next unless customer.subscription.try(:is_retriever_package_active)
+
+        {
+          user_id: customer.id,
+          force_pre_assignment: current_user.collaborator? && !customer.try(:options).try(:operation_processing_forced?)
+        }
       end
     end
 
-    render json: { success: true, options: options.compact }, status:200
+    render json: { success: true, options: options.compact }, status: 200
   end
 
   private
@@ -93,5 +99,4 @@ class Api::Mobile::OperationsController < MobileApiController
     operations = operations.where(bank_account_id: bank_account_ids)
     Operation.search_for_collection(operations, search_terms(@filter)).includes(:bank_account)
   end
-
 end

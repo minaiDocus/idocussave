@@ -1,8 +1,8 @@
-# -*- encoding : UTF-8 -*-
-class Account::ListJournalsController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
+# frozen_string_literal: true
 
+class Account::ListJournalsController < Account::OrganizationController
+  before_action :load_customer
+  before_action :redirect_to_current_step
 
   # GET /account/organizations/:organization_id/customers/:customer_id/list_journals
   def index

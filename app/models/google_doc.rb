@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class GoogleDoc < ActiveRecord::Base
+class GoogleDoc < ApplicationRecord
   belongs_to :external_file_storage
 
   attr_encrypted :refresh_token,           random_iv: true

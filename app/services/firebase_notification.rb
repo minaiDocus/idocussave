@@ -65,11 +65,11 @@ class FirebaseNotification
     end
 
     def api_uri
-      Rails.application.secrets.firebase_api['base_uri']
+      Rails.application.credentials[Rails.env.to_sym][:firebase_api][:base_uri]
     end
 
     def basic_server_key
-      Rails.application.secrets.firebase_api['basic_server_key']
+      Rails.application.credentials[Rails.env.to_sym][:firebase_api][:basic_server_key]
     end
 
   end

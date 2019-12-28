@@ -1,14 +1,13 @@
-# -*- encoding : UTF-8 -*-
-class Account::ReminderEmailsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_reminder_email, except: %w(new create)
+# frozen_string_literal: true
 
+class Account::ReminderEmailsController < Account::OrganizationController
+  before_action :verify_rights
+  before_action :load_reminder_email, except: %w[new create]
 
   # GET /account/organizations/:organization_id/reminder_emails/:id
   def show
     render layout: nil
   end
-
 
   # GET /account/organizations/:organization_id/reminder_emails/new
   def new
@@ -25,7 +24,6 @@ class Account::ReminderEmailsController < Account::OrganizationController
     end
   end
 
-
   # POST # GET /account/organizations/:organization_id/reminder_emails
   def create
     @reminder_email = ReminderEmail.new reminder_email_params
@@ -41,11 +39,8 @@ class Account::ReminderEmailsController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/reminder_emails/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/reminder_emails/:id
   def update
@@ -58,7 +53,6 @@ class Account::ReminderEmailsController < Account::OrganizationController
     end
   end
 
-
   # DELETE /account/organizations/:organization_id/reminder_emails/:id
   def destroy
     @reminder_email.destroy
@@ -67,7 +61,6 @@ class Account::ReminderEmailsController < Account::OrganizationController
 
     redirect_to account_organization_path(@organization, tab: 'reminder_emails')
   end
-
 
   # POST /account/organizations/:organization_id/reminder_emails/:id/deliver
   def deliver
@@ -84,9 +77,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
     redirect_to account_organization_path(@organization, tab: 'reminder_emails')
   end
 
-
   private
-
 
   def verify_rights
     unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization)
@@ -96,11 +87,9 @@ class Account::ReminderEmailsController < Account::OrganizationController
     end
   end
 
-
   def load_reminder_email
     @reminder_email = @organization.reminder_emails.find params[:id]
   end
-
 
   def reminder_email_params
     params.require(:reminder_email).permit(

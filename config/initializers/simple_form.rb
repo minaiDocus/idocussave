@@ -45,51 +45,47 @@ SimpleForm.setup do |config|
     b.use :error, wrap_with: { tag: :span, class: :error }
   end
 
-  config.wrappers :bootstrap, tag: 'div', class: 'control-group', error_class: 'error' do |b|
+  config.wrappers :bootstrap, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
-    b.use :label
-    b.wrapper tag: 'div', class: 'controls' do |ba|
-      ba.use :input
-      ba.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
-      ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    b.wrapper tag: 'div', class: 'label-section' do |ba|
+      ba.use :label
+      ba.use :error, wrap_with: { tag: 'i', class: 'help-inline' }
+    end
+    b.wrapper tag: 'div', class: 'control-section' do |ba|
+      ba.use :input, class: 'form-control'
+      ba.use :hint,  wrap_with: { tag: 'i', class: 'help-block' }
     end
   end
 
-  config.wrappers :prepend, tag: 'div', class: 'control-group', error_class: 'error' do |b|
+  config.wrappers :prepend, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label
-    b.wrapper tag: 'div', class: 'controls' do |input|
-      input.wrapper tag: 'div', class: 'input-prepend' do |prepend|
-        prepend.use :input
-      end
-      input.use :hint,  wrap_with: { tag: 'span', class: 'help-block' }
-      input.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
+    b.wrapper tag: 'div', class: 'input-prepend' do |prepend|
+      prepend.use :input
     end
+    b.use :hint,  wrap_with: { tag: 'span', class: 'help-block' }
+    b.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
   end
 
-  config.wrappers :append, tag: 'div', class: 'control-group', error_class: 'error' do |b|
+  config.wrappers :append, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label
-    b.wrapper tag: 'div', class: 'controls' do |input|
-      input.wrapper tag: 'div', class: 'input-append' do |append|
-        append.use :input
-      end
-      input.use :hint,  wrap_with: { tag: 'span', class: 'help-block' }
-      input.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
+    b.wrapper tag: 'div', class: 'input-append' do |append|
+      append.use :input
     end
+    b.use :hint,  wrap_with: { tag: 'span', class: 'help-block' }
+    b.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
   end
 
-  config.wrappers :inline_checkbox, tag: 'div', class: 'control-group', error_class: 'error' do |b|
+  config.wrappers :inline_checkbox, tag: 'div', class: 'form-group clearfix', error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
-    b.wrapper tag: 'div', class: 'controls' do |ba|
-      ba.use :label_input, wrap_with: { class: 'checkbox inline' }
-      ba.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
-      ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
-    end
+    b.use :label_input, wrap_with: { class: 'checkbox inline' }
+    b.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
+    b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
 
   # Wrappers for forms and inputs using the Twitter Bootstrap toolkit.
@@ -116,7 +112,7 @@ SimpleForm.setup do |config|
   config.error_notification_tag = :div
 
   # CSS class to add for error notification helper.
-  config.error_notification_class = 'alert alert-error'
+  config.error_notification_class = 'alert alert-danger'
 
   # ID to add for error notification helper.
   # config.error_notification_id = nil

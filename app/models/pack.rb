@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Pack < ActiveRecord::Base
+class Pack < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/pack/:id/download'}
+
   serialize :delivered_user_ids, Hash
   serialize :processed_user_ids, Hash
   serialize :content_historic, Array
@@ -28,6 +30,8 @@ class Pack < ActiveRecord::Base
   has_many :remote_files, dependent: :destroy
   has_many :preseizures, through: :reports
 
+  has_one_attached :cloud_content
+
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pack/:id/download'
   do_not_validate_attachment_file_type :content
@@ -41,6 +45,10 @@ class Pack < ActiveRecord::Base
 
   scope :scan_delivered,      -> { where("scanned_pages_count > ? ", 0) }
   scope :not_notified_update, -> { where(is_update_notified: false) }
+
+  before_destroy do |pack|
+    pack.cloud_content.purge
+  end
 
   def as_indexed_json(_options = {})
     {
@@ -89,6 +97,10 @@ class Pack < ActiveRecord::Base
     end
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
   def user
     owner
   end
@@ -129,7 +141,7 @@ class Pack < ActiveRecord::Base
 
 
   def set_content_url
-    self.content_url = original_document.content.url
+    self.content_url = original_document.cloud_content_object.url
   end
 
 
@@ -264,18 +276,19 @@ class Pack < ActiveRecord::Base
 
   def prepend(file_path)
     Dir.mktmpdir do |dir|
-      if File.exist? original_document.content.path.to_s
-        merged_file_path = File.join(dir, original_document.content_file_name)
-        Pdftk.new.merge([file_path, original_document.content.path], merged_file_path)
+      original_file = original_document.cloud_content_object
+      new_file_name = self.name.tr(' ', '_') + '.pdf'
+
+      if File.exist? original_file.path
+        merged_file_path = File.join(dir, new_file_name)
+        Pdftk.new.merge([file_path, original_file.path], merged_file_path)
       else
-        new_file_name = self.name.tr(' ', '_') + '.pdf'
         merged_file_path = File.join(dir, new_file_name)
         FileUtils.copy file_path, merged_file_path
       end
 
       if DocumentTools.modifiable?(merged_file_path)
-        original_document.content = open(merged_file_path)
-        original_document.save
+        original_document.cloud_content_object.attach(File.open(merged_file_path), new_file_name) if original_document.save
       end
     end
   end
@@ -299,7 +312,7 @@ class Pack < ActiveRecord::Base
     if pieces.present?
       Dir.mktmpdir do |dir|
         pieces.each do |piece|
-          success = append(piece.content.path, true, dir)
+          success = append(piece.cloud_content_object.path, true, dir)
 
           break unless success
           #add a sleeping time to prevent disk access overload
@@ -312,23 +325,24 @@ class Pack < ActiveRecord::Base
       end
 
       if success
-        temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
+        temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
 
-        FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+        original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
         set_pages_count
         save
       end
     else
-      FileUtils.rm self.original_document.content.path, :force =>  true
+      self.original_document.cloud_content.purge
     end
   end
 
   private
 
   def _append(file_path, dir, overwrite_original = false)
+    original_file = original_document.cloud_content_object
     target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
-    target_file_path = overwrite_original ? original_document.content.path.to_s.gsub('.pdf', '_2.pdf') : original_document.content.path
+    target_file_path = overwrite_original ? original_file.path.to_s.gsub('.pdf', '_2.pdf') : original_file.path
 
     merged_file_path = File.join(dir, target_file_name)
     FileUtils.rm merged_file_path if File.exist? merged_file_path
@@ -340,8 +354,7 @@ class Pack < ActiveRecord::Base
     end
 
     if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
-      original_document.content = open(merged_file_path)
-      original_document.save
+      original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if original_document.save
     elsif overwrite_original
       begin
         FileUtils.copy merged_file_path, target_file_path

@@ -92,6 +92,16 @@ class Budgea
       @response.code == 200
     end
 
+    def get_all_accounts(connexion_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts?all",
+        method:  :get,
+        proxy:   @settings[:proxy],
+        headers: headers
+      )
+      run_and_parse_response 'accounts'
+    end
+
     def get_accounts ##used by transaction fetcher
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',

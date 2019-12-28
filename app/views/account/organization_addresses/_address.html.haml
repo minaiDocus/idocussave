@@ -1,11 +1,11 @@
-%table.table.table-striped.table-bordered.table-condensed.margin0bottom
+%table.table.table-striped.table-bordered-inner.table-condensed.margin0bottom
   %thead.label
-    %tr
+    %tr.bg-brown.text-white
       %th{ colspan: 2 }
         - if single
           = t('activerecord.models.address.attributes.' + type)
         - else
-          .pull-left
+          .float-left
             - if address.is_for_billing || address.is_for_paper_return || address.is_for_paper_set_shipping
               - if address.is_for_billing
                 = t('activerecord.models.address.attributes.billing')
@@ -19,9 +19,9 @@
                 = t('activerecord.models.address.attributes.paper_set_shipping')
             - else
               Adresse non attribuée
-          .pull-right
-            = link_to icon_edit, edit_account_organization_address_path(@organization, address), class: 'btn btn-mini'
-            = link_to icon_destroy, account_organization_address_path(@organization, address), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+          .float-right
+            = link_to glyphicon('pencil'), edit_account_organization_address_path(@organization, address), class: 'btn btn-light', style: 'color: #3e2f24'
+            = link_to glyphicon('x'), account_organization_address_path(@organization, address), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light', style: 'color: #3e2f24'
   - if address
     %tbody
       %tr

@@ -1,9 +1,9 @@
 - stamp_url = preseizure.get_state_to :image
 
 .preseizure.content_preseizure{ id: "div_#{preseizure.id}", style: 'display: none' }
-  .name.row-fluid
-    .span9.title.padding1
-      %a.label.label-info.do-tooltip{ title: "position" }
+  .name.row
+    .col-md-11.title.padding1
+      %a.badge.badge-info.do-tooltip{ title: "position" }
         = sprintf '%03d', preseizure.position || 0
       %span.preseizure_label 
         %a.tip_details.do-tooltip{data: {id: preseizure.id}}
@@ -11,16 +11,19 @@
             = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
           - else
             = preseizure.piece_name
-    .span3.actionbox.padding1
-      %a.tip_edit.pull-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
-        %i.icon-edit
+    .col-md-1.actionbox.padding1
+      %a.tip_edit.float-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
+        = glyphicon('pencil')
       - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
-        %a.tip_deliver.pull-right.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: preseizure.id}}
-          %i.icon-refresh
-      %a.tip_selection.pull-right.do-tooltip{href: '#', title: "Sélection", data: {id: "div_#{preseizure.id}"}}
-        %i.icon-ok
-  .informations.row-fluid
-    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'span6' : 'span9'}" }
+        %a.tip_deliver.float-right.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: preseizure.id}}
+          = glyphicon('loop-circular')
+      %a.tip_selection.float-right.do-tooltip{href: '#', title: "Sélection", data: {id: "div_#{preseizure.id}"}}
+        .do-selectPage-check-icon
+          = glyphicon('check')
+        .do-selectPage-ban-icon.hide
+          = glyphicon('ban')
+  .informations.row
+    .information_section{ class: "#{preseizure.delivery_tried_at.present? ? 'col-md-6' : 'col-md-9'}" }
       %table.table.table-striped.table-condensed.margin0bottom.information
         %thead
           %tr
@@ -34,7 +37,7 @@
                 .edit_content_date.hide
                   %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
     - if preseizure.delivery_tried_at.present?
-      .other_information.span4
+      .other_information.col-md-4
         %p      
           Dernière envoi  
           %strong
@@ -42,7 +45,6 @@
           le : 
           = preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
         - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''
-
         - if software_erreur.present?
           %p
             Message d'erreur (
@@ -52,9 +54,9 @@
             %span.error_message{title: software_erreur}
               = software_erreur
     - else
-      .span1
+      .col-md-1
     - if stamp_url.present?
-      .stamp_image_content.span1{class: "#{preseizure.delivery_tried_at.present? ? '' : 'ml-14'}"}
+      .stamp_image_content.col-md-1{class: "#{preseizure.delivery_tried_at.present? ? '' : 'ml-14'}"}
         .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')
   .content_detail
     - preseizure_entries = preseizure.entries
@@ -67,24 +69,24 @@
       %strong= preseizure.try(:unit) || 'EUR' 
       %input#preseizure_id{type: :hidden, value: preseizure.id}
       %input.delivered_preseizure{type: :hidden, value: "#{preseizure.is_delivered? ? '1' : '0'}", id: "delivered_#{preseizure.id}"}
-    .row-fluid
-      .entries{ class: (data_analytics.any? ? 'span6' : 'span12') }
+    .row
+      .entries.col-sm-12
         - if data_analytics.any?
           %strong Ecritures
-        %span.color_red.pull-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"} 
-          %i.icon-info-sign
+        %span.color_red.float-right{class: "#{irregular_debit_credit_somme ? '' : 'hide' }"}
+          = glyphicon('info')
           balance non équilibrée     
         %table.table.table-striped.table-condensed.table-bordered.margin0bottom
           %thead
-            %tr
+            %tr.bg-brown.text-white
               %th.account Numéro de compte                 
               %th.entry.text-center Débit
               %th.entry.text-center Crédit
           %tbody.entries
             - preseizure_entries.each do |entry|
               %tr
-                %td.account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
-                  .content_account
+                %td.account
+                  .content_account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
                     = entry.account.number
                   - if @user.collaborator?
                     .edit_account.hide
@@ -97,8 +99,8 @@
                       .content_amount_number
                         = entry.amount.to_f
                       - if @user.collaborator?
-                        %span.debit_or_credit.hide.pull-right
-                          %i.icon-arrow-right
+                        %span.debit_or_credit.hide.float-right
+                          = glyphicon('arrow-thick-right')
                     - if @user.collaborator?
                       .edit_amount.hide
                         %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
@@ -108,8 +110,8 @@
                   - if entry.type == 2
                     .content_amount
                       - if @user.collaborator?
-                        %span.debit_or_credit.hide.pull-left
-                          %i.icon-arrow-left
+                        %span.debit_or_credit.hide.float-left                          
+                          = glyphicon('arrow-thick-left')
                       &nbsp;&nbsp;
                       .content_amount_number
                         = entry.amount.to_f
@@ -119,28 +121,3 @@
                         %input.entry_type{type: :hidden, value: entry.type}
                 - if @user.collaborator?
                   %input.entry_id_hidden{type: :hidden, value: entry.id}
-      - if data_analytics.any?
-        .analytics.span6
-          %strong Analyse comptable
-          %table.table.table-striped.table-condensed.table-bordered.margin0bottom
-            %thead
-              %tr
-                %th Analyse
-                %th Axe
-                %th Ventilation
-                %th Montant ventilé
-            %tbody.entries
-              - data_analytics.each do |analysis|
-                %tr
-                  %td= analysis[:name]
-                  %td
-                    %ul
-                      -if analysis[:axis1].present?
-                        %li= analysis[:axis1]
-                      -if analysis[:axis2].present?
-                        %li= analysis[:axis2]
-                      -if analysis[:axis3].present?
-                        %li= analysis[:axis3]
-                  %td= analysis[:ventilation] + " %"
-                  %td= pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)
-  

@@ -1,31 +1,38 @@
 #account_sharings
-  .row-fluid.marginbottom
-    .span12.margin1bottom
-      %h3 Liste des partages de compte (#{@account_sharings.total_count})
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Liste des partages de compte
+            %span.badge.badge-info.fs-origin= @account_sharings.total_count
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @account_sharings }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, 'Date'
+              %th Dossier
+              %th Client ou contact
+              %th Etat
+          %tbody.retractable.slidedown
+            - @account_sharings.each do |account_sharing|
               %tr
-                %th= sortable :created_at, 'Date'
-                %th Dossier
-                %th Client ou contact
-                %th Etat
-            %tbody
-              - @account_sharings.each do |account_sharing|
-                %tr
-                  %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')
-                  %td= link_to account_sharing.account.info, account_organization_customer_path(account_sharing.account.organization, account_sharing.account)
-                  %td
-                    - if account_sharing.collaborator.is_guest
-                      = account_sharing.collaborator.info
-                    - else
-                      = link_to account_sharing.collaborator.info, account_organization_customer_path(account_sharing.collaborator.organization, account_sharing.collaborator)
-                  %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
-      = render partial: 'shared/list_options', locals: { collection: @account_sharings }
-    .span3
-      = render partial: 'sidebar'
+                %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')
+                %td= link_to account_sharing.account.info, account_organization_customer_path(account_sharing.account.organization, account_sharing.account)
+                %td
+                  - if account_sharing.collaborator.is_guest
+                    = account_sharing.collaborator.info
+                  - else
+                    = link_to account_sharing.collaborator.info, account_organization_customer_path(account_sharing.collaborator.organization, account_sharing.collaborator)
+                %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+    = render partial: 'sidebar'

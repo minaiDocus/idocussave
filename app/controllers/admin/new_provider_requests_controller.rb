@@ -1,18 +1,16 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::NewProviderRequestsController < Admin::AdminController
-  before_filter :load_new_provider_request, except: :index
+  before_action :load_new_provider_request, except: :index
 
   def index
     @new_provider_requests = NewProviderRequest.search(search_terms(params[:new_provider_request_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @new_provider_requests_count = NewProviderRequest.count
   end
 
-  def show
-  end
+  def show; end
 
-  def edit
-  end
-
+  def edit; end
 
   def reject
     if params[:new_provider_request] && params[:new_provider_request][:message].present?
@@ -29,7 +27,7 @@ class Admin::NewProviderRequestsController < Admin::AdminController
     redirect_to admin_new_provider_requests_path
   end
 
-private
+  private
 
   def load_new_provider_request
     @new_provider_request = NewProviderRequest.find params[:id]
@@ -44,5 +42,4 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
 end

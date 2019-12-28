@@ -1,20 +1,22 @@
 #use_csv_descriptor.edit
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition des options de comptabilité du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        %h3 Format d’export .csv pour le dossier : #{@customer}
-  .row-fluid
-    .span12.box
-      = simple_form_for @customer, url: account_organization_customer_use_csv_descriptor_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3 Edition des options de comptabilité du client :
+        = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'fs-origin'
+      - else
+        %h3
+          Format d’export .csv pour le dossier :
+          %span.text-info.fs-origin= @customer
+    = simple_form_for @customer, url: account_organization_customer_use_csv_descriptor_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+      .card-body
         = f.simple_fields_for :softwares do |o|
           = o.hidden_field :id
           = o.input :use_own_csv_descriptor_format, as: :radio_buttons
-        .form-actions.margin0bottom
-          = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = f.submit t('actions.next_step'), class: 'btn btn-primary'
+      .card-footer
+        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        = f.submit t('actions.next_step'), class: 'btn btn-primary'

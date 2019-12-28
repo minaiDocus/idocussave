@@ -1,30 +1,38 @@
 #users
-  .row-fluid.margin1bottom
-    .span12
-      .pull-left
-        %h3 Liste des utilisateurs (#{@users_count})
-      .pull-right
-        = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: @user_contains), class: 'btn btn-primary'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Liste des utilisateurs
+            %span.badge.badge-info= @users_count
+        .float-right
+          = link_to image_tag('application/icon-xls.png', alt: 'Export CSV') + ' Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column), class: 'btn btn-light'
 
-  .row-fluid
-    .span9
-      = render partial: 'shared/list_options', locals: { collection: @users }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-        %thead
-          %tr
-            %th
-            %th= sortable :created_at, t('activerecord.models.common.attributes.created_at'), { user_contains: @user_contains }
-            %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at'), { user_contains: @user_contains }
-            %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier'), { user_contains: @user_contains }
-            %th= t('actions.name').singularize
-        %tbody
-          - @users.each do |user|
-            %tr
-              %td= user.inactive? ? icon_not_ok : nil
-              %td= l(user.created_at)
-              %td= l(user.updated_at)
-              %td= user.info
-              %td= link_to icon_show, admin_user_path(user), alt: t('actions.show'), title: t('actions.show')
-      = render partial: 'shared/list_options', locals: { collection: @users }
-    .span3.well
-      = render partial: 'sidebar'
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @users }
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at'), { user_contains: @user_contains }
+              %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at'), { user_contains: @user_contains }
+              %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier'), { user_contains: @user_contains }
+              %th= t('actions.name').singularize
+          %tbody.retractable.slidedown
+            - @users.each do |user|
+              %tr
+                %td= user.inactive? ? icon_not_ok : nil
+                %td= l(user.created_at)
+                %td= l(user.updated_at)
+                %td= user.info
+                %td.text-center= icon_link_to admin_user_path(user), { icon: 'eye' }
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @users }
+    = render partial: 'sidebar'

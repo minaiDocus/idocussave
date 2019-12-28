@@ -7,6 +7,9 @@ defaults: &defaults
 local:
   <<: *defaults
 
+idocus_r5:
+  <<: *defaults
+
 test:
   <<: *defaults
 
