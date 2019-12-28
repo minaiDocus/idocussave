@@ -6,8 +6,6 @@ class CreateDematboxDocument
   def initialize(args)
     @params = args.permit!
 
-    raise @params.inspect
-
     @doc_id          = @params['doc_id']
     @service_id      = @params['service_id']
     @virtual_box_id  = @params['virtual_box_id']
