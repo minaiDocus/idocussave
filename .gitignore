@@ -19,7 +19,6 @@ db/schema.rb
 /storage/
 
 
-config/deploy/production.rb
 config/deploy/sandbox.rb
 
 config/secrets.yml
