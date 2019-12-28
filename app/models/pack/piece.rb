@@ -160,7 +160,7 @@ class Pack::Piece < ApplicationRecord
     piece.update(is_finalized: true)
   end
 
-  def self.generate_thumbs(piece)
+  def self.generate_thumbs(id)
     piece = Pack::Piece.find(id)
 
     base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
