@@ -6,10 +6,10 @@ class CreateDematboxDocument
   def initialize(args)
     @params = args.permit!.to_h
 
-    @doc_id          = @params['doc_id']
-    @service_id      = @params['service_id']
-    @virtual_box_id  = @params['virtual_box_id']
-    @improved_scan64 = @params['improved_scan']
+    @doc_id          = @params['docId']
+    @service_id      = @params['serviceId']
+    @virtual_box_id  = @params['virtualBoxId']
+    @improved_scan64 = @params['imrpovedScan']
     @temp_document   = TempDocument.where(dematbox_doc_id: @doc_id).first if upload?
   end
 
@@ -28,8 +28,8 @@ class CreateDematboxDocument
         # @temp_document.raw_content          = File.open(@temp_document.content.path)
         # @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
-        @temp_document.dematbox_box_id      = @params['box_id']
-        @temp_document.dematbox_service_id  = @params['service_id']
+        @temp_document.dematbox_box_id      = @params['boxId']
+        @temp_document.dematbox_service_id  = @params['serviceId']
         @temp_document.is_ocr_layer_applied = true
 
         content_file = @temp_document.cloud_content_object
@@ -57,9 +57,9 @@ class CreateDematboxDocument
         options = {
           delivered_by:          user.code,
           delivery_type:         'dematbox_scan',
-          dematbox_doc_id:       @params['doc_id'],
-          dematbox_box_id:       @params['box_id'],
-          dematbox_service_id:   @params['service_id'],
+          dematbox_doc_id:       @params['docId'],
+          dematbox_box_id:       @params['boxId'],
+          dematbox_service_id:   @params['serviceId'],
           dematbox_text:         @params['text'],
           is_content_file_valid: true
         }
