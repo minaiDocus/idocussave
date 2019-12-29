@@ -16,6 +16,9 @@ class CreateDematboxDocument
 
   def execute
     Rails.logger.info(@params.inspect)
+    Rails.logger.info(user.inspect)
+    Rails.logger.info(dematbox.inspect)
+    Rails.logger.info(dematbox.services.inspect)
 
     if valid?
       Rails.logger.info("valid is passing")
