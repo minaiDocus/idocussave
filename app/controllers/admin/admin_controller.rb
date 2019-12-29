@@ -96,7 +96,7 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/failed_packs_delivery
   def failed_packs_delivery
-    pack_ids = RemoteFile.not_processed.not_retryable.where('created_at <= ?', 6.months.ago).pluck(:pack_id)
+    pack_ids = RemoteFile.not_processed.not_retryable.where('created_at >= ?', 6.months.ago).pluck(:pack_id)
 
     @failed_packs_delivery = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
