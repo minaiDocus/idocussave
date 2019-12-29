@@ -9,7 +9,7 @@ class CreateDematboxDocument
     @doc_id          = @params['docId']
     @service_id      = @params['serviceId']
     @virtual_box_id  = @params['virtualBoxId']
-    @improved_scan64 = @params['imrpovedScan']
+    @improved_scan64 = @params['improvedScan']
     @temp_document   = TempDocument.where(dematbox_doc_id: @doc_id).first if upload?
   end
 
