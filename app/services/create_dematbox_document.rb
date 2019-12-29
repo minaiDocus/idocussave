@@ -15,6 +15,8 @@ class CreateDematboxDocument
 
 
   def execute
+    Rails.logger.info(@params.inspect)
+    
     if valid?
       if @service_id == DematboxServiceApi.config.service_id.to_s
         # @temp_document.raw_content          = File.open(@temp_document.content.path)
