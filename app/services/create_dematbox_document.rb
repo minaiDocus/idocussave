@@ -16,9 +16,12 @@ class CreateDematboxDocument
 
   def execute
     Rails.logger.info(@params.inspect)
-    
+
     if valid?
+      Rails.logger.info("valid is passing")
+      Rails.logger.info("service id: #{@service_id}")
       if @service_id == DematboxServiceApi.config.service_id.to_s
+        Rails.logger.info("entering service match condition")
         # @temp_document.raw_content          = File.open(@temp_document.content.path)
         # @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
@@ -83,9 +86,17 @@ class CreateDematboxDocument
 
 
   def valid?
+    Rails.logger.info("content_file_valid: #{content_file_valid?}")
+
     if upload?
       @temp_document.present? && content_file_valid?
+
+      Rails.logger.info("temp_document: #{@temp_document.inspect}")
     else
+      Rails.logger.info("dematbox: #{dematbox.inspect}")
+      Rails.logger.info("service: #{service.inspect}")
+      Rails.logger.info("doc_id: #{@doc_id}")
+
       dematbox.present? && service.present? && @doc_id.present? && content_file_valid?
     end
   end
