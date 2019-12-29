@@ -23,7 +23,7 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    render partial: 'process', locals: { collection: @ocr_needed_temp_packs }
+    render partial: 'ocr_needed_temp_packs', locals: { collection: @ocr_needed_temp_packs }
   end
 
   # GET /admin/bundle_needed_temp_packs
@@ -38,7 +38,7 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @bundle_needed_temp_packs }
+    render partial: 'bundle_needed_temp_packs', locals: { collection: @bundle_needed_temp_packs }
   end
 
   # GET /admin/bundling_temp_packs
@@ -53,7 +53,7 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @bundling_temp_packs }
+    render partial: 'bundling_temp_packs', locals: { collection: @bundling_temp_packs }
   end
 
   # GET /admin/processing_temp_packs
@@ -68,7 +68,7 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @processing_temp_packs }
+    render partial: 'processing_temp_packs', locals: { collection: @processing_temp_packs }
   end
 
   # GET /admin/currently_being_delivered_packs
@@ -91,12 +91,12 @@ class Admin::AdminController < ApplicationController
       end
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @currently_being_delivered_packs }
+    render partial: 'currently_being_delivered_packs', locals: { collection: @currently_being_delivered_packs }
   end
 
   # GET /admin/failed_packs_delivery
   def failed_packs_delivery
-    pack_ids = RemoteFile.not_processed.not_retryable.pluck(:pack_id)
+    pack_ids = RemoteFile.not_processed.not_retryable.where('created_at <= ?', 6.months.ago).pluck(:pack_id)
 
     @failed_packs_delivery = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
@@ -114,20 +114,20 @@ class Admin::AdminController < ApplicationController
         object
       end
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
-    render partial: 'process', locals: { collection: @failed_packs_delivery }
+    render partial: 'failed_packs_delivery', locals: { collection: @failed_packs_delivery }
   end
 
   # GET /admin/blocked_pre_assignments
   def blocked_pre_assignments
     @blocked_pre_assignments = PendingPreAssignmentService.pending.select { |e| e.message.present? }
-    render partial: 'process', locals: { collection: @blocked_pre_assignments }
+    render partial: 'blocked_pre_assignments', locals: { collection: @blocked_pre_assignments }
   end
 
   # GET /admin/awaiting_pre_assignments
   def awaiting_pre_assignments
     @awaiting_pre_assignments = PendingPreAssignmentService.pending.select { |e| (e.message.blank? || e.pre_assignment_state == 'force_processing') }
 
-    render partial: 'process', locals: { collection: @awaiting_pre_assignments }
+    render partial: 'awaiting_pre_assignments', locals: { collection: @awaiting_pre_assignments }
   end
 
   # GET /admin/reports_delivery
@@ -141,14 +141,14 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    render partial: 'process', locals: { collection: @reports_delivery }
+    render partial: 'reports_delivery', locals: { collection: @reports_delivery }
   end
 
   # GET /admin/failed_reports_delivery
   def failed_reports_delivery
     @failed_reports_delivery = Pack::Report.failed_delivery(nil, 200)
 
-    render partial: 'process', locals: { collection: @failed_reports_delivery }
+    render partial: 'failed_reports_delivery', locals: { collection: @failed_reports_delivery }
   end
 
   private
