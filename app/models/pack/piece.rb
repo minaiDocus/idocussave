@@ -155,7 +155,7 @@ class Pack::Piece < ApplicationRecord
     return true if piece.is_finalized
 
     self.extract_content(piece)
-    self.generate_thumbs(piece)
+    self.generate_thumbs(piece.id)
 
     piece.update(is_finalized: true)
   end
