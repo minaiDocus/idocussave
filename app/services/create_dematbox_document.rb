@@ -33,6 +33,9 @@ class CreateDematboxDocument
 
         @temp_document.save
 
+        Rails.logger.debug (@temp_document.inspect)
+        Rails.logger.debug (@temp_document.errors.inspect)
+
         if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
           @temp_document.bundle_needed
         else
