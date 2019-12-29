@@ -15,16 +15,8 @@ class CreateDematboxDocument
 
 
   def execute
-    Rails.logger.info(@params.inspect)
-    Rails.logger.info(user.inspect)
-    Rails.logger.info(dematbox.inspect)
-    Rails.logger.info(dematbox.services.inspect)
-
     if valid?
-      Rails.logger.info("valid is passing")
-      Rails.logger.info("service id: #{@service_id}")
       if @service_id == DematboxServiceApi.config.service_id.to_s
-        Rails.logger.info("entering service match condition")
         # @temp_document.raw_content          = File.open(@temp_document.content.path)
         # @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
@@ -39,10 +31,7 @@ class CreateDematboxDocument
         # INFO : Blank pages are removed, so we need to reassign pages_number
         @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)
 
-        @temp_document.save!
-
-        Rails.logger.info (@temp_document.inspect)
-        Rails.logger.info (@temp_document.errors.inspect)
+        @temp_document.save
 
         if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
           @temp_document.bundle_needed
@@ -89,17 +78,10 @@ class CreateDematboxDocument
 
 
   def valid?
-    Rails.logger.info("content_file_valid: #{content_file_valid?}")
 
     if upload?
       @temp_document.present? && content_file_valid?
-
-      Rails.logger.info("temp_document: #{@temp_document.inspect}")
     else
-      Rails.logger.info("dematbox: #{dematbox.inspect}")
-      Rails.logger.info("service: #{service.inspect}")
-      Rails.logger.info("doc_id: #{@doc_id}")
-
       dematbox.present? && service.present? && @doc_id.present? && content_file_valid?
     end
   end
