@@ -4,7 +4,7 @@ class CreateDematboxDocument
 
 
   def initialize(args)
-    @params = args.permit!
+    @params = args.permit!.to_h
 
     @doc_id          = @params['doc_id']
     @service_id      = @params['service_id']
