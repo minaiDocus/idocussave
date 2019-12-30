@@ -24,7 +24,7 @@ class GoogleDriveSyncService
       end
 
       @session.files if @session
-    rescue Google::APIClient::AuthorizationError => e
+    rescue Google::Apis::AuthorizationError => e
       @error   = e
       @session = nil
 
