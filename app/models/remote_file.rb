@@ -93,7 +93,6 @@ class RemoteFile < ApplicationRecord
     self.tried_count = 0
 
     set_tried_at
-
     save
   end
 
@@ -103,13 +102,13 @@ class RemoteFile < ApplicationRecord
     self.tried_count += 1
     begin
       self.error_message = message.to_s
+      set_tried_at
+      save
     rescue e
       self.error_message = 'unknown service error'
+      set_tried_at
+      save
     end
-
-    set_tried_at
-
-    save
   end
 
   def not_retryable!(message = '')
@@ -117,12 +116,13 @@ class RemoteFile < ApplicationRecord
     self.tried_count   = 2
     begin
       self.error_message = message.to_s
+      set_tried_at
+      save
     rescue e
       self.error_message = 'unknown service error'
+      set_tried_at
+      save
     end
-
-    set_tried_at
-    save
   end
 
   def name

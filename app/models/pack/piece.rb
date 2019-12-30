@@ -155,7 +155,7 @@ class Pack::Piece < ApplicationRecord
     return true if piece.is_finalized
 
     piece.is_finalized = true
-    self.extract_content(piece) unless self.content_text.present?
+    self.extract_content(piece) unless piece.content_text.present?
     self.generate_thumbs(piece.id)
 
     piece.save
