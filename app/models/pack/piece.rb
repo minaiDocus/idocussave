@@ -154,10 +154,11 @@ class Pack::Piece < ApplicationRecord
 
     return true if piece.is_finalized
 
-    self.extract_content(piece)
+    piece.is_finalized = true
+    self.extract_content(piece) unless self.content_text.present?
     self.generate_thumbs(piece.id)
 
-    piece.update(is_finalized: true)
+    piece.save
   end
 
   def self.generate_thumbs(id)
@@ -165,11 +166,15 @@ class Pack::Piece < ApplicationRecord
 
     base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
 
-    image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
+    begin
+      image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
 
-    piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
-                                         filename: "#{base_file_name}.png", 
-                                         content_type: "image/png")
+      piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile),
+                                           filename: "#{base_file_name}.png",
+                                           content_type: "image/png")
+    rescue
+      piece.is_finalized = false
+    end
 
     piece.save
   end
@@ -212,7 +217,7 @@ class Pack::Piece < ApplicationRecord
 
       piece.save
     rescue => e
-      true
+      piece.is_finalized = false
     end
   end
 

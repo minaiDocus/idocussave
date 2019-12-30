@@ -209,13 +209,17 @@ class TempDocument < ApplicationRecord
 
     base_file_name = temp_document.cloud_content_object.filename.to_s.gsub('.pdf', '')
 
-    temp_document.is_thumb_generated = true
+    begin
+      temp_document.is_thumb_generated = true
 
-    image = MiniMagick::Image.read(temp_document.cloud_content.download).format('png').resize('92x133')
+      image = MiniMagick::Image.read(temp_document.cloud_content.download).format('png').resize('92x133')
 
-    temp_document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
-                                                 filename: "#{base_file_name}.png", 
-                                                 content_type: "image/png")
+      temp_document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                   filename: "#{base_file_name}.png", 
+                                                   content_type: "image/png")
+    rescue
+      temp_document.is_thumb_generated = false
+    end
 
     temp_document.save
   end
