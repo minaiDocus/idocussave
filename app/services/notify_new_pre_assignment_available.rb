@@ -6,7 +6,7 @@ class NotifyNewPreAssignmentAvailable
 
   def execute
     @pre_assignment.user.prescribers.each do |prescriber|
-      next unless prescriber.notify.new_pre_assignment_available
+      next unless prescriber.notify.try(:new_pre_assignment_available)
       Notifiable.create(notify: prescriber.notify, notifiable: @pre_assignment, label: 'new')
       NotifyNewPreAssignmentAvailableWorker.perform_in(@time_delay, prescriber.id)
     end

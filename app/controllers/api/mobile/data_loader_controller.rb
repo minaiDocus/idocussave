@@ -393,7 +393,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
                Pack::Report.where(id: params[:id]).first!
              end
 
-    if filter[:by_piece].present?
+    if filter[:by_piece].present? && params[:type] == 'pack'
       pieces = source.pieces
       if filter[:by_piece].try(:[], :content)
         pieces = pieces.where('pack_pieces.name LIKE ? OR pack_pieces.tags LIKE ? OR pack_pieces.content_text LIKE ?', "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%", "%#{filter[:by_piece][:content]}%")

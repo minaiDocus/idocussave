@@ -101,7 +101,11 @@ class RemoteFile < ApplicationRecord
   def not_synced!(message = '')
     self.state = 'not_synced'
     self.tried_count += 1
-    self.error_message = message
+    begin
+      self.error_message = message.to_s
+    rescue e
+      self.error_message = 'unknown service error'
+    end
 
     set_tried_at
 
@@ -111,7 +115,12 @@ class RemoteFile < ApplicationRecord
   def not_retryable!(message = '')
     self.state         = 'not_synced'
     self.tried_count   = 2
-    self.error_message = message
+    begin
+      self.error_message = message.to_s
+    rescue e
+      self.error_message = 'unknown service error'
+    end
+
     set_tried_at
     save
   end
