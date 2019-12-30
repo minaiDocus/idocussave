@@ -85,7 +85,7 @@ JobOrchestratorWorker:
   cron: '*/2 * * * * *'
 
 RetrievePreAssignmentsWorker:
-  queue: default
+  queue: high
   cron: '*/10 * * * * *'
 DeliverPreAssignmentsWorker:
   queue: default
