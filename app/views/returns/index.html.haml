@@ -1,74 +1,75 @@
 #returns.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
-  .row
-    .col-md-1
-      = link_to 'Export CSV', returns_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
-    .col-md-11
-      %table.table.table-bordered.navigation
-        %tr.date_list
-          %td.first.date
-            = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
-            = select_month @current_time.to_date, use_month_numbers: true
-            = hidden_field_tag :date_day, @current_time.day
-          - time = @current_time.beginning_of_month
-          - month = @current_time.end_of_month.month
-          - while time.month == month
-            - if time.day == @current_time.day
-              %td{ class: 'current' }
-                - if @grouped_paper_processes[time.day].present?
-                  = link_to time.day, "/returns/#{@current_time.year}/#{@current_time.month}/#{time.day}"
-                - else
-                  = time.day
-            - else
-              - if @grouped_paper_processes[time.day].present?
-                %td{ class: 'present' }= link_to time.day, "/returns/#{@current_time.year}/#{@current_time.month}/#{time.day}"
-              - else
-                %td
-                  - if time.to_date == Time.now.to_date
+  .box
+    .row
+      .col-md-1
+        = link_to 'Export CSV', returns_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn btn-success float-right'
+      .col-md-11
+        %table.table.table-striped.table-condensed.table-bordered.navigation 
+          %tr.bg-brown.text-white
+            %td.first.date
+              = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
+              = select_month @current_time.to_date, use_month_numbers: true
+              = hidden_field_tag :date_day, @current_time.day
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
+              - if time.day == @current_time.day
+                %td{ class: 'current' }
+                  - if @grouped_paper_processes[time.day].present?
                     = link_to time.day, "/returns/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                   - else
                     = time.day
-            - time = time + 1.day
-        %tr
-          %td
-          - time = @current_time.beginning_of_month
-          - month = @current_time.end_of_month.month
-          - while time.month == month
-            %td
-              - if @grouped_paper_processes[time.day].present?
-                = @grouped_paper_processes[time.day].size
-            - time = time + 1.day
-  .alerts
-    = render partial: 'shared/messages'
-  .row
-    .col-md-12
-      %table.table.table-bordered.condensed
-        %tr
-          %th.date            Heure
-          %th.tracking_number N° de suivi
-          %th.customer_code   Code client
-          %th.letter_type     Type de LS
-        - if @current_time.to_date == Date.today
-          %tr.form
-            = form_for @paper_process, url: returns_path do |f|
-              %td.date -
-              %td.tracking_number
-                != f.text_field :tracking_number, autofocus: true, maxlength: 13
-                - if (error = @paper_process.errors.messages[:tracking_number].try(:first))
-                  %br
-                  %span.errors= error
-              %td.customer_code
-                != f.text_field :customer_code, maxlength: 15
-                - if (error = @paper_process.errors.messages[:customer_code].try(:first))
-                  %br
-                  %span.errors= error
-              %td.letter_type
-                != f.number_field :letter_type
-                - if (error = @paper_process.errors.messages[:letter_type].try(:first))
-                  %br
-                  %span.errors= error
-        - @grouped_paper_processes[@current_time.day].to_a.each do |paper_process|
+              - else
+                - if @grouped_paper_processes[time.day].present?
+                  %td{ class: 'present' }= link_to time.day, "/returns/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                - else
+                  %td
+                    - if time.to_date == Time.now.to_date
+                      = link_to time.day, "/returns/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                    - else
+                      = time.day
+              - time = time + 1.day
           %tr
-            %td.date=            l(paper_process.created_at, format: '%H:%M')
-            %td.tracking_number= paper_process.tracking_number
-            %td.customer_code=   paper_process.customer_code
-            %td.letter_type=     paper_process.letter_type
+            %td
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
+              %td
+                - if @grouped_paper_processes[time.day].present?
+                  = @grouped_paper_processes[time.day].size
+              - time = time + 1.day
+    .alerts
+      = render partial: 'shared/messages'
+    .row
+      .col-md-12
+        %table.table.table-striped.table-condensed.table-bordered
+          %tr.bg-brown.text-white
+            %th.date            Heure
+            %th.tracking_number N° de suivi
+            %th.customer_code   Code client
+            %th.letter_type     Type de LS
+          - if @current_time.to_date == Date.today
+            %tr.form
+              = form_for @paper_process, url: returns_path do |f|
+                %td.date -
+                %td.tracking_number
+                  != f.text_field :tracking_number, autofocus: true, maxlength: 13
+                  - if (error = @paper_process.errors.messages[:tracking_number].try(:first))
+                    %br
+                    %span.errors= error
+                %td.customer_code
+                  != f.text_field :customer_code, maxlength: 15
+                  - if (error = @paper_process.errors.messages[:customer_code].try(:first))
+                    %br
+                    %span.errors= error
+                %td.letter_type
+                  != f.number_field :letter_type
+                  - if (error = @paper_process.errors.messages[:letter_type].try(:first))
+                    %br
+                    %span.errors= error
+          - @grouped_paper_processes[@current_time.day].to_a.each do |paper_process|
+            %tr
+              %td.date=            l(paper_process.created_at, format: '%H:%M')
+              %td.tracking_number= paper_process.tracking_number
+              %td.customer_code=   paper_process.customer_code
+              %td.letter_type=     paper_process.letter_type
