@@ -24,7 +24,7 @@ class GoogleDriveSyncService
       end
 
       @session.files if @session
-    rescue Google::APIClient::AuthorizationError => e
+    rescue Google::Apis::AuthorizationError => e
       @error   = e
       @session = nil
 
@@ -35,7 +35,6 @@ class GoogleDriveSyncService
       when 403
         @google_doc.reset
       end
-
     rescue OAuth2::Error => e
       if e.message =~ /Token has been revoked/
         @error   = e
@@ -46,7 +45,8 @@ class GoogleDriveSyncService
         @error   = e
         @session = nil
       else
-        raise
+        @error   = nil
+        @session = nil
       end
     end
 

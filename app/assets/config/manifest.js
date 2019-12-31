@@ -18,3 +18,4 @@
 //= link application/preaff_ignored.png
 //= link application/preaff_deliv_pending.png
 //= link application/preaff_pending.png
+//= link application/compta_analytics.png

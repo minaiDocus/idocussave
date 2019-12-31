@@ -1,39 +1,41 @@
 #paper_set_orders
-  %h3 Liste des commandes de Kit Courriers (#{@orders_count})
   .row
-    .col-md-9
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-      .row
-        .col-md-12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+    .col-md-12
+      .box.small-shadow
+        %h3
+          Liste des commandes de Kit Courriers
+          %span.badge.badge-info.fs-origin= @orders_count
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @orders }
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
+              %th= sortable :id, 'n° cmde'
+              %th= sortable :user_code, 'code'
+              %th format
+              %th période
+              %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
+              %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
+          %tbody.retractable.slidedown
+            - @orders.each do |order|
               %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
-                %th= sortable :id, 'n° cmde'
-                %th= sortable :user_code, 'code'
-                %th format
-                %th période
-                %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
-                %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
-            %tbody
-              - @orders.each do |order|
-                %tr
-                  %td= l order.created_at, format: :standard
-                  %td= order.id
-                  %td= link_to "#{order.user_code}", account_organization_url(order.user.organization, tab: 'file_sending_kit')
-                  %td= order.paper_set_casing_size.to_s + 'g' + ' - ' + order.paper_set_folder_count.to_s + ' chemises'
-                  %td
-                    = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
-                    à
-                    = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
-                    \-
-                    = case order.period_duration
-                      - when 1 then 'Mensuel'
-                      - when 3 then 'Trimestriel'
-                      - when 12 then 'Annuel'
-                  %td= Order.state_machine.states[order.state].human_name
-                  %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-    .col-md-3.box
-      .row
-        = render partial: 'sidebar'
+                %td= l order.created_at, format: :standard
+                %td= order.id
+                %td= link_to "#{order.user_code}", account_organization_url(order.user.organization, tab: 'file_sending_kit')
+                %td= order.paper_set_casing_size.to_s + 'g' + ' - ' + order.paper_set_folder_count.to_s + ' chemises'
+                %td
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                  à
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                  \-
+                  = case order.period_duration
+                    - when 1 then 'Mensuel'
+                    - when 3 then 'Trimestriel'
+                    - when 12 then 'Annuel'
+                %td= Order.state_machine.states[order.state].human_name
+                %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
+        = render partial: 'shared/list_options', locals: { collection: @orders }
+    = render partial: 'sidebar'
