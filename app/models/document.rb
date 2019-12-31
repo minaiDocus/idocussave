@@ -167,7 +167,7 @@ class Document < ApplicationRecord
 
 
   def get_access_url(style = :original)
-    content.url(style) + '&token=' + get_token
+    "/account/documents/documents/#{id}/download/#{style}" + '&token=' + get_token
   end
 
 
