@@ -32,6 +32,7 @@ gem 'mini_magick'
 gem 'paperclip'
 gem 'prawn'
 gem 'prawn-qrcode'
+gem 'prawn-table'
 
 # View render and utils
 gem 'nested_form'

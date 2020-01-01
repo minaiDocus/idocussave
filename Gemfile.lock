@@ -404,6 +404,8 @@ GEM
     prawn-qrcode (0.5.1)
       prawn (>= 1)
       rqrcode (>= 1.0.0)
+    prawn-table (0.2.2)
+      prawn (>= 1.3.0, < 3.0.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -686,6 +688,7 @@ DEPENDENCIES
   posix-spawn
   prawn
   prawn-qrcode
+  prawn-table
   rabl
   rack-mini-profiler
   rails (= 5.2.4)
