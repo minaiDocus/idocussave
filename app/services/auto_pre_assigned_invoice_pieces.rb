@@ -12,7 +12,7 @@ class AutoPreAssignedInvoicePieces
   def initialize(piece)
     @piece = piece
     @temp_document = @piece.temp_document
-    @invoice = Invoice.where(content_file_name: @temp_document.original_file_name).first if @temp_document.present?
+    @invoice = Invoice.select('invoices.*, active_storage_blobs.filename AS filename').joins('join active_storage_attachments ON active_storage_attachments.record_id = invoices.id AND active_storage_attachments.record_type = "Invoice"').joins('join active_storage_blobs ON active_storage_blobs.id = active_storage_attachments.blob_id').where('active_storage_blobs.filename = ?', @temp_document.original_file_name).first
   end
 
   def execute
