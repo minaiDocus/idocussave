@@ -17,17 +17,18 @@ jQuery ->
   $anr_third_party_account = $('#account_number_rule_third_party_account').parent().parent()
   $anr_affect_to = $('.affect_to')
 
-  if $('#account_number_rule_affect').val() == 'user'
+  if $("#account_number_rule_affect_user").is(':checked')
     $anr_affect_to.show()
 
   if $('#account_number_rule_rule_type').val() == 'truncate'
     $anr_third_party_account.hide()
 
-  $('#account_number_rule_affect').on 'change', ->
-    if $(this).val() == 'organization'
-      $anr_affect_to.hide()
-    else
-      $anr_affect_to.show()
+  $("#account_number_rule_affect_user").click (e) ->
+    $anr_affect_to.show()
+
+  $("#account_number_rule_affect_organization").click (e) ->
+    $anr_affect_to.hide()
+
 
   $('#account_number_rule_rule_type').on 'change', ->
     if $(this).val() == 'truncate'
