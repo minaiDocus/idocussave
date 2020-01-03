@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  get '/contents/original/missing.png', controller: 'account/documents', action: 'handle_bad_url'
+
   get '/account' => redirect('/account/documents')
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
