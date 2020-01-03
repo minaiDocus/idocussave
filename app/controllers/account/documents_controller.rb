@@ -474,12 +474,12 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /contents/original/missing.png
   def handle_bad_url
-    @piece = Piece.where('created_at >= ?', '2019-12-28 00:00:00').where('created_at <= ?', '2019-12-31 23:59:59').find_by_token(params[:token])
+    @piece = Pack::Piece.where('created_at >= ?', '2019-12-28 00:00:00').where('created_at <= ?', '2019-12-31 23:59:59').find_by_token(params[:token])
     filepath = @piece.cloud_content_object.path(:original)
 
     if File.exist?(filepath)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      
+
       send_file(filepath, type: mime_type, filename: @piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
