@@ -474,7 +474,9 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /contents/original/missing.png
   def handle_bad_url
-    @piece = Pack::Piece.where('created_at >= ?', '2019-12-28 00:00:00').where('created_at <= ?', '2019-12-31 23:59:59').find_by_token(params[:token])
+    token = request.original_url.partition('&token=').last
+
+    @piece = Pack::Piece.where('created_at >= ?', '2019-12-28 00:00:00').where('created_at <= ?', '2019-12-31 23:59:59').find_by_token(token)
     filepath = @piece.cloud_content_object.path(:original)
 
     if File.exist?(filepath)
