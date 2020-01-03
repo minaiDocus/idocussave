@@ -33,7 +33,7 @@ class RemoteFile < ApplicationRecord
   scope :of_service,       -> (service_name) { where(service_name: service_name) }
   scope :synchronized,     -> { where(state: :synced) }
   scope :not_retryable,    -> { where("tried_count >= ?", 2) }
-  scope :not_processed,    -> { where.not(state: [:synced, :cancelled]) }
+  scope :not_processed,    -> { where.not(state: [:synced, :cancelled, :sending]) }
   scope :with_extension,   -> (extension) { where(extension: extension) }
   scope :not_synchronized, -> { where(state: :not_synced) }
 
