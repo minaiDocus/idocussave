@@ -239,7 +239,7 @@ class Pack::Piece < ApplicationRecord
 
 
   def get_access_url(style = :original)
-    "/account/documents/pieces/#{id}/download/#{style}" + '&token=' + get_token
+    "/account/documents/pieces/#{id}/download/#{style}" + '?token=' + get_token
   end
 
 

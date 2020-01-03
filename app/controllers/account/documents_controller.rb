@@ -461,10 +461,14 @@ class Account::DocumentsController < Account::AccountController
   # GET /account/documents/pieces/:id/download
   def piece
     # NOTE : support old MongoDB id for pieces uploaded to iBiZa, in CSV export or others
+
+    token = params[:token]
+    token ||= request.original_url.partition('token=').last
+
     @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.find(params[:id])
     filepath = @piece.cloud_content_object.path(params[:style].presence || :original)
 
-    if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
+    if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: @piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
