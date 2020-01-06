@@ -8,7 +8,7 @@ class ScansController < PaperProcessesController
   def index
     respond_to do |format|
       format.html do
-        @document = session[:document] || PeriodDocument.new
+        @document = PeriodDocument.where(id: session[:document]).first || PeriodDocument.new
       end
       format.csv do
         send_data(PeriodDocument.to_csv(@all_documents.order(created_at: :asc)), type: 'text/csv', filename: "scans_#{@current_time.strftime('%Y_%m')}.csv")
@@ -38,7 +38,7 @@ class ScansController < PaperProcessesController
 
       if @document.persisted? && @document.valid?
         session[:document] = nil
-        session[:old_document] = @document.reload
+        session[:old_document] = @document.reload.id
         session[:new_document] = {}
         session[:new_document][:name] = _params[:name]
         session[:new_document][:oversized]  = _params[:oversized].to_i
@@ -65,7 +65,7 @@ class ScansController < PaperProcessesController
 
           flash[:success] = nil
           flash[:error] = 'Donnée(s) invalide(s).'
-          session[:document] = @document
+          session[:document] = @document.id
         end
       end
     end
