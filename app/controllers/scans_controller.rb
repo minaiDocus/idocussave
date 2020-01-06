@@ -18,29 +18,31 @@ class ScansController < PaperProcessesController
 
   # POST /scans
   def create
-    if params[:period_document] && params[:period_document][:name] && params[:period_document][:paperclips] && params[:period_document][:oversized]
-      params[:period_document][:name].tr!('_', ' ')
-      params[:period_document][:name].strip!
+    _params = period_document_params
 
-      if params[:period_document][:name].present? && !params[:period_document][:name].end_with?(' all')
-        params[:period_document][:name] << ' all'
+    if _params && _params[:name] && _params[:paperclips] && _params[:oversized]
+      _params[:name].tr!('_', ' ')
+      _params[:name].strip!
+
+      if _params[:name].present? && !_params[:name].end_with?(' all')
+        _params[:name] << ' all'
       end
 
-      @document = PeriodDocument.where(name: params[:period_document][:name]).order(created_at: :desc).first
+      @document = PeriodDocument.where(name: _params[:name]).order(created_at: :desc).first
 
       if @document.nil? || (@document&.period && @document.period.end_date < Date.today)
         @document = PeriodDocument.new
       end
 
-      @document.assign_attributes(period_document_params)
+      @document.assign_attributes(_params)
 
       if @document.persisted? && @document.valid?
         session[:document] = nil
         session[:old_document] = @document.reload
         session[:new_document] = {}
-        session[:new_document][:name] = params[:period_document][:name]
-        session[:new_document][:oversized]  = params[:period_document][:oversized].to_i
-        session[:new_document][:paperclips] = params[:period_document][:paperclips].to_i
+        session[:new_document][:name] = _params[:name]
+        session[:new_document][:oversized]  = _params[:oversized].to_i
+        session[:new_document][:paperclips] = _params[:paperclips].to_i
       else
         @document.user = User.where(code: @document.name.split[0]).first
         @document.scanned_at = Time.now

@@ -57,7 +57,7 @@ module FileDelivery::RemoteFile
 
   def get_kzip_file
     pole_name = pack.owner.try(:organization).try(:knowings).try(:pole_name)
-    KnowingsApi::File.create(content.path, pole_name: pole_name, data: kzip_options)
+    KnowingsApi::File.create(cloud_content_object.path, pole_name: pole_name, data: kzip_options)
   end
 
 
