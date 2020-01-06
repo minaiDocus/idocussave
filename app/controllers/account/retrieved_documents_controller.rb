@@ -69,7 +69,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
         flash[:success] = 'Le document sélectionné sera intégré.'
       end
     end
-    redirect_to select_account_retrieved_documents_path(document_contains: search_terms(params[:document_contains]))
+    redirect_to select_account_retrieved_documents_path(document_contains: search_terms(params.permit(:document_contains)))
   end
 
   private
