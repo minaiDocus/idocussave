@@ -1,5 +1,5 @@
 update_form = ->
-  options = ['period_duration', 'number_of_journals', 'pre_assignment']
+  options = ['number_of_journals', 'pre_assignment']
   selected_options = []
   
   $('.package input').each((e)->
@@ -14,16 +14,16 @@ update_form = ->
     $('.package input').removeAttr('disabled')
 
   if $('#subscription_is_basic_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    selected_options.push 'number_of_journals', 'pre_assignment'
     lock_heavy_package()
   if $('#subscription_is_mail_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    selected_options.push 'number_of_journals', 'pre_assignment'
     lock_heavy_package()
   if $('#subscription_is_scan_box_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    selected_options.push 'number_of_journals', 'pre_assignment'
     lock_heavy_package()
   if $('#subscription_is_retriever_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals'
+    selected_options.push 'number_of_journals'
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
     $('#subscription_is_micro_package_active').attr('disabled', 'disabled')
   else
@@ -33,7 +33,7 @@ update_form = ->
     selected_options.push 'number_of_journals'
     $('.package .light_package').attr('disabled', 'disabled')
   if $('#subscription_is_micro_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    selected_options.push 'number_of_journals', 'pre_assignment'
     lock_light_package()
     $('#subscription_is_retriever_package_active').attr('disabled', 'disabled')
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
@@ -42,7 +42,7 @@ update_form = ->
   else 
     $('.micro_package_warning').hide() 
   if $('#subscription_is_mini_package_active').is(':checked')
-    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    selected_options.push 'number_of_journals', 'pre_assignment'
     lock_light_package()
     $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
     $('#subscription_is_micro_package_active').attr('disabled', 'disabled')

@@ -74,7 +74,7 @@
                   %i Les factures seront pré-saisies si iDo’FacBanque est sélectionné en plus d’un autre forfait.
                 .micro_package_warning{ style: 'display:none' }
                   %i Rappel: Avec iDo’Micro, les options pré-affectation comptable et ido'FacBanque sont offertes mais vous avez un engagement de 12 mois au cours desquels vous ne pourriez pas changer de forfait, en cas de clôture du dossier avant les 12 mois vous serez facturé à 10 € X mois restant.
-            %tr.period_duration{ style: 'display:none' }
+            %tr{ style: 'display:none' }
               %td.question Quelle périodicité souhaitez-vous pour le forfait ?
               %td= f.select :period_duration, [['Mensuel', 1], ['Trimestriel', 3]], { include_blank: false }, { disabled: lock.present?, title: ("Il n'est pas possible de modifier la périodicité d'un forfait déjà actif" if @subscription.configured?) }
             %tr.number_of_journals{ style: 'display:none' }
