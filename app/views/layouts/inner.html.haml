@@ -21,6 +21,8 @@
 
   %body
     #wrap
+      = hidden_field_tag :state, ''
+      = hidden_field_tag :name, ''
       =render 'layouts/head_menu'
       .retractable.fadein
         != content_for?(:content) ? yield(:content) : yield

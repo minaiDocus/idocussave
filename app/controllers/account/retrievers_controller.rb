@@ -11,8 +11,7 @@ class Account::RetrieversController < Account::RetrieverController
                    @account.retrievers
                  else
                    Retriever.where(user: accounts)
-                 end
-
+                 end    
     @retrievers = Retriever.search_for_collection(retrievers, search_terms(params[:retriever_contains]))
                            .joins(:user)
                            .order("#{sort_column} #{sort_direction}")

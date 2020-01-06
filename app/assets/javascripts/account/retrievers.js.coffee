@@ -5,6 +5,8 @@ Idocus.vent = _.extend({}, Backbone.Events)
 Idocus.refreshRetrieversTimer = null
 
 jQuery ->
+  Idocus.retriever_contains_name  = ''
+  Idocus.retriever_contains_state = ''
   if $('#budgea_sync').length > 0
     router = new Idocus.Routers.BudgeaRetrieversRouter()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
@@ -42,32 +44,38 @@ jQuery ->
         $('.trigger_retriever_'+id).hide()
 
     load_retrievers_list = (url) ->
-      _url = ''
+      _url = ''           
       if url != undefined
-        _url = url
+        _url = url        
       else
         direction = $('#direction').val() || ''
         sort      = $('#sort').val()      || ''
         per_page  = $('#per_page').val()  || ''
-        page      = $('#page').val()      || ''
+        page      = $('#page').val()      || ''        
+        
         _url = 'retrievers?part=true'
         if direction != ''
           _url += '&direction=' + direction
         if sort != ''
           _url += '&sort=' + sort
         if per_page != ''
-          _url += '&per_page=' + per_page
+          _url += '&per_page=' + per_page          
         if page != ''
-          _url += '&page=' + page
-        if window.retriever_contains_name != ''
-          _url += '&retriever_contains[name]=' + window.retriever_contains_name
-        if window.retriever_contains_state != ''
-          _url += '&retriever_contains[state]=' + window.retriever_contains_state
+          _url += '&page=' + page        
+        if Idocus.retriever_contains_name != ''
+          _url += '&retriever_contains[name]=' + Idocus.retriever_contains_name
+        if Idocus.retriever_contains_state != ''
+          _url += '&retriever_contains[state]=' + Idocus.retriever_contains_state
+        
+      
       $.ajax
-        url: _url
+        url: _url        
         dataType: 'html'
         type: 'GET'
         success: (data) ->
+
+          # alert(window.retriever_contains_state)
+
           $('.popover').remove()
           $('.tooltip').remove()
           $('thead a, .list_options a').unbind 'click'
@@ -78,10 +86,21 @@ jQuery ->
           $('[rel=popover]').popover()
           $('[rel=tooltip]').tooltip()
 
-          $('thead a, .list_options a').bind 'click', (e) ->
+          $('.list_options a').bind 'click', (e) ->
             e.preventDefault()
             url = $(this).attr('href')
-            load_retrievers_list(url)
+            $('#per_page').val($(this).text())
+            load_retrievers_list()          
+
+          $('thead a').bind 'click', (e) ->
+            e.preventDefault()
+            url = $(this).attr('href')
+            direction_sort = url.split('?')[1]
+            tmp_direction  = direction_sort.split('&')[0]
+            tmp_sort       = direction_sort.split('&')[1]           
+            $('#direction').val(tmp_direction.split('=')[1])
+            $('#sort').val(tmp_sort.split('=')[1])
+            load_retrievers_list()
 
           $('.destroy_retriever').bind 'click', (e)->
             e.preventDefault()
@@ -141,17 +160,9 @@ jQuery ->
             $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
             $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
 
-    releaseRetrieversTimer()
-    window.retriever_contains_name = ''
-    window.retriever_contains_state = ''
+    releaseRetrieversTimer()    
     window.retrievers_url = 'retrievers?part=true'
     refreshRetrievers()
-
-    $('.retriever_search.form').on 'submit', (e) ->
-      window.retriever_contains_name = $('#retriever_contains_name').val()
-      window.retriever_contains_state = $('#retriever_contains_state').val()
-      e.preventDefault()
-      load_retrievers_list()
 
     $('.reset_filter').on 'click', (e) ->
       e.preventDefault()
@@ -161,8 +172,8 @@ jQuery ->
       $('#sort').val(null)
       $('#per_page').val(null)
       $('#page').val(null)
-      window.retriever_contains_name = ''
-      window.retriever_contains_state = ''
+      Idocus.retriever_contains_name = ''
+      Idocus.retriever_contains_state = ''
       load_retrievers_list()
 
   if $('#new_provider_requests_list').length > 0
@@ -324,4 +335,9 @@ jQuery ->
     text = $(this).attr('title')
     $('#retrievers #account_id_form').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
     $('#retrievers .hint_selection').delay(2500).fadeOut('fast')
+
+  $('.retriever_filter').on 'click', (e) ->    
+    Idocus.retriever_contains_name  = $('#retriever_contains_name').val()
+    Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
+    load_retrievers_list()
 

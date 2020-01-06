@@ -1,4 +1,5 @@
 = hidden_field_tag :retriever_budgea_config, @bi_config
+
 .box
   .row
     .col-md-12
@@ -14,7 +15,7 @@
   .col-md-12.retractable-content
     .retrievers_list.box
   .card.retractable-filter
-    = form_tag account_retrievers_path, method: :get, class: 'retriever_search form-filter' do
+    = form_tag '', method: :get, class: 'retriever_search form-filter' do
       .card-header.clearfix
         .float-left
           %h3 Filtres
@@ -34,7 +35,7 @@
               = select_tag 'retriever_contains[state]', options_for_select( retriever_states, (params[:retriever_contains][:state] rescue '') )
         .card-footer
           .form-actions
-            = submit_tag t('filters.action'), class: 'btn btn-primary'
+            = submit_tag t('filters.action'), class: 'btn btn-primary retriever_filter'
             = link_to glyphicon('x'), account_retrievers_path, class: 'btn btn-light'
 
 #syncConfirm.modal.hide.fade{data: { backdrop: "static" }}

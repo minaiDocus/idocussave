@@ -104,7 +104,7 @@ class RemoteFile < ApplicationRecord
       self.error_message = message.to_s
       set_tried_at
       save
-    rescue e
+    rescue
       self.error_message = 'unknown service error'
       set_tried_at
       save
@@ -118,7 +118,7 @@ class RemoteFile < ApplicationRecord
       self.error_message = message.to_s
       set_tried_at
       save
-    rescue e
+    rescue
       self.error_message = 'unknown service error'
       set_tried_at
       save
