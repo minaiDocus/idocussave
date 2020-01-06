@@ -52,7 +52,7 @@ class DocumentTools
         document = Poppler::Document.new(file_path)
 
         document.permissions.full?
-      rescue GLib::Error
+      rescue
         false
       end
     else
@@ -66,7 +66,7 @@ class DocumentTools
 
     begin
       Poppler::Document.new(file_path)
-    rescue GLib::Error
+    rescue
       is_ok = false
     end
 
@@ -89,7 +89,7 @@ class DocumentTools
     document = Poppler::Document.new(file_path)
     document.permissions.ok_to_print?
 
-    rescue GLib::Error
+    rescue
       false
   end
 
@@ -98,7 +98,7 @@ class DocumentTools
     document = Poppler::Document.new(file_path)
     document.permissions.ok_to_print? && !document.permissions.full?
 
-    rescue GLib::Error
+    rescue
       nil
   end
 
