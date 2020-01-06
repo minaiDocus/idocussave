@@ -78,5 +78,5 @@ jQuery ->
       $(this).val('3000')
       $('#new_paper_process').submit()
 
-  $('#returnLabelsDialog').on 'show', ->
+  $('#returnLabelsDialog').on 'shown.bs.modal', ->
     new_return_labels()
