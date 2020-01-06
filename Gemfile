@@ -52,7 +52,6 @@ gem 'typhoeus'
 
 # Cache
 gem 'dalli'
-gem 'activerecord-session_store'
 
 # Deployment
 gem 'bcrypt_pbkdf'
