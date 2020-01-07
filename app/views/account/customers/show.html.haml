@@ -659,7 +659,7 @@
                           %td= service.name
                 - elsif @customer.account_book_types.size == 0
                   %p Pas de journaux paramétrés.
-                  = link_to 'Déconnecter le Scanner', account_organization_customer_dematbox_path(@organization, @customer), method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
+                = link_to 'Déconnecter le Scanner', account_organization_customer_dematbox_path(@organization, @customer), method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
               - elsif @customer.dematbox.try(:beginning_configuration_at).present?
                 Configuration en cours...veuillez recharger votre page dans quelques secondes.
               - else
