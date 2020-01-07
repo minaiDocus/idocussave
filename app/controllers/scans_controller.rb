@@ -64,7 +64,7 @@ class ScansController < PaperProcessesController
           @document.errors.add(:name, :invalid) unless @document.user
 
           flash[:success] = nil
-          flash[:error] = 'Donnée(s) invalide(s).'
+          flash[:error] = "Donnée(s) invalide(s). [ #{@document.errors.messages.to_s} ]"
           session[:document] = @document.id
         end
       end
