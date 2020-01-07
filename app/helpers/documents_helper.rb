@@ -268,10 +268,11 @@ module DocumentsHelper
     debit_value = credit_value = 0
 
     preseizure_entries.each do |entry|
+      #NOTE : Don't use entry.amount.to_f or to_i here, debit_value and credit_value can't be converted before addition
       if entry.type == 1
-        debit_value += entry.amount
+        debit_value += entry.amount || 0
       else
-        credit_value += entry.amount
+        credit_value += entry.amount || 0
       end
     end
 
