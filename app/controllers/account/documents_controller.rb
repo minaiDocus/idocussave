@@ -590,6 +590,9 @@ class Account::DocumentsController < Account::AccountController
     user = pack.user
     @ibiza = user.try(:organization).try(:ibiza)
 
+    @piece_deleted_count = 0
+    @piece_deleted_count = Pack::Piece.unscoped.where(pack_id: params[:id]).where.not(delete_at: nil).count
+
     @software = @software_human_name = ''
 
     if user.try(:uses_ibiza?)

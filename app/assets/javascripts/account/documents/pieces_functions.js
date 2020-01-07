@@ -88,6 +88,10 @@ function getPieces(url,title,by_preseizure=null) {
 
       $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
       $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
+      if ($(".piece_deleted_count").length > 0)
+      {
+        $(".piece_deleted_count").clone().appendTo("#panel1 .header h3").removeClass('hide');
+      }
 
       $("#pageslist .thumb img").load(function(){
         $(this).parent('.thumb').css('background', 'none');

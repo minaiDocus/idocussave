@@ -6,6 +6,10 @@
   #show_pages.clearfix.box.bg-light
     .head.margin1bottom.clearfix
       %h4.float-left
+      - if @piece_deleted_count > 0
+        %span.badge.badge-danger.piece_deleted_count.hide{style: "margin-left:10px;"}
+          = @piece_deleted_count
+          pièce(s) supprimée(s)
       %span.pieces_total_count.hide= @documents.total_count
       - if @user.active?
         .actiongroup.float-right
