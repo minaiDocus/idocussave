@@ -97,12 +97,12 @@
               = form_for @document, url: scans_path, method: :post do |f|
                 %td.date -
                 %td.paperclips
-                  != f.number_field :paperclips, class: 'col-md-2'
+                  != f.number_field :paperclips, class: 'col-md-8'
                   - if (error = @document.errors.messages[:paperclips].try(:first))
                     %br
                     %span.errors.alignleft= error
                 %td.oversized
-                  != f.number_field :oversized, class: 'col-md-2'
+                  != f.number_field :oversized, class: 'col-md-8'
                   - if (error = @document.errors.messages[:oversized].try(:first))
                     %br
                     %span.errors.alignleft= error

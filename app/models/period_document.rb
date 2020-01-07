@@ -3,10 +3,10 @@ class PeriodDocument < ApplicationRecord
   has_one :report,        class_name: 'Pack::Report', inverse_of: :document, dependent: :delete, foreign_key: :document_id
   has_one :paper_process, class_name: 'PaperProcess',                        dependent: :delete
 
-  belongs_to :pack
+  belongs_to :pack, optional: true
   belongs_to :user
-  belongs_to :period, inverse_of: :documents
-  belongs_to :organization
+  belongs_to :period, optional: true, inverse_of: :documents
+  belongs_to :organization, optional: true
 
   validate  :uniqueness_of_name
   validates :paperclips, numericality: { greater_than_or_equal_to: 0 }
