@@ -5,13 +5,13 @@ module DeliverFile
 
     processed_receiver_ids = []
 
-    while RemoteFile.not_processed.of_service(service_name).retryable.first
-      remote_file = RemoteFile.not_processed.where.not(user_id: processed_receiver_ids,
+    while RemoteFile.waiting.of_service(service_name).retryable.first
+      remote_file = RemoteFile.waiting.where.not(user_id: processed_receiver_ids,
                                                        group_id: processed_receiver_ids,
                                                        organization_id: processed_receiver_ids).of_service(service_name).retryable.first
 
       unless remote_file
-        remote_file = RemoteFile.not_processed.where(service_name: service_name).retryable.first
+        remote_file = RemoteFile.waiting.where(service_name: service_name).retryable.first
         processed_receiver_ids = []
       end
 
@@ -22,7 +22,7 @@ module DeliverFile
       unless receiver
         remote_file.cancel!
       else
-        remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
+        remote_files = pack.remote_files.waiting.of(receiver, service_name).retryable
 
         rm_to_send = []
         #remove remote_files with remotable non attached
