@@ -336,6 +336,9 @@ jQuery ->
     $('#retrievers #account_id_form').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
     $('#retrievers .hint_selection').delay(2500).fadeOut('fast')
 
+  $(".retriever_search").on 'submit', (e) ->
+    return false
+
   $('.retriever_filter').on 'click', (e) ->    
     Idocus.retriever_contains_name  = $('#retriever_contains_name').val()
     Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
