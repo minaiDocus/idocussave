@@ -303,7 +303,7 @@ Rails.application.routes.draw do
       resources :ibiza_users,                       only: :index
       resources :exact_online_users,                       only: :index
       resources :mcf_users,                         only: :index
-      resources :pre_assignments,                   only: :index
+      #resources :pre_assignments,                   only: :index
       # resources :pre_assignment_delivery_errors,    only: :index
 
       # resources :pre_assignment_ignored,            only: :index do
