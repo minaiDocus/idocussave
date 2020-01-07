@@ -8,18 +8,12 @@ module DeliverFile
     packs.each do |pack|
       receivers = generate_receivers(pack)
 
-      puts receivers.inspect
-
       next if receivers.empty?
 
       receivers.each do |receiver|
-        puts receiver.id
-
         storage       = generate_storage(receiver, service_class)
         remote_files  = generate_remote_files_to_sync(pack, receiver, service_name)
         services_name = check_allowed_services(receiver)
-
-        puts remote_files.inspect
 
         if service_name.in?(services_name) && remote_files.size > 0
           push_files(pack, receiver, service_class, service_name, remote_files, storage)
