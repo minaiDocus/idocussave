@@ -24,6 +24,18 @@ module DeliverFile
       else
         remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
 
+        rm_to_send = []
+        #remove remote_files with remotable non attached
+        remote_files.each do |rm|
+          if rm.remotable_type == 'Pack::Report' || (rm.remotable.cloud_content.attached? && rm.local_name.present?)
+            rm_to_send << rm
+          else
+            rm.cancel!
+          end
+        end
+
+        remote_files = rm_to_send
+
         storage = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
         storage = receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
 
