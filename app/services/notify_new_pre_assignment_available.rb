@@ -26,7 +26,7 @@ class NotifyNewPreAssignmentAvailable
     notification.user        = user
     notification.notice_type = 'new_pre_assignment_available'
     notification.title       = list.size == 1 ? 'Nouvelle pré-affectation disponible' : 'Nouvelles pré-affectations disponibles'
-    notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignments_url(collab.organization, ActionMailer::Base.default_url_options)
+    notification.url         = Rails.application.routes.url_helpers.account_documents_path
 
     notification.message = if list.size == 1
       "1 nouvelle pré-affectation est disponible pour le lot suivant : #{list.first.notifiable.report.name}"

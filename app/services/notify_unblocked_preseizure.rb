@@ -27,7 +27,7 @@ class NotifyUnblockedPreseizure
       notification.user        = user
       notification.notice_type = 'unblocked_preseizure'
       notification.title       = count == 1 ? 'Pré-affectation débloqué' : 'Pré-affectations débloqués'
-      notification.url         = Rails.application.routes.url_helpers.account_organization_pre_assignments_url(user.organization, ActionMailer::Base.default_url_options)
+      notification.url         = Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path
       notification.message     = count == 1 ? "1 pré-affectation a été débloqué." : "#{count} pré-affectations ont été débloqués."
       notification.save
       NotifyWorker.perform_async(notification.id)
