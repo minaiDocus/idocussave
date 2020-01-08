@@ -15,7 +15,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
 
   # POST /account/pre_assignment_blocked_duplicates/update_multiple
   def update_multiple
-    preseizures = Pack::Report::Preseizure.blocked_duplicates.where(user_id: account_ids, id: params[:duplicate_ids])
+    preseizures = Pack::Report::Preseizure.unscoped.blocked_duplicates.where(user_id: account_ids, id: params[:duplicate_ids])
 
     if !preseizures.empty?
       if params.keys.include?('unblock') && !params.keys.include?('approve_block')
