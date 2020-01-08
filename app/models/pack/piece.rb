@@ -193,7 +193,7 @@ class Pack::Piece < ApplicationRecord
 
     DocumentTools.sign_pdf(content_file_path, to_sign_file)
 
-    self.cloud_content_object.attach(File.open(to_sign_file), "#{self.cloud_content_object.filename}.pdf") if self.save
+    self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename) if self.save
   end
 
   def self.extract_content(piece)

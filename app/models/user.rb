@@ -420,7 +420,7 @@ class User < ApplicationRecord
     self.try(:softwares).try(:is_fec_agiris_used) && self.organization.is_fec_agiris_used
   end
 
-  def validate_ibiza_analyitcs?
+  def validate_ibiza_analytics?
     uses_ibiza_analytics? && self.try(:softwares).try(:ibiza_analysis_to_validate?)
   end
 

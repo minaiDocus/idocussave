@@ -168,7 +168,7 @@ class AccountingWorkflow::TempPackProcessor
           end
           current_piece_position += 1 unless is_a_cover
 
-          # piece.try(:sign_piece)
+          piece.try(:sign_piece)
         end
 
         published_temp_documents << temp_document
@@ -199,7 +199,7 @@ class AccountingWorkflow::TempPackProcessor
     pieces_to_pre_assigned = []
 
     if temp_pack.is_pre_assignment_needed?
-      if user.validate_ibiza_analyitcs?
+      if user.validate_ibiza_analytics?
         added_pieces.each do |piece|
           if piece.from_web? || piece.from_mobile?
             pieces_to_pre_assigned << piece
