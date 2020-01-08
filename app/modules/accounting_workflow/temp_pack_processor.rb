@@ -9,6 +9,10 @@ class AccountingWorkflow::TempPackProcessor
     user = User.find_by_code user_code
     return false unless user && temp_documents.any?
     pack = Pack.find_or_initialize temp_pack.name, user
+    #Temp: pack seeker
+      pps = Pack.where(name: pack.name)
+      logger.info "[#{runner_id}] #{pack.name} - #{pack.id} - #{pps.size} found #{pps.collect(&:id)} - Pack seeker"
+    #####
     current_piece_position = begin
                                  pack.pieces.by_position.last.position + 1
                                rescue
