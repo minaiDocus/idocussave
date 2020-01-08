@@ -221,7 +221,8 @@ class TempDocument < ApplicationRecord
       temp_document.is_thumb_generated = false
     end
 
-    temp_document.save
+    #TEMP : check temp_document saving error (if temp_pack becomes nil)
+    raise temp_document.errors.messages.to_s unless temp_document.save
   end
 
 
