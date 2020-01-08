@@ -59,26 +59,26 @@
               %tr
                 %td.first
                   Valeurs actuelles
-                  - if session[:old_document].scanned_at.present?
-                    = link_to "(#{session[:old_document].scanned_at.strftime("%d/%m/%Y")})", "/scans/#{session[:old_document].scanned_at.strftime("%Y/%m/%d")}"
-                %td= session[:old_document].paperclips
-                %td= session[:old_document].oversized
+                  - if @old_document.scanned_at.present?
+                    = link_to "(#{@old_document.scanned_at.strftime("%d/%m/%Y")})", "/scans/#{@old_document.scanned_at.strftime("%Y/%m/%d")}"
+                %td= @old_document.paperclips
+                %td= @old_document.oversized
                 %td= link_to 'Annuler', cancel_scans_path, class: 'btn'
               %tr
                 %td.first Nouvelles valeurs
                 %td= paperclips = session[:new_document][:paperclips]
                 %td= oversized = session[:new_document][:oversized]
                 %td
-                  = form_tag overwrite_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
+                  = form_tag overwrite_scan_path(session[:old_document]), method: 'patch', class: 'margin0bottom' do
                     = hidden_field_tag :paperclips, paperclips
                     = hidden_field_tag :oversized, oversized
                     = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
               %tr
                 %td.first Nouvelles valeurs
-                %td= session[:old_document].paperclips + (paperclips = session[:new_document][:paperclips])
-                %td= session[:old_document].oversized + (oversized = session[:new_document][:oversized])
+                %td= @old_document.paperclips + (paperclips = session[:new_document][:paperclips])
+                %td= @old_document.oversized + (oversized = session[:new_document][:oversized])
                 %td
-                  = form_tag add_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
+                  = form_tag add_scan_path(session[:old_document]), method: 'patch', class: 'margin0bottom' do
                     = hidden_field_tag :paperclips, paperclips
                     = hidden_field_tag :oversized, oversized
                     = submit_tag 'Additionner', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }

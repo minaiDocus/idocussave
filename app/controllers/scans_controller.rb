@@ -9,6 +9,7 @@ class ScansController < PaperProcessesController
     respond_to do |format|
       format.html do
         @document = PeriodDocument.where(id: session[:document]).first || PeriodDocument.new
+        @old_document = PeriodDocument.where(id: session[:old_document]).first
       end
       format.csv do
         send_data(PeriodDocument.to_csv(@all_documents.order(created_at: :asc)), type: 'text/csv', filename: "scans_#{@current_time.strftime('%Y_%m')}.csv")
