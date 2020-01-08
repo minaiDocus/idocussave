@@ -6,7 +6,7 @@ module DeliverFile
     packs = Pack.joins(:remote_files).where('remote_files.state = ? AND remote_files.service_name = ?', 'waiting', service_name)
 
     packs.each do |pack|
-      receivers = generate_receivers(pack)
+      receivers = generate_receivers(pack, service_class)
 
       next if receivers.empty?
 
@@ -24,10 +24,10 @@ module DeliverFile
     end
   end
 
-  def self.generate_receivers(pack)
-    user_ids  = pack.remote_files.joins(:user).pluck('users.id').uniq
-    group_ids = pack.remote_files.joins(:group).pluck('groups.id').uniq
-    organization_ids = pack.remote_files.joins(:organization).pluck('organizations.id').uniq
+  def self.generate_receivers(pack, service_name)
+    user_ids  = pack.remote_files.of_service(service_name).joins(:user).pluck('users.id').uniq
+    group_ids = pack.remote_files.of_service(service_name).joins(:group).pluck('groups.id').uniq
+    organization_ids = pack.remote_files.of_service(service_name).joins(:organization).pluck('organizations.id').uniq
 
     receivers = []
 
