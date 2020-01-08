@@ -6,7 +6,7 @@ module DeliverFile
     packs = Pack.joins(:remote_files).where('remote_files.state = ? AND remote_files.service_name = ?', 'waiting', service_name)
 
     packs.each do |pack|
-      receivers = generate_receivers(pack, service_class)
+      receivers = generate_receivers(pack, service_name)
 
       next if receivers.empty?
 
