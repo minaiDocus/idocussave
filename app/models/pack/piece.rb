@@ -54,7 +54,7 @@ class Pack::Piece < ApplicationRecord
   scope :by_position,            -> { order(position: :asc) }
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
-  scope :deleted,                -> { where.not(delete_at: [nil, '']) }
+  scope :deleted,                -> { where.not(delete_at: nil) }
 
   default_scope { where(delete_at: [nil, '']) }
 

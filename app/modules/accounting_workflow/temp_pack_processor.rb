@@ -14,7 +14,7 @@ class AccountingWorkflow::TempPackProcessor
       logger.info "[#{runner_id}] #{pack.name} - #{pack.id} - #{pps.size} found #{pps.collect(&:id)} - Pack seeker"
     #####
     current_piece_position = begin
-                                 pack.pieces.by_position.last.position + 1
+                                 pack.pieces.unscoped.where(pack_id: pack.id).by_position.last.position + 1
                                rescue
                                  1
                                end
