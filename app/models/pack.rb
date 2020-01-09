@@ -233,7 +233,13 @@ class Pack < ApplicationRecord
 
 
   def self.find_or_initialize(name, user)
-    find_by_name(name) || Pack.new(name: name, owner_id: user.id, organization_id: user.organization.try(:id), created_at: Time.now, updated_at: Time.now)
+    self.find_or_initialize_by(name: name) do |pack|
+      pack.name = name
+      pack.owner_id = user.id
+      pack.organization_id = user.organization.try(:id)
+
+      pack
+    end
   end
 
 

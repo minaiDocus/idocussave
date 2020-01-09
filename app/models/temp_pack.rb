@@ -24,11 +24,7 @@ class TempPack < ApplicationRecord
 
 
   def self.find_or_create_by_name(name)
-    if (temp_pack = find_by_name(name))
-      temp_pack
-    else
-      temp_pack = TempPack.new
-
+    self.find_or_initialize_by(name: name) do |temp_pack|
       temp_pack.name = name
       temp_pack.user = User.find_by_code name.split[0]
       temp_pack.organization = temp_pack.user.try(:organization)
