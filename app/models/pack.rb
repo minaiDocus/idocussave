@@ -286,7 +286,7 @@ class Pack < ApplicationRecord
       original_file = original_document.cloud_content_object
       new_file_name = self.name.tr(' ', '_') + '.pdf'
 
-      if File.exist? original_file.path
+      if File.exist? original_file.path.to_s
         merged_file_path = File.join(dir, new_file_name)
         Pdftk.new.merge([file_path, original_file.path], merged_file_path)
       else
