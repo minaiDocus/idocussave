@@ -3,7 +3,7 @@ module DeliverFile
     service_name  = to_service_name(service_prefix)
     service_class = to_service_class(service_prefix)
 
-    packs = Pack.joins(:remote_files).where('remote_files.state = ? AND remote_files.service_name = ?', 'waiting', service_name)
+    packs = Pack.joins(:remote_files).where('remote_files.state IN (?, ?) AND remote_files.tried_count < ? AND remote_files.service_name = ?', "waiting", "not_synced", '2', service_name)
 
     packs.each do |pack|
       receivers = generate_receivers(pack, service_name)
@@ -42,7 +42,7 @@ module DeliverFile
 
 
   def self.generate_remote_files_to_sync(pack, receiver, service_name)
-    remote_files = pack.remote_files.waiting.of(receiver, service_name).retryable.to_a      
+    remote_files = pack.remote_files.not_processed.retryable.of(receiver, service_name).to_a
 
     remote_files.each do |remote_file|
       unless remote_file.remotable_type == 'Pack::Report' || (remote_file.remotable.cloud_content.attached? && remote_file.local_name.present?)
