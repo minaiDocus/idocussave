@@ -20,6 +20,7 @@ class AddTempDocumentToTempPack
 
       temp_document.user                 = user
       # temp_document.content              = file
+      temp_document.content_file_name    = File.basename(file.path).gsub('.pdf', '')
       temp_document.original_fingerprint = options[:original_fingerprint] if options[:original_fingerprint]
       temp_document.position             = temp_pack.next_document_position unless temp_document.position
       temp_document.temp_pack            = temp_pack

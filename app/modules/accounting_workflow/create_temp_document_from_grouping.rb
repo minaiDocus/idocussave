@@ -64,6 +64,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.organization                = @temp_pack.organization
     temp_document.position                    = @temp_pack.next_document_position
     # temp_document.content                     = open file_path
+    temp_document.content_file_name           = File.basename(file_path).gsub('.pdf', '')
     temp_document.pages_number                = DocumentTools.pages_number file_path
     temp_document.is_an_original              = false
     temp_document.is_a_cover                  = original_temp_document.is_a_cover?
