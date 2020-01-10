@@ -100,9 +100,18 @@ class CustomActiveStorageObject
         tmp_file.close
       end
 
+      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - Not generated" unless tmp_file_path.present?
       @base_path = tmp_file_path
     rescue => e
+      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s}"
       @base_path = nil
     end
   end
+
+  private
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_active_storage_logs.log")
+  end
+
 end

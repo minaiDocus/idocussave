@@ -179,23 +179,6 @@ class Pack::Piece < ApplicationRecord
     piece.save
   end
 
-  def cloud_content_object
-    CustomActiveStorageObject.new(self, :cloud_content)
-  end
-
-  def correct_pdf_signature
-    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
-  end
-
-  def sign_piece
-    content_file_path = self.cloud_content_object.path
-    to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
-
-    DocumentTools.sign_pdf(content_file_path, to_sign_file)
-
-    self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename) if self.save
-  end
-
   def self.extract_content(piece)
     begin
       path = piece.cloud_content_object.path
@@ -218,6 +201,31 @@ class Pack::Piece < ApplicationRecord
       piece.save
     rescue => e
       piece.is_finalized = false
+    end
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def correct_pdf_signature
+    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
+  end
+
+  def sign_piece
+    content_file_path = self.cloud_content_object.path
+    to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
+
+    begin
+      DocumentTools.sign_pdf(content_file_path, to_sign_file)
+
+      if self.save && File.exist?(to_sign_file.to_s)
+        self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
+      else
+        logger.info "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})"
+      end
+    rescue => e
+      logger.info "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})"
     end
   end
 
@@ -334,5 +342,9 @@ class Pack::Piece < ApplicationRecord
 
   def set_number
     self.number = DbaSequence.next('Piece') unless number
+  end
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_pieces_events.log")
   end
 end
