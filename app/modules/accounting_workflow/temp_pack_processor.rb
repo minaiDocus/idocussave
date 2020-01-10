@@ -9,10 +9,6 @@ class AccountingWorkflow::TempPackProcessor
     user = User.find_by_code user_code
     return false unless user && temp_documents.any?
     pack = Pack.find_or_initialize temp_pack.name, user
-    #Temp: pack seeker
-      pps = Pack.where(name: pack.name)
-      logger.info "[#{runner_id}] #{pack.name} - #{pack.id} - #{pps.size} found #{pps.collect(&:id)} - Pack seeker"
-    #####
     current_piece_position = begin
                                  pack.pieces.unscoped.where(pack_id: pack.id).by_position.last.position + 1
                                rescue
@@ -44,7 +40,11 @@ class AccountingWorkflow::TempPackProcessor
           piece_file_path = File.join(dir, piece_file_name)
           original_file_path = File.join(dir, 'original.pdf')
 
-          FileUtils.cp temp_document.cloud_content_object.path, original_file_path
+          begin
+            FileUtils.cp temp_document.cloud_content_object.path, original_file_path
+          rescue
+            next
+          end
 
           DocumentTools.correct_pdf_if_needed original_file_path
 
