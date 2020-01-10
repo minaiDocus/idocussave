@@ -39,11 +39,12 @@ class Pack::Report::Preseizure < ApplicationRecord
 
   def self.search(contains)
     preseizures = self.all
-    preseizures = preseizures.joins(:organization, :piece)
+    preseizures = preseizures.joins(:organization, :piece, :user)
     preseizures = preseizures.where("organizations.name LIKE ?", "%#{contains[:organization_name]}%") if contains[:organization_name].present?
     preseizures = preseizures.where("pack_pieces.name LIKE ?", "%#{contains[:piece_name]}%") if contains[:piece_name].present?
     preseizures = preseizures.where("piece_number LIKE ?", "%#{contains[:piece_number]}%") if contains[:piece_number].present?
     preseizures = preseizures.where("third_party LIKE ?", "%#{contains[:third_party]}%") if contains[:third_party].present?
+    preseizures = preseizures.where("users.company LIKE ?", "%#{contains[:company]}%") if contains[:company].present?
     preseizures = preseizures.where(cached_amount: contains[:amount]) if contains[:amount].present?
 
     if contains[:created_at]
@@ -80,6 +81,11 @@ class Pack::Report::Preseizure < ApplicationRecord
     preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{options[:third_party]}%") if options[:third_party].present?
 
     preseizures
+  end
+
+  #Override belong_to piece getter because of default scope
+  def piece
+    Pack::Piece.unscoped.where(id: self.piece_id).first || nil
   end
 
   def piece_name

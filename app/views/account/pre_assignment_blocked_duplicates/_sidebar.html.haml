@@ -27,6 +27,12 @@
 
         .form-group.clearfix
           .label-section
+            = label_tag 'duplicate_contains[company]', 'Nom de la société'
+          .control-section
+            = text_field_tag 'duplicate_contains[company]', (params[:duplicate_contains][:company] rescue '')
+
+        .form-group.clearfix
+          .label-section
             = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
           .control-section
             = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue '')
