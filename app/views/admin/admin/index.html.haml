@@ -10,13 +10,13 @@
           .col-sm-4
             .box.bg-menu.small-shadow
               #v-pills-tab.nav.flex-column.nav-pills.nav-justified{"aria-orientation" => "vertical", :role => "tablist"}
-                %a#v-ocr_needed_temp_packs.nav-link.active{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
+                %a#v-ocr_needed_temp_packs.nav-link{"aria-controls": "v-ocr_needed_temp_packs", "aria-selected": "true", "data-toggle": "pill", href: "#ocr_needed_temp_packs", role: "tab"}
                   %span.badge-tags.badge-pill.badge-success.fs-origin OCR
                   %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
                 %a#v-bundle_needed_temp_packs.nav-link{"aria-controls": "v-bundle_needed_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundle_needed_temp_packs", role: "tab"}
                   %span.badge-tags.badge-pill.badge-secondary.fs-origin Regroupement - En attente
                   %span.float-right.badge.badge-tags.badge-pill.badge-secondary.fs-origin -
-                %a#v-bundling_temp_packs.nav-link{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
+                %a#v-bundling_temp_packs.nav-link.active{"aria-controls": "v-bundling_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#bundling_temp_packs", role: "tab"}
                   %span.badge-tags.badge-pill.badge-success.fs-origin Regroupement - En cours
                   %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
                 %a#v-processing_temp_packs.nav-link{"aria-controls": "v-processing_temp_packs", "aria-selected": "false", "data-toggle": "pill", href: "#processing_temp_packs", role: "tab"}
