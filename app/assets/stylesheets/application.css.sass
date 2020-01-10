@@ -457,6 +457,24 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
       img
         width: 130px
 
+.piece_deleted_selection_content
+  padding: 1%
+
+#PdfViewerDialog
+  .modal-header
+    padding: 1%
+    background-color: #7cbbff
+    border-bottom: 1px solid #cfe
+    h3
+      color: white !important
+      font-weight: bold
+
+  .modal-dialog
+    width: auto
+  .view-content
+    hr
+      margin: 0
+
 /*** Documents ***/
 #documents
   .oi
@@ -464,6 +482,34 @@ nav.navbar .nav-link, nav.navbar .dropdown-item, footer a
     color: #3e2f24 !important
   ul
     padding: 0px
+  .piece_deleted_count
+    margin-left: 10px
+    .content-list-pieces-deleted
+      background-color: #f5fafd
+      color:  #2499d3
+      padding: 5px
+      position: absolute
+      margin-top: 3px
+      border: 1px dotted #D4DDF5
+      border-radius: 3px
+      -webkit-box-shadow: 0px 0px 19px -1px rgba(0,0,0,0.75)
+      -moz-box-shadow: 0px 0px 19px -1px rgba(0,0,0,0.75)
+      box-shadow: 0px 0px 19px -1px rgba(0,0,0,0.75)
+      ul
+        margin: 0
+        li
+          list-style: none
+          padding: 2px
+          font-weight: initial
+        li:hover
+          background-color: white
+          font-weight: bold
+  .piece_deleted_count:hover
+    .content-list-pieces-deleted
+      display: block !important
+      cursor: pointer
+
+
 #documents_actions
   .filter_indication
     margin-top: -3px

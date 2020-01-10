@@ -349,6 +349,7 @@ Rails.application.routes.draw do
       get  'archive',                         on: :member
       post 'sync_with_external_file_storage', on: :collection
       post 'delete_multiple_piece',           on: :collection
+      post 'restore_piece',                   on: :collection
     end
 
 

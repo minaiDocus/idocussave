@@ -109,6 +109,74 @@ var initEventOnPiecesRefresh = function(){
     $("#PdfViewerDialog .modal-body .view-content").html(data_content);    
   });
 
+  $(".content-list-pieces-deleted li").unbind('click');
+  $(".content-list-pieces-deleted li").click(function(e){
+    var id           = $(this).attr("id");
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $(this).prev().attr('data-content') || '';
+    var next         = $(this).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    ShowPdfView(data_content);
+  });
+
+  $("#PdfViewerDialog .previous").unbind('click');
+  $("#PdfViewerDialog .previous").click(function(e){
+    var id_tmp = $('#piece_deleted').val();
+    var id = $('.content-list-pieces-deleted li#'+id_tmp).prev().attr('id');
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $('.content-list-pieces-deleted li#'+id).prev().attr('data-content') || '';
+    var next         = $('.content-list-pieces-deleted li#'+id).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    if ($(this).attr("data-content") != "")
+    {
+      ShowPdfView(data_content,'process');
+    }
+  });
+
+  $("#PdfViewerDialog .next").unbind('click');
+  $("#PdfViewerDialog .next").click(function(e){
+    var id_tmp = $('#piece_deleted').val();
+    var id = $('.content-list-pieces-deleted li#'+id_tmp).next().attr('id');
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $('.content-list-pieces-deleted li#'+id).prev().attr('data-content') || '';
+    var next         = $('.content-list-pieces-deleted li#'+id).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    if ($(this).attr("data-content") != "")
+    {
+      ShowPdfView(data_content,'process');
+    }
+  });
+
+  $("#PdfViewerDialog .restore").unbind('click');
+  $("#PdfViewerDialog .restore").click(function(e){
+    if (confirm("Voulez-vous vraiment restaurer cette pièce ?"))
+    {
+      var piece_id = $('#piece_deleted').val();
+      $.ajax({
+      url: "/account/documents/restore_piece",
+      data: { piece_id:piece_id },
+      dataType: "json",
+      type: "POST",
+      success: function(data){
+        $("#PdfViewerDialog").modal('hide');
+        $(".pack.shared.activated a.do-show-pack").click();
+      }
+    });
+    }
+  });
+
 }
 
 var initEventOnPiecesSelection = function(){

@@ -465,7 +465,7 @@ class Account::DocumentsController < Account::AccountController
     auth_token = params[:token]
     auth_token ||= request.original_url.partition('token=').last
 
-    @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.find(params[:id])
+    @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.unscoped.find(params[:id])
     filepath = @piece.cloud_content_object.path(params[:style].presence || :original)
 
     if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || auth_token == @piece.get_token)
@@ -530,6 +530,16 @@ class Account::DocumentsController < Account::AccountController
     render json: { success: true }, status: 200
   end
 
+  # POST /account/documents/restore_piece
+  def restore_piece
+    piece = Pack::Piece.unscoped.find params[:piece_id]
+
+    piece.delete_at = nil
+    piece.delete_by = nil
+
+    piece.save
+  end
+
   protected
 
   def current_layout
@@ -590,8 +600,7 @@ class Account::DocumentsController < Account::AccountController
     user = pack.user
     @ibiza = user.try(:organization).try(:ibiza)
 
-    @piece_deleted_count = 0
-    @piece_deleted_count = Pack::Piece.unscoped.where(pack_id: params[:id]).where.not(delete_at: nil).count
+    @pieces_deleted = Pack::Piece.unscoped.where(pack_id: params[:id]).deleted.presence || []
 
     @software = @software_human_name = ''
 

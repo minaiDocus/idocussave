@@ -1,3 +1,24 @@
+- if @pieces_deleted.count > 0
+  %span.badge.badge-danger.piece_deleted_count.hide
+    = @pieces_deleted.count
+    pièce(s) supprimée(s)
+    .content-list-pieces-deleted.hide
+      %ul
+        - @pieces_deleted.each do |piece_deleted|
+          %li{"data-content" => html_piece_view(piece_deleted), id: piece_deleted.id} #{piece_deleted.name} supprimée le #{piece_deleted.delete_at.try(:to_date)} par #{piece_deleted.delete_by}
+
+  .piece_deleted_selection.hide
+    .piece_deleted_selection_content
+      %button.btn.btn-light.previous
+        = glyphicon('arrow-thick-left')
+        Préc
+      %button.btn.btn-light.next
+        Suiv
+        = glyphicon('arrow-thick-right')
+      %button.btn.btn-success.restore.float-right
+        = glyphicon('share', {color: "white"})
+        Restaurer
+    %hr
 #show_pieces.clearfix.box.bg-light
   %h4
   %ul.clearfix.padding0.margin0{ :id => "pieces" }
@@ -6,10 +27,6 @@
   #show_pages.clearfix.box.bg-light
     .head.margin1bottom.clearfix
       %h4.float-left
-      - if @piece_deleted_count > 0
-        %span.badge.badge-danger.piece_deleted_count.hide{style: "margin-left:10px;"}
-          = @piece_deleted_count
-          pièce(s) supprimée(s)
       %span.pieces_total_count.hide= @documents.total_count
       - if @user.active?
         .actiongroup.float-right

@@ -1,5 +1,5 @@
 // showing all pieces of the pack given by link
-function showPieces(link, page=1, by_preseizure=null) {
+function showPieces(link, page=1, by_preseizure=null,by_scroll="false") {
   if(page < 1 || window.piecesLoaderLocked)
     return false
 
@@ -24,11 +24,11 @@ function showPieces(link, page=1, by_preseizure=null) {
   $("#panel3").hide();
   $("#panel1").show();
 
-  getPieces(url, link.text(), by_preseizure);
+  getPieces(url, link.text(), by_preseizure,by_scroll);
 }
 
 // fecth all pieces of the pack
-function getPieces(url,title,by_preseizure=null) {
+function getPieces(url,title,by_preseizure=null,by_scroll) {
   $.ajax({
     url: encodeURI(url),
     data: "",
@@ -42,7 +42,10 @@ function getPieces(url,title,by_preseizure=null) {
         vTitle = title;
       else
         vTitle = "Résultat : ";
-      $("#panel1 .header h3").text(vTitle);
+      if (by_scroll== "false")
+      {
+        $("#panel1 .header h3").text(vTitle);
+      }
     },
     success: function(data){
       data = data.trim();
@@ -90,7 +93,7 @@ function getPieces(url,title,by_preseizure=null) {
       $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
       if ($(".piece_deleted_count").length > 0)
       {
-        $(".piece_deleted_count").clone().appendTo("#panel1 .header h3").removeClass('hide');
+        $(".piece_deleted_count").appendTo("#panel1 .header h3").removeClass('hide');
       }
 
       $("#pageslist .thumb img").load(function(){
@@ -193,6 +196,15 @@ function showPage(link,view="init") {
   initEventOnPiecesRefresh();
 }
 
+function ShowPdfView(data_content, show='init')
+{
+  if (show == 'init')
+  {
+    $("#PdfViewerDialog").modal('show');
+  }
+  $("#PdfViewerDialog .modal-body .view-content").html(data_content);
+  initEventOnPiecesRefresh();
+}
 // toggle page selection given by link
 function selectPage(link) {
   var li = link.parents("li.pages")
