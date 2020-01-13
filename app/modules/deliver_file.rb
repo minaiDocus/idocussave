@@ -3,7 +3,7 @@ module DeliverFile
     service_name  = to_service_name(service_prefix)
     service_class = to_service_class(service_prefix)
 
-    packs = Pack.joins(:remote_files).where('remote_files.state IN (?, ?) AND remote_files.tried_count < ? AND remote_files.service_name = ?', "waiting", "not_synced", '2', service_name)
+    packs = Pack.joins(:remote_files).where('remote_files.state IN (?, ?) AND remote_files.tried_count < ? AND remote_files.service_name = ?', "waiting", "not_synced", '2', service_name).distinct
 
     packs.each do |pack|
       receivers = generate_receivers(pack, service_name)
