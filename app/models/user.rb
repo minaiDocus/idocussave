@@ -122,6 +122,10 @@ class User < ApplicationRecord
     user.format_name
   end
 
+  #Overwrite User code method
+  def my_code
+    self.code.presence || self.memberships.first.try(:code)
+  end
 
   def to_param
     [id, company.parameterize].join('-')

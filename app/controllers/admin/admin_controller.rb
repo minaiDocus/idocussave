@@ -78,7 +78,7 @@ class Admin::AdminController < ApplicationController
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.retryable.order(created_at: :asc)
         data = remote_files.map do |remote_file|
-          name = remote_file.user.try(:code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          name = remote_file.user.try(:my_code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
           [name, remote_file.service_name].join(' : ')
         end.uniq
 
@@ -102,7 +102,7 @@ class Admin::AdminController < ApplicationController
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.not_retryable.order(created_at: :asc)
         data = remote_files.map do |remote_file|
-          name = remote_file.user.try(:code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          name = remote_file.user.try(:my_code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
           [name, remote_file.service_name].join(' : ')
         end.uniq
 
