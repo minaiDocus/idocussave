@@ -227,6 +227,18 @@ jQuery(function () {
       as_user_view_box.slideDown('fast');
   });
 
+  $('#notifications.unread_all_onclick').click(function(e){
+    $.ajax({
+        url: "/account/notifications/unread_all_notifications",
+        data: { unread:"all" },
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+          setTimeout(function(){ $('.notif-badge').hide(); }, 1000);
+        }
+    });
+  })
+
   // Add a top padding when necessary
 
   // $menu = $('.navbar-fixed-top');

@@ -22,6 +22,12 @@ class Account::NotificationsController < Account::AccountController
     redirect_to notification.url
   end
 
+  def unread_all_notifications
+    if params[:unread].presence
+      @user.notifications.update_all is_read: true, updated_at: Time.now
+    end
+  end
+
   private
 
   def load_notifications

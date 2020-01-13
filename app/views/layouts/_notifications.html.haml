@@ -1,9 +1,9 @@
-%ul#notifications{ class: (current_user.try(:is_admin) && controller_name != 'organizations') ? '' : 'ml-auto'}
+%ul#notifications.unread_all_onclick{ class: (current_user.try(:is_admin) && controller_name != 'organizations') ? '' : 'ml-auto'}
   %li.dropdown.dropdown-notifications
     - if @user.notifications.not_read.count > 0
       %span.badge.badge-alert.fs-origin.float-right.notif-badge
         = @user.notifications.not_read.count
-    %a.dropdown-itm{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
+    %a.dropdown-it{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
       = content_tag 'svg', content_tag('use', '', 'xlink:href'=>"/assets/open-iconic.min.svg#bell", class: "icon icon-bell"), viewBox: "0 0 8 8", class: "oi-icon colored", 'data-count' => @user.notifications.not_read.count, fill: "#FFF"
     .dropdown-menu.dropdown-position-bottomright.bg-transparent.small-shadow
       .dropdown-toolbar

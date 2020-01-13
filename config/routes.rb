@@ -442,9 +442,10 @@ Rails.application.routes.draw do
 
     resource :suspended, only: :show
 
-    resources :notifications, only: :index do
+    resources :notifications do
       get 'latest', on: :collection
       get 'link_through', on: :member
+      post 'unread_all_notifications', on: :collection
     end
 
     resources :account_sharings, only: %w(new create destroy) do
