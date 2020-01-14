@@ -38,6 +38,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
   def operations(with_page = true)
     return @operations unless @operations.nil?
 
+
     bank_account_ids = @account.bank_accounts.used.map(&:id)
 
     operations = @account.operations.retrieved.where(
@@ -45,8 +46,10 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
         Operation.arel_table[:processed_at].not_eq(nil)
       )
     )
-
-    @operations = Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).order("#{sort_column} #{sort_direction}").includes(:bank_account)
+    @operations = Operation.search_for_collection(operations,
+                                                  search_terms(params[:banking_operation_contains]))
+                                                  .order("#{sort_column} #{sort_direction}")
+                                                  .includes(:bank_account)
     if with_page
       @operations = @operations.page(params[:page]).per(params[:per_page])
     end

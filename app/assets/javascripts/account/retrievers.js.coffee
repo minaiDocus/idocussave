@@ -73,9 +73,6 @@ jQuery ->
         dataType: 'html'
         type: 'GET'
         success: (data) ->
-
-          # alert(window.retriever_contains_state)
-
           $('.popover').remove()
           $('.tooltip').remove()
           $('thead a, .list_options a').unbind 'click'
@@ -344,3 +341,10 @@ jQuery ->
     Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
     load_retrievers_list()
 
+  # for /account/retrieved_banking_operations
+
+  $('.retrieved_banking_operations .page-link-badge').on 'click', (e) ->
+    e.preventDefault()
+    per_page = $(this).text()
+    $('.per_page').val(per_page)
+    $('form .submit_all').click()
