@@ -9,7 +9,7 @@ class Account::Documents::UploadsController < Account::AccountController
                  @user
                end
 
-    if customer.try(:options).try(:is_upload_authorized)
+    if customer.try(:options).try(:is_upload_authorized) && params[:files].present?
       uploaded_document = UploadedDocument.new(params[:files][0].tempfile,
                                                params[:files][0].original_filename,
                                                customer,
