@@ -90,7 +90,7 @@ class CustomActiveStorageObject
       end
 
       unless File.exist? tmp_file_path
-        dir = FileUtils.makedirs(dir)
+        FileUtils.makedirs(dir)
         FileUtils.chmod(0755, dir)
 
         FileUtils.delay_for(1.hours, queue: :low).remove_dir(dir, true)

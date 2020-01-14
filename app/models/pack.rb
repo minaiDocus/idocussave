@@ -224,7 +224,23 @@ class Pack < ApplicationRecord
 
 
   def archive_file_path
-    File.join([Rails.root, 'files', Rails.env, 'archives', archive_name])
+    dir = "#{Rails.root}/tmp/archives/#{self.id}"
+    zip_path = File.join(dir, archive_name)
+
+    unless File.exist?(zip_path)
+      FileUtils.makedirs(dir)
+      FileUtils.chmod(0755, dir)
+
+      pieces.each do |piece|
+        piece_file_path = piece.cloud_content_object.path
+        FileUtils.copy piece_file_path, File.join(dir, File.basename(piece_file_path)) if File.exist?(piece_file_path)
+      end
+
+      POSIX::Spawn::system "zip #{zip_path} #{dir}/*"
+      FileUtils.delay_for(5.minutes, queue: :low).remove_dir(dir, true)
+    end
+
+    zip_path
   end
 
   def self.find_by_name(name)
