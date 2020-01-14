@@ -340,11 +340,3 @@ jQuery ->
     Idocus.retriever_contains_name  = $('#retriever_contains_name').val()
     Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
     load_retrievers_list()
-
-  # for /account/retrieved_banking_operations
-
-  $('.retrieved_banking_operations .page-link-badge').on 'click', (e) ->
-    e.preventDefault()
-    per_page = $(this).text()
-    $('.per_page').val(per_page)
-    $('form .submit_all').click()

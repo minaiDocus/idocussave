@@ -11,8 +11,7 @@
 .row.retractable.with-filter
   .col-md-12.retractable-content
     .box
-      .retrieved_banking_operations
-        = render partial: 'shared/list_options', locals: { collection: @operations }
+      = render partial: 'shared/list_options', locals: { collection: @operations }
       %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
         %thead
           %tr.bg-brown.text-white
@@ -35,8 +34,7 @@
               %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || '€'}"
               - if current_user.collaborator?
                 %td= is_operation_pre_assigned(operation)
-      .retrieved_banking_operations
-        = render partial: 'shared/list_options', locals: { collection: @operations }
+      = render partial: 'shared/list_options', locals: { collection: @operations }
 
   .card.retractable-filter
     = form_tag account_retrieved_banking_operations_path, method: :get, class: 'form-filter' do
@@ -45,7 +43,6 @@
           %h3 Filtres
         .float-right.margin1left
           %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
-        %input.per_page{name: 'per_page', value: '20', type: :hidden}
       .retractable-filter-content
         .card-body
           .form-group.clearfix
@@ -94,7 +91,7 @@
                 = select_tag 'banking_operation_contains[pre_assigned]', options_for_select({"" => "", "Oui" => "pre_assigned", "Non" => "not_pre_assigned", "En attente" => "is_waiting"}, (params[:banking_operation_contains][:pre_assigned] rescue nil))
         .card-footer
           .form-actions
-            = submit_tag t('filters.action'), class: 'btn btn-primary submit_all'
+            = submit_tag t('filters.action'), class: 'btn btn-primary'
             - if current_user.is_admin && params[:banking_operation_contains].present?
               = link_to 'Débloquer les opérations', unlock_operations_account_retrieved_banking_operations_path(banking_operation_contains: params.permit(:banking_operation_contains)[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Êtes-vous sûr de vouloir débloquer ces opérations?"}
             = link_to glyphicon('x'), account_retrieved_banking_operations_path, class: 'btn btn-light'
