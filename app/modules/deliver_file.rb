@@ -169,7 +169,7 @@ module DeliverFile
         when :knowings
           KnowingsSyncService.new(remote_files).execute
         when :my_company_files
-          push_to_mcf(@pack, @receiver, remote_files)
+          push_to_mcf
         when :dropbox_basic
           SendToDropbox.new(storage, remote_files, logger: logger).execute
         when :box
@@ -178,7 +178,7 @@ module DeliverFile
           SendToFTP.new(storage, remote_files, logger: logger).execute
         when :google_doc
           GoogleDriveSyncService.new(storage).sync(remote_files)
-        end      
+        end
       end
 
       total_synced = remote_files.select { |e| e.state == 'synced' }.size
