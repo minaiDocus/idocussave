@@ -709,7 +709,7 @@
         diffHeight = $('#lists_pieces #lists_pieces_content').outerHeight() - $(window).outerHeight();
         if(sTop >= (diffHeight - 25))
         {
-          showPieces(window.currentLink, window.piecesPage,'',true);
+          showPieces(window.currentLink, window.piecesPage, null, true);
         }
       }
       else if(window.currentView == 'preseizures')
