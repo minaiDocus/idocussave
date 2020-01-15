@@ -204,6 +204,11 @@ class Pack::Piece < ApplicationRecord
     end
   end
 
+  def self.correct_pdf_signature_of(piece_id)
+    piece = Pack::Piece.find piece_id
+    piece.correct_pdf_signature
+  end
+
   def cloud_content_object
     CustomActiveStorageObject.new(self, :cloud_content)
   end
@@ -223,6 +228,7 @@ class Pack::Piece < ApplicationRecord
         self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
       else
         logger.info "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})"
+        Pack::Piece.delay_for(5.minutes, queue: :low).correct_pdf_signature_of(self.id)
       end
     rescue => e
       logger.info "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})"
