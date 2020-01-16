@@ -330,13 +330,11 @@ class Account::DocumentsController < Account::AccountController
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
-    preseizures = preseizures.by_position
-    report      = preseizures.first.try(:report)
-    user        = preseizures.first.try(:user)
-
     supported_format = %w[csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid]
 
     if preseizures.any? && export_format.in?(supported_format)
+      preseizures = preseizures.by_position
+
       export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
 
       if export.error?
