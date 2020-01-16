@@ -366,7 +366,7 @@ $('#preseizuresModals #exportSelectedPreseizures').on('show.bs.modal', function(
 
     ids  = idt.join(',');
     data = { ids: ids };
-    export_type = type;
+    export_type = 'preseizure';
     export_ids  = ids;
     indication  = 'les écriture(s) comptable(s) filtrée(s) du lot.'
   }

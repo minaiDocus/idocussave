@@ -318,7 +318,7 @@ class Account::DocumentsController < Account::AccountController
     params64 = params64.split('&')
 
     export_type = params64[0].presence
-    export_ids = params64[1].presence.try(:split, ',')
+    export_ids  = params64[1].presence.try(:split, ',')
     export_format = params64[2].presence
 
     if export_ids && export_type == 'preseizure'
@@ -338,14 +338,14 @@ class Account::DocumentsController < Account::AccountController
       export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
 
       if export.error?
-        render text: "Traitement impossible : #{export.error_message}"
+        render plain: "Traitement impossible : #{export.error_message}"
       else
         send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
       end
     elsif !export_format.in?(supported_format)
-      render text: 'Traitement impossible : le format est incorrect.'
+      render plain: 'Traitement impossible : le format est incorrect.'
     else
-      render text: 'Aucun résultat'
+      render plain: 'Aucun résultat'
     end
   end
 
