@@ -71,7 +71,7 @@ class CustomActiveStorageObject
     @object.send(@attachment.to_s.gsub('cloud_', '').to_sym)
   end
 
-  def generate_file(style = '')
+  def generate_file(style = '', retry_count=1)
     begin
       if style.to_s == 'medium' || style.to_s == 'thumb'
         size_limit = if style.to_s == 'medium'
@@ -103,8 +103,15 @@ class CustomActiveStorageObject
       logger.info "[Generate File] #{@object.class.name} - #{@object.id} - Not generated" unless tmp_file_path.present?
       @base_path = tmp_file_path
     rescue => e
-      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s}"
-      @base_path = nil
+      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retry_count}"
+
+      if retry_count > 0 && retry_count <= 2
+        sleep retry_count * 2
+
+        @base_path = generate_file(style, (retry_count+1))
+      else
+        @base_path = nil
+      end
     end
   end
 
