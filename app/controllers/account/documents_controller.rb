@@ -304,10 +304,11 @@ class Account::DocumentsController < Account::AccountController
     if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
       options << ['XML (Ibiza)', 'xml_ibiza']
     end
-    options << ['ZIP (Quadratus)', 'zip_quadratus'] if user.uses_quadratus?
-    options << ['ZIP (Coala)', 'zip_coala']         if user.uses_coala?
-    options << ['XLS (Coala)', 'xls_coala']         if user.uses_coala?
-    options << ['CSV (Cegid)', 'csv_cegid']         if user.uses_cegid?
+    options << ['ZIP (Quadratus)', 'zip_quadratus']      if user.uses_quadratus?
+    options << ['ZIP (Coala)', 'zip_coala']              if user.uses_coala?
+    options << ['XLS (Coala)', 'xls_coala']              if user.uses_coala?
+    options << ['CSV (Cegid)', 'csv_cegid']              if user.uses_cegid?
+    options << ['TXT (Fec Agiris)', 'txt_fec_agiris']    if user.uses_fec_agiris?
 
     render json: { options: options }, status: 200
   end

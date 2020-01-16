@@ -45,10 +45,14 @@ var initEventOnPreseizuresRefresh = function(){
     if(window.preseizuresSelected.length > 0)
       confirm_text = "Vous êtes sur le point d'envoyer "+window.preseizuresSelected.length+" écriture(s) non livrée(s) de la séléction vers "+software_used+", Etes-vous sûr ?";
 
+    var filter_visibility = $('.filter_indication').is(':visible') || false;
+
     if(confirm(confirm_text))
     {
       if(window.preseizuresSelected.length > 0)
         deliverPreseizures('selection');
+      else if (filter_visibility == true)
+        deliverPreseizures('filter');
       else
         deliverPreseizures('all');
     }
@@ -328,26 +332,51 @@ var initEventOnPreseizuresAccountRefresh = function(){
 }
 
 $('#preseizuresModals #exportSelectedPreseizures').on('show.bs.modal', function(){
-  var id = 0;
+  var id  = 0;
   var ids = 0;
+  var idt = [];
   var export_ids = 0;
   var export_type = '';
   var indication = 'toutes les écritures comptables du lot.';
+  var filter_visibility = $('.filter_indication').is(':visible') || false;
 
-  if(window.preseizuresSelected.length <= 0)
+  if(window.preseizuresSelected.length > 0)
+  {
+    indication = window.preseizuresSelected.length + ' écriture(s) comptable(s) du lot.';
+    data = { ids: window.preseizuresSelected };
+    export_type = 'preseizure';
+    export_ids  = window.preseizuresSelected.join(',');
+  }
+  else if (filter_visibility == true)
+  {
+    type = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack';
+
+    if (type == 'report')
+    {
+      $(".preseizure.content_preseizure").each(function(e){
+        idt.push($(this).attr('id').split("_")[1]);
+      });
+    }
+    else
+    {
+      $(".check_modif_preseizure input").each(function(e){
+        idt.push($(this).attr('id').split("_")[1]);
+      });
+    }
+
+    ids  = idt.join(',');
+    data = { ids: ids };
+    export_type = type;
+    export_ids  = ids;
+    indication  = 'les écriture(s) comptable(s) filtrée(s) du lot.'
+  }
+  else
   {
     id = window.currentLink.parents("li").attr("id").split("_")[2];
     type = (window.currentLink.parents("li").hasClass('report'))? 'report' : 'pack';
     data = { type: type, id: id };
     export_type = type;
     export_ids = id;
-  }
-  else
-  {
-    indication = window.preseizuresSelected.length + ' écriture(s) comptable(s) du lot.';
-    data = { ids: window.preseizuresSelected };
-    export_type = 'preseizure';
-    export_ids  = window.preseizuresSelected.join(',');
   }
 
   $('#exportSelectedPreseizures .preseizures_indication').html(indication);

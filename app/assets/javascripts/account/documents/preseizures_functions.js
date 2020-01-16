@@ -276,8 +276,9 @@ function editPreseizureEntry(id){
 }
 
 function deliverPreseizures(link='all'){
-  var id = 0;
+  var id  = 0;
   var ids = 0;
+  var idt = []
 
   if(link === 'all')
   {
@@ -294,6 +295,14 @@ function deliverPreseizures(link='all'){
     ids.forEach(function(elem){
       $('#show_preseizures #lists_preseizures .preseizure#div_'+elem+' a.tip_deliver').remove();
     });
+  }
+  else if(link === 'filter')
+  {
+    $(".check_modif_preseizure input").each(function(e){
+      idt.push($(this).attr('id').split("_")[1]);
+    })
+    ids = idt.join(',');
+    data = { ids: ids };
   }
   else
   {
