@@ -67,10 +67,14 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
   end
 
   def sort_column
-    if params[:sort].in? %w[created_at journal original_file_name pages_number]
-      params[:sort]
+    if params[:sort].in? %w[created_at]
+      "ibizabox_folders.#{params[:sort]}"
+    elsif params[:sort].in? %w[original_file_name pages_number]
+      "temp_documents.#{params[:sort]}"
+    elsif params[:sort].in? %w[journal]
+      "account_book_types.name"
     else
-      'created_at'
+      'ibizabox_folders.created_at'
     end
   end
   helper_method :sort_column

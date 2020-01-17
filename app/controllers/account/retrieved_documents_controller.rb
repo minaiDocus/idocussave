@@ -25,7 +25,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
 
   def piece
     if @document.piece
-      if File.exist?(@document.piece.cloud_content_object.path)
+      if File.exist?(@document.piece.cloud_content_object.path.to_s)
         send_file(@document.piece.cloud_content_object.path, type: 'application/pdf', filename: @document.piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
       else
         render body: nil, status: 404

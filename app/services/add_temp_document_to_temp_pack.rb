@@ -9,7 +9,7 @@ class AddTempDocumentToTempPack
 
       temp_document = TempDocument.find_or_initialize_with(opts)
     elsif options[:fingerprint].present?
-      opts = { content_fingerprint: options[:fingerprint], user_id: options[:user_id] }
+      opts = { original_fingerprint: options[:fingerprint], user_id: options[:user_id] }
 
       temp_document = TempDocument.find_or_initialize_with(opts)
     else
