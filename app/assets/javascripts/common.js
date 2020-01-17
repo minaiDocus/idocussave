@@ -31,72 +31,6 @@
 // Lola LAI KAM <lailol@directmada.com>
 //
 
-
-
-
-// TODO .....
-
-function reloadUrlPaginationToFilter(){
-  var url  = window.location.href;
-  var text = "";
-  var filterValue = "";
-  $('.page-link-badge').click(function() {
-    url = window.location.href;
-    text = $(this).text();
-    url  = window.location.href;
-  });
-  $('input[type="submit"]').click(function(e){
-    filterValue = $(this).val();
-    if((filterValue == "Filtrer") && !url.match(/per_page=(\d+)/) && (text != "") ){
-      url = url + "&per_page=" + text;
-    }
-    else{
-      url = url + "&per_page=20";
-    }
-    //window.location.href = url;
-    alert("INONA NO ETO:"+url);
-    $(this).attr('action', url).submit();
-  }); 
-  //$(".form-filter").attr('action', url).submit(); 
-}
-
-function genericFilter(){
-
-  function loadUrl(url, perPageNumber){
-    var pattern = /per_page=(\d+)/;
-    var encodingPattern = /utf8=/;
-    if (url.match(pattern)) url = url.replace(pattern, 'per_page='+ perPageNumber);
-    else{
-      if (url.match(encodingPattern)){
-        var links = url.split("?utf8=");
-        url = links[0] + '?per_page='+perPageNumber + '?utf8=' + links[1];
-      }
-      else url = url + '?per_page='+ perPageNumber;     
-    }
-    return url;
-  }
-
-  var url = window.location.href;
-  var formFilterCount = 0;
-  $(".control-section :input").each(function() {
-     var element = $(this);
-     if (element.val() != ""){
-       formFilterCount = parseInt(formFilterCount);
-       formFilterCount = formFilterCount + 1;
-     }
-  });
-
-  if (formFilterCount > 0){
-    $('.page-link-badge').click(function(e){
-      e.preventDefault();
-      var perPageHref = $(this).attr('href');
-      var perPageNumber = $(this).text();
-      window.location.href = loadUrl(url, perPageNumber);
-    });
-  }
-  else window.location.href = url;  
-}
-
 function custom_radio_buttons(){
   $('form .radio_buttons .control-section').livequery(function(){
     $('form .radio_buttons .control-section').each(function(e){
@@ -236,6 +170,49 @@ function adjustIconColor(elem) {
   });
 }
 
+function handlePaginationFilterSubmition(){
+  $(".page-link-badge").click(function(e){
+    e.preventDefault();
+    var per_page = $(this).text().trim();
+    if ($('.form-filter .per_page').length > 0)
+    {
+      $('.form-filter .per_page').val(per_page);
+    }
+    else
+    {
+      $('.form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
+    }
+    $('.form-filter').find('input[type="submit"]').click();
+  });
+
+  $('.pagination .page-item').click(function(e){
+    e.preventDefault();
+    var page = $(this).first().text().trim();
+    if ($('.form-filter .page').length > 0)
+    {
+      $('.form-filter .page').val(page);
+    }
+    else
+    {
+      $('.form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
+    }
+    $('.form-filter').find('input[type="submit"]').click();
+  });
+
+  $('.form-filter').on('submit',function(e){
+    if ($('.form-filter .per_page').length == 0)
+    {
+      var per_page = $(".page-link-badge.badge-info").first().text();
+      $('.form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
+    }
+    if ($('.form-filter .page').length == 0 && $('.pagination').is(':visible'))
+    {
+      var page = $('.pagination .page-item.active').first().text().trim();
+      $('.form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
+    }
+  });
+}
+
 jQuery(function () {
   //For serializing Form to object
   $.fn.serializeObject = function() {
@@ -303,33 +280,11 @@ jQuery(function () {
           setTimeout(function(){ $('.notif-badge').hide(); }, 1000);
         }
     });
-  })
+  });
 
-  // Add a top padding when necessary
-
-  // $menu = $('.navbar-fixed-top');
-
-  // function dynamicTopPadding() {
-  //   if ($menu.height() < 45) {
-  //     $('.ad_dynamic_padding').css('padding-top', '0px');
-  //     $('.dynamic_padding').css('padding-top', '60px');
-  //   } else if ($menu.height() < 55) {
-  //     $('.ad_dynamic_padding').css('padding-top', '0px');
-  //     $('.dynamic_padding').css('padding-top', '0px');
-  //   } else {
-  //     $('.ad_dynamic_padding').css('padding-top', '40px');
-  //     $('.dynamic_padding').css('padding-top', '100px');
-  //   }
-  // }
-
-  // Execute on load
-  // dynamicTopPadding();
-
-  //Apply generic Filter with pagination
-  genericFilter();
-
-  // Bind event listener
-  // $(window).resize(dynamicTopPadding);
+  //Kip pagination state when filter is active
+  if( $('.form-filter').is(":visible") && !$('.form-filter').hasClass('retriever_search') )
+    handlePaginationFilterSubmition()
 
   //adjust icons color
   adjustIconColor();
