@@ -31,6 +31,72 @@
 // Lola LAI KAM <lailol@directmada.com>
 //
 
+
+
+
+// TODO .....
+
+function reloadUrlPaginationToFilter(){
+  var url  = window.location.href;
+  var text = "";
+  var filterValue = "";
+  $('.page-link-badge').click(function() {
+    url = window.location.href;
+    text = $(this).text();
+    url  = window.location.href;
+  });
+  $('input[type="submit"]').click(function(e){
+    filterValue = $(this).val();
+    if((filterValue == "Filtrer") && !url.match(/per_page=(\d+)/) && (text != "") ){
+      url = url + "&per_page=" + text;
+    }
+    else{
+      url = url + "&per_page=20";
+    }
+    //window.location.href = url;
+    alert("INONA NO ETO:"+url);
+    $(this).attr('action', url).submit();
+  }); 
+  //$(".form-filter").attr('action', url).submit(); 
+}
+
+function genericFilter(){
+
+  function loadUrl(url, perPageNumber){
+    var pattern = /per_page=(\d+)/;
+    var encodingPattern = /utf8=/;
+    if (url.match(pattern)) url = url.replace(pattern, 'per_page='+ perPageNumber);
+    else{
+      if (url.match(encodingPattern)){
+        var links = url.split("?utf8=");
+        url = links[0] + '?per_page='+perPageNumber + '?utf8=' + links[1];
+      }
+      else url = url + '?per_page='+ perPageNumber;     
+    }
+    return url;
+  }
+
+  var url = window.location.href;
+  var formFilterCount = 0;
+  $(".control-section :input").each(function() {
+     var element = $(this);
+     if (element.val() != ""){
+       formFilterCount = parseInt(formFilterCount);
+       formFilterCount = formFilterCount + 1;
+     }
+  });
+
+  if (formFilterCount > 0){
+    $('.page-link-badge').click(function(e){
+      e.preventDefault();
+      var perPageHref = $(this).attr('href');
+      var perPageNumber = $(this).text();
+      window.location.href = loadUrl(url, perPageNumber);
+    });
+  }
+  else window.location.href = url;  
+}
+
 function custom_radio_buttons(){
   $('form .radio_buttons .control-section').livequery(function(){
     $('form .radio_buttons .control-section').each(function(e){
@@ -258,6 +324,9 @@ jQuery(function () {
 
   // Execute on load
   // dynamicTopPadding();
+
+  //Apply generic Filter with pagination
+  genericFilter();
 
   // Bind event listener
   // $(window).resize(dynamicTopPadding);
