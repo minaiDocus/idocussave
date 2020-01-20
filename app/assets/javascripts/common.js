@@ -205,11 +205,6 @@ function handlePaginationFilterSubmition(){
       var per_page = $(".page-link-badge.badge-info").first().text();
       $('.form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
     }
-    if ($('.form-filter .page').length == 0 && $('.pagination').is(':visible'))
-    {
-      var page = $('.pagination .page-item.active').first().text().trim();
-      $('.form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
-    }
   });
 }
 
@@ -282,7 +277,7 @@ jQuery(function () {
     });
   });
 
-  //Kip pagination state when filter is active
+  //Keep pagination state when filter is active
   if( $('.form-filter').is(":visible") && !$('.form-filter').hasClass('retriever_search') )
     handlePaginationFilterSubmition()
 
