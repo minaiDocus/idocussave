@@ -9,6 +9,8 @@ class FtpFetcher
     ftp = Net::FTP.new(url, username, password)
     ftp.passive = true
 
+    FtpFetcher::FtpProcessor.new(ftp, dir).execute
+
     ftp.chdir dir
 
     dirs = ftp.nlst.sort
@@ -158,6 +160,88 @@ class FtpFetcher
         yield(file)
       ensure
         file.close
+      end
+    end
+  end
+
+  class FtpProcessor
+    def initialize(ftp, root)
+      @root_path = "/data/ppp/"
+      @ftp = ftp
+
+      @ftp.chdir root
+
+      @code_pattern = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
+      @journal_pattern = '[a-zA-Z0-9]+'
+      @period_pattern = '\d{4}([01T]\d)*'
+    end
+
+    def execute
+      dirs = @ftp.nlst.sort
+
+      dirs.each do |f_path|
+        file_path = @root_path + f_path
+
+        if file_path && file_path.match(/\.uploaded$/)
+          dir = File.basename file_path, '.*'
+          dir = @root_path + dir
+
+          if File.exist?(dir)
+            if Dir.glob(dir + '/*').size == File.read(file_path).to_i
+              File.rename dir, "#{dir}_processing"
+
+              process("#{dir}_processing")
+
+              File.delete file_path
+              File.rename "#{dir}_processing", "#{dir}_ready"
+            else
+              File.rename file_path, "#{dir}.uncomplete"
+            end
+          end
+        end
+      end
+    end
+
+    def valid?(file_path)
+      begin
+        [1,2].include?(DocumentTools.pages_number(file_path))
+      rescue GLib::Error
+        false
+      end
+    end
+
+    def process(path)
+      file_paths = Dir.glob(path + '/*').sort
+
+      grouped_packs(file_paths).each do |pack_name, file_names|
+        invalid_files = []
+
+        file_names.each do |file_path|
+          unless valid?(file_path)
+            invalid_files << file_path 
+          end
+        end
+
+        if invalid_files.any?
+          dir = path.gsub('_processing', '_errors')
+          FileUtils.makedirs(dir)
+          FileUtils.chmod(0755, dir)
+
+          move_to_error(dir, file_names, invalid_files)
+        end
+      end
+    end
+
+    def grouped_packs(file_names)
+      file_names.group_by do |e|
+        result = File.basename(e).scan(/\A(#{@code_pattern}(_| )#{@journal_pattern}(_| )#{@period_pattern})/)[0][0]
+      end
+    end
+
+    def move_to_error(dir, file_names, invalid_files)
+      file_names.each do |file_path|
+        error_file_name = invalid_files.include?(file_path) ? File.basename(file_path, '.*') + '_error' + File.extname(file_path) : File.basename(file_path)
+        FileUtils.mv file_path, "#{dir}/#{error_file_name}"
       end
     end
   end
