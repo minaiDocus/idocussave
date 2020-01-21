@@ -98,12 +98,12 @@ module ApplicationHelper
 
 
   def icon_ok
-    content_tag :i, '', class: 'icon-ok'
+    glyphicon('check')
   end
 
 
   def icon_not_ok
-    content_tag :i, '', class: 'icon-remove'
+    glyphicon('x')
   end
 
 

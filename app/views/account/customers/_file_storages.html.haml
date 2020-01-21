@@ -11,31 +11,31 @@
     %tbody.retractable.slidedown
       %tr
         %th Dropbox Extended
-        %td= icon_tag user.is_dropbox_extended_authorized
-        %td= icon_tag(DropboxExtended.access_token.present?)
+        %td.text-center= icon_tag user.is_dropbox_extended_authorized
+        %td.text-center= icon_tag(DropboxExtended.access_token.present?)
         %td
         %td= user.dropbox_delivery_folder
       %tr
         %th Dropbox
-        %td= icon_tag external_file_storage.is_dropbox_basic_authorized?
-        %td= icon_tag external_file_storage.dropbox_basic.is_configured?
-        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
+        %td.text-center= icon_tag external_file_storage.is_dropbox_basic_authorized?
+        %td.text-center= icon_tag external_file_storage.dropbox_basic.is_configured?
+        %td.text-center= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
         %td= external_file_storage.dropbox_basic.path
       %tr
         %th Google Drive
-        %td= icon_tag external_file_storage.is_google_docs_authorized?
-        %td= icon_tag external_file_storage.google_doc.is_configured?
-        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS)
+        %td.text-center= icon_tag external_file_storage.is_google_docs_authorized?
+        %td.text-center= icon_tag external_file_storage.google_doc.is_configured?
+        %td.text-center= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS)
         %td= external_file_storage.google_doc.path
       %tr
         %th FTP
-        %td= icon_tag external_file_storage.is_ftp_authorized?
-        %td= icon_tag external_file_storage.ftp.is_configured?
-        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
+        %td.text-center= icon_tag external_file_storage.is_ftp_authorized?
+        %td.text-center= icon_tag external_file_storage.ftp.is_configured?
+        %td.text-center= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
         %td= external_file_storage.ftp.path
       %tr
         %th Box
-        %td= icon_tag external_file_storage.is_box_authorized?
-        %td= icon_tag external_file_storage.box.is_configured?
-        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
+        %td.text-center= icon_tag external_file_storage.is_box_authorized?
+        %td.text-center= icon_tag external_file_storage.box.is_configured?
+        %td.text-center= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
         %td= external_file_storage.box.path
