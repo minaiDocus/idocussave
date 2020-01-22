@@ -1,31 +1,38 @@
 .box.bg-light
   %h6 Choisir le(s) groupe(s) et/ou client(s) affectés par la règle.
   %hr
-  .row
-    .form-group
-      .controls.users
-        .col-md-6
-          Groupes
-          %br
-          (
-          = link_to 'Tous', '#', class: 'all_groups'
-          \/
-          = link_to 'Aucun', '#', class: 'no_groups'
-          )
-          %br
+  .form-group
+    .controls.users.row
+      .col-md-6
+        Groupes
+        %br
+        (
+        = link_to 'Tous', '#', class: 'all_groups'
+        \/
+        = link_to 'Aucun', '#', class: 'no_groups'
+        )
+        %br
+        %ul.padding0{ style: "list-style: none" }
           - @organization.groups.includes(:members).order(name: :asc).each do |group|
-            = check_box_tag 'account_number_rule[group][]', group.members.map{ |m| m.id.to_s }, false, id: "account_number_rule_group_#{group.id}"
-            %label{ for: "account_number_rule_group_#{group.id}" }= group.name
-        .col-md-6
-          = t('activerecord.models.account_number_rule.attributes.users')
-          %br
-          (
-          = link_to 'Tous', '#', class: 'all_users'
-          \/
-          = link_to 'Aucun', '#', class: 'no_users'
-          )
-          %br
-          - users = @account_number_rule.present? ? @account_number_rule.users : []
+            %li.clearfix
+              .float-left{ style: "padding-top: 5px; width: 7%" }
+                = check_box_tag 'account_number_rule[group][]', group.members.map{ |m| m.id.to_s }, false, id: "account_number_rule_group_#{group.id}"
+              .float-left{ style: "width: 92%" }
+                %label{ for: "account_number_rule_group_#{group.id}" }= group.name
+      .col-md-6
+        = t('activerecord.models.account_number_rule.attributes.users')
+        %br
+        (
+        = link_to 'Tous', '#', class: 'all_users'
+        \/
+        = link_to 'Aucun', '#', class: 'no_users'
+        )
+        %br
+        - users = @account_number_rule.present? ? @account_number_rule.users : []
+        %ul.padding0{ style: "list-style: none" }
           - @organization.customers.active.order(code: :asc).each do |user|
-            = check_box_tag 'account_number_rule[user_ids][]', user.id, users.include?(user),id: "account_number_rule_user_ids_#{user.id}"
-            %label{ for: "account_number_rule_user_ids_#{user.id}" }= user.info
+            %li.clearfix
+              .float-left{ style: "padding-top: 5px; width: 7%" }
+                = check_box_tag 'account_number_rule[user_ids][]', user.id, users.include?(user),id: "account_number_rule_user_ids_#{user.id}"
+              .float-left{ style: "width: 92%" }
+                %label{ for: "account_number_rule_user_ids_#{user.id}" }= user.info
