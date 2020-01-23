@@ -5,19 +5,29 @@
   .row
     .col-md-12
       .box
-        - if @customer.configured?
-          %h3
-            Plan comptable du client : 
-            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
-        - else
-          .float-left
-            %h3
-              Plan comptable pour le dossier : 
-              %span.text-info.fs-origin= @customer
-          .float-right
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
-            = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+        .row
+          - if @customer.configured?
+            .col-md-9
+              %h3
+                Plan comptable du client :
+                = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
+            .col-md-3{style: "padding-top: 3px;padding-left: 50px;border-radius: 3px;background-color: #f8f9fa;"}
+              = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+                .form-group.clearfix.float-left.margin0
+                  .control-section
+                    = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%", accept: "text/plain"
+                .form-actions.float-left.margin1left
+                  = submit_tag 'Importer FEC', class: 'btn btn-primary'
+                  %span.badge.badge-info.fs-origin .txt
+          - else
+            .float-left
+              %h3
+                Plan comptable pour le dossier :
+                %span.text-info.fs-origin= @customer
+            .float-right
+              = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+              = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+              = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
   .row
     .col-md-12

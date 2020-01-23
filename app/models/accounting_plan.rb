@@ -17,42 +17,52 @@ class AccountingPlan < ApplicationRecord
   scope :updating,     -> { where(is_updating: true) }
 
   def import(file, type)
-    items = type == 'providers' ? providers : customers
-    begin
-      csv_string = File.read(file.path)
-      csv_string.encode!('UTF-8')
-
+    if type == "fec"
       begin
-        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if csv_string.match(/\\x([0-9a-zA-Z]{2})/)
-      rescue => e
-        csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+        return false if file.content_type != "text/plain"
+        file_path  = file.path
+        ImportFecService.new(file_path).execute user
+        true
+      rescue
+        false
       end
+    elsif
+      items = type == 'providers' ? providers : customers
+      begin
+        csv_string = File.read(file.path)
+        csv_string.encode!('UTF-8')
 
-      csv_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
-
-      ::CSV.parse(csv_string, headers: true, col_sep: ';') do |row|
-        encoded_hash = row.to_hash.with_indifferent_access
-
-        attrs = { third_party_name: encoded_hash['NOM_TIERS'], third_party_account: encoded_hash['COMPTE_TIERS'], conterpart_account: encoded_hash['COMPTE_CONTREPARTIE'], code: encoded_hash['CODE_TVA'] }
-
-        if (item = items.find_by_name(encoded_hash['NOM_TIERS']))
-          item.update(attrs)
-        else
-          item = AccountingPlanItem.new(attrs)
-          if type == 'providers'
-            item.kind = 'provider'
-            providers << item
-          else
-            item.kind = 'customer'
-            customers << item
-          end
-          item.save
+        begin
+          csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if csv_string.match(/\\x([0-9a-zA-Z]{2})/)
+        rescue => e
+          csv_string.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
         end
-      end
 
-      true
-    rescue => e
-      false
+        csv_string.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+
+        ::CSV.parse(csv_string, headers: true, col_sep: ';') do |row|
+          encoded_hash = row.to_hash.with_indifferent_access
+
+          attrs = { third_party_name: encoded_hash['NOM_TIERS'], third_party_account: encoded_hash['COMPTE_TIERS'], conterpart_account: encoded_hash['COMPTE_CONTREPARTIE'], code: encoded_hash['CODE_TVA'] }
+
+          if (item = items.find_by_name(encoded_hash['NOM_TIERS']))
+            item.update(attrs)
+          else
+            item = AccountingPlanItem.new(attrs)
+            if type == 'providers'
+              item.kind = 'provider'
+              providers << item
+            else
+              item.kind = 'customer'
+              customers << item
+            end
+            item.save
+          end
+        end
+        true
+      rescue => e
+        false
+      end
     end
   end
 

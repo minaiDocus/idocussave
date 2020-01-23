@@ -39,6 +39,9 @@ class Account::AccountingPlansController < Account::OrganizationController
     elsif params[:customers_file]
       file = params[:customers_file]
       type = 'customers'
+    elsif params[:fec_file]
+      file = params[:fec_file]
+      type = 'fec'
     end
 
     if file
