@@ -19,6 +19,7 @@ class CreateInvoicePdf
         next if periods.empty? && organization_period.price_in_cents_wo_vat == 0
         next if organization.addresses.select{ |a| a.is_for_billing }.empty?
 
+        UpdateOrganizationPeriod.new(organization_period).fetch_all
         #Update discount only for organization and when generating invoice
         DiscountBillingService.update_period(organization_period)
 

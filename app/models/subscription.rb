@@ -42,6 +42,10 @@ class Subscription < ApplicationRecord
 
     UpdatePeriod.new(period).execute
 
+    if organization
+      UpdateOrganizationPeriod.new(period).fetch_all
+    end
+
     period
   end
 

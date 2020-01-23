@@ -10,6 +10,7 @@ class UpdatePeriodPriceService
     if @period.try(:organization)
       @period.tva_ratio = @period.organization.subject_to_vat ? 1.2 : 1
     end
+
     @period.recurrent_products_price_in_cents_wo_vat = recurrent_price
     @period.ponctual_products_price_in_cents_wo_vat  = ponctual_price
     @period.products_price_in_cents_wo_vat           = options_price
@@ -52,11 +53,9 @@ private
   end
 
   def excesses_price
-    @period.price_in_cents_of_excess_scan +
-    @period.price_in_cents_of_excess_compta_pieces  +
-    @period.price_in_cents_of_excess_uploaded_pages +
-    @period.price_in_cents_of_excess_dematbox_scanned_pages +
-    @period.price_in_cents_of_excess_paperclips
+    return 0 if @period.organization #excesses price of organization is saved in an order instead of period execess price
+
+    @period.excesses_price
   end
 
   def total_price

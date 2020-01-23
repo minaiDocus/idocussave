@@ -43,6 +43,9 @@ class Period < ApplicationRecord
     end
   end
 
+  def is_valid_for_quota_organization
+    !self.organization && self.duration == 1 && !self.subscription.is_micro_package_active && !self.subscription.is_mini_package_active
+  end
 
   def amount_in_cents_wo_vat
     price_in_cents_wo_vat
@@ -205,11 +208,17 @@ class Period < ApplicationRecord
     excess_of(:expense_pieces)
   end
 
-
   def excess_compta_pieces
     excess_preseizure_pieces + excess_expense_pieces
   end
 
+  def excesses_price
+    price_in_cents_of_excess_scan +
+    price_in_cents_of_excess_compta_pieces  +
+    price_in_cents_of_excess_uploaded_pages +
+    price_in_cents_of_excess_dematbox_scanned_pages +
+    price_in_cents_of_excess_paperclips
+  end
 
   def compta_pieces
     preseizure_pieces + expense_pieces
@@ -240,8 +249,9 @@ class Period < ApplicationRecord
 
 private
 
-
   def excess_of(value, max_value=nil)
+    return 0 if is_valid_for_quota_organization
+
     max_value ||= "max_#{value.to_s}_authorized"
     return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
 
@@ -274,6 +284,8 @@ private
 
 
   def excess_duration
+    return 1 if organization
+
     if subscription.try(:is_micro_package_active)
       12
     elsif subscription.try(:is_mini_package_active)

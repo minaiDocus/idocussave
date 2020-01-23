@@ -6,6 +6,8 @@ class UpdatePeriodDataService
   end
 
   def execute
+    return false if @period.organization
+
     @period.pages  = @period.documents.sum(:pages)      || 0
     @period.pieces = @period.documents.sum(:pieces)     || 0
 
@@ -30,6 +32,8 @@ class UpdatePeriodDataService
 
     set_tags
     set_delivery_state
+
+    set_organization_period_data_count
 
     @period.save
   end
@@ -79,5 +83,35 @@ class UpdatePeriodDataService
 
   def report_ids
     @report_ids ||= Pack::Report.where(document_id: document_ids).pluck(:id)
+  end
+
+  def set_organization_period_data_count
+    if @period.is_valid_for_quota_organization
+      organization_period = @period.user.organization.subscription.find_or_create_period(@period.start_date)
+
+      organization_period.pages  += @period.pages    || 0
+      organization_period.pieces += @period.pieces   || 0
+
+      organization_period.oversized  += @period.oversized  || 0
+      organization_period.paperclips += @period.paperclips || 0
+
+      organization_period.retrieved_pages  += @period.retrieved_pages   || 0
+      organization_period.retrieved_pieces += @period.retrieved_pieces  || 0
+
+      organization_period.scanned_pages   += @period.scanned_pages  || 0
+      organization_period.scanned_pieces  += @period.scanned_pieces || 0
+      organization_period.scanned_sheets  += @period.scanned_sheets || 0
+
+      organization_period.uploaded_pages  += @period.uploaded_pages  || 0
+      organization_period.uploaded_pieces += @period.uploaded_pieces || 0
+
+      organization_period.dematbox_scanned_pages  += @period.dematbox_scanned_pages  || 0
+      organization_period.dematbox_scanned_pieces += @period.dematbox_scanned_pieces || 0
+
+      organization_period.expense_pieces    += @period.expense_pieces    || 0
+      organization_period.preseizure_pieces += @period.preseizure_pieces || 0
+
+      organization_period.save
+    end
   end
 end
