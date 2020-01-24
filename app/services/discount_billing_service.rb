@@ -120,18 +120,18 @@ class DiscountBillingService
       end
     else
       case quantity_of(option)
-        when (0..50)
+        when (0..75)
           {subscription: 0, retriever: 0}
-        when (51..100)
+        when (76..151)
           {subscription: -1, retriever: 0}
-        when (101..200)
+        when (152..251)
           {subscription: -1.5, retriever: -0.5}
-        when (201..350)
-          {subscription: -2, retriever: -1}
-        when (351..500)
-          {subscription: -3, retriever: -1.25}
-        when (501..Float::INFINITY)
-          {subscription: -4, retriever: -1.5}
+        when (252..351)
+          {subscription: -2, retriever: -0.75}
+        when (352..501)
+          {subscription: -3, retriever: -1}
+        when (502..Float::INFINITY)
+          {subscription: -4, retriever: -1.25}
       end
     end
   end
