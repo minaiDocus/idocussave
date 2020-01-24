@@ -328,7 +328,7 @@ class Pack < ApplicationRecord
   end
 
   def recreate_original_document
-    pieces = self.pieces.by_position
+    pieces  = self.pieces.by_position
     success = false
     sleep_counter = 5
 
@@ -347,14 +347,16 @@ class Pack < ApplicationRecord
         end
       end
 
-      if success
-        temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
+      temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
 
+      if success
         original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
         set_pages_count
         save
       end
+
+      FileUtils.rm temp_file_path if File.exist? temp_file_path
     else
       self.original_document.cloud_content.purge
     end

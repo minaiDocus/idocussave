@@ -538,6 +538,16 @@ class Account::DocumentsController < Account::AccountController
     piece.delete_by = nil
 
     piece.save
+
+    pack = piece.pack
+
+    pack.delay.try(:recreate_original_document)
+
+    temp_pack = TempPack.find_by_name(pack.name)
+
+    if temp_pack.is_pre_assignment_needed? && piece.preseizures.size == 0 && piece.temp_document.try(:api_name) != 'invoice_auto' && !piece.pre_assignment_waiting_analytics?
+      AccountingWorkflow::SendPieceToPreAssignment.execute([piece])
+    end
   end
 
   protected
