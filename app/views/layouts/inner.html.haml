@@ -16,6 +16,7 @@
     = stylesheet_link_tag 'account/suspended' if controller_name == 'suspended'
     = stylesheet_link_tag 'account/addresses' if controller_name == 'addresses'
     = stylesheet_link_tag 'account/group_organizations' if controller_name == 'group_organizations'
+    = stylesheet_link_tag 'account/reporting' if controller_name == 'reporting'
     - if controller_name.in?(%w(pre_assignment_blocked_duplicates pre_assignment_ignored pre_assignment_delivery_errors))
       = stylesheet_link_tag "account/#{controller_name}"
 

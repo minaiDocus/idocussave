@@ -234,6 +234,7 @@ function showPeriodsInfo(value){
 $(document).ready(function(){
   max_period_y = $('.user').length;
 
+  $('.custom_popover').custom_popover();
   initDoShowInvoice();
 
   $("a.do-show").click(function(){

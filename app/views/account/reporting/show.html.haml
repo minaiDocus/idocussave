@@ -28,6 +28,7 @@
         .float-right
           = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year, organization_id: params[:organization_id]), class: 'btn btn-light'
 
+  - @organization = accounts.first.organization
   - annual_summary = []
   - 12.times do
     - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
@@ -280,7 +281,13 @@
                             - if invoice.cloud_content_object.try(:url)
                               %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                               %a{ :href => organization_invoice_path(invoice.id, invoice.organization.id), :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
-            - if @user.collaborator?
+                %tr.global_excess
+                  %td
+                    Dépassement dossiers mensuels
+                  - 12.times do |time|
+                    %td.text-center{ id: "period_#{time}"}
+                      - date = (Time.local(@year) + time.month).to_date
+                      = render partial: 'organization_quota', locals: { period: @organization.subscription.find_period(date) }
               %tfooter
                 %tr
                   %th{ :style => "width:15%;" }
@@ -437,48 +444,51 @@
         </tr>
       </table>
       <hr/>
-      <table class="table table-condensed">
-        <tr>
-          <th>Dépassement</th>
-          <th class="center">Pièces</th>
-          <th class="center">Feuilles</th>
-          <th class="center">Pages</th>
-          <th class="center">Attaches</th>
-          <th class="center">Hors format</th>
-        </tr>
-        <tr>
-          <td>Téléversement</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-          <td class="center">{%= o.documents.excess.uploaded_pages %}</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-        </tr>
-        <tr>
-          <td>Numérisation</td>
-          <td class="center">-</td>
-          <td class="center">{%= o.documents.excess.sheets %}</td>
-          <td class="center">-</td>
-          <td class="center">{%= o.documents.excess.paperclips %}</td>
-          <td class="center">{%= o.documents.excess.oversized %}</td>
-        </tr>
-        <tr>
-          <td>iDocus'Box</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-          <td class="center">{%= o.documents.excess.dematbox_scanned_pages %}</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-        </tr>
-        <tr>
-          <td>Pré-affectation</td>
-          <td class="center">{%= o.documents.excess.compta_pieces %}</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-          <td class="center">-</td>
-        </tr>
-      </table>
+      {% if (!o.documents.is_valid_for_quota_organization)
+        { %}
+        <table class="table table-condensed">
+          <tr>
+            <th>Dépassement</th>
+            <th class="center">Pièces</th>
+            <th class="center">Feuilles</th>
+            <th class="center">Pages</th>
+            <th class="center">Attaches</th>
+            <th class="center">Hors format</th>
+          </tr>
+          <tr>
+            <td>Téléversement</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">{%= o.documents.excess.uploaded_pages %}</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+          </tr>
+          <tr>
+            <td>Numérisation</td>
+            <td class="center">-</td>
+            <td class="center">{%= o.documents.excess.sheets %}</td>
+            <td class="center">-</td>
+            <td class="center">{%= o.documents.excess.paperclips %}</td>
+            <td class="center">{%= o.documents.excess.oversized %}</td>
+          </tr>
+          <tr>
+            <td>iDocus'Box</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">{%= o.documents.excess.dematbox_scanned_pages %}</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+          </tr>
+          <tr>
+            <td>Pré-affectation</td>
+            <td class="center">{%= o.documents.excess.compta_pieces %}</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+            <td class="center">-</td>
+          </tr>
+        </table>
+      {% } %}
     </div>
   - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
     :plain
@@ -496,31 +506,34 @@
               <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
             </tr>
           {% } %}
-          <tr>
-            <td>Dépassement téléversement</td>
-            <td></td>
-            <td style="text-align:right;">{%= o.options.excess_uploaded_pages%} €</td>
-          </tr>
-          <tr>
-            <td>Dépassement numérisation</td>
-            <td></td>
-            <td style="text-align:right;">{%= o.options.excess_scan%} €</td>
-          </tr>
-          <tr>
-            <td>Dépassement iDocus'Box</td>
-            <td></td>
-            <td style="text-align:right;">{%= o.options.excess_dematbox_scanned_pages%} €</td>
-          </tr>
-          <tr>
-            <td>Dépassement pré-affectation</td>
-            <td></td>
-            <td style="text-align:right;">{%= o.options.excess_compta_pieces%} €</td>
-          </tr>
-          <tr>
-            <td>Dépassement attaches</td>
-            <td></td>
-            <td style="text-align:right;">{%= o.options.excess_paperclips%} €</td>
-          </tr>
+          {% if (!o.documents.is_valid_for_quota_organization)
+            { %}
+            <tr>
+              <td>Dépassement téléversement</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_uploaded_pages%} €</td>
+            </tr>
+            <tr>
+              <td>Dépassement numérisation</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_scan%} €</td>
+            </tr>
+            <tr>
+              <td>Dépassement iDocus'Box</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_dematbox_scanned_pages%} €</td>
+            </tr>
+            <tr>
+              <td>Dépassement pré-affectation</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_compta_pieces%} €</td>
+            </tr>
+            <tr>
+              <td>Dépassement attaches</td>
+              <td></td>
+              <td style="text-align:right;">{%= o.options.excess_paperclips%} €</td>
+            </tr>
+          {% } %}
           <tr>
             <td></td>
             <td><b>Total :</b></td>

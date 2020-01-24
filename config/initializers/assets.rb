@@ -12,7 +12,7 @@ Rails.application.config.assets.precompile += %w( admin.css admin/events.css adm
                                                   admin/notification_settings.css admin/pre_assignment_blocked_duplicates.css admin/pre_assignment_delivery.css
                                                   admin/process_reporting.css admin/retrievers.css admin/reporting.css admin/scanning_providers.css admin/subscriptions.css)
 
-Rails.application.config.assets.precompile += %w( paper_process.css account/profiles.css account/mcf_settings.css account/addresses.css account/organizations.css account/group_organizations.css account/ibiza.css account/paper_processes.css
+Rails.application.config.assets.precompile += %w( paper_process.css account/reporting.css account/profiles.css account/mcf_settings.css account/addresses.css account/organizations.css account/group_organizations.css account/ibiza.css account/paper_processes.css
                                                   account/subscriptions.css account/groups.css account/collaborators.css account/journals.css account/account_number_rules.css account/paper_set_orders.css
                                                   account/invoices.css account/customers.css account/file_naming_policies.css account/organization_addresses.css account/organization_period_options.css 
                                                   account/csv_descriptors.css account/orders.css account/bank_accounts.css account/rights.css account/retrievers.css account/pre_assignment_ignored.css 
