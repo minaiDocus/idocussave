@@ -16,13 +16,29 @@ class Idocus.Collections.Connectors extends Backbone.Collection
       #Temporary fix : Set in cache | Get, the maximum connectors fetched
       Idocus.budgeaApi.get_connectors().then(
         (datas)->
+          console.log("cached : " + connectors_cache.length)
+          console.log("fetched : " + datas.length)
           if connectors_cache.length < datas.length
-            self.common.setCache('connectors', datas, 15)
-            self.reset(datas)
+            if datas.length < 300
+              console.log("retry")
+              Idocus.budgeaApi.get_connectors().then(
+                (datas_2)->
+                  console.log("use : " + datas_2.length)
+                  self.common.setCache('connectors', datas_2, 15)
+                  self.reset(datas_2)
+                  resolve()
+                (error_2)-> reject(error_2)
+              )
+            else
+              console.log("use : " + datas.length)
+              self.common.setCache('connectors', datas, 15)
+              self.reset(datas)
+              resolve()
           else
+            console.log("use : cached")
             self.common.setCache('connectors', connectors_cache, 15)
             self.reset(connectors_cache)
-          resolve()
+            resolve()
         (error)-> reject(error)
       )
     )
