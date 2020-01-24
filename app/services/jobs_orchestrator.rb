@@ -19,7 +19,7 @@ class JobsOrchestrator
     end
     # Publish documents and initialize delivery
     TempPack.not_processed.each do |temp_pack|
-      UniqueJobs.for "PublishDocument-#{temp_pack.id}" do
+      UniqueJobs.for "PublishDocument-#{temp_pack.id}", 2.hours do
         PublishDocumentWorker.perform_async(temp_pack.id)
       end
     end
