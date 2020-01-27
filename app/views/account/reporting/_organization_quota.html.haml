@@ -1,6 +1,6 @@
 - if period
   .organization_quota
-    %span= period.excesses_amount_in_cents_wo_vat.to_s + " €"
+    %span= format_price_00(period.organization_excesses_price) + " €"
     .details.box.hide
       %table.table.table-condensed
         %thead

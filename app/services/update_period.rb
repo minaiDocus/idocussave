@@ -13,8 +13,10 @@ class UpdatePeriod
 
       @period.duration = @subscription.period_duration
 
-      copyable_keys.each do |key|
-        @period[key] = @subscription[key]
+      if !@period.organization
+        copyable_keys.each do |key|
+          @period[key] = @subscription[key]
+        end
       end
 
       @period.product_option_orders.destroy_all

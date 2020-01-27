@@ -43,6 +43,8 @@ module Reporting
       remaining_dividers -= current_dividers.count
       time += period.duration.month
     end
+
+    UpdateOrganizationPeriod.new(pack.organization.subscription.current_period).fetch_all(true)
   end
 
   def self.find_period_document(pack, start_date, end_date)

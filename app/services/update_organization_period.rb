@@ -6,7 +6,9 @@ class UpdateOrganizationPeriod
     @organization    = period.organization
   end
 
-  def fetch_all
+  def fetch_all(soft_process = false)
+    return false unless @organization
+
     @period.with_lock do
       time = @period.start_date.beginning_of_month + 15.days
 
@@ -16,11 +18,13 @@ class UpdateOrganizationPeriod
       fill_excess_max_values
 
       @customers_periods.each do |c_period|
-        UpdatePeriodDataService.new(c_period).execute if c_period.is_valid_for_quota_organization
+        if c_period.is_valid_for_quota_organization
+          UpdatePeriodDataService.new(c_period).execute unless soft_process
+          fill_datas_with c_period.reload
+        end
       end
 
-      create_excess_order
-
+      @period.save
       UpdatePeriodPriceService.new(@period).execute
     end
   end
@@ -37,14 +41,17 @@ class UpdateOrganizationPeriod
     @period.max_oversized_authorized            = 0
 
     @customers_periods.each do |c_period|
-      if c_period.is_valid_for_quota_organization
-        @period.max_sheets_authorized               += c_period.max_sheets_authorized || 0
-        @period.max_upload_pages_authorized         += c_period.max_upload_pages_authorized || 0
-        @period.max_dematbox_scan_pages_authorized  += c_period.max_dematbox_scan_pages_authorized || 0
-        @period.max_preseizure_pieces_authorized    += c_period.max_preseizure_pieces_authorized || 0
-        @period.max_expense_pieces_authorized       += c_period.max_expense_pieces_authorized || 0
-        @period.max_paperclips_authorized           += c_period.max_paperclips_authorized || 0
-        @period.max_oversized_authorized            += c_period.max_oversized_authorized || 0
+      if c_period.is_valid_for_quota_organizationn
+        subscription = c_period.subscription
+        option       = c_period.user.options
+
+        @period.max_sheets_authorized               += c_period.max_sheets_authorized.to_i               if subscription.is_mail_package_active
+        @period.max_upload_pages_authorized         += c_period.max_upload_pages_authorized.to_i         if subscription.is_basic_package_active || subscription.is_mail_package_active || subscription.is_scan_box_package_active
+        @period.max_dematbox_scan_pages_authorized  += c_period.max_dematbox_scan_pages_authorized.to_i  if subscription.is_scan_box_package_active
+        @period.max_preseizure_pieces_authorized    += c_period.max_preseizure_pieces_authorized.to_i    if option.is_preassignment_authorized
+        @period.max_expense_pieces_authorized       += c_period.max_expense_pieces_authorized.to_i       if option.is_preassignment_authorized
+        @period.max_paperclips_authorized           += c_period.max_paperclips_authorized.to_i           if subscription.is_mail_package_active
+        @period.max_oversized_authorized            += c_period.max_oversized_authorized.to_i            if subscription.is_mail_package_active
       end
     end
 
@@ -77,21 +84,28 @@ class UpdateOrganizationPeriod
     @period.save
   end
 
-  def create_excess_order
-    @period.product_option_orders.where(name: 'excess_documents').destroy_all
 
-    excesses_price = @period.excesses_price
+  def fill_datas_with(customer_period)
+      @period.pages  += customer_period.pages    || 0
+      @period.pieces += customer_period.pieces   || 0
 
-    if excesses_price > 0
-      option             = @period.product_option_orders.new
-      option.title       = "Documents et écritures compta. en excès pour les dossiers mensuels"
-      option.name        = 'excess_documents'
-      option.duration    = 1
-      option.group_title = 'Autres'
-      option.is_an_extra = true
-      option.price_in_cents_wo_vat = excesses_price
+      @period.oversized  += customer_period.oversized  || 0
+      @period.paperclips += customer_period.paperclips || 0
 
-      option.save
-    end
+      @period.retrieved_pages  += customer_period.retrieved_pages   || 0
+      @period.retrieved_pieces += customer_period.retrieved_pieces  || 0
+
+      @period.scanned_pages   += customer_period.scanned_pages  || 0
+      @period.scanned_pieces  += customer_period.scanned_pieces || 0
+      @period.scanned_sheets  += customer_period.scanned_sheets || 0
+
+      @period.uploaded_pages  += customer_period.uploaded_pages  || 0
+      @period.uploaded_pieces += customer_period.uploaded_pieces || 0
+
+      @period.dematbox_scanned_pages  += customer_period.dematbox_scanned_pages  || 0
+      @period.dematbox_scanned_pieces += customer_period.dematbox_scanned_pieces || 0
+
+      @period.expense_pieces    += customer_period.expense_pieces    || 0
+      @period.preseizure_pieces += customer_period.preseizure_pieces || 0
   end
 end
