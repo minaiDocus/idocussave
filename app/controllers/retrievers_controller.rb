@@ -9,7 +9,7 @@ class RetrieversController < ApiController
   def callback
     authorization = request.headers['Authorization']
 
-    if authorization.present? && params['user']
+    if authorization.present? && params['user'] #callback for retrieved data
       access_token = authorization.split[1]
       account = BudgeaAccount.where(identifier: params['user']['id']).first
 
@@ -22,8 +22,27 @@ class RetrieversController < ApiController
       else
         render plain: '', status: :unauthorized
       end
-    else
-      render plain: '', status: :unauthorized
+    else #callback for webauth
+      if params[:error_description] != 'None'
+        flash[:error] = params[:error_description].presence
+
+        redirect_to account_retrievers_path
+      elsif params[:id_connection]
+        local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
+        remote_params = { id: params[:id_connection], last_update: Time.now }
+
+        user = User.find local_params[:user_id]
+        if user
+          CreateBudgeaConnection.new(user, local_params, remote_params).execute
+          flash[:success] = 'Paramétrage effectué'
+        else
+          flash[:error] = 'Modification non autorisée'
+        end
+
+        redirect_to account_retrievers_path
+      else
+        render plain: '', status: :unauthorized
+      end
     end
   end
 
@@ -32,7 +51,7 @@ class RetrieversController < ApiController
       user = User.find params[:user_id]
 
       budgea_account = user.budgea_account
-      redirect_uri = retriever_webauth_callback_url
+      redirect_uri = retriever_callback_url
       base_uri = "https://#{Budgea.config.domain}/2.0"
       client_id = Budgea.config.client_id
 
@@ -44,25 +63,6 @@ class RetrieversController < ApiController
     else
       render json: { success: false, error: 'Erreur de service interne' }, status: 200
     end
-  end
-
-  def webauth_callback
-    if params[:error_description] != 'None'
-      flash[:error] = params[:error_description].pesence
-    elsif params[:id_connection]
-      local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
-      remote_params = { id: params[:id_connection], last_update: Time.now }
-
-      user = User.find local_params[:user_id]
-      if user
-        CreateBudgeaConnection.new(user, local_params, remote_params).execute
-        flash[:success] = 'Paramétrage effectué'
-      else
-        flash[:error] = 'Modification non autorisée'
-      end
-    end
-
-    redirect_to account_retrievers_path
   end
 
   def get_retriever_infos

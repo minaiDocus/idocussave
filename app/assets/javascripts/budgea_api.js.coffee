@@ -350,6 +350,7 @@ class Idocus.BudgeaApi
       domparser = new DOMParser()
       data = domparser.parseFromString(response.paypal_dom, 'text/html')
       redirect_url = $(data).find('a').attr('href')
+
       if(redirect_url != undefined && redirect_url != null)
         window.location.href = redirect_url
       else
