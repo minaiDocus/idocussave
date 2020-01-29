@@ -300,9 +300,8 @@ function deliverPreseizures(link='all'){
   {
     $(".check_modif_preseizure input").each(function(e){
       idt.push($(this).attr('id').split("_")[1]);
-    })
-    ids = idt.join(',');
-    data = { ids: ids };
+    });
+    data = { ids: idt };
   }
   else
   {
