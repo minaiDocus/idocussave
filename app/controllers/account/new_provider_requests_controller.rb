@@ -8,24 +8,26 @@ class Account::NewProviderRequestsController < Account::RetrieverController
   end
 
   def new
-    if params[:create] == '1'
-      flash[:success] = 'Demande envoyée avec succès'
-      redirect_to account_new_provider_requests_path
-    else
-      @new_provider_request = NewProviderRequest.new
-    end
+    redirect_to account_retrievers_path(account_id: @account.id)
+    # if params[:create] == '1'
+    #   flash[:success] = 'Demande envoyée avec succès'
+    #   redirect_to account_new_provider_requests_path
+    # else
+    #   @new_provider_request = NewProviderRequest.new
+    # end
   end
 
   def create
-    @new_provider_request = NewProviderRequest.new
-    @new_provider_request = @account.new_provider_requests.build new_provider_request_params
-    @new_provider_request.start_process
-    @new_provider_request.is_sent = true
-    if @new_provider_request.save
-      render json: { success: true }, status: 200
-    else
-      render json: { success: false, error_message: 'Impossible de procéder a votre demande, veuillez réessayer plus tard!' }, status: 200
-    end
+    redirect_to account_retrievers_path(account_id: @account.id)
+    # @new_provider_request = NewProviderRequest.new
+    # @new_provider_request = @account.new_provider_requests.build new_provider_request_params
+    # @new_provider_request.start_process
+    # @new_provider_request.is_sent = true
+    # if @new_provider_request.save
+    #   render json: { success: true }, status: 200
+    # else
+    #   render json: { success: false, error_message: 'Impossible de procéder a votre demande, veuillez réessayer plus tard!' }, status: 200
+    # end
   end
 
   private

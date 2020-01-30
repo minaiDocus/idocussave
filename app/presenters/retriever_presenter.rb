@@ -30,13 +30,14 @@ class RetrieverPresenter < BasePresenter
       h.content_tag :span, 'Suppression en cours', class: 'badge fs-origin badge-secondary'
     elsif retriever.unavailable?
       content = formatted_state({class: 'badge fs-origin badge-secondary'})
-      if scope == :account
-        content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-light')
-      elsif scope == :collaborator
-        content + h.link_to("Demander la création d'un automate", h.new_account_organization_customer_new_provider_request_path(user.organization, user), class: 'btn btn-light')
-      elsif scope == :admin
-        content + h.content_tag(:span, "Demander la création d'un automate", class: 'badge fs-origin badge-secondary')
-      end
+      #Temporary disable new provider request
+      # if scope == :account
+      #   content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-light')
+      # elsif scope == :collaborator
+      #   content + h.link_to("Demander la création d'un automate", h.new_account_organization_customer_new_provider_request_path(user.organization, user), class: 'btn btn-light')
+      # elsif scope == :admin
+      #   content + h.content_tag(:span, "Demander la création d'un automate", class: 'badge fs-origin badge-secondary')
+      # end
     else
       label_type = 'success'   if retriever.ready?
       label_type = 'danger' if retriever.error?

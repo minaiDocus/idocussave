@@ -46,14 +46,14 @@
                   %a.nav-link{ href: ( @account.try(:id)? list_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                     Liste des automates disponibles
                     = glyphicon('list-rich', { class: 'float-right' })
-                %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
-                  %a.nav-link{ href: ( @account.try(:id)? new_account_new_provider_request_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Demander un nouvel automate
-                    = glyphicon('question-mark', { class: 'float-right' })
-                %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }
-                  %a.nav-link{ href: ( @account.try(:id)? account_new_provider_requests_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Suivi de mes demandes
-                    = glyphicon('list', { class: 'float-right' })
+                / %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
+                /   %a.nav-link{ href: ( @account.try(:id)? new_account_new_provider_request_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                /     Demander un nouvel automate
+                /     = glyphicon('question-mark', { class: 'float-right' })
+                / %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }
+                /   %a.nav-link{ href: ( @account.try(:id)? account_new_provider_requests_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                /     Suivi de mes demandes
+                /     = glyphicon('list', { class: 'float-right' })
                 %li.nav-header Historique de récupération
                 %li.nav-item{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
                   %a.nav-link{ href: ( @account.try(:id)? account_retrieved_banking_operations_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
