@@ -11,7 +11,7 @@
           %h3 Automates de récupérations
 
         .row
-          .col-md-5
+          .col-md-12
             = link_to admin_retrievers_path do
               %span.badge.badge-light.fs-origin Tous
             = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
@@ -22,10 +22,6 @@
               %span.badge.badge-secondary.fs-origin Sélection
             = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
               %span.badge.badge-danger.fs-origin Erreur
-          .col-md-7
-            .float-right
-              = form_tag run_admin_retrievers_path(params.permit!), class: 'form-filter' do
-                = submit_tag "Lancer la récupération (#{@retrievers_count})", name: nil, class: 'btn btn-primary'
 
   .row.retractable.with-filter
     .col-md-12.retractable-content

@@ -591,8 +591,7 @@ Rails.application.routes.draw do
 
     resources :dematbox_files, only: :index
 
-    resources :retrievers, only: %w(index edit destroy) do
-      post 'run',     on: :collection
+    resources :retrievers, only: %w(index edit) do
       post 'fetcher', on: :collection
       get 'fetcher',  on: :collection
     end

@@ -174,36 +174,36 @@ function handlePaginationFilterSubmition(){
   $(".page-link-badge").click(function(e){
     e.preventDefault();
     var per_page = $(this).text().trim();
-    if ($('.form-filter .per_page').length > 0)
+    if ($('.retractable-filter .form-filter .per_page').length > 0)
     {
-      $('.form-filter .per_page').val(per_page);
+      $('.retractable-filter .form-filter .per_page').val(per_page);
     }
     else
     {
-      $('.form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
+      $('.retractable-filter .form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
     }
-    $('.form-filter').find('input[type="submit"]').click();
+    $('.retractable-filter .form-filter').find('input[type="submit"]').click();
   });
 
   $('.pagination .page-item').click(function(e){
     e.preventDefault();
     var page = $(this).first().text().trim();
-    if ($('.form-filter .page').length > 0)
+    if ($('.retractable-filter .form-filter .page').length > 0)
     {
-      $('.form-filter .page').val(page);
+      $('.retractable-filter .form-filter .page').val(page);
     }
     else
     {
-      $('.form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
+      $('.retractable-filter .form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
     }
-    $('.form-filter').find('input[type="submit"]').click();
+    $('.retractable-filter .form-filter').find('input[type="submit"]').click();
   });
 
-  $('.form-filter').on('submit',function(e){
-    if ($('.form-filter .per_page').length == 0)
+  $('.retractable-filter .form-filter').on('submit',function(e){
+    if ($('.retractable-filter .form-filter .per_page').length == 0)
     {
       var per_page = $(".page-link-badge.badge-info").first().text();
-      $('.form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
+      $('.retractable-filter .form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
     }
   });
 }
@@ -278,7 +278,7 @@ jQuery(function () {
   });
 
   //Keep pagination state when filter is active
-  if( $('.form-filter').is(":visible") && !$('.form-filter').hasClass('retriever_search') )
+  if( $('.retractable-filter .form-filter').is(":visible") && !$('.retractable-filter .form-filter').hasClass('retriever_search') )
     handlePaginationFilterSubmition()
 
   //adjust icons color

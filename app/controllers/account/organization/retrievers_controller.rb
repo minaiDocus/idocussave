@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Account::Organization::RetrieversController < Account::Organization::RetrieverController
+  before_action :redirect_page
   before_action :load_retriever, except: %w[index list new create]
   before_action :verify_rights, except: %w[index list new create]
   before_action :load_connectors, only: %w[list new create edit update]
@@ -45,30 +46,6 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     else
       render :edit
     end
-  end
-
-  def destroy
-    if @retriever.unavailable?
-      if @retriever.bank_accounts.any?
-        Operation.where(bank_account_id: @retriever.bank_accounts.map(&:id)).update_all(api_id: nil)
-        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id))
-      end
-      @retriever.destroy
-      flash[:success] = 'Supprimé avec succès.'
-    else
-      if @retriever.destroy_connection
-        flash[:success] = 'Suppression en cours.'
-      else
-        flash[:error] = 'Impossible de supprimer.'
-      end
-    end
-    redirect_to account_organization_customer_retrievers_path(@organization, @customer)
-  end
-
-  def run
-    @retriever.run
-    flash[:success] = 'Traitement en cours...'
-    redirect_to account_organization_customer_retrievers_path(@organization, @customer)
   end
 
   def waiting_additionnal_info; end
@@ -137,5 +114,9 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     @connectors = Connector.budgea.order(name: :asc).list
     @providers  = Connector.budgea.providers.order(name: :asc)
     @banks      = Connector.budgea.banks.order(name: :asc)
+  end
+
+  def redirect_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
   end
 end
