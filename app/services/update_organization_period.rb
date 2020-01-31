@@ -41,7 +41,7 @@ class UpdateOrganizationPeriod
     @period.max_oversized_authorized            = 0
 
     @customers_periods.each do |c_period|
-      if c_period.is_valid_for_quota_organizationn
+      if c_period.is_valid_for_quota_organization
         subscription = c_period.subscription
         option       = c_period.user.options
 
