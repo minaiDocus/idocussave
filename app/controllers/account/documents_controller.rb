@@ -516,11 +516,20 @@ class Account::DocumentsController < Account::AccountController
       piece.delete_by = @user.code
       piece.save
 
-      temp_piece = piece.temp_document
-      temp_piece.original_fingerprint    = nil
-      temp_piece.content_fingerprint     = nil
-      temp_piece.raw_content_fingerprint = nil
-      temp_piece.save
+      temp_document = piece.temp_document
+      temp_document.original_fingerprint    = nil
+      temp_document.content_fingerprint     = nil
+      temp_document.raw_content_fingerprint = nil
+      temp_document.save
+
+      parent_document = temp_document.parent_document
+
+      if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
+        parent_document.original_fingerprint    = nil
+        parent_document.content_fingerprint     = nil
+        parent_document.raw_content_fingerprint = nil
+        parent_document.save
+      end
 
       pack ||= piece.pack
     end
@@ -539,6 +548,18 @@ class Account::DocumentsController < Account::AccountController
 
     piece.save
 
+    temp_document = piece.temp_document
+
+    parent_document = temp_document.parent_document
+
+    temp_document.original_fingerprint = DocumentTools.checksum(temp_document.cloud_content_object.path)
+    temp_document.save
+
+    if parent_document
+      parent_document.original_fingerprint = DocumentTools.checksum(parent_document.cloud_content_object.path)
+      parent_document.save
+    end
+
     pack = piece.pack
 
     pack.delay.try(:recreate_original_document)
@@ -548,6 +569,8 @@ class Account::DocumentsController < Account::AccountController
     if temp_pack.is_pre_assignment_needed? && piece.preseizures.size == 0 && piece.temp_document.try(:api_name) != 'invoice_auto' && !piece.pre_assignment_waiting_analytics?
       AccountingWorkflow::SendPieceToPreAssignment.execute([piece])
     end
+
+    render json: { success: true }, status: 200
   end
 
   protected

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_16_075023) do
+ActiveRecord::Schema.define(version: 2020_01_30_115935) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -94,15 +94,11 @@ ActiveRecord::Schema.define(version: 2019_12_16_075023) do
   end
 
   create_table "accounting_plan_vat_accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "mongo_id"
     t.string "code"
     t.string "nature"
     t.string "account_number"
     t.integer "accounting_plan_id"
-    t.string "accounting_plan_id_mongo_id"
     t.index ["accounting_plan_id"], name: "accounting_plan_id"
-    t.index ["accounting_plan_id_mongo_id"], name: "accounting_plan_id_mongo_id"
-    t.index ["mongo_id"], name: "index_accounting_plan_vat_accounts_on_mongo_id"
   end
 
   create_table "accounting_plans", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1649,6 +1645,15 @@ ActiveRecord::Schema.define(version: 2019_12_16_075023) do
     t.boolean "is_default", default: false, null: false
   end
 
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
   create_table "settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "key"
     t.text "is_journals_modification_authorized"
@@ -1792,6 +1797,7 @@ ActiveRecord::Schema.define(version: 2019_12_16_075023) do
     t.integer "pages_number"
     t.integer "position"
     t.boolean "is_an_original", default: true, null: false
+    t.integer "parent_document_id"
     t.boolean "is_a_cover", default: false, null: false
     t.boolean "is_ocr_layer_applied"
     t.string "delivered_by"
@@ -1845,6 +1851,7 @@ ActiveRecord::Schema.define(version: 2019_12_16_075023) do
     t.index ["is_an_original"], name: "index_temp_documents_on_is_an_original"
     t.index ["mongo_id"], name: "index_temp_documents_on_mongo_id"
     t.index ["organization_id"], name: "organization_id"
+    t.index ["parent_document_id"], name: "index_temp_documents_on_parent_document_id"
     t.index ["piece_id"], name: "piece_id"
     t.index ["retriever_id"], name: "index_temp_documents_on_retriever_id"
     t.index ["state"], name: "index_temp_documents_on_state"

@@ -24,6 +24,8 @@ class TempDocument < ApplicationRecord
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
+  has_many :children, class_name: 'TempDocument', foreign_key: 'parent_document_id'
+
   has_one_attached :cloud_content
   has_one_attached :cloud_raw_content
   has_one_attached :cloud_content_thumbnail
@@ -85,6 +87,7 @@ class TempDocument < ApplicationRecord
   scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
   scope :from_ibizabox,     -> { where.not(ibizabox_folder_id: nil) }
   scope :from_mobile,       -> { where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile'") }
+  scope :fingerprint_is_nil,-> { where(original_fingerprint: [nil, ''], content_fingerprint: [nil, ''], raw_content_fingerprint: [nil, '']) }
 
 
   state_machine initial: :created do
@@ -358,5 +361,10 @@ class TempDocument < ApplicationRecord
     self.corruption_notified_at = Time.now
 
     save
+  end
+
+  def parent_document
+    return nil unless self.parent_document_id
+    TempDocument.find self.parent_document_id
   end
 end
