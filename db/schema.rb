@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_30_115935) do
+ActiveRecord::Schema.define(version: 2020_02_01_150158) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -1041,6 +1041,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_115935) do
     t.boolean "is_cegid_auto_deliver", default: false
     t.boolean "is_fec_agiris_used", default: false
     t.boolean "is_fec_agiris_auto_deliver", default: false
+    t.string "vat_identifier"
     t.index ["leader_id"], name: "leader_id"
     t.index ["organization_group_id"], name: "index_organizations_on_organization_group_id"
   end
@@ -1645,7 +1646,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_115935) do
     t.boolean "is_default", default: false, null: false
   end
 
-  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at", null: false

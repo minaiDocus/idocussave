@@ -201,6 +201,12 @@ class CreateInvoicePdf
       pdf.move_down 33
       pdf.bounding_box([252, pdf.cursor], width: 240) do
         pdf.text formatted_address, align: :right, style: :bold
+
+        if @invoice.organization.vat_identifier
+          pdf.move_down 7
+
+          pdf.text "TVA : #{@invoice.organization.vat_identifier}", align: :right, style: :bold
+        end
       end
 
       # Information
@@ -271,6 +277,11 @@ class CreateInvoicePdf
       pdf.move_down 13
       pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[@invoice.created_at.month].downcase} #{@invoice.created_at.year}"
 
+      if @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat
+        pdf.move_down 7
+        pdf.text 'Auto-liquidation par le preneur - Art 283-2 du CGI'
+      end
+
       pdf.move_down 7
       pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
     end
@@ -278,7 +289,7 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
+    #auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end
 
   def auto_upload_last_invoice

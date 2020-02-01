@@ -52,10 +52,12 @@ class AutoPreAssignedInvoicePieces
         entry.save
 
         ### 2 ###
+        account_number = @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat ? '7060900' : '706000'
+        
         account = Pack::Report::Preseizure::Account.new
         account.preseizure = preseizure
         account.type       = Pack::Report::Preseizure::Account.get_type('HT') # TTC / HT / TVA
-        account.number     = '706000'
+        account.number     = account_number
         account.save
 
         entry = Pack::Report::Preseizure::Entry.new
