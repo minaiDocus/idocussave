@@ -73,7 +73,7 @@ private
 
     if excesses_price > 0
       option           ||=  @period.product_option_orders.new
-      option.title       = "Documents et écritures compta. en excès pour les dossiers mensuels"
+      option.title       = "Documents et écritures comptables en excès pour les dossiers mensuels"
       option.name        = 'excess_documents'
       option.duration    = 1
       option.group_title = 'Autres'

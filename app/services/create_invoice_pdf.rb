@@ -10,6 +10,13 @@ class CreateInvoicePdf
         print '.'
       end; nil
 
+
+      Organization.billed.each do |organization|
+        organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', '2020-02-02', '2020-02-02').first
+
+        UpdateOrganizationPeriod.new(organization_period).fetch_all
+      end
+
       Organization.billed.order(created_at: :asc).each do |organization|
         organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
         periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
@@ -43,7 +50,7 @@ class CreateInvoicePdf
         #  notification.save
         #end
 
-        #InvoiceMailer.delay(queue: :high).notify(invoice)
+        InvoiceMailer.delay(queue: :high).notify(invoice)
       end
       Invoice.archive
     end
@@ -289,7 +296,7 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    #auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
+    auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end
 
   def auto_upload_last_invoice
