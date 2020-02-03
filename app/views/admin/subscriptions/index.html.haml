@@ -137,8 +137,8 @@
         .row
           .col-12
             = render partial: 'shared/list_options', locals: { collection: @statistics }
-    = form_tag admin_subscriptions_path, method: :get, class: 'form-filter' do
-      .card.retractable-filter
+    .card.retractable-filter
+      = form_tag admin_subscriptions_path, method: :get, class: 'form-filter' do
         .card-header.clearfix
           .float-left
             %h3 Filtres

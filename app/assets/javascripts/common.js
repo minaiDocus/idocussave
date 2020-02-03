@@ -170,43 +170,6 @@ function adjustIconColor(elem) {
   });
 }
 
-function handlePaginationFilterSubmition(){
-  $(".page-link-badge").click(function(e){
-    e.preventDefault();
-    var per_page = $(this).text().trim();
-    if ($('.retractable-filter .form-filter .per_page').length > 0)
-    {
-      $('.retractable-filter .form-filter .per_page').val(per_page);
-    }
-    else
-    {
-      $('.retractable-filter .form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
-    }
-    $('.retractable-filter .form-filter').find('input[type="submit"]').click();
-  });
-
-  $('.pagination .page-item').click(function(e){
-    e.preventDefault();
-    var page = $(this).first().text().trim();
-    if ($('.retractable-filter .form-filter .page').length > 0)
-    {
-      $('.retractable-filter .form-filter .page').val(page);
-    }
-    else
-    {
-      $('.retractable-filter .form-filter').append('<input type="hidden" name="page" class="page" value="'+page+'">');
-    }
-    $('.retractable-filter .form-filter').find('input[type="submit"]').click();
-  });
-
-  $('.retractable-filter .form-filter').on('submit',function(e){
-    if ($('.retractable-filter .form-filter .per_page').length == 0)
-    {
-      var per_page = $(".page-link-badge.badge-info").first().text();
-      $('.retractable-filter .form-filter').append('<input type="hidden" name="per_page" class="per_page" value="'+per_page+'">');
-    }
-  });
-}
 
 jQuery(function () {
   //For serializing Form to object
@@ -276,10 +239,6 @@ jQuery(function () {
         }
     });
   });
-
-  //Keep pagination state when filter is active
-  if( $('.retractable-filter .form-filter').is(":visible") && !$('.retractable-filter .form-filter').hasClass('retriever_search') )
-    handlePaginationFilterSubmition()
 
   //adjust icons color
   adjustIconColor();
