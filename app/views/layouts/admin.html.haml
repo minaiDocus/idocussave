@@ -9,10 +9,12 @@
     = csrf_meta_tag
     = stylesheet_link_tag 'admin'
     = stylesheet_link_tag 'admin/subscriptions'
+    = stylesheet_link_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
     :plain
       <!--[if lt IE 9]>
         <script src="/assets/html5.js" type="text/javascript"></script>
       <![endif]-->
+    = javascript_include_tag 'application', 'inner'
     = javascript_include_tag 'admin'
     = javascript_include_tag 'admin/admin' if controller_name == 'admin'
     = javascript_include_tag 'admin/user' if params[:controller] == 'admin/users'
@@ -24,6 +26,7 @@
     = javascript_include_tag 'admin/news' if controller_name == 'news'
     = javascript_include_tag 'admin/subscriptions' if params[:controller] == 'admin/subscriptions'
     = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
+    = javascript_include_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
   %body
     = render 'layouts/admin/navigation'
 

@@ -23,6 +23,7 @@
       </table>
     </div>
     <div class='row'>
+      <% uri_location =  window.location.href %>
       <%if @loading: %>
         <div class='col-md-12 loading'>Chargement en cours ...</span>
       <% else: %>
@@ -32,7 +33,8 @@
             <hr />
             <ul class="clearfix">
               <% for connector in @providers: %>
-                <li><a href='new?connector_id=<%= connector.get('id') %>' class='connector' data-id={<%=  %>}><%= connector.get('name') %></a></li>
+                <% if uri_location.match(/admin/g): %><% href_url = '#' %><% else: %><% href_url = 'new?connector_id=' + connector.get('id') %> <% end %>
+                <li><a href='<%= href_url %>' class='connector' data-id={<%= connector.get('id') %>}><%= connector.get('name') %></a></li>
               <% end %>
             </ul>
           </div>
@@ -43,7 +45,8 @@
             <hr />
             <ul class="clearfix" >
               <% for connector in @banks: %>
-                <li><a href='new?connector_id=<%= connector.get('id') %>' class='connector' data-id={<%= connector.get('id') %>}><%= connector.get('name') %></a></li>
+                <% if uri_location.match(/admin/g): %><% href_url = '#' %><% else: %><% href_url = 'new?connector_id=' + connector.get('id') %> <% end %>
+                <li><a href='<%= href_url %>' class='connector' data-id={<%= connector.get('id') %>}><%= connector.get('name') %></a></li>
               <% end %>
             </ul>
           </div>

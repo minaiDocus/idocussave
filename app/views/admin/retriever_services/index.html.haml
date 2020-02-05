@@ -4,23 +4,5 @@
       .box.small-shadow.clearfix
         = render 'layouts/admin/retriever/navigation'
 
-  .card
-    .card-header.clearfix
-      .float-left
-        %h3 Liste des automates disponibles
-      .float-right
-        = link_to 'Mettre à jour', admin_retriever_services_update_list_path, method: :post, class: 'btn btn-primary'
-    .card-body
-      .row
-        .col-md-6
-          .box.bg-light.height_groups.groups_1
-            %h4 Documents (#{@providers.size})
-            %ul
-              - @providers.each do |provider|
-                %li= provider.name
-        .col-6
-          .box.bg-light.height_groups.groups_1
-            %h4 Banques (#{@banks.size})
-            %ul
-              - @banks.each do |bank|
-                %li= bank.name
+  = hidden_field_tag :retriever_budgea_config, @bi_config
+  #connectors_list.row-fluid

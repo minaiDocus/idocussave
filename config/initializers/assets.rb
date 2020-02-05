@@ -10,7 +10,7 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 
 Rails.application.config.assets.precompile += %w( admin.css admin/events.css admin/groups.css admin/invoices.css admin/journals.css admin/mobile_reponring.css 
                                                   admin/notification_settings.css admin/pre_assignment_blocked_duplicates.css admin/pre_assignment_delivery.css
-                                                  admin/process_reporting.css admin/retrievers.css admin/reporting.css admin/scanning_providers.css admin/subscriptions.css)
+                                                  admin/process_reporting.css admin/retrievers.css admin/retriever_services.css admin/reporting.css admin/scanning_providers.css admin/subscriptions.css)
 
 Rails.application.config.assets.precompile += %w( paper_process.css account/reporting.css account/profiles.css account/mcf_settings.css account/addresses.css account/organizations.css account/group_organizations.css account/ibiza.css account/paper_processes.css
                                                   account/subscriptions.css account/groups.css account/collaborators.css account/journals.css account/account_number_rules.css account/paper_set_orders.css
@@ -19,7 +19,7 @@ Rails.application.config.assets.precompile += %w( paper_process.css account/repo
                                                   account/pre_assignment_blocked_duplicates.css account/pre_assignment_delivery_errors.css account/suspended.css )
 
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
-                                                  admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js )
+                                                  admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js admin/retriever_services.js )
 
 Rails.application.config.assets.precompile += %w( paper_process.js inner.js welcome.js account/ftps.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js
                                                   account/subscriptions.js account/organization_subscriptions.js account/groups.js account/journals.js account/account_number_rules.js account/paper_set_orders.js 
