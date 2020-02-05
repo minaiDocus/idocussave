@@ -185,7 +185,11 @@ class FTPImport
 
   def sync_folder(item)
     if item.to_be_created?
-      client.mkdir item.path
+      begin
+        client.mkdir item.path
+      rescue
+        false
+      end
       item.created
     elsif item.to_be_destroyed?
       remove_item item
