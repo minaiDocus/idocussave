@@ -11,7 +11,7 @@ class NotifyPaperQuotaReached
   end
 
   def execute
-    if @user.notify.paper_quota_reached
+    if @user.notify.try(:paper_quota_reached)
       notification = Notification.new
       notification.user        = @user
       notification.notice_type = 'paper_quota_reached'
@@ -23,7 +23,7 @@ class NotifyPaperQuotaReached
     end
 
     @user.prescribers.each do |prescriber|
-      next unless prescriber.notify.paper_quota_reached
+      next unless prescriber.notify.try(:paper_quota_reached)
       notification = Notification.new
       notification.user        = prescriber
       notification.notice_type = 'paper_quota_reached'
