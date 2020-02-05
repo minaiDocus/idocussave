@@ -23,13 +23,13 @@ class RetrieversController < ApiController
         render plain: '', status: :unauthorized
       end
     else #callback for webauth
-      if params[:error_description] != 'None'
-        flash[:error] = params[:error_description].presence
+      if params[:error_description].present? && params[:error_description] != 'None'
+        flash[:error] = params[:error_description].presence || 'Id connection not found'
 
         redirect_to account_retrievers_path
       elsif params[:id_connection]
         local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
-        remote_params = { id: params[:id_connection], last_update: Time.now }
+        remote_params = { id: params[:id_connection], last_update: Time.now.to_s }
 
         user = User.find local_params[:user_id]
         if user
