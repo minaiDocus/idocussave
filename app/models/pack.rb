@@ -190,27 +190,31 @@ class Pack < ApplicationRecord
   def historic
     _documents = pages.order(created_at: :asc)
 
-    current_date = _documents.first.created_at
+    @events = [{ date: self.created_at, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
 
-    @events = [{ date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
+    if _documents.any?
+      current_date = _documents.first.created_at
 
-    current_offset = 0
+      @events = [{ date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
 
-    _documents.each do |document|
-      if document.created_at > current_date.end_of_day
-        current_date = document.created_at
-        current_offset += 1
-        @events << { date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }
-      end
+      current_offset = 0
 
-      if document.uploaded?
-        @events[current_offset][:uploaded] += 1
-      elsif document.dematbox_scanned?
-        @events[current_offset][:dematbox_scanned] += 1
-      elsif document.retrieved?
-        @events[current_offset][:retrieved] += 1
-      else
-        @events[current_offset][:scanned] += 1
+      _documents.each do |document|
+        if document.created_at > current_date.end_of_day
+          current_date = document.created_at
+          current_offset += 1
+          @events << { date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }
+        end
+
+        if document.uploaded?
+          @events[current_offset][:uploaded] += 1
+        elsif document.dematbox_scanned?
+          @events[current_offset][:dematbox_scanned] += 1
+        elsif document.retrieved?
+          @events[current_offset][:retrieved] += 1
+        else
+          @events[current_offset][:scanned] += 1
+        end
       end
     end
 

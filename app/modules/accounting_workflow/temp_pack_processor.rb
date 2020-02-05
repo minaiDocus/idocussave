@@ -28,6 +28,7 @@ class AccountingWorkflow::TempPackProcessor
 
     temp_documents.each_with_index do |temp_document, document_index|
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start"
+      inserted_piece = nil
       if !temp_document.is_a_cover? || !pack.has_cover?
         Dir.mktmpdir do |dir|
           
@@ -69,6 +70,7 @@ class AccountingWorkflow::TempPackProcessor
           piece.pages_number          = pages_number
           piece.analytic_reference_id = temp_document.analytic_reference_id
           piece.cloud_content_object.attach(File.open(piece_file_path), piece_file_name) if piece.save
+          inserted_piece = piece
           
           ##Temp fix issue imagemagick v 6 thumb generation (The piece will not have a thumb)
           ## REMOVE THIS after imagemagick upgrade
@@ -176,8 +178,16 @@ class AccountingWorkflow::TempPackProcessor
         end
 
         published_temp_documents << temp_document
+      else
+        temp_document.processed
       end
-      temp_document.processed
+
+      if inserted_piece.try(:persisted?)
+        temp_document.processed
+      else
+        logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted"
+      end
+
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end"
     end
 
