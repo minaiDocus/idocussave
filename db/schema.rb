@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_01_150158) do
+ActiveRecord::Schema.define(version: 2020_02_04_143006) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -704,6 +704,17 @@ ActiveRecord::Schema.define(version: 2020_02_01_150158) do
     t.index ["period_id"], name: "period_id"
     t.index ["subscription_id"], name: "subscription_id"
     t.index ["user_id"], name: "user_id"
+  end
+
+  create_table "job_processings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string "state"
+    t.text "notifications"
+    t.index ["finished_at"], name: "index_job_processings_on_finished_at"
+    t.index ["name"], name: "index_job_processings_on_name"
+    t.index ["state"], name: "index_job_processings_on_state"
   end
 
   create_table "knowings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1646,7 +1657,7 @@ ActiveRecord::Schema.define(version: 2020_02_01_150158) do
     t.boolean "is_default", default: false, null: false
   end
 
-  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at", null: false

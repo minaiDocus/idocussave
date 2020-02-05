@@ -2,10 +2,14 @@ class ProcessRetrievedDataWorker
   include Sidekiq::Worker
   sidekiq_options retry: false, unique: :until_and_while_executing
 
-  def perform(retrieved_data_id)
-    UniqueJobs.for "ProcessRetrievedDataWorker-#{retrieved_data_id}" do
-      retrieved_data = RetrievedData.find retrieved_data_id
-      ProcessRetrievedData.new(retrieved_data).execute if retrieved_data.not_processed?
+  def perform
+    UniqueJobs.for 'ProcessRetrievedDataWorker', 1.day do
+      RetrievedData.not_processed.each do |retrieved_data|
+        UniqueJobs.for "ProcessRetrievedData-#{retrieved_data.id}" do
+          ProcessRetrievedData.new(retrieved_data).execute
+        end
+      end
     end
   end
+
 end

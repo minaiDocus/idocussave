@@ -9,8 +9,10 @@ class UpdateAccountingPlanWorker
         AccountingWorkflow::MappingGenerator.new([user]).execute
       end
     else
-      UpdateAccountingPlan.execute
-      AccountingWorkflow::MappingGenerator.execute
+      UniqueJobs.for "UpdateAccountingPlan_all", 1.day do
+        UpdateAccountingPlan.execute
+        AccountingWorkflow::MappingGenerator.execute
+      end
     end
   end
 end
