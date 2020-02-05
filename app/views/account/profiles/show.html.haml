@@ -236,42 +236,42 @@
                               .margin2top
                                 = render partial: 'storage_form', locals: { storage: @external_file_storage.box }
 
-                      - if @user.is_dematbox_authorized
-                        #idocus_box.bg-light.row.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
-                          .col-md-12
-                            .box
-                              %h3.aligncenter.margin2bottom iDocus'Box
-                              - if @user.dematbox.try(:is_configured)
-                                %h4.margin1bottom Liste des services
-                                - if @user.dematbox.try(:services).try(:any?)
-                                  %table.table.table-striped.table-bordered.table-condensed.margin0bottom
-                                    %thead
-                                      %tr
-                                        %th Groupe
-                                        %th Nom
-                                    %tbody
-                                      - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
-                                        %tr
-                                          %td= service.group_name
-                                          %td= service.name
-                                - elsif @user.account_book_types.size == 0
-                                  %p Pas de journaux paramétrés.
-                                .alignright
-                                  = link_to icon_destroy + ' Déconnecter le Scanner', account_dematbox_path, method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
-                              - elsif @user.dematbox.try(:beginning_configuration_at).present?
-                                Configuration en cours...veuillez recharger votre page dans quelques secondes.
-                              - else
-                                Appairez ici un scanner iDocus'Box (Produit Sagemcom).
-                                %br
-                                Afin d'appairer le scanner, merci de suivre les instructions du
-                                = link_to "mode d'emploi Sagemcom", docs_download_path(name: 'Livret_utilisation_Dematbox.pdf')
-                                fournit lors de la livraison.
-                                %br
-                                Merci d'inscrire le code d'appairage dans le champ ci-dessous :
-                                = form_tag account_dematbox_path, method: :post, class: 'form-inline margin2top' do
-                                  = label_tag :pairing_code, 'Code appairage'
-                                  = text_field_tag :pairing_code, '', style: 'width:75px;'
-                                  = submit_tag t('actions.submit'), class: 'btn btn-primary'
+            - if @user.is_dematbox_authorized
+              #idocus_box.bg-light.row.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
+                .col-md-12
+                  .box
+                    %h3.aligncenter.margin2bottom iDocus'Box
+                    - if @user.dematbox.try(:is_configured)
+                      %h4.margin1bottom Liste des services
+                      - if @user.dematbox.try(:services).try(:any?)
+                        %table.table.table-striped.table-bordered.table-condensed.margin0bottom
+                          %thead
+                            %tr
+                              %th Groupe
+                              %th Nom
+                          %tbody
+                            - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
+                              %tr
+                                %td= service.group_name
+                                %td= service.name
+                      - elsif @user.account_book_types.size == 0
+                        %p Pas de journaux paramétrés.
+                      .alignright
+                        = link_to icon_destroy + ' Déconnecter le Scanner', account_dematbox_path, method: :delete, class: 'btn btn-danger margin1top', data: { confirm: 'Etes-vous sûr de vouloir déconnecter le scanner ?' }
+                    - elsif @user.dematbox.try(:beginning_configuration_at).present?
+                      Configuration en cours...veuillez recharger votre page dans quelques secondes.
+                    - else
+                      Appairez ici un scanner iDocus'Box (Produit Sagemcom).
+                      %br
+                      Afin d'appairer le scanner, merci de suivre les instructions du
+                      = link_to "mode d'emploi Sagemcom", docs_download_path(name: 'Livret_utilisation_Dematbox.pdf')
+                      fournit lors de la livraison.
+                      %br
+                      Merci d'inscrire le code d'appairage dans le champ ci-dessous :
+                      = form_tag account_dematbox_path, method: :post, class: 'form-inline margin2top' do
+                        = label_tag :pairing_code, 'Code appairage'
+                        = text_field_tag :pairing_code, '', style: 'width:75px;'
+                        = submit_tag t('actions.submit'), class: 'btn btn-primary'
 
             #subscription_options.row.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
               .col-md-12
