@@ -468,7 +468,7 @@ class Account::DocumentsController < Account::AccountController
     @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.unscoped.find(params[:id])
     filepath = @piece.cloud_content_object.path(params[:style].presence || :original)
 
-    if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || auth_token == @piece.get_token)
+    if File.exist?(filepath.to_s) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || auth_token == @piece.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: @piece.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else

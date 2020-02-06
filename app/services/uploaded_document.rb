@@ -17,6 +17,7 @@ class UploadedDocument
     @user     = user
     @code     = @user.code
     @journal  = journal
+    @api_name = api_name
     @uploader = uploader || user
 
     @original_file_name  = original_file_name.gsub(/\0/, '')
@@ -217,7 +218,11 @@ class UploadedDocument
 
 
   def valid_file_size?
-    @file.size <= 10_000_000
+    if @api_name == 'mobile'
+      @file.size <= 250_000_000
+    else
+      @file.size <= 10_000_000
+    end
   end
 
 
