@@ -52,9 +52,9 @@
               &nbsp; Filtre lié à la pré-affectation.
             .form-group.clearfix
               .label-section
-                = label_tag 'by_preseizure[is_delivered]', 'Livraison écriture comptable', class: 'control-label'
+                = label_tag 'by_preseizure[is_delivered]', 'Livraison/Export écriture comptable', class: 'control-label'
               .control-section
-                = select_tag 'by_preseizure[is_delivered]', options_for_select([['Tous', ''], ['Livrée', 1], ['Non livrée', 2], ['Avec erreur', 3]]), include_blank: false
+                = select_tag 'by_preseizure[is_delivered]', options_for_select([['Tous', ''], ['Livrée', 1], ['Non livrée', 2], ['Avec erreur', 3], ['Téléchargé', 4], ['Non récupéré', 5]]), include_blank: false
             .form-group.clearfix
               .label-section
                 = label_tag 'by_preseizure[delivery_tried_at]', 'Date livraison', class: 'control-label'

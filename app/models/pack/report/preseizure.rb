@@ -29,6 +29,9 @@ class Pack::Report::Preseizure < ApplicationRecord
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
   scope :not_deleted,                   -> { joins(:piece) } #IMPORTANT: piece model has default scope so the inner join inherit that scope which is deleted_at presence
+  scope :exported,                      -> { joins('INNER JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id > 0') }
+  scope :not_exported,                  -> { joins('LEFT JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id IS NULL') }
+
 
   scope :blocked_duplicates,            -> { where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
   scope :potential_duplicates,          -> { where.not(duplicate_detected_at: nil) }
@@ -59,7 +62,7 @@ class Pack::Report::Preseizure < ApplicationRecord
       end
     end
 
-    preseizures
+    preseizures.distinct
   end
 
   def self.filter_by(options)
@@ -67,9 +70,11 @@ class Pack::Report::Preseizure < ApplicationRecord
 
     return preseizures unless options.present?
 
-    preseizures = preseizures.delivered         if options[:is_delivered].present? && options[:is_delivered].to_i == 1
-    preseizures = preseizures.not_delivered     if options[:is_delivered].present? && options[:is_delivered].to_i == 2
-    preseizures = preseizures.failed_delivery   if options[:is_delivered].present? && options[:is_delivered].to_i == 3
+    preseizures = preseizures.delivered           if options[:is_delivered].present? && options[:is_delivered].to_i == 1
+    preseizures = preseizures.not_delivered       if options[:is_delivered].present? && options[:is_delivered].to_i == 2
+    preseizures = preseizures.failed_delivery     if options[:is_delivered].present? && options[:is_delivered].to_i == 3
+    preseizures = preseizures.exported            if options[:is_delivered].present? && options[:is_delivered].to_i == 4
+    preseizures = preseizures.not_exported        if options[:is_delivered].present? && options[:is_delivered].to_i == 5
 
     preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.created_at, '%Y-%m-%d') #{options[:created_at_operation].tr('012', ' ><')}= ?", options[:created_at])                        if options[:created_at].present?
     preseizures = preseizures.where("DATE_FORMAT(pack_report_preseizures.date, '%Y-%m-%d') #{options[:date_operation].tr('012', ' ><')}= ?", options[:date])                                          if options[:date].present?
@@ -80,7 +85,7 @@ class Pack::Report::Preseizure < ApplicationRecord
     preseizures = preseizures.where(piece_number: options[:piece_number]) if options[:piece_number].present?
     preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{options[:third_party]}%") if options[:third_party].present?
 
-    preseizures
+    preseizures.distinct
   end
 
   #Override belong_to piece getter because of default scope
