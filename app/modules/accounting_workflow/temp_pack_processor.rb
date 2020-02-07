@@ -2,7 +2,14 @@
 class AccountingWorkflow::TempPackProcessor
   POSITION_SIZE = 3
 
-  def self.process(temp_pack)
+  def self.process(temp_pack_id)
+    UniqueJobs.for "PublishDocument-#{temp_pack_id}", 2.hours, 2 do
+      temp_pack = TempPack.find temp_pack_id
+      execute(temp_pack) if temp_pack.not_processed?
+    end
+  end
+
+  def self.execute(temp_pack)
     runner_id = SecureRandom.hex(4)
     temp_documents = temp_pack.ready_documents
     user_code = temp_pack.name.split[0]
