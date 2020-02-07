@@ -21,7 +21,9 @@ class Period < ApplicationRecord
   scope :monthly,   -> { where(duration: 1) }
   scope :quarterly, -> { where(duration: 3) }
 
-  scope :current, -> { where('end_date >= ?', Date.today) }
+  scope :organizations, -> { where('orgnization_id > 0') }
+  scope :customers,     -> { where('user_id > 0') }
+  scope :current,       -> { where('end_date >= ?', Date.today) }
   scope :paper_quota_reached_not_notified, -> { where(is_paper_quota_reached_notified: false) }
   scope :paper_quota_reached, -> { where('max_sheets_authorized <= scanned_sheets') }
 
