@@ -321,6 +321,7 @@ class Account::DocumentsController < Account::AccountController
     export_ids  = params64[1].presence.try(:split, ',')
     export_format = params64[2].presence
 
+    preseizures = []
     if export_ids && export_type == 'preseizure'
       preseizures = Pack::Report::Preseizure.where(id: export_ids)
     elsif export_ids && export_type == 'report'
