@@ -1,32 +1,31 @@
 # -*- encoding: utf-8 -*-
 class DatabaseCleanerService
-	class << self
-		def clear_all
-			execute	
-		end
+  def clear_all
+    clear_mcf
+    clear_retrieved_data
+    clear_currency_rate
+    clear_job_processing
+  end
 
-		def execute
+  private
 
-			## Destroy McfDocument records 'created_at < 2.years.ago'
-			McfDocument.where('created_at < ?', 2.years.ago).destroy_all
+    def clear_mcf
+      ## Destroy all McfDocument records when 'created_at < ?', 1.years.ago
+      McfDocument.where('created_at < ?', 1.years.ago).destroy_all
+    end
 
-			## Destroy all models records when created date are more than 2 years ago
-			# models = model_collections
-			# models.each do |model|
-			# 	model.where('created_at < ?', 2.years.ago).destroy_all
-			# end
-		end
+    def clear_retrieved_data
+      ## Remove all oldest RetriedData when 'created_at < ?', 1.month.ago
+      RetrievedData.where('created_at < ?', 1.month.ago).destroy_all
+    end
 
-		### --------- TODO ------------- ###
-		def model_collections
-		    models = []
-		    folder = File.join(Rails.root, "app", "models")
-		    Dir[File.join(folder, "*")].each do |filename|
-		      klass = File.basename(filename, '.rb').camelize.constantize
-		      models << klass
-		    end
-		    return models
-		end
-		
-	end	
+    def clear_currency_rate
+      ## Truncate CurrencyRate table when Time.now.month == 6, Time.now.day == 1 and Time.now.hour == 1
+        ActiveRecord::Base.connection.execute("TRUNCATE #{CurrencyRate.table_name}") if (Time.now.month.to_i % 6 == 0) && Time.now.day.to_i == 1
+    end
+
+    def clear_job_processing
+      ## Destroy all JobProcessing when records 'created_at < ?', 1.month.ago
+      JobProcessing.where('started_at < ?', 1.month.ago).finished.destroy_all
+    end
 end

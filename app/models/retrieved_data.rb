@@ -37,10 +37,6 @@ class RetrievedData < ApplicationRecord
     end
   end
 
-  def self.remove_oldest
-    RetrievedData.where('created_at < ?', 1.month.ago).destroy_all
-  end
-
   def json_content=(data)
     # self.content = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
     # self.content_file_name = 'data.blob'

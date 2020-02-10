@@ -39,6 +39,9 @@ RSpec.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
+
+  config.use_transactional_fixtures = false
+  
   config.mock_with :rspec
 
   config.infer_spec_type_from_file_location!

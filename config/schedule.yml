@@ -36,9 +36,11 @@ NotifyPreAssignmentDeliveryFailureDailyWorker:
 NotifyPreAssignmentExportWorker:
   queue: default
   cron: '0 8 * * *'
-ClearCurrencyRateWorker:
-  queue: default
-  cron: '0 1 1 */6 *'
+
+#TO DO : Remove
+# ClearCurrencyRateWorker:
+#   queue: default
+#   cron: '0 1 1 */6 *'
 
 ## Budgea retrievers workers
 
@@ -46,10 +48,10 @@ ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
-# TO DO : move to DatabaseCleanerWorker
-RemoveOldestRetrievedDataWorker:
-  queue: default
-  cron: '0 0 * * *'
+# TO DO : Remove
+# RemoveOldestRetrievedDataWorker:
+#   queue: default
+#   cron: '0 0 * * *'
 
 NotifyProcessedRequestsWorker:
   queue: default
@@ -117,10 +119,10 @@ JobProcessorWorker:
   queue: high
   cron: '0 */5 * * * *'
 
-## Erase records every year (created_at < 2.years.ago
-# DatabaseCleanerWorker:
-#   queue: default
-#   cron: 0 0 1 1 *
+## destroy some data
+DatabaseCleanerWorker:
+  queue: default
+  cron: '0 2 * * *'
 
 
 ## Delivery workers

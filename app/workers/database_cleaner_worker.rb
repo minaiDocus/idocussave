@@ -2,6 +2,8 @@ class DatabaseCleanerWorker
   include Sidekiq::Worker
 
   def perform
-      DatabaseCleanerService.clear_all
+    UniqueJobs.for "DatabaseCleaner" do
+      DatabaseCleanerService.new.clear_all
+    end
   end
 end

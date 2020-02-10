@@ -43,10 +43,6 @@ class CurrencyRate < ApplicationRecord
      "RWF", "AWG", "DJF", "BTN", "KMF", "WST", "SPL", "ERN", "FKP", "SHP", "JEP", "TMT", "TVD", "IMP", "GGP", "ZMW"]
   end
 
-  def self.clear_all
-    connection.execute("TRUNCATE #{self.table_name}")
-  end
-
   private
 
   def self.of(date, from, to)
