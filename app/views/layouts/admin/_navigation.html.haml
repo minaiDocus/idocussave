@@ -5,66 +5,77 @@
     %span.navbar-toggler-icon
 
   .collapse.navbar-collapse#navbarSupportedContent
-    %ul.nav.navbar-nav.mr-auto.bg-menu
-      -#%li.nav-item{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
-      %li.nav-item{ class: ('active' if controller_name == 'admin') }
-        = link_to 'Tableau de bord', admin_root_path, class: 'nav-link'
-      %li.nav-item.dropdown
-        = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
-          Finance
-          %b.caret
-        .dropdown-menu
-          = link_to 'Reporting', '/admin/reporting', class: 'dropdown-item'
-          = link_to 'Reporting de traitement', '/admin/process_reporting', class: 'dropdown-item'
-          = link_to 'Factures', admin_invoices_path, class: 'dropdown-item'
-      %li.nav-item{ class: ( 'active' if controller_name == 'users') }
-        = link_to 'Utilisateurs', admin_users_path, class: 'nav-link'
-      %li.nav-item{ class: ('active' if controller_name == 'subscription_options') }
-        = link_to 'Forfaits', admin_subscription_options_path, class: 'nav-link'
-      %li.nav-item{ class: ('active' if controller_name.in?(%w(subscriptions mobile_reporting))) }
-        = link_to 'Statistiques', admin_subscriptions_path, class: 'nav-link'
-      %li.nav-item{ class: ('active' if controller_name == 'orders') }
-        = link_to 'Commandes', admin_orders_path, class: 'nav-link'
-      %li.nav-item{ class: ('active' if controller_name == 'events') }
-        = link_to 'Visites', admin_events_path, class: 'nav-link'
-      %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests))) }
-        = link_to 'Automates', admin_retrievers_path, class: 'nav-link'
-      %li.nav-item.dropdown
-        = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
-          Livraison de pré-affectation
-          %b.caret
-        %ul.dropdown-menu
-          = link_to 'Livraison vers Ibiza', admin_pre_assignment_deliveries_path(software: 'ibiza'), class: 'dropdown-item'
-          = link_to 'Livraison vers Exact Online', admin_pre_assignment_deliveries_path(software: 'exact_online'), class: 'dropdown-item'
-      %li.nav-item{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
-        = link_to "iDocus'Box", admin_dematboxes_path, class: 'nav-link'
-      %li.nav-item.dropdown
-        = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
-          Autres
-          %b.caret
-        %ul.dropdown-menu
-          = link_to 'News', admin_news_index_path, class: 'dropdown-item'
-          = link_to 'Récéptions Mail', admin_emailed_documents_path, class: 'dropdown-item'
-          = link_to 'Images', admin_cms_images_path, class: 'dropdown-item'
-          = link_to 'Ateliers', admin_scanning_providers_path, class: 'dropdown-item'
-          = link_to 'Partages de compte', admin_account_sharings_path, class: 'dropdown-item'
-          = link_to 'Notifications utilisateurs', admin_notifications_path, class: 'dropdown-item'
-          = link_to 'Doublons de pré-affectation', admin_pre_assignment_blocked_duplicates_path, class: 'dropdown-item'
-          = link_to 'Paramétrage des notifications', admin_notification_settings_path, class: 'dropdown-item'
-    %span.navbar-text
-      %li.nav-item.dropdown.bg-menu
-        = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
-          = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
-          = current_user.email
-          %b.caret
-        %ul.dropdown-menu
-          %li
-            = link_to destroy_user_session_path, method: :delete, class: 'dropdown-item' do
-              = glyphicon('account-logout', { class: 'mr-sm-1', color: '#fff' })
-              Déconnexion
-      /  = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
-      /  = link_to current_user.email, root_path, class: 'text-white'
-      /  |
-      /  = glyphicon('account-logout', { class: 'float-left mr-sm-2' })
-      /  = link_to 'Déconnexion', destroy_user_session_path, method: :delete, class: 'text-white'
+    .main-menu-content.mr-auto{ style: 'max-width: 80%' }
+      %ul.nav.navbar-nav.bg-menu{ style: 'width: 989px' }
+        -#%li.nav-item{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
+        %li.nav-item{ class: ('active' if controller_name == 'admin') }
+          = link_to 'Tableau de bord', admin_root_path, class: 'nav-link'
+        %li.nav-item.dropdown
+          = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+            Finance
+            %b.caret
+          .dropdown-menu
+            = link_to 'Reporting', '/admin/reporting', class: 'dropdown-item'
+            = link_to 'Reporting de traitement', '/admin/process_reporting', class: 'dropdown-item'
+            = link_to 'Factures', admin_invoices_path, class: 'dropdown-item'
+        %li.nav-item{ class: ( 'active' if controller_name == 'users') }
+          = link_to 'Utilisateurs', admin_users_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name == 'subscription_options') }
+          = link_to 'Forfaits', admin_subscription_options_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name.in?(%w(subscriptions mobile_reporting))) }
+          = link_to 'Statistiques', admin_subscriptions_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name == 'orders') }
+          = link_to 'Commandes', admin_orders_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name == 'events') }
+          = link_to 'Visites', admin_events_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests))) }
+          = link_to 'Automates', admin_retrievers_path, class: 'nav-link'
+        %li.nav-item.dropdown
+          = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+            Livraison de pré-affectation
+            %b.caret
+          %ul.dropdown-menu
+            = link_to 'Livraison vers Ibiza', admin_pre_assignment_deliveries_path(software: 'ibiza'), class: 'dropdown-item'
+            = link_to 'Livraison vers Exact Online', admin_pre_assignment_deliveries_path(software: 'exact_online'), class: 'dropdown-item'
+        %li.nav-item{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
+          = link_to "iDocus'Box", admin_dematboxes_path, class: 'nav-link'
+        %li.nav-item.dropdown
+          = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+            Autres
+            %b.caret
+          %ul.dropdown-menu
+            = link_to 'News', admin_news_index_path, class: 'dropdown-item'
+            = link_to 'Récéptions Mail', admin_emailed_documents_path, class: 'dropdown-item'
+            = link_to 'Images', admin_cms_images_path, class: 'dropdown-item'
+            = link_to 'Ateliers', admin_scanning_providers_path, class: 'dropdown-item'
+            = link_to 'Partages de compte', admin_account_sharings_path, class: 'dropdown-item'
+            = link_to 'Notifications utilisateurs', admin_notifications_path, class: 'dropdown-item'
+            = link_to 'Doublons de pré-affectation', admin_pre_assignment_blocked_duplicates_path, class: 'dropdown-item'
+            = link_to 'Paramétrage des notifications', admin_notification_settings_path, class: 'dropdown-item'
+        - if current_user.is_developer
+          %li.nav-item.dropdown
+            = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+              Outils DEV
+              %b.caret
+            %ul.dropdown-menu
+              = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
+    .user-menu-content
+      %ul.nav.navbar-nav
+        %li.nav-item
+          = link_to glyphicon('external-link', { color:'#FFF'} ), root_path, title: "Revenir à la page d'acceuil", class: 'nav-link'
+        %li.nav-item.dropdown.bg-menu
+          = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+            = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
+            = current_user.email
+            %b.caret
+          %ul.dropdown-menu
+            %li
+              = link_to destroy_user_session_path, method: :delete, class: 'dropdown-item' do
+                = glyphicon('account-logout', { class: 'mr-sm-1', color: '#fff' })
+                Déconnexion
+        /  = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
+        /  = link_to current_user.email, root_path, class: 'text-white'
+        /  |
+        /  = glyphicon('account-logout', { class: 'float-left mr-sm-2' })
+        /  = link_to 'Déconnexion', destroy_user_session_path, method: :delete, class: 'text-white'
       

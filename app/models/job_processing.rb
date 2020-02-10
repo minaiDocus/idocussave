@@ -42,4 +42,15 @@ class JobProcessing < ApplicationRecord
       transition started: :killed
     end
   end
+
+  def self.search(contains)
+    job_processing = JobProcessing.all
+
+    job_processing = job_processing.where("name LIKE ?", "%#{contains[:name]}%")            if contains[:name].present?
+    job_processing = job_processing.where(state: contains[:state])                          if contains[:state].present?
+    job_processing = job_processing.where("started_at >= ?", "#{contains[:started_at]}")    if contains[:started_at].present?
+    job_processing = job_processing.where("finished_at <= ?", "#{contains[:finished_at]}")  if contains[:finished_at].present?
+
+    job_processing
+  end
 end

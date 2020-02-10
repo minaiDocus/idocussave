@@ -629,6 +629,11 @@ Rails.application.routes.draw do
 
     resources :pre_assignment_blocked_duplicates, only: :index
 
+    resources :job_processing, only: :index do
+      get 'kill_job_softly', on: :collection
+      get 'real_time_event', on: :collection
+    end
+
     resources :news do
       post :publish, on: :member
     end
