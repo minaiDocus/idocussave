@@ -23,7 +23,7 @@ class JobProcessorService
       jobs = JobProcessing.where(name: job.name).not_killed.order(started_at: :desc)
       job_processing  = jobs.first
 
-      time_duration = ((Time.now - job_processing.started_at)/3600).round
+      time_duration = ((Time.now - job_processing.started_at)/3600).to_i
 
       job_pass_name = job_processing.name.split(/-|_/)[0]
 
@@ -32,7 +32,7 @@ class JobProcessorService
       job_test_8h = job_pass_unlocked_8h.include?(job_pass_name) && time_duration >= 8
 
       if job_test_8h || (!job_test_8h && (time_duration >= 3 || job_test_2h || job_test_1h))
-        result = $remote_lock.release_lock job_processing.name
+        result = $remote_lock.release_lock "#{job_processing.name}"
 
         jobs.each(&:kill)
 
@@ -60,5 +60,17 @@ class JobProcessorService
 
   def logger
     @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_job_processing.log")
+  end
+
+  private
+
+  def clear_all_lock
+    lock_names = JobProcessing.all.select(:name).distinct
+    lock_names.each do |name|
+      $remote_lock.release_lock "#{name}"
+    end
+
+    di = SidekiqUniqueJobs::Digests.all
+    di.each{|d| SidekiqUniqueJobs::Digests.delete_by_digest d}
   end
 end
