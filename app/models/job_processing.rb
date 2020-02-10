@@ -3,11 +3,13 @@ class JobProcessing < ApplicationRecord
 
   validates_presence_of :name
 
-  scope :not_finished, -> { where(finished_at: [nil,''], state: :started) }
+  scope :not_finished,  -> { where(finished_at: [nil,''], state: :started) }
+  scope :killed,        -> { where(state: :killed) }
+  scope :not_killed,    -> { where.not(state: :killed) }
 
   state_machine initial: :started do
     state :finished
-    state :aborted
+    state :killed
     state :started
 
 
@@ -22,7 +24,7 @@ class JobProcessing < ApplicationRecord
       process.save
     end
 
-    after_transition on: :abort do |process, _transition|
+    after_transition on: :kill do |process, _transition|
       process.finished_at = Time.now
       process.save
     end
@@ -35,8 +37,8 @@ class JobProcessing < ApplicationRecord
       transition started: :finished
     end
 
-    event :abort do
-      transition started: :aborted
+    event :kill do
+      transition started: :killed
     end
   end
 end

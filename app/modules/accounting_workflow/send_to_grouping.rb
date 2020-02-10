@@ -1,4 +1,12 @@
 class AccountingWorkflow::SendToGrouping
+
+  def self.process(temp_doc_id)
+    UniqueJobs.for "SendToGrouping-#{temp_doc_id}" do
+      temp_document = TempDocument.find temp_doc_id
+      AccountingWorkflow::SendToGrouping.new(temp_document).execute if temp_document.bundle_needed?
+    end
+  end
+
   def initialize(temp_document)
     @temp_document = temp_document
   end

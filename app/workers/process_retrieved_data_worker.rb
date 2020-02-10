@@ -3,11 +3,9 @@ class ProcessRetrievedDataWorker
   sidekiq_options retry: false, unique: :until_and_while_executing
 
   def perform
-    UniqueJobs.for 'ProcessRetrievedDataWorker', 1.day do
-      RetrievedData.not_processed.each do |retrieved_data|
-        UniqueJobs.for "ProcessRetrievedData-#{retrieved_data.id}" do
-          ProcessRetrievedData.new(retrieved_data).execute
-        end
+    RetrievedData.not_processed.each do |retrieved_data|
+      UniqueJobs.for "ProcessRetrievedData-#{retrieved_data.id}" do
+        ProcessRetrievedData.delay.process(retrieved_data.id)
       end
     end
   end

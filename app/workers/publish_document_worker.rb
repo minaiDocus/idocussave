@@ -9,5 +9,4 @@ class PublishDocumentWorker
       end
     end
   end
-
 end

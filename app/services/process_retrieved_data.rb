@@ -1,5 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class ProcessRetrievedData
+
+  def self.process(retrieved_data_id)
+    UniqueJobs.for "ProcessRetrievedData-#{retrieved_data_id}" do
+      retrieved_data = RetrievedData.find retrieved_data_id
+      ProcessRetrievedData.new(retrieved_data).execute if retrieved_data.not_processed?
+    end
+  end
+
   def initialize(retrieved_data, run_until=nil)
     @retrieved_data = retrieved_data
     @run_until      = run_until

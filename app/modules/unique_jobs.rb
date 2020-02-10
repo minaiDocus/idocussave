@@ -3,7 +3,7 @@ module UniqueJobs
   def self.for(name, expiry=1.day, retries=1)
     result, error = nil
 
-    job_processing       = JobProcessing.find_by_name(name.to_s).presence || JobProcessing.new
+    job_processing       = JobProcessing.where(name: name.to_s).not_killed.first.presence || JobProcessing.new
     job_processing.name  = name.to_s
     is_started           = false
 

@@ -19,8 +19,8 @@ class JobProcessorService
 
     job_pass_unlocked_8h = %w[UpdateAccountingPlan_all ImportFromDropbox ImportFromAllFTP InitializeIbizaboxImport]
 
-    JobProcessing.not_finished.select(:name).distinct.each do |job|
-      jobs = JobProcessing.where(name: job.name).order(started_at: :desc)
+    JobProcessing.not_finished.not_killed.select(:name).distinct.each do |job|
+      jobs = JobProcessing.where(name: job.name).not_killed.order(started_at: :desc)
       job_processing  = jobs.first
 
       time_duration = ((Time.now - job_processing.started_at)/3600).round
@@ -34,9 +34,9 @@ class JobProcessorService
       if job_test_8h || (!job_test_8h && (time_duration >= 3 || job_test_2h || job_test_1h))
         result = $remote_lock.release_lock job_processing.name
 
-        jobs.each(&:abort)
+        jobs.each(&:kill)
 
-        logger.info "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} => Success (#{result} - Nb : #{jobs.size})"
+        logger.info "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} - started_at : #{job_processing.started_at.to_s} - killed_at : #{Time.now.to_s} => Success (#{result} - Nb : #{jobs.size})"
       end
     end
   end
@@ -54,7 +54,7 @@ class JobProcessorService
       SidekiqUniqueJobs::Digests.delete_by_digest uniq_job_id
       Rails.cache.write([:job_processing, uniq_job_id], "killed", expires_in: 1.minutes)
 
-      logger.info "[JOB PROCESSING KILLED] -- #{uniq_job_id} => Success"
+      logger.info "[JOB PROCESSING KILLED] -- #{uniq_job_id} - killed_at : #{Time.now.to_s} => Success"
     end
   end
 

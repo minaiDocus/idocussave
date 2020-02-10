@@ -5,6 +5,12 @@ class AccountingWorkflow::GroupDocument
 
   @@schema = Nokogiri::XML::Schema(Rails.root.join('lib/xsd/group_documents.xsd'))
 
+  def self.process(file_path)
+    UniqueJobs.for "GroupDocument-#{file_path}", 1.day, 2 do
+      AccountingWorkflow::GroupDocument.new(file_path).execute if File.exist?(file_path)
+    end
+  end
+
   def initialize(file_path)
     @errors               = []
     @processed_file_paths = []
