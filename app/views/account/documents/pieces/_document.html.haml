@@ -11,17 +11,17 @@
     %span.preseizure_label.tip_details.each.do-tooltip
       = document.name
     = document_delivery_label(document) if preseizures.count > 0
-
-    %span.choose_action_piece     
-      %a.float-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
-        = glyphicon('trash')
-      %a.float-right.margin3.do-tooltip{href: document.cloud_content_object.url, title: 'Télécharger', target: '_blank'}
-        = glyphicon('data-transfer-download')
-      %a.float-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
-        .do-selectPage-check-icon
-          = glyphicon('check')
-        .do-selectPage-ban-icon.hide
-          = glyphicon('ban')
+    - if @user.active?
+      %span.choose_action_piece
+        %a.float-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
+          = glyphicon('trash')
+        %a.float-right.margin3.do-tooltip{href: document.cloud_content_object.url, title: 'Télécharger', target: '_blank'}
+          = glyphicon('data-transfer-download')
+        %a.float-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
+          .do-selectPage-check-icon
+            = glyphicon('check')
+          .do-selectPage-ban-icon.hide
+            = glyphicon('ban')
      
   .piece_body
     .piece_image

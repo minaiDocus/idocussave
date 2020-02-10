@@ -2,6 +2,7 @@
 
 class Account::NotificationsController < Account::AccountController
   skip_before_action :verify_suspension, only: :latest
+  skip_before_action :verify_if_active
   before_action :load_notifications, except: :link_through
 
   def index

@@ -1,4 +1,4 @@
-#documents.container-fluid{ class: (@user.active? ? 'padding19bottom' : '') }
+#documents.container-fluid
   .alerts
     = render partial: 'shared/messages'
 
@@ -87,7 +87,6 @@
 - if @pack
   #pack{ data: { name: @pack.name.sub(' all', ''), id: @pack.id } }
 
-- if @user.active?
-  = render :partial => "/account/documents/dialog_box"
+= render :partial => "/account/documents/dialog_box"
 
 = render "help"
