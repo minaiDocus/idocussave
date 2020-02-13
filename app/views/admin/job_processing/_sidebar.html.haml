@@ -19,6 +19,7 @@
               = text_field_tag 'job_contains[started_at]', (params[:job_contains][:started_at] rescue ''), class: 'form-control date datepicker'
           .label-section
             = label_tag 'job_contains[finished_at]', 'Fin'
+          .control-section
             .input-group
               .input-group-prepend
               = text_field_tag 'job_contains[finished_at]', (params[:job_contains][:finished_at] rescue ''), class: 'form-control date datepicker'

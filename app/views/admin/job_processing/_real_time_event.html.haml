@@ -21,11 +21,6 @@
         %td= job.notifications
         %td.text-center
           = processing_of job
-          - elapsed_time = (job.finished_at.present?) ? (job.finished_at - job.started_at) : (Time.now - job.started_at)
-          - if elapsed_time >= 60
-            = ((elapsed_time / 60).to_i).to_s + ' min.'
-          - else
-            = elapsed_time.to_s + ' sec.'
         - if 0 == 1
           %td.text-center
             - if !job.finished_at.presence

@@ -17,7 +17,7 @@ class Admin::JobProcessingController < Admin::AdminController
   end
 
   def real_time_event
-    @jobs = JobProcessing.search(search_terms(params[:job_contains])).order(started_at: :desc).last(50)
+    @jobs = JobProcessing.search(search_terms(params[:job_contains])).order(state: :desc).last(50)
 
     render partial: 'real_time_event'
   end
@@ -28,7 +28,7 @@ class Admin::JobProcessingController < Admin::AdminController
     if params[:sort].in? %w[started_at name finished_at state]
       params[:sort]
     else
-      'started_at'
+      'state'
     end
   end
   helper_method :sort_column
