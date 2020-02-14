@@ -132,8 +132,9 @@ class AccountingPlan < ApplicationRecord
   end
 
   def cleanNotUpdatedItems
-    self.providers.where(is_updated: false).each(&:destroy)
-    self.customers.where(is_updated: false).each(&:destroy)
+    # TO DO : temp fix, keep not updated datas
+    # self.providers.where(is_updated: false).each(&:destroy)
+    # self.customers.where(is_updated: false).each(&:destroy)
   end
 
   def need_update?
