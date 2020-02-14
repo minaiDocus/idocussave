@@ -7,6 +7,21 @@ class Admin::RetrieversController < Admin::AdminController
     @retrievers = @retrievers.page(params[:page]).per(params[:per_page])
   end
 
+  def fetcher
+    if params[:post_action_budgea_fetcher]
+      if params_fetcher_valid?
+        @message = BudgeaTransactionFetcher.new(
+          User.get_by_code(params[:budgea_fetcher_contains][:user_code]),
+          params[:budgea_fetcher_contains][:account_ids].split(',').collect { |id| id.delete(' ') },
+          params[:budgea_fetcher_contains][:min_date],
+          params[:budgea_fetcher_contains][:max_date]
+        ).execute
+      else
+        @message = 'Paramètre manquant!!'
+      end
+    end
+  end
+
   private
 
   def load_retriever
