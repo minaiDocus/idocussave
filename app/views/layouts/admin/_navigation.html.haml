@@ -58,7 +58,10 @@
               Outils DEV
               %b.caret
             %ul.dropdown-menu
-              = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
+              %li.dropdown-item
+                = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
+              %li.dropdown-item
+                = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
     .user-menu-content
       %ul.nav.navbar-nav
         %li.nav-item

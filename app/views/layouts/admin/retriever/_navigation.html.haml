@@ -1,13 +1,6 @@
 %ul.nav
-  %li.dropdown
-    = link_to '#', class: 'dropdown-toggle btn btn-secondary', data: { toggle: 'dropdown' } do
-      Automates
-      %b.caret
-    %ul.dropdown-menu
-      %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'index') }
-        = link_to 'Automates de récupération', admin_retrievers_path, class: 'dropdown-item'
-      %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'fetcher') }
-        = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
+  %li
+    = link_to 'Automates de récupération', admin_retrievers_path, class: 'btn btn-secondary'
   &nbsp;
   %li{ class: ('active' if controller_name == 'new_provider_requests') }
     = link_to 'Demandes', admin_new_provider_requests_path, class: 'btn btn-secondary'
