@@ -1,0 +1,15 @@
+.auto-scroll-div{  
+	max-width: 75%;
+  overflow: hidden; 
+}
+
+.auto-scroll-div ul{
+  width: 991px;
+}
+
+.dropdown-menu.show{    
+  position: fixed !important;
+  right: auto;
+  top: auto;
+  left: auto;
+}

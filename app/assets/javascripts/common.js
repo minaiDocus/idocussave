@@ -26,6 +26,7 @@
 //= require bootstrap-filestyle.min
 //= require bootstrap-datepicker/core
 //= require retractable
+//= require dynamic_hide_menu
 //
 // French translation for bootstrap-datepicker
 // Lola LAI KAM <lailol@directmada.com>
@@ -169,7 +170,6 @@ function adjustIconColor(elem) {
     })
   });
 }
-
 
 jQuery(function () {
   //For serializing Form to object

@@ -13,6 +13,8 @@
 @import chosen
 @import custom_popover
 @import retractable
+@import dynamic_hide_menu
+
 
 // Defaults
 
@@ -89,8 +91,7 @@ nav.navbar .dropdown-menu
     box-shadow: (#ffffff 0 1px 0px inset)
     img
       position: relative
-      top: 7px
-      left: 11px
+      margin: 7px 11px
 
 //form
 /***** Form *****/
@@ -370,6 +371,7 @@ form.form-filter
   .dropdown-menu .dropdown-item:hover
     background-color: #d7d6d7 !important
     color: #3e2f24 !important
+
   .nav-item.active
     background-color: #fff !important
     .nav-link

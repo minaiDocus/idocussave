@@ -5,8 +5,11 @@
     %span.navbar-toggler-icon
 
   .collapse.navbar-collapse#navbarSupportedContent
-    .main-menu-content.mr-auto{ style: 'max-width: 80%' }
-      %ul.nav.navbar-nav.bg-menu{ style: 'width: 989px' }
+    %span.auto-scroll-span-left.hide.ml-1.mr-1
+      %button.btn
+        = glyphicon('arrow-left', { color: 'white' })
+    .main-menu-content.auto-scroll-div
+      %ul.nav.navbar-nav.bg-menu
         -#%li.nav-item{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
         %li.nav-item{ class: ('active' if controller_name == 'admin') }
           = link_to 'Tableau de bord', admin_root_path, class: 'nav-link'
@@ -34,7 +37,7 @@
           = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
             Livraison de pré-affectation
             %b.caret
-          %ul.dropdown-menu
+          .dropdown-menu
             = link_to 'Livraison vers Ibiza', admin_pre_assignment_deliveries_path(software: 'ibiza'), class: 'dropdown-item'
             = link_to 'Livraison vers Exact Online', admin_pre_assignment_deliveries_path(software: 'exact_online'), class: 'dropdown-item'
         %li.nav-item{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
@@ -43,7 +46,7 @@
           = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
             Autres
             %b.caret
-          %ul.dropdown-menu
+          .dropdown-menu
             = link_to 'News', admin_news_index_path, class: 'dropdown-item'
             = link_to 'Récéptions Mail', admin_emailed_documents_path, class: 'dropdown-item'
             = link_to 'Images', admin_cms_images_path, class: 'dropdown-item'
@@ -51,17 +54,18 @@
             = link_to 'Partages de compte', admin_account_sharings_path, class: 'dropdown-item'
             = link_to 'Notifications utilisateurs', admin_notifications_path, class: 'dropdown-item'
             = link_to 'Doublons de pré-affectation', admin_pre_assignment_blocked_duplicates_path, class: 'dropdown-item'
-            = link_to 'Paramétrage des notifications', admin_notification_settings_path, class: 'dropdown-item'
-        - if current_user.is_developer
-          %li.nav-item.dropdown
-            = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
-              Outils DEV
-              %b.caret
-            %ul.dropdown-menu
-              %li.dropdown-item
-                = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
-              %li.dropdown-item
-                = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
+            = link_to 'Paramétrage des notifications', admin_notification_settings_path, class: 'dropdown-item'        
+        %li.nav-item.dropdown
+          = link_to '#', class: 'nav-link dropdown-toggle', data: { toggle: 'dropdown' } do
+            Outils DEV
+            %b.caret
+          .dropdown-menu
+            - if current_user.is_developer
+              = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
+            = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
+    %span.auto-scroll-span-right.hide.mr-auto.ml-1
+      %button.btn
+        = glyphicon('arrow-right', { color: 'white' })
     .user-menu-content
       %ul.nav.navbar-nav
         %li.nav-item
@@ -71,11 +75,10 @@
             = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
             = current_user.email
             %b.caret
-          %ul.dropdown-menu
-            %li
-              = link_to destroy_user_session_path, method: :delete, class: 'dropdown-item' do
-                = glyphicon('account-logout', { class: 'mr-sm-1', color: '#fff' })
-                Déconnexion
+          .dropdown-menu
+            = link_to destroy_user_session_path, method: :delete, class: 'dropdown-item' do
+              = glyphicon('account-logout', { class: 'mr-sm-1', color: '#fff' })
+              Déconnexion
         /  = glyphicon('person', { class: 'mr-sm-1', color: '#fff' })
         /  = link_to current_user.email, root_path, class: 'text-white'
         /  |
