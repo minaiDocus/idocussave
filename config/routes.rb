@@ -339,6 +339,8 @@ Rails.application.routes.draw do
 
       resource :invoices, only: %w(index show) do
         get 'download(/:id)', action: 'download', as: :download
+        post 'insert', action: 'insert'
+        delete 'remove', action: 'remove'
       end
     end
 

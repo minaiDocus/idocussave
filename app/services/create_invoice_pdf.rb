@@ -299,6 +299,8 @@ class CreateInvoicePdf
     auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end
 
+private
+  
   def auto_upload_last_invoice
     begin
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
@@ -308,17 +310,30 @@ class CreateInvoicePdf
 
       uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
 
-      if uploaded_document.valid?
-        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded"
-      else
-        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}"
-      end
+      logger_message_content(uploaded_document)
+
+      auto_upload_invoice_setting(file, content_file_name)
     rescue => e
       logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
     end
   end
 
-private
+  def auto_upload_invoice_setting(file, content_file_name)
+    invoice_settings = @invoice.organization.invoice_settings || []
+
+    invoice_settings.each do |invoice_setting|
+      uploaded_document = UploadedDocument.new( file, content_file_name, invoice_setting.user, invoice_setting.journal_code, 1, nil, 'invoice_setting', nil )
+      logger_message_content(uploaded_document)
+    end
+  end
+
+  def logger_message_content(uploaded_document)
+    if uploaded_document.valid?
+      logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded"
+    else
+      logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}"
+    end
+  end
 
   def logger
     @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_auto_upload_invoice.log")
