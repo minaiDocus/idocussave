@@ -28,7 +28,6 @@
         .float-right
           = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year, organization_id: params[:organization_id]), class: 'btn btn-light'
 
-  - @organization = accounts.first.organization
   - annual_summary = []
   - 12.times do
     - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
@@ -287,7 +286,7 @@
                   - 12.times do |time|
                     %td.text-center{ id: "period_#{time}"}
                       - date = (Time.local(@year) + time.month).to_date
-                      = render partial: 'organization_quota', locals: { period: @organization.subscription.find_period(date) }
+                      = render partial: 'organization_quota', locals: { period: @user.organization.subscription.find_period(date) }
               %tfooter
                 %tr
                   %th{ :style => "width:15%;" }

@@ -17,8 +17,11 @@ class ProcessRetrievedData
     logger.info "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start"
     start_time = Time.now
     user = @retrieved_data.user
-    connections = @retrieved_data.json_content['connections']
-    if connections.present?
+    json_content = @retrieved_data.json_content
+
+    if json_content.present? && json_content[:success]
+      connections = json_content[:content]['connections']
+
       connections.each do |connection|
         unless connection['id'].in?(@retrieved_data.processed_connection_ids)
           is_connection_ok = true
@@ -233,7 +236,12 @@ class ProcessRetrievedData
 
     logger.info "[#{user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
 
-    if @retrieved_data.error?
+    if (!json_content[:success] && json_content[:content] != 'File not found') || @retrieved_data.error?
+      if !json_content[:success]
+        @retrieved_data.update(error_message: json_content[:content].to_s)
+        @retrieved_data.reload
+      end
+
       addresses = Array(Settings.first.try(:notify_errors_to))
       if addresses.size > 0
         NotificationMailer.notify(
@@ -243,7 +251,7 @@ class ProcessRetrievedData
       end
       @retrieved_data.error_message
     else
-      @retrieved_data.processed
+      @retrieved_data.processed if json_content[:success] || !@retrieved_data.cloud_content.attached?
     end
   end
 

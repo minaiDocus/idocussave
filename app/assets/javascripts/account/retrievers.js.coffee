@@ -48,10 +48,10 @@ jQuery ->
       if url != undefined
         _url = url        
       else
-        direction = $('#direction').val() || ''
-        sort      = $('#sort').val()      || ''
-        per_page  = $('#per_page').val()  || ''
-        page      = $('#page').val()      || ''        
+        direction = $('#direction').val() || 'desc'
+        sort      = $('#sort').val()      || 'created_at'
+        per_page  = $('#per_page').val()  || 20
+        page      = $('#page').val()      || 1
         
         _url = 'retrievers?part=true'
         if direction != ''

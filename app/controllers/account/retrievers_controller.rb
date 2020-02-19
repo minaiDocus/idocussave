@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
+  before_action :verif_account, except: %w[index]
   before_action :load_budgea_config
   before_action :load_retriever, except: %w[index list new]
   before_action :verify_retriever_state, except: %w[index list new]
@@ -97,5 +98,11 @@ class Account::RetrieversController < Account::RetrieverController
       proxy: Budgea.config.proxy
     }.to_json
     @bi_config = Base64.encode64(bi_config.to_s)
+  end
+
+  def verif_account
+    if @account.nil?
+      redirect_to account_retrievers_path
+    end
   end
 end

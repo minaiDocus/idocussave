@@ -9,10 +9,14 @@ class DocumentTools
 
 
   def self.pages_number(file_path)
-    document = nil
-    document = Poppler::Document.new(file_path)
+    begin
+      document = nil
+      document = Poppler::Document.new(file_path)
 
-    document.pages.count
+      document.pages.count
+    rescue
+      0
+    end
   end
 
 

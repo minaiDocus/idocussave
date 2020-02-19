@@ -191,12 +191,14 @@ module ApplicationHelper
 
 
   def per_page
-    params[:per_page].try(:to_i) || 20
+    per_page = params[:per_page] || 20
+    per_page.to_i
   end
 
 
   def page
-    params[:page].try(:to_i) || 1
+    page = params[:page] || 1
+    page.to_i
   end
 
 
