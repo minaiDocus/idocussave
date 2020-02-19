@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_04_143006) do
+ActiveRecord::Schema.define(version: 2020_02_19_121248) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -620,9 +620,9 @@ ActiveRecord::Schema.define(version: 2020_02_04_143006) do
     t.boolean "is_configured", default: false, null: false
     t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
     t.integer "external_file_storage_id"
-    t.string "encrypted_access_token"
-    t.string "encrypted_refresh_token"
-    t.string "encrypted_access_token_expires_at"
+    t.text "encrypted_access_token"
+    t.text "encrypted_refresh_token"
+    t.text "encrypted_access_token_expires_at"
     t.index ["external_file_storage_id"], name: "external_file_storage_id"
   end
 
@@ -1939,6 +1939,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_143006) do
     t.string "phone_number"
     t.string "company"
     t.boolean "is_prescriber", default: false, null: false
+    t.boolean "is_developer", default: false
     t.boolean "is_fake_prescriber", default: false, null: false
     t.datetime "inactive_at"
     t.string "dropbox_delivery_folder", default: "iDocus_delivery/:code/:year:month/:account_book/", null: false
