@@ -15,7 +15,8 @@
             .row
               .col-md-6.padding1top
                 = link_to 'Ajouter un champ', '#', class: 'btn btn-primary add_field'
-                = link_to 'Supprimer tous les champs', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-primary remove_all_fields'
+                = link_to 'Ajouter tous les champs', '#', class: 'btn btn-success add_all_fields'
+                = link_to 'Supprimer tous les champs', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-danger remove_all_fields'
               .col-md-6.clearfix
                 .float-right
                   = f.input :directive, as: :hidden

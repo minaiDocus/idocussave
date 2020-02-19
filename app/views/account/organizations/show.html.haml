@@ -561,7 +561,8 @@
                     N.B.: ce fichier est nécessaire pour tous les outils comptables ne fonctionnant pas avec iDocus par API (Mode SaaS intégral).
                     %br
                   .col-md-2
-                    .alignright= link_to 'Créer maintenant', edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
+                    - title = (@organization.try(:csv_descriptor).try(:directive).present?) ? 'Modifier le format' : 'Créer maintenant'
+                    .alignright= link_to title, edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
             - if @user.leader?
               #payments.tab-pane{ class: ('active' if params[:tab] == 'payments') }
                 = render :partial => '/account/organizations/slimpay_checkout'

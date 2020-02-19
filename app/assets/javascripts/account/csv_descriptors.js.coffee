@@ -27,12 +27,16 @@ activate_csv_field_action = ->
     false
   $('#csv_descriptors.edit #select_directive').unbind('change')
   $('#csv_descriptors.edit #select_directive').bind 'change', ->
+    $(this).children('option[selected="selected"]').removeAttr('selected')
+    $(this).children('option:selected').attr('selected','selected')
     type = $(this).children('option:selected').attr('value')
     update_directive_input(type, $(this))
 
 activate_csv_global_action = ->
   $('#csv_descriptors.edit .add_field').click ->
     $('#csv_descriptors.edit .template li.field').clone().appendTo('#csv_descriptors.edit .list')
+    fields = $('#csv_descriptors.edit .list li.field').last().find('#select_directive option').first()
+    fields.attr('selected','selected')
     activate_csv_field_action()
     false
 
@@ -41,6 +45,26 @@ activate_csv_global_action = ->
     if is_confirmed
       $('#csv_descriptors.edit .list').html('')
     false
+
+  $('#csv_descriptors.edit .add_all_fields').click ->
+    is_confirmed = confirm('Etes-vous sûr ?')
+    if is_confirmed
+      options = $('#csv_descriptors.edit .template li.field #select_directive option')
+      escape_option = []
+      $('#csv_descriptors.edit .list li.field').each (index, element) ->
+        if $(this).find('#select_directive option[selected="selected"]').val() != undefined
+          escape_option.push($(this).find('#select_directive option[selected="selected"]').val())
+
+      if escape_option.length == 0 && $('#csv_descriptors.edit .list li.field').length > 0
+        $('#csv_descriptors.edit .list').html('')
+
+      options.each (index,element) ->
+        if escape_option.indexOf(element.value) == -1
+          new_fields = $('#csv_descriptors.edit .template li.field').clone().appendTo('#csv_descriptors.edit .list')
+          fields = $('#csv_descriptors.edit .list li.field').last().find('#select_directive option[value="'+element.value+'"]')
+          fields.attr('selected','selected')
+          activate_csv_field_action()
+          update_directive_input(element.value, fields)
 
 jQuery ->
   if $('#csv_descriptors.edit').length > 0

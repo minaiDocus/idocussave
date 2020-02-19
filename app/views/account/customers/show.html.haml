@@ -597,32 +597,35 @@
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.uses_csv_descriptor?
-                .hide
-                  %hr
-                  %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
-                  %table.table.table-striped.table-condensed
-                    %tbody
-                      %tr
-                        %th Générer automatiquement l'export des écritures et pièces ?
-                        %td
+                %hr
+                %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
+                %table.table.table-striped.table-condensed
+                  %tbody
+                    %tr.hide
+                      %th Générer automatiquement l'export des écritures et pièces ?
+                      %td
+                        .alignright
+                          %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
+                          -if @user.leader? || @user.manage_customers
+                            = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
+                    %tr
+                      %th
+                        - if @customer.softwares.use_own_csv_descriptor_format
+                          Ce dossier utilise son propre format de fichier d'export .csv.
+                        - else
+                          Ce dossier utilise le format de fichier d'export .csv de l'organisation.
+                        - unless @organization.try(:csv_descriptor).try(:directive).present?
+                          %br
+                          %i (L'organisation n'a pas de format csv configuré)
+                      %td
+                        - if @user.leader? || @user.manage_customers
                           .alignright
-                            %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
-                            -if @user.leader? || @user.manage_customers
-                              = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
-                      %tr
-                        %th
-                          - if @customer.softwares.use_own_csv_descriptor_format
-                            Ce dossier utilise son propre format de fichier d'export .csv.
-                          - else
-                            Ce dossier utilise le format de fichier d'export .csv de l'organisation.
-                        %td
-                          - if @user.leader? || @user.manage_customers
-                            .alignright
-                              - if @customer.softwares.use_own_csv_descriptor_format
+                            - if @customer.softwares.use_own_csv_descriptor_format
+                              - if @organization.try(:csv_descriptor).try(:directive).present?
                                 = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
-                                = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
-                              - else
-                                = link_to 'Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
+                              = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
+                            - else
+                              = link_to 'Créer un format propre au dossier', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-primary'
           #accounting_plan.tab-pane.fade{ class: ('active show' if params[:tab] == 'accounting_plan') }
             - if @customer.active?
               = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary'
