@@ -57,6 +57,8 @@ module FileDelivery::RemoteFile
 
   def get_kzip_file
     pole_name = pack.owner.try(:organization).try(:knowings).try(:pole_name)
+    return nil unless File.exist?(cloud_content_object.path.to_s)
+
     KnowingsApi::File.create(cloud_content_object.path, pole_name: pole_name, data: kzip_options)
   end
 
@@ -78,6 +80,9 @@ module FileDelivery::RemoteFile
 
       remote_file.save
     end
+
+    return nil if extension == KnowingsApi::File::EXTENSION && remote_file.temp_path.nil?
+
     remote_file
   end
 
@@ -93,6 +98,6 @@ module FileDelivery::RemoteFile
       current_remote_files << get_remote_file(object, service_name)
     end
 
-    current_remote_files
+    current_remote_files.compact
   end
 end
