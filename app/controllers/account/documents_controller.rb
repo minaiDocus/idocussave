@@ -18,8 +18,7 @@ class Account::DocumentsController < Account::AccountController
 
     if params[:pack_name].present?
       @packs = pack_with_includes.where(owner_id: options[:owner_ids], name: params[:pack_name]).page(options[:page]).per(options[:per_page])
-      ### TODO: find a better way to get empty reports with kaminari classes / methods
-      @reports = @packs.first.reports.where(pack_id: nil).page(options[:page]).per(options[:per_page])
+      @reports = Pack::Report.where(user_id: options[:owner_ids], name: params[:pack_name].gsub('all', '').strip, pack_id: nil).order(updated_at: :desc).page(options[:page]).per(options[:per_page])
     else
       @packs   = pack_with_includes.search(params.try(:[], :by_piece).try(:[], :content), options)
       @reports = Pack::Report.where(user_id: options[:owner_ids], pack_id: nil).order(updated_at: :desc).page(options[:page]).per(options[:per_page])
