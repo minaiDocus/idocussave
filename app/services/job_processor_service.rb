@@ -32,7 +32,7 @@ class JobProcessorService
       job_test_8h = job_pass_unlocked_8h.include?(job_pass_name) && time_duration >= 8
 
       if job_test_8h || (!job_test_8h && (time_duration >= 3 || job_test_2h || job_test_1h))
-        result = $remote_lock.release_lock "#{job_processing.name}"
+        result = $remote_lock.release_lock "#{job_processing.name.strip}"
 
         jobs.each(&:kill)
 
@@ -65,9 +65,9 @@ class JobProcessorService
   private
 
   def clear_all_lock
-    lock_names = JobProcessing.all.select(:name).distinct
-    lock_names.each do |name|
-      $remote_lock.release_lock "#{name}"
+    JobProcessing.all.select(:name).distinct.each do |job|
+      result = $remote_lock.release_lock "#{job.name.strip}"
+      p "#{name.strip} - #{result.to_s}" if result.to_i > 0
     end
 
     di = SidekiqUniqueJobs::Digests.all

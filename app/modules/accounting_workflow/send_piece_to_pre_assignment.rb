@@ -12,7 +12,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def execute
-    return false unless @piece.temp_document.present?
+    return false if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
 
     copy_to_dir manual_dir
 

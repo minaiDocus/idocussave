@@ -237,10 +237,10 @@ class Pack::Piece < ApplicationRecord
   end
 
   def sign_piece
-    content_file_path = self.cloud_content_object.path
-    to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
-
     begin
+      content_file_path = self.cloud_content_object.path
+      to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
+
       DocumentTools.sign_pdf(content_file_path, to_sign_file)
 
       if self.save && File.exist?(to_sign_file.to_s)
@@ -251,6 +251,7 @@ class Pack::Piece < ApplicationRecord
       end
     rescue => e
       logger.info "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})"
+      Pack::Piece.delay_for(2.hours, queue: :low).correct_pdf_signature_of(self.id)
     end
   end
 
