@@ -107,7 +107,7 @@ module DeliverFile
       @remote_files = @pack.remote_files.not_processed.retryable.of(@receiver, @service_name).to_a
 
       @remote_files.each do |remote_file|
-        unless remote_file.remotable_type == 'Pack::Report' || (remote_file.remotable.cloud_content.attached? && remote_file.local_name.present?)
+        unless remote_file.remotable_type == 'Pack::Report' || (remote_file.remotable.try(:cloud_content).try(:attached?) && remote_file.try(:local_name).present?)
           remote_file.cancel!
 
           @remote_files.reject! { |rf| rf.id == remote_file.id }
