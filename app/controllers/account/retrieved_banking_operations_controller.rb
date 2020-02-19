@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Account::RetrievedBankingOperationsController < Account::RetrieverController
+  before_action :verif_account
+
   def index
     operations
     @is_filter_empty = search_terms(params[:banking_operation_contains]).blank?
@@ -78,5 +80,11 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
     operations = @account.operations.not_processed.not_locked.recently_added.waiting_processing
     operations = operations.where(bank_account_id: bank_account_ids)
     Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).includes(:bank_account)
+  end
+
+  def verif_account
+    if @account.nil?
+      redirect_to account_retrievers_path
+    end
   end
 end

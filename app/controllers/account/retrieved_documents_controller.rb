@@ -2,6 +2,7 @@
 
 class Account::RetrievedDocumentsController < Account::RetrieverController
   before_action :load_document, only: %w[show piece]
+  before_action :verif_account
 
   def index
     @documents = TempDocument.search_for_collection(
@@ -101,6 +102,12 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
       "temp_document_metadata.#{sort_column} #{sort_direction}"
     else
       { sort_column => sort_direction }
+    end
+  end
+
+  def verif_account
+    if @account.nil?
+      redirect_to account_retrievers_path
     end
   end
 end

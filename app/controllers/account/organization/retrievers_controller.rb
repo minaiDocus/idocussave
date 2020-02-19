@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Account::Organization::RetrieversController < Account::Organization::RetrieverController
-  before_action :redirect_page
+  before_action :redirect_to_new_page
   before_action :load_retriever, except: %w[index list new create]
   before_action :verify_rights, except: %w[index list new create]
   before_action :load_connectors, only: %w[list new create edit update]
@@ -116,7 +116,7 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     @banks      = Connector.budgea.banks.order(name: :asc)
   end
 
-  def redirect_page
+  def redirect_to_new_page
     redirect_to account_retrievers_path(account_id: @customer.id)
   end
 end

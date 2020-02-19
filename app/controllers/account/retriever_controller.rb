@@ -23,7 +23,7 @@ class Account::RetrieverController < Account::AccountController
       account_id = params[:account_id].presence || session[:retrievers_account_id].presence || 'all'
       @account = nil
 
-      unless account_id == 'all'
+      if account_id != 'all'
         @account = accounts.where(id: account_id).first || accounts.first
       end
       session[:retrievers_account_id] = account_id

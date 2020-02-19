@@ -2,6 +2,7 @@
 
 class Account::Organization::RetrievedDocumentsController < Account::Organization::RetrieverController
   before_action :load_document, except: %w[index select validate]
+  before_action :redirect_to_new_page
 
   def index
     @documents = TempDocument.search_for_collection(
@@ -100,5 +101,9 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
     else
       { sort_column => sort_direction }
     end
+  end
+
+  def redirect_to_new_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
   end
 end

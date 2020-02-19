@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Account::Organization::RetrievedBankingOperationsController < Account::Organization::RetrieverController
+  before_action :redirect_to_new_page
+
   def index
     @operations = operations
     @waiting_operations_count = waiting_operations.count
@@ -70,5 +72,9 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
     operations = @customer.operations.not_processed.not_locked.recently_added.waiting_processing
     operations = operations.where(bank_account_id: bank_account_ids)
     Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains]))
+  end
+
+  def redirect_to_new_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
   end
 end

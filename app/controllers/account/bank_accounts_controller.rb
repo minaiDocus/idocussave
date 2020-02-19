@@ -2,6 +2,7 @@
 
 class Account::BankAccountsController < Account::RetrieverController
   before_action :load_budgea_config
+  before_action :verif_account
 
   def index
     if bank_account_contains && bank_account_contains[:retriever_budgea_id]
@@ -33,5 +34,11 @@ class Account::BankAccountsController < Account::RetrieverController
       proxy: Budgea.config.proxy
     }.to_json
     @bi_config = Base64.encode64(bi_config.to_s)
+  end
+
+  def verif_account
+    if @account.nil?
+      redirect_to account_retrievers_path
+    end
   end
 end

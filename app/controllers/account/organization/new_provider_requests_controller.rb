@@ -3,6 +3,7 @@
 class Account::Organization::NewProviderRequestsController < Account::Organization::RetrieverController
   before_action :load_new_provider_request, only: %w[edit update]
   before_action :verify_if_modifiable
+  before_action :redirect_to_new_page
 
   def index
     @new_provider_requests = @customer.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
@@ -61,4 +62,8 @@ class Account::Organization::NewProviderRequestsController < Account::Organizati
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
+
+  def redirect_to_new_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
+  end
 end

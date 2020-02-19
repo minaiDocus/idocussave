@@ -4,14 +4,15 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
   before_action :load_bank_account, except: %w[index update_multiple]
 
   def index
-    fetch_remote_accounts
+    redirect_to account_retrievers_path(account_id: @customer.id)
+    # fetch_remote_accounts
 
-    bank_account_contains = search_terms(params[:bank_account_contains])
-    if bank_account_contains && bank_account_contains[:retriever_id]
-      @retriever = @customer.retrievers.find(bank_account_contains[:retriever_id])
-      @retriever.ready if @retriever&.waiting_selection?
-    end
-    @bank_accounts = @customer.retrievers.collect(&:bank_accounts).flatten! || []
+    # bank_account_contains = search_terms(params[:bank_account_contains])
+    # if bank_account_contains && bank_account_contains[:retriever_id]
+    #   @retriever = @customer.retrievers.find(bank_account_contains[:retriever_id])
+    #   @retriever.ready if @retriever&.waiting_selection?
+    # end
+    # @bank_accounts = @customer.retrievers.collect(&:bank_accounts).flatten! || []
   end
 
   def edit; end
