@@ -7,7 +7,7 @@
   width: 991px;
 }
 
-.dropdown-menu.show{    
+.auto-scroll-div .dropdown-menu.show{    
   position: fixed !important;
   right: auto;
   top: auto;

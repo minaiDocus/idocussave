@@ -5,7 +5,7 @@ class Idocus.Collections.Connectors extends Backbone.Collection
     @common = new Idocus.Models.Common()
     @connectors_cache = []
     @connectors_fetched = []
-    @retries_limit = 3
+    @retries_limit = 8
 
   parse: (response) ->
     response.connectors

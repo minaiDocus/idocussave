@@ -196,7 +196,11 @@ class User < ApplicationRecord
 
   def create_or_update_software(attributes)
     software = self.softwares || SoftwaresSetting.new()
-    software.assign_attributes(attributes.to_unsafe_hash)
+    begin
+      software.assign_attributes(attributes)
+    rescue
+      software.assign_attributes(attributes.to_unsafe_hash)
+    end
 
     unless software.is_exact_online_used && software.is_ibiza_used
       software.user = self

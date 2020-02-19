@@ -188,7 +188,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          setTimeout(resolve, 1000)
+          setTimeout(resolve, 2000)
         onError: (error)-> reject(error)
       })
 
@@ -199,7 +199,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          setTimeout(resolve, 1000)
+          setTimeout(resolve, 2000)
         onError: (error)-> reject(error)
       })
 
