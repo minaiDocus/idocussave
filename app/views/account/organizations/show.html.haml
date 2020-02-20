@@ -218,6 +218,15 @@
                   %tr
                     %th Chemin de livraison
                     %td= @organization.ftp.try(:path) || 'OUTPUT/:code/:year:month/:account_book/'
+                  - if @organization.ftp.try(:error_message).present?
+                    %tr
+                      %th Dérnière message d'erreur rencontré
+                      %td
+                        %span.badge.badge-danger.fs-origin.text-white
+                          le #{@organization.ftp.error_fetched_at.strftime("%d-%m-%Y")} :
+                        %span
+                          = @organization.ftp.error_message
+
               - if @user.leader?
                 = link_to 'Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
                 - if @organization.ftp.try(:configured?)

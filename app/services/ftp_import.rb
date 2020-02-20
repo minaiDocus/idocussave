@@ -50,7 +50,7 @@ class FTPImport
   def client
     return @client if @client
 
-    @client = FTPClient.new(@ftp.organization.code)
+    @client = FTPClient.new(@ftp)
     @client.connect @ftp.domain, @ftp.port
     @client.login @ftp.login, @ftp.password
     @client.passive = @ftp.is_passive

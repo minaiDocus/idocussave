@@ -67,6 +67,15 @@ class Ftp < ApplicationRecord
     host.sub /\Aftp:\/\//, ''
   end
 
+  def got_error(message, deactivate=false)
+   update({ error_message: message, error_fetched_at: Time.now })
+
+    if deactivate
+      self.is_configured = false
+      save
+    end
+  end
+
   private
 
   def host_format

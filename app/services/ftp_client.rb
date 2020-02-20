@@ -1,19 +1,19 @@
 class FTPClient
-  def initialize(message_prefix)
+  def initialize(ftp)
     @client = Net::FTP.new
-    @message_prefix = message_prefix
+    @ftp = ftp
   end
 
   def method_missing(name, *args, &block)
     grace_time = name.in?(slow_methods) ? 120 : 5
     retries = 0
     begin
-      log name, args
-
       Timeout::timeout grace_time do
         @client.send name, *args, &block
       end
-    rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED, Errno::ENOTCONN, Timeout::Error, Net::FTPTempError, EOFError
+    rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED, Errno::ENOTCONN, Timeout::Error, Net::FTPTempError, EOFError => e
+      log name, args
+
       retries += 1
       if retries < 3
         min_sleep_seconds = Float(2 ** (retries/2.0))
@@ -22,6 +22,7 @@ class FTPClient
         sleep sleep_duration
         retry
       end
+      @ftp.got_error e.to_s
       raise
     end
   end
@@ -38,6 +39,6 @@ class FTPClient
 
   def log(name, args)
     _args = name == :login ? ['[FILTERED]'] : args
-    logger.info "[#{@message_prefix}] #{name} - #{_args.join(', ')}"
+    logger.info "[FTP ID: #{@ftp.id}] #{name} - #{_args.join(', ')}"
   end
 end
