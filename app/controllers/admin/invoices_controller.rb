@@ -56,7 +56,7 @@ class Admin::InvoicesController < Admin::AdminController
 
   # GET /admin/invoices/:id
   def show
-    if File.exist?(@invoice.cloud_content_object.path)
+    if File.exist?(@invoice.cloud_content_object.path.to_s)
       # type     = @invoice.content_content_type || 'application/pdf'
       # Find a way to get active record mime type
       type = 'application/pdf'

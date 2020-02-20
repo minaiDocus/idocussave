@@ -53,25 +53,27 @@ class Account::FileSendingKitsController < Account::OrganizationController
       FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1')
       flash[:notice] = 'Généré avec succès.'
     else
-      flash[:error] = ''
+      errors = []
       if without_shipping_address.count != 0
-        flash[:error] = "Les clients suivants n'ont pas d'adresse de livraison et/ou du kit :"
+        errors << "Les clients suivants n'ont pas d'adresse de livraison et/ou du kit :"
         without_shipping_address.each do |client|
-          flash[:error] << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
+          errors << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
         end
       end
       unless is_logo_present
-        flash[:error] << '</br></br>' if without_shipping_address.count != 0
+        errors << '</br></br>' if without_shipping_address.count != 0
         unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
-          flash[:error] << 'Logo central introuvable.</br>'
+          errors << 'Logo central introuvable.</br>'
         end
         unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
-          flash[:error] << 'Logo gauche introuvable.</br>'
+          errors << 'Logo gauche introuvable.</br>'
         end
         unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
-          flash[:error] << 'Logo droite introuvable.</br>'
+          errors << 'Logo droite introuvable.</br>'
         end
       end
+
+      flash[:error] = errors.join(' ') if errors.any?
     end
     redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
   end

@@ -36,39 +36,41 @@ class Pack::Report::Preseizure::Account < ApplicationRecord
 
     if preseizure.piece
       journal = preseizure.report.journal({ name_only: false })
-      compta_type = journal.compta_type
+      if journal
+        compta_type = journal.compta_type
 
-      fetch_customer = entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'VT'
-      fetch_provider = entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'AC'
+        fetch_customer = entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'VT'
+        fetch_provider = entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'AC'
 
-      accounts_name << journal.anomaly_account
+        accounts_name << journal.anomaly_account
 
-      if fetch_provider || fetch_customer
-        accounts_name << journal.meta_account_number
+        if fetch_provider || fetch_customer
+          accounts_name << journal.meta_account_number
 
-        if fetch_customer
-          accounts_name << accounting_plan.customers.collect(&:third_party_account)
+          if fetch_customer
+            accounts_name << accounting_plan.customers.collect(&:third_party_account)
+          else
+            accounts_name << accounting_plan.providers.collect(&:third_party_account)
+          end
         else
-          accounts_name << accounting_plan.providers.collect(&:third_party_account)
+          accounts_name << journal.meta_charge_account
+
+          if entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'AC'
+            accounts_name << accounting_plan.providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+          elsif entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'VT'
+            accounts_name << accounting_plan.customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+          end
         end
-      else
-        accounts_name << journal.meta_charge_account
 
-        if entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'AC'
-          accounts_name << accounting_plan.providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
-        elsif entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'VT'
-          accounts_name << accounting_plan.customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+        if self.type == Pack::Report::Preseizure::Account::TVA
+          accounts_name << journal.vat_account
+          accounts_name << journal.vat_account_10
+          accounts_name << journal.vat_account_8_5
+          accounts_name << journal.vat_account_5_5
+          accounts_name << journal.vat_account_2_1
+
+          accounts_name << accounting_plan.vat_accounts.collect(&:account_number)
         end
-      end
-
-      if self.type == Pack::Report::Preseizure::Account::TVA
-        accounts_name << journal.vat_account
-        accounts_name << journal.vat_account_10
-        accounts_name << journal.vat_account_8_5
-        accounts_name << journal.vat_account_5_5
-        accounts_name << journal.vat_account_2_1
-
-        accounts_name << accounting_plan.vat_accounts.collect(&:account_number)
       end
     elsif preseizure.operation
       match_rules  = []

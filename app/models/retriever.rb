@@ -202,15 +202,15 @@ class Retriever < ApplicationRecord
   end
 
   def provider?
-    capabilities == ['document']
+    capabilities.include?('document')
   end
 
   def bank?
-    capabilities == ['bank']
+    capabilities.include?('bank')
   end
 
   def provider_and_bank?
-    capabilities && capabilities.include?('bank') && capabilities.include?('document')
+    capabilities && provider? && bank?
   end
 
   def not_processed?
