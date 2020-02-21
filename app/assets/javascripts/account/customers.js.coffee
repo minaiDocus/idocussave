@@ -30,7 +30,7 @@ jQuery ->
         $('input[type=submit]').removeAttr('disabled')
 
   if $('#customer.edit.mcf').length > 0
-    $('#user_mcf_storage').after('<div class="feedback"></div>')
+    $('#user_mcf_storage').after('<div class="feedback"><img src="/assets/application/bar_loading.gif" alt="chargement..." ></div>')
     $.ajax
       url: $('#user_mcf_storage').data('users-list-url'),
       data: '',

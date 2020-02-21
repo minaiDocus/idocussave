@@ -66,7 +66,9 @@ module FileDelivery::RemoteFile
   def get_remote_file(object, service_name, extension = '.pdf')
     remote_file = remote_files.of(object, service_name).with_extension(extension).first
 
-    if remote_file.nil?
+    mcf_passed = (service_name == 'My Company Files' && user.mcf_storage.nil?) ? false : true
+
+    if remote_file.nil? && mcf_passed
       remote_file              = ::RemoteFile.new
       remote_file.receiver     = object
       remote_file.pack         = self.is_a?(Pack) ? self : pack #remote file can be document or pack itself
