@@ -11,14 +11,13 @@
                 = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
                 = hidden_field_tag :account_id, @account.try(:id)
               - else
-                - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
                 %form#account_id_form{ action: current_url, method: 'GET', class: 'form-horizontal label-auto' }
                   .form-group.clearfix.float-left.margin1right{ style: 'margin-bottom: 0px' }
                     .label-section
                       %label{ for: 'retrievers_account_id' }
                         %span.badge.badge-info.fs-origin= "Dossier : "
                     .control-section
-                      = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
+                      = select_tag :account_id, options_for_select([['Tous', 'all']] + customers_active, (@account.try(:id) || 'all')), class: 'chosen-select'
                   -if @account.try(:id) && current_user.collaborator?
                     = glyphicon('arrow-thick-left')
                     = link_to 'Voir la fiche cliente', account_organization_customer_path(@account.organization, @account), style: 'font-size: 13px'

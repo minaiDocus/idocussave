@@ -28,7 +28,7 @@
     <%- @connector.contact_fields() %>
   </div>
   <hr />
-  <div class="form-actions">
+  <div class="form-actions clearfix">
     <div class="actions">
       <input name="commit" value="Valider" class="btn btn-primary" id="retriever_commit" type="button">
       <a class="btn btn-light" href="/account/retrievers">Annuler</a>

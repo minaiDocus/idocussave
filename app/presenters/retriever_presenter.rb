@@ -7,7 +7,7 @@ class RetrieverPresenter < BasePresenter
     if retriever.waiting_selection?
       if retriever.provider? || retriever.provider_and_bank?
         if scope == :account
-          h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: retriever }), class: 'btn btn-light'
+          h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path({ account_id: retriever.user.id, document_contains: { retriever_id: retriever }}), class: 'btn btn-light'
         elsif scope == :collaborator
           h.link_to 'Sélectionnez les documents', h.select_account_organization_customer_retrieved_documents_path(user.organization, user, document_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :admin
@@ -15,7 +15,7 @@ class RetrieverPresenter < BasePresenter
         end
       else
         if scope == :account
-          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
+          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever }}), class: 'btn btn-light'
         elsif scope == :collaborator
           h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :admin
