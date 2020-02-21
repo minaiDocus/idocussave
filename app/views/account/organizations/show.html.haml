@@ -223,7 +223,7 @@
                       %th Dérnière message d'erreur rencontré
                       %td
                         %span.badge.badge-danger.fs-origin.text-white
-                          le #{@organization.ftp.error_fetched_at.strftime("%d-%m-%Y")} :
+                          le #{@organization.ftp.error_fetched_at.strftime("%d-%m-%Y %H:%M:%S")} :
                         %span
                           = @organization.ftp.error_message
 
