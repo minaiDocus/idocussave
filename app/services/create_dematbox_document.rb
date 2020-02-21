@@ -126,7 +126,7 @@ class CreateDematboxDocument
 
 
   def decoded_data
-    Base64.decode64(@improved_scan64.gsub(/\\n/, "\n")).force_encoding('UTF-8')
+    Base64.decode64(@improved_scan64.to_s.gsub(/\\n/, "\n")).force_encoding('UTF-8')
   end
 
 
@@ -164,7 +164,7 @@ class CreateDematboxDocument
     if !@is_content_file_valid.nil?
       @is_content_file_valid
     else
-      @is_content_file_valid = DocumentTools.modifiable?(file.path)
+      @is_content_file_valid = @improved_scan64.present? && DocumentTools.modifiable?(file.path)
     end
   end
 
