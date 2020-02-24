@@ -16,7 +16,7 @@ class Subscription < ApplicationRecord
   validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 12 }
 
 
-  validates_inclusion_of :period_duration, in: [1, 3, 12]
+  validates_inclusion_of :period_duration, in: [1, 12]
 
   def current_period
     find_or_create_period(Date.today)

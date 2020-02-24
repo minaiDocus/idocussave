@@ -57,11 +57,7 @@ update_form = ->
       $('.'+option).hide()
 
 update_warning = ->
-  to_be_disabled_text = null
-  if $('#subscription_period_duration').val() == '1'
-    to_be_disabled_text = "sera effectif le mois prochain"
-  else if $('#subscription_period_duration').val() == '3'
-    to_be_disabled_text = "sera effectif le trimestre prochain"
+  to_be_disabled_text = "sera effectif le mois prochain"
   is_recently_created = $('form').data('is-recently-created') == true
 
   if $('#subscription_is_basic_package_active').is(':checked')
@@ -139,20 +135,13 @@ update_price = ->
 
   options = []
   if $('#subscription_is_annual_package_active').is(':checked')
-    $('#subscription_period_duration').val(3)
     period_type = 2
     $('.stamp_price').html('(-€HT)')
 
     selected_options = ['annual_subscription']
   else
-    period_duration = $('#subscription_period_duration').val()
-    if period_duration == '1'
-      period_type = 0
-      $('.stamp_price').html('(5€HT)')
-    else if period_duration == '3'
-      period_type = 1
-      $('.stamp_price').html('(15€HT)')
-
+    period_type = 0
+    $('.stamp_price').html('(5€HT)')
 
     if $('#subscription_is_basic_package_active').is(':checked')
       options.push 'subscription', 'subscription_plus', 'pre_assignment'
