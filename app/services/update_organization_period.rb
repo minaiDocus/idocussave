@@ -7,26 +7,26 @@ class UpdateOrganizationPeriod
   end
 
   def fetch_all(soft_process = false)
-    return false unless @organization
+    return false if !@organization || @period.is_locked?
 
-    @period.with_lock do
-      time = @period.start_date.beginning_of_month + 15.days
+    @period.update_attribute :locked_at, Time.now
+    time = @period.start_date.beginning_of_month + 15.days
 
-      @customers_periods = Period.where(user_id: @organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+    @customers_periods = Period.where(user_id: @organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
 
-      reset_quota
-      fill_excess_max_values
+    reset_quota
+    fill_excess_max_values
 
-      @customers_periods.each do |c_period|
-        if c_period.is_valid_for_quota_organization
-          UpdatePeriodDataService.new(c_period).execute unless soft_process
-          fill_datas_with c_period.reload
-        end
+    @customers_periods.each do |c_period|
+      if c_period.is_valid_for_quota_organization
+        UpdatePeriodDataService.new(c_period).execute unless soft_process
+        fill_datas_with c_period.reload
       end
-
-      @period.save
-      UpdatePeriodPriceService.new(@period).execute
     end
+
+    @period.update_attribute :locked_at, nil
+    @period.save
+    UpdatePeriodPriceService.new(@period).execute
   end
 
   private
@@ -54,8 +54,6 @@ class UpdateOrganizationPeriod
         @period.max_oversized_authorized            += c_period.max_oversized_authorized.to_i            if subscription.is_mail_package_active
       end
     end
-
-    @period.save
   end
 
   def reset_quota
@@ -80,8 +78,6 @@ class UpdateOrganizationPeriod
 
     @period.expense_pieces    = 0
     @period.preseizure_pieces = 0
-
-    @period.save
   end
 
 

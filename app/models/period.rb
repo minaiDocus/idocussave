@@ -15,6 +15,7 @@ class Period < ApplicationRecord
   belongs_to :subscription, optional: true
 
   validates_inclusion_of :duration, in: [1, 3, 12]
+  validate :unlocked_period
 
 
   scope :annual,    -> { where(duration: 12) }
@@ -43,6 +44,14 @@ class Period < ApplicationRecord
     elsif duration == 12
       time.year.to_s
     end
+  end
+
+  def is_not_locked?
+    locked_at.nil?
+  end
+
+  def is_locked?
+    !is_not_locked?
   end
 
   def is_valid_for_quota_organization
@@ -301,5 +310,9 @@ private
     else
       1
     end
+  end
+
+  def unlocked_period
+    errors.add(:locked_at, 'is locked (present)') unless locked_at.nil?
   end
 end
