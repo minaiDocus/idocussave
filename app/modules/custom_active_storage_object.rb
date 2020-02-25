@@ -43,7 +43,17 @@ class CustomActiveStorageObject
 
   def size
     if as_attached.attached?
-      as_attached.blob.byte_size
+      retries = 0
+      begin
+        as_attached.blob.byte_size
+      rescue
+        retries += 1
+        if retries <= 2
+          sleep retries * 2
+          retry
+        end
+        raise
+      end
     else
       target_file_size = @attachment.to_s.gsub('cloud_', '') + '_file_size'
       @object.send(target_file_size.to_sym)
@@ -52,7 +62,17 @@ class CustomActiveStorageObject
 
   def filename
     if as_attached.attached?
-      as_attached.filename.sanitized.gsub('-', '_')
+      retries = 0
+      begin
+        as_attached.filename.sanitized.gsub('-', '_')
+      rescue
+        retries += 1
+        if retries <= 2
+          sleep retries * 2
+          retry
+        end
+        raise
+      end
     else
       target_file_name = @attachment.to_s.gsub('cloud_', '') + '_file_name'
       @object.send(target_file_name.to_sym)
@@ -71,7 +91,9 @@ class CustomActiveStorageObject
     @object.send(@attachment.to_s.gsub('cloud_', '').to_sym)
   end
 
-  def generate_file(style = '', retry_count=1)
+  def generate_file(style = '')
+    retries = 0
+
     begin
       if style.to_s == 'medium' || style.to_s == 'thumb'
         size_limit = if style.to_s == 'medium'
@@ -103,15 +125,15 @@ class CustomActiveStorageObject
       logger.info "[Generate File] #{@object.class.name} - #{@object.id} - Not generated" unless tmp_file_path.present?
       @base_path = tmp_file_path
     rescue => e
-      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retry_count}"
+      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retries}"
 
-      if retry_count > 0 && retry_count <= 2
-        sleep retry_count * 2
-
-        @base_path = generate_file(style, (retry_count+1))
-      else
-        @base_path = nil
+      retries += 1
+      if retries <= 2
+        sleep retries * 2
+        retry
       end
+
+      @base_path = nil
     end
   end
 
