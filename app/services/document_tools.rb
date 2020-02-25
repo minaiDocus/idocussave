@@ -14,7 +14,8 @@ class DocumentTools
       document = Poppler::Document.new(file_path)
 
       document.pages.count
-    rescue
+    rescue => e
+      logger.info "[pages_number] - #{file_path.to_s} - #{e.to_s}"
       0
     end
   end
@@ -56,7 +57,8 @@ class DocumentTools
         document = Poppler::Document.new(file_path)
 
         document.permissions.full?
-      rescue
+      rescue => e
+        logger.info "[modifiable?] - #{file_path.to_s} - #{e.to_s}"
         false
       end
     else
@@ -70,7 +72,8 @@ class DocumentTools
 
     begin
       Poppler::Document.new(file_path)
-    rescue
+    rescue => e
+      logger.info "[completed?] - #{file_path.to_s} - #{e.to_s}"
       is_ok = false
     end
 
@@ -90,20 +93,26 @@ class DocumentTools
 
 
   def self.printable?(file_path)
-    document = Poppler::Document.new(file_path)
-    document.permissions.ok_to_print?
+    begin
+      document = Poppler::Document.new(file_path)
+      document.permissions.ok_to_print?
 
-    rescue
+    rescue => e
+      logger.info "[printable?] - #{file_path.to_s} - #{e.to_s}"
       false
+    end
   end
 
 
   def self.is_printable_only?(file_path)
-    document = Poppler::Document.new(file_path)
-    document.permissions.ok_to_print? && !document.permissions.full?
+    begin
+      document = Poppler::Document.new(file_path)
+      document.permissions.ok_to_print? && !document.permissions.full?
 
-    rescue
+    rescue => e
+      logger.info "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}"
       nil
+    end
   end
 
   def self.protected?(file_path)
@@ -177,7 +186,7 @@ class DocumentTools
   end
 
 
-  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, logger = Rails.logger, font_size = 10)
+  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, _logger = Rails.logger, font_size = 10)
     sizes     = Poppler::Document.new(target_file_path).pages.map(&:size)
     file_path = File.join(dir, 'stamp.pdf')
     
@@ -198,7 +207,7 @@ class DocumentTools
             text name, size: font_size, align: :center
           end
         rescue Prawn::Errors::CannotFit
-          logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
+          _logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
         end
       end
     end
@@ -211,11 +220,11 @@ class DocumentTools
     dir     = options[:dir] || '/tmp'
     origin = options[:origin] || 'scan'
     is_stamp_background_filled = options[:is_stamp_background_filled] || false
-    logger = options[:logger] || Rails.logger
+    _logger = options[:logger] || Rails.logger
 
     name = stamp_name(pattern, name, origin)
 
-    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, logger, stamp_font_size(file_path))
+    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, _logger, stamp_font_size(file_path))
 
     Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
 
@@ -279,5 +288,9 @@ class DocumentTools
 
   def self.checksum(file_path)
     `md5sum "#{file_path}"`.split[0]
-  end 
+  end
+
+  def self.logger
+    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_poppler_errors.log")
+  end
 end
