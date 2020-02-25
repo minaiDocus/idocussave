@@ -18,10 +18,27 @@ class DebitMandateResponseService
 
       if @debit_mandate.configured? || (@order_reference && @order_reference.try(:[], 'state') == 'closed.completed')
         @errors = "Vous avez déjà configurer votre prélèvement. Pour toutes modifications ou renouvellement de compte, veuillez contacter notre équipe d'assistance au support@idocus.com"
+
+        if !@debit_mandate.RUM.present? && !@debit_mandate.iban.present? && !@debit_mandate.bic.present?
+          if @mandate['rum'].present? && @bank_account['iban'].present? && @bank_account['bic'].present?
+            @debit_mandate.transactionStatus = 'success'
+            @debit_mandate.signatureDate = Time.now.strftime('%Y-%m-%d')
+            @debit_mandate.RUM = @mandate['rum']
+            @debit_mandate.iban = @bank_account['iban']
+            @debit_mandate.bic = @bank_account['bic']
+            @debit_mandate.save
+
+            @debit_mandate.organization.update(is_suspended: false) if @debit_mandate.organization.is_suspended
+
+            logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Refilled : Order state : #{@order_reference['state']}"
+          end
+        end
       else
         @order_reference = client.create_sepa_order @debit_mandate unless @order_reference && @order_reference.try(:[], 'state') == 'open.running'
         @checkout_iframe_64 = client.get_checkout_frame
         @checkout_uri = client.get_checkout_uri_redirection
+
+        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Started : Order state : #{@order_reference['state']}"
       end
     rescue => e
       @errors = e.message
@@ -29,7 +46,9 @@ class DebitMandateResponseService
   end
 
   def confirm_payment
+    sleep 3 #wait for slimpay to update order state
     fetch_order_infos
+    finished = false
 
     if @mandate && @bank_account
       @debit_mandate.transactionStatus = 'success'
@@ -40,11 +59,15 @@ class DebitMandateResponseService
       @debit_mandate.save
 
       @debit_mandate.organization.update(is_suspended: false) if @debit_mandate.organization.is_suspended
+
+      finished = true
     elsif @order_reference && @order_reference.try(:[], 'state').match(/closed[.]aborted/)
       @debit_mandate.transactionStatus = nil
       @debit_mandate.reference = nil
       @debit_mandate.save
     end
+
+    logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Finished : Order state : #{@order_reference['state']} - closed : #{finished.to_s}"
   end
 
   def get_frame
@@ -68,9 +91,15 @@ class DebitMandateResponseService
     if @debit_mandate.reference.present?
       @order_reference = client.get_order @debit_mandate
 
+      logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Order state : #{@order_reference['state']}"
+
       if @order_reference['state'] == 'closed.completed'
         @mandate = client.get_mandate
         @bank_account = client.get_bank_account
+
+        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - RUM : #{@mandate['rum']}"
+        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - IBAN : #{@bank_account['iban']}"
+        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - bic : #{@bank_account['bic']}"
       end
     end
   end
@@ -108,4 +137,7 @@ private
     @client ||= SlimpayCheckout::Client.new
   end
 
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_slimpay.log")
+  end
 end
