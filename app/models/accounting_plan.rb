@@ -16,12 +16,22 @@ class AccountingPlan < ApplicationRecord
 
   scope :updating,     -> { where(is_updating: true) }
 
-  def import(file, type)
+  def import(file, type, is_coala=false)
     if type == "fec"
       begin
         return false if file.content_type != "text/plain"
         file_path  = file.path
-        ImportFecService.new(file_path).execute user
+
+        dir = "#{Rails.root}/files/#{Rails.env}/imports/FEC/"
+
+        FileUtils.makedirs(dir)
+        FileUtils.chmod(0755, dir)
+
+        file_path_dir = File.join(dir, "#{Time.now.strftime('%Y%m%d%H%M%S')}_#{file.original_filename}" )
+
+        FileUtils.cp file_path, file_path_dir
+
+        ImportFecService.new(file_path).execute(user,is_coala)
         true
       rescue
         false

@@ -33,6 +33,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import
   def import
+    is_coala = false
     if params[:providers_file]
       file = params[:providers_file]
       type = 'providers'
@@ -42,10 +43,11 @@ class Account::AccountingPlansController < Account::OrganizationController
     elsif params[:fec_file]
       file = params[:fec_file]
       type = 'fec'
+      is_coala = true if params[:is_coala].present?
     end
 
     if file
-      if @accounting_plan.import(file, type)
+      if @accounting_plan.import(file, type, is_coala)
         flash[:success] = 'Importé avec succès.'
       else
         flash[:error] = 'Fichier non valide.'
