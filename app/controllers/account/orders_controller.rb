@@ -12,6 +12,7 @@ class Account::OrdersController < Account::OrganizationController
     @order = Order.new
     @order.user = @customer
     @order.period_duration = @customer.subscription.period_duration
+    @paper_set_prices = OrderPaperSet.paper_set_prices
 
     if params[:order][:type] == 'paper_set'
       @order.type = 'paper_set'
@@ -44,6 +45,7 @@ class Account::OrdersController < Account::OrganizationController
   # POST /account/organizations/:organization_id/customers/:customer_id/orders
   def create
     @order = Order.new(order_params)
+    @paper_set_prices = OrderPaperSet.paper_set_prices
 
     if @order.dematbox? && OrderDematbox.new(@customer, @order).execute
       copy_back_address
@@ -77,7 +79,9 @@ class Account::OrdersController < Account::OrganizationController
   end
 
   # GET /account/organizations/:organization_id/customers/:customer_id/orders/:id/edit
-  def edit; end
+  def edit
+    @paper_set_prices = OrderPaperSet.paper_set_prices
+  end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/orders/:id
   def update

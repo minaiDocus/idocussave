@@ -78,6 +78,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
 
   def order_multiple
     if params[:customer_ids].present?
+      @paper_set_prices = OrderPaperSet.paper_set_prices
       customers = @organization.customers.where(id: params[:customer_ids])
       @orders = customers.map do |customer|
         Order.new(user: customer, type: 'paper_set', period_duration: customer.subscription.period_duration)
