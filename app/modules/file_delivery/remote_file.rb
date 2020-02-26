@@ -77,13 +77,13 @@ module FileDelivery::RemoteFile
 
       if extension == KnowingsApi::File::EXTENSION
         remote_file.extension = '.kzip'
-        remote_file.temp_path = get_kzip_file
+        remote_file.temp_path = get_kzip_file.to_s
       end
 
       remote_file.save
     end
 
-    return nil if extension == KnowingsApi::File::EXTENSION && remote_file.temp_path.nil?
+    return nil if extension == KnowingsApi::File::EXTENSION && !remote_file.temp_path.present?
 
     remote_file
   end
