@@ -84,12 +84,14 @@ module Idocus
       #{config.root}/app/workers
       #{config.root}/app/services
       #{config.root}/app/mailers
+      #{config.root}/app/models/ckeditor
     )
 
     config.eager_load_paths += %W(
       #{config.root}/app/workers
       #{config.root}/app/services
       #{config.root}/app/mailers
+      #{config.root}/app/models/ckeditor
     )
 
 
