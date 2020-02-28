@@ -619,6 +619,14 @@
       $('#file_prev_period_offset').val($(this).val());
     });
 
+    $('#packFilterModal #packFilterForm input').keypress(function (e) {
+      if (e.which == 13) {
+        e.preventDefault();
+        $("#packFilterModal #validatePackFilterModal").click();
+        return false;
+      }
+    });
+
     $("#packFilterModal #validatePackFilterModal").click(function(e) {
       e.preventDefault();
       $("#packFilterModal").modal('hide');
