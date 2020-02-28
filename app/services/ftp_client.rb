@@ -1,6 +1,6 @@
 class FTPClient
   def initialize(ftp)
-    @client = Net::FTP.new
+    @client = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
     @ftp = ftp
   end
 
