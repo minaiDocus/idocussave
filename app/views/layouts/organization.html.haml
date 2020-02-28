@@ -110,6 +110,7 @@
         <script src="/assets/html5.js" type="text/javascript"></script>
       <![endif]-->
 
+    = javascript_include_tag Ckeditor.cdn_url
     = javascript_include_tag 'application', 'inner'
     = javascript_include_tag 'account/software_users' if controller_name == 'organizations' && action_name == 'edit_software_users'
     = javascript_include_tag 'account/compta_analytics' if controller_name == 'journals' && action_name == 'edit_analytics'

@@ -117,6 +117,12 @@ lock_light_package = ->
   $('#subscription_is_mail_package_active').attr('disabled', 'disabled')
   $('#subscription_is_scan_box_package_active').attr('disabled', 'disabled')
 
+check_input_number = ->
+  $('form#subscription_package_form .special_input').focus()
+
+  $('form#subscription_package_form .special_input').keypress (e) ->
+    e.preventDefault();
+
 update_price = ->
   price_list = {
     #standard prices
@@ -166,7 +172,7 @@ update_price = ->
         selected_options.push option
 
   if options.length > 0
-    number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]:checked').val())
+    number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]').val())
     if number_of_journals > 5
       price += number_of_journals - 5
 
@@ -199,6 +205,7 @@ jQuery ->
   if $('#subscriptions.edit, #organization_subscriptions.edit').length > 0
     update_form()
     update_warning()
+    check_input_number()
     update_price()
 
     $('#subscriptions #admin_options_button').on 'click', ->

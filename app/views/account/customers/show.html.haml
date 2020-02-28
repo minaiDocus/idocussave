@@ -276,17 +276,17 @@
             .row
               .col-md-7
                 %b Pré-saisie comptable activée pour le dossier :
-                %span.badge{ class: 'badge-' + (@customer.options.is_preassignment_authorized ? 'success' : 'danger') }
+                %span.badge{ class: 'badge-' + (@customer.options.is_preassignment_authorized ? 'success fs-origin' : 'danger fs-origin') }
                   = @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
                 - unless @customer.options.is_preassignment_authorized
                   %i.margin1left
                     = link_to '(Activer la pré-saisie comptable)', edit_account_organization_customer_subscription_path(@organization, @customer)
                 %br
                 %b Nombre de journaux comptables utilisés :
-                %span.badge= @customer.account_book_types.count
+                %span.badge.fs-origin= @customer.account_book_types.count
                 %br
                 %b Nombre de journaux comptables autorisés :
-                %span.badge= @customer.options.max_number_of_journals
+                %span.badge.fs-origin= @customer.options.max_number_of_journals
                 - if @customer.options.max_number_of_journals < 10
                   %i.margin1left
                     = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)

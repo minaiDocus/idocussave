@@ -13,7 +13,7 @@ class Subscription < ApplicationRecord
   attr_accessor :is_to_apply_now
 
 
-  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 12 }
+  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 30 }
 
 
   validates_inclusion_of :period_duration, in: [1, 12]

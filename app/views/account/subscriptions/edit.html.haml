@@ -77,12 +77,9 @@
             %tr.number_of_journals{ style: 'display:none' }
               %td.question Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
               %td.subscription_number_of_journals
-                - iterations = (@customer.code.in?(['GMBA%ECURIESJLB', 'AFH%AFH']))? (5..12) : (5..10)
-                - iterations.each do |number|
-                  .choice
-                    %label{ for: "subscription_number_of_journals_#{number}" }
-                      = radio_button_tag 'subscription[number_of_journals]', number, @subscription.number_of_journals == number, class: 'radio_buttons', disabled: (number < @customer.account_book_types.count)
-                      = number
+                = f.number_field :number_of_journals, class: 'form-control col-md-1 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
+                &nbsp;
+                %span{id: 'err-msg-input-number'}
                 - if @customer.account_book_types.count > 5
                   %div{ style: "clear:both;" }
                     %i Supprimez un journal comptable avant de baisser cette option.
