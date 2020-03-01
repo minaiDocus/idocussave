@@ -157,7 +157,8 @@ class PeriodPresenter
         uploaded_pages: @period.excess_uploaded_pages.to_s,
         dematbox_scanned_pages: @period.excess_dematbox_scanned_pages.to_s
       },
-      delivery: @period.delivery_state
+      delivery: @period.delivery_state,
+      is_valid_for_quota_organization: @period.is_valid_for_quota_organization
     }
   end
 
@@ -191,7 +192,7 @@ class PeriodPresenter
       _invoices = (@period.organization || @period.user).invoices.where("created_at >= ? AND created_at <= ?", start_time, end_time)
 
       _invoices = _invoices.map do |invoice|
-        { number: invoice.number, link: invoice.content.url }
+        { number: invoice.number, link: invoice.cloud_content_object.url }
       end
     end
 

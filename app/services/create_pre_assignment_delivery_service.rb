@@ -32,7 +32,7 @@ class CreatePreAssignmentDeliveryService
     exact_online_deliveries = @deliver_to.include?('exact_online') ? deliver_to_exact_online : []
 
     @deliveries = ibiza_deliveries + exact_online_deliveries
-    @report.update_attribute(:is_locked, (@report.preseizures(true).not_locked.count == 0)) if @preseizures.any?
+    @report.update_attribute(:is_locked, (@report.preseizures.reload.not_locked.count == 0)) if @preseizures.any?
 
     if @deliveries.any?
       @deliveries

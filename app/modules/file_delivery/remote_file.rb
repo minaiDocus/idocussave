@@ -57,14 +57,18 @@ module FileDelivery::RemoteFile
 
   def get_kzip_file
     pole_name = pack.owner.try(:organization).try(:knowings).try(:pole_name)
-    KnowingsApi::File.create(content.path, pole_name: pole_name, data: kzip_options)
+    return nil unless File.exist?(cloud_content_object.path.to_s)
+
+    KnowingsApi::File.create(cloud_content_object.path, pole_name: pole_name, data: kzip_options)
   end
 
 
   def get_remote_file(object, service_name, extension = '.pdf')
     remote_file = remote_files.of(object, service_name).with_extension(extension).first
 
-    if remote_file.nil?
+    mcf_passed = (service_name == 'My Company Files' && user.mcf_storage.nil?) ? false : true
+
+    if remote_file.nil? && mcf_passed
       remote_file              = ::RemoteFile.new
       remote_file.receiver     = object
       remote_file.pack         = self.is_a?(Pack) ? self : pack #remote file can be document or pack itself
@@ -73,11 +77,14 @@ module FileDelivery::RemoteFile
 
       if extension == KnowingsApi::File::EXTENSION
         remote_file.extension = '.kzip'
-        remote_file.temp_path = get_kzip_file
+        remote_file.temp_path = get_kzip_file.to_s
       end
 
       remote_file.save
     end
+
+    return nil if extension == KnowingsApi::File::EXTENSION && !remote_file.temp_path.present?
+
     remote_file
   end
 
@@ -93,6 +100,6 @@ module FileDelivery::RemoteFile
       current_remote_files << get_remote_file(object, service_name)
     end
 
-    current_remote_files
+    current_remote_files.compact
   end
 end

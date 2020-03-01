@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account::DocsController < Account::AccountController
   def download
     raise_not_found unless @user.is_prescriber
@@ -16,6 +18,6 @@ class Account::DocsController < Account::AccountController
   private
 
   def raise_not_found
-    raise ActionController::RoutingError.new('Not Found')
+    raise ActionController::RoutingError, 'Not Found'
   end
 end

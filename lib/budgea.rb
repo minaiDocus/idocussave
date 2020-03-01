@@ -92,6 +92,16 @@ class Budgea
       @response.code == 200
     end
 
+    def get_all_accounts(connexion_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts?all",
+        method:  :get,
+        proxy:   @settings[:proxy],
+        headers: headers
+      )
+      run_and_parse_response 'accounts'
+    end
+
     def get_accounts ##used by transaction fetcher
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',
@@ -136,6 +146,36 @@ class Budgea
     end
 
   private
+
+    #Fix retriever freez running state
+    def trigger_connexion(retriever)
+      if retriever.state == 'running' && retriever.budgea_id.present?
+        @error_message = nil
+        @request = Typhoeus::Request.new(
+          @settings[:base_url] + "/users/me/connections/#{retriever.budgea_id}",
+          method:  :put,
+          proxy:   @settings[:proxy],
+          headers: headers
+        )
+        result = run_and_parse_response(nil)
+
+        if !@error_message.present?
+          if result['last_update'].present?
+            retriever.sync_at = Time.parse result['last_update']
+            retriever.save
+          end
+
+          if result['additionnal_fields'].present?
+            retriever.pause_budgea_connection
+          else
+            retriever.success_budgea_connection
+          end
+        else
+          retriever.update(budgea_error_message: @error_message)
+          retriever.fail_budgea_connection
+        end
+      end
+    end
 
     def headers
       {

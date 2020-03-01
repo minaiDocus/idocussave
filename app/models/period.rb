@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Period < ActiveRecord::Base
+class Period < ApplicationRecord
   serialize :documents_name_tags
 
   audited
@@ -10,18 +10,21 @@ class Period < ActiveRecord::Base
   has_many :billings, class_name: 'PeriodBilling'
   has_many :documents, class_name: 'PeriodDocument'
   has_many :product_option_orders, as: :product_optionable
-  belongs_to :user
-  belongs_to :organization
-  belongs_to :subscription
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
+  belongs_to :subscription, optional: true
 
   validates_inclusion_of :duration, in: [1, 3, 12]
+  validate :unlocked_period
 
 
   scope :annual,    -> { where(duration: 12) }
   scope :monthly,   -> { where(duration: 1) }
   scope :quarterly, -> { where(duration: 3) }
 
-  scope :current, -> { where('end_date >= ?', Date.today) }
+  scope :organizations, -> { where('orgnization_id > 0') }
+  scope :customers,     -> { where('user_id > 0') }
+  scope :current,       -> { where('end_date >= ?', Date.today) }
   scope :paper_quota_reached_not_notified, -> { where(is_paper_quota_reached_notified: false) }
   scope :paper_quota_reached, -> { where('max_sheets_authorized <= scanned_sheets') }
 
@@ -43,6 +46,17 @@ class Period < ActiveRecord::Base
     end
   end
 
+  def is_not_locked?
+    locked_at.nil?
+  end
+
+  def is_locked?
+    !is_not_locked?
+  end
+
+  def is_valid_for_quota_organization
+    !self.organization && self.duration == 1 && !self.subscription.is_micro_package_active && !self.subscription.is_mini_package_active
+  end
 
   def amount_in_cents_wo_vat
     price_in_cents_wo_vat
@@ -205,11 +219,17 @@ class Period < ActiveRecord::Base
     excess_of(:expense_pieces)
   end
 
-
   def excess_compta_pieces
     excess_preseizure_pieces + excess_expense_pieces
   end
 
+  def excesses_price
+    price_in_cents_of_excess_scan +
+    price_in_cents_of_excess_compta_pieces  +
+    price_in_cents_of_excess_uploaded_pages +
+    price_in_cents_of_excess_dematbox_scanned_pages +
+    price_in_cents_of_excess_paperclips
+  end
 
   def compta_pieces
     preseizure_pieces + expense_pieces
@@ -238,10 +258,17 @@ class Period < ActiveRecord::Base
     self.user.operations.where('created_at >= ? AND created_at <= ?', self.start_date, self.end_date).count
   end
 
+  def organization_excesses_price
+    return 0 unless organization
+
+    self.product_option_orders.where(name: 'excess_documents').first.try(:price_in_cents_wo_vat).to_f
+  end
+
 private
 
-
   def excess_of(value, max_value=nil)
+    return 0 if is_valid_for_quota_organization
+
     max_value ||= "max_#{value.to_s}_authorized"
     return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
 
@@ -274,6 +301,8 @@ private
 
 
   def excess_duration
+    return 1 if organization
+
     if subscription.try(:is_micro_package_active)
       12
     elsif subscription.try(:is_mini_package_active)
@@ -281,5 +310,9 @@ private
     else
       1
     end
+  end
+
+  def unlocked_period
+    errors.add(:locked_at, 'is locked (present)') unless locked_at.nil?
   end
 end

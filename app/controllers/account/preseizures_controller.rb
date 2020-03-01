@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PreseizuresController < Account::OrganizationController
-  before_filter :load_preseizure, except: :index
+  before_action :load_preseizure, except: :index
 
   def index
     if params[:pack_report_id].present?
@@ -10,7 +11,9 @@ class Account::PreseizuresController < Account::OrganizationController
         @preseizures = report.preseizures
 
         if params[:filter].present?
-          @preseizures = @preseizures.where('third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%") unless Pack::Report.preseizures.where(id: params[:pack_report_id]).where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%").count > 0
+          unless Pack::Report.preseizures.where(id: params[:pack_report_id]).where('pack_reports.name LIKE ?', "%#{params[:filter].gsub('+', ' ')}%").count > 0
+            @preseizures = @preseizures.where('third_party LIKE ?', "%#{params[:filter].gsub('+', ' ')}%")
+          end
         end
 
         if params[:view] == 'delivered'
@@ -30,28 +33,30 @@ class Account::PreseizuresController < Account::OrganizationController
 
   def update
     respond_to do |format|
-      begin
-        @preseizure.assign_attributes(preseizure_params)
-        @preseizure.update_entries_amount if @preseizure.conversion_rate_changed? || @preseizure.amount_changed?
-        @preseizure.save
-
-        format.json { render json: { status: :ok } }
+      @preseizure.assign_attributes(preseizure_params)
+      if @preseizure.conversion_rate_changed? || @preseizure.amount_changed?
+        @preseizure.update_entries_amount
       end
+      @preseizure.save
+
+      format.json { render json: { status: :ok } }
     end
   end
 
   def deliver
-    CreatePreAssignmentDeliveryService.new(@preseizure, ['ibiza', 'exact_online']).execute
+    CreatePreAssignmentDeliveryService.new(@preseizure, %w[ibiza exact_online]).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end
   end
 
-private
+  private
 
   def load_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
-    raise ActiveRecord::RecordNotFound unless @preseizure.report.user.in? customers
+    unless @preseizure.report.user.in? customers
+      raise ActiveRecord::RecordNotFound
+    end
   end
 
   def preseizure_params

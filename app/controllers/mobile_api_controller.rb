@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MobileApiController < ApplicationController
   protect_from_forgery with: :null_session
 
@@ -14,7 +16,7 @@ class MobileApiController < ApplicationController
   def authenticate_mobile_user
     @user = User.where(authentication_token: params[:auth_token]).first
 
-    if @user && Devise.secure_compare(@user.authentication_token, params[:auth_token])
+    if @user && Devise.secure_compare(@user.get_authentication_token, params[:auth_token])
       sign_in(@user, store: false)
       @user
     end
@@ -28,7 +30,7 @@ class MobileApiController < ApplicationController
   protected
 
   def has_multiple_accounts?
-    accounts.count > 1 ? true : false
+    accounts.count > 1
   end
 
   def load_organization
@@ -47,6 +49,6 @@ class MobileApiController < ApplicationController
   end
 
   def customers
-    @customers ||= (@user.collaborator? || @user.admin?) ? @user.customers : [@user]
+    @customers ||= @user.collaborator? || @user.admin? ? @user.customers : [@user]
   end
 end

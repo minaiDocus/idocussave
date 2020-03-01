@@ -136,7 +136,6 @@ class SendToStorage
         else
           logger.info "#{failure_message} - retrying later (#{execution_time}s)"
           metafile.not_synced! "[#{e.class}] #{e.message}"
-          Airbrake.notify(e)
         end
       elsif manageable_failure?(e)
         logger.info "#{failure_message} - aborting (#{execution_time}s)"
@@ -144,7 +143,6 @@ class SendToStorage
       else
         logger.info "#{failure_message} - retrying later (#{execution_time}s)"
         metafile.not_synced! "[#{e.class}] #{e.message}"
-        Airbrake.notify(e)
         raise if Rails.env.test?
       end
       @semaphore.synchronize do

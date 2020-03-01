@@ -31,6 +31,26 @@ module ApplicationHelper
     end
   end
 
+  def user_login_tag
+    label = glyphicon("person", { class: "mr-sm-2" })
+    label += 'Identifiant (E-mail)'
+  end
+
+  def user_password_tag
+    label = glyphicon("lock-locked", { class: "mr-sm-2" })
+    label += 'Mot de passe'
+  end
+
+  def glyphicon(icon, options={})
+    style = ''
+    style += options[:size].present? ? "width: #{options[:size]}px; height: #{options[:size]}px;" : ''
+    style += options[:color].present? ? "fill: #{options[:color]};" : ''
+    style += options[:style] if options[:style].present?
+
+    klass = options[:class].to_s
+
+    content_tag 'svg', content_tag('use', '', 'xlink:href'=>"/assets/open-iconic.min.svg##{icon}", class: "icon icon-#{icon}"), viewBox: "0 0 8 8", class: "oi-icon #{klass} #{options[:color].present? ? 'colored' : ''}", style: style
+  end
 
   def icon_ban_circle
     content_tag :i, '', class: 'icon-ban-circle'
@@ -78,12 +98,12 @@ module ApplicationHelper
 
 
   def icon_ok
-    content_tag :i, '', class: 'icon-ok'
+    glyphicon('check')
   end
 
 
   def icon_not_ok
-    content_tag :i, '', class: 'icon-remove'
+    glyphicon('x')
   end
 
 
@@ -103,12 +123,12 @@ module ApplicationHelper
 
 
   def label_ok(is_current = false)
-    content_tag(:span, icon_ok, class: "label #{is_current ? 'label-success' : ''}", style: 'margin-left:2px;margin-right:2px;')
+    content_tag(:span, icon_ok, class: "badge #{is_current ? 'badge-success' : ''}", style: 'margin-left:2px;margin-right:2px;')
   end
 
 
   def label_not_ok(is_current = false)
-    content_tag(:span, icon_not_ok, class: "label #{!is_current ? 'label-important' : ''}", style: 'margin-left:2px;margin-right:2px;')
+    content_tag(:span, icon_not_ok, class: "badge #{!is_current ? 'badge-danger' : ''}", style: 'margin-left:2px;margin-right:2px;')
   end
 
 
@@ -130,9 +150,9 @@ module ApplicationHelper
   def twitterized_type(type)
     case type
     when 'alert'
-      'alert-block'
+      'alert-warning'
     when 'error'
-      'alert-error'
+      'alert-danger'
     when 'notice'
       'alert-info'
     when 'success'
@@ -160,35 +180,38 @@ module ApplicationHelper
 
     if column.to_s == sort_column
       direction = sort_direction == 'asc' ? 'desc' : 'asc'
-      icon_direction = sort_direction == 'asc' ? 'down' : 'up'
-      icon = content_tag(:i, '', class: 'icon-chevron-' + icon_direction)
+      icon_direction = sort_direction == 'asc' ? 'bottom' : 'top'
+      icon = glyphicon('chevron-'+icon_direction) + " "
     end
 
     options = params.merge(contains)
 
-    link_to icon + title, options.merge(sort: column, direction: direction)
+    link_to icon + title, options.permit!.merge(sort: column, direction: direction)
   end
 
 
   def per_page
-    params[:per_page].try(:to_i) || 20
+    per_page = params[:per_page] || 20
+    per_page.to_i
   end
 
 
   def page
-    params[:page].try(:to_i) || 1
+    page = params[:page] || 1
+    page.to_i
   end
 
 
   def per_page_link(number, options = {})
     temp_class = (options['class'] || options[:class] || '').split
-    temp_class << 'label'
-    temp_class << 'label-info' if per_page == number
+    temp_class << 'page-link-badge'
+    temp_class << 'badge'
+    temp_class << 'badge-info' if per_page == number
     temp_class.uniq!
 
     temp_options = options.merge(class: temp_class)
 
-    link_to number, params.merge(per_page: number), temp_options
+    link_to number, params.permit!.merge(per_page: number), temp_options
   end
 
 
@@ -204,9 +227,11 @@ module ApplicationHelper
 
 
   def new_provider_request_state(new_provider_request)
-    klass = 'label'
-    klass += ' label-success'   if new_provider_request.accepted?
-    klass += ' label-important' if new_provider_request.rejected?
+    klass = 'badge fs-origin'
+    klass_plus = ' badge-secondary'
+    klass_plus = ' badge-success'   if new_provider_request.accepted?
+    klass_plus = ' badge-danger' if new_provider_request.rejected?
+    klass += klass_plus
     content_tag :span, NewProviderRequest.state_machine.states[new_provider_request.state].human_name, class: klass
   end
 
@@ -302,7 +327,6 @@ module ApplicationHelper
       [t('activerecord.models.csv_descriptor.attributes.piece_url'), :piece_url],
       [t('activerecord.models.csv_descriptor.attributes.remark'), :remark],
       [t('activerecord.models.csv_descriptor.attributes.third_party'), :third_party],
-      ['Separateur', :separator],
       ['Autre', :other]
     ]
   end

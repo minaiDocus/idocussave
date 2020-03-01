@@ -1,90 +1,79 @@
 #organization
-  .row-fluid
-    .span12
-      - if @user.is_admin
-        .row-fluid
-          .span12.box
-            .row-fluid
-              .span6
-                - if !@organization.is_active
-                  %span.label.label-important.pull-left.margin1right.closed_account Compte clôturé
-              .span6.alignright
-                - if @organization.is_active
-                  = link_to icon_not_ok + " Clôturer l'organisation", close_confirm_account_organization_path(@organization), class: 'btn btn-danger'
-                - else
-                  = link_to icon_not_ok + " Réouvrir l'organisation", activate_account_organization_path(@organization), method: 'patch',class: 'btn btn-primary'
-
-      .row-fluid
-        .span12.box
+  .row
+    .col-md-12
+      .card
+        .card-header
+          %h3 Paramètres
+        .card-body
           %ul.nav.nav-tabs
-            %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
-              %a{ href: '#information', data: { toggle: 'tab' } } Information
+            %li.nav-item
+              %a{ class: "nav-link #{(params[:tab] == 'information' || params[:tab].blank?) ? 'active' : ''}", href: '#information', data: { toggle: 'tab' } } Information
             -if @organization.is_active
-              %li{ class: ('active' if params[:tab] == 'file_naming_policy') }
-                %a{ href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF
-              %li{ class: ('active' if params[:tab] == 'addresses') }
-                %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
-              %li{ class: ('active' if params[:tab] == 'period_options') }
-                %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
-              %li{ class: ('active' if params[:tab] == 'reminder_emails') }
-                %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
-              %li{ class: ('active' if params[:tab] == 'knowings') }
-                %a{ href: '#knowings', data: { toggle: 'tab' } } Knowings
-              %li{ class: ('active' if params[:tab] == 'ftp') }
-                %a{ href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
-            %li{ class: ('active' if params[:tab] == 'mcf') }
-              %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
-            %li.dropdown{ class: ('active' if ['ibiza', 'exact_online', 'csv_descriptor', 'coala', 'quadratus', 'cegid'].include? params[:tab]) }
-              %a.dropdown-toogle{ href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
-              %ul.dropdown-menu{ style: "min-width: 187px" }
-                %li{ class: ('active' if params[:tab] == 'ibiza') }
-                  %a{ href: '#ibiza', data: { toggle: 'tab' } } 
-                    .pull-left iBiza
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'file_naming_policy') ? 'active' : ''}", href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'addresses') ? 'active' : ''}", href: '#addresses', data: { toggle: 'tab' } } Adresses
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'period_options') ? 'active' : ''}", href: '#period_options', data: { toggle: 'tab' } } Option téléversement
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'reminder_emails') ? 'active' : ''}", href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'knowings') ? 'active' : ''}", href: '#knowings', data: { toggle: 'tab' } } Knowings
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'ftp') ? 'active' : ''}", href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
+            %li.nav-item
+              %a{ class: "nav-link #{(params[:tab] == 'mcf') ? 'active' : ''}", href: '#mcf', data: { toggle: 'tab' } } My Company Files
+            %li.nav-item.dropdown
+              %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+              %ul.dropdown-menu{ style: "min-width: 195px" }
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'ibiza') ? 'active' : ''}", href: '#ibiza', data: { toggle: 'tab' } } 
+                    .float-left iBiza
                     - if @organization.try(:ibiza).try(:used?)
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'exact_online') }
-                  %a{ href: '#exact_online', data: { toggle: 'tab' } }
-                    .pull-left Exact Online
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'exact_online') ? 'active' : ''}", href: '#exact_online', data: { toggle: 'tab' } }
+                    .float-left Exact Online
                     - if @organization.is_exact_online_used
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'coala') }
-                  %a{ href: '#coala', data: { toggle: 'tab' } }
-                    .pull-left Coala
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'coala') ?  'active' : ''}", href: '#coala', data: { toggle: 'tab' } }
+                    .float-left Coala
                     - if @organization.is_coala_used
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'quadratus') }
-                  %a{ href: '#quadratus', data: { toggle: 'tab' } }
-                    .pull-left Quadratus
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'quadratus') ? 'active' : ''}", href: '#quadratus', data: { toggle: 'tab' } }
+                    .float-left Quadratus
                     - if @organization.is_quadratus_used
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'cegid') }
-                  %a{ href: '#cegid', data: { toggle: 'tab' } }
-                    .pull-left Cegid
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'cegid') ? 'active' : ''}", href: '#cegid', data: { toggle: 'tab' } }
+                    .float-left Cegid
                     - if @organization.is_cegid_used
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'fec_agiris') }
-                  %a{ href: '#fec_agiris', data: { toggle: 'tab' } }
-                    .pull-left Fec Agiris
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'fec_agiris') ? 'active' : ''}", href: '#fec_agiris', data: { toggle: 'tab' } }
+                    .float-left Fec Agiris
                     - if @organization.is_fec_agiris_used
-                      %i.icon-ok.pull-right
-                %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
-                  %a{ href: '#csv_descriptor', data: { toggle: 'tab' } }
-                    .pull-left Autre (format d'export .csv)
+                      = glyphicon('check', { class: 'float-right' })
+                %li
+                  %a{ class: "dropdown-item #{(params[:tab] == 'csv_descriptor') ? 'active' : ''}", href: '#csv_descriptor', data: { toggle: 'tab' } }
+                    .float-left Autre (format d'export .csv)
                     - if @organization.is_csv_descriptor_used
-                      %i.icon-ok.pull-right
+                      = glyphicon('check', { class: 'float-right' })
             - if @user.leader?
-              %li{ class: ('active' if params[:tab] == 'payments') }
-                %a{ href: '#payments', data: { toggle: 'tab' } } Mode de paiement
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'payments') ? 'active' : ''}", href: '#payments', data: { toggle: 'tab' } } Mode de paiement
             - if @user.is_admin
-              %li{ class: ('active' if params[:tab] == 'file_sending_kit') }
-                %a{ href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
-              %li{ class: ('active' if params[:tab] == 'subscription') }
-                %a{ href: '#subscription', data: { toggle: 'tab' } } Abonnement
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'subscription') ? 'active' : ''}", href: '#subscription', data: { toggle: 'tab' } } Abonnement
 
-          .tab-content
-            #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
-              .row-fluid
-                .span8
+          .tab-content.box.border-top-0.bg-light
+            #information.tab-pane.fade{ class: ('active show' if params[:tab] == 'information' || params[:tab].blank?) }
+              .row
+                .col-md-8
                   %table.table.table-condensed.table-striped
                     %tr
                       %th= t('activerecord.models.organization.attributes.name')
@@ -123,7 +112,7 @@
                       %tr
                         %th= t('activerecord.models.organization.attributes.subject_to_vat')
                         %td= @organization.subject_to_vat ? t('yes_value') : t('no_value')
-                .span4
+                .col-md-4
                   %table.table.table-condensed.table-striped
                     %tr
                       %th= t('activerecord.models.organization.attributes.collaborators_count')
@@ -138,9 +127,8 @@
                       %th Nombre de clients actifs
                       %td= @organization.customers.active.count
               - if @user.leader?
-                .row-fluid
-                  .span12= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization), class: 'btn btn-primary'
-            #file_naming_policy.tab-pane{ class: ('active' if params[:tab] == 'file_naming_policy') }
+                = link_to t('actions.edit'), edit_account_organization_path(@organization), class: 'btn btn-primary'
+            #file_naming_policy.tab-pane.fade{ class: ('active show' if params[:tab] == 'file_naming_policy') }
               %p Configuration actuelle du nom de vos fichiers en sortie vers les stockages externes.
               %table.table.table-condensed.table-striped
                 %tbody
@@ -155,16 +143,16 @@
                     %th Exemple
                     %td= CustomFileNameService.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
               - if @user.leader?
-                .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
-            #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
-              .row-fluid.margin1bottom
-                .span4= render partial: 'account/organization_addresses/address', locals: { address: @organization.billing_address,  single: true, type: 'billing' }
-                .span4= render partial: 'account/organization_addresses/address', locals: { address: @organization.paper_return_address, single: true, type: 'paper_return' }
-                .span4= render partial: 'account/organization_addresses/address', locals: { address: @organization.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
-              .row-fluid
-                .span12.aligncenter
-                  = link_to icon_edit + ' ' + 'Configurer', account_organization_addresses_path(@organization), class: 'btn btn-primary'
-            #period_options.tab-pane{ class: ('active' if params[:tab] == 'period_options') }
+                = link_to t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
+            #addresses.tab-pane.fade{ class: ('active show' if params[:tab] == 'addresses') }
+              .row.margin1bottom
+                .col-md-4= render partial: 'account/organization_addresses/address', locals: { address: @organization.billing_address,  single: true, type: 'billing' }
+                .col-md-4= render partial: 'account/organization_addresses/address', locals: { address: @organization.paper_return_address, single: true, type: 'paper_return' }
+                .col-md-4= render partial: 'account/organization_addresses/address', locals: { address: @organization.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
+              .row
+                .col-md-12.aligncenter
+                  = link_to 'Configurer', account_organization_addresses_path(@organization), class: 'btn btn-primary'
+            #period_options.tab-pane.fade{ class: ('active show' if params[:tab] == 'period_options') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
@@ -178,11 +166,10 @@
                       %th= t('activerecord.models.organization.attributes.auth_prev_period_until_month')
                       %td= @organization.auth_prev_period_until_month
               - if @user.leader?
-                .alignright
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_period_options_path(@organization), class: 'btn btn-primary'
-                  - if @user.is_admin
-                    = link_to icon_globe + ' Propager', select_propagation_options_account_organization_period_options_path(@organization), class: 'btn btn-primary'
-            #knowings.tab-pane{ class: ('active' if params[:tab] == 'knowings') }
+                = link_to t('actions.edit'), edit_account_organization_period_options_path(@organization), class: 'btn btn-primary'
+                - if @user.is_admin
+                  = link_to 'Propager', select_propagation_options_account_organization_period_options_path(@organization), class: 'btn btn-primary'
+            #knowings.tab-pane.fade{ class: ('active show' if params[:tab] == 'knowings') }
               - if @organization.knowings
                 %table.table.table-condensed.table-striped
                   %tbody
@@ -203,21 +190,19 @@
                       %td= @organization.knowings.is_third_party_included ? t('yes_value') : t('no_value')
               - if @user.leader?
                 - if @organization.knowings
-                  .alignright
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_knowings_path(@organization), class: 'btn btn-primary'
+                  = link_to t('actions.edit'), edit_account_organization_knowings_path(@organization), class: 'btn btn-primary'
                 - else
-                  .aligncenter
-                    = link_to 'Configurer', new_account_organization_knowings_path(@organization), class: 'btn btn-primary'
-            #ftp.tab-pane{ class: ('active' if params[:tab] == 'ftp') }
+                  = link_to 'Configurer', new_account_organization_knowings_path(@organization), class: 'btn btn-primary'
+            #ftp.tab-pane.fade{ class: ('active show' if params[:tab] == 'ftp') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
                     %th Etat
                     %td
                       - if @organization.ftp.try(:configured?)
-                        %span.label.label-success OK
+                        %span.badge.badge-success.fs-origin OK
                       - else
-                        %span.label Non configuré
+                        %span.badge.badge-secondary.fs-origin Non configuré
                   %tr
                     %th Hôte
                     %td= @organization.ftp.try(:host) || 'ftp://ftp.example.com'
@@ -233,39 +218,47 @@
                   %tr
                     %th Chemin de livraison
                     %td= @organization.ftp.try(:path) || 'OUTPUT/:code/:year:month/:account_book/'
+                  - if @organization.ftp.try(:error_message).present?
+                    %tr
+                      %th Dérnière message d'erreur rencontré
+                      %td
+                        %span.badge.badge-danger.fs-origin.text-white
+                          le #{@organization.ftp.error_fetched_at.strftime("%d-%m-%Y %H:%M:%S")} :
+                        %span
+                          = @organization.ftp.error_message
+
               - if @user.leader?
-                .alignright
-                  = link_to icon_edit + ' Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
-                  - if @organization.ftp.try(:configured?)
-                    = link_to icon_download + ' Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
-                    = link_to icon_not_ok + ' Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
-            #mcf.tab-pane{ class: ('active' if params[:tab] == 'mcf') }
+                = link_to 'Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
+                - if @organization.ftp.try(:configured?)
+                  = link_to 'Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn btn-secondary', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
+                  = link_to 'Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
+            #mcf.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'mcf') }
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
                     %th Statut de la liaison
                     %td
                       - if @organization.mcf_settings.try(:access_token).present?
-                        %span.label.label-success OK
+                        %span.badge.badge-success OK
                       - else
-                        %span.label.label-default Non configuré
+                        %span.badge.badge-default Non configuré
                   - if @organization.mcf_settings.try(:access_token).present?
                     %tr
                       %th Livraison activé ?
                       %td
                         - if @organization.mcf_settings.try(:is_delivery_activated)
-                          %span.label.label-success= t('yes_value')
+                          %span.badge.badge-success= t('yes_value')
                         - else
-                          %span.label.label-important= t('no_value')
+                          %span.badge.badge-important= t('no_value')
                   %tr
                     %th Chemin de livraison
                     %td= @organization.mcf_settings.try(:delivery_path_pattern) || McfSettings.new.delivery_path_pattern
               - if @organization.mcf_settings.try(:access_token).present?
-                = link_to icon_destroy + ' Supprimer mes paramètres', account_organization_mcf_settings_path(@organization), class: 'btn btn-danger pull-right margin05left', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres pour My Company Files ?' }
-                = link_to icon_edit + ' Editer', edit_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right margin05left'
+                = link_to 'Supprimer mes paramètres', account_organization_mcf_settings_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres pour My Company Files ?' }
+                = link_to 'Editer', edit_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary'
               - else
-                = link_to icon(icon: 'share-alt') + ' Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right', method: :post
-            #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
+                = link_to 'Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary', method: :post
+            #ibiza.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza') }
               .aligncenter
                 %h4.margin2bottom Configuration Ibiza
               %table.table.table-condensed.table-striped
@@ -273,11 +266,11 @@
                   %tr
                     %th= t('activerecord.models.ibiza.attributes.access_token')
                     %td
-                      %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state))}" }= ibiza_state(@organization.ibiza.try(:state))
+                      %span{ class: "fs-origin badge #{ibiza_state_label(@organization.ibiza.try(:state))}" }= ibiza_state(@organization.ibiza.try(:state))
                   %tr
                     %th= t('activerecord.models.ibiza.attributes.access_token_2')
                     %td
-                      %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state_2))}" }= ibiza_state(@organization.ibiza.try(:state_2))
+                      %span{ class: "fs-origin badge #{ibiza_state_label(@organization.ibiza.try(:state_2))}" }= ibiza_state(@organization.ibiza.try(:state_2))
                   %tr
                     %th= t('activerecord.models.ibiza.attributes.is_auto_deliver')
                     %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
@@ -289,177 +282,226 @@
                       %th= t('activerecord.models.ibiza.attributes.is_analysis_to_validate')
                       %td= @organization.ibiza.try(:is_analysis_to_validate) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
-                %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (par défaut: colonne "Pièce" dans iBiza)
-                %table.table.table-condensed.table-striped
-                  %thead
-                    %tr
-                      %th.name Valeur
-                      %th.is_used Utilisé ?
-                      %th.position Position
-                  %tbody
-                    %tr
-                      %td.name Code complet
-                      %td.is_used
-                        - value = @organization.ibiza.piece_name_format['code']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.piece_name_format['code']['position'] rescue 1
-                    %tr
-                      %td.name Code dossier sans code cabinet
-                      %td.is_used
-                        - value = @organization.ibiza.piece_name_format['code_wp']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.piece_name_format['code_wp']['position'] rescue 1
-                    %tr
-                      %td.name Journal
-                      %td.is_used
-                        - value = @organization.ibiza.piece_name_format['journal']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.piece_name_format['journal']['position'] rescue 1
-                    %tr
-                      %td.name Période de traitement
-                      %td.is_used
-                        - value = @organization.ibiza.piece_name_format['period']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.piece_name_format['period']['position'] rescue 1
-                    %tr
-                      %td.name Numéro
-                      %td.is_used
-                        - value = @organization.ibiza.piece_name_format['number']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.piece_name_format['number']['position'] rescue 1
-                    %tr
-                      %td{ colspan: 3 }
-                        %i
-                          ( EXEMPLE:&nbsp;
-                          %strong= IbizaAPI::Utils.piece_name('CAB%DOC AC 201901 001', @organization.ibiza.piece_name_format, @organization.ibiza.piece_name_format_sep)
-                          &nbsp;)
-                %h4.margin2top.margin1bottom Format de l'écriture comptable dans iBiza
-                %table.table.table-condensed.table-striped
-                  %thead
-                    %tr
-                      %th.name Valeur
-                      %th.is_used Utilisé ?
-                      %th.position Position
-                      %th
-                  %tbody
-                    %tr
-                      %td.name Libellé de l'opération bancaire
-                      %td.is_used= t('yes_value')
-                      %td.position= @organization.ibiza.description['operation_label']['position'] rescue 1
-                      %td Obligatoire pour une opération provenant d'un automate bancaire.
-                    %tr
-                      %td.name Date réelle
-                      %td.is_used
-                        - value = @organization.ibiza.description['date']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['date']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Tiers
-                      %td.is_used
-                        - value = @organization.ibiza.description['third_party']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Montant d'origine
-                      %td.is_used
-                        - value = @organization.ibiza.description['amount']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['amount']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Devise
-                      %td.is_used
-                        - value = @organization.ibiza.description['currency']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['currency']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Taux de conversion
-                      %td.is_used
-                        - value = @organization.ibiza.description['conversion_rate']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['conversion_rate']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Remarque
-                      %td.is_used
-                        - value = @organization.ibiza.description['observation']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['observation']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Journal
-                      %td.is_used
-                        - value = @organization.ibiza.description['journal']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['journal']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Nom de pièce (iDocus)
-                      %td.is_used
-                        - value = @organization.ibiza.description['piece_name']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
-                      %td
-                    %tr
-                      %td.name Numéro de pièce d'origine
-                      %td.is_used
-                        - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
-                        = value ? t('yes_value') : t('no_value')
-                      %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
-                      %td
-                    %tr
-                      %td{ colspan: 4 }
-                        - preseizure = OpenStruct.new({ journal_name: 'AC', piece: OpenStruct.new(name: 'CAB%DOC AC 201901 001'), piece_number: 'FACT001', date: Time.new(2019,1,2), third_party: 'tiers' })
-                        - preseizure['amount'] = '100,00'
-                        - preseizure['currency'] = 'USD'
-                        - preseizure['conversion_rate'] = 'Taux_Conv'
-                        - preseizure['observation'] = 'remarque'
-                        %i
-                          ( EXEMPLE:&nbsp;
-                          %strong= IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
-                          &nbsp;)
-                %h4.margin2top.margin1bottom Champ utilisé dans la colonne "Ref. pièce" et "Piece" dans Ibiza
-                %table.table.table-condensed.table-striped
-                  %thead
-                    %tr
-                      %th.name Colonne
-                      %th.is_used Champ
-                  %tbody
-                    %tr
-                      %td.name Ref. pièce
-                      %td= @organization.ibiza.try(:voucher_ref_target) == 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
-                    %tr
-                      %td.name Pièce
-                      %td= @organization.ibiza.try(:voucher_ref_target) != 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
+                .card.margin1bottom
+                  .card-header
+                    %h4 Format de nom de la pièce iDocus dans iBiza (par défaut: colonne "Pièce" dans iBiza)
+                  .card-body
+                    %table.table.table-condensed.table-striped
+                      %thead
+                        %tr.bg-brown.text-white
+                          %th.name.border-top-0 Valeur
+                          %th.is_used.border-top-0 Utilisé ?
+                          %th.position.border-top-0 Position
+                      %tbody
+                        %tr
+                          %td.name Code complet
+                          %td.is_used
+                            - value = @organization.ibiza.piece_name_format['code']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.piece_name_format['code']['position'] rescue 1
+                        %tr
+                          %td.name Code dossier sans code cabinet
+                          %td.is_used
+                            - value = @organization.ibiza.piece_name_format['code_wp']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.piece_name_format['code_wp']['position'] rescue 1
+                        %tr
+                          %td.name Journal
+                          %td.is_used
+                            - value = @organization.ibiza.piece_name_format['journal']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.piece_name_format['journal']['position'] rescue 1
+                        %tr
+                          %td.name Période de traitement
+                          %td.is_used
+                            - value = @organization.ibiza.piece_name_format['period']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.piece_name_format['period']['position'] rescue 1
+                        %tr
+                          %td.name Numéro
+                          %td.is_used
+                            - value = @organization.ibiza.piece_name_format['number']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.piece_name_format['number']['position'] rescue 1
+                        %tr
+                          %td{ colspan: 3 }
+                            %i
+                              ( EXEMPLE:&nbsp;
+                              %strong= IbizaAPI::Utils.piece_name('CAB%DOC AC 201901 001', @organization.ibiza.piece_name_format, @organization.ibiza.piece_name_format_sep)
+                              &nbsp;)
+                .card.margin1bottom
+                  .card-header
+                    %h4 Format de l'écriture comptable dans iBiza
+                  .card-body
+                    %table.table.table-condensed.table-striped
+                      %thead
+                        %tr.bg-brown.text-white
+                          %th.name.border-top-0 Valeur
+                          %th.is_used.border-top-0 Utilisé ?
+                          %th.position.border-top-0 Position
+                          %th.border-top-0
+                      %tbody
+                        %tr
+                          %td.name Libellé de l'opération bancaire
+                          %td.is_used= t('yes_value')
+                          %td.position= @organization.ibiza.description['operation_label']['position'] rescue 1
+                          %td Obligatoire pour une opération provenant d'un automate bancaire.
+                        %tr
+                          %td.name Date réelle
+                          %td.is_used
+                            - value = @organization.ibiza.description['date']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['date']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Tiers
+                          %td.is_used
+                            - value = @organization.ibiza.description['third_party']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Montant d'origine
+                          %td.is_used
+                            - value = @organization.ibiza.description['amount']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['amount']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Devise
+                          %td.is_used
+                            - value = @organization.ibiza.description['currency']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['currency']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Taux de conversion
+                          %td.is_used
+                            - value = @organization.ibiza.description['conversion_rate']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['conversion_rate']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Remarque
+                          %td.is_used
+                            - value = @organization.ibiza.description['observation']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['observation']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Journal
+                          %td.is_used
+                            - value = @organization.ibiza.description['journal']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['journal']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Nom de pièce (iDocus)
+                          %td.is_used
+                            - value = @organization.ibiza.description['piece_name']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
+                          %td
+                        %tr
+                          %td.name Numéro de pièce d'origine
+                          %td.is_used
+                            - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
+                            = value ? t('yes_value') : t('no_value')
+                          %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
+                          %td
+                        %tr
+                          %td{ colspan: 4 }
+                            - preseizure = OpenStruct.new({ journal_name: 'AC', piece: OpenStruct.new(name: 'CAB%DOC AC 201901 001'), piece_number: 'FACT001', date: Time.new(2019,1,2), third_party: 'tiers' })
+                            - preseizure['amount'] = '100,00'
+                            - preseizure['currency'] = 'USD'
+                            - preseizure['conversion_rate'] = 'Taux_Conv'
+                            - preseizure['observation'] = 'remarque'
+                            %i
+                              ( EXEMPLE:&nbsp;
+                              %strong= IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
+                              &nbsp;)
+                .card.margin1bottom
+                  .card-header
+                    %h4 Champ utilisé dans la colonne "Ref. pièce" et "Piece" dans Ibiza
+                  .card-body
+                    %table.table.table-condensed.table-striped
+                      %thead
+                        %tr.bg-brown.text-white
+                          %th.name.border-top-0 Colonne
+                          %th.is_used.border-top-0 Champ
+                      %tbody
+                        %tr
+                          %td.name Ref. pièce
+                          %td= @organization.ibiza.try(:voucher_ref_target) == 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
+                        %tr
+                          %td.name Pièce
+                          %td= @organization.ibiza.try(:voucher_ref_target) != 'piece_number' ? "Numéro de pièce d'origine" : "Nom de la pièce (iDocus)"
               - if @user.leader?
-                .alignright
+                .alignright.mt-md-3
                   -if @organization.try(:ibiza).try(:used?)
-                    = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'ibiza'), class: 'btn'
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
-            #coala.tab-pane{ class: ('active' if params[:tab] == 'coala') }
+                    = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'ibiza'), class: 'btn btn-secondary'
+                  = link_to t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
+            #coala.tab-pane.fade{ class: ('active show' if params[:tab] == 'coala') }
               .aligncenter
                 %h4.margin1bottom Configuration Coala
-              = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form form-horizontal margin0' } do |f|
+              = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
                 = hidden_field_tag :part, 'coala'
                 %table.table.table-condensed.with_custom_controls
                   %tbody
                     %tr
                       %th= t('activerecord.models.organization.attributes.is_coala_used')
-                      %td{width: '30%'} Cette option permet de selectionner/utiliser Coala dans le paramétrage dossier client
+                      %td{width: '40%'} Cette option permet de selectionner/utiliser Coala dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
                     %tr.hide
                       %th= t('activerecord.models.organization.attributes.is_coala_auto_deliver')
-                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
                       %td{width: '5%'}= f.input :is_coala_auto_deliver, as: 'boolean', label: 'oui?'
                 - if @user.leader?
                   .alignright
                     -if @organization.is_coala_used
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn'
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #cegid.tab-pane{ class: ('active' if params[:tab] == 'cegid') }
+            #exact_online.tab-pane.fade{ class: ('active show' if params[:tab] == 'exact_online') }
+              .aligncenter
+                %h4.margin1bottom Configuration Exact Online
+              = simple_form_for [:account, @organization], html: { id: 'form_exact_online', class: 'form-horizontal label-auto' } do |f|
+                = hidden_field_tag :part, 'exact_online'
+                %table.table.table-condensed.with_custom_controls
+                  %tbody
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_exact_online_used')
+                      %td{width: '40%'} Cette option permet de selectionner/utiliser Exact Online dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte exact online).
+                      %td{width: '5%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_used }
+                    %tr.hide
+                      %th= t('activerecord.models.organization.attributes.is_exact_online_auto_deliver')
+                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.
+                      %td{width: '5%'}= f.input :is_exact_online_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_auto_deliver }
+                - if @user.leader?
+                  .alignright
+                    - if @organization.is_exact_online_used
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn btn-secondary'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
+            #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
+              .aligncenter
+                %h4.margin1bottom Configuration Quadratus
+              = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
+                = hidden_field_tag :part, 'quadratus'
+                %table.table.table-condensed.with_custom_controls
+                  %tbody
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_quadratus_used')
+                      %td{width: '40%'} Cette option permet de selectionner/utiliser Quadratus dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
+                    %tr.hide
+                      %th= t('activerecord.models.organization.attributes.is_quadratus_auto_deliver')
+                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_quadratus_auto_deliver, as: 'boolean', label: 'oui?'
+                - if @user.leader?
+                  .alignright
+                    -if @organization.is_quadratus_used
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'quadratus'), class: 'btn btn-secondary'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
+            #cegid.tab-pane.fade{ class: ('active show' if params[:tab] == 'cegid') }
               .aligncenter
                 %h4.margin1bottom Configuration Cegid
               = simple_form_for [:account, @organization], html: { id: 'form_cegid', class: 'form form-horizontal margin0' } do |f|
@@ -477,49 +519,9 @@
                 - if @user.leader?
                   .alignright
                     -if @organization.is_cegid_used
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn'
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #exact_online.tab-pane{ class: ('active' if params[:tab] == 'exact_online') }
-              .aligncenter
-                %h4.margin1bottom Configuration Exact Online
-              = simple_form_for [:account, @organization], html: { id: 'form_exact_online', class: 'form form-horizontal margin0' } do |f|
-                = hidden_field_tag :part, 'exact_online'
-                %table.table.table-condensed.table-striped
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_exact_online_used')
-                      %td Cette option permet de selectionner/utiliser Exact Online dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte exact online).
-                      %td{width: '10%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_used }
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_exact_online_auto_deliver')
-                      %td Cette option peut être écrasée dans le paramétrage dossier client.
-                      %td{width: '10%'}= f.input :is_exact_online_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_auto_deliver }
-                - if @user.leader?
-                  .alignright
-                    - if @organization.is_exact_online_used
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn'
-                    = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #quadratus.tab-pane{ class: ('active' if params[:tab] == 'quadratus') }
-              .aligncenter
-                %h4.margin1bottom Configuration Quadratus
-              = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form form-horizontal margin0' } do |f|
-                = hidden_field_tag :part, 'quadratus'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_quadratus_used')
-                      %td{width: '30%'} Cette option permet de selectionner/utiliser Quadratus dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_quadratus_auto_deliver')
-                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_quadratus_auto_deliver, as: 'boolean', label: 'oui?'
-                - if @user.leader?
-                  .alignright
-                    -if @organization.is_quadratus_used
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'quadratus'), class: 'btn'
-                    = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #fec_agiris.tab-pane{ class: ('active' if params[:tab] == 'fec_agiris') }
+            #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
               .aligncenter
                 %h4.margin1bottom Configuration Fec Agiris
               = simple_form_for [:account, @organization], html: { id: 'form_fec_agiris', class: 'form form-horizontal margin0' } do |f|
@@ -539,53 +541,54 @@
                     -if @organization.is_fec_agiris_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_agiris'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
+            #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               .aligncenter
                 %h4.margin1bottom Configuration d'export .csv
-                = simple_form_for [:account, @organization], html: { id: 'form_csv_descriptor', class: 'form form-horizontal margin0' } do |f|
-                  = hidden_field_tag :part, 'csv_descriptor'
-                  %table.table.table-condensed.with_custom_controls
-                    %tbody
-                      %tr
-                        %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
-                        %td{width: '30%'} Cette option permet de selectionner/utiliser un format d'export personnalisé dans le paramétrage dossier client
-                        %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
-                      %tr.hide
-                        %th= t('activerecord.models.organization.attributes.is_csv_descriptor_auto_deliver')
-                        %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
-                        %td{width: '5%'}= f.input :is_csv_descriptor_auto_deliver, as: 'boolean', label: 'oui?'
-                  - if @user.leader?
-                    .alignright
-                      -if @organization.is_csv_descriptor_used
-                        = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'csv_descriptor'), class: 'btn'
-                      = f.submit t('actions.submit'), class: 'btn btn-primary'
+              = simple_form_for [:account, @organization], html: { id: 'form_csv_descriptor', class: 'form-horizontal label-auto' } do |f|
+                = hidden_field_tag :part, 'csv_descriptor'
+                %table.table.table-condensed.with_custom_controls
+                  %tbody
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
+                      %td{width: '40%'} Cette option permet de selectionner/utiliser un format d'export personnalisé dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
+                    %tr.hide
+                      %th= t('activerecord.models.organization.attributes.is_csv_descriptor_auto_deliver')
+                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
+                      %td{width: '5%'}= f.input :is_csv_descriptor_auto_deliver, as: 'boolean', label: 'oui?'
+                - if @user.leader?
+                  .alignright
+                    -if @organization.is_csv_descriptor_used
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'csv_descriptor'), class: 'btn btn-secondary'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
               -if @organization.is_csv_descriptor_used && @user.leader?
                 %hr
-                .row-fluid
-                  .span10
+                .row
+                  .col-md-10
                     Créez un fichier d’export des écritures comptables en format .csv. Choisissez les différentes données que vous souhaitez récupérer en comptabilité.
                     %br
                     N.B.: ce fichier est nécessaire pour tous les outils comptables ne fonctionnant pas avec iDocus par API (Mode SaaS intégral).
                     %br
-                  .span2
-                    .alignright= link_to icon_edit + ' Créer maintenant', edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
+                  .col-md-2
+                    - title = (@organization.try(:csv_descriptor).try(:directive).present?) ? 'Modifier le format' : 'Créer maintenant'
+                    .alignright= link_to title, edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
             - if @user.leader?
               #payments.tab-pane{ class: ('active' if params[:tab] == 'payments') }
                 = render :partial => '/account/organizations/slimpay_checkout'
                 %h3.aligncenter Prélèvement
-                %table.table.table-condensed.margin2top
+                %table.table.table-condensed.table-striped
                   %tbody
                     %tr
                       %th Etat :
                       %td#debit_state
                         - if @organization.try(:debit_mandate).try(:pending?)
-                          %span.label Non configuré
+                          %span.badge.fs-origin Non configuré
                         - elsif @organization.try(:debit_mandate).try(:started?)
-                          %span.label.label-warning En attente utilisateur ...
+                          %span.badge.fs-origin.badge-warning En attente utilisateur ...
                         - elsif @organization.try(:debit_mandate).try(:configured?)
-                          %span.label.label-success OK
+                          %span.badge.fs-origin.badge-success OK
                         - else
-                          %span.label.label-important Information non valide
+                          %span.badge.fs-origin.badge-important Information non valide
                     %tr
                       %th Banque :
                       %td#debit_bic= @organization.try(:debit_mandate).try(:bic)
@@ -596,11 +599,11 @@
                       %th Email :
                       %td#debit_email= @organization.try(:debit_mandate).try(:email)
                 %a#link_slimpay_checkout.btn.btn-primary{ href: '#slimpay_checkout', data: { toggle: :modal } } Configurer
-                %span#payment_configuration_checker.label.label-warning.hide
+                %span#payment_configuration_checker.fs-origin.badge.badge-warning.hide
                   Verification de votre configuration en cours ... Veuillez patienter svp.
 
             - if @user.is_admin
-              #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
+              #file_sending_kit.tab-pane.fade{ class: ('active show' if params[:tab] == 'file_sending_kit') }
                 %table.table.table-striped.table-condensed
                   %tr
                     %th= t('activerecord.models.file_sending_kit.attributes.folders')
@@ -622,14 +625,13 @@
                     %td
                       - if File.exist? File.join(Rails.root, 'files', Rails.env, 'kit', 'workshop_labels.pdf')
                         = link_to 'workshop_labels.pdf', workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
-                .alignright
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
-                  = link_to icon(icon: 'ok-sign') + ' Générer', select_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
-            #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
+                = link_to t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
+                = link_to 'Générer', select_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
+            #reminder_emails.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'reminder_emails') }
               %p Configurez ici un nouvel e-mail de rappel qui sera envoyé à vos clients afin qu'ils n'oublient pas d'envoyer leurs documents.
               %table.table.table-striped.table-condensed
                 %thead
-                  %tr
+                  %tr.bg-brown.text-white
                     %th= t('activerecord.models.reminder_email.attributes.name')
                     %th= t('activerecord.models.reminder_email.attributes.delivery_day')
                     %th= t('activerecord.models.reminder_email.attributes.delivered_at')
@@ -653,13 +655,13 @@
                         - else
                           = @organization.customers.active.count
                       %td
-                        = link_to icon(icon: 'plus'), new_account_organization_reminder_email_path(@organization, template: reminder_email), class: 'btn btn-mini', title: 'Configurer un nouveau e-mail de rappel en se basant sur cet e-mail'
-                        = link_to icon_show, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', target: :_blank, title: "Voir"
-                        = link_to icon_edit, edit_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', title: 'Editer'
-                        = link_to icon_destroy, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
-                        = link_to icon(icon: 'play') + ' ' + t('activerecord.models.reminder_email.actions.send'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', data: { confirm: t('activerecord.models.reminder_email.actions.send_confirmation') }, method: :post
-              = link_to icon_new + ' ' + t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary pull-right'
-            #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
+                        = link_to glyphicon('plus'), new_account_organization_reminder_email_path(@organization, template: reminder_email), class: 'btn btn-light', title: 'Configurer un nouveau e-mail de rappel en se basant sur cet e-mail'
+                        = link_to glyphicon('eye'), account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', target: :_blank, title: "Voir"
+                        = link_to glyphicon('pencil'), edit_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', title: 'Editer'
+                        = link_to glyphicon('x'), account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+                        = link_to glyphicon('envelope-open'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-light', data: { confirm: t('activerecord.models.reminder_email.actions.send_confirmation') }, method: :post, title: 'Envoyer'
+              = link_to t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary'
+            #subscription.tab-pane.fade{ class: ('active show' if params[:tab] == 'subscription') }
               %table.table.table-striped.table-condensed
                 %tr
                   %th Option
@@ -687,6 +689,5 @@
                   %th TVA (20 %)
                   %td
                   %td.price= format_price_00((@total * @subscription.tva_ratio) - @total) + ' €'
-              .alignright
-                = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
-                = link_to icon_edit + ' Propager les quotas', select_options_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
+              = link_to t('actions.edit'), edit_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
+              = link_to 'Propager les quotas', select_options_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'

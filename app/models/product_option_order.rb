@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ProductOptionOrder < ActiveRecord::Base
+class ProductOptionOrder < ApplicationRecord
   belongs_to :product_optionable, polymorphic: true
 
   scope :by_position, -> { order(group_position: :asc, position: :asc) }

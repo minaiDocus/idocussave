@@ -1,8 +1,7 @@
 #account_number_rule.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition de la règle : #{@account_number_rule.name}
-
-  .row-fluid
-    .span12.box
-      = render partial: 'form'
+  .card
+    .card-header
+      %h3 
+        Edition de la règle : 
+        %span.text-info.fs-origin= @account_number_rule.name
+    = render partial: 'form'

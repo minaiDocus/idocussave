@@ -1,6 +1,10 @@
 Idocus::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
+  # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
+  # config.require_master_key = true
+
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -35,8 +39,8 @@ Idocus::Application.configure do
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
   # config.serve_static_files = false
-  config.serve_static_files = true
-
+  config.public_file_server.enabled = true
+  
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
@@ -53,10 +57,6 @@ Idocus::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.active_record.raise_in_transactional_callbacks = true
-
-  config.active_record.dump_schema_after_migration = false
-
   # Compress JavaScript and CSS
   config.assets.js_compress = :uglifier
 
@@ -67,6 +67,8 @@ Idocus::Application.configure do
   # Generate digests for assets URLs
   # config.assets.digest = true
   config.assets.digest = true
+
+  config.active_storage.service = :openstack_prod
 
   # Adding js files
   config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)

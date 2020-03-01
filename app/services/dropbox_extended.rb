@@ -3,8 +3,8 @@ module DropboxExtended
   class << self
     def authenticator
       DropboxApi::Authenticator.new(
-        Rails.application.secrets.dropbox_extended_api['key'],
-        Rails.application.secrets.dropbox_extended_api['secret']
+        Rails.application.credentials[Rails.env.to_sym][:dropbox_extended_api][:key],
+        Rails.application.credentials[Rails.env.to_sym][:dropbox_extended_api][:secret]
       )
     end
 
@@ -18,7 +18,7 @@ module DropboxExtended
     end
 
     def access_token
-      Rails.application.secrets.dropbox_extended_api['access_token']
+      Rails.application.credentials[Rails.env.to_sym][:dropbox_extended_api][:access_token]
     end
 
     def client

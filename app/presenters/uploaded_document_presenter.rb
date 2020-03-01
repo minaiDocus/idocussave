@@ -12,10 +12,10 @@ class UploadedDocumentPresenter
 
       file[:created_at] = I18n.l(temp_document.created_at)
       file[:name]       = temp_document.original_file_name
-      file[:new_name]   = temp_document.content_file_name
+      file[:new_name]   = temp_document.cloud_content_object.filename
 
       if temp_document.state == 'bundle_needed'
-        file[:message] = 'vos documents sont en-cours de traitement, ils seront visibles dans quelques heures dans votre espace'
+        file[:message] = 'Vos documents sont en-cours de traitement, ils seront visibles dans quelques heures dans votre espace'
       end
     else
       file[:name]  = @uploaded_document.original_file_name
@@ -23,6 +23,6 @@ class UploadedDocumentPresenter
     end
 
     data << file
-    data.to_json
+    { files: data }.to_json
   end
 end

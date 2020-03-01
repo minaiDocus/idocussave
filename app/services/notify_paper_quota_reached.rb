@@ -6,12 +6,13 @@ class NotifyPaperQuotaReached
   end
 
   def initialize(period)
-    @period = period
-    @user = period.user
+    @period       = period
+    @user         = period.user
+    @organization = period.organization
   end
 
   def execute
-    if @user.notify.paper_quota_reached
+    if @user && @user.notify.try(:paper_quota_reached)
       notification = Notification.new
       notification.user        = @user
       notification.notice_type = 'paper_quota_reached'
@@ -22,13 +23,22 @@ class NotifyPaperQuotaReached
       NotifyWorker.perform_async(notification.id)
     end
 
-    @user.prescribers.each do |prescriber|
-      next unless prescriber.notify.paper_quota_reached
-      notification = Notification.new
+    collaborators = []
+    if @user
+      collaborators = @user.prescribers
+      indication    = "le client #{@user.code}"
+    elsif @organization
+      collaborators = @organization.collaborators
+      indication    = "les dossiers mensuels"
+    end
+
+    collaborators.each do |prescriber|
+      next unless prescriber.notify.try(:paper_quota_reached)
+      notification             = Notification.new
       notification.user        = prescriber
       notification.notice_type = 'paper_quota_reached'
       notification.title       = 'Quota de feuille atteint'
-      notification.message     = "Le quota de feuille #{@period.type_name} est atteint pour le client #{@user.code}. Hors forfait de 0,12 cts HT par feuille et pièce comptable."
+      notification.message     = "Le quota de feuille #{@period.type_name} est atteint pour #{indication}. Hors forfait de 0,12 cts HT par feuille et pièce comptable."
       notification.url         = url
       notification.save
       NotifyWorker.perform_async(notification.id)

@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::InvoicesController < Admin::AdminController
-  before_filter :load_invoice, only: %w(show update)
+  before_action :load_invoice, only: %w[show update]
 
   # GET /admin/invoices
   def index
@@ -11,7 +12,6 @@ class Admin::InvoicesController < Admin::AdminController
     @invoices = @invoices.page(params[:page]).per(params[:per_page])
   end
 
-
   # GET /admin/invoices/archive
   def archive
     file_path = Invoice.archive_path(params[:file_name])
@@ -19,10 +19,9 @@ class Admin::InvoicesController < Admin::AdminController
     if File.exist? file_path
       send_file(file_path, type: 'application/zip', filename: params[:file_name], x_sendfile: true)
     else
-      raise ActionController::RoutingError.new('Not Found')
+      raise ActionController::RoutingError, 'Not Found'
     end
   end
-
 
   # GET /admin/invoices/:id/download
   def download
@@ -34,19 +33,18 @@ class Admin::InvoicesController < Admin::AdminController
     end
   end
 
-
   # POST /admin/invoices/debit_order
   def debit_order
     debit_date = begin
                   params[:debit_date].presence.to_date
-                rescue
-                  Date.today
+                 rescue StandardError
+                   Date.today
                 end
 
     invoice_time = begin
                     params[:invoice_date].presence.to_time
-                  rescue
-                    Time.now
+                   rescue StandardError
+                     Time.now
                   end
 
     csv = SepaDirectDebitGenerator.execute(invoice_time, debit_date)
@@ -56,13 +54,14 @@ class Admin::InvoicesController < Admin::AdminController
     send_data(csv, type: 'text/csv', filename: filename)
   end
 
-
   # GET /admin/invoices/:id
   def show
-    if File.exist?(@invoice.content.path)
-      type     = @invoice.content_content_type || 'application/pdf'
-      filename = File.basename @invoice.content.path
-      send_file(@invoice.content.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@invoice.cloud_content_object.path.to_s)
+      # type     = @invoice.content_content_type || 'application/pdf'
+      # Find a way to get active record mime type
+      type = 'application/pdf'
+      filename = File.basename @invoice.cloud_content_object.path
+      send_file(@invoice.cloud_content_object.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     end
   end
 
@@ -72,12 +71,10 @@ class Admin::InvoicesController < Admin::AdminController
     @invoice = Invoice.find(params[:id])
   end
 
-
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
-
 
   def sort_direction
     params[:direction] || 'desc'

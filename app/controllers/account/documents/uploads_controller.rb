@@ -1,14 +1,15 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Documents::UploadsController < Account::AccountController
   def create
     data = nil
-    if params[:file_code].present?
-      customer = accounts.active.find_by_code(params[:file_code])
-    else
-      customer = @user
-    end
+    customer = if params[:file_code].present?
+                 accounts.active.find_by_code(params[:file_code])
+               else
+                 @user
+               end
 
-    if customer.try(:options).try(:is_upload_authorized)
+    if customer.try(:options).try(:is_upload_authorized) && params[:files].present?
       uploaded_document = UploadedDocument.new(params[:files][0].tempfile,
                                                params[:files][0].original_filename,
                                                customer,
@@ -20,7 +21,7 @@ class Account::Documents::UploadsController < Account::AccountController
 
       data = present(uploaded_document).to_json
     else
-      data = [{ name: params[:files][0].original_filename, error: 'Accès non autorisé.' }].to_json
+      data = { files: [{ name: params[:files].try(:[], 0).try(:original_filename), error: 'Accès non autorisé.' }] }.to_json
     end
 
     respond_to do |format|

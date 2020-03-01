@@ -1,7 +1,7 @@
 require 'sidekiq/web'
 require 'sidekiq-scheduler/web'
 
-Idocus::Application.routes.draw do
+Rails.application.routes.draw do
   mount Ckeditor::Engine => '/ckeditor'
   root to: 'account/account#index'
 
@@ -13,10 +13,12 @@ Idocus::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  get '/contents/original/*all', controller: 'account/documents', action: 'handle_bad_url'
+
   get '/account' => redirect('/account/documents')
   get '/account/compositions/download',                    controller: 'account/compositions', action: 'download'
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
-  get '/account/documents/processing/:id/download/:style', controller: 'account/documents', action: 'download_processing'
+  get '/account/documents/processing/:id/download(/:style)', controller: 'account/documents', action: 'download_processing'
   get '/account/documents/pieces/:id/download(/:style)',   controller: 'account/documents', action: 'piece'
   get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
@@ -77,7 +79,7 @@ Idocus::Application.routes.draw do
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
-  get  'retriever/webauth_callback', controller: 'retrievers', action: 'webauth_callback'
+  get  'retriever/callback', controller: 'retrievers', action: 'callback'
   post 'retriever/fetch_webauth_url', controller: 'retrievers', action: 'fetch_webauth_url'
   post 'retriever/create', controller: 'retrievers', action: 'create'
   post 'retriever/add_infos', controller: 'retrievers', action: 'add_infos'
@@ -301,7 +303,7 @@ Idocus::Application.routes.draw do
       resources :ibiza_users,                       only: :index
       resources :exact_online_users,                       only: :index
       resources :mcf_users,                         only: :index
-      resources :pre_assignments,                   only: :index
+      #resources :pre_assignments,                   only: :index
       # resources :pre_assignment_delivery_errors,    only: :index
 
       # resources :pre_assignment_ignored,            only: :index do
@@ -347,6 +349,7 @@ Idocus::Application.routes.draw do
       get  'archive',                         on: :member
       post 'sync_with_external_file_storage', on: :collection
       post 'delete_multiple_piece',           on: :collection
+      post 'restore_piece',                   on: :collection
     end
 
 
@@ -439,9 +442,10 @@ Idocus::Application.routes.draw do
 
     resource :suspended, only: :show
 
-    resources :notifications, only: :index do
+    resources :notifications do
       get 'latest', on: :collection
       get 'link_through', on: :member
+      post 'unread_all_notifications', on: :collection
     end
 
     resources :account_sharings, only: %w(new create destroy) do
@@ -568,7 +572,7 @@ Idocus::Application.routes.draw do
     get 'subscriptions', controller: 'subscriptions', action: 'index'
     post 'subscriptions/accounts/(:type)', controller: 'subscriptions', action: 'accounts'
 
-    resources :mobile_reporting, only: %w(index) do
+    resources :mobile_reporting, only: :index do
       get 'mobile_users_stats(/:month)(/:year)', action: 'download_mobile_users', on: :collection, as: :download_users
       get 'mobile_documents_stats(/:month)(/:year)', action: 'download_mobile_documents', on: :collection, as: :download_documents
     end
@@ -587,8 +591,7 @@ Idocus::Application.routes.draw do
 
     resources :dematbox_files, only: :index
 
-    resources :retrievers, only: %w(index edit destroy) do
-      post 'run',     on: :collection
+    resources :retrievers, only: %w(index edit) do
       post 'fetcher', on: :collection
       get 'fetcher',  on: :collection
     end
@@ -626,6 +629,11 @@ Idocus::Application.routes.draw do
 
     resources :pre_assignment_blocked_duplicates, only: :index
 
+    resources :job_processing, only: :index do
+      get 'kill_job_softly', on: :collection
+      get 'real_time_event', on: :collection
+    end
+
     resources :news do
       post :publish, on: :member
     end
@@ -645,7 +653,6 @@ Idocus::Application.routes.draw do
   get '/admin/process_reporting(/:year)(/:month)', controller: 'admin/process_reporting', action: :index
 
   get  'admin/retriever_services',             controller: 'admin/retriever_services', action: :index
-  post 'admin/retriever_services/update_list', controller: 'admin/retriever_services', action: :update_list
 
   match '*a', to: 'errors#routing', via: :all
 end

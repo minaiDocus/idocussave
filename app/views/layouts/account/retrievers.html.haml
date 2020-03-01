@@ -1,50 +1,79 @@
 - content_for :content do
   #retrievers.container-fluid
-    - if has_multiple_accounts?
-      .row-fluid
-        .span12.box
-          - if action_name == 'edit' && current_user.collaborator?
-            = "Dossier : "
-            = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
-            = hidden_field_tag :account_id, @account.try(:id)
+    .row
+      .col-md-12
+        .box.medium-shadow.clearfix{ style: 'margin-bottom: 20px' }
+          %h3 Mes Automates
+          - if has_multiple_accounts?
+            .user_selector.clearfix
+              - if action_name == 'edit'
+                %span.badge.badge-info.fs-origin= "Dossier : "
+                = link_to "#{@account}", account_organization_customer_path(@account.organization, @account)
+                = hidden_field_tag :account_id, @account.try(:id)
+              - else
+                %form#account_id_form{ action: current_url, method: 'GET', class: 'form-horizontal label-auto' }
+                  .form-group.clearfix.float-left.margin1right{ style: 'margin-bottom: 0px' }
+                    .label-section
+                      %label{ for: 'retrievers_account_id' }
+                        %span.badge.badge-info.fs-origin= "Dossier : "
+                    .control-section
+                      = select_tag :account_id, options_for_select([['Tous', 'all']] + customers_active, (@account.try(:id) || 'all')), class: 'chosen-select'
+                  -if @account.try(:id) && current_user.collaborator?
+                    = glyphicon('arrow-thick-left')
+                    = link_to 'Voir la fiche cliente', account_organization_customer_path(@account.organization, @account), style: 'font-size: 13px'
           - else
-            - options = (controller_name == 'retrievers' && action_name == 'index') ? ( [['Tous', 'all']] + customers_active ) : customers_active
-            %form#account_id_form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
-              = label_tag :retrievers_account_id, 'Dossier :'
-              = select_tag :account_id, options_for_select(options, (@account.try(:id) || 'all')), class: 'chosen-select'
-              -if @account.try(:id) && current_user.collaborator?
-                %span.icon-arrow-left
-                = link_to 'Voir la fiche cliente', account_organization_customer_path(@account.organization, @account)
-    - else
-      = hidden_field_tag :account_id, @account.try(:id)
-    .row-fluid
-      .span3
-        .box.sidebar-nav
-          %ul.nav.nav-list
-            %li.nav-header Automates
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name.in?(%w(index edit select_documents select_bank_accounts wait_for_user_action))) }
-              = link_to 'Mes automates', account_retrievers_path
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
-              = link_to 'Ajouter un automate', @account.try(:id)? new_account_retriever_path : '#', link_retriever_options(@account)
-            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
-              = link_to 'Liste des automates disponibles', @account.try(:id)? list_account_retrievers_path : '#', link_retriever_options(@account)
-            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
-              = link_to 'Demander un nouvel automate', @account.try(:id)? new_account_new_provider_request_path : '#', link_retriever_options(@account)
-            %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }
-              = link_to 'Suivi de mes demandes', @account.try(:id)? account_new_provider_requests_path : '#', link_retriever_options(@account)
-            %li.divider
-            %li.nav-header Historique de récupération
-            %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
-              = link_to 'Opérations bancaires', @account.try(:id)? account_retrieved_banking_operations_path : '#', link_retriever_options(@account)
-            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }
-              = link_to 'Documents', @account.try(:id)? account_retrieved_documents_path : '#', link_retriever_options(@account)
-            %li.divider
-            %li.nav-header Autres
-            %li{ class: ('active' if controller_name == 'bank_accounts') }
-              = link_to 'Sélection des comptes bancaires', @account.try(:id)? account_bank_accounts_path : '#', link_retriever_options(@account)
-            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
-              = link_to 'Sélection de documents restant à récupérer', @account.try(:id)? select_account_retrieved_documents_path : '#', link_retriever_options(@account)
-      .span9
+            = hidden_field_tag :account_id, @account.try(:id)
+    .row.retractable.with-menu
+      .retractable-menu        
+        .row
+          .col-md-12
+            .box.medium-shadow.bg-menu.side-menu
+              %span.retractable-caret
+                %span.title Mes Automates
+                %span.icon= glyphicon('caret-right')
+              %ul.nav.flex-column.nav-list
+                %li.nav-header Automates
+                %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name.in?(%w(index edit select_documents select_bank_accounts wait_for_user_action))) }
+                  %a.nav-link{ href: ( account_retrievers_path )}
+                    Mes automates
+                    = glyphicon('star', { class: 'float-right' })
+                %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
+                  %a.nav-link{ href: ( @account.try(:id)? new_account_retriever_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Ajouter un automate
+                    = glyphicon('plus', { class: 'float-right' })
+                %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
+                  %a.nav-link{ href: ( @account.try(:id)? list_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Liste des automates disponibles
+                    = glyphicon('list-rich', { class: 'float-right' })
+                / %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
+                /   %a.nav-link{ href: ( @account.try(:id)? new_account_new_provider_request_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                /     Demander un nouvel automate
+                /     = glyphicon('question-mark', { class: 'float-right' })
+                / %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }
+                /   %a.nav-link{ href: ( @account.try(:id)? account_new_provider_requests_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                /     Suivi de mes demandes
+                /     = glyphicon('list', { class: 'float-right' })
+                %li.nav-header Historique de récupération
+                %li.nav-item{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
+                  %a.nav-link{ href: ( @account.try(:id)? account_retrieved_banking_operations_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Opérations bancaires
+                    = glyphicon('project', { class: 'float-right' })
+                %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }
+                  %a.nav-link{ href: ( @account.try(:id)? account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Documents
+                    = glyphicon('document', { class: 'float-right' })
+                %li.nav-header Autres
+                %li.nav-item{ class: ('active' if controller_name == 'bank_accounts') }
+                  %a.nav-link{ href: ( @account.try(:id)? account_bank_accounts_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Sélection des comptes bancaires
+                    = glyphicon('excerpt', { class: 'float-right' })
+                %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
+                  %a.nav-link{ href: ( @account.try(:id)? select_account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Sélection de documents restant
+                    %br
+                    à récupérer
+                    = glyphicon('align-left', { class: 'float-right', style: 'margin-top: -8px'})
+      .col-md-12
         .alerts
           = render partial: 'shared/messages'
         = yield

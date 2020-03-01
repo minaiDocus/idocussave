@@ -1,12 +1,11 @@
-﻿# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::OrganizationSubscriptionsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_subscription
+  before_action :verify_rights
+  before_action :load_subscription
 
   # GET /account/organizations/:organization_id/organization_subscription/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/organization_subscription
   def update
@@ -19,11 +18,8 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     end
   end
 
-
   # GET /account/organizations/:organization_id/organization_subscription/select_options
-  def select_options
-  end
-
+  def select_options; end
 
   # PUT /account/organizations/:organization_id/organization_subscription/propagate_options
   def propagate_options
@@ -32,7 +28,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     if @subscription.update(_params)
       ids = begin
               params[:subscription][:customer_ids] - ['']
-            rescue
+            rescue StandardError
               []
             end
 
@@ -41,7 +37,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
       if ids.size == registered_ids.size
         subscriptions = Subscription.where(user_id: ids)
 
-        subscriptions.update_all(_params)
+        subscriptions.update_all(_params.to_s)
 
         periods = Period.where(subscription_id: subscriptions.map(&:id)).where('start_date <= ? AND end_date >= ?', Date.today, Date.today)
 
@@ -71,16 +67,13 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     end
   end
 
-
   def load_subscription
     @subscription = @organization.find_or_create_subscription
   end
 
-
   def subscription_params
     params.require(:subscription).permit(option_ids: [])
   end
-
 
   def subscription_quotas_params
     _params = params.require(:subscription).permit(

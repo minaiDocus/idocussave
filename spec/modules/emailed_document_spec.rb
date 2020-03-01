@@ -7,7 +7,7 @@ describe EmailedDocument do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
 
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       @journal.save
@@ -200,7 +200,7 @@ describe EmailedDocument do
         emailed_document = EmailedDocument.new mail
         expect(emailed_document.attachments.first).to be_valid_content
         expect(emailed_document).to be_valid
-        expect(DocumentTools.is_printable_only?(emailed_document.temp_documents.first.content.path)).to eq(false)
+        expect(DocumentTools.is_printable_only?(emailed_document.temp_documents.first.cloud_content_object.path)).to eq(false)
       end
 
       it 'should be valid' do
@@ -218,8 +218,8 @@ describe EmailedDocument do
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(1)
         document = emailed_document.temp_documents.first
-        expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
-        expect(File.exist?(document.content.path)).to be true
+        expect(document.cloud_content_object.filename).to eq("TS0001_TS_201401.pdf")
+        expect(File.exist?(document.cloud_content_object.path)).to be true
       end
 
       it 'with 2 attachments should be valid' do
@@ -239,14 +239,14 @@ describe EmailedDocument do
         expect(emailed_document.temp_documents.count).to eq(2)
 
         document = emailed_document.temp_documents[0]
-        expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
-        expect(File.exist?(document.content.path)).to be true
+        expect(document.cloud_content_object.filename).to eq("TS0001_TS_201401.pdf")
+        expect(File.exist?(document.cloud_content_object.path)).to be true
 
         document2 = emailed_document.temp_documents[1]
-        expect(document2.content_file_name).to eq("TS0001_TS_201401.pdf")
-        expect(File.exist?(document2.content.path)).to be true
+        expect(document2.cloud_content_object.filename).to eq("TS0001_TS_201401.pdf")
+        expect(File.exist?(document2.cloud_content_object.path)).to be true
 
-        expect(document.content_file_size).not_to eq document2.content_file_size
+        expect(document.cloud_content_object.size).not_to eq document2.cloud_content_object.size
       end
 
       context 'given the file already exist' do
@@ -257,13 +257,14 @@ describe EmailedDocument do
 
           temp_document = TempDocument.new
           temp_document.user                = @user
-          temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
+          # temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
           temp_document.position            = 1
           temp_document.temp_pack           = @temp_pack
           temp_document.original_file_name  = '2pages.pdf'
           temp_document.delivered_by        = 'Tester'
           temp_document.delivery_type       = 'upload'
-          temp_document.save
+          file_path = File.join(Rails.root, 'spec/support/files/2pages.pdf')
+          temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
         end
 
         it 'does not create another file' do
@@ -304,8 +305,8 @@ describe EmailedDocument do
         expect(emailed_document).to be_valid
         expect(emailed_document.temp_documents.count).to eq(1)
         document = emailed_document.temp_documents.first
-        expect(document.content_file_name).to eq("TS0001_TS_2014.pdf")
-        expect(File.exist?(document.content.path)).to be true
+        expect(document.cloud_content_object.filename).to eq("TS0001_TS_2014.pdf")
+        expect(File.exist?(document.cloud_content_object.path)).to be true
       end
 
       after(:all) do
@@ -380,14 +381,14 @@ describe EmailedDocument do
         expect(emailed_document.temp_documents.count).to eq(2)
 
         document = emailed_document.temp_documents[0]
-        expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
+        expect(document.cloud_content_object.filename).to eq("TS0001_TS_201401.pdf")
         expect(document.original_file_name).to eq("ido1.png")
-        expect(File.exist?(document.content.path)).to be true
+        expect(File.exist?(document.cloud_content_object.path)).to be true
 
         document2 = emailed_document.temp_documents[1]
-        expect(document2.content_file_name).to eq("TS0001_TS_201401.pdf")
+        expect(document2.cloud_content_object.filename).to eq("TS0001_TS_201401.pdf")
         expect(document2.original_file_name).to eq("ido2.tiff")
-        expect(File.exist?(document2.content.path)).to be true
+        expect(File.exist?(document2.cloud_content_object.path)).to be true
 
       end
     end
@@ -398,7 +399,7 @@ describe EmailedDocument do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_options is_upload_authorized: true
       @user.create_notify
 

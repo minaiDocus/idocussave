@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Account::ProfileHelper
   def ibiza_state(state)
     t('activerecord.models.ibiza.attributes.states.' + (state.presence || 'none'))
@@ -6,11 +8,11 @@ module Account::ProfileHelper
   def ibiza_state_label(state)
     case state
     when 'waiting'
-      'label-warning'
+      'badge-warning'
     when 'valid'
-      'label-success'
+      'badge-success'
     when 'invalid'
-      'label-important'
+      'badge-danger'
     else
       ''
     end

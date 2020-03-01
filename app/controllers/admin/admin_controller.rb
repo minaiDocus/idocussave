@@ -1,8 +1,8 @@
-# -*- encoding : UTF-8 -*-
-class Admin::AdminController < ApplicationController
-  before_filter :login_user!
-  before_filter :verify_admin_rights
+# frozen_string_literal: true
 
+class Admin::AdminController < ApplicationController
+  before_action :login_user!
+  before_action :verify_admin_rights
 
   layout 'admin'
 
@@ -11,7 +11,6 @@ class Admin::AdminController < ApplicationController
     @new_provider_requests = NewProviderRequest.not_processed.order(created_at: :desc).includes(:user).limit(5)
     @unbillable_organizations = Organization.billed.select { |e| e.billing_address.nil? }
   end
-
 
   # GET /admin/ocr_needed_temp_packs
   def ocr_needed_temp_packs
@@ -24,9 +23,8 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    render partial: 'process', locals: { collection: @ocr_needed_temp_packs }
+    render partial: 'ocr_needed_temp_packs', locals: { collection: @ocr_needed_temp_packs }
   end
-
 
   # GET /admin/bundle_needed_temp_packs
   def bundle_needed_temp_packs
@@ -40,9 +38,8 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @bundle_needed_temp_packs }
+    render partial: 'bundle_needed_temp_packs', locals: { collection: @bundle_needed_temp_packs }
   end
-
 
   # GET /admin/bundling_temp_packs
   def bundling_temp_packs
@@ -56,9 +53,8 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @bundling_temp_packs }
+    render partial: 'bundling_temp_packs', locals: { collection: @bundling_temp_packs }
   end
-
 
   # GET /admin/processing_temp_packs
   def processing_temp_packs
@@ -72,9 +68,8 @@ class Admin::AdminController < ApplicationController
       object
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @processing_temp_packs }
+    render partial: 'processing_temp_packs', locals: { collection: @processing_temp_packs }
   end
-
 
   # GET /admin/currently_being_delivered_packs
   def currently_being_delivered_packs
@@ -83,7 +78,7 @@ class Admin::AdminController < ApplicationController
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.retryable.order(created_at: :asc)
         data = remote_files.map do |remote_file|
-          name = remote_file.user.try(:code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          name = remote_file.user.try(:my_code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
           [name, remote_file.service_name].join(' : ')
         end.uniq
 
@@ -96,19 +91,18 @@ class Admin::AdminController < ApplicationController
       end
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    render partial: 'process', locals: { collection: @currently_being_delivered_packs }
+    render partial: 'currently_being_delivered_packs', locals: { collection: @currently_being_delivered_packs }
   end
-
 
   # GET /admin/failed_packs_delivery
   def failed_packs_delivery
-    pack_ids = RemoteFile.not_processed.not_retryable.pluck(:pack_id)
+    pack_ids = RemoteFile.not_processed.not_retryable.where('created_at >= ?', 6.months.ago).pluck(:pack_id)
 
     @failed_packs_delivery = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.not_retryable.order(created_at: :asc)
         data = remote_files.map do |remote_file|
-          name = remote_file.user.try(:code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          name = remote_file.user.try(:my_code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
           [name, remote_file.service_name].join(' : ')
         end.uniq
 
@@ -120,24 +114,21 @@ class Admin::AdminController < ApplicationController
         object
       end
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
-    render partial: 'process', locals: { collection: @failed_packs_delivery }
+    render partial: 'failed_packs_delivery', locals: { collection: @failed_packs_delivery }
   end
-
 
   # GET /admin/blocked_pre_assignments
   def blocked_pre_assignments
     @blocked_pre_assignments = PendingPreAssignmentService.pending.select { |e| e.message.present? }
-    render partial: 'process', locals: { collection: @blocked_pre_assignments }
+    render partial: 'blocked_pre_assignments', locals: { collection: @blocked_pre_assignments }
   end
-
 
   # GET /admin/awaiting_pre_assignments
   def awaiting_pre_assignments
     @awaiting_pre_assignments = PendingPreAssignmentService.pending.select { |e| (e.message.blank? || e.pre_assignment_state == 'force_processing') }
 
-    render partial: 'process', locals: { collection: @awaiting_pre_assignments }
+    render partial: 'awaiting_pre_assignments', locals: { collection: @awaiting_pre_assignments }
   end
-
 
   # GET /admin/reports_delivery
   def reports_delivery
@@ -150,19 +141,17 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    render partial: 'process', locals: { collection: @reports_delivery }
+    render partial: 'reports_delivery', locals: { collection: @reports_delivery }
   end
-
 
   # GET /admin/failed_reports_delivery
   def failed_reports_delivery
     @failed_reports_delivery = Pack::Report.failed_delivery(nil, 200)
 
-    render partial: 'process', locals: { collection: @failed_reports_delivery }
+    render partial: 'failed_reports_delivery', locals: { collection: @failed_reports_delivery }
   end
 
   private
-
 
   def verify_admin_rights
     redirect_to root_url unless current_user.is_admin

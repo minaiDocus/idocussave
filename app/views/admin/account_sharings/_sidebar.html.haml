@@ -1,32 +1,44 @@
-.row-fluid
-  .span12.well.margin0bottom
-    %h3 Filtres
-
-    %br
-    = form_tag admin_account_sharings_path, method: :get, class: 'form form-vertical margin0bottom' do
-      = hidden_field_tag :direction, sort_direction
-      = hidden_field_tag :sort, sort_column
-      = hidden_field_tag :per_page, per_page
-
-      = label_tag 'account_sharing_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue '')
-
-      = label_tag 'account_sharing_contains[account]', 'Dossier'
-      = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'span12'
-      = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact'
-      = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue ''), class: 'span12'
-
-      = label_tag 'account_sharing_contains[is_approved]', 'Etat'
-      = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true
-
-      %br
-      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-      = link_to t('filters.reset'), admin_account_sharings_path, class: 'btn'
+.card.retractable-filter
+  = form_tag admin_account_sharings_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'account_sharing_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'account_sharing_contains[created_at][>=]', (params[:account_sharing_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'account_sharing_contains[created_at][<=]', (params[:account_sharing_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'account_sharing_contains[account]', 'Dossier'
+          .control-section
+            = text_field_tag 'account_sharing_contains[account]', (params[:account_sharing_contains][:account] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'account_sharing_contains[collaborator]', 'Client ou contact'
+          .control-section
+            = text_field_tag 'account_sharing_contains[collaborator]', (params[:account_sharing_contains][:collaborator] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'account_sharing_contains[is_approved]', 'Etat'
+          .control-section
+            = select_tag 'account_sharing_contains[is_approved]', options_for_select([['En attente de validation', 0],['Partagé', 1]], (params[:account_sharing_contains][:is_approved] rescue '')), include_blank: true, class: 'form-control'
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_account_sharings_path, class: 'btn btn-light', title: t('filters.reset')

@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class ReceiptsController < PaperProcessesController
   def index
     paper_processes = PaperProcess.receipts.where('created_at >= ? AND created_at <= ?', @current_time.beginning_of_month, @current_time.end_of_month)
@@ -48,7 +49,7 @@ class ReceiptsController < PaperProcessesController
     redirect_to receipts_path
   end
 
-private
+  private
 
   def paper_process_params
     params.require(:paper_process).permit(:tracking_number, :customer_code)

@@ -24,9 +24,9 @@ describe FTPImport do
 
       @organization = Organization.create(name: 'iDocus', code: 'IDOC')
       @ftp = Ftp.new(organization: @organization, host: 'ftp://localhost', is_configured: true)
-      @user = FactoryGirl.create(:user, code: 'IDOC%0001', organization: @organization)
+      @user = FactoryBot.create(:user, code: 'IDOC%0001', organization: @organization)
       @user.options = UserOptions.create(user: @user, is_upload_authorized: true)
-      @user2 = FactoryGirl.create(:user, code: 'IDOC%0002', organization: @organization)
+      @user2 = FactoryBot.create(:user, code: 'IDOC%0002', organization: @organization)
       @user2.options = UserOptions.create(user: @user2, is_upload_authorized: true)
 
       AccountBookType.create(user: @user, name: 'AC', description: '( Achat )')

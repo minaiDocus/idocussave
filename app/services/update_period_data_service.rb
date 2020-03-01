@@ -6,6 +6,8 @@ class UpdatePeriodDataService
   end
 
   def execute
+    return false if @period.organization
+
     @period.pages  = @period.documents.sum(:pages)      || 0
     @period.pieces = @period.documents.sum(:pieces)     || 0
 
@@ -80,4 +82,5 @@ class UpdatePeriodDataService
   def report_ids
     @report_ids ||= Pack::Report.where(document_id: document_ids).pluck(:id)
   end
+
 end

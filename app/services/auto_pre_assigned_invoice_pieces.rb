@@ -12,12 +12,12 @@ class AutoPreAssignedInvoicePieces
   def initialize(piece)
     @piece = piece
     @temp_document = @piece.temp_document
-    @invoice = Invoice.where(content_file_name: @temp_document.original_file_name).first if @temp_document.present?
+    @invoice = Invoice.select('invoices.*, active_storage_blobs.filename AS filename').joins('join active_storage_attachments ON active_storage_attachments.record_id = invoices.id AND active_storage_attachments.record_type = "Invoice"').joins('join active_storage_blobs ON active_storage_blobs.id = active_storage_attachments.blob_id').where('active_storage_blobs.filename = ?', @temp_document.original_file_name).first
   end
 
   def execute
     begin
-      if @temp_document.present? && @invoice.present?
+      if @temp_document.present? && @invoice.present? && @piece.preseizures.empty? && !@piece.is_awaiting_pre_assignment
         @piece.update(is_awaiting_pre_assignment: true)
         @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
@@ -52,10 +52,12 @@ class AutoPreAssignedInvoicePieces
         entry.save
 
         ### 2 ###
+        account_number = @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat ? '7060900' : '706000'
+        
         account = Pack::Report::Preseizure::Account.new
         account.preseizure = preseizure
         account.type       = Pack::Report::Preseizure::Account.get_type('HT') # TTC / HT / TVA
-        account.number     = '706000'
+        account.number     = account_number
         account.save
 
         entry = Pack::Report::Preseizure::Entry.new
@@ -102,7 +104,6 @@ class AutoPreAssignedInvoicePieces
       end
     rescue => e
       logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}"
-      Airbrake.notify e
     end
   end
 

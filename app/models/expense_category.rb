@@ -1,6 +1,6 @@
 # -*- enconding : UTF-8 -*-
-class ExpenseCategory < ActiveRecord::Base
-  belongs_to :account_book_type
+class ExpenseCategory < ApplicationRecord
+  belongs_to :account_book_type, optional: true
 
   validates_presence_of :name
 end

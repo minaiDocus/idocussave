@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::PreAssignmentsController < ApiController
   # GET /api/v1/pre_assignments
   def index

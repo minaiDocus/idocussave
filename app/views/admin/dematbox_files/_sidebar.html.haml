@@ -1,27 +1,47 @@
-.well
-  %h3 Filtres
-
-  = form_tag admin_dematbox_files_path, method: :get, class: 'form form-vertical margin2top margin0bottom' do
-    = hidden_field_tag :per_page, per_page
-    = label_tag 'dematbox_file_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
-    .filter_date
-      .input-prepend.date.datepicker
-        %span.add-on
-          %i.icon-th
-        = text_field_tag 'dematbox_file_contains[created_at][>=]', (params['dematbox_file_contains']['created_at']['>='] rescue ''), class: 'span4'
-      .input-prepend.date.datepicker
-        %span.add-on
-          %i.icon-th
-        = text_field_tag 'dematbox_file_contains[created_at][<=]', (params['dematbox_file_contains']['created_at']['<='] rescue ''), class: 'span4'
-    = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('activerecord.models.temp_document.attributes.dematbox_doc_id')
-    = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue '')
-    = label_tag 'dematbox_file_contains[delivered_by]', t('activerecord.models.temp_document.attributes.delivered_by')
-    = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue '')
-    = label_tag 'dematbox_file_contains[content_file_name]', t('activerecord.models.temp_document.attributes.content_file_name')
-    = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue '')
-    = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
-    = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true
-    %br
-    %br
-    = submit_tag t('filters.action'), class: 'btn btn-primary'
-    = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'
+.card.retractable-filter
+  = form_tag admin_dematbox_files_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'dematbox_file_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'dematbox_file_contains[created_at][>=]', (params['dematbox_file_contains']['created_at']['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'dematbox_file_contains[created_at][<=]', (params['dematbox_file_contains']['created_at']['<='] rescue ''), class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+          .control-section
+            = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'dematbox_file_contains[delivered_by]', t('activerecord.models.temp_document.attributes.delivered_by')
+          .control-section
+            = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'dematbox_file_contains[content_file_name]', t('activerecord.models.temp_document.attributes.content_file_name')
+          .control-section
+            = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('activerecord.models.temp_document.attributes.dematbox_is_notified')
+          .control-section
+            = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true, class: 'form-control'
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_dematbox_files_path, class: 'btn btn-light', title: t('filters.reset')

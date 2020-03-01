@@ -1,4 +1,12 @@
 class AccountingWorkflow::SendToGrouping
+
+  def self.process(temp_doc_id)
+    UniqueJobs.for "SendToGrouping-#{temp_doc_id}" do
+      temp_document = TempDocument.find temp_doc_id
+      AccountingWorkflow::SendToGrouping.new(temp_document).execute if temp_document.bundle_needed?
+    end
+  end
+
   def initialize(temp_document)
     @temp_document = temp_document
   end
@@ -27,12 +35,12 @@ class AccountingWorkflow::SendToGrouping
 
 
   def copy
-    FileUtils.cp @temp_document.content.path, path.join(basename + '.pdf')
+    FileUtils.cp @temp_document.cloud_content_object.path, path.join(basename + '.pdf')
   end
 
 
   def split
-    Pdftk.new.burst @temp_document.content.path, path, basename, AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+    Pdftk.new.burst @temp_document.cloud_content_object.path, path, basename, AccountingWorkflow::TempPackProcessor::POSITION_SIZE
   end
 
 

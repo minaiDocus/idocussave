@@ -1,12 +1,12 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::UseCsvDescriptorsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
-  before_filter :redirect_to_current_step
+  before_action :verify_rights
+  before_action :load_customer
+  before_action :redirect_to_current_step
 
   # FIXME : check if needed
-  def edit
-  end
+  def edit; end
 
   def update
     if @customer.update(user_params)
@@ -26,6 +26,6 @@ class Account::UseCsvDescriptorsController < Account::OrganizationController
   end
 
   def user_params
-    params.require(:user).permit(softwares_attributes: [:id, :use_own_csv_descriptor_format])
+    params.require(:user).permit(softwares_attributes: %i[id use_own_csv_descriptor_format])
   end
 end

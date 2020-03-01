@@ -1,5 +1,5 @@
 // showing all pieces of the pack given by link
-function showPieces(link, page=1, by_preseizure=null) {
+function showPieces(link, page=1, by_preseizure=null,by_scroll="false") {
   if(page < 1 || window.piecesLoaderLocked)
     return false
 
@@ -24,11 +24,11 @@ function showPieces(link, page=1, by_preseizure=null) {
   $("#panel3").hide();
   $("#panel1").show();
 
-  getPieces(url, link.text(), by_preseizure);
+  getPieces(url, link.text(), by_preseizure,by_scroll);
 }
 
 // fecth all pieces of the pack
-function getPieces(url,title,by_preseizure=null) {
+function getPieces(url,title,by_preseizure=null,by_scroll) {
   $.ajax({
     url: encodeURI(url),
     data: "",
@@ -42,7 +42,10 @@ function getPieces(url,title,by_preseizure=null) {
         vTitle = title;
       else
         vTitle = "Résultat : ";
-      $("#panel1 .header h3").text(vTitle);
+      if (by_scroll== "false")
+      {
+        $("#panel1 .header h3").text(vTitle);
+      }
     },
     success: function(data){
       data = data.trim();
@@ -88,6 +91,10 @@ function getPieces(url,title,by_preseizure=null) {
 
       $("#show_pages h4").text($("#show_pages .pieces_total_count").text() + " piece(s) traitée(s)");
       $("#show_pieces h4").text($("#show_pieces > ul > li").length + " piece(s) en cours de traitement");
+      if ($(".piece_deleted_count").length > 0)
+      {
+        $(".piece_deleted_count").appendTo("#panel1 .header h3").removeClass('hide');
+      }
 
       $("#pageslist .thumb img").load(function(){
         $(this).parent('.thumb').css('background', 'none');
@@ -114,7 +121,7 @@ function getPieces(url,title,by_preseizure=null) {
     },
     error: function(data){
       logAfterAction();
-      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+      $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
       setTimeout(function(){ window.piecesLoaderLocked = false }, 1000);
     }
   });
@@ -170,7 +177,10 @@ function showPage(link,view="init") {
   var id = li.attr("id").split("_")[1];
   var page_number = (li.prevAll().length + 1);
 
-  var data_content = '<div style="width: 750px; padding: 10px"><input type="hidden" class="showPage" value="'+id+'"><div class="actiongroup span4 aligncenter" style="margin:1% 25%;"><a class="do-prevPage left btn" href="#"><i class="icon-arrow-left"></i></a>&nbsp; '+page_number+' &nbsp;<a class="do-nextPage right btn" href="#"><i class="icon-arrow-right"></i></a></div><div><iframe src="'+url+'" class="piece_view" style="width:100%;min-height:550px; max-height: 600px"></iframe></div></div>';
+  var data_content = $('.data-content-view-pdf .content');
+  data_content.find('.showPage').val(id);
+  data_content.find('.page_number').text(page_number);
+  data_content.find('.iframe-content iframe').prop('src',url);
   
   if (view == "init")
   {
@@ -181,10 +191,20 @@ function showPage(link,view="init") {
     $("#PdfViewerDialog .modal-body .view-content").html('<img src="/assets/application/spinner_gray_alpha.gif" alt="Chargement">Chargement en cours . . . ');
   }
   
-  $("#PdfViewerDialog .modal-body .view-content").html(data_content); 
+  $("#PdfViewerDialog .modal-body .view-content").html('');
+  data_content.clone().appendTo("#PdfViewerDialog .modal-body .view-content");
   initEventOnPiecesRefresh();
 }
 
+function ShowPdfView(data_content, show='init')
+{
+  if (show == 'init')
+  {
+    $("#PdfViewerDialog").modal('show');
+  }
+  $("#PdfViewerDialog .modal-body .view-content").html(data_content);
+  initEventOnPiecesRefresh();
+}
 // toggle page selection given by link
 function selectPage(link) {
   var li = link.parents("li.pages")
@@ -195,32 +215,30 @@ function selectPage(link) {
     if ($("li.selected").length >= 2)
     {
       $(".composer").show();
-      $(".composer").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
     }
     else
     {
       $(".composer").hide();
-      $(".composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
     }
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").addClass('border_piece_action');
   }
   else 
   {
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").removeClass('border_piece_action');
   } 
 
   if (li.hasClass('selected'))
   {
-    link.find('i').addClass('icon-ban-circle');
-    link.find('i').removeClass('icon-ok');
+    link.find('.do-selectPage-check-icon').addClass('hide');
+    link.find('.do-selectPage-ban-icon').removeClass('hide');
   }
   else 
   {
-    link.find('i').removeClass('icon-ban-circle');
-    link.find('i').addClass('icon-ok');
+    link.find('.do-selectPage-check-icon').removeClass('hide');
+    link.find('.do-selectPage-ban-icon').addClass('hide');
   }
 
   countSelectedPieces();

@@ -17,6 +17,7 @@ class UploadedDocument
     @user     = user
     @code     = @user.code
     @journal  = journal
+    @api_name = api_name
     @uploader = uploader || user
 
     @original_file_name  = original_file_name.gsub(/\0/, '')
@@ -50,8 +51,10 @@ class UploadedDocument
 
     if @errors.empty?
       pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
+      logger.info "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack"
 
       pack.update_pack_state # Create or update pack related to temp_pack
+      logger.info "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack"
 
       options = {
         delivered_by:          @uploader.code,
@@ -215,7 +218,11 @@ class UploadedDocument
 
 
   def valid_file_size?
-    @file.size <= 10_000_000
+    if @api_name == 'mobile'
+      @file.size <= 250_000_000
+    else
+      @file.size <= 10_000_000
+    end
   end
 
 
@@ -229,5 +236,9 @@ class UploadedDocument
 
   def fingerprint
     @fingerprint ||= DocumentTools.checksum(@file.path)
+  end
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_document_upload.log")
   end
 end

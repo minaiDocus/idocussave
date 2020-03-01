@@ -1,30 +1,41 @@
-<div class="simple_form retriever_form form form-horizontal" id="new_retriever">
-  <div class="control-group integer required">
-    <label class="integer required control-label" for="retriever_connector_id">
-      <abbr title="champ requis">*</abbr> Fournisseur/Banque
-    </label>
-    <div class="controls">
+<form class="simple_form retriever_form form-horizontal" id="new_retriever" novalidate="novalidate" action="">
+  <div class="form-group clearfix integer required">
+    <div class="label-section">
+      <label class="integer required control-label" for="retriever_connector_id">
+        <abbr title="champ requis">*</abbr> Fournisseur/Banque
+      </label>
+    </div>
+    <div class="control-section">
       <div>
         <input autocomplete="off" <% if @loading || !@new_connector: %> disabled="" <% end %> style="outline: medium none currentcolor;" id="retriever_connector_name" type="text">
-        <span class="add-on right">
-          <i class="icon-search"></i>
-        </span>
+        <span class="oi fs-origin" data-glyph="magnifying-glass"></span>
       </div>
       <div id="retriever_connector_urls"></div>
     </div>
   </div>
-  <div class="control-group integer required">
-    <div class="controls">
-      <div>
-        <strong>Choisissez parmis la liste suivante:</strong>
+  <div class="form-group check_boxes clearfix integer required">
+    <div class="label-section" style="height: 10px"></div>
+    <div class="control-section">
+      <div class="info-head">
+        <div>
+          <strong>Choisissez parmis la liste suivante:</strong>
+        </div>
+        <div>
+          <div class="checkbox">
+            <label id='banks_label'>
+              <input type='checkbox' id='check_banks' class='filter_type' checked='checked' />Banques
+            </label>
+          </div>
+          <div class="checkbox">
+            <label id='providers_label'>
+              <input type='checkbox' id='check_document' class='filter_type' checked='checked' />Fournisseurs
+            </label>
+          </div>
+          <span class="badge badge-secondary fs-origin float-right mt-md-3" id="connectors_count">0</span>
+        </div>
       </div>
       <div>
-        <input type='checkbox' id='check_banks' class='filter_type' checked='checked' /> Banques
-        <input type='checkbox' id='check_document' class='filter_type' checked='checked' /> Fournisseurs
-        <span class="badge badge-secondary" style="margin-left: 63px" id="connectors_count">0</span>
-      </div>
-      <div>
-        <select <% if !@new_connector: %> disabled="" <% end %> class="select" id="retriever_connections_list" style="width:252px" size=15>
+        <select <% if !@new_connector: %> disabled="" <% end %> class="select" id="retriever_connections_list" style="height: auto" size=15>
           <% if @loading: %>
             <option class='loading' disabled='disabled'>Chargement en cours ...</option>
           <% end %>
@@ -35,4 +46,4 @@
   <div class="control-group integer">
     <a href="<%= @list_url %>" title="Liste des automates disponibles">Liste des automates disponibles</a>
   </div>
-</div>
+</form>

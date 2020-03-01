@@ -1,36 +1,34 @@
-#organizations.container-fluid
+#organizations
   .edit_software_users
-    .row-fluid
-      .span12.box
+    .card
+      .card-header
         %h3 Edition des utilisateurs : #{@software_name}
-
-    .row-fluid
-      .span12.box
-        = form_tag update_software_users_account_organization_path(@organization), method: 'patch', multipart: true, class: 'form form-horizontal margin0' do |f|
+      = form_tag update_software_users_account_organization_path(@organization), method: 'patch', multipart: true, class: 'form-horizontal' do |f|
+        .card-body.clearfix
           = hidden_field_tag :software, @software
-          %fieldset
-            %legend Assignation des dossiers
-            .control-group
+          .form-group
+            .label-section
               = label_tag 'software_account_list', "Liste des clients assignés à l'option : #{@software_name}", class: 'select control-label'
-              .controls
-                -list_options  = @organization.customers.active.order(:code)
-                -list_selected = []
-                -if @software == 'coala'
-                  -list_selected = list_options.select{ |c| c.uses_coala? }
-                -elsif @software == 'quadratus'
-                  -list_selected = list_options.select{ |c| c.uses_quadratus? }
-                -elsif @software == 'cegid'
-                  -list_selected = list_options.select{ |c| c.uses_cegid? }
-                -elsif @software == 'csv_descriptor'
-                  -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
-                -elsif @software == 'ibiza'
-                  -list_selected = list_options.select{ |c| c.uses_ibiza? }
-                -elsif @software == 'exact_online'
-                  -list_selected = list_options.select{ |c| c.uses_exact_online? }
-                -elsif @software == 'fec_agiris'
-                  -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
+            .control-section
+              -list_options  = @organization.customers.active.order(:code)
+              -list_selected = []
+              -if @software == 'coala'
+                -list_selected = list_options.select{ |c| c.uses_coala? }
+              -elsif @software == 'quadratus'
+                -list_selected = list_options.select{ |c| c.uses_quadratus? }
+              -elsif @software == 'cegid'
+                -list_selected = list_options.select{ |c| c.uses_cegid? }
+              -elsif @software == 'csv_descriptor'
+                -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
+              -elsif @software == 'ibiza'
+                -list_selected = list_options.select{ |c| c.uses_ibiza? }
+              -elsif @software == 'exact_online'
+                -list_selected = list_options.select{ |c| c.uses_exact_online? }
+              -elsif @software == 'fec_agiris'
+                -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
 
-                = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
-          .form-actions.margin0bottom
+              = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
+        .card-footer
+          .form-actions
             = submit_tag t('actions.submit'), class: 'btn btn-primary'
-            = link_to t('actions.cancel'), account_organization_path(@organization, tab: @software), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: @software), class: 'btn btn-light'

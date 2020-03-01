@@ -1,23 +1,26 @@
 #dematboxes
-  = render 'navigation'
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        = render 'navigation'
 
-  .row-fluid
-    .span3
-      %h3.margin1bottom Dematboxes (#{@dematboxes.count})
-
-  .row-fluid
-    .span3
-      %table.table.table-striped.table-bordered.table-condensed
+  .card
+    .card-header
+      %h3 
+        Dematboxes
+        .badge.badge-info.fs-origin #{@dematboxes.count}
+    .card-body
+      %table.table.table-striped.table-bordered-inner.table-condensed.table-detachable-head.table-bordered-inner
         %thead
-          %tr
+          %tr.bg-brown.text-white
             %th Client
             %th Nombre de service
             %th Actions
-        %tbody
+        %tbody.retractable.slidedown
           - @dematboxes.each do |dematbox|
             %tr
               %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
               %td= link_to dematbox.services.count, admin_dematbox_path(dematbox)
-              %td
-                = link_to icon(icon: 'refresh'), subscribe_admin_dematbox_path(dematbox), title: 'Réassigner les services', data: { method: 'post', confirm: t('actions.confirm') }
-                = link_to icon_destroy, admin_dematbox_path(dematbox), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }
+              %td.text-center
+                = link_to glyphicon('loop-circular'), subscribe_admin_dematbox_path(dematbox), title: 'Réassigner les services', data: { method: 'post', confirm: t('actions.confirm') }
+                = link_to glyphicon('trash'), admin_dematbox_path(dematbox), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }

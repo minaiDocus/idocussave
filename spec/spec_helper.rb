@@ -39,6 +39,9 @@ RSpec.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
+
+  config.use_transactional_fixtures = false
+  
   config.mock_with :rspec
 
   config.infer_spec_type_from_file_location!
@@ -59,13 +62,13 @@ RSpec.configure do |config|
 
     begin
       DatabaseCleaner.start
-      FactoryGirl.lint
+      FactoryBot.lint
     ensure
       DatabaseCleaner.clean
     end
 
     suppress_warnings do
-      FactoryGirl.reload
+      FactoryBot.reload
       Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}
     end
   end
@@ -79,7 +82,7 @@ RSpec.configure do |config|
   end
 
   config.include Capybara::DSL
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
   config.extend LoginMacros
   config.include Devise::Test::ControllerHelpers, :type => :controller
 end

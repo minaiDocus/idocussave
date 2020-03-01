@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Email < ActiveRecord::Base
+class Email < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_original_content' => '/admin/emailed_documents/:id'}
+
   serialize :errors_list
   serialize :attachment_names
 
@@ -11,6 +13,7 @@ class Email < ActiveRecord::Base
 
   validates_uniqueness_of :message_id
 
+  has_one_attached :cloud_original_content
 
   has_attached_file :original_content,
                             path: ':rails_root/files/:rails_env/:class/:attachment/:filename',
@@ -18,6 +21,10 @@ class Email < ActiveRecord::Base
   do_not_validate_attachment_file_type :original_content
 
   before_create :initialize_serialized_attributes
+
+  before_destroy do |email|
+    email.cloud_original_content.purge
+  end
 
   scope :error,         -> { where(state: 'error') }
   scope :created,       -> { where(state: 'created') }
@@ -49,11 +56,13 @@ class Email < ActiveRecord::Base
     end
   end
 
+  def cloud_original_content_object
+    CustomActiveStorageObject.new(self, :cloud_original_content)
+  end
 
   def code
     to.split('@')[0]
   end
-
 
   def self.search(contains)
     emailed_documents = Email.all

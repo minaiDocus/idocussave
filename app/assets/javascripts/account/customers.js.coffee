@@ -30,7 +30,7 @@ jQuery ->
         $('input[type=submit]').removeAttr('disabled')
 
   if $('#customer.edit.mcf').length > 0
-    $('#user_mcf_storage').after('<div class="feedback"></div>')
+    $('#user_mcf_storage').after('<div class="feedback"><img src="/assets/application/bar_loading.gif" alt="chargement..." ></div>')
     $.ajax
       url: $('#user_mcf_storage').data('users-list-url'),
       data: '',
@@ -53,7 +53,7 @@ jQuery ->
         $('input[type=submit]').removeAttr('disabled')
       error: (data) ->
         $('.feedback').remove()
-        $('#user_mcf_storage').after('<span class="label label-important error">Erreur</span>')
+        $('#user_mcf_storage').after('<span class="badge badge-danger fs-origin error">Erreur</span>')
 
   if $('#customer.errors.mcf').length > 0
     $('#master_checkbox').change ->

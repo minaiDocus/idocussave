@@ -1,86 +1,110 @@
 #events
-  .row-fluid
-    .span12
-      %h3 Liste des événements
-  .row-fluid
-    .span12
-      .filter.panel.margin1top
-        = form_tag admin_events_path, method: :get, class: 'form form-vertical margin0bottom' do
-          = hidden_field_tag :direction, sort_direction
-          = hidden_field_tag :sort,      sort_column
-          = hidden_field_tag :per_page,  per_page
+  .bg-dark.text-white.details.focusable.focused
+    .box.bg-brown.text-white.show
+      %h4.text-white Détails
+      %p.margin0bottom
+        Cliquer sur une ligne du tableau pour en afficher les détails ici.
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3 
+            Liste des événements
+            %span.badge.badge-info= @events.total_count
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box.clearfix
+        = render partial: 'shared/list_options', locals: { collection: @events }
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+              %thead
+                %tr.bg-brown.text-white
+                  %th.aligncenter=           sortable :id,          'ID'
+                  %th.aligncenter=           sortable :created_at,  'Date'
+                  %th.aligncenter=           sortable :user_id,     t('activerecord.models.event.attributes.user')
+                  %th.aligncenter=           sortable :action,      t('activerecord.models.event.attributes.action')
+                  %th.aligncenter=           sortable :target_type, t('activerecord.models.event.attributes.target_type')
+                  %th.aligncenter=           sortable :target_name, t('activerecord.models.event.attributes.target_name')
+              %tbody
+                - @events.each do |event|
+                  - event_presenter = EventPresenter.new(event, self)
+                  %tr{ data: { id: event_presenter.id.to_s } }
+                    %td.do-show.number=      event_presenter.id
+                    %td.do-show.aligncenter=        event_presenter.created_at
+                    %td.aligncenter=                     event_presenter.user_code
+                    %td.do-show.aligncenter=             event_presenter.action
+                    %td.do-show.aligncenter=             event_presenter.target_type
+                    %td.do-show.target_name= event_presenter.target_name
+      %br
+      .row
+        .col.mb-2
+          = render partial: 'shared/list_options', locals: { collection: @events }
 
-          %table.table.table-condensed.margin0bottom
-            %thead
-              %tr
-                %th Total
-                %th.field.number_field= label_tag 'event_contains[id]', 'ID'
-                %th.field.date_field= label_tag 'event_contains[created_at][>=]', 'Date de début'
-                %th.field.date_field= label_tag 'event_contains[created_at][<=]', 'Date de fin'
-                %th.field.text_field= label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
-                %th.field.action_field= label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
-                %th.field.target_type_field= label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
-                %th.field.text_field= label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
-                %th
-            %tbody
-              %tr
-                %td
+    = form_tag admin_events_path, method: :get, class: 'form-filter' do
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            = hidden_field_tag :direction, sort_direction
+            = hidden_field_tag :sort,      sort_column
+            = hidden_field_tag :per_page,  per_page
+            .form-group
+              .label-section
+                .badge.badge-info.fs-origin
+                  Total :
                   - if @events.total_count != Event.count
                     %b= @events.total_count
                     sur
                     = Event.count
                   - else
                     %b= Event.count
-                %td.field.number_field= number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][>=]', (params[:event_contains][:created_at]['>='] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][<=]', (params[:event_contains][:created_at]['<='] rescue '')
-                %td.field.text_field= text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue '')
-                %td.field.action_field
-                  = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true
-                %td.field.target_type_field
-                  = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true
-                %td.field.text_field= text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue '')
-                %td
-                  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-                  = link_to t('filters.reset'), admin_events_path, class: 'btn'
-
-  .row-fluid
-    .span12
-      = render partial: 'shared/list_options', locals: { collection: @events }
-  .row-fluid
-    .span8
-      %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
-        %thead
-          %tr
-            %th.number=      sortable :id,          'ID'
-            %th.date=        sortable :created_at,  'Date'
-            %th=             sortable :user_id,     t('activerecord.models.event.attributes.user')
-            %th=             sortable :action,      t('activerecord.models.event.attributes.action')
-            %th=             sortable :target_type, t('activerecord.models.event.attributes.target_type')
-            %th.target_name= sortable :target_name, t('activerecord.models.event.attributes.target_name')
-        %tbody
-          - @events.each do |event|
-            - event_presenter = EventPresenter.new(event, self)
-            %tr{ data: { id: event_presenter.id.to_s } }
-              %td.do-show.number=      event_presenter.id
-              %td.do-show.date=        event_presenter.created_at
-              %td=                     event_presenter.user_code
-              %td.do-show=             event_presenter.action
-              %td.do-show=             event_presenter.target_type
-              %td.do-show.target_name= event_presenter.target_name
-    .span4.show.margin1top.margin0bottom
-      .panel
-        %h4 Détails
-        %p.margin0bottom
-          Cliquer sur une ligne du tableau pour en afficher les détails ici.
-  .row-fluid
-    .span12
-      = render partial: 'shared/list_options', locals: { collection: @events }
+            .form-group
+              .label-section
+                = label_tag 'event_contains[id]', 'ID'
+              .control-section
+                = number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue ''), min: 1, class: 'input-small input-event-id'
+            .form-group
+              .label-section
+                = label_tag 'event_contains[created_at][>=]', 'Date de début'
+              .control-section
+                .input-append.date.datepicker
+                  = text_field_tag 'event_contains[created_at][>=]', (params[:event_contains][:created_at]['>='] rescue ''), class: 'input-small', placeholder: 'Début'
+                  %span.add-on
+                    %i.icon-th
+            .form-group
+              .label-section
+                = label_tag 'event_contains[created_at][<=]', 'Date de fin'
+              .control-section
+                .input-append.date.datepicker
+                  = text_field_tag 'event_contains[created_at][<=]', (params[:event_contains][:created_at]['<='] rescue ''), class: 'input-small', placeholder: 'Fin'
+                  %span.add-on
+                    %i.icon-th
+            .form-group
+              .label-section
+                = label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
+              .control-section
+                = text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
+              .control-section
+                = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
+              .control-section
+                = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
+              .control-section
+                = text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue ''), class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), admin_events_path, class: 'btn btn-light', title: t('filters.reset')

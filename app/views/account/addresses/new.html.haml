@@ -1,7 +1,8 @@
 #address.new.container-fluid
-  .row-fluid
-    .span12
+  .card
+    .card-header
+      %h3 Gestion des Adresses
+    .card-body
       = render partial: 'navigation'
-  .row-fluid
-    .span12.well
-      = render partial: 'form'
+      .tab-content
+        = render partial: 'form'

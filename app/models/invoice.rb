@@ -1,5 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class Invoice < ActiveRecord::Base
+class Invoice < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/invoices/:id/download/:style'}
+
+  has_one_attached :cloud_content
+  
   has_attached_file :content,
                             styles: {
                               thumb: ['46x67>', :png]
@@ -16,12 +20,15 @@ class Invoice < ActiveRecord::Base
   before_validation :set_number
 
 
-  belongs_to :organization
+  belongs_to :organization, optional: true
   # INFO : keeping those 3 relations for backward compatibility
-  belongs_to :user
-  belongs_to :period
-  belongs_to :subscription
+  belongs_to :user, optional: true
+  belongs_to :period, optional: true
+  belongs_to :subscription, optional: true
 
+  before_destroy do |invoice|
+    invoice.cloud_content.purge
+  end
 
   def self.search(contains)
     invoices = Invoice.all.includes(:organization, :user)
@@ -61,7 +68,7 @@ class Invoice < ActiveRecord::Base
   def self.archive(time = Time.now)
     invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
     file_path  = archive_path archive_name(time - 1.month)
-    files_path = invoices.map { |e| e.content.path }
+    files_path = invoices.map { |e| e.cloud_content_object.path }
 
     DocumentTools.archive(file_path, files_path)
   end
@@ -78,8 +85,11 @@ class Invoice < ActiveRecord::Base
     File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
   end
 
-  private
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
 
+  private
 
   def set_number
     unless number

@@ -1,20 +1,20 @@
-#addresses.row-fluid
-  .span12
-    .row-fluid
-      .span12.box
-        .row-fluid
-          .span12
-            .pull-left
-              %h3 Liste des adresses de l'organisation
-            .pull-right
-              = link_to t('actions.return'), account_organization_path(@organization, tab: 'addresses'), class: 'btn'
-              = link_to 'Nouvelle adresse', new_account_organization_address_path(@organization), class: 'btn btn-primary'
-    .row-fluid
-      .span12.box
+#addresses
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3 Liste des adresses de l'organisation
+        .float-right
+          = link_to t('actions.return'), account_organization_path(@organization, tab: 'addresses'), class: 'btn btn-light'
+          = link_to 'Nouvelle adresse', new_account_organization_address_path(@organization), class: 'btn btn-primary'
+
+  .row
+    .col-md-12
+      .box
         - grouped_addresses = @addresses.in_groups_of(3)
         - grouped_addresses.each_with_index do |addresses, index|
-          .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+          .row{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
             - addresses.each do |address|
               - if address
-                .span4
+                .col-md-4
                   = render partial: 'address', locals: { address: address, single: false }

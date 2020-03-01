@@ -1,37 +1,45 @@
 #vat_accounts
   - if @customer.configured?
-    .row-fluid
-      .span12.box
-        .row-fluid
-          .span12
-            .pull-left
-              %h3 Paramètrage des TVA du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
-            .pull-right
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
+    .row
+      .col-md-12
+        .box.clearfix
+          .float-left
+            %h3
+              Paramètrage des TVA du client : 
+              = link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
+          .float-right
+            = link_to t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
   - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        .pull-left
-          %h3 Comptes de TVA pour le dossier : #{@customer}
-        .pull-right
-          = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+    .box
+      = render 'account/customers/steps'
+    .row
+      .col-md-12
+        .box.clearfix
+          .float-left
+            %h3
+              Comptes de TVA pour le dossier : 
+              %span.text-info.fs-origin= @customer
+          .float-right
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+            = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
-  .row-fluid
-    .span12.box
-      %table.table.table-striped.table-condensed.margin0bottom
-        %tr
-          %th= t('activerecord.models.vat_account.attributes.code')
-          %th= t('activerecord.models.vat_account.attributes.nature')
-          %th= t('activerecord.models.vat_account.attributes.account_number')
-        - @vat_accounts.each do |vat_account|
-          %tr
-            %td= vat_account.code
-            %td= vat_account.nature
-            %td= vat_account.account_number
+  .row
+    .col-md-12
+      .box
+        %table.table.table-striped.table-condensed.margin0bottom.table.bordered-inner.table-detachable-head
+          %thead
+            %tr.bg-brown.text-white
+              %th= t('activerecord.models.vat_account.attributes.code')
+              %th= t('activerecord.models.vat_account.attributes.nature')
+              %th= t('activerecord.models.vat_account.attributes.account_number')
+          %tbody
+            - @vat_accounts.each do |vat_account|
+              %tr
+                %td= vat_account.code
+                %td= vat_account.nature
+                %td= vat_account.account_number
 
-      - unless @customer.configured?
-        .pull-right.margin2top
-          = link_to icon_edit + ' ' + t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
+        - unless @customer.configured?
+          .margin2top
+            = link_to t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'

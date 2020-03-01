@@ -1,16 +1,16 @@
 #user.show{ data: { user_id: @user.id } }
-  .row-fluid
-    .span12
-      .row-fluid
-        .span6
+  .row
+    .col-12
+      .row
+        .col-6
           - if @user.inactive?
-            %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
+            %span.badge.badge-danger.float-left.margin1right.closed_account Dossier clôturé
           %h2= @user.info
 
-        .span6.alignright
+        .col-6.alignright
           = link_to icon(icon: 'refresh') + ' ' + 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
-  #information.row-fluid.margin1top
-    .span4
+  #information.row.margin1top
+    .col-4
       %table.table.table-striped.table-bordered.table-condensed.bestinplace
         %tbody
           %tr
@@ -38,8 +38,10 @@
                 - @user.memberships.order(:code).each do |membership|
                   = membership.code
                   %br
-              - else
+              - elsif @user.is_guest
                 = @user.code
+              - else
+                = link_to @user.code, account_organization_customer_path(@user.organization, @user)
           %tr
             %th.first= t('activerecord.models.user.attributes.knowings_code')
             %td= render partial: 'text_field', locals: { value: @user.knowings_code, name: 'user[knowings_code]' }
@@ -61,9 +63,9 @@
             %th.first= t('activerecord.models.scanning_provider.name')
             %td
               - if @user.scanning_provider
-                .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
-                .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
-    .span8
+                .float-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
+                .float-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
+    .col-8
       %table.table.table-striped.table-bordered.table-condensed
         %tbody
           %tr

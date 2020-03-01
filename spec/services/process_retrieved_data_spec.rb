@@ -6,8 +6,8 @@ describe ProcessRetrievedData do
     DatabaseCleaner.start
     Timecop.freeze(Time.local(2017,1,4))
 
-    @organization = FactoryGirl.create :organization, code: 'IDO'
-    @user = FactoryGirl.create(:user, code: 'IDO%0001', organization: @organization)
+    @organization = FactoryBot.create :organization, code: 'IDO'
+    @user = FactoryBot.create(:user, code: 'IDO%0001', organization: @organization)
     @user.create_options
     @user.create_notify(
       r_wrong_pass: true,
@@ -17,7 +17,7 @@ describe ProcessRetrievedData do
       r_new_documents: 'now',
       r_new_operations: 'now'
     )
-    @journal = FactoryGirl.create :account_book_type, user_id: @user.id
+    @journal = FactoryBot.create :account_book_type, user_id: @user.id
     @retriever = Retriever.new
     @retriever.user           = @user
     @retriever.budgea_id      = 7

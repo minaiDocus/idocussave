@@ -1,15 +1,4 @@
-//= require underscore
-//= require backbone
-//= require backbone-forms/backbone-forms.js
-//= require backbone-forms/templates/bootstrap.js
-//= require backbone-forms/adapters/backbone.bootstrap-modal.js
-//= require backbone-forms/backbone-validation.js
-//= require idocus
-//= require_tree ../templates
-//= require_tree ./models
-//= require_tree ./collections
-//= require_tree ./views
-//= require_tree ./routers
+//= require backbone_init
 
 var ActionPerformCount = 0;
 
@@ -43,11 +32,11 @@ Number.prototype.formatMoney = function(c, d, t){
 var notification_per_page = 5;
 var notification_data = null;
 function load_latest_notifications(load_more) {
-    if (load_more || $('.dropdown-notifications.open').length == 0) {
+    if (load_more || $('.dropdown-notifications.show').length == 0) {
         $.ajax({
             url: '/account/notifications/latest?per_page=' + (notification_per_page + (load_more ? 5 : 0)),
             success: function(data) {
-                if ((load_more || $('.dropdown-notifications.open').length == 0) && notification_data != data) {
+                if ((load_more || $('.dropdown-notifications.show').length == 0) && notification_data != data) {
                     $('#notifications .items').html(data);
                     notification_data = data;
                     unread_notification_count = $('#unread_notification_count').data('count');
@@ -77,7 +66,7 @@ notification_list.scroll(function() {
 load_latest_notifications(false);
 setInterval(load_latest_notifications, 30000);
 
-$('#news.modal').on('show', function (e) {
+$('#news.modal').on('show.bs.modal', function (e) {
     $.ajax({
         url: '/account/news',
         beforeSend: function() {

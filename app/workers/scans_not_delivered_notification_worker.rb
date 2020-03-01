@@ -3,6 +3,8 @@ class ScansNotDeliveredNotificationWorker
   sidekiq_options queue: :high, retry: false
 
   def perform
-    ScanService.notify_not_delivered
+    UniqueJobs.for 'ScansNotDeliveredNotification' do
+      ScanService.notify_not_delivered
+    end
   end
 end

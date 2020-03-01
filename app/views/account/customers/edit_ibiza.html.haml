@@ -1,28 +1,32 @@
 #customer.edit.ibiza
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition des options iBiza du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
-        %h3 Configuration d'iBiza pour le dossier : #{@customer}
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3
+          Edition des options iBiza du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza'), class: 'fs-origin'
+      - else
+        %h3
+          Configuration d'iBiza pour le dossier : 
+          = @customer
 
-  .rwo-fluid
-    .span12.box
-      = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+    = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |f|
+      .card-body
         = f.input :ibiza_id, label: 'Sélectionner le dossier correspondant dans iBiza', collection: [], input_html: { style: 'display:none', data: { original_value: @customer.ibiza_id, users_list_url: account_organization_ibiza_users_path(@organization, format: 'json'), placeholder: 'Choisir un dossier' } }
         = f.simple_fields_for :softwares do |o|
           = o.hidden_field :id
-          = o.input :is_ibiza_auto_deliver, collection: auto_deliver_options, include_blank: false
-          = o.input :is_ibiza_compta_analysis_activated, collection: activate_compta_analytic_options, include_blank: false
-          = o.input :is_ibiza_analysis_to_validate, collection: activate_compta_analytic_options, include_blank: false, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées"
+          = o.input :is_ibiza_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+          = o.input :is_ibiza_compta_analysis_activated, collection: activate_compta_analytic_options, as: :radio_buttons
+          = o.input :is_ibiza_analysis_to_validate, collection: activate_compta_analytic_options, as: :radio_buttons, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées"
+      .card-footer  
         .form-actions.margin0bottom
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary', disabled: true
-            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ibiza'), class: 'btn'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ibiza'), class: 'btn btn-light'
           - else
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
             = f.submit t('actions.next_step'), class: 'btn btn-primary', disabled: true

@@ -1,7 +1,7 @@
-# -*- encoding : UTF-8 -*-
-class Account::AccountNumberRulesController < Account::OrganizationController
-  before_filter :load_account_number_rule, only: %w(show edit update destroy)
+# frozen_string_literal: true
 
+class Account::AccountNumberRulesController < Account::OrganizationController
+  before_action :load_account_number_rule, only: %w[show edit update destroy]
 
   # GET /account/organizations/:organization_id/account_number_rules
   def index
@@ -12,17 +12,14 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     @account_number_rules = @account_number_rules.page(params[:page]).per(params[:per_page])
 
     @list_accounts = @user.customers
-    @list_skiped_accounting_plan = @list_accounts.select{|c| c.options.skip_accounting_plan_finder}
+    @list_skiped_accounting_plan = @list_accounts.select { |c| c.options.skip_accounting_plan_finder }
   end
-
 
   # GET /account/organizations/:organization_id/account_number_rules/:id
-  def show
-  end
-
+  def show; end
 
   # GET /account/organizations/:organization_id/account_number_rules/new
-	def new
+  def new
     @account_number_rule = AccountNumberRule.new
     if params[:template].present?
       template = @organization.account_number_rules.find params[:template]
@@ -35,7 +32,6 @@ class Account::AccountNumberRulesController < Account::OrganizationController
       @account_number_rule.users               = template.users
     end
   end
-
 
   # POST /account/organizations/:organization_id/account_number_rules
   def create
@@ -52,11 +48,8 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/account_number_rules/:id/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/account_number_rules/:id
   def update
@@ -73,7 +66,6 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     end
   end
 
-
   # DELETE /account/organizations/:organization_id/account_number_rules/:id
   def destroy
     @account_number_rule.destroy
@@ -83,30 +75,28 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     redirect_to account_organization_account_number_rules_path(@organization)
   end
 
-
   # POST /account/organizations/:organization_id/account_number_rules/export_or_destroy
   def export_or_destroy
     @account_number_rules = AccountNumberRule.where(id: params[:rules].try(:[], :rule_ids) || [])
 
     if @account_number_rules.any?
       case params[:export_or_destroy]
-        when 'export'
-          data = AccountNumberRulesToXlsService.new(@account_number_rules).execute
+      when 'export'
+        data = AccountNumberRulesToXlsService.new(@account_number_rules).execute
 
-          send_data data, type: 'application/vnd.ms-excel', filename: 'Affectation.xls'
-        when 'destroy'
-          @account_number_rules.destroy_all
+        send_data data, type: 'application/vnd.ms-excel', filename: 'Affectation.xls'
+      when 'destroy'
+        @account_number_rules.destroy_all
 
-          flash[:success] = "Règles d'affectations supprimées avec succès."
-          redirect_to account_organization_account_number_rules_path(@organization)
+        flash[:success] = "Règles d'affectations supprimées avec succès."
+        redirect_to account_organization_account_number_rules_path(@organization)
       end
     else
-      flash[:warning] = "Veuillez sélectionner les règles d'affectations à exporter ou à supprimer."
+      flash[:alert] = "Veuillez sélectionner les règles d'affectations à exporter ou à supprimer."
 
       redirect_to account_organization_account_number_rules_path(@organization)
     end
   end
-
 
   # GET /account/organizations/:organization_id/account_number_rules/import_model
   def import_model
@@ -120,11 +110,8 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     send_data(data.join("\n"), type: 'plain/text', filename: "modèle d'import.csv")
   end
 
-
   # GET /account/organizations/:organization_id/account_number_rules/import_form
-  def import_form
-  end
-
+  def import_form; end
 
   # GET /account/organizations/:organization_id/account_number_rules/import
   def import
@@ -153,31 +140,31 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     render json: { success: true }, status: 200
   end
 
-private
+  private
 
   def sort_column
     params[:sort] || 'name'
   end
   helper_method :sort_column
 
-
   def sort_direction
     params[:direction] || 'asc'
   end
   helper_method :sort_direction
 
-
   def account_number_rule_params
-    attributes = [
-      :name,
-      :rule_target,
-      :rule_type,
-      :content,
-      :priority,
-      :third_party_account,
-      :categorization
+    attributes = %i[
+      name
+      rule_target
+      rule_type
+      content
+      priority
+      third_party_account
+      categorization
     ]
-    params[:account_number_rule][:third_party_account] = nil if params[:account_number_rule][:rule_type] == 'truncate'
+    if params[:account_number_rule][:rule_type] == 'truncate'
+      params[:account_number_rule][:third_party_account] = nil
+    end
 
     attributes << :affect if action_name == 'create'
 
@@ -189,7 +176,6 @@ private
 
     params.require(:account_number_rule).permit(*attributes)
   end
-
 
   def load_account_number_rule
     @account_number_rule = @organization.account_number_rules.find params[:id]

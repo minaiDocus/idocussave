@@ -1,23 +1,21 @@
-# -*- encoding : UTF-8 -*-
-class Account::ExercisesController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_rights
-  before_filter :verify_access
-  before_filter :redirect_to_current_step
-  before_filter :load_exercise, except: %w(index new create)
+# frozen_string_literal: true
 
+class Account::ExercisesController < Account::OrganizationController
+  before_action :load_customer
+  before_action :verify_rights
+  before_action :verify_access
+  before_action :redirect_to_current_step
+  before_action :load_exercise, except: %w[index new create]
 
   # GET  /account/organizations/:organization_id/customers/:customer_id/exercises
   def index
     @exercises = @customer.exercises.order(start_date: :desc)
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/exercises/new
   def new
     @exercise = Exercise.new
   end
-
 
   # POST /account/organizations/:organization_id/customers/:customer_id/exercises
   def create
@@ -34,11 +32,8 @@ class Account::ExercisesController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/exercises/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/exercises/:id
   def update
@@ -51,7 +46,6 @@ class Account::ExercisesController < Account::OrganizationController
     end
   end
 
-
   # DELETE /account/organizations/:organization_id/customers/:customer_id/exercises/:id
   def destroy
     @exercise.destroy
@@ -61,9 +55,7 @@ class Account::ExercisesController < Account::OrganizationController
     redirect_to account_organization_customer_exercises_path(@organization, @customer)
   end
 
-
   private
-
 
   def verify_rights
     unless @user.leader? || @user.manage_customers
@@ -72,7 +64,6 @@ class Account::ExercisesController < Account::OrganizationController
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def verify_access
     if @customer.uses_ibiza?
@@ -86,11 +77,9 @@ class Account::ExercisesController < Account::OrganizationController
     @customer = customers.find params[:customer_id]
   end
 
-
   def load_exercise
     @exercise = @customer.exercises.find params[:id]
   end
-
 
   def exercise_params
     params.require(:exercise).permit(:start_date,

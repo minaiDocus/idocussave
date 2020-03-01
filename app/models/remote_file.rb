@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RemoteFile < ActiveRecord::Base
+class RemoteFile < ApplicationRecord
   DROPBOX          = 'Dropbox'.freeze
   DROPBOX_EXTENDED = 'Dropbox Extended'.freeze
   GOOGLE_DRIVE     = 'Google Drive'.freeze
@@ -9,11 +9,11 @@ class RemoteFile < ActiveRecord::Base
   MY_COMPANY_FILES = 'My Company Files'.freeze
   SERVICE_NAMES    = [DROPBOX, DROPBOX_EXTENDED, GOOGLE_DRIVE, FTP, BOX, KNOWINGS, MY_COMPANY_FILES].freeze
 
-  belongs_to :user
-  belongs_to :pack
-  belongs_to :group
+  belongs_to :user, optional: true
+  belongs_to :pack, optional: true
+  belongs_to :group, optional: true
   belongs_to :remotable, polymorphic: true
-  belongs_to :organization
+  belongs_to :organization, optional: true
 
 
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure', association_foreign_key: 'pack_report_preseizure_id'
@@ -33,7 +33,7 @@ class RemoteFile < ActiveRecord::Base
   scope :of_service,       -> (service_name) { where(service_name: service_name) }
   scope :synchronized,     -> { where(state: :synced) }
   scope :not_retryable,    -> { where("tried_count >= ?", 2) }
-  scope :not_processed,    -> { where.not(state: [:synced, :cancelled]) }
+  scope :not_processed,    -> { where.not(state: [:synced, :cancelled, :sending]) }
   scope :with_extension,   -> (extension) { where(extension: extension) }
   scope :not_synchronized, -> { where(state: :not_synced) }
 
@@ -93,7 +93,6 @@ class RemoteFile < ActiveRecord::Base
     self.tried_count = 0
 
     set_tried_at
-
     save
   end
 
@@ -101,19 +100,29 @@ class RemoteFile < ActiveRecord::Base
   def not_synced!(message = '')
     self.state = 'not_synced'
     self.tried_count += 1
-    self.error_message = message
-
-    set_tried_at
-
-    save
+    begin
+      self.error_message = message.to_s
+      set_tried_at
+      save
+    rescue
+      self.error_message = 'unknown service error'
+      set_tried_at
+      save
+    end
   end
 
   def not_retryable!(message = '')
     self.state         = 'not_synced'
     self.tried_count   = 2
-    self.error_message = message
-    set_tried_at
-    save
+    begin
+      self.error_message = message.to_s
+      set_tried_at
+      save
+    rescue
+      self.error_message = 'unknown service error'
+      set_tried_at
+      save
+    end
   end
 
   def name
@@ -148,7 +157,7 @@ class RemoteFile < ActiveRecord::Base
 
 
   def local_path
-    temp_path.presence || remotable.content.path
+    temp_path.presence || remotable.cloud_content_object.path
   end
 
 

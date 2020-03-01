@@ -1,30 +1,43 @@
-.row-fluid
-  .span12.box
+.card
+  .card-header
     %h3 Edition du kit d'envoi de documents
-
-.row-fluid
-  .span12.box
-    = simple_form_for [:account, @organization, @file_sending_kit], html: { class: 'form form-horizontal margin0' } do |f|
-      %fieldset
-        %legend= t('common.details')
-        = f.input :title
-        = f.input :position
-        = f.input :instruction, as: :text
-      %fieldset
-        %legend= t('activerecord.models.file_sending_kit.attributes.logo.center')
-        = f.input :logo_path, input_html: { class: 'span12' }
-        = f.input :logo_height
-        = f.input :logo_width
-      %fieldset
-        %legend= t('activerecord.models.file_sending_kit.attributes.logo.left')
-        = f.input :left_logo_path, input_html: { class: 'span12' }
-        = f.input :left_logo_height
-        = f.input :left_logo_width
-      %fieldset
-        %legend= t('activerecord.models.file_sending_kit.attributes.logo.right')
-        = f.input :right_logo_path, input_html: { class: 'span12' }
-        = f.input :right_logo_height
-        = f.input :right_logo_width
+  = simple_form_for [:account, @organization, @file_sending_kit], html: { class: 'form form-horizontal margin0' } do |f|
+    .card-body
+      .row
+        .col-md-6
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
+              %h4= t('common.details')
+              %hr
+              = f.input :title
+              = f.input :position
+              = f.input :instruction, as: :text
+        .col-md-6
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
+              %h4= t('activerecord.models.file_sending_kit.attributes.logo.center')
+              %hr
+              = f.input :logo_path, input_html: { class: 'span12' }
+              = f.input :logo_height
+              = f.input :logo_width
+      .row
+        .col-md-6
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
+              %h4= t('activerecord.models.file_sending_kit.attributes.logo.left')
+              %hr
+              = f.input :left_logo_path, input_html: { class: 'span12' }
+              = f.input :left_logo_height
+              = f.input :left_logo_width
+        .col-md-6
+          .field{ style: 'margin-bottom: 10px' }
+            .box.bg-light.height_groups.groups_1
+              %h4= t('activerecord.models.file_sending_kit.attributes.logo.right')
+              %hr
+              = f.input :right_logo_path, input_html: { class: 'span12' }
+              = f.input :right_logo_height
+              = f.input :right_logo_width
+    .card-footer
       .form-actions.margin0bottom
         = f.submit t('actions.submit'), class: 'btn btn-primary'
-        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'file_sending_kit'), class: 'btn'
+        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'file_sending_kit'), class: 'btn btn-light'

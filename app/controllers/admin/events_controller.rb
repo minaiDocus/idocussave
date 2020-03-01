@@ -1,10 +1,10 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::EventsController < Admin::AdminController
   # GET /admin/events
   def index
     @events = Event.search(search_terms(params[:event_contains])).includes(:user).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
-
 
   # GET /admin/events/:id
   def show
@@ -19,7 +19,6 @@ class Admin::EventsController < Admin::AdminController
     params[:sort] || 'id'
   end
   helper_method :sort_column
-
 
   def sort_direction
     params[:direction] || 'desc'

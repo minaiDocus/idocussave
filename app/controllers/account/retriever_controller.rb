@@ -1,11 +1,12 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::RetrieverController < Account::AccountController
   layout 'layouts/account/retrievers'
 
   before_action :verify_rights
   before_action :load_account
 
-private
+  private
 
   def verify_rights
     unless accounts.any? && @user.organization.is_active
@@ -22,7 +23,7 @@ private
       account_id = params[:account_id].presence || session[:retrievers_account_id].presence || 'all'
       @account = nil
 
-      unless account_id == 'all'
+      if account_id != 'all'
         @account = accounts.where(id: account_id).first || accounts.first
       end
       session[:retrievers_account_id] = account_id

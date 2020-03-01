@@ -1,34 +1,71 @@
-%h3 Filtres
-
-= form_tag admin_users_path, method: :get, class: 'form form-vertical margin0bottom' do
-  %br
-  = hidden_field_tag :direction, sort_direction
-  = hidden_field_tag :sort, sort_column
-  - item = params[:user_contains][:organization_id] rescue ''
-  = label_tag 'user_contains[organization_id]', t('activerecord.models.organization.name')
-  = select_tag 'user_contains[organization_id]', options_from_collection_for_select(Organization.order(name: :asc), :id, :name, selected: item), include_blank: true
-  = label_tag 'user_contains[is_admin]', t('activerecord.models.user.attributes.is_admin')
-  = select_tag 'user_contains[is_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_admin] rescue '')), include_blank: true
-  = label_tag 'user_contains[is_organization_admin]', t('activerecord.models.user.attributes.is_organization_admin')
-  = select_tag 'user_contains[is_organization_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_organization_admin] rescue '')), include_blank: true
-  = label_tag 'user_contains[is_prescriber]', t('activerecord.models.user.attributes.is_prescriber')
-  = select_tag 'user_contains[is_prescriber]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_prescriber] rescue '')), include_blank: true
-  = label_tag 'user_contains[is_guest]', t('activerecord.models.user.attributes.is_guest')
-  = select_tag 'user_contains[is_guest]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_guest] rescue '')), include_blank: true
-  = label_tag 'user_contains[is_inactive]', t('activerecord.models.user.attributes.is_inactive')
-  = select_tag 'user_contains[is_inactive]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_inactive] rescue '')), include_blank: true
-  = label_tag 'user_contains[company]', t('activerecord.models.user.attributes.company')
-  = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue '')
-  = label_tag 'user_contains[code]', t('activerecord.models.user.attributes.code')
-  = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue '')
-  = label_tag 'user_contains[last_name]', t('activerecord.models.user.attributes.last_name')
-  = text_field_tag 'user_contains[last_name]', (params[:user_contains][:last_name] rescue '')
-  = label_tag 'user_contains[first_name]', t('activerecord.models.user.attributes.first_name')
-  = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue '')
-  = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email')
-  = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue '')
-
-  %br
-  %br
-  = submit_tag t('filters.action'), class: 'btn btn-primary'
-  = link_to t('filters.cancel'), admin_users_path, class: 'btn'
+.card.retractable-filter
+  = form_tag admin_users_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        - item = params[:user_contains][:organization_id] rescue ''
+        .form-group
+          .label-section
+            = label_tag 'user_contains[organization_id]', t('activerecord.models.organization.name')
+          .control-section
+            = select_tag 'user_contains[organization_id]', options_from_collection_for_select(Organization.order(name: :asc), :id, :name, selected: item), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[is_admin]', t('activerecord.models.user.attributes.is_admin')
+          .control-section
+            = select_tag 'user_contains[is_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_admin] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[is_organization_admin]', t('activerecord.models.user.attributes.is_organization_admin')
+          .control-section
+            = select_tag 'user_contains[is_organization_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_organization_admin] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[is_prescriber]', t('activerecord.models.user.attributes.is_prescriber')
+          .control-section
+            = select_tag 'user_contains[is_prescriber]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_prescriber] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[is_guest]', t('activerecord.models.user.attributes.is_guest')
+          .control-section
+            = select_tag 'user_contains[is_guest]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_guest] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[is_inactive]', t('activerecord.models.user.attributes.is_inactive')
+          .control-section
+            = select_tag 'user_contains[is_inactive]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_inactive] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[company]', t('activerecord.models.user.attributes.company')
+          .control-section
+            = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[code]', t('activerecord.models.user.attributes.code')
+          .control-section
+            = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[last_name]', t('activerecord.models.user.attributes.last_name')
+          .control-section
+            = text_field_tag 'user_contains[last_name]', (params[:user_contains][:last_name] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[first_name]', t('activerecord.models.user.attributes.first_name')
+          .control-section
+            = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email')
+          .control-section
+            = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'form-control'
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_users_path, class: 'btn btn-light', title: t('filters.reset')

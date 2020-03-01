@@ -1,7 +1,6 @@
-.navbar
-  .navbar-inner
-    .container-fluid
-      .nav-collapse
-        %ul.nav
-          %li{ class: ('active' if action_name == 'index') }= link_to 'Index', admin_news_index_path
-          %li{ class: ('active' if action_name == 'new') }= link_to t('actions.new'), new_admin_news_path
+%ul.nav
+  %li{ class: ('active' if action_name == 'index') }
+    = link_to 'Index', admin_news_index_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: ('active' if action_name == 'new') }
+    = link_to t('actions.new'), new_admin_news_path, class: 'btn btn-secondary'

@@ -1,93 +1,98 @@
 #process_reporting
-  .row-fluid.margin1bottom
-    .span12
-      %h3 Reporting des traitements de #{l(@time, format: '%B %Y')}
-  .row-fluid
-    .span12
-      %table.table.table-condensed.table-striped.table-bordered
-        %thead
-          %tr
-            %th.date{ rowspan: 2 }
-              = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
-              \-
-              = l(@time, format: '%b %Y').capitalize
-              \-
-              = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
-            %th{ colspan: 2 } Kits
-            %th{ rowspan: 2 } Réception plis
-            %th{ colspan: 3 } Numérisation
-            %th{ rowspan: 2 } Regroupement
-            %th{ rowspan: 2 } Pré-aff
-            %th{ colspan: 3 } Retours plis
-          %tr
-            %th Demandes
-            %th Envois
-            %th Feuilles
-            %th Hors-formats
-            %th Attaches
-            %th LS500
-            %th LS1000
-            %th LS3000
-        %tbody
-          - total = [0,0,0,0,0,0,0,0,0,0,0]
-          - @organizations.each do |organization|
-            - customers = organization.customers
+  .row
+    .col-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Reporting des traitements de #{l(@time, format: '%B %Y')}
+
+  .row
+    .col-12
+      .box
+        %table.table.table-condensed.table-striped.table-bordered.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th{ rowspan: 2 }
+                = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
+                \-
+                = l(@time, format: '%b %Y').capitalize
+                \-
+                = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
+              %th.aligncenter{ colspan: 2 } Kits
+              %th.aligncenter{ rowspan: 2 } Réception plis
+              %th.aligncenter{ colspan: 3 } Numérisation
+              %th.aligncenter{ rowspan: 2 } Regroupement
+              %th.aligncenter{ rowspan: 2 } Pré-aff
+              %th.aligncenter{ colspan: 3 } Retours plis
+            %tr.bg-brown-light.text-white
+              %th.aligncenter Demandes
+              %th.aligncenter Envois
+              %th.aligncenter Feuilles
+              %th.aligncenter Hors-formats
+              %th.aligncenter Attaches
+              %th.aligncenter LS500
+              %th.aligncenter LS1000
+              %th.aligncenter LS3000
+          %tbody.retractable.slidedown
+            - total = [0,0,0,0,0,0,0,0,0,0,0]
+            - @organizations.each do |organization|
+              - customers = organization.customers
+              %tr
+                %td= link_to organization.name, [:account, organization]
+                - sum = sum_of_requested_kits(customers, @time)
+                - total[0] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_sent_kits(organization, @time)
+                - total[1] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_receipts(organization, @time)
+                - total[2] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_scanned_sheets(organization, @time)
+                - total[3] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_oversized(customers, @time)
+                - total[4] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_paperclips(customers, @time)
+                - total[5] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_bundled(organization, @time)
+                - total[6] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_pre_assignments(organization, @time)
+                - total[7] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_returns_500(organization, @time)
+                - total[8] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_returns_1000(organization, @time)
+                - total[9] += sum
+                %td.aligncenter= sum
+                - sum = sum_of_returns_3000(organization, @time)
+                - total[10] += sum
+                %td.aligncenter= sum
             %tr
-              %td.organization= link_to organization.name, [:account, organization]
-              - sum = sum_of_requested_kits(customers, @time)
-              - total[0] += sum
-              %td= sum
-              - sum = sum_of_sent_kits(organization, @time)
-              - total[1] += sum
-              %td= sum
-              - sum = sum_of_receipts(organization, @time)
-              - total[2] += sum
-              %td= sum
-              - sum = sum_of_scanned_sheets(organization, @time)
-              - total[3] += sum
-              %td= sum
-              - sum = sum_of_oversized(customers, @time)
-              - total[4] += sum
-              %td= sum
-              - sum = sum_of_paperclips(customers, @time)
-              - total[5] += sum
-              %td= sum
-              - sum = sum_of_bundled(organization, @time)
-              - total[6] += sum
-              %td= sum
-              - sum = sum_of_pre_assignments(organization, @time)
-              - total[7] += sum
-              %td= sum
-              - sum = sum_of_returns_500(organization, @time)
-              - total[8] += sum
-              %td= sum
-              - sum = sum_of_returns_1000(organization, @time)
-              - total[9] += sum
-              %td= sum
-              - sum = sum_of_returns_3000(organization, @time)
-              - total[10] += sum
-              %td= sum
-          %tr
-            %td.total Total
-            %td
-              %b= total[0]
-            %td
-              %b= total[1]
-            %td
-              %b= total[2]
-            %td
-              %b= total[3]
-            %td
-              %b= total[4]
-            %td
-              %b= total[5]
-            %td
-              %b= total[6]
-            %td
-              %b= total[7]
-            %td
-              %b= total[8]
-            %td
-              %b= total[9]
-            %td
-              %b= total[10]
+              %td Total
+              %td.aligncenter
+                %b= total[0]
+              %td.aligncenter
+                %b= total[1]
+              %td.aligncenter
+                %b= total[2]
+              %td.aligncenter
+                %b= total[3]
+              %td.aligncenter
+                %b= total[4]
+              %td.aligncenter
+                %b= total[5]
+              %td.aligncenter
+                %b= total[6]
+              %td.aligncenter
+                %b= total[7]
+              %td.aligncenter
+                %b= total[8]
+              %td.aligncenter
+                %b= total[9]
+              %td.aligncenter
+                %b= total[10]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::Mobile::AccountSharingController < MobileApiController
   before_action :load_organization
   before_action :apply_membership
@@ -8,20 +10,20 @@ class Api::Mobile::AccountSharingController < MobileApiController
     order_by  = params[:order][:order_by] == 'approval' ? 'is_approved' : 'created_at'
     direction = params[:order][:direction] ? 'asc' : 'desc'
 
-    account_sharings = AccountSharing.unscoped.
-      where(account_id: customers).
-      search(search_terms(params[:account_sharing_contains])).
-      order(order_by => direction).
-      page(params[:page]).
-      per(20)
+    account_sharings = AccountSharing.unscoped
+                                     .where(account_id: customers)
+                                     .search(search_terms(params[:account_sharing_contains]))
+                                     .order(order_by => direction)
+                                     .page(params[:page])
+                                     .per(20)
 
     data_docs = account_sharings.map do |account_sharing|
       {
         id_idocus: account_sharing.id.to_s,
-        date:      account_sharing.created_at,
-        approval:  account_sharing.is_approved,
-        client:    account_sharing.collaborator.info,
-        document:  account_sharing.account.info
+        date: account_sharing.created_at,
+        approval: account_sharing.is_approved,
+        client: account_sharing.collaborator.info,
+        document: account_sharing.account.info
       }
     end
 
@@ -30,26 +32,28 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def load_shared_contacts
     direction = params[:order][:direction] ? 'asc' : 'desc'
-    order_by  = params[:order][:order_by] if params[:order][:order_by].in?(%w(email company))
-    order_by  ||= 'created_at'
+    if params[:order][:order_by].in?(%w[email company])
+      order_by = params[:order][:order_by]
+    end
+    order_by ||= 'created_at'
 
-    guest_collaborators = @organization.guest_collaborators.
-      search(search_terms(params[:guest_collaborator_contains])).
-      order(order_by => direction).
-      page(params[:page]).
-      per(20)
+    guest_collaborators = @organization.guest_collaborators
+                                       .search(search_terms(params[:guest_collaborator_contains]))
+                                       .order(order_by => direction)
+                                       .page(params[:page])
+                                       .per(20)
 
     contacts = guest_collaborators.map do |data|
-        {
-          id_idocus:      data.id.to_s,
-          date:           data.created_at, 
-          email:          data.email,
-          company:        data.company,
-          first_name:     data.first_name,
-          last_name:      data.last_name,
-          account_size:   data.accounts.size.to_s
-        }
-      end
+      {
+        id_idocus: data.id.to_s,
+        date: data.created_at,
+        email: data.email,
+        company: data.company,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        account_size: data.accounts.size.to_s
+      }
+    end
 
     render json: { contacts: contacts, nb_pages: guest_collaborators.total_pages, total: guest_collaborators.total_count }, status: 200
   end
@@ -59,11 +63,11 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
     if params[:q].present?
       users = @organization.users.active.where(
-        "code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
+        'code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t',
         t: params[:q].split.join('|')
-      ).order(code: :asc).select do |user|
+      ).order(code: :asc).reject do |user|
         str = [user.code, user.email, user.company, user.first_name, user.last_name].join(' ')
-        !params[:q].split.detect { |e| !str.match(/#{e}/i) }
+        params[:q].split.detect { |e| !str.match(/#{e}/i) }
       end
 
       unless @user.leader?
@@ -83,7 +87,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
     if params[:q].present?
       users = @organization.customers.active.where(
-        "code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
+        'code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t',
         t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
@@ -138,7 +142,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def delete_shared_docs
-    if(params[:type] && params[:type] == 'customers')
+    if params[:type] && params[:type] == 'customers'
       account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
 
       if DestroyAccountSharing.new(account_sharing, @user).execute
@@ -167,7 +171,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def load_shared_docs_customers
     data_shared = contacts = request_sharing = []
 
-    if @user.active? && (not @user.collaborator?) && @user.organization.is_active
+    if @user.active? && !@user.collaborator? && @user.organization.is_active
       data_shared     = data_shared_customer
       contacts        = contact_shared_customer
       request_sharing = account_sharing_request_customer
@@ -183,7 +187,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
       render json: { message: 'Votre compte a été partagé avec succès.' }, status: 200
     elsif Array(account_sharing.errors[:account] || account_sharing.errors[:collaborator]).include?('est déjà pris.')
       render json: { message: 'Ce contact a déjà accès à votre compte.' }, status: 200
-    elsif contact.errors[:email].include?("est déjà pris.") || account_sharing.errors[:collaborator_id].include?("n'est pas valide")
+    elsif contact.errors[:email].include?('est déjà pris.') || account_sharing.errors[:collaborator_id].include?("n'est pas valide")
       render json: { message: "Vous ne pouvez pas partager votre compte avec le contact : #{contact.email}." }, status: 200
     else
       render json: { message: 'Un problème a eu lieu pendant le partage de compte!!' }, status: 200
@@ -216,7 +220,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def account_sharing_request_customer
-    @user.account_sharings.pending.where(collaborator_id: @user.id).map do |account_sharing|
+    @user.account_sharings.unscoped.pending.where(collaborator_id: @user.id).map do |account_sharing|
       { id_idocus: account_sharing.id, name: account_sharing.account.info }
     end
   end

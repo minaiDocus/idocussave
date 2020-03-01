@@ -155,7 +155,7 @@ module DocumentsHelper
 
     contents = ''
     contents += content_tag :h4, 'Informations'
-    contents += content_tag :div, tinformations(pack, 120)
+    contents += content_tag :div, tinformations(pack, 220)
 
     if pack.preseizures.any?
       contents += content_tag :h4, 'Ecritures Comptables'
@@ -177,7 +177,7 @@ module DocumentsHelper
   def html_piece_view(piece)
     contents = ''
     contents += content_tag :h4, "Pièce n° #{piece.position} - #{piece.name}"
-    contents += content_tag :div, content_tag(:iframe, "", :src => piece.content.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
+    contents += content_tag :div, content_tag(:iframe, "", :src => piece.cloud_content_object.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
     content_tag :div, contents, style: 'width: 750px; padding: 10px;z-index:200'
   end 
 
@@ -268,10 +268,11 @@ module DocumentsHelper
     debit_value = credit_value = 0
 
     preseizure_entries.each do |entry|
+      #NOTE : Don't use entry.amount.to_f or to_i here, debit_value and credit_value can't be converted before addition
       if entry.type == 1
-        debit_value += entry.amount
+        debit_value += entry.amount || 0
       else
-        credit_value += entry.amount
+        credit_value += entry.amount || 0
       end
     end
 

@@ -188,7 +188,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          setTimeout(resolve, 1000)
+          setTimeout(resolve, 2000)
         onError: (error)-> reject(error)
       })
 
@@ -199,7 +199,7 @@ class Idocus.BudgeaApi
         collection: 'banks'
         onSuccess: (data)->
           connectors_list = connectors_list.concat(data)
-          setTimeout(resolve, 1000)
+          setTimeout(resolve, 2000)
         onError: (error)-> reject(error)
       })
 
@@ -350,6 +350,7 @@ class Idocus.BudgeaApi
       domparser = new DOMParser()
       data = domparser.parseFromString(response.paypal_dom, 'text/html')
       redirect_url = $(data).find('a').attr('href')
+
       if(redirect_url != undefined && redirect_url != null)
         window.location.href = redirect_url
       else
@@ -500,21 +501,23 @@ class Idocus.BudgeaApi
 
       count = keys.length || 0
       if self.encryptor != undefined && self.encryptor != null && count > 0
-        for k in keys
-          if !except.includes(k)
-              self.encrypt(data[k], k).then(
-                (encrypted)->
-                  _k = encrypted.key
-                  _value = encrypted.response
-                  data[_k] = _value
-                  count--
-                  if count <= 0
-                    resolve(data)
-              )
-          else
-            count--
-            if count <= 0
-              resolve(data)
+        # Data encryption is not active for app production budgea now, so we disable data encryption
+        # for k in keys
+        #   if !except.includes(k)
+        #       self.encrypt(data[k], k).then(
+        #         (encrypted)->
+        #           _k = encrypted.key
+        #           _value = encrypted.response
+        #           data[_k] = _value
+        #           count--
+        #           if count <= 0
+        #             resolve(data)
+        #       )
+        #   else
+        #     count--
+        #     if count <= 0
+        #       resolve(data)
+        resolve(data)
       else
         resolve(data)
     )

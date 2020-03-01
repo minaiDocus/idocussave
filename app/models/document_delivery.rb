@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DocumentDelivery < ActiveRecord::Base
+class DocumentDelivery < ApplicationRecord
   has_many :temp_packs
   has_many :temp_documents
 
@@ -60,9 +60,8 @@ class DocumentDelivery < ActiveRecord::Base
 
 
   def replace(temp_document, file)
-    temp_document.content = file
-
-    temp_document.save
+    # temp_document.content = file
+    temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file)) if temp_document.save
 
     temp_document.temp_pack.is_bundle_needed? ? temp_document.bundle_needed : temp_document.ready
   end

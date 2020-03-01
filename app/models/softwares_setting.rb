@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SoftwaresSetting < ActiveRecord::Base
+class SoftwaresSetting < ApplicationRecord
   belongs_to :user
 
   validates_inclusion_of :is_ibiza_auto_deliver,                 in: [-1, 0, 1]

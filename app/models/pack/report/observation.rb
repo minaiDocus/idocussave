@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report::Observation < ActiveRecord::Base
+class Pack::Report::Observation < ApplicationRecord
   has_many   :guests,  class_name: 'Pack::Report::Observation::Guest', inverse_of: :observation, dependent: :destroy
 
   belongs_to :expense, class_name: 'Pack::Report::Expense',            inverse_of: :observation

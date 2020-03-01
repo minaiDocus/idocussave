@@ -1,21 +1,22 @@
+# frozen_string_literal: true
+
 class Account::OrganizationsController < Account::OrganizationController
   layout :layout_by_action
 
-  before_action :verify_suspension, only: %w(show edit update)
-  before_action :load_organization, except: %w(index edit_options update_options new create)
+  before_action :verify_suspension, only: %w[show edit update]
+  before_action :load_organization, except: %w[index edit_options update_options new create]
   before_action :apply_membership
   before_action :verify_rights
 
   # GET /account/organizations
   def index
     @organizations = ::Organization.search(search_terms(params[:organization_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    @without_address_count = Organization.joins(:addresses).where('addresses.is_for_billing =  ?', true ).count
+    @without_address_count = Organization.joins(:addresses).where('addresses.is_for_billing =  ?', true).count
     @debit_mandate_not_configured_count = DebitMandate.not_configured.count
   end
 
   # GET /account/organizations/:id/update_options
-  def edit_options
-  end
+  def edit_options; end
 
   # PUT /account/organizations/:id/update_options
   def update_options
@@ -25,30 +26,30 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:id/edit_software_users
-  def edit_software_users    
+  def edit_software_users
     @software = params[:software]
-    @software_name =  case @software
-                        when 'coala'
-                          'Coala'
-                        when 'quadratus'
-                          'Quadratus'
-                        when 'cegid'
-                          'Cegid'
-                        when 'csv_descriptor'
-                          'Export csv personnalisé'
-                        when 'ibiza'
-                          'Ibiza'
-                        when 'exact_online'
-                          'Exact Online'
-                        when 'fec_agiris'
-                          'Fec Agiris'
-                        else
-                          ''
+    @software_name = case @software
+                     when 'coala'
+                       'Coala'
+                     when 'quadratus'
+                       'Quadratus'
+                     when 'cegid'
+                       'Cegid'
+                     when 'csv_descriptor'
+                       'Export csv personnalisé'
+                     when 'ibiza'
+                       'Ibiza'
+                     when 'exact_online'
+                       'Exact Online'
+                     when 'fec_agiris'
+                       'Fec Agiris'
+                     else
+                       ''
                       end
   end
 
   # PUT /account/organizations/:id/update_software_users
-  def update_software_users 
+  def update_software_users
     software = params[:software]
     software_users = params[:software_account_list] || ''
     @organization.customers.active.each do |customer|
@@ -68,8 +69,10 @@ class Account::OrganizationsController < Account::OrganizationController
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
       end
-      
-      customer.create_or_update_software(softwares_params) unless softwares_params.nil?
+
+      unless softwares_params.nil?
+        customer.create_or_update_software(softwares_params)
+      end
     end
     flash[:success] = 'Modifié avec succès.'
     redirect_to edit_software_users_account_organization_path(@organization, software: software)
@@ -94,7 +97,7 @@ class Account::OrganizationsController < Account::OrganizationController
   # GET /account/organizations/:id/
   def show
     @members = @organization.customers.page(params[:page]).per(params[:per])
-    @periods = Period.where(user_id: @organization.customers.pluck(:id)).where("start_date < ? AND end_date > ?", Date.today, Date.today).includes(:billings)
+    @periods = Period.where(user_id: @organization.customers.pluck(:id)).where('start_date < ? AND end_date > ?', Date.today, Date.today).includes(:billings)
 
     @subscription         = @organization.find_or_create_subscription
     @subscription_options = @subscription.options.sort_by(&:position)
@@ -102,11 +105,10 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:id/edit
-  def edit
-  end
+  def edit; end
 
   # PUT /account/organizations/:id
-  def update    
+  def update
     if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       if params[:part].present?
@@ -149,8 +151,7 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   # GET /account/organizations/:id/close_confirm
-  def close_confirm
-  end
+  def close_confirm; end
 
   def prepare_payment
     debit_mandate = @organization.debit_mandate
@@ -172,20 +173,22 @@ class Account::OrganizationsController < Account::OrganizationController
       mandate.prepare_order
 
       if mandate.errors
-        render json: { success: false, message: mandate.errors  }, status: 200
+        render json: { success: false, message: mandate.errors }, status: 200
       else
         debit_mandate.update(reference: mandate.order_reference, transactionStatus: 'started')
 
         render json: { success: true, frame_64: mandate.get_frame }, status: 200
       end
     else
-      render json: { success: false, message: debit_mandate.errors.message  }, status: 200
+      render json: { success: false, message: debit_mandate.errors.message }, status: 200
     end
   end
 
   def confirm_payment
     debit_mandate = @organization.debit_mandate
-    DebitMandateResponseService.new(debit_mandate).confirm_payment if debit_mandate.started?
+    if debit_mandate.started?
+      DebitMandateResponseService.new(debit_mandate).confirm_payment
+    end
 
     render json: { success: true, debit_mandate: @organization.debit_mandate.reload }, status: 200
   end
@@ -195,11 +198,11 @@ class Account::OrganizationsController < Account::OrganizationController
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if current_user.is_admin && action_name.in?(%w(index edit_options update_options edit_software_users update_software_users new create prepare_payment confirm_payment suspend unsuspend))
+      if current_user.is_admin && action_name.in?(%w[index edit_options update_options edit_software_users update_software_users new create prepare_payment confirm_payment suspend unsuspend])
         authorized = true
-      elsif action_name.in?(%w(show)) && @user.is_prescriber
+      elsif action_name.in?(%w[show]) && @user.is_prescriber
         authorized = true
-      elsif action_name.in?(%w(edit update edit_software_users update_software_users prepare_payment confirm_payment)) && @user.leader?
+      elsif action_name.in?(%w[edit update edit_software_users update_software_users prepare_payment confirm_payment]) && @user.leader?
         authorized = true
       end
 
@@ -211,7 +214,7 @@ class Account::OrganizationsController < Account::OrganizationController
   end
 
   def layout_by_action
-    if action_name.in?(%w(index edit_options update_options new create))
+    if action_name.in?(%w[index edit_options update_options new create])
       'inner'
     else
       'organization'

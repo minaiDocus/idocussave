@@ -1,0 +1,41 @@
+.card.retractable-filter
+  = form_tag admin_job_processing_index_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'job_contains[started_at]', 'Début'
+          .control-section
+            .input-group
+              .input-group-prepend
+              = text_field_tag 'job_contains[started_at]', (params[:job_contains][:started_at] rescue ''), class: 'form-control date datepicker'
+          .label-section
+            = label_tag 'job_contains[finished_at]', 'Fin'
+          .control-section
+            .input-group
+              .input-group-prepend
+              = text_field_tag 'job_contains[finished_at]', (params[:job_contains][:finished_at] rescue ''), class: 'form-control date datepicker'
+
+        .form-group
+          .label-section
+            = label_tag 'job_contains[name]', 'Nom du job'
+          .control-section
+            = text_field_tag 'job_contains[name]', (params[:job_contains][:name] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'job_contains[state]', 'Etat'
+          .control-section
+            = select_tag 'job_contains[state]', options_for_select([["started", 'started'],['killed', 'killed'],['finished', 'finished']], (params[:job_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_job_processing_index_path, class: 'btn btn-light', title: t('filters.reset')

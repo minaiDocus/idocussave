@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Piece < ActiveRecord::Base
+class Pack::Piece < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/pieces/:id/download/:style'}
+
   serialize :tags
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
@@ -16,7 +18,10 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :user
   belongs_to :pack, inverse_of: :pieces
   belongs_to :organization
-  belongs_to :analytic_reference, inverse_of: :pieces
+  belongs_to :analytic_reference, inverse_of: :pieces, optional: true
+
+  has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content, styles: { medium: ['92x133', :png] },
                               path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
@@ -27,13 +32,15 @@ class Pack::Piece < ActiveRecord::Base
     attachment.instance.mongo_id || attachment.instance.id
   end
 
-  after_create do |piece|
+  after_create_commit do |piece|
     unless Rails.env.test?
       Pack::Piece.delay_for(10.seconds, queue: :low).finalize_piece(piece.id)
     end
   end
 
   before_destroy do |piece|
+    piece.cloud_content.purge
+
     current_analytic = piece.analytic_reference
     current_analytic.destroy if current_analytic && !current_analytic.is_used_by_other_than?({ pieces: [piece.id] })
   end
@@ -47,7 +54,7 @@ class Pack::Piece < ActiveRecord::Base
   scope :by_position,            -> { order(position: :asc) }
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
-  scope :deleted,                -> { where.not(delete_at: [nil, '']) }
+  scope :deleted,                -> { where.not(delete_at: nil) }
 
   default_scope { where(delete_at: [nil, '']) }
 
@@ -147,40 +154,34 @@ class Pack::Piece < ActiveRecord::Base
 
     return true if piece.is_finalized
 
-    self.extract_content(piece)
-    self.generate_thumbs(piece)
+    piece.is_finalized = true
+    self.extract_content(piece) unless piece.content_text.present?
+    self.generate_thumbs(piece.id)
 
-    piece.update(is_finalized: true)
+    piece.save
   end
 
-  def self.generate_thumbs(piece)
+  def self.generate_thumbs(id)
+    piece = Pack::Piece.find(id)
+
+    base_file_name = piece.cloud_content_object.filename.to_s.gsub('.pdf', '')
+
     begin
-      piece.content.reprocess!
-      piece.save
-    rescue => e
-      true
+      image = MiniMagick::Image.read(piece.cloud_content.download).format('png').resize('92x133')
+
+      piece.cloud_content_thumbnail.attach(io: File.open(image.tempfile),
+                                           filename: "#{base_file_name}.png",
+                                           content_type: "image/png")
+    rescue
+      piece.is_finalized = false
     end
-  end
 
-  def correct_pdf_signature
-    sign_piece if DocumentTools.remake_pdf(self.content.path)
-  end
-
-  def sign_piece
-    to_sign_file = File.dirname(self.content.path) + '/signed.pdf'
-    FileUtils.cp self.content.path, to_sign_file
-
-    DocumentTools.sign_pdf(to_sign_file, self.content.path)
-    FileUtils.rm to_sign_file
+    piece.save
   end
 
   def self.extract_content(piece)
     begin
-      path = if piece.content.queued_for_write[:original]
-               piece.content.queued_for_write[:original].path
-             else
-               piece.content.path
-             end
+      path = piece.cloud_content_object.path
 
       POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
 
@@ -199,7 +200,58 @@ class Pack::Piece < ActiveRecord::Base
 
       piece.save
     rescue => e
-      true
+      piece.is_finalized = false
+    end
+  end
+
+  def self.correct_pdf_signature_of(piece_id)
+    piece = Pack::Piece.find piece_id
+    piece.correct_pdf_signature
+  end
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def recreate_pdf
+    return false unless temp_document
+
+    Dir.mktmpdir do |dir|
+      piece_file_name = DocumentTools.file_name self.name
+      piece_file_path = File.join(dir, piece_file_name)
+
+      original_file_path = File.join(dir, 'original.pdf')
+
+      FileUtils.cp temp_document.cloud_content_object.path, original_file_path
+      DocumentTools.correct_pdf_if_needed original_file_path
+
+      DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
+      self.cloud_content_object.attach(File.open(piece_file_path), self.name)
+      
+      self.try(:sign_piece)
+    end
+  end
+
+  def correct_pdf_signature
+    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
+  end
+
+  def sign_piece
+    begin
+      content_file_path = self.cloud_content_object.path
+      to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
+
+      DocumentTools.sign_pdf(content_file_path, to_sign_file)
+
+      if self.save && File.exist?(to_sign_file.to_s)
+        self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
+      else
+        logger.info "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})"
+        Pack::Piece.delay_for(5.minutes, queue: :low).correct_pdf_signature_of(self.id)
+      end
+    rescue => e
+      logger.info "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})"
+      Pack::Piece.delay_for(2.hours, queue: :low).correct_pdf_signature_of(self.id)
     end
   end
 
@@ -221,7 +273,7 @@ class Pack::Piece < ActiveRecord::Base
 
 
   def get_access_url(style = :original)
-    content.url(style) + '&token=' + get_token
+    "/account/documents/pieces/#{id}/download/#{style}" + '?token=' + get_token
   end
 
 
@@ -268,7 +320,7 @@ class Pack::Piece < ActiveRecord::Base
     return self.pages_number if self.pages_number > 0
 
     begin
-      self.pages_number = DocumentTools.pages_number(self.content.path)
+      self.pages_number = DocumentTools.pages_number(self.cloud_content_object.path)
       save
     rescue
       0
@@ -314,8 +366,11 @@ class Pack::Piece < ActiveRecord::Base
 
   private
 
-
   def set_number
     self.number = DbaSequence.next('Piece') unless number
+  end
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_pieces_events.log")
   end
 end

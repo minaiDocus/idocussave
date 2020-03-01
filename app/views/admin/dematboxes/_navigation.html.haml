@@ -1,9 +1,9 @@
-.navbar
-  .navbar-inner
-    %ul.nav
-      %li{ class: (controller_name == 'dematboxes' ? 'active' : '') }
-        = link_to "Dematbox", admin_dematboxes_path
-      %li{ class: (controller_name == 'dematbox_services' ? 'active' : '') }
-        = link_to "Services & Groupes", admin_dematbox_services_path
-      %li{ class: (controller_name == 'dematbox_files' ? 'active' : '') }
-        = link_to "Fichiers", admin_dematbox_files_path
+%ul.nav
+  %li{ class: (controller_name == 'dematboxes' ? 'active' : '') }
+    = link_to "Dematbox", admin_dematboxes_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: (controller_name == 'dematbox_services' ? 'active' : '') }
+    = link_to "Services & Groupes", admin_dematbox_services_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: (controller_name == 'dematbox_files' ? 'active' : '') }
+    = link_to "Fichiers", admin_dematbox_files_path, class: 'btn btn-secondary'

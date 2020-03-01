@@ -1,7 +1,8 @@
 - if @customer.configured?
   = render 'account/customers/header'
 - else
-  = render 'account/customers/steps'
+  .box
+    = render 'account/customers/steps'
   .row-fluid
     .span12.box
       %h3 Création des automates pour le dossier : #{@customer}

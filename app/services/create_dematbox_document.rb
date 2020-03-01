@@ -4,12 +4,12 @@ class CreateDematboxDocument
 
 
   def initialize(args)
-    @params = Hash[args.map { |k, v| [k.to_s.underscore, v] }]
+    @params = args.permit!.to_h
 
-    @doc_id          = @params['doc_id']
-    @service_id      = @params['service_id']
-    @virtual_box_id  = @params['virtual_box_id']
-    @improved_scan64 = @params['improved_scan']
+    @doc_id          = @params['docId']
+    @service_id      = @params['serviceId']
+    @virtual_box_id  = @params['virtualBoxId']
+    @improved_scan64 = @params['improvedScan']
     @temp_document   = TempDocument.where(dematbox_doc_id: @doc_id).first if upload?
   end
 
@@ -17,17 +17,19 @@ class CreateDematboxDocument
   def execute
     if valid?
       if @service_id == DematboxServiceApi.config.service_id.to_s
-        @temp_document.raw_content          = File.open(@temp_document.content.path)
-        @temp_document.content              = file
+        # @temp_document.raw_content          = File.open(@temp_document.content.path)
+        # @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
-        @temp_document.dematbox_box_id      = @params['box_id']
-        @temp_document.dematbox_service_id  = @params['service_id']
+        @temp_document.dematbox_box_id      = @params['boxId']
+        @temp_document.dematbox_service_id  = @params['serviceId']
         @temp_document.is_ocr_layer_applied = true
 
-        @temp_document.save
+        content_file = @temp_document.cloud_content_object
+        @temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if @temp_document.save
+        @temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path))
 
         # INFO : Blank pages are removed, so we need to reassign pages_number
-        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.content.path)
+        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)
 
         @temp_document.save
 
@@ -44,9 +46,9 @@ class CreateDematboxDocument
         options = {
           delivered_by:          user.code,
           delivery_type:         'dematbox_scan',
-          dematbox_doc_id:       @params['doc_id'],
-          dematbox_box_id:       @params['box_id'],
-          dematbox_service_id:   @params['service_id'],
+          dematbox_doc_id:       @params['docId'],
+          dematbox_box_id:       @params['boxId'],
+          dematbox_service_id:   @params['serviceId'],
           dematbox_text:         @params['text'],
           is_content_file_valid: true
         }
@@ -68,7 +70,7 @@ class CreateDematboxDocument
 
   def file_name
     if upload?
-      @temp_document.content_file_name
+      @temp_document.cloud_content_object.filename
     else
       "#{user.code}_#{journal}_#{period}.pdf"
     end
@@ -76,6 +78,7 @@ class CreateDematboxDocument
 
 
   def valid?
+
     if upload?
       @temp_document.present? && content_file_valid?
     else
@@ -123,7 +126,7 @@ class CreateDematboxDocument
 
 
   def decoded_data
-    Base64.decode64(@improved_scan64.gsub(/\\n/, "\n")).force_encoding('UTF-8')
+    Base64.decode64(@improved_scan64.to_s.gsub(/\\n/, "\n")).force_encoding('UTF-8')
   end
 
 
@@ -161,7 +164,7 @@ class CreateDematboxDocument
     if !@is_content_file_valid.nil?
       @is_content_file_valid
     else
-      @is_content_file_valid = DocumentTools.modifiable?(file.path)
+      @is_content_file_valid = @improved_scan64.present? && DocumentTools.modifiable?(file.path)
     end
   end
 

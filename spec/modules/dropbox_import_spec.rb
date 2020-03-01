@@ -15,7 +15,7 @@ describe DropboxImport do
       before(:each) do
         DatabaseCleaner.start
 
-        @user = FactoryGirl.create(:user, code: 'TS%0001')
+        @user = FactoryBot.create(:user, code: 'TS%0001')
         @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
 
         AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )')
@@ -152,7 +152,7 @@ describe DropboxImport do
 
             temp_pack = TempPack.where(name: 'TS%0001 AC 201502 all').first
             temp_document = temp_pack.temp_documents.first
-            fingerprint = `md5sum #{temp_document.content.path}`.split.first
+            fingerprint = `md5sum #{temp_document.cloud_content_object.path}`.split.first
             expect(temp_pack.temp_documents.count).to eq 1
             expect(temp_document.original_file_name).to eq 'test.pdf'
             expect(fingerprint).to eq '97f90eac0d07fe5ade8f60a0fa54cdfc'
@@ -194,7 +194,7 @@ describe DropboxImport do
 
           temp_pack = TempPack.where(name: 'TS%0001 AC 201502 all').first
           temp_document = temp_pack.temp_documents.first
-          fingerprint = `md5sum #{temp_document.content.path}`.split.first
+          fingerprint = `md5sum #{temp_document.cloud_content_object.path}`.split.first
           expect(temp_pack.temp_documents.count).to eq 1
           expect(temp_document.original_file_name).to eq 'test.pdf'
           expect(fingerprint).to eq '97f90eac0d07fe5ade8f60a0fa54cdfc'
@@ -290,13 +290,14 @@ describe DropboxImport do
 
             temp_document = TempDocument.new
             temp_document.user                = @user
-            temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
+            # temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
             temp_document.position            = 1
             temp_document.temp_pack           = @temp_pack
             temp_document.original_file_name  = '2pages.pdf'
             temp_document.delivered_by        = 'Tester'
             temp_document.delivery_type       = 'upload'
-            temp_document.save
+            file_path = File.join(Rails.root, 'spec/support/files/2pages.pdf')
+            temp_document.cloud_content.attach(io: File.open(file_path), filename: File.basename(file_path)) if temp_document.save
           end
 
           it 'marks one file as already exist' do
@@ -616,7 +617,7 @@ describe DropboxImport do
           before(:each) do
             organization = Organization.create(name: 'TEST', code: 'TS')
             organization.customers << @user
-            @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
+            @user2 = FactoryBot.create(:user, code: 'TS%0002', company: 'DEF')
             @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
             @user2.organization = organization
             @user2.save
@@ -738,12 +739,12 @@ describe DropboxImport do
 
         @organization = Organization.create(name: 'TEST', code: 'TS')
 
-        @collaborator = FactoryGirl.create(:prescriber)
+        @collaborator = FactoryBot.create(:prescriber)
         @collaborator.organization = @organization
         @collaborator.save
         @member = Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
-        @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
+        @user = FactoryBot.create(:user, code: 'TS%0001', company: 'ABC')
         @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
         @user.organization = @organization
         @user.save
@@ -751,7 +752,7 @@ describe DropboxImport do
         AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )')
         AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
 
-        @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
+        @user2 = FactoryBot.create(:user, code: 'TS%0002', company: 'DEF')
         @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
         @user2.organization = @organization
         @user2.save
@@ -867,7 +868,7 @@ describe DropboxImport do
 
             temp_pack = TempPack.where(name: 'TS%0002 AC 201502 all').first
             temp_document = temp_pack.temp_documents.first
-            fingerprint = `md5sum #{temp_document.content.path}`.split.first
+            fingerprint = `md5sum #{temp_document.cloud_content_object.path}`.split.first
             expect(temp_pack.temp_documents.count).to eq 1
             expect(temp_document.original_file_name).to eq '2pages.pdf'
             expect(fingerprint).to eq '97f90eac0d07fe5ade8f60a0fa54cdfc'
@@ -1248,7 +1249,7 @@ describe DropboxImport do
 
         context 'given TS%0003 is added' do
           before(:each) do
-            @user3 = FactoryGirl.create(:user, code: 'TS%0003', company: 'GHI')
+            @user3 = FactoryBot.create(:user, code: 'TS%0003', company: 'GHI')
             @user3.options = UserOptions.create(user_id: @user3.id, is_upload_authorized: true)
             @user3.organization = @organization
             @user3.save
@@ -1346,11 +1347,11 @@ describe DropboxImport do
 
         @organization = Organization.create(name: 'TEST', code: 'TS')
 
-        @contact = FactoryGirl.create(:guest, code: 'TS%SHR1')
+        @contact = FactoryBot.create(:guest, code: 'TS%SHR1')
         @contact.organization = @organization
         @contact.save
 
-        @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
+        @user = FactoryBot.create(:user, code: 'TS%0001', company: 'ABC')
         @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
         @user.organization = @organization
         @user.save
@@ -1358,7 +1359,7 @@ describe DropboxImport do
         AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )')
         AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
 
-        @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
+        @user2 = FactoryBot.create(:user, code: 'TS%0002', company: 'DEF')
         @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
         @user2.organization = @organization
         @user2.save

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ExactOnline < ActiveRecord::Base
+class ExactOnline < ApplicationRecord
   belongs_to :user
 
   attr_encrypted :client_id,       random_iv: true

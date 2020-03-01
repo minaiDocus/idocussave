@@ -119,6 +119,8 @@ CKEDITOR.editorConfig = function( config )
     { name: 'links', items: [ 'Link', 'Unlink'] }
   ];
 
+  config.toolbar = 'mini';
+
   config.toolbar_news = [
     { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
     { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
@@ -127,4 +129,6 @@ CKEDITOR.editorConfig = function( config )
     { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar' ] },
     { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] }
   ];
+
+  config.toolbar = 'news';
 };

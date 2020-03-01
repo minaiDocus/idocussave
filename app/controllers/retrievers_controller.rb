@@ -1,14 +1,15 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class RetrieversController < ApiController
-  before_filter :load_retriever, only: [:destroy, :trigger, :get_retriever_infos]
-  before_filter :authenticate_current_user, except: [:callback, :webauth_callback, :destroy, :trigger, :get_retriever_infos]
-  skip_before_filter :verify_authenticity_token
-  skip_before_filter :verify_rights
+  before_action :load_retriever, only: %i[destroy trigger get_retriever_infos]
+  before_action :authenticate_current_user, except: %i[callback webauth_callback destroy trigger get_retriever_infos]
+  skip_before_action :verify_authenticity_token
+  skip_before_action :verify_rights
 
   def callback
     authorization = request.headers['Authorization']
 
-    if authorization.present? && params['user']
+    if authorization.present? && params['user'] #callback for retrieved data
       access_token = authorization.split[1]
       account = BudgeaAccount.where(identifier: params['user']['id']).first
 
@@ -17,12 +18,31 @@ class RetrieversController < ApiController
         retrieved_data.user = account.user
         retrieved_data.json_content = params.except(:controller, :action)
         retrieved_data.save
-        render text: '', status: :ok
+        render plain: '', status: :ok
       else
-        render text: '', status: :unauthorized
+        render plain: '', status: :unauthorized
       end
-    else
-      render text: '', status: :unauthorized
+    else #callback for webauth
+      if params[:error_description].present? && params[:error_description] != 'None'
+        flash[:error] = params[:error_description].presence || 'Id connection not found'
+
+        redirect_to account_retrievers_path
+      elsif params[:id_connection]
+        local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
+        remote_params = { id: params[:id_connection], last_update: Time.now.to_s }
+
+        user = User.find local_params[:user_id]
+        if user
+          CreateBudgeaConnection.new(user, local_params, remote_params).execute
+          flash[:success] = 'Paramétrage effectué'
+        else
+          flash[:error] = 'Modification non autorisée'
+        end
+
+        redirect_to account_retrievers_path
+      else
+        render plain: '', status: :unauthorized
+      end
     end
   end
 
@@ -31,7 +51,7 @@ class RetrieversController < ApiController
       user = User.find params[:user_id]
 
       budgea_account = user.budgea_account
-      redirect_uri = retriever_webauth_callback_url
+      redirect_uri = retriever_callback_url
       base_uri = "https://#{Budgea.config.domain}/2.0"
       client_id = Budgea.config.client_id
 
@@ -45,32 +65,15 @@ class RetrieversController < ApiController
     end
   end
 
-  def webauth_callback
-    if params[:error_description] != 'None'
-      flash[:error] = params[:error_description].pesence
-    elsif params[:id_connection]
-      local_params = JSON.parse(Base64.decode64(params[:state])).with_indifferent_access
-      remote_params = { id: params[:id_connection], last_update: Time.now }
-
-      user = User.find local_params[:user_id]
-      if user
-        CreateBudgeaConnection.new(user, local_params, remote_params).execute
-        flash[:success] = 'Paramétrage effectué'
-      else
-        flash[:error] = 'Modification non autorisée'
-      end
-    end
-
-    redirect_to account_retrievers_path
-  end
-
   def get_retriever_infos
     user = @retriever.user
     bi_token = user.try(:budgea_account).try(:access_token)
 
     if params[:remote_method] == 'DELETE' && !@retriever.budgea_id.present?
       success = false
-      success = DestroyBudgeaConnection.execute(@retriever) if @retriever.destroy_connection
+      if @retriever.destroy_connection
+        success = DestroyBudgeaConnection.execute(@retriever)
+      end
       render json: { success: success, deleted: success, bi_token: bi_token, budgea_id: nil }, status: 200
     else
       render json: { success: true, bi_token: bi_token, budgea_id: @retriever.budgea_id }, status: 200
@@ -99,22 +102,24 @@ class RetrieversController < ApiController
   end
 
   def destroy
-    if params[:success] == "true" && @retriever.destroy_connection
+    if params[:success] == 'true' && @retriever.destroy_connection
       success = DestroyBudgeaConnection.execute(@retriever)
     else
       success = false
       @retriever.update(budgea_error_message: params[:error_message])
       @retriever.fail_budgea_connection
     end
-    render json: { success: success  }, status: 200
+    render json: { success: success }, status: 200
   end
 
   def trigger
     @current_user = @retriever.user
     @retriever.run
 
-    if @retriever.budgea_id && params[:success] == "true"
-      @retriever.sync_at = Time.parse params[:data_remote][:last_update] if params[:data_remote][:last_update].present?
+    if @retriever.budgea_id && params[:success] == 'true'
+      if params[:data_remote][:last_update].present?
+        @retriever.sync_at = Time.parse params[:data_remote][:last_update]
+      end
       @retriever.save
 
       if params[:data_remote][:additionnal_fields].present?
@@ -140,7 +145,7 @@ class RetrieversController < ApiController
   end
 
   def create_bank_accounts
-    if CreateBankAccount.execute(@current_user, (params[:accounts] || []), params[:options])
+    if CreateBankAccount.execute(@current_user, (params[:accounts].try(:to_unsafe_h) || []), params[:options])
       render json: { success: true }, status: 200
     else
       render json: { success: false, error_message: 'Impossible de synchroniser un compte bancaire' }, status: 200
@@ -151,7 +156,7 @@ class RetrieversController < ApiController
     if params[:data_local][:connector_id].present?
       banks = @current_user.retrievers.where(budgea_id: params[:data_local][:connector_id]).try(:first).try(:bank_accounts).try(:used)
     else
-      banks = @current_user.retrievers.linked.map{ |r| r.try(:bank_accounts).try(:used) }.compact.flatten
+      banks = @current_user.retrievers.linked.map { |r| r.try(:bank_accounts).try(:used) }.compact.flatten
     end
 
     if params[:data_local][:full_result].present? && params[:data_local][:full_result] == 'true'

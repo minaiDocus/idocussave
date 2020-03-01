@@ -47,7 +47,7 @@ private
   end
 
   def valid_extension?
-    File.extname(@document['url']) == '.pdf'
+    File.extname(@document['url'].to_s) == '.pdf'
   end
 
   def invalid?

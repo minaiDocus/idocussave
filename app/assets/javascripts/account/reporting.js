@@ -130,7 +130,7 @@ function render_data(period){
       dataType: "json",
       type: "GET",
       beforeSend: function(){
-        $("#periodModal .modal-body").html("<img src='/assets/application/spinner_gray_alpha.gif' alt='chargement...' style='position:relative;top:142px;left:468px;'/>");
+        $("#periodModal .modal-body").html("<img src='/assets/application/spinner_gray_alpha.gif' alt='chargement...' style='position:relative;left:468px;'/>");
       },
       success: function(data){
         $periodModal.find(".modal-body").html(tmpl("tmpl-period",data));
@@ -234,6 +234,7 @@ function showPeriodsInfo(value){
 $(document).ready(function(){
   max_period_y = $('.user').length;
 
+  $('.custom_popover').custom_popover();
   initDoShowInvoice();
 
   $("a.do-show").click(function(){

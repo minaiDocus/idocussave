@@ -3,9 +3,6 @@
 RefreshDashboardStatisticsWorker:
   queue: default
   cron: '*/5 * * * *'
-CreateInvoicePdfWorker:
-  queue: high
-  cron: '0 3 1 * *'
 InitializePeriodsWorker:
   queue: high
   cron: '0 3 1 * *'
@@ -39,54 +36,77 @@ NotifyPreAssignmentDeliveryFailureDailyWorker:
 NotifyPreAssignmentExportWorker:
   queue: default
   cron: '0 8 * * *'
-ClearCurrencyRateWorker:
-  queue: default
-  cron: '0 1 1 */6 *'
+
+#TO DO : Remove
+# ClearCurrencyRateWorker:
+#   queue: default
+#   cron: '0 1 1 */6 *'
 
 ## Budgea retrievers workers
 
 ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
-RemoveOldestRetrievedDataWorker:
-  queue: default
-  cron: '0 0 * * *'
+
+# TO DO : Remove
+# RemoveOldestRetrievedDataWorker:
+#   queue: default
+#   cron: '0 0 * * *'
+
 NotifyProcessedRequestsWorker:
   queue: default
   cron: '0 8 * * *'
-UpdateConnectorsListWorker:
-  queue: default
-  cron: '45 3 * * *'
+
+# UpdateConnectorsListWorker:
+#   queue: default
+#   cron: '45 3 * * *'
 
 ## Accounting flow workers
 
 FtpFetcherWorker:
   queue: default
   cron: '* * * * *'
+
 RetrieveEmailedDocumentWorker:
   queue: default
   cron: '* * * * *'
+
 ImportFromDropboxWorker:
   queue: file_import
   cron: '*/10 * * * * *'
+
 ImportFromAllFTPWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
+
 InitializeIbizaboxImportWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
 
 RetrieveOcrProcessedDocumentWorker:
-  queue: high
+  queue: default
   cron: '*/10 * * * * *'
 
-JobOrchestratorWorker:
+SendToGroupingWorker:
+  queue: default
+  cron: '*/2 * * * * *'
+
+GroupDocumentWorker:
+  queue: default
+  cron: '*/2 * * * * *'
+
+PublishDocumentWorker:
+  queue: high
+  cron: '*/2 * * * * *'
+
+ProcessRetrievedDataWorker:
   queue: high
   cron: '*/2 * * * * *'
 
 RetrievePreAssignmentsWorker:
-  queue: default
+  queue: high
   cron: '*/10 * * * * *'
+
 DeliverPreAssignmentsWorker:
   queue: default
   cron: '*/10 * * * * *'
@@ -94,6 +114,16 @@ DeliverPreAssignmentsWorker:
 McfProcessorWorker:
   queue: default
   cron: '0 */5 * * * *'
+
+JobProcessorWorker:
+  queue: high
+  cron: '0 */5 * * * *'
+
+## destroy some data
+DatabaseCleanerWorker:
+  queue: default
+  cron: '0 2 * * *'
+
 
 ## Delivery workers
 

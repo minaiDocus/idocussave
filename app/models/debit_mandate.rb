@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DebitMandate < ActiveRecord::Base
+class DebitMandate < ApplicationRecord
   audited
 
   belongs_to :organization

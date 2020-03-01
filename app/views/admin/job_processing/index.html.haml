@@ -1,0 +1,25 @@
+#job_processing
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Job processing
+        .float-right
+          %input#flag_temp_start_stop{ value: '0', type: 'hidden' }
+          %button.btn.btn-success#real_temp.font-weight-bold
+            Temps réel
+
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @jobs }
+        = render partial: 'real_time_event', locals: { collection: @jobs }
+
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @jobs }
+    = render partial: 'sidebar'

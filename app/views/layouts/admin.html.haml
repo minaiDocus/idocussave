@@ -3,14 +3,18 @@
   %head
     %title Idocus | BackOffice
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }/
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1"}/
+
     %link{ :rel => 'shortcut icon', :type => "image/ico", :href => image_path('favicon.ico') }
     = csrf_meta_tag
     = stylesheet_link_tag 'admin'
     = stylesheet_link_tag 'admin/subscriptions'
+    = stylesheet_link_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
     :plain
       <!--[if lt IE 9]>
         <script src="/assets/html5.js" type="text/javascript"></script>
       <![endif]-->
+    = javascript_include_tag Ckeditor.cdn_url
     = javascript_include_tag 'admin'
     = javascript_include_tag 'admin/admin' if controller_name == 'admin'
     = javascript_include_tag 'admin/user' if params[:controller] == 'admin/users'
@@ -19,20 +23,19 @@
     = javascript_include_tag 'admin/reporting' if controller_name == 'reporting'
     = javascript_include_tag 'admin/events' if controller_name == 'events'
     = javascript_include_tag 'admin/pre_assignment_blocked_duplicates' if controller_name == 'pre_assignment_blocked_duplicates'
-    = javascript_include_tag 'admin/news' if controller_name == 'news'
+    = javascript_include_tag 'admin/news' if controller_name == 'admin/news'
     = javascript_include_tag 'admin/subscriptions' if params[:controller] == 'admin/subscriptions'
     = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
+    = javascript_include_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
+    = javascript_include_tag 'admin/job_processing' if params[:controller] == 'admin/job_processing'
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          = render 'layouts/admin/navigation'
-    .container-fluid.wrapper.ad_dynamic_padding
+    = render 'layouts/admin/navigation'
+
+    .container-fluid.wrapper.mt-4.clearfix
       .content
-        .row-fluid
-          .span12
-            = render 'layouts/messages'
+        .row
+          = render 'layouts/messages'
         = yield
       .push
-    %footer.footer
+    %footer.fixed-bottom.footer.clearfix
       %p.copyright{ style: 'text-align:center;' } &copy; iDocus #{Time.now.year}

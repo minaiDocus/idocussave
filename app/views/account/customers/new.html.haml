@@ -1,8 +1,7 @@
 ﻿#customer
-  = render 'steps'
-  .row-fluid
-    .span12.box
+  .box
+    = render 'steps'
+  .card
+    .card-header
       %h3 Informations dossier
-  .row-fluid
-    .span12.box
-      = render partial: 'form'
+    = render partial: 'form'

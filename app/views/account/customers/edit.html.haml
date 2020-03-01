@@ -1,7 +1,7 @@
 #customer
-  .row-fluid
-    .span12.box
-      %h3 Edition du client : #{link_to @customer, account_organization_customer_path(@organization, @customer)}
-  .rwo-fluid
-    .span12.box
-      = render partial: 'form'
+  .card
+    .card-header
+      %h3
+        Edition du client : 
+        = link_to @customer, account_organization_customer_path(@organization, @customer), class: 'fs-origin'
+    = render partial: 'form'

@@ -106,7 +106,7 @@ jQuery ->
       });
   )
 
-  $('#slimpay_checkout').on('hidden', (e)->
+  $('#slimpay_checkout').on('hidden.bs.modal', (e)->
     id = $('#slimpay_checkout_form #organization_id').val();
     url = "/account/organizations/"+id+"/confirm_payment";
 
@@ -121,11 +121,11 @@ jQuery ->
 
           if data.success
             if data.debit_mandate['transactionStatus'] == 'success'
-              $('#payments td#debit_state').html('<span class="label label-success">OK</span>');
+              $('#payments td#debit_state').html('<span class="badge badge-success fs-origin">OK</span>');
             else if data.debit_mandate['transactionStatus'] == 'started'
-              $('#payments td#debit_state').html('<span class="label label-warning">En attente utilisateur ...</span>');
+              $('#payments td#debit_state').html('<span class="badge badge-warning fs-origin">En attente utilisateur ...</span>');
             else
-              $('#payments td#debit_state').html('<span class="label">Non configuré</span>');
+              $('#payments td#debit_state').html('<span class="badge badge-secondary fs-origin">Non configuré</span>');
               resetForm();
 
             $('#payments td#debit_bic').html(data.debit_mandate.bic);
@@ -133,6 +133,6 @@ jQuery ->
             $('#payments td#debit_email').html(data.debit_mandate.email);
         error: ()->
           $('#payments #payment_configuration_checker').addClass('hide');
-          $('#payments td#debit_state').html("<span class='label label-danger'>Une erreur inattendue s'est produite, Veuillez réessayer ultérieurement.</span>");
+          $('#payments td#debit_state').html("<span class='badge badge-danger fs-origin'>Une erreur inattendue s'est produite, Veuillez réessayer ultérieurement.</span>");
       });
   )

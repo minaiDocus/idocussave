@@ -3,6 +3,8 @@ class UpdateConnectorsListWorker
   sidekiq_options queue: :default
 
   def perform
-    UpdateConnectorsList.execute
+    UniqueJobs.for 'UpdateConnectorsList' do
+      UpdateConnectorsList.execute
+    end
   end
 end

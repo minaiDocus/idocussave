@@ -14,7 +14,7 @@ class Storage::Metafile
   end
 
   def path
-    @path ||= File.join(folder_path, name).to_s
+    @path ||= File.join(folder_path.to_s, name.to_s).to_s
   end
 
   def name

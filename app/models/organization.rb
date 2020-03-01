@@ -1,4 +1,4 @@
-class Organization < ActiveRecord::Base
+class Organization < ApplicationRecord
   validates :authd_prev_period, numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
@@ -7,7 +7,7 @@ class Organization < ActiveRecord::Base
   validates_presence_of   :name, :code
   validates_uniqueness_of :name, :code
 
-  belongs_to :organization_group
+  belongs_to :organization_group, optional: true
   has_many :members
   has_many :admin_members, -> { admins }, class_name: 'Member'
   has_many :admins, through: :admin_members, source: :user
@@ -123,15 +123,19 @@ class Organization < ActiveRecord::Base
     organizations = Organization.all
     organizations = organizations.where(is_active:    (contains[:is_active] == '1'))    unless contains[:is_active].blank?
     organizations = organizations.where(is_test:      (contains[:is_test] == '1'))      unless contains[:is_test].blank?
-    organizations = organizations.where(created_at:   contains[:created_at])            unless contains[:created_at].blank?
+
+    contains[:created_at].each { |compare,date| organizations = organizations.where("organizations.created_at #{compare} ? ", "#{date}")} unless contains[:created_at].blank?
+
     organizations = organizations.where(is_for_admin: (contains[:is_for_admin] == '1')) unless contains[:is_for_admin].blank?
     organizations = organizations.where(is_suspended: (contains[:is_suspended] == '1')) unless contains[:is_suspended].blank?
 
     if contains[:is_without_address].present?
+      org_ids = Address.where(is_for_billing: true, locatable_type: 'Organization').select('locatable_id').distinct
+
       if contains[:is_without_address] == '1'
-        organizations = organizations.where('addresses.is_for_billing' => { '$nin' => [true] })
+        organizations = organizations.where.not(id: org_ids)
       else
-        organizations = organizations.where('addresses.is_for_billing' => true)
+        organizations = organizations.where(id: org_ids)
       end
     end
 

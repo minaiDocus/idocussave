@@ -1,9 +1,10 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::PaymentsController < Account::AccountController
-  skip_before_filter :login_user!,               only: :debit_mandate_notify
-  skip_before_filter :load_user_and_role,        only: :debit_mandate_notify
-  skip_before_filter :verify_suspension,         only: :debit_mandate_notify
-  skip_before_filter :verify_authenticity_token, only: :debit_mandate_notify
+  skip_before_action :login_user!,               only: :debit_mandate_notify
+  skip_before_action :load_user_and_role,        only: :debit_mandate_notify
+  skip_before_action :verify_suspension,         only: :debit_mandate_notify
+  skip_before_action :verify_authenticity_token, only: :debit_mandate_notify
 
   # GET /account/payment/use_debit_mandate
   def use_debit_mandate
@@ -12,8 +13,8 @@ class Account::PaymentsController < Account::AccountController
 
   # POST /account/payment/debit_mandate_notify
   def debit_mandate_notify
-    #NOTE: slimpay notification doesn't work so we fetch the debit mandate infos after debit configuration
-    render text: 'OK'
+    # NOTE: slimpay notification doesn't work so we fetch the debit mandate infos after debit configuration
+    render plain: 'OK'
     # attributes = DebitMandateResponseService.new(params[:blob]).execute
 
     # if attributes.present?
@@ -26,12 +27,12 @@ class Account::PaymentsController < Account::AccountController
     #       debit_mandate.organization.update(is_suspended: false)
     #     end
 
-    #     render text: 'OK'
+    #     render plain: 'OK'
     #   else
-    #     render text: 'Erreur'
+    #     render plain: 'Erreur'
     #   end
     # else
-    #   render text: 'Erreur'
+    #   render plain: 'Erreur'
     # end
   end
 end

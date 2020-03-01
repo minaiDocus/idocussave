@@ -32,7 +32,7 @@ class DiscountBillingService
       discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{classic_quantity_of(:retriever)}" if unit_amount(:retriever) < 0
     end
 
-    discount_title << '-50 dossiers' if discount_title.empty?
+    discount_title << '- 75 dossiers' if discount_title.empty?
     "Remise sur CA (#{discount_title.join(', ')})"
   end
 
@@ -70,7 +70,7 @@ class DiscountBillingService
   end
 
   def apply_special_policy?
-    groups = extentis_group + ['GMBA']
+    groups = []
     groups.include? @organization.code
   end
 
@@ -120,18 +120,18 @@ class DiscountBillingService
       end
     else
       case quantity_of(option)
-        when (0..50)
+        when (0..75)
           {subscription: 0, retriever: 0}
-        when (51..100)
+        when (76..150)
           {subscription: -1, retriever: 0}
-        when (101..200)
+        when (151..250)
           {subscription: -1.5, retriever: -0.5}
-        when (201..350)
-          {subscription: -2, retriever: -1}
+        when (251..350)
+          {subscription: -2, retriever: -0.75}
         when (351..500)
-          {subscription: -3, retriever: -1.25}
+          {subscription: -3, retriever: -1}
         when (501..Float::INFINITY)
-          {subscription: -4, retriever: -1.5}
+          {subscription: -4, retriever: -1.25}
       end
     end
   end

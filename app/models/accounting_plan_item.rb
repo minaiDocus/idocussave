@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountingPlanItem < ActiveRecord::Base
+class AccountingPlanItem < ApplicationRecord
   attr_accessor :no_third_party_account
 
   validates_presence_of :third_party_name

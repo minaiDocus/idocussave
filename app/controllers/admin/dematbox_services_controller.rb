@@ -1,13 +1,12 @@
-# -*- encoding : UTF-8 -*-
-class Admin::DematboxServicesController < Admin::AdminController
-  before_filter :load_dematbox_service, only: 'destroy'
+# frozen_string_literal: true
 
+class Admin::DematboxServicesController < Admin::AdminController
+  before_action :load_dematbox_service, only: 'destroy'
 
   # GET /admin/dematbox_services
   def index
     @dematbox_services = DematboxService.order(type: :desc).order(name: :asc)
   end
-
 
   # POST /admin/dematbox_services/load_from_external
   def load_from_external
@@ -17,7 +16,6 @@ class Admin::DematboxServicesController < Admin::AdminController
 
     redirect_to admin_dematbox_services_path
   end
-
 
   # DELETE /admin/dematbox_services/:id
   def destroy

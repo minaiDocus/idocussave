@@ -2,10 +2,13 @@ class SendToGroupingWorker
   include Sidekiq::Worker
   sidekiq_options retry: false, unique: :until_and_while_executing
 
-  def perform(temp_document_id)
-    UniqueJobs.for "SendToGrouping-#{temp_document_id}", 1.day, 2 do
-      temp_document = TempDocument.find(temp_document_id)
-      AccountingWorkflow::SendToGrouping.new(temp_document).execute if temp_document.bundle_needed?
+  def perform
+    TempPack.bundle_processable.each do |temp_pack|
+      temp_pack.temp_documents.bundle_needed.by_position.each do |temp_document|
+        UniqueJobs.for "SendToGrouping-#{temp_document.id}" do
+          AccountingWorkflow::SendToGrouping.delay.process(temp_document.id)
+        end
+      end
     end
   end
 end

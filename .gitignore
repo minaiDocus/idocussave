@@ -1,3 +1,4 @@
+.DS_Store
 .rspec
 .idea/
 .envrc
@@ -5,6 +6,7 @@
 ./doc/
 log/
 tmp/
+keys/
 /data/
 /files/
 public/system
@@ -14,11 +16,10 @@ coverage/
 doc_data.txt
 .sass-cache
 db/schema.rb
+/storage/
 
 
-config/deploy/production.rb
 config/deploy/sandbox.rb
-config/deploy/staging.rb
 
 config/secrets.yml
 config/elastic_apm.yml
@@ -33,6 +34,11 @@ config/pdftk.yml
 config/smtp.yml
 config/budgea.yml
 config/fiduceo.yml
+config/storage.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
 config/symmetric-encryption.yml
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+config/storage.yml

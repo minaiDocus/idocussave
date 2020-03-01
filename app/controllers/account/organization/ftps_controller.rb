@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
 class Account::Organization::FtpsController < Account::OrganizationController
   before_action :verify_rights
   before_action :load_ftp
 
-  def edit
-  end
+  def edit; end
 
   def update
-    _params = ftp_params.delete_if { |k,_| k == 'password' }
+    _params = ftp_params.delete_if { |k, _| k == 'password' }
 
     is_connection_params_changed = false
     is_connection_params_changed = true if @ftp.host != _params[:host]
     is_connection_params_changed = true if @ftp.port != _params[:port].to_i
     is_connection_params_changed = true if @ftp.login != _params[:login]
-    is_connection_params_changed = true if @ftp.is_passive != (_params[:is_passive] == '1')
+    if @ftp.is_passive != (_params[:is_passive] == '1')
+      is_connection_params_changed = true
+    end
 
     if ftp_params[:password].present? || is_connection_params_changed
       @ftp.assign_attributes password: ftp_params[:password]

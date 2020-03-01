@@ -1,69 +1,90 @@
-.row-fluid
-  .span12.well.margin0bottom
-    %h3 Filtres
+.card.retractable-filter
+  = form_tag admin_new_provider_requests_path, method: :get do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+          .control-section  
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'new_provider_request_contains[created_at][>=]', (params[:new_provider_request_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'new_provider_request_contains[created_at][<=]', (params[:new_provider_request_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'new_provider_request_contains[updated_at][>=]', (params[:new_provider_request_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'new_provider_request_contains[updated_at][<=]', (params[:new_provider_request_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[user_code]', t('activerecord.models.user.name')
+          .control-section
+            = text_field_tag 'new_provider_request_contains[user_code]', (params[:new_provider_request_contains][:user_code] rescue ''), class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[state]', t('activerecord.models.new_provider_request.attributes.state')
+          .control-section
+            = select_tag 'new_provider_request_contains[state]', options_for_select(NewProviderRequest.state_machine. states.map { |e| [e.human_name, e.name] }, (params[:new_provider_request_contains][:state] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[name]', t('activerecord.models.new_provider_request.attributes.name')
+          .control-section
+            = text_field_tag 'new_provider_request_contains[name]', (params[:new_provider_request_contains][:name]  rescue ''), class: 'form-control'
 
-    %br
-    = form_tag admin_new_provider_requests_path, method: :get, class: 'form form-vertical margin0bottom' do
-      = hidden_field_tag :direction, sort_direction
-      = hidden_field_tag :sort, sort_column
-      = hidden_field_tag :per_page, per_page
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[is_notified]', t('activerecord.models.new_provider_request.attributes.is_notified')
+          .control-section
+            = select_tag 'new_provider_request_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:new_provider_request_contains][:is_notified] rescue '')), include_blank: true, class: 'form-control'
 
-      = label_tag 'new_provider_request_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'new_provider_request_contains[created_at][>=]', (params[:new_provider_request_contains][:created_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'new_provider_request_contains[created_at][<=]', (params[:new_provider_request_contains][:created_at]['<='] rescue '')
-
-      = label_tag 'new_provider_request_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'new_provider_request_contains[updated_at][>=]', (params[:new_provider_request_contains][:updated_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'new_provider_request_contains[updated_at][<=]', (params[:new_provider_request_contains][:updated_at]['<='] rescue '')
-
-      = label_tag 'new_provider_request_contains[user_code]', t('activerecord.models.user.name')
-      = text_field_tag 'new_provider_request_contains[user_code]', (params[:new_provider_request_contains][:user_code] rescue ''), class: 'span12'
-
-      = label_tag 'new_provider_request_contains[state]', t('activerecord.models.new_provider_request.attributes.state')
-      = select_tag 'new_provider_request_contains[state]', options_for_select(NewProviderRequest.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:new_provider_request_contains][:state] rescue '')), include_blank: true
-
-      = label_tag 'new_provider_request_contains[name]', t('activerecord.models.new_provider_request.attributes.name')
-      = text_field_tag 'new_provider_request_contains[name]', (params[:new_provider_request_contains][:name] rescue ''), class: 'span12'
-
-      = label_tag 'new_provider_request_contains[is_notified]', t('activerecord.models.new_provider_request.attributes.is_notified')
-      = select_tag 'new_provider_request_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:new_provider_request_contains][:is_notified] rescue '')), include_blank: true
-
-      = label_tag 'new_provider_request_contains[notified_at][>=]', t('activerecord.models.new_provider_request.attributes.notified_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'new_provider_request_contains[notified_at][>=]', (params[:new_provider_request_contains][:notified_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'new_provider_request_contains[notified_at][<=]', (params[:new_provider_request_contains][:notified_at]['<='] rescue '')
-
-      = label_tag 'new_provider_request_contains[processing_at][>=]', t('activerecord.models.new_provider_request.attributes.processing_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'new_provider_request_contains[processing_at][>=]', (params[:new_provider_request_contains][:processing_at]['>='] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'new_provider_request_contains[processing_at][<=]', (params[:new_provider_request_contains][:processing_at]['<='] rescue '')
-
-      %br
-      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-      = link_to t('filters.reset'), admin_new_provider_requests_path, class: 'btn'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[notified_at][>=]', t('activerecord.models.new_provider_request.attributes.notified_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'new_provider_request_contains[updated_at][>=]', (params[:new_provider_request_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'new_provider_request_contains[notified_at][<=]', (params[:new_provider_request_contains][:notified_at]['<='] rescue ''), class: 'form-control date datepicker'
+        .form-group
+          .label-section
+            = label_tag 'new_provider_request_contains[processing_at][>=]', t('activerecord.models.new_provider_request.attributes.processing_at')
+          .control-section
+            .input-group
+              .input-group-prepend
+                %span.input-group-text >=
+              = text_field_tag 'new_provider_request_contains[processing_at][>=]', (params[:new_provider_request_contains][:processing_at]['>='] rescue ''), class: 'form-control date datepicker'
+            &nbsp;
+            .input-group
+              .input-group-prepend
+                %span.input-group-text <=
+              = text_field_tag 'new_provider_request_contains[processing_at][<=]', (params[:new_provider_request_contains][:processing_at]['<='] rescue ''), class: 'form-control date datepicker'
+      .card-footer.clearfix
+        .form-actions.float-right
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_new_provider_requests_path, class: 'btn btn-light', title: t('filters.reset')

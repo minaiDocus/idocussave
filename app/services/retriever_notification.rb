@@ -156,7 +156,7 @@ class RetrieverNotification
     prescribers.each do |prescriber|
       notification = Notification.new
       notification.user        = prescriber
-      notification.url         = account_organization_customer_bank_accounts_url @retriever.user.organization, @retriever.user
+      notification.url         = account_bank_accounts_url @retriever.user
       notification.notice_type = 'retriever_no_bank_account_configured'
       notification.title       = 'Automate - En attente de configuration'
       notification.message     = "Aucun compte bancaire n'a été configuré pour l'automate #{name} du dossier #{user_info}."

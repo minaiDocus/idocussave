@@ -9,11 +9,6 @@
       color: #3E2F24
       font-size: 18px
       margin: 20px
-      animation: blinkingText 1s infinite
-      //Firefox 1+
-      -webkit-animation: blinkingText 1s infinite
-      //Safari 3-4
-      -moz-animation: blinkingText 1s infinite
     .chartContainer
       max-width: 563px !important
       max-height: 281px !important
@@ -35,41 +30,43 @@
         width: 125px
         margin-right: 10px
   .table
-    width: auto !important
-@keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
-
-//Firefox 1+
-@-webkit-keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
-
-//Safari 3-4
-@-moz-keyframes blinkingText
-  0%
-    color: #3E2F24
-  49%
-    color: transparent
-  50%
-    color: transparent
-  99%
-    color:transparent
-  100%
-    color: #3E2F24
+    width: 500px !important
+  .panel
+    .legends
+      ul
+        li
+          .with-default
+            background-color: #018CCF
+          .with-custom
+            background-color: #FF420E
+          .with-idocus
+            background-color: #3E2F24
+          .with-mobile
+            background-color: #FF420E
+          .with-ios
+            background-color: #F08A42
+          .with-android
+            background-color: #C0D838
+      .with-default, .with-custom, .with-idocus, .with-mobile, .with-ios, .with-android
+        padding: 1px 9px 2px;
+        border-radius: 9px;
+        margin-right: 10px;
+        font-size: 10.998px
+        font-weight: bold
+        line-height: 16px
+        color: white
+        vertical-align: baseline
+        white-space: nowrap
+        text-shadow: 0 -1px 0 rgba(0,0,0,0.25)
+        strong
+          font-size: 14px
+      .list-group-item
+        border: none
+      .liFloat
+        float: left
+        text-align: left
+        margin: 0px 10px        
+      .list-inline
+        display: inline-block
+  h1, h2, h3, h4, h5, h6
+    font-weight: bold

@@ -1,4 +1,4 @@
-class CurrencyRate < ActiveRecord::Base
+class CurrencyRate < ApplicationRecord
   validates_presence_of :exchange_from, :exchange_to, :exchange_rate, :date
 
   def create!(params)
@@ -41,10 +41,6 @@ class CurrencyRate < ActiveRecord::Base
      "BIF", "SOS", "HTG", "GNF", "MVR", "MNT", "CDF", "STD", "TJS", "KPW", "MMK", "LSL", "LRD", "KGS", "GIP",
      "XPT", "MDL", "CUP", "KHR", "MKD", "VUV", "MRO", "ANG", "SZL", "CVE", "SRD", "XPD", "SVC", "BSD", "XDR",
      "RWF", "AWG", "DJF", "BTN", "KMF", "WST", "SPL", "ERN", "FKP", "SHP", "JEP", "TMT", "TVD", "IMP", "GGP", "ZMW"]
-  end
-
-  def self.clear_all
-    connection.execute("TRUNCATE #{self.table_name}")
   end
 
   private

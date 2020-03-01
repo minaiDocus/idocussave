@@ -5,6 +5,8 @@ Idocus.vent = _.extend({}, Backbone.Events)
 Idocus.refreshRetrieversTimer = null
 
 jQuery ->
+  Idocus.retriever_contains_name  = ''
+  Idocus.retriever_contains_state = ''
   if $('#budgea_sync').length > 0
     router = new Idocus.Routers.BudgeaRetrieversRouter()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
@@ -42,29 +44,32 @@ jQuery ->
         $('.trigger_retriever_'+id).hide()
 
     load_retrievers_list = (url) ->
-      _url = ''
+      _url = ''           
       if url != undefined
-        _url = url
+        _url = url        
       else
-        direction = $('#direction').val() || ''
-        sort      = $('#sort').val()      || ''
-        per_page  = $('#per_page').val()  || ''
-        page      = $('#page').val()      || ''
+        direction = $('#direction').val() || 'desc'
+        sort      = $('#sort').val()      || 'created_at'
+        per_page  = $('#per_page').val()  || 20
+        page      = $('#page').val()      || 1
+        
         _url = 'retrievers?part=true'
         if direction != ''
           _url += '&direction=' + direction
         if sort != ''
           _url += '&sort=' + sort
         if per_page != ''
-          _url += '&per_page=' + per_page
+          _url += '&per_page=' + per_page          
         if page != ''
-          _url += '&page=' + page
-        if window.retriever_contains_name != ''
-          _url += '&retriever_contains[name]=' + window.retriever_contains_name
-        if window.retriever_contains_state != ''
-          _url += '&retriever_contains[state]=' + window.retriever_contains_state
+          _url += '&page=' + page        
+        if Idocus.retriever_contains_name != ''
+          _url += '&retriever_contains[name]=' + Idocus.retriever_contains_name
+        if Idocus.retriever_contains_state != ''
+          _url += '&retriever_contains[state]=' + Idocus.retriever_contains_state
+        
+      
       $.ajax
-        url: _url
+        url: _url        
         dataType: 'html'
         type: 'GET'
         success: (data) ->
@@ -78,10 +83,21 @@ jQuery ->
           $('[rel=popover]').popover()
           $('[rel=tooltip]').tooltip()
 
-          $('thead a, .list_options a').bind 'click', (e) ->
+          $('.list_options a').bind 'click', (e) ->
             e.preventDefault()
             url = $(this).attr('href')
-            load_retrievers_list(url)
+            $('#per_page').val($(this).text())
+            load_retrievers_list()          
+
+          $('thead a').bind 'click', (e) ->
+            e.preventDefault()
+            url = $(this).attr('href')
+            direction_sort = url.split('?')[1]
+            tmp_direction  = direction_sort.split('&')[0]
+            tmp_sort       = direction_sort.split('&')[1]           
+            $('#direction').val(tmp_direction.split('=')[1])
+            $('#sort').val(tmp_sort.split('=')[1])
+            load_retrievers_list()
 
           $('.destroy_retriever').bind 'click', (e)->
             e.preventDefault()
@@ -97,7 +113,7 @@ jQuery ->
               releaseRetrieversTimer(id)
               $('#delConfirm.modal .loading').removeClass('hide')
               $('#delConfirm.modal .buttonsAction').addClass('hide')
-              $('.state_field_'+id).html('<span class="label">Suppression en cours</span>')
+              $('.state_field_'+id).html('<span class="badge fs-origin badge-secondary">Suppression en cours</span>')
               budgeaApi.delete_connection(id).then(
                 ()->
                   fClose()
@@ -105,7 +121,7 @@ jQuery ->
                 ()->
                   fClose()
                   refreshRetrievers(id)
-                  $('.state_field_'+id).html('<span class="label label-important">Erreur de suppression</span>')
+                  $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur de suppression</span>')
               )
 
             $('#delConfirm.modal').modal('show')
@@ -126,7 +142,7 @@ jQuery ->
               releaseRetrieversTimer(id)
               $('#syncConfirm.modal .loading').removeClass('hide')
               $('#syncConfirm.modal .buttonsAction').addClass('hide')
-              $('.state_field_'+id).html('<span class="label fs-origin label-secondary">Synchronisation en cours</span>')
+              $('.state_field_'+id).html('<span class="badge fs-origin badge-secondary">Synchronisation en cours</span>')
               budgeaApi.trigger_connection(id).then(
                 ()->
                   fClose()
@@ -134,24 +150,16 @@ jQuery ->
                 ()->
                   fClose()
                   refreshRetrievers(id)
-                  $('.state_field_'+id).html('<span class="label label-important">Erreur de synchronisation</span>')
+                  $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur de synchronisation</span>')
               )
 
             $('#syncConfirm.modal').modal('show')
             $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
             $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
 
-    releaseRetrieversTimer()
-    window.retriever_contains_name = ''
-    window.retriever_contains_state = ''
+    releaseRetrieversTimer()    
     window.retrievers_url = 'retrievers?part=true'
     refreshRetrievers()
-
-    $('.retriever_search.form').on 'submit', (e) ->
-      window.retriever_contains_name = $('#retriever_contains_name').val()
-      window.retriever_contains_state = $('#retriever_contains_state').val()
-      e.preventDefault()
-      load_retrievers_list()
 
     $('.reset_filter').on 'click', (e) ->
       e.preventDefault()
@@ -161,19 +169,9 @@ jQuery ->
       $('#sort').val(null)
       $('#per_page').val(null)
       $('#page').val(null)
-      window.retriever_contains_name = ''
-      window.retriever_contains_state = ''
+      Idocus.retriever_contains_name = ''
+      Idocus.retriever_contains_state = ''
       load_retrievers_list()
-
-  if $('#retrievers .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
-    $('a.toggle_filter').click (e) ->
-      e.preventDefault()
-      if $('.filter').is(':visible')
-        $('.filter').slideUp('fast')
-        $(this).find('span').text('Afficher le filtre')
-      else
-        $('.filter').slideDown('fast')
-        $(this).find('span').text('Cacher le filtre')
 
   if $('#new_provider_requests_list').length > 0
     $('.show_provider_request').on 'click', (e)->
@@ -292,7 +290,7 @@ jQuery ->
         html += '<td>'+account.name+'</td>'
         html += '<td>'+account.number+'</td>'
         html += '</tr>'
-
+ 
       t_body.html(html)
 
     Idocus.budgeaApi.get_accounts_of(connector_id, true).then(
@@ -329,8 +327,16 @@ jQuery ->
   $('select#account_id').on 'change', (e)->
     $('#retrievers #account_id_form').submit()
 
-  $('#retrievers a.disabled').on 'click', (e)->
+  $('#retrievers a.disable').on 'click', (e)->
     $('#retrievers .hint_selection').remove()
     text = $(this).attr('title')
-    $('#retrievers #account_id_form #account_id_chosen').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
+    $('#retrievers #account_id_form').after("<span class='hint_selection alert alert-danger margin1left'>#{text}</span>")
     $('#retrievers .hint_selection').delay(2500).fadeOut('fast')
+
+  $(".retriever_search").on 'submit', (e) ->
+    return false
+
+  $('.retriever_filter').on 'click', (e) ->    
+    Idocus.retriever_contains_name  = $('#retriever_contains_name').val()
+    Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
+    load_retrievers_list()

@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'csv'
 require 'rails/all'
@@ -11,6 +11,8 @@ require 'prawn/measurement_extensions'
 module Idocus
   class Application < Rails::Application
     # load all files in lib directory
+
+    config.load_defaults 5.2
 
     # development files
     Dir.glob("#{Rails.root}/app/workers/*.{rb}").each { |file| require file }
@@ -82,12 +84,14 @@ module Idocus
       #{config.root}/app/workers
       #{config.root}/app/services
       #{config.root}/app/mailers
+      #{config.root}/app/models/ckeditor
     )
 
     config.eager_load_paths += %W(
       #{config.root}/app/workers
       #{config.root}/app/services
       #{config.root}/app/mailers
+      #{config.root}/app/models/ckeditor
     )
 
 
@@ -96,12 +100,13 @@ module Idocus
 
     ActionMailer::Base.default from: 'iDocus <notification@idocus.com>', reply_to: 'Support iDocus <support@idocus.com>'
 
-    config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
-    config.middleware.swap Rails::Rack::Logger, CustomLogger, alternative: ['/account/notifications/latest']
-
     Raven.configure do |config|
       config.dsn = 'https://8a88cb7b80654dc5bd2bc9bfd8b160a0:b79bb42c43bc4c918442ebd04f5f61b9@sentry.idocus.com/2'
       config.environments = ['sandbox', 'staging', 'production']
+    end
+
+    Bearer.init_config do |config|
+      config.secret_key = "sk_production_vTCclbqjXkL0UPtVvZujIFxj3N2uWX8v" if Rails.env.production?
     end
   end
 end

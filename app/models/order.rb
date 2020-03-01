@@ -1,15 +1,15 @@
 # -*- encoding : UTF-8 -*-
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord
   attr_accessor :address_required
   self.inheritance_column = :_type_disabled
 
-  has_one :address, as: :locatable
-  has_one :paper_return_address, as: :locatable, class_name: 'Address'
-  has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess'
+  has_one :address, as: :locatable, :dependent => :destroy
+  has_one :paper_return_address, as: :locatable, class_name: 'Address', :dependent => :destroy
+  has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess', :dependent => :destroy
 
-  belongs_to :user
-  belongs_to :period
-  belongs_to :organization
+  belongs_to :user, optional: true
+  belongs_to :period, optional: true
+  belongs_to :organization, optional: true
 
   validate :inclusion_of_paper_set_end_date,   if: proc { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date, if: proc { |o| o.paper_set? }
@@ -31,7 +31,7 @@ class Order < ActiveRecord::Base
   validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
 
 
-  accepts_nested_attributes_for :address, :paper_return_address
+  accepts_nested_attributes_for :address, :paper_return_address, allow_destroy: true
 
 
   scope :pending,    -> { where(state: 'pending') }
@@ -192,7 +192,8 @@ class Order < ActiveRecord::Base
   private
 
   def paper_set_starting_date
-    start_date = created_at.try(:to_date) || (Date.today.month < 12 ? Date.today : 1.month.from_now.to_date)
+    #Order paper set for the new year is only available from the 15th of december
+    start_date = (Date.today.day >= 15 && Date.today.month == 12) ? 1.month.from_now.to_date : Date.today
 
     case period_duration
     when 1

@@ -1,4 +1,5 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Documents::TagsController < Account::AccountController
   def update_multiple
     UpdateMultipleTags.execute(@user, params[:tags], params[:document_ids], params[:type])

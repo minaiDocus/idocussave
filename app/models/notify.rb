@@ -1,4 +1,4 @@
-class Notify < ActiveRecord::Base
+class Notify < ApplicationRecord
   belongs_to :user
   has_many :notifiables, dependent: :destroy
   has_many :notifiable_document_being_processed,         -> { document_being_processed },         class_name: 'Notifiable'

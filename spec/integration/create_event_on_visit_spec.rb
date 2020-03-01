@@ -21,7 +21,7 @@ describe 'Create event on visit' do
 
   context 'as an user' do
     it 'create page visit event on /account/documents' do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
       @user.organization = Organization.create(name: 'TEST', code: 'TS')
       @user.save
@@ -40,7 +40,7 @@ describe 'Create event on visit' do
 
   context 'as an admin' do
     it 'does not create page visit event on /account/documents' do
-      @user = FactoryGirl.create(:admin, code: 'TS%0001')
+      @user = FactoryBot.create(:admin, code: 'TS%0001')
       @user.organization = Organization.create(name: 'TEST', code: 'TS')
       @user.save
 

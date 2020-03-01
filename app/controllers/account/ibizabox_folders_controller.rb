@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class Account::IbizaboxFoldersController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_rights
-  before_filter :verify_if_customer_is_active
+  before_action :load_customer
+  before_action :verify_rights
+  before_action :verify_if_customer_is_active
 
   def update
     @folder = @customer.ibizabox_folders.find params[:id]
-    if (@folder.active? ? @folder.disable : @folder.enable)
+    if @folder.active? ? @folder.disable : @folder.enable
       flash[:success] = "#{@folder.active? ? 'Activé' : 'Désactivé'} avec succès"
     else
       flash[:error] = "#{@folder.active? ? 'Désactivation' : 'Activation'} échouée"
@@ -35,7 +37,7 @@ class Account::IbizaboxFoldersController < Account::OrganizationController
   end
 
   def verify_if_customer_is_active
-    if @customer && @customer.inactive?
+    if @customer&.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

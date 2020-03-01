@@ -6,11 +6,16 @@ show_event = (id) ->
     datatype: 'html',
     type: 'GET'
     success: (data) ->
-      $('#events .show').html(data)
+      $('#events .details.focusable').click()
+      $('#events .show').html(data)      
 
 jQuery ->
-  $('#events .list tbody td.do-show').on 'click', (e) ->
+  $('#events .focusable').on 'click', (e) ->
+    e.preventDefault()
+    $('#events .focused').removeClass('focused')
+    $(this).addClass('focused')
+
+  $('tbody tr td.do-show').on 'click', (e) ->
     e.preventDefault()
     $tr = $(this).parent('tr')
-    $tr.addClass('highlight').siblings().removeClass('highlight');
     show_event($tr.data('id'))

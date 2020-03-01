@@ -1,6 +1,7 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::SetupsController < Account::OrganizationController
-  before_filter :load_customer
+  before_action :load_customer
 
   ######### NE PAS TOUCHER / BOL DE SPAGHETTI / OU ALORS PASSER LA JOURNÉE A TESTER ##########
 
@@ -13,7 +14,6 @@ class Account::SetupsController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/setup/previous
   def previous
     if @customer.configured?
@@ -22,7 +22,6 @@ class Account::SetupsController < Account::OrganizationController
       previous_configuration_step
     end
   end
-
 
   # GET /account/organizations/:organization_id/customers/:customer_id/setup/resume
   def resume
@@ -48,51 +47,51 @@ class Account::SetupsController < Account::OrganizationController
                    'journals'
                  end
       elsif step == 'period_options'
-        if @customer.options.upload_authorized?
-          result = 'period_options'
-        elsif @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+        result = if @customer.options.upload_authorized?
+                   'period_options'
+                 elsif @customer.subscription.is_pre_assignment_active
+                   if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    elsif @customer.uses_csv_descriptor?
                      'use_csv_descriptor'
                    else
                      'accounting_plans'
-                   end
-        else
-          result = 'journals'
-        end
-      elsif step.in?(%w(ibiza use_csv_descriptor))
-        if @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+                            end
+                 else
+                   'journals'
+                 end
+      elsif step.in?(%w[ibiza use_csv_descriptor])
+        result = if @customer.subscription.is_pre_assignment_active
+                   if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    elsif @customer.uses_csv_descriptor?
                      'use_csv_descriptor'
                    else
                      'accounting_plans'
-                   end
-        else
-          result = 'journals'
-        end
+                            end
+                 else
+                   'journals'
+                 end
       elsif step == 'csv_descriptor'
-        if @customer.subscription.is_pre_assignment_active
-          result = if @customer.try(:softwares).try(:use_own_csv_descriptor_format)
+        result = if @customer.subscription.is_pre_assignment_active
+                   if @customer.try(:softwares).try(:use_own_csv_descriptor_format)
                      'csv_descriptor'
                    else
                      'use_csv_descriptor'
-                   end
-        else
-          result = 'journals'
-        end
-      elsif step.in?(%w(accounting_plans vat_accounts exercises))
-        if @customer.subscription.is_pre_assignment_active
-          result = if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+                            end
+                 else
+                   'journals'
+                 end
+      elsif step.in?(%w[accounting_plans vat_accounts exercises])
+        result = if @customer.subscription.is_pre_assignment_active
+                   if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                      'ibiza'
                    else
                      step
-                   end
-        else
-          result = 'journals'
-        end
+                            end
+                 else
+                   'journals'
+                 end
       elsif step == 'journals'
         result = 'journals'
       elsif step == 'order_paper_set'
@@ -129,7 +128,6 @@ class Account::SetupsController < Account::OrganizationController
       redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
-
 
   # GET /account/organizations/:organization_id/customers/:customer_id/setup/complete_later
   def complete_later

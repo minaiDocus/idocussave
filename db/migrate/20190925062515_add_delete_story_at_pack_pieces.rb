@@ -1,4 +1,4 @@
-class AddDeleteStoryAtPackPieces < ActiveRecord::Migration
+class AddDeleteStoryAtPackPieces < ActiveRecord::Migration[5.2]
   def change
   	add_column :pack_pieces, :delete_at, :datetime
     add_column :pack_pieces, :delete_by, :string

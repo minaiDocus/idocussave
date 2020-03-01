@@ -66,7 +66,9 @@ jQuery ->
 
   $("#user_notify_attributes_to_send_docs").change ->
     if !$(this).is(":checked")
-      result = confirm("En décochant cette case, vous demandez à ne plus recevoir de mails automatiques de relance pour l'envoi de vos documents papier à iDocus.\nAfin de bénéficier pleinement du service, nous vous conseillons de respecter les dates préconisées par votre cabinet.")
+      str_origin = "En décochant cette case, vous demandez à ne plus recevoir de mails automatiques de relance pour l'envoi de vos documents papier à iDocus.\nAfin de bénéficier pleinement du service, nous vous conseillons de respecter les dates préconisées par votre cabinet."
+      encode_utf8 = unescape( encodeURIComponent( str_origin ) )
+      result = confirm(encode_utf8)
       if result == false
         $(this).attr('checked', true)
 

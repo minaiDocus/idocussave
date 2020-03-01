@@ -1,24 +1,22 @@
-# -*- encoding : UTF-8 -*-
-class Account::JournalsController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index)
-  before_filter :verify_rights
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_journal, only: %w(edit update destroy edit_analytics update_analytics delete_analytics sync_analytics)
-  before_filter :verify_max_number, only: %w(new create select copy)
+# frozen_string_literal: true
 
+class Account::JournalsController < Account::OrganizationController
+  before_action :load_customer, except: %w[index]
+  before_action :verify_rights
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_journal, only: %w[edit update destroy edit_analytics update_analytics delete_analytics sync_analytics]
+  before_action :verify_max_number, only: %w[new create select copy]
 
   # GET /account/organizations/:organization_id/journals
   def index
     @journals = @organization.account_book_types.order(is_default: :desc, name: :asc)
   end
 
-
   # GET /account/organizations/:organization_id/journals/new
   def new
     @journal = AccountBookType.new
   end
-
 
   # POST /account/organizations/:organization_id/journals
   def create
@@ -46,7 +44,7 @@ class Account::JournalsController < Account::OrganizationController
       render :new
     end
   end
-  
+
   # GET /account/organizations/:organization_id/journals/edit_analytics
   def edit_analytics
     unless @customer
@@ -86,11 +84,8 @@ class Account::JournalsController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/journals/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
@@ -103,7 +98,9 @@ class Account::JournalsController < Account::OrganizationController
 
         EventCreateService.journal_update(@journal, @customer, changes, current_user, path: request.path, ip_address: request.remote_ip)
 
-        @customer.dematbox.subscribe if changes['name'].present? && @customer.dematbox.try(:is_configured)
+        if changes['name'].present? && @customer.dematbox.try(:is_configured)
+          @customer.dematbox.subscribe
+        end
 
         DropboxImport.changed(@customer)
 
@@ -115,7 +112,6 @@ class Account::JournalsController < Account::OrganizationController
       render :edit
     end
   end
-
 
   # DELETE /account/organizations/:organization_id/journals/:journal_id
   def destroy
@@ -141,14 +137,14 @@ class Account::JournalsController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/journals/:journal_id/select
   def select
     @journals = @organization.account_book_types.order(is_default: :desc).order(name: :asc)
 
-    @journals = @journals.not_compta_processable unless @customer.options.is_preassignment_authorized
+    unless @customer.options.is_preassignment_authorized
+      @journals = @journals.not_compta_processable
+    end
   end
-
 
   # GET /account/organizations/:organization_id/journals/:journal_id/copy
   def copy
@@ -162,15 +158,18 @@ class Account::JournalsController < Account::OrganizationController
 
     ids.each do |id|
       next if is_max_number_reached?
+
       journal = AccountBookType.find id
 
       next unless !journal.compta_processable? || is_preassignment_authorized?
+
       copy              = journal.dup
       copy.user         = @customer
       copy.organization = nil
       copy.is_default   = nil
 
       next unless copy.save
+
       copied_ids << id
 
       UpdateJournalRelationService.new(copy).execute
@@ -193,9 +192,7 @@ class Account::JournalsController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
   end
 
-
   private
-
 
   def verify_rights
     is_ok = false
@@ -210,40 +207,40 @@ class Account::JournalsController < Account::OrganizationController
     end
   end
 
-
   def verify_if_customer_is_active
-    if @customer && @customer.inactive?
+    if @customer&.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
   end
 
-
   def journal_params
-    attrs = [
-      :pseudonym,
-      :description,
-      :instructions,
-      :position,
-      :is_default
+    attrs = %i[
+      pseudonym
+      description
+      instructions
+      position
+      is_default
     ]
 
-    attrs << :name if @user.is_admin || Settings.first.is_journals_modification_authorized || !@customer || !@journal || @journal.is_open_for_modification?
+    if @user.is_admin || Settings.first.is_journals_modification_authorized || !@customer || !@journal || @journal.is_open_for_modification?
+      attrs << :name
+    end
 
     if is_preassignment_authorized?
-      attrs += [
-        :domain,
-        :entry_type,
-        :currency,
-        :account_type,
-        :meta_account_number,
-        :meta_charge_account,
-        :vat_account,
-        :vat_account_10,
-        :vat_account_8_5,
-        :vat_account_5_5,
-        :vat_account_2_1,
-        :anomaly_account
+      attrs += %i[
+        domain
+        entry_type
+        currency
+        account_type
+        meta_account_number
+        meta_charge_account
+        vat_account
+        vat_account_10
+        vat_account_8_5
+        vat_account_5_5
+        vat_account_2_1
+        anomaly_account
       ]
     end
 
@@ -251,7 +248,7 @@ class Account::JournalsController < Account::OrganizationController
 
     attributes = params.require(:account_book_type).permit(*attrs)
 
-    if (@journal && @journal.is_expense_categories_editable) || current_user.is_admin
+    if @journal&.is_expense_categories_editable || current_user.is_admin
       if params[:account_book_type][:expense_categories_attributes].present?
         attributes[:expense_categories_attributes] = params[:account_book_type][:expense_categories_attributes].permit!
       end
@@ -260,30 +257,25 @@ class Account::JournalsController < Account::OrganizationController
     attributes
   end
 
-
   def load_customer
     if params[:customer_id].present?
       @customer = customers.find params[:customer_id]
     end
   end
 
-
   def load_journal
     @journal = (@customer || @organization).account_book_types.find params[:id]
   end
-
 
   def is_max_number_reached?
     @customer.account_book_types.count >= @customer.options.max_number_of_journals
   end
   helper_method :is_max_number_reached?
 
-
   def is_preassignment_authorized?
     @customer.nil? || @customer.options.is_preassignment_authorized
   end
   helper_method :is_preassignment_authorized?
-
 
   def verify_max_number
     if @customer && is_max_number_reached?

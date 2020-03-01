@@ -13,33 +13,40 @@
 = hidden_field_tag :contact_first_name, @contact_first_name || nil
 
 #budgea_sync
-  #section1.row-fluid
-    .span6.box
-      %h4.aligncenter Connecteurs
-      %hr.margin0top.margin3bottom
-      #budgea_retrievers
-    #section11.span6.box
-      %h4.aligncenter Informations basiques & Authentification
-      %hr.margin0top.margin3bottom
-      #budgea_information_fields
-    #section12.span6.box{style: 'display:none'}
-      %h4.aligncenter Informations additionnelles
-      %hr.margin0top.margin3bottom
-      #budgea_additionnal_fields
-  #section2.row-fluid{style: 'display:none'}
-    .span12.box
-      %h4.aligncenter Séléction comptes bancaires
-      %hr.margin0top.margin3bottom
-      #budgea_bank_accounts
+  #section1.row
+    .col-md-6
+      .box
+        %h4.aligncenter Connecteurs
+        %hr.margin0top.margin3bottom
+        #budgea_retrievers
+    #section11.col-md-6
+      .box
+        %h4.aligncenter Informations basiques & Authentification
+        %hr.margin0top.margin3bottom
+        #budgea_information_fields
+    #section12.col-md-6{style: 'display:none'}
+      .box
+        %h4.aligncenter Informations additionnelles
+        %hr.margin0top.margin3bottom
+        #budgea_additionnal_fields
+  #section2.row{style: 'display:none'}
+    .col-md-12
+      .box
+        %h4.aligncenter Séléction comptes bancaires
+        %hr.margin0top.margin3bottom
+        #budgea_bank_accounts
 
 
   #showCguBI.modal.hide.fade{data: { backdrop: "static" } }
-    .modal-header
-      %h3 Condition générale d'utilisation
-    .modal-body
-      #terms
-      #controls.form-actions
-        .pull-right
-          .feedback.pull-left
-          =button_tag "J'accepte les conditions générales d'utilisation et j’accepte la transmission de mes transactions à Idocus", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn'
-          %a{href: account_retrievers_path, id: 'cgu_bi_exit', class: 'btn-danger btn', style: 'margin-left: 10px'} Sortir
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Condition générale d'utilisation
+        .modal-body
+          #terms
+        .modal-footer
+          #controls.form-actions.clearfix
+            .float-right
+              .feedback.float-left
+              =button_tag "J'accepte les conditions générales d'utilisation et j’accepte la transmission de mes transactions à Idocus", type: 'button', id: 'cgu_bi_validate', class: 'btn-primary btn'
+              %a{href: account_retrievers_path, id: 'cgu_bi_exit', class: 'btn-danger btn', style: 'margin-left: 10px'} Sortir

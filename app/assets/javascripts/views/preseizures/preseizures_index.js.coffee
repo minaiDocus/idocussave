@@ -19,7 +19,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
 
   render: ->
     @$el.html(@template(@collection))
-    @$el.children('ul').prepend('<div class="feedback pull-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
+    @$el.children('ul').prepend('<div class="feedback float-left active" id="loading"><span class="out">Chargement en cours ...</span></div>')
     this
 
   setPreseizures: ->

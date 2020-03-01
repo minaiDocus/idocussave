@@ -3,7 +3,7 @@ class DematboxNotifyUploaded
     temp_document = TempDocument.find(temp_document_id)
 
     if temp_document.dematbox_box_id && temp_document.dematbox_doc_id
-      pages_number = DocumentTools.pages_number(temp_document.content.path)
+      pages_number = DocumentTools.pages_number(temp_document.cloud_content_object.path)
       message = 'Envoi OK : %02d p.' % pages_number
 
       begin

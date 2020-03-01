@@ -1,20 +1,17 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::AccountingPlansController < Account::OrganizationController
-  before_filter :load_customer
-  before_filter :verify_rights
-  before_filter :verify_if_customer_is_active
-  before_filter :redirect_to_current_step
-  before_filter :load_accounting_plan
+  before_action :load_customer
+  before_action :verify_rights
+  before_action :verify_if_customer_is_active
+  before_action :redirect_to_current_step
+  before_action :load_accounting_plan
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
-  def show
-  end
-
+  def show; end
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/edit
-  def edit
-  end
-
+  def edit; end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/:id
   def update
@@ -27,7 +24,6 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
-
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import_model
   def import_model
     data = "NOM_TIERS;COMPTE_TIERS;COMPTE_CONTREPARTIE;CODE_TVA\n"
@@ -35,19 +31,23 @@ class Account::AccountingPlansController < Account::OrganizationController
     send_data(data, type: 'plain/text', filename: "modèle d'import.csv")
   end
 
-
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import
   def import
+    is_coala = false
     if params[:providers_file]
       file = params[:providers_file]
       type = 'providers'
     elsif params[:customers_file]
       file = params[:customers_file]
       type = 'customers'
+    elsif params[:fec_file]
+      file = params[:fec_file]
+      type = 'fec'
+      is_coala = true if params[:is_coala].present?
     end
 
     if file
-      if @accounting_plan.import(file, type)
+      if @accounting_plan.import(file, type, is_coala)
         flash[:success] = 'Importé avec succès.'
       else
         flash[:error] = 'Fichier non valide.'
@@ -59,7 +59,6 @@ class Account::AccountingPlansController < Account::OrganizationController
     redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
 
-
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_providers
   def destroy_providers
     @accounting_plan.providers.clear
@@ -70,7 +69,6 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
-
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_customers
   def destroy_customers
@@ -89,7 +87,6 @@ class Account::AccountingPlansController < Account::OrganizationController
     @customer = customers.find params[:customer_id]
   end
 
-
   def verify_if_customer_is_active
     if @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
@@ -98,11 +95,9 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
-
   def load_accounting_plan
     @accounting_plan = @customer.accounting_plan
   end
-
 
   def verify_rights
     unless (@user.leader? || @user.manage_customers) && !@customer.uses_api_softwares?
@@ -110,7 +105,6 @@ class Account::AccountingPlansController < Account::OrganizationController
       redirect_to account_organization_path(@organization)
     end
   end
-
 
   def accounting_plan_params
     attributes = {}

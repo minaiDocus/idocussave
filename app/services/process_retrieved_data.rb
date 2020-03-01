@@ -1,5 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class ProcessRetrievedData
+
+  def self.process(retrieved_data_id)
+    UniqueJobs.for "ProcessRetrievedData-#{retrieved_data_id}" do
+      retrieved_data = RetrievedData.find retrieved_data_id
+      ProcessRetrievedData.new(retrieved_data).execute if retrieved_data.not_processed?
+    end
+  end
+
   def initialize(retrieved_data, run_until=nil)
     @retrieved_data = retrieved_data
     @run_until      = run_until
@@ -9,8 +17,11 @@ class ProcessRetrievedData
     logger.info "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start"
     start_time = Time.now
     user = @retrieved_data.user
-    connections = @retrieved_data.json_content['connections']
-    if connections.present?
+    json_content = @retrieved_data.json_content
+
+    if json_content.present? && json_content[:success]
+      connections = json_content[:content]['connections']
+
       connections.each do |connection|
         unless connection['id'].in?(@retrieved_data.processed_connection_ids)
           is_connection_ok = true
@@ -36,6 +47,7 @@ class ProcessRetrievedData
                   else
                     bank_account.retriever         = retriever
                     bank_account.api_id            = account['id']
+                    bank_account.number            = account['number']
                     bank_account.api_name          = 'budgea'
                     bank_account.name              = account['name']
                     bank_account.type_name         = account['type']
@@ -224,7 +236,12 @@ class ProcessRetrievedData
 
     logger.info "[#{user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
 
-    if @retrieved_data.error?
+    if (!json_content[:success] && json_content[:content] != 'File not found') || @retrieved_data.error?
+      if !json_content[:success]
+        @retrieved_data.update(error_message: json_content[:content].to_s)
+        @retrieved_data.reload
+      end
+
       addresses = Array(Settings.first.try(:notify_errors_to))
       if addresses.size > 0
         NotificationMailer.notify(
@@ -234,7 +251,7 @@ class ProcessRetrievedData
       end
       @retrieved_data.error_message
     else
-      @retrieved_data.processed
+      @retrieved_data.processed if json_content[:success] || !@retrieved_data.cloud_content.attached?
     end
   end
 

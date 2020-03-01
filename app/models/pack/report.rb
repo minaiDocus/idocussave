@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pack::Report < ActiveRecord::Base
+class Pack::Report < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
   has_many   :expenses,     class_name: 'Pack::Report::Expense',    inverse_of: :report, dependent: :destroy
@@ -10,8 +10,8 @@ class Pack::Report < ActiveRecord::Base
 
 
   belongs_to :user
-  belongs_to :pack
-  belongs_to :document, class_name: 'PeriodDocument',           inverse_of: :report, foreign_key: :document_id
+  belongs_to :pack, optional: true
+  belongs_to :document, class_name: 'PeriodDocument', inverse_of: :report, foreign_key: :document_id, optional: true
   belongs_to :organization
 
   scope :delivered,                 -> { where.not(is_delivered_to: [nil, '']) }

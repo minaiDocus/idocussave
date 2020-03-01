@@ -1,10 +1,12 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::NewProviderRequestsController < Account::Organization::RetrieverController
-  before_filter :load_new_provider_request, only: %w(edit update)
-  before_filter :verify_if_modifiable
+  before_action :load_new_provider_request, only: %w[edit update]
+  before_action :verify_if_modifiable
+  before_action :redirect_to_new_page
 
   def index
-    @new_provider_requests =  @customer.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @new_provider_requests = @customer.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def new
@@ -22,8 +24,7 @@ class Account::Organization::NewProviderRequestsController < Account::Organizati
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     @new_provider_request.edited_by_customer = true
@@ -35,14 +36,14 @@ class Account::Organization::NewProviderRequestsController < Account::Organizati
     end
   end
 
-private
+  private
 
   def load_new_provider_request
     @new_provider_request = @customer.new_provider_requests.find(params[:id])
   end
 
   def verify_if_modifiable
-    if action_name.in?(%w(edit update)) && !@new_provider_request.pending?
+    if action_name.in?(%w[edit update]) && !@new_provider_request.pending?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end
@@ -62,4 +63,7 @@ private
   end
   helper_method :sort_direction
 
+  def redirect_to_new_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
+  end
 end

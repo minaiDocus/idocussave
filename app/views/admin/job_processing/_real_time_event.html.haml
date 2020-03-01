@@ -1,0 +1,28 @@
+%table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+  %thead
+    %tr.bg-brown.text-white
+      %th N°
+      %th.text-center=sortable :name,"Nom de l'unique Job"
+      %th.text-center=sortable :started_at, "Date début"
+      %th.text-center=sortable :finished_at, "Date fin"
+      %th.text-center=sortable :state, "Etat"
+      %th.text-center Erreur
+      %th.text-center Process
+      - if 0 == 1
+        %th.text-center Action
+  %tbody
+    - @jobs.each do |job|
+      %tr{id:"tr_#{job.id}"}
+        %td= job.id
+        %td= job.name
+        %td= job.started_at.try(:to_formatted_s, :db)
+        %td= job.finished_at.try(:to_formatted_s, :db)
+        %td= job.state
+        %td= job.notifications
+        %td.text-center
+          = processing_of job
+        - if 0 == 1
+          %td.text-center
+            - if !job.finished_at.presence
+              %span.kill_action{id: "#{job.id}", title: "Arrêter le process", style: "cursor:pointer;"}
+                = glyphicon('x', { color: 'red' })

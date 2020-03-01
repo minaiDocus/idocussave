@@ -8,7 +8,7 @@ class CreateBudgeaConnection
   def execute
     retriever = @user.retrievers.where(budgea_id: @budgea_response[:id]).first || Retriever.new
     retriever.user = @user
-    retriever.sync_at   = Time.parse @budgea_response[:last_update] if @budgea_response[:last_update].present?
+    retriever.sync_at   = Time.parse @budgea_response[:last_update].to_s if @budgea_response[:last_update].present?
     retriever.assign_attributes parse_parameters
 
     if retriever.save

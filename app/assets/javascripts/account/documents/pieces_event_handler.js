@@ -17,8 +17,8 @@ var initEventOnPiecesRefresh = function(){
     $("#show_pages li.pages").each(function(index,li){
       if (!$(li).hasClass("selected")) {
         $(li).addClass("selected");             
-        $(this).find('a.do-selectPage i').addClass('icon-ban-circle');
-        $(this).find('a.do-selectPage i').removeClass('icon-ok');                 
+        $(this).find('.do-selectPage-check-icon').addClass('hide');
+        $(this).find('.do-selectPage-ban-icon').removeClass('hide');
         addPage($(li));        
       }
     });
@@ -27,7 +27,7 @@ var initEventOnPiecesRefresh = function(){
       $('.composer').show();
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .tip_edit_multiple").css({'border' : '2px solid #b1d837', 'padding' : '4px 2px 6px 6px', 'border-radius' : '3px'});
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").addClass('border_piece_action');
   });
 
   $(".do-unselectAllPages").unbind('click');
@@ -35,22 +35,23 @@ var initEventOnPiecesRefresh = function(){
     e.preventDefault();
     $("#show_pages li.pages").removeClass("selected");
     $("#show_pages li.pages").each(function(index,li){
-      $(this).find('a.do-selectPage i').removeClass('icon-ban-circle');
-      $(this).find('a.do-selectPage i').addClass('icon-ok');        
+      $(this).find('.do-selectPage-check-icon').removeClass('hide');
+      $(this).find('.do-selectPage-ban-icon').addClass('hide');
       removePage($(li));
     });
     window.preseizuresSelected = [];
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").css({'border' : 'none', 'padding' : '0', 'border-radius' : '0'});
+    $(".delete_piece_composition, .piece_tag, .composer, .do-deliverAllPreseizure").removeClass('border_piece_action');
+    $(".do-exportSelectedPreseizures, .do-deliverAllPreseizure, .tip_edit_multiple, .do-exportSelectedPreseizures").removeClass('border_action_preseizure');
     $(".content_preseizure, .tab").removeClass('preseizure_selected active');
     $('input[type="checkbox"').prop('checked',false);
     $(".tip_edit_multiple").addClass('hide');
-
   });  
 
   $("a.do-nextPage").unbind('click');
   $("a.do-nextPage").click(function(e){
     e.preventDefault();
+    e.stopPropagation();
     var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.next().children(".do-showPage");
@@ -61,6 +62,7 @@ var initEventOnPiecesRefresh = function(){
   $("a.do-prevPage").unbind('click');
   $("a.do-prevPage").click(function(e){
     e.preventDefault();
+    e.stopPropagation();
     var id = $("#PdfViewerDialog .showPage").val();
     var li = $("#document_"+id);
     var link = li.prev().children(".do-showPage")
@@ -94,6 +96,7 @@ var initEventOnPiecesRefresh = function(){
       $("#span"+_id).addClass("preseizure_selected");
       $("#div"+_id).addClass("preseizure_selected active");
     }           
+
     handlePreseizureSelection(_id);
     togglePreseizureAction();
   });
@@ -104,6 +107,74 @@ var initEventOnPiecesRefresh = function(){
 
     $("#PdfViewerDialog").modal('show');
     $("#PdfViewerDialog .modal-body .view-content").html(data_content);    
+  });
+
+  $(".content-list-pieces-deleted li").unbind('click');
+  $(".content-list-pieces-deleted li").click(function(e){
+    var id           = $(this).attr("id");
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $(this).prev().attr('data-content') || '';
+    var next         = $(this).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    ShowPdfView(data_content);
+  });
+
+  $("#PdfViewerDialog .previous").unbind('click');
+  $("#PdfViewerDialog .previous").click(function(e){
+    var id_tmp = $('#piece_deleted').val();
+    var id = $('.content-list-pieces-deleted li#'+id_tmp).prev().attr('id');
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $('.content-list-pieces-deleted li#'+id).prev().attr('data-content') || '';
+    var next         = $('.content-list-pieces-deleted li#'+id).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    if ($(this).attr("data-content") != "")
+    {
+      ShowPdfView(data_content,'process');
+    }
+  });
+
+  $("#PdfViewerDialog .next").unbind('click');
+  $("#PdfViewerDialog .next").click(function(e){
+    var id_tmp = $('#piece_deleted').val();
+    var id = $('.content-list-pieces-deleted li#'+id_tmp).next().attr('id');
+    var piece_deleted_selection = $(".piece_deleted_selection");
+    var prev         = $('.content-list-pieces-deleted li#'+id).prev().attr('data-content') || '';
+    var next         = $('.content-list-pieces-deleted li#'+id).next().attr('data-content') || '';
+
+    piece_deleted_selection.find('.previous').attr('data-content', prev);
+    piece_deleted_selection.find('.next').attr('data-content', next);
+
+    var data_content = piece_deleted_selection.html() +'<input id="piece_deleted" type="hidden" value='+ id + '>' + $(this).attr("data-content");
+    if ($(this).attr("data-content") != "")
+    {
+      ShowPdfView(data_content,'process');
+    }
+  });
+
+  $("#PdfViewerDialog .restore").unbind('click');
+  $("#PdfViewerDialog .restore").click(function(e){
+    if (confirm("Voulez-vous vraiment restaurer cette pièce ?"))
+    {
+      var piece_id = $('#piece_deleted').val();
+      $.ajax({
+      url: "/account/documents/restore_piece",
+      data: { piece_id:piece_id },
+      dataType: "json",
+      type: "POST",
+      success: function(data){
+        $("#PdfViewerDialog").modal('hide');
+        $(".pack.shared.activated a.do-show-pack").click();
+      }
+    });
+    }
   });
 
 }
@@ -134,7 +205,7 @@ var initEventOnPiecesSelection = function(){
       },
       error: function(data){
         logAfterAction();
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été informé.</span></div></div>");
+        $(".alerts").html("<div class='row'><div class='col-md-12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été informé.</span></div></div>");
       }
     });
   });
@@ -144,12 +215,12 @@ $('#file_account_book_type').val($('#h_file_account_book_type').val());
 $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
 
 var lock_or_unlock_file_upload_params_interval = null;
-$('#uploadDialog').on('show', function() {
+$('#uploadDialog').on('show.bs.modal', function() {
   window.analytic_target_form = '#fileupload'
   lock_or_unlock_file_upload_params_interval = setInterval(lock_or_unlock_file_upload_params, 500);
 });
 
-$('#uploadDialog').on('shown', function() {
+$('#uploadDialog').on('shown.bs.modal', function() {
   var ready = false
 
   if( $('#h_file_code').val() != '' && ( $('#fileupload').data('params') == 'undefined' || jQuery.isEmptyObject($('#fileupload').data('params')) ) ) {
@@ -171,7 +242,7 @@ $('#uploadDialog').on('hide', function() {
   clearInterval(lock_or_unlock_file_upload_params_interval);
 });
 
-$('#comptaAnalysisEdition').on('show', function() {
+$('#comptaAnalysisEdition').on('show.bs.modal', function() {
   if(window.analytic_target_form != '#fileupload')
   {
     $('#analysis_validate').removeClass('hide');
@@ -201,7 +272,7 @@ $('#analysis_validate').on('click', function(){
 
   if (document_ids.length <= 0)
   {
-    $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+    $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
   }
   else 
   {
@@ -227,7 +298,7 @@ $('#analysis_validate').on('click', function(){
         }
 
         if(data.error_message.length > 0) {
-          full_message += "<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>" + data.error_message + "</span></div>";
+          full_message += "<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>" + data.error_message + "</span></div>";
         } else {
           setTimeout(function(){ $('#comptaAnalysisEdition').modal('hide') }, 2000)
         }
@@ -237,13 +308,13 @@ $('#analysis_validate').on('click', function(){
       error: function(data){
         logAfterAction();
         $('#comptaAnalysisEdition .analytic_validation_loading').addClass('hide');
-        $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div>");
+        $("#comptaAnalysisEdition .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div>");
       }
     });
   }
 });
 
-$("#compositionDialog").on("hidden",function() {
+$("#compositionDialog").on("hidden.bs.modal",function() {
   $("#compositionDialog .length_alert").html("");
   $("#compositionDialog .names_alert").html("");
   $("#composition_name").val("");
@@ -261,9 +332,9 @@ $("#compositionButton").click(function() {
   var $composition_name = $("#composition_name");
 
   if (document_ids.length <= 0)
-    $("#compositionDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+    $("#compositionDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
   if ($composition_name.val().length <= 0)
-    $("#compositionDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer le nom de la composition.</span></div>");
+    $("#compositionDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer le nom de la composition.</span></div>");
 
   if (document_ids.length > 0 && $composition_name.val().length > 0) {
     var hsh = {"composition[document_ids]": document_ids, "composition[name]": $composition_name.val()};

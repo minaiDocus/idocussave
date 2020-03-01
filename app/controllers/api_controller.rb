@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class ApiController < ApplicationController
-  before_filter :authenticate_current_user
-  before_filter :verify_rights
+  before_action :authenticate_current_user
+  before_action :verify_rights
 
   attr_reader :current_user
 
@@ -51,7 +53,7 @@ class ApiController < ApplicationController
         format.xml  { render xml:  '<message>Invalid API Token</message>', status: 401 }
         format.json { render json: { message: 'Invalid API Token' }, status: 401 }
       end
-      return
+      nil
     end
   end
 
@@ -70,19 +72,15 @@ class ApiController < ApplicationController
   end
 
   def catch_error
-    begin
-      yield
-    rescue ActionController::UnknownController,
-           ActionController::RoutingError,
-           AbstractController::ActionNotFound,
-           ActiveRecord::RecordNotFound
-      respond_with_not_found
-    rescue => e
-      Airbrake.notify(e, airbrake_request_data)
-      respond_to do |format|
-        format.xml  { render xml:  "<message>Internal Error</message>", status: 500 }
-        format.json { render json: { message: "Internal Error" },       status: 500 }
-      end
+    yield
+  rescue ActionController::RoutingError,
+         AbstractController::ActionNotFound,
+         ActiveRecord::RecordNotFound
+    respond_with_not_found
+  rescue StandardError => e
+    respond_to do |format|
+      format.xml  { render xml:  '<message>Internal Error</message>', status: 500 }
+      format.json { render json: { message: 'Internal Error' },       status: 500 }
     end
   end
 

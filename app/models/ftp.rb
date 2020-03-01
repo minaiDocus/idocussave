@@ -1,6 +1,6 @@
-class Ftp < ActiveRecord::Base
-  belongs_to :organization
-  belongs_to :external_file_storage
+class Ftp < ApplicationRecord
+  belongs_to :organization, optional: true
+  belongs_to :external_file_storage, optional: true
 
   attr_encrypted :host,     random_iv: true
   attr_encrypted :port,     random_iv: true, type: :integer
@@ -65,6 +65,15 @@ class Ftp < ActiveRecord::Base
 
   def domain
     host.sub /\Aftp:\/\//, ''
+  end
+
+  def got_error(message, deactivate=false)
+   update({ error_message: message, error_fetched_at: Time.now })
+
+    if deactivate
+      self.is_configured = false
+      save
+    end
   end
 
   private

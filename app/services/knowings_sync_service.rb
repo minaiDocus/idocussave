@@ -33,7 +33,7 @@ class KnowingsSyncService
 
         log.info { "#{info} upload failed : [#{e.class}] #{e.message}" }
 
-        if tries < 3
+        if tries < 2
           retry
         else
           log.info { "#{number} retrying later" }

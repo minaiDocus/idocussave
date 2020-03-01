@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Ibiza < ActiveRecord::Base
+class Ibiza < ApplicationRecord
   audited
 
   serialize :description, Hash
@@ -16,7 +16,6 @@ class Ibiza < ActiveRecord::Base
 
 
   before_save :update_states
-
 
   def configured?
     state == 'valid' || state_2 == 'valid'

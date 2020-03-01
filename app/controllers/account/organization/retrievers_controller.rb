@@ -1,16 +1,19 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Account::Organization::RetrieversController < Account::Organization::RetrieverController
-  before_filter :load_retriever, except: %w(index list new create)
-  before_filter :verify_rights, except: %w(index list new create)
-  before_filter :load_connectors, only: %w(list new create edit update)
+  before_action :redirect_to_new_page
+  before_action :load_retriever, except: %w[index list new create]
+  before_action :verify_rights, except: %w[index list new create]
+  before_action :load_connectors, only: %w[list new create edit update]
 
   def index
     @retrievers = Retriever.search_for_collection(@customer.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    render partial: 'account/retrievers/retrievers', locals: { scope: :collaborator } if params[:part].present?
+    if params[:part].present?
+      render partial: 'account/retrievers/retrievers', locals: { scope: :collaborator }
+    end
   end
 
-  def list
-  end
+  def list; end
 
   def new
     @retriever = Retriever.new
@@ -30,48 +33,22 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if UpdateRetriever.new(@retriever, retriever_params).execute
-      if @retriever.configuring?
-        flash[:success] = 'Configuration en cours.'
-      else
-        flash[:success] = 'Modifié avec succès.'
-      end
+      flash[:success] = if @retriever.configuring?
+                          'Configuration en cours.'
+                        else
+                          'Modifié avec succès.'
+                        end
       redirect_to account_organization_customer_retrievers_path(@organization, @customer)
     else
       render :edit
     end
   end
 
-  def destroy
-    if @retriever.unavailable?
-      if @retriever.bank_accounts.any?
-        Operation.where(bank_account_id: @retriever.bank_accounts.map(&:id)).update_all(api_id: nil)
-        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id))
-      end
-      @retriever.destroy
-      flash[:success] = 'Supprimé avec succès.'
-    else
-      if @retriever.destroy_connection
-        flash[:success] = 'Suppression en cours.'
-      else
-        flash[:error] = 'Impossible de supprimer.'
-      end
-    end
-    redirect_to account_organization_customer_retrievers_path(@organization, @customer)
-  end
-
-  def run
-    @retriever.run
-    flash[:success] = 'Traitement en cours...'
-    redirect_to account_organization_customer_retrievers_path(@organization, @customer)
-  end
-
-  def waiting_additionnal_info
-  end
+  def waiting_additionnal_info; end
 
   def additionnal_info
     if @retriever.update(answers: params[:answers])
@@ -83,7 +60,7 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     end
   end
 
-private
+  private
 
   def sort_column
     params[:sort] || 'created_at'
@@ -97,11 +74,11 @@ private
 
   def retriever_params
     dyn_attrs = [
-      { param1: [:name, :value] },
-      { param2: [:name, :value] },
-      { param3: [:name, :value] },
-      { param4: [:name, :value] },
-      { check_journal:     true },
+      { param1: %i[name value] },
+      { param2: %i[name value] },
+      { param3: %i[name value] },
+      { param4: %i[name value] },
+      { check_journal: true }
     ]
     if action_name == 'update'
       params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)
@@ -117,13 +94,13 @@ private
   def verify_rights
     is_ok = false
 
-    if action_name.in? %w(edit update destroy run)
+    if action_name.in? %w[edit update destroy run]
       if action_name == 'destroy' && (@retriever.ready? || @retriever.error? || @retriever.unavailable?)
         is_ok = true
       elsif @retriever.ready? || @retriever.error?
         is_ok = true unless action_name == 'run' && @retriever.budgea_id.nil?
       end
-    elsif action_name.in?(%w(waiting_additionnal_info additionnal_info)) && @retriever.waiting_additionnal_info?
+    elsif action_name.in?(%w[waiting_additionnal_info additionnal_info]) && @retriever.waiting_additionnal_info?
       is_ok = true
     end
 
@@ -137,5 +114,9 @@ private
     @connectors = Connector.budgea.order(name: :asc).list
     @providers  = Connector.budgea.providers.order(name: :asc)
     @banks      = Connector.budgea.banks.order(name: :asc)
+  end
+
+  def redirect_to_new_page
+    redirect_to account_retrievers_path(account_id: @customer.id)
   end
 end

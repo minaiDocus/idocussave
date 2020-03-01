@@ -16,13 +16,13 @@
               %span{ class: 'icon-bar' }
             = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
             - if current_user
-              %p{ class: 'navbar-text pull-right' }
+              %p{ class: 'navbar-text float-right' }
                 %span{ style: 'color:#999;'} Connecté en tant que
                 = link_to current_user.email, root_path
                 |
                 = link_to 'déconnexion', destroy_user_session_path, method: :delete
             - else
-              %p{ class: 'navbar-text pull-right' }
+              %p{ class: 'navbar-text float-right' }
                 = link_to 'Connexion', new_user_session_path
 
       .padding6top.dynamic_padding

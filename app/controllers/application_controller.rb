@@ -1,12 +1,17 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
   helper_method :format_price, :format_price_00
 
+  before_action :configure_permitted_parameters, only: [:login_user!]
   before_action :set_raven_context
-  before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
-  around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
-  around_filter :log_visit
+  if %w[staging sandbox production].include?(Rails.env)
+    before_action :redirect_to_https
+  end
+  #around_action :catch_error if %w[sandbox production test].include?(Rails.env)
+  #around_action :log_visit
 
   def after_sign_in_path_for(resource_or_scope)
     # TODO : reactivate when paths are sanitized
@@ -15,23 +20,23 @@ class ApplicationController < ActionController::Base
     #   session[:targeted_path] = nil
     #   path
     # else
-      case resource_or_scope
-      when :user, User
-        root_url
-      when :admin
-        admin_root_url
-      else
-        super
-      end
+    case resource_or_scope
+    when :user, User
+      root_url
+    when :admin
+      admin_root_url
+    else
+      super
+    end
     # end
   end
 
   def after_sign_out_path_for(_resource_or_scope)
-    "https://www.idocus.com"
+    'https://www.idocus.com'
   end
 
   def login_user!
-    unless current_user && request.path.match(/\A\/users.*/)
+    unless current_user && request.path.match(%r{\A/users.*})
       # TODO : find a way to clean path
       session[:targeted_path] = request.path
     end
@@ -41,18 +46,18 @@ class ApplicationController < ActionController::Base
   def load_user(name = :@user)
     user = nil
 
-    if current_user && current_user.is_admin
+    if current_user&.is_admin
       if params[:user_code].present? || session[:user_code].present?
-        user = User.get_by_code(params[:user_code].presence || session[:user_code].presence)
+        user = User.includes(:options, :softwares, :organization).get_by_code(params[:user_code].presence || session[:user_code].presence)
         user ||= current_user
         prev_user_code = session[:user_code]
         session[:user_code] = if user == current_user
-          nil
-        else
-          params[:user_code].presence || session[:user_code].presence
+                                nil
+                              else
+                                params[:user_code].presence || session[:user_code].presence
         end
 
-        if user.collaborator? && prev_user_code != session[:user_code] && request.path.match(/^\/account\/organizations/)
+        if user.collaborator? && prev_user_code != session[:user_code] && request.path.match(%r{^/account/organizations})
           collab = Collaborator.new(user)
           redirect_to account_organization_path(collab.organization)
         end
@@ -76,15 +81,15 @@ class ApplicationController < ActionController::Base
     return @accounts if @accounts
 
     @accounts = if @user
-      if @user.collaborator?
-        @user.customers.order(code: :asc)
-      elsif @user.is_guest
-        @user.accounts.order(code: :asc)
-      else
-        User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
-      end
-    else
-      []
+                  if @user.collaborator?
+                    @user.customers.order(code: :asc)
+                  elsif @user.is_guest
+                    @user.accounts.order(code: :asc)
+                  else
+                    User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
+                  end
+                else
+                  []
     end
   end
   helper_method :accounts
@@ -100,14 +105,16 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_if_active
-    if @user && @user.inactive? && !controller_name.in?(%w(profiles documents))
+    if @user&.inactive? && !controller_name.in?(%w[profiles documents])
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
     end
   end
 
   def load_recent_notifications
-    @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
+    if @user
+      @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5)
+    end
   end
 
   def all_packs
@@ -140,7 +147,7 @@ class ApplicationController < ActionController::Base
   helper_method :search_terms
 
   def format_price_with_dot(price_in_cents)
-    '%0.2f' % (price_in_cents.round / 100.0)
+    format('%0.2f', (price_in_cents.round / 100.0))
   end
 
   def format_price_00(price_in_cents)
@@ -151,54 +158,51 @@ class ApplicationController < ActionController::Base
     format_price_00(price_in_cents).gsub(/,00/, '')
   end
 
+  def current_user
+    @current_user ||= super && User.includes(:options, :softwares, :organization).find(@current_user.id)
+  end
+
   protected
 
   def redirect_to_https
-    if !request.ssl? && !request.path.match(/(^\/dematbox\/|debit_mandate_notify)/)
+    if !request.ssl? && !request.path.match(%r{(^/dematbox/|debit_mandate_notify)})
       url = request.url.gsub('http', 'https')
       redirect_to(url)
     end
   end
 
   def catch_error
-    begin
-      yield
-    rescue ActionController::UnknownController,
-           ActionController::RoutingError,
-           AbstractController::ActionNotFound,
-           ActiveRecord::RecordNotFound
-      respond_to do |format|
-        format.html { render '/404', status: :not_found, layout: (@user ? 'inner' : 'error') }
-        format.json { render json: { error: 'Not Found' }, status: :not_found }
-      end
-    rescue Budgea::Errors::ServiceUnavailable => e
-      Airbrake.notify(e, airbrake_request_data)
-      respond_to do |format|
-        format.html { render '/503', status: :service_unavailable, layout: 'inner' }
-        format.json { render json: { error: 'Service Unavailable' }, status: :service_unavailable }
-      end
-    rescue => e
-      Airbrake.notify(e, airbrake_request_data)
-      respond_to do |format|
-        format.html { render '/500', status: :internal_server_error, layout: (@user ? 'inner' : 'error') }
-        format.json { render json: { error: 'Internal Server Error' }, status: :internal_server_error }
-      end
+    yield
+  rescue ActionController::RoutingError,
+         AbstractController::ActionNotFound,
+         ActiveRecord::RecordNotFound
+    respond_to do |format|
+      format.html { render '/404', status: :not_found, layout: (@user ? 'inner' : 'error') }
+      format.json { render json: { error: 'Not Found' }, status: :not_found }
     end
-  rescue ActionController::UnknownFormat
-    render status: :bad_request, text: 'Bad Request'
+  rescue Budgea::Errors::ServiceUnavailable => e
+    respond_to do |format|
+      format.html { render '/503', status: :service_unavailable, layout: 'inner' }
+      format.json { render json: { error: 'Service Unavailable' }, status: :service_unavailable }
+    end
+  rescue StandardError => e
+    respond_to do |format|
+      format.html { render '/500', status: :internal_server_error, layout: (@user ? 'inner' : 'error') }
+      format.json { render json: { error: 'Internal Server Error' }, status: :internal_server_error }
+    end
   end
 
   def authenticate_admin_user!
     authenticate_user!
-    unless current_user && current_user.is_admin
+    unless current_user&.is_admin
       flash[:error] = "Vous n'avez pas accès à cette page!"
       redirect_to root_path
     end
   end
 
   def log_visit
-    unless request.path.match('(dematbox|system|assets|num|preview)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?) || controller_name == 'compta'
-      unless current_user && current_user.is_admin
+    unless request.path.match('(dematbox|system|assets|num|preview)') || !params[:action].in?(%w[index show]) || (controller_name == 'retrievers' && params[:part].present?) || controller_name == 'compta'
+      unless current_user&.is_admin
         event = Event.new
         event.action      = 'visit'
         event.target_name = request.path
@@ -234,5 +238,9 @@ class ApplicationController < ActionController::Base
         redirect_to account_suspended_path
       end
     end
+  end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_in, keys: %i[email password])
   end
 end

@@ -13,8 +13,10 @@ class UpdatePeriod
 
       @period.duration = @subscription.period_duration
 
-      copyable_keys.each do |key|
-        @period[key] = @subscription[key]
+      if !@period.organization
+        copyable_keys.each do |key|
+          @period[key] = @subscription[key]
+        end
       end
 
       @period.product_option_orders.destroy_all
@@ -123,6 +125,8 @@ class UpdatePeriod
         option.price_in_cents_wo_vat = price
 
         selected_options << option
+
+        selected_options << mini_remaining_months_option if mini_remaining_months_option.present?
       end
 
       if @subscription.is_mail_package_active
@@ -254,6 +258,29 @@ class UpdatePeriod
     @micro_remaining_months_option
   end
 
+  def mini_remaining_months_option
+    return @mini_remaining_months_option unless @mini_remaining_months_option.nil?
+
+    @mini_remaining_months_option = ''
+    months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
+
+    if @subscription.user.inactive? && months_remaining > 0 && ['GAP%STAYHOME'].include?(@subscription.user.code)
+      price = package_options_price([:subscription, :subscription_plus, :pre_assignment], 0) * months_remaining
+
+      option = ProductOptionOrder.new
+
+      option.title       = "iDo'Mini : engagement #{months_remaining} mois restant(s)"
+      option.name        = 'extra_option'
+      option.duration    = 1
+      option.group_title = 'Autres'
+      option.is_an_extra = true
+      option.price_in_cents_wo_vat = price
+
+      @mini_remaining_months_option = option
+    end
+
+    @mini_remaining_months_option
+  end
 
   def journals_option
     additionnal_journals = @subscription.number_of_journals - 5

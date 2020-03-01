@@ -343,7 +343,7 @@ class DropboxImport
   end
 
   def file_detail(uploaded_document)
-    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
+    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.cloud_content_object.size
     "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
   end
 

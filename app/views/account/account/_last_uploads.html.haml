@@ -1,9 +1,9 @@
 .row-fluid
-  .span12
+  .col-sm-12
     %h4 Derniers documents téléversés
-    %table.table.table-striped.table-condensed.table-bordered.margin1top.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin1top.margin1bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           %th Nom original
           %th Nom iDocus
@@ -15,6 +15,6 @@
             %tr
               %td.date= l temp_document.created_at
               %td= temp_document.original_file_name
-              %td= temp_document.piece.try(:name) || temp_document.temp_pack.name.sub(' all', '')
+              %td= temp_document.piece.try(:name) || temp_document.temp_pack.try(:name).to_s.sub(' all', '').presence || temp_document.content_file_name
               - if @user.is_prescriber
                 %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)

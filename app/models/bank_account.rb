@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BankAccount < ActiveRecord::Base
+class BankAccount < ApplicationRecord
   attr_accessor :is_for_pre_assignment
 
   serialize :original_currency, Hash

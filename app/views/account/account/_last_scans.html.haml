@@ -1,16 +1,15 @@
 .row-fluid
-  .span12
+  .col-sm-12
     %h4 Derniers kits envoyés
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client
             %th Société
           %th N° de suivi
       %tbody
-        %br
         - @last_kits.each do |kit|
           - cache kit do
             %tr
@@ -24,20 +23,19 @@
                 %td= kit.user.try(:company)
               %td
                 = link_to_paper_tracking(kit) if kit.tracking_number.present?
-    .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
-.row-fluid.margin1top
-  .span12
+    .float-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
+.row-fluid.margin3top
+  .col-sm-12
     %h4 Dernières enveloppes reçues
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client
             %th Société
           %th N° de suivi
       %tbody
-        %br
         - @last_receipts.each do |receipt|
           - cache receipt do
             %tr
@@ -51,17 +49,16 @@
                 %td= receipt.user.try(:company)
               %td
                 = link_to_paper_tracking(receipt) if receipt.tracking_number.present?
-    .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
-.row-fluid.margin1top
-  .span12
+    .float-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
+.row-fluid.margin3top
+  .col-sm-12
     %h4 Derniers documents numérisés
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           %th Nom
       %tbody
-        %br
         - @last_scanned.each do |document|
           - cache document do
             %tr
@@ -71,20 +68,19 @@
                   = link_to document.name, account_documents_path(pack_name: document.name), target: '_blank'
                 - else
                   = document.name
-    .pull-right= link_to 'Tous les documents numérisés', account_paper_processes_path(paper_process_contains: { type: 'scan' })
-.row-fluid.margin1top
-  .span12
+    .float-right= link_to 'Tous les documents numérisés', account_paper_processes_path(paper_process_contains: { type: 'scan' })
+.row-fluid.margin3top
+  .col-sm-12
     %h4 Dernières enveloppes retournées
-    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+    %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom
       %thead
-        %tr
+        %tr.bg-brown.text-white
           %th.date Date
           - if @user.is_prescriber
             %th Code client
             %th Société
           %th N° de suivi
       %tbody
-        %br
         - @last_returns.each do |ret|
           - cache ret do
             %tr
@@ -98,4 +94,4 @@
                 %td= ret.user.try(:company)
               %td
                 = link_to_paper_tracking(ret) if ret.tracking_number.present?
-    .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })
+    .float-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })

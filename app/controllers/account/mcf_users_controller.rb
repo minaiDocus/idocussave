@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Account::McfUsersController < Account::OrganizationController
-  before_filter :load_mcf_settings
-  before_filter :verify_rights
+  before_action :load_mcf_settings
+  before_action :verify_rights
 
   # GET /account/organizations/:organization_id/mcf_users
   def index

@@ -3,8 +3,8 @@ require 'spec_helper'
 describe DetectPreseizureDuplicate do
   before(:each) do
     DatabaseCleaner.start
-    @organization = FactoryGirl.create :organization, code: 'IDOC'
-    @user = FactoryGirl.create :user, code: 'IDOC%001'
+    @organization = FactoryBot.create :organization, code: 'IDOC'
+    @user = FactoryBot.create :user, code: 'IDOC%001'
     @user.create_notify
   end
 

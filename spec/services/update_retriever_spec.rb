@@ -2,15 +2,15 @@ require 'spec_helper'
 
 describe UpdateRetriever do
   before(:all) do
-    @user = FactoryGirl.create :user, code: 'IDO%0001'
+    @user = FactoryBot.create :user, code: 'IDO%0001'
     @user.options = UserOptions.create(user_id: @user.id)
-    @journal = FactoryGirl.create :account_book_type, user_id: @user.id
+    @journal = FactoryBot.create :account_book_type, user_id: @user.id
 
     VCR.use_cassette('budgea/create_budgea_account') do
       CreateBudgeaAccount.execute(@user)
     end
 
-    @connector = FactoryGirl.create :connector
+    @connector = FactoryBot.create :connector
   end
 
   context 'given a retriever' do

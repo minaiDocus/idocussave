@@ -1,6 +1,5 @@
 #reporting
   table
-    table-layout: fixed
     th
       text-align: center
     td
@@ -12,18 +11,17 @@
       text-align: center
     th.year, td.organization, td.total
       width: 16%
-    th, td
-      width: 7%
     .df_symbol
       font-size: 7px
     .vat_symbol
       font-size: 7px
   #showInvoice
-    height: 500px
+    height: 650px
     width: 878px
-    margin: -250px 0 0 -439px !important
+    .modal-dialog
+      max-width: 900px
     .modal-body
-      max-height: 450px
+      max-height: 600px
       iframe
         width: 843px
-        height: 415px
+        height: 500px

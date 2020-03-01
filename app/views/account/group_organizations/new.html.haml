@@ -1,9 +1,6 @@
 #group_organizations.container-fluid
   .new
-    .row-fluid
-      .span12.box
+    .card
+      .card-header
         %h3 Création d'un nouveau groupe d'organisation
-
-    .row-fluid
-      .span12.box
-        = render partial: 'form'
+      = render partial: 'form'

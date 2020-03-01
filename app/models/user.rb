@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   include ::CodeFormatValidation
 
   devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
@@ -65,10 +65,10 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   has_many :ibizabox_folders, dependent: :destroy
 
-  belongs_to :manager, class_name: 'Member', inverse_of: :managed_users
+  belongs_to :manager, class_name: 'Member', inverse_of: :managed_users, optional: true
 
-  belongs_to :organization,      inverse_of: 'members'
-  belongs_to :scanning_provider, inverse_of: 'customers'
+  belongs_to :organization,      inverse_of: 'members', optional: true
+  belongs_to :scanning_provider, inverse_of: 'customers', optional: true
 
   has_one  :budgea_account,                                                                     dependent: :destroy
   has_many :retrievers,                                                                         dependent: :destroy
@@ -122,6 +122,10 @@ class User < ActiveRecord::Base
     user.format_name
   end
 
+  #Overwrite User code method
+  def my_code
+    self.code.presence || self.memberships.first.try(:code)
+  end
 
   def to_param
     [id, company.parameterize].join('-')
@@ -192,7 +196,11 @@ class User < ActiveRecord::Base
 
   def create_or_update_software(attributes)
     software = self.softwares || SoftwaresSetting.new()
-    software.assign_attributes(attributes.to_hash)
+    begin
+      software.assign_attributes(attributes)
+    rescue
+      software.assign_attributes(attributes.to_unsafe_hash)
+    end
 
     unless software.is_exact_online_used && software.is_ibiza_used
       software.user = self
@@ -275,6 +283,10 @@ class User < ActiveRecord::Base
     update_attribute(:email_code, get_new_email_code)
   end
 
+  def get_authentication_token
+    update_authentication_token unless self.authentication_token.present?
+    self.reload.authentication_token
+  end
 
   def get_new_authentication_token
     begin
@@ -416,7 +428,7 @@ class User < ActiveRecord::Base
     self.try(:softwares).try(:is_fec_agiris_used) && self.organization.is_fec_agiris_used
   end
 
-  def validate_ibiza_analyitcs?
+  def validate_ibiza_analytics?
     uses_ibiza_analytics? && self.try(:softwares).try(:ibiza_analysis_to_validate?)
   end
 

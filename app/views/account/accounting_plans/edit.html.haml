@@ -1,37 +1,46 @@
 #accounting_plan
-  - if @customer.configured?
-    .row-fluid
-      .span12.box
-        %h3 Edition du #{link_to 'plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer)} du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
-  - else
-    = render 'account/customers/steps'
-    .row-fluid
-      .span12.box
+  - unless @customer.configured?
+    .box
+      = render 'account/customers/steps'
+  .card
+    .card-header
+      - if @customer.configured?
+        %h3
+          Edition du 
+          = link_to 'plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'fs-origin'
+          du client : 
+          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
+      - else
         %h3 Plan comptable
 
-  .row-fluid
-    .span12.box
-      = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
-        .row-fluid.margin2bottom
-          .span6
-            %h3 Fournisseurs
-            = f.fields_for :providers do |provider|
-              = provider.link_to_remove icon_destroy, class: 'btn btn-mini'
-              = provider.input :third_party_account, label: t('activerecord.models.accounting_plan_item.attributes.third_party_account')
-              = provider.input :third_party_name, label: t('activerecord.models.accounting_plan_item.attributes.third_party_name')
-              = provider.input :conterpart_account, label: t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
-              = provider.input :code, label: t('activerecord.models.accounting_plan_item.attributes.code')
-            = f.link_to_add 'Ajouter un fournisseur', :providers, class: 'btn'
-          .span6
-            %h3 Clients
-            = f.fields_for :customers do |customer|
-              = customer.link_to_remove icon_destroy, class: 'btn btn-mini'
-              = customer.input :third_party_account, label: t('activerecord.models.accounting_plan_item.attributes.third_party_account')
-              = customer.input :third_party_name, label: t('activerecord.models.accounting_plan_item.attributes.third_party_name')
-              = customer.input :conterpart_account, label: t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
-              = customer.input :code, label: t('activerecord.models.accounting_plan_item.attributes.code')
-            = f.link_to_add 'Ajouter un client', :customers, class: 'btn'
-
-        .form-actions.margin0bottom
+    = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
+      .card-body
+        .row
+          .col-md-6
+            .box.bg-light
+              %h4 Fournisseurs
+              %hr
+              = f.fields_for :providers do |provider|
+                .box
+                  = provider.link_to_remove glyphicon('x'), class: 'btn btn-light', style: "position: absolute; right: 48px;"
+                  = provider.input :third_party_account, label: t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                  = provider.input :third_party_name, label: t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                  = provider.input :conterpart_account, label: t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                  = provider.input :code, label: t('activerecord.models.accounting_plan_item.attributes.code')
+              = f.link_to_add 'Ajouter un fournisseur', :providers, class: 'btn btn-secondary'
+          .col-md-6
+            .box.bg-light
+              %h4 Clients
+              %hr
+              = f.fields_for :customers do |customer|
+                .box
+                  = customer.link_to_remove glyphicon('x'), class: 'btn btn-light', style: "position: absolute; right: 48px;"
+                  = customer.input :third_party_account, label: t('activerecord.models.accounting_plan_item.attributes.third_party_account')
+                  = customer.input :third_party_name, label: t('activerecord.models.accounting_plan_item.attributes.third_party_name')
+                  = customer.input :conterpart_account, label: t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
+                  = customer.input :code, label: t('activerecord.models.accounting_plan_item.attributes.code')
+              = f.link_to_add 'Ajouter un client', :customers, class: 'btn btn-secondary'
+      .card-footer
+        .form-actions
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-light'

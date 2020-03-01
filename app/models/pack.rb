@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Pack < ActiveRecord::Base
+class Pack < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/pack/:id/download'}
+
   serialize :delivered_user_ids, Hash
   serialize :processed_user_ids, Hash
   serialize :content_historic, Array
@@ -28,6 +30,9 @@ class Pack < ActiveRecord::Base
   has_many :remote_files, dependent: :destroy
   has_many :preseizures, through: :reports
 
+  has_one_attached :cloud_content
+  has_one_attached :cloud_archive
+
   has_attached_file :content, path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                               url: '/account/documents/pack/:id/download'
   do_not_validate_attachment_file_type :content
@@ -41,6 +46,10 @@ class Pack < ActiveRecord::Base
 
   scope :scan_delivered,      -> { where("scanned_pages_count > ? ", 0) }
   scope :not_notified_update, -> { where(is_update_notified: false) }
+
+  before_destroy do |pack|
+    pack.cloud_content.purge
+  end
 
   def as_indexed_json(_options = {})
     {
@@ -89,6 +98,10 @@ class Pack < ActiveRecord::Base
     end
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
   def user
     owner
   end
@@ -129,7 +142,7 @@ class Pack < ActiveRecord::Base
 
 
   def set_content_url
-    self.content_url = original_document.content.url
+    self.content_url = original_document.cloud_content_object.url
   end
 
 
@@ -177,27 +190,31 @@ class Pack < ActiveRecord::Base
   def historic
     _documents = pages.order(created_at: :asc)
 
-    current_date = _documents.first.created_at
+    @events = [{ date: self.created_at, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
 
-    @events = [{ date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
+    if _documents.any?
+      current_date = _documents.first.created_at
 
-    current_offset = 0
+      @events = [{ date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }]
 
-    _documents.each do |document|
-      if document.created_at > current_date.end_of_day
-        current_date = document.created_at
-        current_offset += 1
-        @events << { date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }
-      end
+      current_offset = 0
 
-      if document.uploaded?
-        @events[current_offset][:uploaded] += 1
-      elsif document.dematbox_scanned?
-        @events[current_offset][:dematbox_scanned] += 1
-      elsif document.retrieved?
-        @events[current_offset][:retrieved] += 1
-      else
-        @events[current_offset][:scanned] += 1
+      _documents.each do |document|
+        if document.created_at > current_date.end_of_day
+          current_date = document.created_at
+          current_offset += 1
+          @events << { date: current_date, uploaded: 0, scanned: 0, dematbox_scanned: 0, retrieved: 0 }
+        end
+
+        if document.uploaded?
+          @events[current_offset][:uploaded] += 1
+        elsif document.dematbox_scanned?
+          @events[current_offset][:dematbox_scanned] += 1
+        elsif document.retrieved?
+          @events[current_offset][:retrieved] += 1
+        else
+          @events[current_offset][:scanned] += 1
+        end
       end
     end
 
@@ -211,7 +228,23 @@ class Pack < ActiveRecord::Base
 
 
   def archive_file_path
-    File.join([Rails.root, 'files', Rails.env, 'archives', archive_name])
+    dir = "#{Rails.root}/tmp/archives/#{self.id}"
+    zip_path = File.join(dir, archive_name)
+
+    unless File.exist?(zip_path)
+      FileUtils.makedirs(dir)
+      FileUtils.chmod(0755, dir)
+
+      pieces.each do |piece|
+        piece_file_path = piece.cloud_content_object.path
+        FileUtils.copy piece_file_path, File.join(dir, File.basename(piece_file_path)) if File.exist?(piece_file_path)
+      end
+
+      POSIX::Spawn::system "zip #{zip_path} #{dir}/*"
+      FileUtils.delay_for(5.minutes, queue: :low).remove_dir(dir, true)
+    end
+
+    zip_path
   end
 
   def self.find_by_name(name)
@@ -220,7 +253,13 @@ class Pack < ActiveRecord::Base
 
 
   def self.find_or_initialize(name, user)
-    find_by_name(name) || Pack.new(name: name, owner_id: user.id, organization_id: user.organization.try(:id), created_at: Time.now, updated_at: Time.now)
+    self.find_or_initialize_by(name: name) do |pack|
+      pack.name = name
+      pack.owner_id = user.id
+      pack.organization_id = user.organization.try(:id)
+
+      pack
+    end
   end
 
 
@@ -264,18 +303,19 @@ class Pack < ActiveRecord::Base
 
   def prepend(file_path)
     Dir.mktmpdir do |dir|
-      if File.exist? original_document.content.path.to_s
-        merged_file_path = File.join(dir, original_document.content_file_name)
-        Pdftk.new.merge([file_path, original_document.content.path], merged_file_path)
+      original_file = original_document.cloud_content_object
+      new_file_name = self.name.tr(' ', '_') + '.pdf'
+
+      if File.exist? original_file.path.to_s
+        merged_file_path = File.join(dir, new_file_name)
+        Pdftk.new.merge([file_path, original_file.path], merged_file_path)
       else
-        new_file_name = self.name.tr(' ', '_') + '.pdf'
         merged_file_path = File.join(dir, new_file_name)
         FileUtils.copy file_path, merged_file_path
       end
 
       if DocumentTools.modifiable?(merged_file_path)
-        original_document.content = open(merged_file_path)
-        original_document.save
+        original_document.cloud_content_object.attach(File.open(merged_file_path), new_file_name) if original_document.save
       end
     end
   end
@@ -292,14 +332,14 @@ class Pack < ActiveRecord::Base
   end
 
   def recreate_original_document
-    pieces = self.pieces.by_position
+    pieces  = self.pieces.by_position
     success = false
     sleep_counter = 5
 
     if pieces.present?
       Dir.mktmpdir do |dir|
         pieces.each do |piece|
-          success = append(piece.content.path, true, dir)
+          success = append(piece.cloud_content_object.path, true, dir)
 
           break unless success
           #add a sleeping time to prevent disk access overload
@@ -311,24 +351,27 @@ class Pack < ActiveRecord::Base
         end
       end
 
-      if success
-        temp_file_path = self.original_document.content.path.to_s.gsub('.pdf', '_2.pdf')
+      temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
 
-        FileUtils.mv temp_file_path, self.original_document.content.path if File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
+      if success
+        original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
         set_pages_count
         save
       end
+
+      FileUtils.rm temp_file_path if File.exist? temp_file_path
     else
-      FileUtils.rm self.original_document.content.path, :force =>  true
+      self.original_document.cloud_content.purge
     end
   end
 
   private
 
   def _append(file_path, dir, overwrite_original = false)
+    original_file = original_document.cloud_content_object
     target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
-    target_file_path = overwrite_original ? original_document.content.path.to_s.gsub('.pdf', '_2.pdf') : original_document.content.path
+    target_file_path = overwrite_original ? original_file.path.to_s.gsub('.pdf', '_2.pdf') : original_file.path
 
     merged_file_path = File.join(dir, target_file_name)
     FileUtils.rm merged_file_path if File.exist? merged_file_path
@@ -340,8 +383,7 @@ class Pack < ActiveRecord::Base
     end
 
     if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
-      original_document.content = open(merged_file_path)
-      original_document.save
+      original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if original_document.save
     elsif overwrite_original
       begin
         FileUtils.copy merged_file_path, target_file_path

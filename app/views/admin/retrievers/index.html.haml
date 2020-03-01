@@ -1,114 +1,131 @@
 #retrievers
-  .row-fluid
-    .span12
-      = render 'layouts/admin/retriever/navigation'
+  .row
+    .col-12
+      .box.small-shadow.clearfix
+        = render 'layouts/admin/retriever/navigation'
 
-  .row-fluid.marginbottom
-    .span12.margin1bottom
-      %h3 Automates de récupérations
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3 Automates de récupérations
 
-  .row-fluid
-    .span12
-      .filter.panel.margin1top
-        = form_tag admin_retrievers_path, method: :get, class: 'form form-horizontal margin0bottom' do
-          = hidden_field_tag :direction, sort_direction
-          = hidden_field_tag :sort, sort_column
-          = hidden_field_tag :per_page, per_page
+        .row
+          .col-md-12
+            = link_to admin_retrievers_path do
+              %span.badge.badge-light.fs-origin Tous
+            = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
+              %span.badge.badge-info.fs-origin Récent
+            = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
+              %span.badge.badge-success.fs-origin OK
+            = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
+              %span.badge.badge-secondary.fs-origin Sélection
+            = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
+              %span.badge.badge-danger.fs-origin Erreur
 
-          %table.table.table-condensed.margin0bottom
-            %thead
-              %tr
-                %th Total
-                %th.field.date_field= label_tag 'retriever_contains[created_at][>=]', 'Créé le'
-                %th.field.date_field= label_tag 'retriever_contains[updated_at][>=]', 'Modifié le'
-                %th.field.text_field= label_tag 'retriever_contains[user_code]', t('activerecord.models.user.name')
-                %th.field= label_tag 'retriever_contains[capabilities]', t('activerecord.models.retriever.attributes.capabilities')
-                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('activerecord.models.retriever.attributes.service_name')
-                %th.field.text_field= label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name')
-                %th.field= label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state')
-                %th.field= label_tag 'retriever_contains[is_sane]', t('activerecord.models.retriever.attributes.is_sane')
-                %th
-            %tbody
-              %tr
-                %td
-                  %b= @retrievers_count
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      >=
-                    = text_field_tag 'retriever_contains[created_at][>=]', (params[:retriever_contains][:created_at]['>='] rescue '')
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      <=
-                    = text_field_tag 'retriever_contains[created_at][<=]', (params[:retriever_contains][:created_at]['<='] rescue '')
-                %td.field.date_field
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      >=
-                    = text_field_tag 'retriever_contains[updated_at][>=]', (params[:retriever_contains][:updated_at]['>='] rescue '')
-                  .input-prepend.date.datepicker
-                    %span.add-on
-                      <=
-                    = text_field_tag 'retriever_contains[updated_at][<=]', (params[:retriever_contains][:updated_at]['<='] rescue '')
-                %td.field.text_field= text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue '')
-                %td.field= select_tag 'retriever_contains[capabilities]', options_for_select([['Document', :document], ['Op. Bancaire', :bank], ['Doc. et Op. Bancaires', :both]], (params[:retriever_contains][:capabilities] rescue '')), include_blank: true
-                %td.field.text_field= text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue '')
-                %td.field.text_field= text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
-                %td.field= select_tag 'retriever_contains[state]', options_for_select(Retriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
-                %td.field= select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true
-                %td
-                  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-                  = link_to t('filters.reset'), admin_retrievers_path, class: 'btn'
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box.clearfix
+        = render partial: 'shared/list_options', locals: { collection: @retrievers }
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+              %thead
+                %tr.bg-brown.text-white
+                  %th= sortable :created_at,   'Créé le'
+                  %th= sortable :updated_at,   'Modifié le'
+                  %th= sortable :user_id,      t('activerecord.models.user.name')
+                  %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
+                  %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
+                  %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
+                  %th Journal
+                  %th= t('activerecord.models.retriever.attributes.state')
+                  %th= sortable :is_sane,      t('activerecord.models.retriever.attributes.is_sane')
+                  %th Action
+              %tbody.retractable.slidedown
+                - @retrievers.each do |retriever|
+                  - present retriever do |retriever_presenter|
+                    %tr
+                      %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+                      %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
+                      %td= link_to retriever.user.code, [:admin, retriever.user]
+                      %td= retriever_presenter.capabilities
+                      %td= retriever_presenter.service_name
+                      %td= retriever_presenter.name
+                      %td= retriever_presenter.journal.try(:name) || '-'
+                      %td!= retriever_presenter.state(:admin)
+                      %td= retriever.is_sane ? t('yes_value') : t('no_value')
+                      %td.text-center= icon_link_to account_retrievers_path(user_code: retriever.user.code), { icon: 'eye' }
+        
+        = render partial: 'shared/list_options', locals: { collection: @retrievers }
 
-  .row-fluid
-    .span12
-      .panel
-        = form_tag run_admin_retrievers_path(params), class: 'form form-horizontal margin0bottom' do
-          = submit_tag "Lancer la récupération (#{@retrievers_count})", name: nil, class: 'btn btn-primary'
-
-  .row-fluid
-    .span12
-      .row-fluid
-        .span6
-          = render partial: 'shared/list_options', locals: { collection: @retrievers }
-        .span6.alignright.padding1top
-          = link_to admin_retrievers_path do
-            %span.badge Tous
-          = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
-            %span.badge Récent
-          = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
-            %span.badge.badge-success OK
-          = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
-            %span.badge Sélection
-          = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
-            %span.badge.badge-important Erreur
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
-              %tr
-                %th= sortable :created_at,   'Créé le'
-                %th= sortable :updated_at,   'Modifié le'
-                %th= sortable :user_id,      t('activerecord.models.user.name')
-                %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
-                %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
-                %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
-                %th Journal
-                %th= t('activerecord.models.retriever.attributes.state')
-                %th= sortable :is_sane,      t('activerecord.models.retriever.attributes.is_sane')
-                %th Action
-            %tbody
-              - @retrievers.each do |retriever|
-                - present retriever do |retriever_presenter|
-                  %tr
-                    %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
-                    %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
-                    %td= link_to retriever.user.code, [:admin, retriever.user]
-                    %td= retriever_presenter.capabilities
-                    %td= retriever_presenter.service_name
-                    %td= retriever_presenter.name
-                    %td= retriever_presenter.journal.try(:name) || '-'
-                    %td!= retriever_presenter.state(:admin)
-                    %td= retriever.is_sane ? t('yes_value') : t('no_value')
-                    %td= link_to icon(icon: 'eye-open'), account_retrievers_path(user_code: retriever.user.code)
-      = render partial: 'shared/list_options', locals: { collection: @retrievers }
+    = form_tag admin_retrievers_path, method: :get, class: 'form-filter' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[created_at][>=]', 'Créé le'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'retriever_contains[created_at][>=]', (params[:retriever_contains][:created_at]['>='] rescue ''), class: 'form-control date datepicker'
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text <=
+                  = text_field_tag 'retriever_contains[created_at][<=]', (params[:retriever_contains][:created_at]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[updated_at][>=]', 'Modifié le'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'retriever_contains[updated_at][>=]', (params[:retriever_contains][:updated_at]['>='] rescue ''), class: 'form-control date datepicker'
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text <=
+                    = text_field_tag 'retriever_contains[updated_at][<=]', (params[:retriever_contains][:updated_at]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[user_code]', t('activerecord.models.user.name')
+              .control-section
+                = text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[capabilities]', t('activerecord.models.retriever.attributes.capabilities')
+              .control-section
+                = select_tag 'retriever_contains[capabilities]', options_for_select([['Document', :document], ['Op. Bancaire', :bank], ['Doc. et Op. Bancaires', :both]], (params[:retriever_contains][:capabilities] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[service_name]', t('activerecord.models.retriever.attributes.service_name')
+              .control-section
+                = text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name')
+              .control-section
+                = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue ''), class: 'form-control'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state')
+              .control-section
+                = select_tag 'retriever_contains[state]', options_for_select(Retriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'retriever_contains[is_sane]', t('activerecord.models.retriever.attributes.is_sane')
+              .control-section
+                = select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true, class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), admin_retrievers_path, class: 'btn btn-light', title: t('filters.reset')

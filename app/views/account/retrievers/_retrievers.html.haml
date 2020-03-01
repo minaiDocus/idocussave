@@ -4,15 +4,15 @@
 = hidden_field_tag :page, page
 
 = render partial: 'account/retrievers/list_options'
-%table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+%table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
   %thead
-    %tr
+    %tr.bg-brown.text-white
       %th= sortable 'users.code', 'Dossier'
       %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
       %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
       %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
       %th= sortable :journal_name, 'Journal'
-      %th.retriever_state= sortable :state, t('activerecord.models.retriever.attributes.state')
+      %th= sortable :state, t('activerecord.models.retriever.attributes.state')
       %th Actions
   %tbody
     - @retrievers.each do |retriever|
@@ -23,13 +23,13 @@
           %td= retriever_presenter.service_name
           %td= retriever_presenter.name
           %td= retriever_presenter.journal.try(:name) || '-'
-          %td.retriever_state{class: "state_field_#{retriever.id}"}!= retriever_presenter.state(scope)
+          %td{class: "state_field_#{retriever.id}"}= retriever_presenter.state(scope)
           %td
-            = icon_link_to '#', { icon: 'info-sign' }, { rel: 'popover', data: { 'original-title' => 'Date de création/modification', content: "#{l(retriever.created_at)}<br>#{l(retriever.updated_at)}", placement: 'left' } }
+            = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
             - if retriever.ready? || retriever.error? || retriever.waiting_additionnal_info?
               - if retriever.budgea_id.present?
                 = retriever_presenter.action_link
-              = link_to icon_edit, edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip'
+              = link_to glyphicon('pencil'), edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip', class: 'btn btn-light'
             - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
-              = link_to icon_destroy, '#', class: "destroy_retriever destroy_retriever_#{retriever.id}", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
+              = link_to glyphicon('x'), '#', class: "destroy_retriever destroy_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
 = render partial: 'account/retrievers/list_options'

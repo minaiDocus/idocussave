@@ -1,9 +1,9 @@
 %li{ :id => "original_#{report.id}_#{report.id}", :class => (report.user == @user ? 'report own' : 'report shared') }
   %span.action
-    %a.do-popover{ :href => "#", "data-content" => html_report_info(report) }
-      %i.icon-info-sign
+    %a.custom_popover{ :href => "#", "data-content" => html_report_info(report) }
+      = glyphicon('info')
   %span.name
     %a.do-show-report.report_name_selection{ :href => "#" }= report.name.sub('all','')
     - if report.is_not_delivered? && !report.is_locked
       %a.do-tooltip{ :title => "Ecritures comptables non livrées"}
-        %icon.icon-pause
+        = glyphicon('media-pause')

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountingPlanVatAccount < ActiveRecord::Base
+class AccountingPlanVatAccount < ApplicationRecord
   belongs_to :accounting_plan
 
   validates_presence_of :code

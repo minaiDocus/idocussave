@@ -1,4 +1,4 @@
-#information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+#information.tab-pane.fade{ class: ('active show' if params[:tab] == 'information' || params[:tab].blank?) }
   %table.table.table-striped.table-condensed
     %tr
       %th= t('activerecord.models.member.attributes.role')
@@ -24,6 +24,6 @@
     %tr
       %th= t('activerecord.models.user.attributes.company')
       %td= @member.user.company
-  .alignright
-    - if @organization.is_active
-      = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @member), class: 'btn btn-primary'
+
+  - if @organization.is_active
+    = link_to t('actions.edit'), edit_account_organization_collaborator_path(@organization, @member), class: 'btn btn-primary'

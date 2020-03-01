@@ -10,6 +10,13 @@ class CreateInvoicePdf
         print '.'
       end; nil
 
+
+      Organization.billed.each do |organization|
+        organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', '2020-02-02', '2020-02-02').first
+
+        UpdateOrganizationPeriod.new(organization_period).fetch_all
+      end
+
       Organization.billed.order(created_at: :asc).each do |organization|
         organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
         periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
@@ -19,6 +26,7 @@ class CreateInvoicePdf
         next if periods.empty? && organization_period.price_in_cents_wo_vat == 0
         next if organization.addresses.select{ |a| a.is_for_billing }.empty?
 
+        UpdateOrganizationPeriod.new(organization_period).fetch_all
         #Update discount only for organization and when generating invoice
         DiscountBillingService.update_period(organization_period)
 
@@ -32,15 +40,15 @@ class CreateInvoicePdf
         CreateInvoicePdf.new(invoice).execute
         print "done\n"
 
-        organization.admins.each do |admin|
-          notification = Notification.new
-          notification.user        = admin
-          notification.notice_type = 'invoice'
-          notification.title       = 'Nouvelle facture disponible'
-          notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
-          notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
-          notification.save
-        end
+        #organization.admins.each do |admin|
+        #  notification = Notification.new
+        #  notification.user        = admin
+        #  notification.notice_type = 'invoice'
+        #  notification.title       = 'Nouvelle facture disponible'
+        #  notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+        #  notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
+        #  notification.save
+        #end
 
         InvoiceMailer.delay(queue: :high).notify(invoice)
       end
@@ -200,6 +208,12 @@ class CreateInvoicePdf
       pdf.move_down 33
       pdf.bounding_box([252, pdf.cursor], width: 240) do
         pdf.text formatted_address, align: :right, style: :bold
+
+        if @invoice.organization.vat_identifier
+          pdf.move_down 7
+
+          pdf.text "TVA : #{@invoice.organization.vat_identifier}", align: :right, style: :bold
+        end
       end
 
       # Information
@@ -270,13 +284,17 @@ class CreateInvoicePdf
       pdf.move_down 13
       pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[@invoice.created_at.month].downcase} #{@invoice.created_at.year}"
 
+      if @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat
+        pdf.move_down 7
+        pdf.text 'Auto-liquidation par le preneur - Art 283-2 du CGI'
+      end
+
       pdf.move_down 7
       pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
     end
 
-    @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
-
-    @invoice.save
+    # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
+    @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
     auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
   end
@@ -285,8 +303,8 @@ class CreateInvoicePdf
     begin
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
 
-      file = File.new @invoice.content.path
-      content_file_name = @invoice.content_file_name
+      file = File.new @invoice.cloud_content_object.path
+      content_file_name = @invoice.cloud_content_object.filename
 
       uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
 
@@ -297,7 +315,6 @@ class CreateInvoicePdf
       end
     rescue => e
       logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
-      Airbrake.notify e
     end
   end
 

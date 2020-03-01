@@ -1,46 +1,44 @@
 #paper_set_orders
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .row-fluid
-            .span5
-              %h3 Liste des commandes de Kit Courriers (#{@orders_count})
-            .span7.alignright
-              = link_to icon_new + ' Nouvelles Commandes ', select_for_orders_account_organization_paper_set_orders_path, class: 'btn btn-primary'
-  .row-fluid
-    .span9.box
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-      .row-fluid
-        .span12
-          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-            %thead
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            Liste des commandes de Kit Courriers 
+            %span.badge.badge-info= @orders_count
+        .float-right
+          = link_to 'Nouvelles Commandes ', select_for_orders_account_organization_paper_set_orders_path, class: 'btn btn-primary'
+
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        = render partial: 'shared/list_options', locals: { collection: @orders }
+        %table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner
+          %thead
+            %tr.bg-brown.text-white
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
+              %th= sortable :user_code, 'code'
+              %th= sortable :company, 'société'
+              %th commandes
+              %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
+              %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
+              %th actions
+          %tbody.retractable.slidedown
+            - @orders.each do |order|
               %tr
-                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at').downcase
-                %th= sortable :user_code, 'code'
-                %th= sortable :company, 'société'
-                %th commandes
-                %th= sortable :state, t('activerecord.models.order.attributes.state').downcase
-                %th= t('activerecord.models.paper_process.attributes.tracking_number').downcase
-                %th actions
-            %tbody
-              - @orders.each do |order|
-                %tr
-                  %td= l order.created_at, format: :standard
-                  %td= link_to "#{order.user_code}", account_organization_customer_path(@organization, order.user_id, tab: 'orders')
-                  %td= truncate(order.company, length: 20, separator: ' ')
-                  %td
-                    = order.paper_set_casing_size.to_s + 'g - ' + order.paper_set_casing_count.to_s + ' env - ' + order.paper_set_folder_count.to_s + ' chm - '
-                    = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
-                    à
-                    = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
-                  %td= Order.state_machine.states[order.state].human_name
-                  %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
-                  %td
-                    = link_to icon(icon: 'plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-mini', title: 'Recommander le même kit'
-                    = link_to icon_edit, edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-mini', title: 'Editer'
-                    = link_to icon_destroy, account_organization_paper_set_order_path(@organization, order), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
-      = render partial: 'shared/list_options', locals: { collection: @orders }
-    .span3.box
-      .row-fluid
-        = render partial: 'sidebar'
+                %td= l order.created_at, format: :standard
+                %td= link_to "#{order.user_code}", account_organization_customer_path(@organization, order.user_id, tab: 'orders')
+                %td= truncate(order.company, length: 20, separator: ' ')
+                %td
+                  = order.paper_set_casing_size.to_s + 'g - ' + order.paper_set_casing_count.to_s + ' env - ' + order.paper_set_folder_count.to_s + ' chm - '
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                  à
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                %td= Order.state_machine.states[order.state].human_name
+                %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
+                %td
+                  = link_to glyphicon('plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-light', title: 'Recommander le même kit'
+                  = link_to glyphicon('pencil'), edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', title: 'Editer'
+                  = link_to glyphicon('x'), account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+        = render partial: 'shared/list_options', locals: { collection: @orders }
+    = render partial: 'sidebar'

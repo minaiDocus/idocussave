@@ -1,17 +1,19 @@
 .modal.fade{ :id=>"skipAccountingPlan" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Gestion des recherches
-  %form#skipAccountingPlanForm{ action: update_skip_accounting_plan_accounts_account_organization_account_number_rules_path }
-    .modal-body
-      %p
-        La recherche dans les plans comptables sera ignorée pour les dossiers suivants :
-        %br
-        = "( De ce fait, le compte d'attente sera appliqué si la recherche sur les règles n'aboutie pas )"
-        %br
-        %br
-        = select_tag 'account_list', options_for_select(@list_accounts, @list_skiped_accounting_plan), include_blank: false, multiple: true, class: 'searchable-option-list'
-    .modal-footer
-      .parentFeedback.hide.pull-left
-        .feedback.active
-      %input#skipAccountingPlanButton.btn.btn-primary{ :type => "button", :value => "Valider" }
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h3 Gestion des recherches
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %form#skipAccountingPlanForm{ action: update_skip_accounting_plan_accounts_account_organization_account_number_rules_path }
+        .modal-body
+          %p
+            La recherche dans les plans comptables sera ignorée pour les dossiers suivants :
+            %br
+            = "( De ce fait, le compte d'attente sera appliqué si la recherche sur les règles n'aboutie pas )"
+            %br
+            %br
+            = select_tag 'account_list', options_for_select(@list_accounts, @list_skiped_accounting_plan), include_blank: false, multiple: true, class: 'searchable-option-list'
+        .modal-footer
+          .parentFeedback.hide.float-left
+            .feedback.active
+          %input#skipAccountingPlanButton.btn.btn-primary{ :type => "button", :value => "Valider" }

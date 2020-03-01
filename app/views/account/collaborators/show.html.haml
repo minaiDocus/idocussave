@@ -1,31 +1,33 @@
 #member.user
-  .row-fluid
-    .span12.box
-      .pull-left
-        %h3
-          = @member.info
-          - if @member.user == @user.user
-            %i (Votre compte)
-      .pull-right
-        - if (@user.leader? || @user.manage_collaborators) && @organization.is_active
-          = link_to icon_destroy + ' Supprimer le compte', account_organization_collaborator_path(@organization, @member), class: 'btn btn-danger btn-primary', data: { method: :delete, confirm: t('actions.confirm') }
+  .row
+    .col-md-12
+      .box.clearfix
+        .float-left
+          %h3
+            = @member.info
+            - if @member.user == @user.user
+              %i (Votre compte)
+        .float-right
+          - if (@user.leader? || @user.manage_collaborators) && @organization.is_active
+            = link_to icon_destroy + ' Supprimer le compte', account_organization_collaborator_path(@organization, @member), class: 'btn btn-danger btn-primary', data: { method: :delete, confirm: t('actions.confirm') }
 
-  .row-fluid
-    .span12.box
-      %ul.nav.nav-tabs
-        %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
-          %a{ href: '#information', data: { toggle: 'tab' } } Information
-        - if multi_organizations? || @member.user.memberships.count > 1
-          %li{ class: ('active' if params[:tab] == 'organization_group') }
-            %a{ href: '#organization_group', data: { toggle: 'tab' } } Organisations
-        %li{ class: ('active' if params[:tab] == 'authorization') }
-          %a{ href: '#authorization', data: { toggle: 'tab' } } Autorisation
-        - if @user.is_admin && @organization.is_active
-          %li{ class: ('active' if params[:tab] == 'file_storages') }
-            %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
+  .row
+    .col-md-12
+      .box
+        %ul.nav.nav-tabs
+          %li.nav-item
+            %a.nav-link{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ), href: '#information', data: { toggle: 'tab' } } Information
+          - if multi_organizations? || @member.user.memberships.count > 1
+            %li.nav-item
+              %a.nav-link{ class: ('active' if params[:tab] == 'organization_group'), href: '#organization_group', data: { toggle: 'tab' } } Organisations
+          %li.nav-item
+            %a.nav-link{ class: ('active' if params[:tab] == 'authorization'), href: '#authorization', data: { toggle: 'tab' } } Autorisation
+          - if @user.is_admin && @organization.is_active
+            %li.nav-item
+              %a.nav-link{ class: ('active' if params[:tab] == 'file_storages'), href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
-      .tab-content
-        = render partial: 'info'
-        = render partial: 'organization_group'
-        = render partial: 'authorization'
-        = render partial: 'file_storage'
+        .tab-content.box.bg-light.border-top-0
+          = render partial: 'info'
+          = render partial: 'organization_group'
+          = render partial: 'authorization'
+          = render partial: 'file_storage'

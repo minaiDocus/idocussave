@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class TempPack < ActiveRecord::Base
+class TempPack < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name
 
@@ -7,7 +7,7 @@ class TempPack < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :organization
-  belongs_to :document_delivery
+  belongs_to :document_delivery, optional: true
 
 
 
@@ -24,11 +24,7 @@ class TempPack < ActiveRecord::Base
 
 
   def self.find_or_create_by_name(name)
-    if (temp_pack = find_by_name(name))
-      temp_pack
-    else
-      temp_pack = TempPack.new
-
+    self.find_or_initialize_by(name: name) do |temp_pack|
       temp_pack.name = name
       temp_pack.user = User.find_by_code name.split[0]
       temp_pack.organization = temp_pack.user.try(:organization)

@@ -24,7 +24,7 @@ class GoogleDriveSyncService
       end
 
       @session.files if @session
-    rescue Google::APIClient::AuthorizationError => e
+    rescue Google::Apis::AuthorizationError => e
       @error   = e
       @session = nil
 
@@ -35,7 +35,9 @@ class GoogleDriveSyncService
       when 403
         @google_doc.reset
       end
-
+    rescue Google::Apis::ClientError => e
+      @error   = e
+      @session = nil
     rescue OAuth2::Error => e
       if e.message =~ /Token has been revoked/
         @error   = e
@@ -46,12 +48,14 @@ class GoogleDriveSyncService
         @error   = e
         @session = nil
       else
-        raise
+        @error   = nil
+        @session = nil
       end
     end
 
     @session
   end
+
 
 
   def sync(remote_files)
@@ -72,8 +76,8 @@ class GoogleDriveSyncService
     else
       remote_files.each do |remote_file|
         if @error
-          if @error.class == OAuth2::Error
-            remote_file.not_synced!("[#{@error.class}] #{@error.message}")
+          if @error.class == OAuth2::Error || @error.class == Google::Apis::ClientError
+            remote_file.not_synced!("[#{@error.class}] #{@error.try(:message)}")
           elsif @error.result.response.status.in?([401, 403])
             remote_file.not_synced!("#{@error.result.response.status}: Invalid Credentials.")
           else

@@ -1,4 +1,4 @@
-class AnalyticReference < ActiveRecord::Base
+class AnalyticReference < ApplicationRecord
   has_many :temp_documents
   has_many :pieces, class_name: 'Pack::Piece'
   has_many :journals, class_name: 'AccountBookType'

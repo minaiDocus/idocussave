@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Subscription < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :organization
+class Subscription < ApplicationRecord
+  belongs_to :user, optional: true
+  belongs_to :organization, optional: true
 
 
   has_many :periods
@@ -13,10 +13,10 @@ class Subscription < ActiveRecord::Base
   attr_accessor :is_to_apply_now
 
 
-  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 12 }
+  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 30 }
 
 
-  validates_inclusion_of :period_duration, in: [1, 3, 12]
+  validates_inclusion_of :period_duration, in: [1, 12]
 
   def current_period
     find_or_create_period(Date.today)
@@ -41,6 +41,10 @@ class Subscription < ActiveRecord::Base
     period.save
 
     UpdatePeriod.new(period).execute
+
+    if organization
+      UpdateOrganizationPeriod.new(period).fetch_all(true)
+    end
 
     period
   end

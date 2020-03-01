@@ -1,134 +1,137 @@
 #scans
-  .row-fluid
-    - if is_return_labels_authorized?
-      .span1
-        %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
-    .span1
-      = link_to 'Export CSV', scans_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
-    %div{ class: (is_return_labels_authorized? ? 'span10' : 'span11') }
-      .margin2bottom
-        %table.table.table-bordered.navigation
-          %tr.date_list
-            %td.first.date
-              = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
-              = select_month @current_time.to_date, use_month_numbers: true
-              = hidden_field_tag :date_day, @current_time.day
-            - time = @current_time.beginning_of_month
-            - month = @current_time.end_of_month.month
-            - while time.month == month
-              - if time.day == @current_time.day
-                %td{ class: 'current' }
-                  - if @groups[time.day].present?
-                    = link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
-                  - else
-                    = time.day
-              - else
-                - if @groups[time.day].present?
-                  %td{ class: 'present' }= link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
-                - else
-                  %td
-                    - if time.to_date == Time.now.to_date
+  .box
+    .row
+      - if is_return_labels_authorized?
+        .col-md-1
+          %button.btn.btn-primary.float-right{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
+      .col-md-1
+        = link_to 'Export CSV', scans_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn btn-success float-right'
+      %div{ class: (is_return_labels_authorized? ? 'col-md-10' : 'col-md-11') }
+        .margin2bottom
+          %table.table.table-striped.table-condensed.table-bordered.navigation
+            %tr.bg-brown.text-white
+              %td.first.date
+                = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
+                = select_month @current_time.to_date, use_month_numbers: true
+                = hidden_field_tag :date_day, @current_time.day
+              - time = @current_time.beginning_of_month
+              - month = @current_time.end_of_month.month
+              - while time.month == month
+                - if time.day == @current_time.day
+                  %td{ class: 'current' }
+                    - if @groups[time.day].present?
                       = link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                     - else
                       = time.day
-              - time = time + 1.day
-          %tr
-            %td
-            - time = @current_time.beginning_of_month
-            - month = @current_time.end_of_month.month
-            - while time.month == month
+                - else
+                  - if @groups[time.day].present?
+                    %td{ class: 'present' }= link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                  - else
+                    %td
+                      - if time.to_date == Time.now.to_date
+                        = link_to time.day, "/scans/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                      - else
+                        = time.day
+                - time = time + 1.day
+            %tr
               %td
-                - if @groups[time.day].present?
-                  = @groups[time.day].size
-              - time = time + 1.day
-  .row-fluid
-    .span12
-      .alerts
-        = render partial: 'shared/messages'
-      - if session[:new_document] && @current_time.to_date == Date.today
-        .alert.alert-danger.already_exist
-          %b Ces valeurs concernent la chemise "#{session[:new_document][:name]}" déjà intégré dans la plateforme iDocus :
-          %br
-          %table.table.table-bordered.table-condensed
-            %tr
-              %th
-              %th Nombre d'attaches
-              %th Nombre de hors format
-              %th
-            %tr
-              %td.first
-                Valeurs actuelles
-                - if session[:old_document].scanned_at.present?
-                  = link_to "(#{session[:old_document].scanned_at.strftime("%d/%m/%Y")})", "/scans/#{session[:old_document].scanned_at.strftime("%Y/%m/%d")}"
-              %td= session[:old_document].paperclips
-              %td= session[:old_document].oversized
-              %td= link_to 'Annuler', cancel_scans_path, class: 'btn'
-            %tr
-              %td.first Nouvelles valeurs
-              %td= paperclips = session[:new_document][:paperclips]
-              %td= oversized = session[:new_document][:oversized]
-              %td
-                = form_tag overwrite_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
-                  = hidden_field_tag :paperclips, paperclips
-                  = hidden_field_tag :oversized, oversized
-                  = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
-            %tr
-              %td.first Nouvelles valeurs
-              %td= session[:old_document].paperclips + (paperclips = session[:new_document][:paperclips])
-              %td= session[:old_document].oversized + (oversized = session[:new_document][:oversized])
-              %td
-                = form_tag add_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
-                  = hidden_field_tag :paperclips, paperclips
-                  = hidden_field_tag :oversized, oversized
-                  = submit_tag 'Additionner', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+              - time = @current_time.beginning_of_month
+              - month = @current_time.end_of_month.month
+              - while time.month == month
+                %td
+                  - if @groups[time.day].present?
+                    = @groups[time.day].size
+                - time = time + 1.day
+    .row
+      .col-md-12
+        .alerts
+          = render partial: 'shared/messages'
+        - if session[:new_document] && @current_time.to_date == Date.today
+          .alert.alert-danger.already_exist
+            %b Ces valeurs concernent la chemise "#{session[:new_document][:name]}" déjà intégré dans la plateforme iDocus :
+            %br
+            %table.table.table-bordered.table-condensed
+              %tr.bg-brown.text-white
+                %th
+                %th Nombre d'attaches
+                %th Nombre de hors format
+                %th
+              %tr
+                %td.first
+                  Valeurs actuelles
+                  - if @old_document.scanned_at.present?
+                    = link_to "(#{@old_document.scanned_at.strftime("%d/%m/%Y")})", "/scans/#{@old_document.scanned_at.strftime("%Y/%m/%d")}"
+                %td= @old_document.paperclips
+                %td= @old_document.oversized
+                %td= link_to 'Annuler', cancel_scans_path, class: 'btn'
+              %tr
+                %td.first Nouvelles valeurs
+                %td= paperclips = session[:new_document][:paperclips]
+                %td= oversized = session[:new_document][:oversized]
+                %td
+                  = form_tag overwrite_scan_path(session[:old_document]), method: 'patch', class: 'margin0bottom' do
+                    = hidden_field_tag :paperclips, paperclips
+                    = hidden_field_tag :oversized, oversized
+                    = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+              %tr
+                %td.first Nouvelles valeurs
+                %td= @old_document.paperclips + (paperclips = session[:new_document][:paperclips])
+                %td= @old_document.oversized + (oversized = session[:new_document][:oversized])
+                %td
+                  = form_tag add_scan_path(session[:old_document]), method: 'patch', class: 'margin0bottom' do
+                    = hidden_field_tag :paperclips, paperclips
+                    = hidden_field_tag :oversized, oversized
+                    = submit_tag 'Additionner', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
 
-      %table.table.table-bordered.condensed
-        %tr
-          %th.date       Heure
-          %th.paperclips Nombre d'attaches
-          %th.oversized  Nombre de hors format
-          %th.name       Nom
-          - if current_user
-            %th.scanned_by Numérisé par
-          %th.actions    Actions
-        - if @current_time.to_date == Date.today
-          %tr.form
-            = form_for @document, url: scans_path, method: :post do |f|
-              %td.date -
-              %td.paperclips
-                != f.number_field :paperclips, class: 'span2'
-                - if (error = @document.errors.messages[:paperclips].try(:first))
-                  %br
-                  %span.errors.alignleft= error
-              %td.oversized
-                != f.number_field :oversized, class: 'span2'
-                - if (error = @document.errors.messages[:oversized].try(:first))
-                  %br
-                  %span.errors.alignleft= error
-              %td.name
-                != f.text_field :name, autofocus: true
-                - if (error = @document.errors.messages[:name].try(:first))
-                  %br
-                  %span.errors= error
-              - if current_user
-                %td.scanned_by
-              %td.actions= submit_tag 'Valider', class: 'btn btn-primary'
-        - @documents.each do |document|
-          %tr
-            %td.date=         l(document.scanned_at, format: '%H:%M')
-            %td.paperclips=   document.paperclips
-            %td.oversized=    document.oversized
-            %td.name=         document.name
+        %table.table.table-bordered.condensed
+          %tr.bg-brown.text-white
+            %th.date       Heure
+            %th.paperclips Nombre d'attaches
+            %th.oversized  Nombre de hors format
+            %th.name       Nom
             - if current_user
-              %td.scanned_by= document.scanned_by
-            %td.actions
+              %th.scanned_by Numérisé par
+            %th.actions    Actions
+          - if @current_time.to_date == Date.today
+            %tr.form
+              = form_for @document, url: scans_path, method: :post do |f|
+                %td.date -
+                %td.paperclips
+                  != f.number_field :paperclips, class: 'col-md-8'
+                  - if (error = @document.errors.messages[:paperclips].try(:first))
+                    %br
+                    %span.errors.alignleft= error
+                %td.oversized
+                  != f.number_field :oversized, class: 'col-md-8'
+                  - if (error = @document.errors.messages[:oversized].try(:first))
+                    %br
+                    %span.errors.alignleft= error
+                %td.name
+                  != f.text_field :name, autofocus: true
+                  - if (error = @document.errors.messages[:name].try(:first))
+                    %br
+                    %span.errors= error
+                - if current_user
+                  %td.scanned_by
+                %td.actions= submit_tag 'Valider', class: 'btn btn-primary'
+          - @documents.each do |document|
+            %tr
+              %td.date=         l(document.scanned_at, format: '%H:%M')
+              %td.paperclips=   document.paperclips
+              %td.oversized=    document.oversized
+              %td.name=         document.name
+              - if current_user
+                %td.scanned_by= document.scanned_by
+              %td.actions
 
 - #if (@user && @user['is_return_labels_authorized']) or current_user
 - if @user || current_user
   #returnLabelsDialog.modal.hide.fade
-    .modal-header
-      %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
-      %h3 Génération des étiquettes de retour
-    .modal-body
-      #returnLabelsForm
-      %iframe{ src: '', id: 'returnLabelsShow' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Génération des étiquettes de retour
+          %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
+        .modal-body
+          #returnLabelsForm
+          %iframe{ src: '', id: 'returnLabelsShow' }

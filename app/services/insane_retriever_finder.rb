@@ -52,7 +52,7 @@ class InsaneRetrieverFinder
     if @retriever.bank?
       operations = Operation.where(bank_account_id: @retriever.bank_accounts.used.pluck(:id))
       this_month += operations.where("date <= ? AND date >= ?", Date.today, Date.today - 1.month).count
-      last_month += operations.where( "date < ? AND date >= ?", Date.today - 1.month, Date.today - 2.month).count
+      last_month += operations.where("date < ? AND date >= ?", Date.today - 1.month, Date.today - 2.month).count
       is_stopped = true if (last_month - this_month) > last_month.to_f / 4
     elsif @retriever.provider?
       this_month = @retriever.temp_documents.where("created_at <= ? AND created_at >= ?", Time.now, Time.now - 1.month).count

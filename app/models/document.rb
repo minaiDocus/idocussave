@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/account/documents/:id/download/:style'}
+
   serialize :tags
 
 
@@ -8,7 +10,10 @@ class Document < ActiveRecord::Base
 
   has_many :remote_files, as: :remotable, dependent: :destroy
 
-  belongs_to :pack
+  belongs_to :pack, optional: true
+
+  has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
 
   has_attached_file :content,
                             styles: {
@@ -34,8 +39,11 @@ class Document < ActiveRecord::Base
 
   before_create :init_tags
 
+  before_destroy do |document|
+    document.cloud_content.purge
+  end
 
-  after_create do |document|
+  after_create_commit do |document|
     unless document.mixed? || Rails.env.test?
       Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
       Document.delay_for(10.seconds, queue: :low).extract_content(document.id)
@@ -108,9 +116,15 @@ class Document < ActiveRecord::Base
 
   def self.generate_thumbs(id)
     document = Document.find(id)
-    document.dirty = false
 
-    document.content.reprocess!
+    base_file_name = document.cloud_content.filename.to_s.gsub('.pdf', '')
+
+    image = MiniMagick::Image.read(document.cloud_content.download).format('png').resize('92x133')
+    
+
+    document.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                                 filename: "#{base_file_name}.png", 
+                                                 content_type: "image/png")
 
     document.save
   end
@@ -118,11 +132,7 @@ class Document < ActiveRecord::Base
 
   def self.extract_content(id)
     document = Document.find(id)
-    path = if document.content.queued_for_write[:original]
-             document.content.queued_for_write[:original].path
-           else
-             document.content.path
-           end
+    path = document.cloud_content_object.path
 
     POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
 
@@ -142,6 +152,9 @@ class Document < ActiveRecord::Base
     document.save
   end
 
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
 
   def get_token
     if token.present?
@@ -154,7 +167,7 @@ class Document < ActiveRecord::Base
 
 
   def get_access_url(style = :original)
-    content.url(style) + '&token=' + get_token
+    "/account/documents/documents/#{id}/download/#{style}" + '?token=' + get_token
   end
 
 
@@ -162,11 +175,10 @@ class Document < ActiveRecord::Base
     Dir.mktmpdir do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([self.content.path, file_path], merged_file_path)
+      Pdftk.new.merge([self.cloud_content_object.path, file_path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.content = open(merged_file_path)
-        save
+        self.cloud_content_object.attach(File.open(merged_file_path), content_file_name) if save
       end
     end
   end
@@ -176,11 +188,10 @@ class Document < ActiveRecord::Base
     Dir.mktmpdir do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([file_path, self.content.path], merged_file_path)
+      Pdftk.new.merge([file_path, self.cloud_content_object.path], merged_file_path)
 
       if DocumentTools.modifiable?(merged_file_path)
-        self.content = open(merged_file_path)
-        save
+        self.cloud_content_object.attach(File.open(merged_file_path), content_file_name) if save
       end
     end
   end

@@ -15,6 +15,14 @@ class Idocus.Views.ConnectorsList extends Backbone.View
 
   render: ->
     @$el.html(@template(loading: @loading, providers: @providers_filtered, banks: @banks_filtered, active: @active_index))
+    @$el.find('.connectors-list li a').each((e)->
+      text = $(this).text()
+      if text.length > 24
+        $(this).attr('title', text)
+        $(this).tooltip({placement: 'bottom', trigger: 'hover'})
+    )
+
+    @$el.find('.connectors-list').fadeIn('slow')
     this
 
   fetch_connectors: ()->

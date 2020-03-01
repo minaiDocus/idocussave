@@ -39,7 +39,7 @@ class Idocus.Models.Common
         class_required = 'required'
         abbr_required = '<abbr title="champ requis">*</abbr>'
 
-      field_input = '<input class="field '+class_required+class_plus+'" style="outline: medium none currentcolor;" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'">'
+      field_input = '<input class="field '+class_required+class_plus+'" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'">'
 
       if field.type == "list"
         options = ""
@@ -53,11 +53,10 @@ class Idocus.Models.Common
         if field.name == "website"
           class_website = ' field_website'
 
-        field_input = '<select class="select field '+class_required+class_website+class_plus+'" style="outline: medium none currentcolor; width: 90%; max-width: 263px" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
+        field_input = '<select class="select field '+class_required+class_website+class_plus+'" id="field_'+field.name+'" name="'+field.name+'">'+options+'</select>'
 
       else if field.type == 'oauth' #type oAuth redirection
         field_input = '<input class="field oauth" id="field_'+field.name+'" name="'+field.name+'" type="hidden" value="'+(field.value || '')+'">'
-
 
       label = ''
       if field.label && field.label != ''
@@ -65,9 +64,11 @@ class Idocus.Models.Common
                   '+abbr_required+' '+field.label+'
                 </label>'
 
-      html += '<div class="control-group '+class_required+' field_parent">
-                '+label+'
-                <div class="controls">
+      html += '<div class="form-group clearfix '+class_required+' field_parent">
+                <div class="label-section">
+                  '+label+'
+                </div>
+                <div class="control-section">
                   '+field_input+'
                 </div>
               </div>'
@@ -88,7 +89,7 @@ class Idocus.Models.Common
   action_loading: (el, load)->
     if load
       el.find('.form-actions .actions').css(display: 'none')
-      el.find('.form-actions .actions').after('<div class="feedback pull-left active"></div>')
+      el.find('.form-actions .actions').after('<div class="feedback float-left active"></div>')
     else
       el.find('.form-actions .actions').css(display: 'block')
       el.find('.form-actions .feedback').remove()

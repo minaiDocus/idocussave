@@ -50,7 +50,7 @@ class FTPImport
   def client
     return @client if @client
 
-    @client = FTPClient.new(@ftp.organization.code)
+    @client = FTPClient.new(@ftp)
     @client.connect @ftp.domain, @ftp.port
     @client.login @ftp.login, @ftp.password
     @client.passive = @ftp.is_passive
@@ -185,7 +185,11 @@ class FTPImport
 
   def sync_folder(item)
     if item.to_be_created?
-      client.mkdir item.path
+      begin
+        client.mkdir item.path
+      rescue
+        false
+      end
       item.created
     elsif item.to_be_destroyed?
       remove_item item
@@ -314,7 +318,7 @@ class FTPImport
   end
 
   def file_detail(uploaded_document)
-    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
+    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.cloud_content_object.size
     "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
   end
 

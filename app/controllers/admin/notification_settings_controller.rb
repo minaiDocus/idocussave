@@ -1,14 +1,11 @@
-# -*- encoding : UTF-8 -*-
+# frozen_string_literal: true
+
 class Admin::NotificationSettingsController < Admin::AdminController
   # GET /admin/notification_settings
-  def index
-  end
-
+  def index; end
 
   # GET /admin/notification_settings/edit_error
-  def edit_error
-  end
-
+  def edit_error; end
 
   # POST /admin/notification_settings/update_error
   def update_error
@@ -19,11 +16,8 @@ class Admin::NotificationSettingsController < Admin::AdminController
     redirect_to admin_notification_settings_path
   end
 
-
   # GET /admin/notification_settings/edit_dematbox_order
-  def edit_dematbox_order
-  end
-
+  def edit_dematbox_order; end
 
   # POST /admin/notification_settings/update_dematbox_order
   def update_dematbox_order
@@ -34,28 +28,22 @@ class Admin::NotificationSettingsController < Admin::AdminController
     redirect_to admin_notification_settings_path
   end
 
-
   # GET /admin/notification_settings/edit_paper_set_order
-  def edit_paper_set_order
-  end
-
+  def edit_paper_set_order; end
 
   # POST /admin/notification_settings/update_paper_set_order
   def update_paper_set_order
     Settings.update_setting('notify_paper_set_order_to', params[:notification][:to].split(',').map(&:strip))
 
-    settings.save
+    # settings.save
 
     flash[:notice] = 'Modifié avec succès.'
 
     redirect_to admin_notification_settings_path
   end
 
-
   # GET /admin/notification_settings/edit_ibiza
-  def edit_ibiza
-  end
-
+  def edit_ibiza; end
 
   # POST /admin/notification_settings/update_ibiza
   def update_ibiza
@@ -67,11 +55,8 @@ class Admin::NotificationSettingsController < Admin::AdminController
     redirect_to admin_notification_settings_path
   end
 
-
   # GET /admin/notification_settings/edit_scans
-  def edit_scans
-  end
-
+  def edit_scans; end
 
   # POST /admin/notification_settings/update_scans
   def update_scans

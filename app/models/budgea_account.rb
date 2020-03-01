@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaAccount < ActiveRecord::Base
+class BudgeaAccount < ApplicationRecord
   belongs_to :user
 
   attr_encrypted :access_token, random_iv: true

@@ -6,22 +6,24 @@
 
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
   .piece_head
-    %span.position_label.label.label-warning.piece_number
+    %span.position_label.badge.badge-warning.piece_number
       = sprintf '%03d', document.position
     %span.preseizure_label.tip_details.each.do-tooltip
       = document.name
     = document_delivery_label(document) if preseizures.count > 0
-
-    %span.choose_action_piece     
-      %a.pull-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
-        %i.icon-trash       
-      %a.pull-right.margin3.do-tooltip{href: document.content.url, title: 'Télécharger', target: '_blank'}
-        %i.icon-download-alt 
-      %a.pull-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
-        %i.icon-ok         
+    - if @user.active?
+      %span.choose_action_piece
+        %a.float-right.piece.margin3.do-tooltip{href: '#', title: 'Supprimer la pièce', id: "#{document.id}"}
+          = glyphicon('trash')
+        %a.float-right.margin3.do-tooltip{href: document.cloud_content_object.url, title: 'Télécharger', target: '_blank'}
+          = glyphicon('data-transfer-download')
+        %a.float-right.select.do-selectPage.margin3.do-tooltip{href: '#', title: "Sélection"}
+          .do-selectPage-check-icon
+            = glyphicon('check')
+          .do-selectPage-ban-icon.hide
+            = glyphicon('ban')
      
   .piece_body
-    
     .piece_image
       %input{ type: :hidden, name: :page_number, value: document.position }
       %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }         
@@ -36,7 +38,7 @@
             .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')     
     .preseizure_description
       - if size > 0 
-        .content_details         
+        .content_details
           %input{type: :hidden, class: :list_preseizure_id, value: preseizures.ids}      
           .tab_preseizures{class: "#{size == 1 ? 'hide' : ''} "}
             - active = nil
@@ -45,13 +47,13 @@
                 - preseizure_name = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
               - else 
                 - preseizure_name = preseizure.piece_name  
-              %div{id: "span_#{preseizure.id}", class: "#{(size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && size >1) ? 'tab_active' : ''}", title: "#{(size > 1) ? preseizure_name : ''}"}                
+              %div.word_wrap{id: "span_#{preseizure.id}", class: "#{(size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && size >1) ? 'tab_active' : ''}", title: "#{(size > 1) ? preseizure_name : ''}"}                
                 - if size == 1
                   %input{type: :hidden, id: ""}
                 - else
                   %div.check_modif_preseizure{ title: "Sélection"}
-                    %input{ id: "_#{preseizure.id}", type: :checkbox,style: "margin-top: -2px;margin-left: 5px;"}  
-                  = preseizure_name[0,10]                                                                      
+                    %input{ id: "_#{preseizure.id}", type: :checkbox}
+                  = preseizure_name
               - active = 1            
         - preseizures.each do |preseizure|               
           .content_preseizure{id: "div_#{preseizure.id}"}

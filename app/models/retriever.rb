@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class Retriever < ActiveRecord::Base
+class Retriever < ApplicationRecord
   attr_accessor :confirm_dyn_params, :check_journal
 
   belongs_to :user
-  belongs_to :journal,               class_name: 'AccountBookType'
+  belongs_to :journal, class_name: 'AccountBookType', optional: true
   has_many   :temp_documents
   has_many   :bank_accounts
 
@@ -202,15 +202,15 @@ class Retriever < ActiveRecord::Base
   end
 
   def provider?
-    capabilities == ['document']
+    capabilities.include?('document')
   end
 
   def bank?
-    capabilities == ['bank']
+    capabilities.include?('bank')
   end
 
   def provider_and_bank?
-    capabilities && capabilities.include?('bank') && capabilities.include?('document')
+    capabilities && provider? && bank?
   end
 
   def not_processed?

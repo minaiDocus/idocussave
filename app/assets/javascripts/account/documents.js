@@ -2,14 +2,17 @@
   //FUNCTION DECLARATION
   // init all link action
   window.initEventOnHoverOnInformation = function() {
-    $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({placement: 'top', trigger: 'hover'});
-    $('.do-tooltip-right, .information-right').tooltip({placement: 'left', trigger: 'hover'});
-    $('.do-tooltip-bottom, .information-bottom').tooltip({placement: 'left', trigger: 'hover'});
-    $('.do-tooltip-left, .information-left').tooltip({placement: 'left', trigger: 'hover'});
-    $('.do-popover-top').popover({placement: 'top'});
-    $('.do-popover, .do-popover-right').popover({placement: 'right'});
-    $('.do-popover-bottom').popover({placement: 'bottom'});
-    $('.do-popover-left').popover({placement: 'left'});
+    adjustIconColorDocument();
+
+    $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({ placement: 'top', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-right, .information-right').tooltip({ placement: 'right', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-bottom, .information-bottom').tooltip({ placement: 'bottom', trigger: 'hover', html: true, sanitize: false });
+    $('.do-tooltip-left, .information-left').tooltip({ placement: 'left', trigger: 'hover', html: true, sanitize: false });
+
+    $('.do-popover-top').popover({ placement: 'top', trigger: 'hover', html: true, sanitize: false });
+    $('.do-popover, .do-popover-right').popover({ placement: 'right', trigger: 'hover', html: true, sanitize: false});
+    $('.do-popover-bottom').popover({ placement: 'bottom', trigger: 'hover', html: true, sanitize: false });
+    $('.do-popover-left').popover({ placement: 'left', trigger: 'hover', html: true, sanitize: false });
 
     $('.custom_popover').custom_popover();
   }
@@ -237,6 +240,7 @@
           list.append(data);
 
           packs_count = $("input[name=packs_count]").val();
+
           $("#documentslist .packsList h3").text(packs_count + " lot(s)");
 
           $("#pageslist #panel1").attr("style","min-height:"+$("#documentslist").height()+"px");
@@ -253,7 +257,7 @@
         },
         error: function(data){
           logAfterAction();
-          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
           setTimeout(function(){
             window.datasLoaderLocked = false;
             if(thenReports)
@@ -261,7 +265,7 @@
            }, 1000);
         }
       });
-    },500);
+    }, 500);
   }
 
   //fetch lists of report (operation reports)
@@ -320,7 +324,7 @@
       },
       error: function(data){
         logAfterAction();
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été prévenu.</span></div></div>");
         setTimeout(function(){ window.datasLoaderLocked = false; }, 1000);
       }
     });
@@ -335,9 +339,9 @@
       var $pagesTags = $("#pagesTags");
 
       if (document_ids.length <= 0)
-        $("#pagesTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+        $("#pagesTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($pagesTags.val().length <= 0)
-        $("#pagesTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
+        $("#pagesTaggingDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
 
       if (document_ids.length > 0 && $pagesTags.val().length > 0) {
         postTags($pagesTags.val(),document_ids,'piece');
@@ -363,7 +367,7 @@
       }
     });
 
-    $("#pagesTaggingDialog").on("hidden",function() {
+    $("#pagesTaggingDialog").on("hidden.bs.modal",function() {
       $("#pagesTaggingDialog .length_alert").html("");
       $("#pagesTaggingDialog .names_alert").html("");
       $("#pagesTags").val("");
@@ -380,9 +384,9 @@
       var $selectionsTags = $("#selectionsTags");
 
       if (document_ids.length <= 0)
-        $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+        $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($selectionsTags.val().length <= 0)
-        $("#selectionTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
+        $("#selectionTaggingDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
 
       if (document_ids.length > 0 && $selectionsTags.val().length > 0) {
         postTags($selectionsTags.val(),document_ids,'piece');
@@ -408,7 +412,7 @@
       }
     });
 
-    $("#selectionTaggingDialog").on("hidden",function() {
+    $("#selectionTaggingDialog").on("hidden.bs.modal",function() {
       $("#selectionTaggingDialog .length_alert").html("");
       $("#selectionTaggingDialog .names_alert").html("");
       $("#selectionsTags").val("");
@@ -440,7 +444,7 @@
         },
         error: function(data){
           logAfterAction();
-          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Erreur interne, l'administrateur a été prévenu.</span></div></div>");
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span> Erreur interne, l'administrateur a été prévenu.</span></div></div>");
           $('#shareDialog').modal('hide');
           $("#deliverButton").removeAttr("disabled");
         }
@@ -459,9 +463,9 @@
       var $documentsTags = $("#documentsTags");
 
       if (document_ids.length <= 0)
-        $("#documentsTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+        $("#documentsTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($documentsTags.val().length <= 0)
-        $("#documentsTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
+        $("#documentsTaggingDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
 
       if (document_ids.length > 0 && $documentsTags.val().length > 0) {
         var tags = $documentsTags.val();
@@ -491,7 +495,7 @@
       }
     });
 
-    $("#documentsTaggingDialog").on("hidden",function() {
+    $("#documentsTaggingDialog").on('hidden.bs.modal',function() {
       $("#documentsTaggingDialog .length_alert").html("");
       $("#documentsTaggingDialog .names_alert").html("");
       $("#documentsTags").val("");
@@ -501,7 +505,7 @@
       $("#documentsTaggingDialog .names_alert").html("");
     });
 
-    $("#shareDialog").on('show',function(){
+    $("#shareDialog").on('show.bs.modal',function(){
       var pack_ids = $.map($("#documentslist .packsList .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       if(pack_ids.length > 0) {
         $(".warn_selected_file").show();
@@ -518,7 +522,7 @@
       if(pack_ids != "")
         window.location = "/account/documents/multi_pack_download?pack_ids=" + pack_ids.join('_')
       else
-        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez selectionner au moins un document.</span></div></div>");
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez selectionner au moins un document.</span></div></div>");
     });
 
     $(".do-selectAll").click(function(e){ e.preventDefault(); $("#documentslist .packsList .content > ul > li").addClass("selected"); });
@@ -615,6 +619,14 @@
       $('#file_prev_period_offset').val($(this).val());
     });
 
+    $('#packFilterModal #packFilterForm input').keypress(function (e) {
+      if (e.which == 13) {
+        e.preventDefault();
+        $("#packFilterModal #validatePackFilterModal").click();
+        return false;
+      }
+    });
+
     $("#packFilterModal #validatePackFilterModal").click(function(e) {
       e.preventDefault();
       $("#packFilterModal").modal('hide');
@@ -704,7 +716,9 @@
       {
         diffHeight = $('#lists_pieces #lists_pieces_content').outerHeight() - $(window).outerHeight();
         if(sTop >= (diffHeight - 25))
-          showPieces(window.currentLink, window.piecesPage);
+        {
+          showPieces(window.currentLink, window.piecesPage, null, true);
+        }
       }
       else if(window.currentView == 'preseizures')
       {
@@ -722,6 +736,16 @@
       {
         $('.scroll_on_top').hide('slow');
         $('#show_pages .actiongroup, #presPanel1 .actiongroup').removeClass('actiongroup-fixed');
+      }
+    });
+  }
+
+  //force the color of all icons to dark
+  function adjustIconColorDocument() {
+    $('.oi-icon').each(function(e) {
+      if(!$(this).hasClass('colored')) {
+        $(this).css('fill', '#3E2F24');
+        $(this).addClass('colored');
       }
     });
   }
@@ -766,6 +790,8 @@
     if($('#documentslist .packsList .content ul li').length == 1) {
       setTimeout(function() { $('#documentslist .packsList .content ul li:first').find('.do-show-pack').click() }, 1000 );
     }
+
+    adjustIconColorDocument();
   });
 
 })(jQuery);

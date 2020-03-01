@@ -7,7 +7,7 @@ describe AccountingWorkflow::TempPackProcessor do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2013,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_options
       @user.create_notify
       @user.find_or_create_subscription
@@ -95,7 +95,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 3 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(3)
           end
         end
 
@@ -448,7 +448,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 4 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(4)
           end
         end
 
@@ -1874,7 +1874,7 @@ describe AccountingWorkflow::TempPackProcessor do
             subject { @pack.pieces.by_position[0] }
 
             it 'pages number should eq 2' do
-              expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
+              expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(2)
             end
 
             describe '#name' do
@@ -2039,7 +2039,7 @@ describe AccountingWorkflow::TempPackProcessor do
             subject { @pack.pieces.by_position[5] }
 
             it 'pages number should eq 2' do
-              expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
+              expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(2)
             end
 
             describe '#name' do
@@ -2249,7 +2249,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 4 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(4)
           end
         end
 
@@ -2728,7 +2728,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 6 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(6)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(6)
           end
         end
 
@@ -3258,7 +3258,7 @@ describe AccountingWorkflow::TempPackProcessor do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2015,1,1))
 
-      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryBot.create(:user, code: 'TS0001')
       @user.create_notify
       @subscription = Subscription.create(user_id: @user.id, period_duration: 12)
       UpdatePeriod.new(@subscription.current_period).execute
@@ -3346,7 +3346,7 @@ describe AccountingWorkflow::TempPackProcessor do
           end
 
           it 'should have 3 pages' do
-            expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
+            expect(DocumentTools.pages_number(subject.cloud_content_object.path)).to eq(3)
           end
         end
 
