@@ -34,35 +34,36 @@ class GeneratePreAssignmentExportService
     group.each do |g|
       @report = g.first
       @preseizures = Array(g.last)
+      @is_notified = false
 
       ### ibiza not used for now
       # if valid_ibiza?
-      #   create_pre_assignment_export_for 'ibiza'
+      #   create_pre_assignment_export_for('ibiza')
       #   generate_ibiza_export
       # end
 
       if valid_coala?
-        create_pre_assignment_export_for 'coala'
+        create_pre_assignment_export_for('coala')
         generate_coala_export(true, true)
       end
 
       if valid_cegid?
-        create_pre_assignment_export_for 'cegid'
+        create_pre_assignment_export_for('cegid')
         generate_cegid_export
       end
 
       if valid_fec_agiris?
-        create_pre_assignment_export_for 'fec_agiris'
+        create_pre_assignment_export_for('fec_agiris')
         generate_fec_agiris_export
       end
 
       if valid_quadratus?
-        create_pre_assignment_export_for 'quadratus'
+        create_pre_assignment_export_for('quadratus')
         generate_quadratus_export
       end
 
       if valid_csv_descriptor?
-        create_pre_assignment_export_for 'csv_descriptor'
+        create_pre_assignment_export_for('csv_descriptor')
         generate_csv_descriptor_export
       end
     end
@@ -71,34 +72,35 @@ class GeneratePreAssignmentExportService
   def generate_on_demand
     @report = @all_preseizures.first.report
     @preseizures = @all_preseizures
+    @is_notified = true
 
     case @export_type
     when 'csv'
-      create_pre_assignment_export_for 'csv_descriptor'
+      create_pre_assignment_export_for('csv_descriptor')
 
       generate_csv_descriptor_export(false)
     when 'xml_ibiza'
-      create_pre_assignment_export_for 'ibiza'
+      create_pre_assignment_export_for('ibiza')
 
       generate_ibiza_export
     when 'zip_quadratus'
-      create_pre_assignment_export_for 'quadratus'
+      create_pre_assignment_export_for('quadratus')
 
       generate_quadratus_export
     when 'zip_coala'
-      create_pre_assignment_export_for 'coala'
+      create_pre_assignment_export_for('coala')
 
       generate_coala_export(true)
     when 'xls_coala'
-      create_pre_assignment_export_for 'coala'
+      create_pre_assignment_export_for('coala')
 
       generate_coala_export
     when 'txt_fec_agiris'
-      create_pre_assignment_export_for 'fec_agiris'
+      create_pre_assignment_export_for('fec_agiris')
 
       generate_fec_agiris_export(false)
     when 'csv_cegid'
-      create_pre_assignment_export_for 'cegid'
+      create_pre_assignment_export_for('cegid')
 
       generate_cegid_export(false)
     end
@@ -248,6 +250,7 @@ private
     @export.pack_name      = @report.name
     @export.total_item     = @preseizures.size
     @export.preseizures    = @preseizures
+    @export.is_notified    = @is_notified
     @export.save
   end
 end
