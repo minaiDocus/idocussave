@@ -57,7 +57,7 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
         flash[:success] = 'Le document sélectionné sera intégré.'
       end
     end
-    redirect_to select_account_organization_customer_ibizabox_documents_path(@organization, @customer, document_contains: params[:document_contains])
+    redirect_to select_account_organization_customer_ibizabox_documents_path(@organization, @customer, document_contains: params[:document_contains].permit!)
   end
 
   private
