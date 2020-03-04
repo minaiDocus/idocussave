@@ -26,7 +26,7 @@ class Period < ApplicationRecord
   scope :customers,     -> { where('user_id > 0') }
   scope :current,       -> { where('end_date >= ?', Date.today) }
   scope :paper_quota_reached_not_notified, -> { where(is_paper_quota_reached_notified: false) }
-  scope :paper_quota_reached, -> { where('max_sheets_authorized <= scanned_sheets') }
+  scope :paper_quota_reached, -> { where('max_sheets_authorized <= scanned_sheets AND scanned_sheets > 0') }
 
   before_create :add_one_delivery
   before_create :set_start_date_and_end_date
