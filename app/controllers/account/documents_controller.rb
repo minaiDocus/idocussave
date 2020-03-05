@@ -522,18 +522,21 @@ class Account::DocumentsController < Account::AccountController
       piece.save
 
       temp_document = piece.temp_document
-      temp_document.original_fingerprint    = nil
-      temp_document.content_fingerprint     = nil
-      temp_document.raw_content_fingerprint = nil
-      temp_document.save
 
-      parent_document = temp_document.parent_document
+      if temp_document
+        temp_document.original_fingerprint    = nil
+        temp_document.content_fingerprint     = nil
+        temp_document.raw_content_fingerprint = nil
+        temp_document.save
 
-      if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
-        parent_document.original_fingerprint    = nil
-        parent_document.content_fingerprint     = nil
-        parent_document.raw_content_fingerprint = nil
-        parent_document.save
+        parent_document = temp_document.parent_document
+
+        if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
+          parent_document.original_fingerprint    = nil
+          parent_document.content_fingerprint     = nil
+          parent_document.raw_content_fingerprint = nil
+          parent_document.save
+        end
       end
 
       pack ||= piece.pack
