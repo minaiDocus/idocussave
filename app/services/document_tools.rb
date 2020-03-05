@@ -10,6 +10,9 @@ class DocumentTools
 
   def self.pages_number(file_path)
     begin
+      extension = File.extname(file_path).downcase
+      return 0 if extension != '.pdf'
+
       document = nil
       document = Poppler::Document.new(file_path)
 
