@@ -55,7 +55,7 @@
         %li.nav-item{ class: ('active' if controller_name == 'reporting') }
           = link_to 'Mon reporting', account_reporting_path, class: 'nav-link'
       - if accounts.detect { |e| e.options.is_retriever_authorized }
-        %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
+        %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents bank_settings)) && params[:organization_id].nil?) }
           = link_to 'Mes automates', account_retrievers_path, class: 'nav-link'
       - if accounts.detect { |e| e.options.is_upload_authorized }
         %li.nav-item{ class: ('active' if controller_name == 'paper_processes') }

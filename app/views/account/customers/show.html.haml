@@ -24,7 +24,7 @@
             %li.nav-item
               = link_to "iDo'FacBanque", account_retrievers_path(account_id: @customer.id), class: 'nav-link'
             %li.nav-item
-              %a.nav-link{ class: ('active' if params[:tab] == 'bank_accounts'), href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
+              = link_to "Paramètres bancaires", account_bank_settings_path({account_id: @customer.id}), class: 'nav-link'
           %li.nav-item{ class: ('active' if params[:tab] == 'compta') }
             %a.nav-link{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
           - if @customer.uses_ibiza?
@@ -298,27 +298,6 @@
                   - elsif @customer.active?
                     = link_to 'Ajouter nouveau', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
                     = link_to 'Copier depuis base existante', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
-          #bank_accounts.tab-pane.fade{ class: ('active show' if params[:tab] == 'bank_accounts') }
-            %table.table.table-striped.table-condensed.margin0bottom.table-bordered-inner.table-detachable-head
-              %thead
-                %tr.bg-brown.text-white
-                  %th= t('activerecord.models.bank_account.attributes.bank_name')
-                  %th= t('activerecord.models.bank_account.attributes.name')
-                  %th= t('activerecord.models.bank_account.attributes.number')
-                  %th= t('activerecord.models.bank_account.attributes.journal')
-                  %th= t('activerecord.models.bank_account.attributes.accounting_number')
-                  %th= t('activerecord.models.bank_account.attributes.start_date')
-                  %th Paramétrer
-              %tbody
-                - @customer.bank_accounts.used.each do |bank_account|
-                  %tr
-                    %td= bank_account.bank_name
-                    %td= bank_account.name
-                    %td= bank_account.number
-                    %td= bank_account.journal
-                    %td= bank_account.accounting_number
-                    %td= bank_account.start_date
-                    %td= link_to t('actions.edit'), edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), class: 'btn btn-light'
           #compta.tab-pane.fade{ class: ('active show' if params[:tab] == 'compta') }
             %table.table.table-striped.table-condensed
               %tbody

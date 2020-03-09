@@ -73,6 +73,10 @@
                     %br
                     à récupérer
                     = glyphicon('align-left', { class: 'float-right', style: 'margin-top: -8px'})
+                %li.nav-item{ class: ('active' if controller_name == 'bank_settings' && action_name == 'index') }
+                  %a.nav-link{ href: ( @account.try(:id)? account_bank_settings_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                    Paramètres bancaires
+                    = glyphicon('cog', { class: 'float-right' })
       .col-md-12
         .alerts
           = render partial: 'shared/messages'

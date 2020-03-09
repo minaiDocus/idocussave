@@ -2,6 +2,7 @@
 
 class Account::Organization::BankAccountsController < Account::Organization::RetrieverController
   before_action :load_bank_account, except: %w[index update_multiple]
+  before_action :bank_setting_retriever
 
   def index
     redirect_to account_retrievers_path(account_id: @customer.id)
@@ -123,5 +124,9 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
 
   def bank_account_params
     params.require(:bank_account).permit(:journal, :currency, :accounting_number, :foreign_journal, :temporary_account, :start_date, :lock_old_operation, :permitted_late_days)
+  end
+
+  def bank_setting_retriever
+    redirect_to account_bank_settings_path({account_id: @customer.id})
   end
 end

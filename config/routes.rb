@@ -420,6 +420,8 @@ Rails.application.routes.draw do
       post 'unlock_operations', on: :collection
     end
 
+    resources :bank_settings, only: %W(index edit update)
+
     resources :retrieved_documents do
       get   'piece',    on: :member
       get   'select',   on: :collection

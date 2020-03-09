@@ -25,7 +25,7 @@
         %li= link_to 'Journaux comptables', account_organization_customer_path(@organization, @customer, tab: 'journals')
         - if @customer.active? && @customer.options.is_retriever_authorized
           %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
-          %li= link_to 'Paramètres bancaires', account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
+          %li= link_to 'Paramètres bancaires', account_bank_settings_path({account_id: @customer.id})
         %li= link_to 'Comptabilité', account_organization_customer_path(@organization, @customer, tab: 'compta')
         - if @customer.uses_ibiza?
           %li= link_to 'Ibiza Box', account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')
