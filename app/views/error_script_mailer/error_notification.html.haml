@@ -1,0 +1,25 @@
+!!!
+%html
+  %head
+    %title [iDocus] Erreur script
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Pour information, le script #{@script[:name]} a eu l'erreur suivante :
+    %br
+    %br
+    Erreur type : #{@script[:erreur_type]}
+    %br
+    Date erreur : #{@script[:date_erreur]}
+    %br
+    Détails :
+    %ul
+    - @script[:more_information].each do |libelle, value|
+      %li #{libelle} : #{value}
+      %br
+    %br
+    Cordialement
+    %br
+    SI iDocus

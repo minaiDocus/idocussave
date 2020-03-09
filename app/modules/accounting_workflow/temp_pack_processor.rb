@@ -184,6 +184,19 @@ class AccountingWorkflow::TempPackProcessor
           published_temp_documents << temp_document
         else
           logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece already exist"
+          log_document = {
+            name: "AccountingWorkflow::TempPackProcessor",
+            erreur_type: "Piece already exist",
+            date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+            more_information: {
+              validation_model: temp_document.valid?,
+              model: temp_document.inspect,
+              user: temp_document.user.inspect,
+              piece: temp_document.piece.inspect,
+              temp_pack: temp_pack.inspect
+            }
+          }
+          ErrorScriptMailer.error_notification(log_document).deliver
         end
       else
         temp_document.processed
@@ -197,8 +210,18 @@ class AccountingWorkflow::TempPackProcessor
         end
 
         temp_document.processed
-      else
+      elsif inserted_piece.present?
         logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted"
+        log_document = {
+          name: "AccountingWorkflow::TempPackProcessor",
+          erreur_type: "Piece not persisted",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            temp_document: temp_document.id,
+            validation_model: inserted_piece.try(:errors).try(:messages).to_s
+          }
+        }
+        ErrorScriptMailer.error_notification(log_document).deliver
       end
 
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end"

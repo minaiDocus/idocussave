@@ -42,6 +42,16 @@ class DebitMandateResponseService
       end
     rescue => e
       @errors = e.message
+
+      log_document = {
+          name: "DebitMandateResponseService",
+          erreur_type: "Error Slimpay",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            error: e.message
+          }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
     end
   end
 
