@@ -4,7 +4,7 @@ class UploadedDocument
   attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
 
 
-  VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif).freeze
+  VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
 
 
   def self.valid_extensions
@@ -125,17 +125,7 @@ class UploadedDocument
           re_create_pdf @file.path, file_path
         end
       else
-        tmp_file_path = @file.path
-        begin
-          geometry = Paperclip::Geometry.from_file @file.path
-          if geometry.height > 2000 || geometry.width > 2000
-            tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
-            DocumentTools.resize_img(@file.path, tmp_file_path)
-          end
-        rescue => e
-          tmp_file_path = @file.path
-        end
-        DocumentTools.to_pdf(tmp_file_path, file_path)
+        DocumentTools.to_pdf(@file.path, file_path, @dir)
       end
 
       @temp_file = File.open(file_path, 'r')

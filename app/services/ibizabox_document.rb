@@ -90,7 +90,7 @@ private
           FileUtils.cp @file.path, file_path
         end
       else
-        DocumentTools.to_pdf(@file.path, file_path)
+        DocumentTools.to_pdf(@file.path, file_path, @dir)
       end
 
       @temp_file = File.open(file_path, 'r')

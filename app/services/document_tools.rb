@@ -23,9 +23,39 @@ class DocumentTools
     end
   end
 
+  def self.to_pdf(file_path, output_file_path, tmp_dir = nil)
+    extension = File.extname(file_path).downcase
+    filename  = File.basename(file_path).downcase
+    dirname   = tmp_dir || File.dirname(file_path)
 
-  def self.to_pdf(file_path, output_file_path)
-    system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
+    if extension == '.pdf'
+      output_file_path = file_path
+    else
+      tmp_file_path = file_path
+
+      if extension == '.heic'
+        filename = filename.gsub('.heic', '.jpg')
+        jpg_file_path = File.join(dirname, "heic_jpg_#{filename}")
+        DocumentTools.convert_heic_to_jpg(tmp_file_path, jpg_file_path)
+
+        tmp_file_path = jpg_file_path if File.exist?(jpg_file_path)
+      end
+
+      begin
+        geometry = Paperclip::Geometry.from_file tmp_file_path
+        if geometry.height > 2000 || geometry.width > 2000
+          resized_file_path = File.join(dirname, "resized_#{filename}")
+          DocumentTools.resize_img(tmp_file_path, resized_file_path)
+          tmp_file_path = resized_file_path
+        end
+      rescue => e
+        tmp_file_path ||= file_path
+      end
+
+      system "convert '#{tmp_file_path}' -quality 100 'pdf:#{output_file_path}' 2>&1"
+
+      return output_file_path
+    end
   end
 
   def self.to_pdf_hight_quality(file_path, output_file_path)
@@ -42,6 +72,10 @@ class DocumentTools
 
   def self.sign_pdf(file_path, output_file_path)
     system "/usr/local/bin/PortableSigner -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
+  end
+
+  def self.convert_heic_to_jpg(input_file_path, output_file_path)
+    system "heif-convert '#{input_file_path}' '#{output_file_path}'"
   end
 
   def self.remake_pdf(file_path)

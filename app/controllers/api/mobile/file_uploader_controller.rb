@@ -204,19 +204,8 @@ class Api::Mobile::FileUploaderController < MobileApiController
 
   def create_pdf_file_from(file, original_filename)
     @img_file_path = File.join(@dir, 'tmp_img.pdf')
-    tmp_file_path = file.path
 
-    begin
-      geometry = Paperclip::Geometry.from_file file.path
-      if geometry.height > 2000 || geometry.width > 2000
-        tmp_file_path = File.join(@dir, "resized_#{original_filename}")
-        DocumentTools.resize_img(file.path, tmp_file_path)
-      end
-    rescue StandardError => e
-      tmp_file_path = file.path
-    end
-
-    DocumentTools.to_pdf(tmp_file_path, @img_file_path)
+    DocumentTools.to_pdf(file.path, @img_file_path, @dir)
 
     unless File.exist? @img_file_path
       @errors << { filename: original_filename, errors: 'Image non supportée' }
