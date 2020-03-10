@@ -43,7 +43,7 @@ class CurrencyRateService
           new(currency, date.to_date).execute unless CurrencyRate.already_present? currency, date.to_date 
         end
       rescue Exception => e
-        logger.info "#{Time.now} #{e.to_s}"
+        LogService.info('currency_rate', "#{Time.now} - #{e.to_s}")
       end
     end
 
@@ -51,10 +51,6 @@ class CurrencyRateService
       CurrencyRate.lists.each do |cr|
         execute(cr, Date.today)
       end
-    end
-
-    def logger
-      @@logger ||= Logger.new("#{Rails.root}/log/update_currency_rate_#{Rails.env[0..2]}.log")
     end
 
     def convert_operation_amount(operation)

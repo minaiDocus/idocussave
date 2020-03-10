@@ -11,8 +11,8 @@ class DropboxesController < ApplicationController
       render status: :ok, plain: 'OK'
     else
       #Tmp Oversight: dropbox webhook
-      logger.info "[Webhook - signature] #{signature}"
-      logger.info "[Webhook - header] #{request.headers['X-Dropbox-Signature']} - match : #{(signature == request.headers['X-Dropbox-Signature']).to_s}"
+      LogService.info('dropbox_webhook', "[Webhook - signature] #{signature}")
+      LogService.info('dropbox_webhook', "[Webhook - header] #{request.headers['X-Dropbox-Signature']} - match : #{(signature == request.headers['X-Dropbox-Signature']).to_s}")
 
       log_document = {
         name: "DropboxesController",
@@ -32,11 +32,5 @@ class DropboxesController < ApplicationController
   def verify
     render(plain: params[:challenge]) && return if params[:challenge].present?
     render plain: 'challenge parameter is missing'
-  end
-
-  private
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_dropbox_webhook.log")
   end
 end

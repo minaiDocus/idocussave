@@ -7,7 +7,7 @@ class VerifyFtpSettings
   def execute
     ftp = nil
     begin
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`..."
+      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`...")
       ftp = FTPClient.new(@ftp)
       ftp.connect @ftp.domain, @ftp.port
       ftp.login @ftp.login, @ftp.password
@@ -22,11 +22,11 @@ class VerifyFtpSettings
       ftp.mkdir test_item.path
       ftp.rmdir test_item.path
 
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful"
+      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful")
       true
     rescue => e
       @ftp.got_error e.to_s
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}"
+      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}")
       false
     ensure
       ftp.close if ftp

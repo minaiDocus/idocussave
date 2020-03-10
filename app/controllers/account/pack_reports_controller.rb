@@ -93,9 +93,6 @@ class Account::PackReportsController < Account::OrganizationController
     when 'zip_quadratus'
       if @report.user.uses_quadratus?
         file_path = QuadratusZipService.new(preseizures).execute
-
-        logger.info(file_path.inspect)
-
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render :select_to_download

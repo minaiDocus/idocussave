@@ -8,9 +8,6 @@ class KnowingsSyncService
 
 
   def execute
-    log = Logger.new(STDOUT)
-
-
     @remote_files.each_with_index do |remote_file, index|
       remote_filepath = File.join(@knowings.url, remote_file.local_name)
 
@@ -25,18 +22,18 @@ class KnowingsSyncService
 
         raise Knowings::UnexpectedResponseCode.new result unless result.in? [200, 201]
 
-        log.info { "#{info} uploaded" }
+        LogService.info('knowings', "#{info} uploaded")
 
         remote_file.synced!
       rescue => e
         tries += 1
 
-        log.info { "#{info} upload failed : [#{e.class}] #{e.message}" }
+        LogService.info('knowings', "#{info} upload failed : [#{e.class}] #{e.message}")
 
         if tries < 2
           retry
         else
-          log.info { "#{number} retrying later" }
+          LogService.info('knowings', "#{number} retrying later")
 
           remote_file.not_retryable!("[#{e.class}] #{e.message}")
         end
@@ -45,7 +42,6 @@ class KnowingsSyncService
   end
 
   private
-
 
   def client
     @client ||= KnowingsApi::Client.new(@knowings.username, @knowings.password, @knowings.url)

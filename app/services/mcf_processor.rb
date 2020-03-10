@@ -54,14 +54,14 @@ class McfProcessor
       begin
         McfApi::Client.new(@access_token).ask_to_resend_file
 
-        logger.info "[MCF][RESEND REQUEST SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success"
+        LogService.info('mcf_processing', "[MCF][RESEND REQUEST SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
       rescue => e
-        logger.info "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}"
+        LogService.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
       end
 
       @mcf_document.has_retaken
     elsif @mcf_document.maximum_retake_reach?
-      logger.info "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Maximum number of retake reached"
+      LogService.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Maximum number of retake reached")
       @mcf_document.delivery_fails
     end
   end
@@ -85,11 +85,11 @@ class McfProcessor
 
       if uploaded_document.valid? || uploaded_document.already_exist?
         @mcf_document.processed
-        logger.info "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}"
+        LogService.info('mcf_processing', "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}")
 
         move_file
       else
-        logger.info "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}"
+        LogService.info('mcf_processing', "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}")
 
         uploaded_document.errors.each do |err|
           if err.include? :file_is_corrupted_or_protected
@@ -114,16 +114,12 @@ class McfProcessor
       begin
         McfApi::Client.new(@access_token).move_uploaded_file
 
-        logger.info "[MCF][MOVE SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success"
+        LogService.info('mcf_processing', "[MCF][MOVE SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
         @mcf_document.update(is_moved: true)
       rescue => e
-        logger.info "[MCF][MOVE ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}"
+        LogService.info('mcf_processing', "[MCF][MOVE ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
         @mcf_document.update(is_moved: true) if e.message.match(/"Status"=>909/)
       end
     end
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_mcf_processing.log")
   end
 end

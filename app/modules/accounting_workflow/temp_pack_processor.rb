@@ -34,7 +34,7 @@ class AccountingWorkflow::TempPackProcessor
     invoice_pieces = []
 
     temp_documents.each_with_index do |temp_document, document_index|
-      logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start"
+      LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start")
       inserted_piece = nil
       if !temp_document.is_a_cover? || !pack.has_cover?
         inserted_piece = temp_document.piece
@@ -61,8 +61,7 @@ class AccountingWorkflow::TempPackProcessor
 
             DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
                                                                                                                 is_stamp_background_filled: user.is_stamp_background_filled,
-                                                                                                                dir: dir,
-                                                                                                                logger: logger
+                                                                                                                dir: dir
 
             pages_number = DocumentTools.pages_number piece_file_path
 
@@ -183,7 +182,7 @@ class AccountingWorkflow::TempPackProcessor
 
           published_temp_documents << temp_document
         else
-          logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece already exist"
+          LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece already exist")
           log_document = {
             name: "AccountingWorkflow::TempPackProcessor",
             erreur_type: "Piece already exist",
@@ -211,7 +210,7 @@ class AccountingWorkflow::TempPackProcessor
 
         temp_document.processed
       elsif inserted_piece.present?
-        logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted"
+        LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted")
         log_document = {
           name: "AccountingWorkflow::TempPackProcessor",
           erreur_type: "Piece not persisted",
@@ -224,7 +223,7 @@ class AccountingWorkflow::TempPackProcessor
         ErrorScriptMailer.error_notification(log_document).deliver
       end
 
-      logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end"
+      LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
     end
 
     pack.set_original_document_id
@@ -272,9 +271,5 @@ class AccountingWorkflow::TempPackProcessor
     published_temp_documents.each do |temp_document|
       NotifyPublishedDocument.new(temp_document).execute
     end
-  end
-
-  def self.logger
-    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_document_processor.log")
   end
 end

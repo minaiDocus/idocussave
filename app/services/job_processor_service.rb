@@ -36,7 +36,7 @@ class JobProcessorService
 
         jobs.each(&:kill)
 
-        logger.info "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} - started_at : #{job_processing.started_at.to_s} - killed_at : #{Time.now.to_s} => Success (#{result} - Nb : #{jobs.size})"
+        LogService.info('job_processing', "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} - started_at : #{job_processing.started_at.to_s} - killed_at : #{Time.now.to_s} => Success (#{result} - Nb : #{jobs.size})")
       end
     end
   end
@@ -54,12 +54,8 @@ class JobProcessorService
       SidekiqUniqueJobs::Digests.delete_by_digest uniq_job_id
       Rails.cache.write([:job_processing, uniq_job_id], "killed", expires_in: 1.minutes)
 
-      logger.info "[JOB PROCESSING KILLED] -- #{uniq_job_id} - killed_at : #{Time.now.to_s} => Success"
+      LogService.info('job_processing', "[JOB PROCESSING KILLED] -- #{uniq_job_id} - killed_at : #{Time.now.to_s} => Success")
     end
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_job_processing.log")
   end
 
   private

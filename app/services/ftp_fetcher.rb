@@ -89,7 +89,7 @@ class FtpFetcher
     ftp.close
 
   rescue Errno::ETIMEDOUT
-    Rails.logger.info "[#{Time.now}] FTP: connect to #{url} : timeout"
+    LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : timeout")
     false
 
   rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e

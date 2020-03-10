@@ -14,16 +14,12 @@ class PonctualScripts::PonctualScript
 
   def logger_infos(message)
     infos = "[#{@class_name}] - #{message}"
-    p infos #print infos to console or log
-    logger.info infos
+    p infos #print infos to console and log
+    LogService.info('ponctual_scripts', infos)
   end
 
   private
 
   # Define execute method on the child class (without params, use initializer options if you need params)
   def execute; end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_ponctual_scripts.log")
-  end
 end

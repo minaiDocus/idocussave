@@ -18,7 +18,7 @@ class DocumentTools
 
       document.pages.count
     rescue => e
-      logger.info "[pages_number] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[pages_number] - #{file_path.to_s} - #{e.to_s}")
       0
     end
   end
@@ -61,7 +61,7 @@ class DocumentTools
 
         document.permissions.full?
       rescue => e
-        logger.info "[modifiable?] - #{file_path.to_s} - #{e.to_s}"
+        LogService.info('poppler_errors', "[modifiable?] - #{file_path.to_s} - #{e.to_s}")
         false
       end
     else
@@ -76,7 +76,7 @@ class DocumentTools
     begin
       Poppler::Document.new(file_path)
     rescue => e
-      logger.info "[completed?] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
       is_ok = false
     end
 
@@ -101,7 +101,7 @@ class DocumentTools
       document.permissions.ok_to_print?
 
     rescue => e
-      logger.info "[printable?] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[printable?] - #{file_path.to_s} - #{e.to_s}")
       false
     end
   end
@@ -113,7 +113,7 @@ class DocumentTools
       document.permissions.ok_to_print? && !document.permissions.full?
 
     rescue => e
-      logger.info "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}")
       nil
     end
   end
@@ -189,7 +189,7 @@ class DocumentTools
   end
 
 
-  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, _logger = Rails.logger, font_size = 10)
+  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, font_size = 10)
     sizes     = Poppler::Document.new(target_file_path).pages.map(&:size)
     file_path = File.join(dir, 'stamp.pdf')
     
@@ -210,7 +210,7 @@ class DocumentTools
             text name, size: font_size, align: :center
           end
         rescue Prawn::Errors::CannotFit
-          _logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
+          LogService.info('document_processor', "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})")
         end
       end
     end
@@ -223,11 +223,10 @@ class DocumentTools
     dir     = options[:dir] || '/tmp'
     origin = options[:origin] || 'scan'
     is_stamp_background_filled = options[:is_stamp_background_filled] || false
-    _logger = options[:logger] || Rails.logger
 
     name = stamp_name(pattern, name, origin)
 
-    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, _logger, stamp_font_size(file_path))
+    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, stamp_font_size(file_path))
 
     Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
 
@@ -291,9 +290,5 @@ class DocumentTools
 
   def self.checksum(file_path)
     `md5sum "#{file_path}"`.split[0]
-  end
-
-  def self.logger
-    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_poppler_errors.log")
   end
 end

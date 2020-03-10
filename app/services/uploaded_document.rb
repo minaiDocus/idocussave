@@ -51,10 +51,10 @@ class UploadedDocument
 
     if @errors.empty?
       pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      logger.info "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack"
+      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack")
 
       pack.update_pack_state # Create or update pack related to temp_pack
-      logger.info "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack"
+      LogService.info('document_upload', "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack")
 
       options = {
         delivered_by:          @uploader.code,
@@ -236,9 +236,5 @@ class UploadedDocument
 
   def fingerprint
     @fingerprint ||= DocumentTools.checksum(@file.path)
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_document_upload.log")
   end
 end

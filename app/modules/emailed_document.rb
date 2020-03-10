@@ -84,7 +84,7 @@ class EmailedDocument
 
       email.save
 
-      Rails.logger.info(email.inspect)
+      # LogService.info('emails', email.inspect)
 
       Dir.mktmpdir do |dir|
         file_path = "#{dir}/#{email.id}.eml"

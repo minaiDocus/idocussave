@@ -74,13 +74,13 @@ class SendToStorage
         metafile.sending! metafile.path
 
         if up_to_date?
-          logger.info "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)"
+          LogService.info('processing', "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)")
         else
-          logger.info "#{metafile.description} sending"
+          LogService.info('processing', "#{metafile.description} sending")
 
           sender.call
 
-          logger.info "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)"
+          LogService.info('processing', "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)")
         end
 
         metafile.synced!
@@ -130,18 +130,18 @@ class SendToStorage
           min_sleep_seconds = Float(2 ** (retries/2.0))
           max_sleep_seconds = Float(2 ** retries)
           sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
-          logger.info "#{failure_message} - retrying in #{sleep_duration} seconds"
+          LogService.info('processing', "#{failure_message} - retrying in #{sleep_duration} seconds")
           sleep sleep_duration
           retry
         else
-          logger.info "#{failure_message} - retrying later (#{execution_time}s)"
+          LogService.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
           metafile.not_synced! "[#{e.class}] #{e.message}"
         end
       elsif manageable_failure?(e)
-        logger.info "#{failure_message} - aborting (#{execution_time}s)"
+        LogService.info('processing', "#{failure_message} - aborting (#{execution_time}s)")
         metafile.not_retryable! "[#{e.class}] #{e.message}"
       else
-        logger.info "#{failure_message} - retrying later (#{execution_time}s)"
+        LogService.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
         metafile.not_synced! "[#{e.class}] #{e.message}"
         raise if Rails.env.test?
       end
@@ -155,9 +155,5 @@ class SendToStorage
     if @storage.class != DropboxExtended
       @errors.uniq { |e| "#{e.class.to_s} #{e.message}" }.each { |e| manage_failure e }
     end
-  end
-
-  def logger
-    @logger ||= @options[:logger] || Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end

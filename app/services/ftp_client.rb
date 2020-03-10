@@ -33,12 +33,8 @@ class FTPClient
     [:get, :getbinaryfile, :gettextfile, :put, :putbinaryfile, :puttextfile, :login, :connect]
   end
 
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_debug_ftp.log")
-  end
-
   def log(name, args)
     _args = name == :login ? ['[FILTERED]'] : args
-    logger.info "[FTP ID: #{@ftp.id}] #{name} - #{_args.join(', ')}"
+    LogService.info('debug_ftp', "[FTP ID: #{@ftp.id}] #{name} - #{_args.join(', ')}")
   end
 end

@@ -2,8 +2,6 @@ class UpdateConnectorsList
   def self.execute
     return false
     #Not used anymore just keep the code in case
-    logger = Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
-
     BudgeaConnector.flush_all_cache
     BudgeaConnector.all.each do |budgea_connector|
       next if Rails.env.production? && budgea_connector['name'] == 'Connecteur de test'
@@ -26,9 +24,9 @@ class UpdateConnectorsList
       if connector.persisted?
         # Because activerecord hash change detection is dumb !
         changes = changes.select { |_, v| v.first != v.last }
-        logger.info "[CONNECTOR UPDATED] #{connector.name} - #{connector.id} : #{changes}" if changes.present?
+        LogService.info('processing', "[CONNECTOR UPDATED] #{connector.name} - #{connector.id} : #{changes}") if changes.present?
       else
-        logger.info "[CONNECTOR ADDED] #{connector.name} - #{connector.id}"
+        LogService.info('processing', "[CONNECTOR ADDED] #{connector.name} - #{connector.id}")
       end
     end
     true
