@@ -34,7 +34,11 @@ class AccountingWorkflow::TempPackProcessor
     invoice_pieces           = []
     recreate_original        = false
 
-    Dir.mktmpdir do |dir|
+    dir = "#{Rails.root}/files/#{Rails.env}/temp_pack_processor/#{temp_pack.name.downcase.tr(' %','__')}/"
+
+    FileUtils.makedirs(dir)
+    FileUtils.chmod(0755, dir)
+
       temp_documents.each_with_index do |temp_document, document_index|
         LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start")
         inserted_piece = nil
@@ -143,7 +147,7 @@ class AccountingWorkflow::TempPackProcessor
             if pack.original_document.present?
               if pack.original_document.cloud_content_object.size.to_i < 400.megabytes
                 if is_a_cover
-                  pack.prepend piece_file_path
+                  pack.prepend piece_file_path, dir
                 else
                   recreate_original = true if !pack.append(piece_file_path, false, dir)
                 end
@@ -187,7 +191,7 @@ class AccountingWorkflow::TempPackProcessor
             log_document = {
               name: "AccountingWorkflow::TempPackProcessor",
               erreur_type: "Piece already exist",
-              date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
               more_information: {
                 validation_model: temp_document.valid?,
                 model: temp_document.inspect,
@@ -215,7 +219,7 @@ class AccountingWorkflow::TempPackProcessor
           log_document = {
             name: "AccountingWorkflow::TempPackProcessor",
             erreur_type: "Piece not persisted",
-            date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
               temp_document: temp_document.id,
               validation_model: inserted_piece.try(:errors).try(:messages).to_s
@@ -226,11 +230,24 @@ class AccountingWorkflow::TempPackProcessor
 
         LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
       end
-    end
+
+    FileUtils.remove_entry dir if dir
 
     if recreate_original
-      LogService.info('document_processor', "Recreate original of #{pack.id} - #{pack.name}")
-      # Pack.delay_for(10.minutes, queue: :low).try(:recreate_original_document, pack.id)
+
+      log_document = {
+        name: "AccountingWorkflow::TempPackProcessor",
+        erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          pack_name: pack.name,
+          model: pack.inspect
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
+
+      Pack.delay_for(10.minutes, queue: :low).try(:recreate_original_document, pack.id)
     end
 
     pack.set_original_document_id

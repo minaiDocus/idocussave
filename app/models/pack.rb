@@ -305,22 +305,22 @@ class Pack < ApplicationRecord
   end
 
 
-  def prepend(file_path)
-    Dir.mktmpdir do |dir|
-      original_file = original_document.cloud_content_object
-      new_file_name = self.name.tr(' ', '_') + '.pdf'
+  def prepend(file_path, dir = nil)
+    return false if dir.nil?
 
-      if File.exist? original_file.path.to_s
-        merged_file_path = File.join(dir, new_file_name)
-        Pdftk.new.merge([file_path, original_file.path], merged_file_path)
-      else
-        merged_file_path = File.join(dir, new_file_name)
-        FileUtils.copy file_path, merged_file_path
-      end
+    original_file = original_document.cloud_content_object
+    new_file_name = self.name.tr(' ', '_') + '.pdf'
 
-      if DocumentTools.modifiable?(merged_file_path)
-        original_document.cloud_content_object.attach(File.open(merged_file_path), new_file_name) if original_document.save
-      end
+    if File.exist? original_file.path.to_s
+      merged_file_path = File.join(dir, new_file_name)
+      Pdftk.new.merge([file_path, original_file.path], merged_file_path)
+    else
+      merged_file_path = File.join(dir, new_file_name)
+      FileUtils.copy file_path, merged_file_path
+    end
+
+    if DocumentTools.modifiable?(merged_file_path)
+      original_document.cloud_content_object.attach(File.open(merged_file_path), new_file_name) if original_document.save
     end
   end
 
