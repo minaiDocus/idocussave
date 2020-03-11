@@ -63,6 +63,10 @@ class Pack < ApplicationRecord
     }
   end
 
+  def self.recreate_original_document(pack_id)
+    pack = Pack.find pack_id
+    pack.recreate_original_document
+  end
 
   def self.search(text, options = {})
     page = options[:page].present? ? options[:page].to_i : 1
@@ -384,6 +388,7 @@ class Pack < ApplicationRecord
 
     if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
       original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if original_document.save
+      return true
     elsif overwrite_original
       begin
         FileUtils.copy merged_file_path, target_file_path
@@ -392,6 +397,8 @@ class Pack < ApplicationRecord
         FileUtils.rm target_file_path if File.exist? target_file_path
         return false
       end
+    else
+      return false
     end
   end
 end

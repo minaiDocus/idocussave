@@ -30,18 +30,18 @@ class AccountingWorkflow::TempPackProcessor
     end
 
     published_temp_documents = []
-    added_pieces = []
-    invoice_pieces = []
+    added_pieces             = []
+    invoice_pieces           = []
+    recreate_original        = false
 
-    temp_documents.each_with_index do |temp_document, document_index|
-      LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start")
-      inserted_piece = nil
-      if !temp_document.is_a_cover? || !pack.has_cover?
-        inserted_piece = temp_document.piece
+    Dir.mktmpdir do |dir|
+      temp_documents.each_with_index do |temp_document, document_index|
+        LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start")
+        inserted_piece = nil
+        if !temp_document.is_a_cover? || !pack.has_cover?
+          inserted_piece = temp_document.piece
 
-        if !inserted_piece
-          Dir.mktmpdir do |dir|
-
+          if !inserted_piece
             ## Initialization
             is_a_cover = temp_document.is_a_cover?
             basename = pack.name.sub(' all', '')
@@ -145,10 +145,11 @@ class AccountingWorkflow::TempPackProcessor
                 if is_a_cover
                   pack.prepend piece_file_path
                 else
-                  pack.append piece_file_path
+                  recreate_original = true if !pack.append(piece_file_path, false, dir)
                 end
               end
             end
+
             ## Pages
             if pack.has_documents?
               suffix = is_a_cover ? 'cover_page' : 'page'
@@ -175,55 +176,61 @@ class AccountingWorkflow::TempPackProcessor
                 current_page_position += 1 unless is_a_cover
               end
             end
+
             current_piece_position += 1 unless is_a_cover
 
             piece.try(:sign_piece)
+
+            published_temp_documents << temp_document
+          else
+            LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece already exist")
+            log_document = {
+              name: "AccountingWorkflow::TempPackProcessor",
+              erreur_type: "Piece already exist",
+              date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+              more_information: {
+                validation_model: temp_document.valid?,
+                model: temp_document.inspect,
+                user: temp_document.user.inspect,
+                piece: temp_document.piece.inspect,
+                temp_pack: temp_pack.inspect
+              }
+            }
+            ErrorScriptMailer.error_notification(log_document).deliver
+          end
+        else
+          temp_document.processed
+        end
+
+        if inserted_piece.try(:persisted?)
+          if temp_document.api_name == 'invoice_auto'
+            invoice_pieces << inserted_piece
+          else
+            added_pieces << inserted_piece
           end
 
-          published_temp_documents << temp_document
-        else
-          LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece already exist")
+          temp_document.processed
+        elsif inserted_piece.present?
+          LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted")
           log_document = {
             name: "AccountingWorkflow::TempPackProcessor",
-            erreur_type: "Piece already exist",
+            erreur_type: "Piece not persisted",
             date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
             more_information: {
-              validation_model: temp_document.valid?,
-              model: temp_document.inspect,
-              user: temp_document.user.inspect,
-              piece: temp_document.piece.inspect,
-              temp_pack: temp_pack.inspect
+              temp_document: temp_document.id,
+              validation_model: inserted_piece.try(:errors).try(:messages).to_s
             }
           }
           ErrorScriptMailer.error_notification(log_document).deliver
         end
-      else
-        temp_document.processed
+
+        LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
       end
+    end
 
-      if inserted_piece.try(:persisted?)
-        if temp_document.api_name == 'invoice_auto'
-          invoice_pieces << inserted_piece
-        else
-          added_pieces << inserted_piece
-        end
-
-        temp_document.processed
-      elsif inserted_piece.present?
-        LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{inserted_piece.try(:name).to_s} - #{inserted_piece.try(:errors).try(:messages).to_s} - piece not persisted")
-        log_document = {
-          name: "AccountingWorkflow::TempPackProcessor",
-          erreur_type: "Piece not persisted",
-          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
-          more_information: {
-            temp_document: temp_document.id,
-            validation_model: inserted_piece.try(:errors).try(:messages).to_s
-          }
-        }
-        ErrorScriptMailer.error_notification(log_document).deliver
-      end
-
-      LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
+    if recreate_original
+      LogService.info('document_processor', "Recreate original of #{pack.id} - #{pack.name}")
+      # Pack.delay_for(10.minutes, queue: :low).try(:recreate_original_document, pack.id)
     end
 
     pack.set_original_document_id
