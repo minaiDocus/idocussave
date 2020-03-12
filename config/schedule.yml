@@ -119,10 +119,6 @@ JobProcessorWorker:
   queue: high
   cron: '0 */5 * * * *'
 
-CheckWriteDiskWorker:
-  queue: high
-  cron: '0 */10 * * * *'
-
 ## destroy some data
 DatabaseCleanerWorker:
   queue: default
