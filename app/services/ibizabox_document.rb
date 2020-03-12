@@ -57,7 +57,7 @@ private
   end
 
   def valid_file_size?
-    @file.size <= 10_000_000
+    @file.size > 0 && @file.size <= 1_000_000_000
   end
 
   def period_service

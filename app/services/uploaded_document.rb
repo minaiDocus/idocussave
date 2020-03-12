@@ -218,11 +218,7 @@ class UploadedDocument
 
 
   def valid_file_size?
-    if @api_name == 'mobile'
-      @file.size <= 250_000_000
-    else
-      @file.size <= 10_000_000
-    end
+    @file.size <= 1_000_000_000
   end
 
 
