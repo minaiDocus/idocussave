@@ -12,6 +12,13 @@ class PonctualScripts::PonctualScript
     logger_infos "[END] - #{Time.now} - within #{Time.now - start_time} seconds"
   end
 
+  def rollback
+    start_time = Time.now
+    logger_infos "[ROLLBACK-START] - #{start_time}"
+    backup
+    logger_infos "[ROLLBACK-END] - #{Time.now} - within #{Time.now - start_time} seconds"
+  end
+
   def logger_infos(message)
     infos = "[#{@class_name}] - #{message}"
     p infos #print infos to console and log
@@ -22,4 +29,7 @@ class PonctualScripts::PonctualScript
 
   # Define execute method on the child class (without params, use initializer options if you need params)
   def execute; end
+
+  # Define backup method on the child class (without params, use initializer options if you need params)
+  def backup; end
 end
