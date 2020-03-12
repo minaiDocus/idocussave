@@ -63,7 +63,6 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.temp_pack                   = @temp_pack
     temp_document.user                        = @temp_pack.user
     temp_document.organization                = @temp_pack.organization
-    temp_document.original_file_name          = file_name
     temp_document.position                    = @temp_pack.next_document_position
     # temp_document.content                     = open file_path
     temp_document.content_file_name           = File.basename(file_path).gsub('.pdf', '')

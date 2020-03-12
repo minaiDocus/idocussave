@@ -4,9 +4,12 @@
       .commercial-contact
         %span.contact-label Service Commercial :
         %span.contact-tel 01 84 250 251
-      .client-contact
-        %span.contact-label Support Client :
-        = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
+      .client-contact.clearfix
+        %span.contact-label.mt-2{style: 'display: inline-block'} Support Client :
+        .number.float-right
+          = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
+          %div.open-time de 8H à 12H - 13H à 17H
+
 
     .col-md-3
 

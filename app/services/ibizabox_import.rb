@@ -145,6 +145,8 @@ class IbizaboxImport
               file.close if file
             end
           end
+
+          sleep(5)
         end
       end
     end

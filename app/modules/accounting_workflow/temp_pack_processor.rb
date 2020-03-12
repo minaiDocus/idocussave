@@ -6,6 +6,7 @@ class AccountingWorkflow::TempPackProcessor
     UniqueJobs.for "PublishDocument-#{temp_pack_id}", 2.hours, 2 do
       temp_pack = TempPack.find temp_pack_id
       execute(temp_pack) if temp_pack.not_processed?
+      sleep(60) #lock multi temp pack processing to avoid access disk overload
     end
   end
 
@@ -34,12 +35,20 @@ class AccountingWorkflow::TempPackProcessor
     invoice_pieces           = []
     recreate_original        = false
 
+    sleep_counter = 5
     dir = "#{Rails.root}/files/#{Rails.env}/temp_pack_processor/#{temp_pack.name.downcase.tr(' %','__')}/"
 
     FileUtils.makedirs(dir)
     FileUtils.chmod(0755, dir)
 
       temp_documents.each_with_index do |temp_document, document_index|
+        #add a sleeping time to prevent disk access overload
+        sleep_counter -= 1
+        if sleep_counter <= 0
+          sleep(7)
+          sleep_counter = 5
+        end
+
         LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start")
         inserted_piece = nil
         if !temp_document.is_a_cover? || !pack.has_cover?
@@ -234,7 +243,6 @@ class AccountingWorkflow::TempPackProcessor
     FileUtils.remove_entry dir if dir
 
     if recreate_original
-
       log_document = {
         name: "AccountingWorkflow::TempPackProcessor",
         erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",

@@ -336,6 +336,9 @@ class Pack < ApplicationRecord
   end
 
   def recreate_original_document
+    return false if self.locked_at.present?
+
+    self.update(locked_at: Time.now)
     pieces  = self.pieces.by_position
     success = false
     sleep_counter = 5
@@ -368,6 +371,8 @@ class Pack < ApplicationRecord
     else
       self.original_document.cloud_content.purge
     end
+
+    self.update(locked_at: nil)
   end
 
   private

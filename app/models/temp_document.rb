@@ -341,12 +341,14 @@ class TempDocument < ApplicationRecord
 
   def is_a_cover?
     if scanned?
-      if original_file_name.present?
+      if !self.parent_document_id.present? && original_file_name.present?
         case original_file_name
         when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
           File.basename(original_file_name, '.*').tr(' ', '_').split('_')[3].match(/\A0*\z/).present?
         when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
           File.basename(original_file_name, '.*').tr(' ', '_').split('_')[3].match(/\Apage0001\z/).present?
+        else
+          is_a_cover
         end
       else
         is_a_cover
