@@ -15,7 +15,7 @@ class RetrieverPresenter < BasePresenter
         end
       else
         if scope == :account
-          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever }}), class: 'btn btn-light'
+          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever, retriever_budgea_id: retriever.budgea_id }}), class: 'btn btn-light'
         elsif scope == :collaborator
           h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
         elsif scope == :admin
