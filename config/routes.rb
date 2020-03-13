@@ -415,6 +415,8 @@ Rails.application.routes.draw do
 
     resources :retrievers do
       get   'list',                     on: :collection
+      post 'export_connector_to_xls',   on: :collection
+      get  'get_connector_xls(/:key)', action: 'get_connector_xls',   on: :collection
     end
     resources :new_provider_requests, only: %w(index new create edit update)
 

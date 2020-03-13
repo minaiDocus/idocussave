@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
-  before_action :verif_account, except: %w[index]
-  before_action :load_budgea_config
-  before_action :load_retriever, except: %w[index list new]
-  before_action :verify_retriever_state, except: %w[index list new]
+  before_action :verif_account, except: %w[index export_connector_to_xls get_connector_xls]
+  before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls]
+  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls]
+  before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls]
   before_action :load_retriever_edition, only: %w[new edit]
 
   def index
@@ -34,6 +34,41 @@ class Account::RetrieversController < Account::RetrieverController
   end
 
   def edit; end
+
+  def export_connector_to_xls
+    array_document = params[:documents].to_s.split(/\;/)
+    array_bank     = params[:banks].to_s.split(/\;/)
+    dir            = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
+    file           = OpenStruct.new({path: "#{dir}/list_des_automates.xls", close: nil})
+    xls_data       = []
+
+    max_length = array_document.size > array_bank.size ? array_document.size : array_bank.size
+
+    tmp_data = {}
+    tmp_data[:documents] = "Documents"
+    tmp_data[:banques]   = "Banques"
+    xls_data << OpenStruct.new(tmp_data)
+
+    max_length.times do |i|
+      tmp_data = {}
+      tmp_data[:documents] = array_document[i] if array_document[i].present?
+      tmp_data[:banques]   = array_bank[i]     if array_bank[i].present?
+      next if !array_document[i].present? && !array_bank[i].present?
+      xls_data << OpenStruct.new(tmp_data)
+    end
+
+    ToXls::Writer.new(xls_data, columns: [:documents, :banques], headers: false).write_io(file.path)
+
+    FileUtils.delay_for(5.minutes, queue: :low).remove_dir(dir, true)
+
+    render json: { key: Base64.encode64(file.path.to_s), status: :ok }
+  end
+
+  def get_connector_xls
+    file_path = Base64.decode64(params[:key])
+
+    send_data File.read(file_path), filename: 'liste_automates.xls'
+  end
 
   private
 
