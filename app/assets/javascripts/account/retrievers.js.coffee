@@ -17,6 +17,7 @@ jQuery ->
     router = new Idocus.Routers.BudgeaConnectorsListRouter()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
     Backbone.history.start()
+    $('.export_connector_xls').prop('disabled', true)
 
   if $('#retrieved_documents.select, #bank_accounts.select').length > 0
     $('#master_checkbox').change ->

@@ -4,6 +4,7 @@ class Idocus.Views.ConnectorsList extends Backbone.View
 
   events:
     'click .index_filter': 'filter'
+    'click .export_connector_xls': 'send_xls'
 
   initialize: (options) ->
     @common = new Idocus.Models.Common()
@@ -42,6 +43,31 @@ class Idocus.Views.ConnectorsList extends Backbone.View
       filter_index = $(e.target).attr('data-filter')
       @active_index = filter_index
       @filter_connectors(filter_index)
+
+  send_xls: (e)->
+    list_documents = ""
+    list_banks     = ""
+
+    connectors_document =  @connectors.find("capabilities", "include", 'document')
+    for connector in connectors_document
+      list_documents += ";" + connector.get('name').replace(/\"/g, '')
+
+    connectors_bank =  @connectors.find("capabilities", "include", 'bank')
+    for connector in connectors_bank
+      list_banks += ";" + connector.get('name').replace(/\"/g, '')
+
+    $.ajax({
+      url: "export_connector_to_xls",
+      data: { documents: list_documents, banks: list_banks },
+      dataType: 'json',
+      type: 'post',
+      beforeSend: () ->
+        $('.export_connector_xls').prop("disabled", true)
+      success: (data) ->
+        $('.export_connector_xls').prop("disabled", false)
+
+        location.href = '/account/retrievers/get_connector_xls/' + data.key
+    })
 
   filter_connectors: (filter)->
     @loading = false
