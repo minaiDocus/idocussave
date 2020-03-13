@@ -116,31 +116,36 @@ class DebitMandateResponseService
 
 private
 
-  #NOTE: only used by administrator
+  #NOTE: keep this method private : only used by administrator
   def revoke_payment
-    fetch_order_infos
+    begin
+      fetch_order_infos
 
-    if @mandate && @bank_account
-      begin
-        if client.revoke_mandate.try(:[], 'state') == 'revoked'
-          @debit_mandate.transactionStatus = nil
-          @debit_mandate.reference = nil
-
-          @debit_mandate.RUM = nil
-          @debit_mandate.iban = nil
-          @debit_mandate.bic = nil
-
-          @debit_mandate.save
-          true
-        else
-          p @errors = 'Impossible de supprimer le payment!'
-          false
-        end
-      rescue => e
-        p @errors = "Impossible de supprimer le payment! (#{e.message})"
-        false
+      if @mandate && @bank_account
+          if client.revoke_mandate.try(:[], 'state') == 'revoked'
+            reset_mandate
+            nil #need to return nil if success
+          else
+            'Impossible de supprimer le mandat!'
+          end
+      else
+        reset_mandate
+        nil #need to return nil if success
       end
+    rescue => e
+      "Impossible de supprimer le mandat! (#{e.message})"
     end
+  end
+
+  def reset_mandate
+    @debit_mandate.transactionStatus = nil
+    @debit_mandate.reference = nil
+
+    @debit_mandate.RUM = nil
+    @debit_mandate.iban = nil
+    @debit_mandate.bic = nil
+
+    @debit_mandate.save
   end
 
   def client

@@ -599,6 +599,8 @@
                       %th Email :
                       %td#debit_email= @organization.try(:debit_mandate).try(:email)
                 %a#link_slimpay_checkout.btn.btn-primary{ href: '#slimpay_checkout', data: { toggle: :modal } } Configurer
+                -if @user.is_admin
+                  %a.btn.btn-danger{ href: revoke_payment_account_organization_path({ revoke_confirm: true }), data: { method: :post, confirm: 'Êtes vous sur?'}  } Revoquer le mandat
                 %span#payment_configuration_checker.fs-origin.badge.badge-warning.hide
                   Verification de votre configuration en cours ... Veuillez patienter svp.
 
