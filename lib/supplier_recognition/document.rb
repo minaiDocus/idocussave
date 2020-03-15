@@ -1,5 +1,5 @@
 module SupplierRecognition
-  class Document < Base
+  class Document
     include ActiveModel::Model
 
     attr_accessor :id, :name, :content, :created_at, :updated_at, :state, :third_party_id, :external_id
