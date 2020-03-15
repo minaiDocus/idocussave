@@ -293,7 +293,7 @@ class AccountingWorkflow::TempPackProcessor
       end
 
       pieces_to_pre_assigned.flatten!
-      AccountingWorkflow::SendPieceToPreAssignment.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
+      AccountingWorkflow::SendPieceToSupplierRecognition.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
 
       AutoPreAssignedInvoicePieces.execute(invoice_pieces) if invoice_pieces.any?
     end

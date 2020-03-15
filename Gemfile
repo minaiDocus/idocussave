@@ -139,6 +139,12 @@ gem 'ruby-progressbar', require: false
 # Boot
 gem 'bootsnap'
 
+# API Calls
+gem 'faraday'
+
+# JSON Serialization
+gem 'fast_jsonapi'
+
 group :production do
   # APM
   gem 'elastic-apm'
