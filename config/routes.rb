@@ -120,6 +120,7 @@ Rails.application.routes.draw do
       get   :close_confirm,         on: :member
       post  :prepare_payment,       on: :member
       post  :confirm_payment,       on: :member
+      post  :revoke_payment,        on: :member
       patch :update_options,        on: :collection
       patch :update_software_users, on: :member
 
@@ -419,6 +420,8 @@ Rails.application.routes.draw do
       post 'force_processing', on: :collection
       post 'unlock_operations', on: :collection
     end
+
+    resources :bank_settings, only: %W(index edit update)
 
     resources :retrieved_documents do
       get   'piece',    on: :member

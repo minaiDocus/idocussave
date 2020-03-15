@@ -84,7 +84,7 @@ class EmailedDocument
 
       email.save
 
-      Rails.logger.info(email.inspect)
+      # LogService.info('emails', email.inspect)
 
       Dir.mktmpdir do |dir|
         file_path = "#{dir}/#{email.id}.eml"
@@ -120,17 +120,17 @@ class EmailedDocument
 
             if emailed_document.get_invalid_attachments.any?
               email.update_attribute(:errors_list, emailed_document.errors)
-              EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver_now
+              EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver
             else
               if email.from_user_id.presence.to_i > 0
                 sender = User.find email.from_user_id
-                EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now if sender.try(:notify).try(:reception_of_emailed_docs)
+                EmailedDocumentMailer.notify_success(email, emailed_document).deliver if sender.try(:notify).try(:reception_of_emailed_docs)
               end
             end
           else
             email.update_attribute(:errors_list, emailed_document.errors)
             email.failure
-            emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver_now
+            emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver
           end
           [emailed_document, email]
         else
@@ -143,7 +143,7 @@ class EmailedDocument
           attachment_names = mail.attachments.map(&:filename).select do |filename|
             File.extname(filename).casecmp('.pdf').zero?
           end
-          EmailedDocumentMailer.notify_error(email, attachment_names).deliver_now
+          EmailedDocumentMailer.notify_error(email, attachment_names).deliver
           email.update_attribute(:is_error_notified, true)
         end
         if rescue_error

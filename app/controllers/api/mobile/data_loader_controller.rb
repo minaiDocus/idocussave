@@ -105,7 +105,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
       end
     end
 
-    if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
+    if File.exist?(filepath.to_s) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
       send_file(filepath, type: mime_type, filename: document.cloud_content_object.filename, x_sendfile: true, disposition: 'inline')
     else
@@ -344,7 +344,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
     documents = documents.order(position: :desc).includes(:pack).page(params[:page]).per(20)
 
     data_collected = documents.collect do |document|
-      thumb = File.exist?(document.cloud_content_object.path(:medium)) ? { id: document.id, style: 'medium', filter: document.cloud_content_object.filename } : false
+      thumb = File.exist?(document.cloud_content_object.path(:medium).to_s) ? { id: document.id, style: 'medium', filter: document.cloud_content_object.filename } : false
 
       {
         id: document.id,
@@ -369,7 +369,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
     end
 
     data_collected = temp_documents.collect do |temp_document|
-      thumb = File.exist?(temp_document.cloud_content_object.path(:medium)) ? { id: temp_document.id, style: 'medium', filter: temp_document.cloud_content_object.filename } : false
+      thumb = File.exist?(temp_document.cloud_content_object.path(:medium).to_s) ? { id: temp_document.id, style: 'medium', filter: temp_document.cloud_content_object.filename } : false
 
       {
         id: temp_document.id,
@@ -423,7 +423,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
       thumb = false
       large = false
       if piece
-        thumb = File.exist?(piece.cloud_content_object.path(:medium)) ? { id: piece.id, style: 'medium', filter: piece.cloud_content_object.filename } : false
+        thumb = File.exist?(piece.cloud_content_object.path(:medium).to_s) ? { id: piece.id, style: 'medium', filter: piece.cloud_content_object.filename } : false
         large = { id: piece.id, style: 'original', filter: piece.cloud_content_object.filename }
       end
 

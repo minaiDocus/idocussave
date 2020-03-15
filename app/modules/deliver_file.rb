@@ -152,18 +152,18 @@ module DeliverFile
       if mcf_storage.present?
         path_pattern = Pathname.new '/' + mcf_storage
         path_pattern = path_pattern.join @receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
-        SendToMcf.new(@receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger, max_retries: 1).execute
+        SendToMcf.new(@receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, max_retries: 1).execute
       else
         remote_files.each(&:cancel!)
       end
     end
 
     def push_files
-      logger.info "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{remote_files.size} - SYNC START"
+      LogService.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{remote_files.size} - SYNC START")
       start_time = Time.now
 
       if @receiver.class.name == Group.name || @service_class == :dropbox_extended
-        SendToDropbox.new(DropboxExtended, remote_files, path_pattern: @receiver.dropbox_delivery_folder, logger: logger).execute
+        SendToDropbox.new(DropboxExtended, remote_files, path_pattern: @receiver.dropbox_delivery_folder).execute
       else
         case @service_class
         when :knowings
@@ -171,22 +171,18 @@ module DeliverFile
         when :my_company_files
           push_to_mcf
         when :dropbox_basic
-          SendToDropbox.new(storage, remote_files, logger: logger).execute
+          SendToDropbox.new(storage, remote_files).execute
         when :box
           BoxSyncService.new(remote_files).sync
         when :ftp
-          SendToFTP.new(storage, remote_files, logger: logger).execute
+          SendToFTP.new(storage, remote_files).execute
         when :google_doc
           GoogleDriveSyncService.new(storage).sync(remote_files)
         end
       end
 
       total_synced = remote_files.select { |e| e.state == 'synced' }.size
-      logger.info "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)"
-    end
-
-    def logger
-      @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
+      LogService.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)")
     end
   end
 end

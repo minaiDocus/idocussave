@@ -122,10 +122,25 @@ class CustomActiveStorageObject
         tmp_file.close
       end
 
-      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - Not generated" unless tmp_file_path.present?
+      if !tmp_file_path.present?
+        LogService.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - Not generated")
+
+        log_document = {
+            name: "CustomActiveStorageObject",
+            erreur_type: "Active Storage, Not generated file",
+            date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+            more_information: {
+              object: @object.inspect,
+              style: style.to_s,
+              path: tmp_file.try(:path)
+            }
+        }
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
+
       @base_path = tmp_file_path
     rescue => e
-      logger.info "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retries}"
+      LogService.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retries}")
 
       retries += 1
       if retries <= 2
@@ -133,14 +148,20 @@ class CustomActiveStorageObject
         retry
       end
 
+      log_document = {
+        name: "CustomActiveStorageObject",
+        erreur_type: "Active Storage, Generate File Retry",
+        date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+        more_information: {
+          object: @object.inspect,
+          style: style.to_s,
+          error: e.to_s,
+          retry: retries
+        }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
+
       @base_path = nil
     end
   end
-
-  private
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_active_storage_logs.log")
-  end
-
 end

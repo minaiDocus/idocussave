@@ -65,22 +65,34 @@ class AddTempDocumentToTempPack
       if options[:is_content_file_valid]
         temp_document.pages_number = DocumentTools.pages_number(temp_document.cloud_content_object.path)
 
-        temp_document.save
-
-        if temp_document.retrieved?
-          options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
-        else
-          if temp_document.from_ibizabox? && options[:wait_selection]
-            temp_document.wait_selection
-          elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
-            temp_document.ocr_needed
-            NotifyDocumentBeingProcessed.new(temp_document).execute
-          elsif temp_pack.is_bundle_needed? && !temp_document.from_ibizabox? && (temp_document.scanned? || temp_document.pages_number > 2)
-            temp_document.bundle_needed
-            NotifyDocumentBeingProcessed.new(temp_document).execute
+        if temp_document.save
+          if temp_document.retrieved?
+            options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
           else
-            temp_document.ready
+            if temp_document.from_ibizabox? && options[:wait_selection]
+              temp_document.wait_selection
+            elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
+              temp_document.ocr_needed
+              NotifyDocumentBeingProcessed.new(temp_document).execute
+            elsif temp_pack.is_bundle_needed? && !temp_document.from_ibizabox? && (temp_document.scanned? || temp_document.pages_number > 2)
+              temp_document.bundle_needed
+              NotifyDocumentBeingProcessed.new(temp_document).execute
+            else
+              temp_document.ready
+            end
           end
+        else
+          log_document = {
+            name: "AddTempDocumentToTempPack",
+            erreur_type: "Temp Document not saved",
+            date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+            more_information: {
+              error_message: temp_document.try(:errors).try(:messages).to_s,
+              model: temp_document.inspect,
+              user: temp_document.user.inspect
+            }
+          }
+          ErrorScriptMailer.error_notification(log_document).deliver
         end
       else
         temp_document.unreadable

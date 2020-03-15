@@ -193,6 +193,19 @@ class Account::OrganizationsController < Account::OrganizationController
     render json: { success: true, debit_mandate: @organization.debit_mandate.reload }, status: 200
   end
 
+  def revoke_payment
+    if @user.is_admin && params[:revoke_confirm] == 'true'
+      result = DebitMandateResponseService.new(@organization.debit_mandate).send(:revoke_payment)
+      if result.present?
+        flash[:error]   = result
+      else
+        flash[:success] = 'Mandat supprimé avec succès.'
+      end
+    end
+
+    redirect_to account_organization_path(@organization, { tab: 'payments' })
+  end
+
   private
 
   def verify_rights

@@ -86,7 +86,7 @@ class AutoPreAssignedInvoicePieces
         end
         
         if preseizure.persisted?
-          logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted"
+          LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
 
           @piece.processed_pre_assignment
           @piece.update(is_awaiting_pre_assignment: false)
@@ -99,11 +99,11 @@ class AutoPreAssignedInvoicePieces
             NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
           end
         else
-          logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}"
+          LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")
         end
       end
     rescue => e
-      logger.info "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}"
+      LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}")
     end
   end
 
@@ -170,9 +170,5 @@ class AutoPreAssignedInvoicePieces
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros)
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_auto_upload_invoice.log")
   end
 end

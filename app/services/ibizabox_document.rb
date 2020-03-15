@@ -57,7 +57,7 @@ private
   end
 
   def valid_file_size?
-    @file.size <= 10_000_000
+    @file.size > 0 && @file.size <= 1_000_000_000
   end
 
   def period_service
@@ -90,7 +90,7 @@ private
           FileUtils.cp @file.path, file_path
         end
       else
-        DocumentTools.to_pdf(@file.path, file_path)
+        DocumentTools.to_pdf(@file.path, file_path, @dir)
       end
 
       @temp_file = File.open(file_path, 'r')

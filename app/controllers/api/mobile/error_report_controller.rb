@@ -18,7 +18,7 @@ class Api::Mobile::ErrorReportController < MobileApiController
       report: params[:report]
     }
 
-    MobileReportMailer.report(data_report).deliver_now
+    MobileReportMailer.report(data_report).deliver
 
     render json: { success: true }, status: 200
   end

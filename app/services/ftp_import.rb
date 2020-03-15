@@ -29,7 +29,7 @@ class FTPImport
     return false if not @ftp.organization
     return false if customers.empty?
 
-    logger.info "#{log_prefix} START"
+    LogService.info('processing', "#{log_prefix} START")
     start_time = Time.now
 
     return unless test_connection
@@ -40,7 +40,7 @@ class FTPImport
 
     client.close
 
-    logger.info "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)"
+    LogService.info('processing', "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)")
 
     @ftp.update import_checked_at: Time.now, previous_import_paths: import_folders.map(&:path)
   end
@@ -275,10 +275,10 @@ class FTPImport
             uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @ftp.organization, 'ftp'
 
             if uploaded_document.valid?
-              logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
+              LogService.info('processing', "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
               client.delete file_path
             else
-              logger.info "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}"
+              LogService.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
               mark_file_error(item.path, file_name, uploaded_document.errors)
             end
           end
@@ -307,10 +307,6 @@ class FTPImport
         loop_count += 1
       end
     end
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 
   def log_prefix

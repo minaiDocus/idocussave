@@ -10,19 +10,52 @@ class DocumentTools
 
   def self.pages_number(file_path)
     begin
+      extension = File.extname(file_path).downcase
+      return 0 if extension != '.pdf'
+
       document = nil
       document = Poppler::Document.new(file_path)
 
       document.pages.count
     rescue => e
-      logger.info "[pages_number] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[pages_number] - #{file_path.to_s} - #{e.to_s}")
       0
     end
   end
 
+  def self.to_pdf(file_path, output_file_path, tmp_dir = nil)
+    extension = File.extname(file_path).downcase
+    filename  = File.basename(file_path).downcase
+    dirname   = tmp_dir || File.dirname(file_path)
 
-  def self.to_pdf(file_path, output_file_path)
-    system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
+    if extension == '.pdf'
+      output_file_path = file_path
+    else
+      tmp_file_path = file_path
+
+      if extension == '.heic'
+        filename = filename.gsub('.heic', '.jpg')
+        jpg_file_path = File.join(dirname, "heic_jpg_#{filename}")
+        DocumentTools.convert_heic_to_jpg(tmp_file_path, jpg_file_path)
+
+        tmp_file_path = jpg_file_path if File.exist?(jpg_file_path)
+      end
+
+      begin
+        geometry = Paperclip::Geometry.from_file tmp_file_path
+        if geometry.height > 2000 || geometry.width > 2000
+          resized_file_path = File.join(dirname, "resized_#{filename}")
+          DocumentTools.resize_img(tmp_file_path, resized_file_path)
+          tmp_file_path = resized_file_path
+        end
+      rescue => e
+        tmp_file_path ||= file_path
+      end
+
+      system "convert '#{tmp_file_path}' -quality 100 'pdf:#{output_file_path}' 2>&1"
+
+      return output_file_path
+    end
   end
 
   def self.to_pdf_hight_quality(file_path, output_file_path)
@@ -39,6 +72,10 @@ class DocumentTools
 
   def self.sign_pdf(file_path, output_file_path)
     system "/usr/local/bin/PortableSigner -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
+  end
+
+  def self.convert_heic_to_jpg(input_file_path, output_file_path)
+    system "heif-convert '#{input_file_path}' '#{output_file_path}'"
   end
 
   def self.remake_pdf(file_path)
@@ -58,7 +95,7 @@ class DocumentTools
 
         document.permissions.full?
       rescue => e
-        logger.info "[modifiable?] - #{file_path.to_s} - #{e.to_s}"
+        LogService.info('poppler_errors', "[modifiable?] - #{file_path.to_s} - #{e.to_s}")
         false
       end
     else
@@ -73,8 +110,17 @@ class DocumentTools
     begin
       Poppler::Document.new(file_path)
     rescue => e
-      logger.info "[completed?] - #{file_path.to_s} - #{e.to_s}"
-      is_ok = false
+      LogService.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
+      is_ok    = false
+      dir      = "#{Rails.root}/files/#{Rails.env}/temp_pack_processor/poppler_error/"
+
+      FileUtils.makedirs(dir)
+      FileUtils.chmod(0755, dir)
+
+      filename        = File.basename(file_path)
+      file_error_path = File.join(dir, filename)
+
+      FileUtils.copy file_path, file_error_path if File.exist? file_path
     end
 
     if strict
@@ -98,7 +144,7 @@ class DocumentTools
       document.permissions.ok_to_print?
 
     rescue => e
-      logger.info "[printable?] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[printable?] - #{file_path.to_s} - #{e.to_s}")
       false
     end
   end
@@ -110,7 +156,7 @@ class DocumentTools
       document.permissions.ok_to_print? && !document.permissions.full?
 
     rescue => e
-      logger.info "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}"
+      LogService.info('poppler_errors', "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}")
       nil
     end
   end
@@ -186,7 +232,7 @@ class DocumentTools
   end
 
 
-  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, _logger = Rails.logger, font_size = 10)
+  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, font_size = 10)
     sizes     = Poppler::Document.new(target_file_path).pages.map(&:size)
     file_path = File.join(dir, 'stamp.pdf')
     
@@ -207,7 +253,7 @@ class DocumentTools
             text name, size: font_size, align: :center
           end
         rescue Prawn::Errors::CannotFit
-          _logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
+          LogService.info('document_processor', "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})")
         end
       end
     end
@@ -220,11 +266,10 @@ class DocumentTools
     dir     = options[:dir] || '/tmp'
     origin = options[:origin] || 'scan'
     is_stamp_background_filled = options[:is_stamp_background_filled] || false
-    _logger = options[:logger] || Rails.logger
 
     name = stamp_name(pattern, name, origin)
 
-    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, _logger, stamp_font_size(file_path))
+    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, stamp_font_size(file_path))
 
     Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
 
@@ -288,9 +333,5 @@ class DocumentTools
 
   def self.checksum(file_path)
     `md5sum "#{file_path}"`.split[0]
-  end
-
-  def self.logger
-    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_poppler_errors.log")
   end
 end

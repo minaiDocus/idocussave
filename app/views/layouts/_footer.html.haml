@@ -4,9 +4,12 @@
       .commercial-contact
         %span.contact-label Service Commercial :
         %span.contact-tel 01 84 250 251
-      .client-contact
-        %span.contact-label Support Client :
-        = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
+      .client-contact.clearfix
+        %span.contact-label.mt-2{style: 'display: inline-block'} Support Client :
+        .number.float-right
+          = image_tag('application/contact_number.png', alt: 'contact', class: 'contact_number')
+          %div.open-time de 8H à 12H - 13H à 17H
+
 
     .col-md-3
 
@@ -82,7 +85,7 @@
     /       %li
     /         %a{ href: '' } Page Title 4
   .bottom-bar
-    - if ['retrievers', 'new_provider_requests', 'retrieved_banking_operations', 'retrieved_documents', 'bank_accounts'].include? controller_name
+    - if ['retrievers', 'new_provider_requests', 'retrieved_banking_operations', 'retrieved_documents', 'bank_accounts', 'bank_settings'].include? controller_name
       Idocus est enregistrée sous le numéro 804067726 par l’Autorité de Contrôle Prudentiel et de Résolution comme Agent de Budget Insight, établissement de paiement agréé.
     / |
     / %a{ href: '' } Privacy Policy

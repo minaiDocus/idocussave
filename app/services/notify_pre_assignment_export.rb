@@ -41,13 +41,12 @@ class NotifyPreAssignmentExport
     def send_notifications(notifications)
       notifications.each do |collab_id, notif|
         user = User.find collab_id.to_i
-        user_collab = user.collaborator? ? Collaborator.new(user) : user
 
         notification = Notification.new
         notification.user        = user
         notification.notice_type = 'pre_assignment_export'
         notification.title       = "Export d'écritures comptables disponibles"
-        notification.url         = Rails.application.routes.url_helpers.account_organization_customers_url(user_collab.organization, ActionMailer::Base.default_url_options)
+        notification.url         = Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options)
         notification.message     = notif
         notification.save
 

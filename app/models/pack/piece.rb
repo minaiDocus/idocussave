@@ -246,12 +246,42 @@ class Pack::Piece < ApplicationRecord
       if self.save && File.exist?(to_sign_file.to_s)
         self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
       else
-        logger.info "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})"
+        LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})")
+
         Pack::Piece.delay_for(5.minutes, queue: :low).correct_pdf_signature_of(self.id)
+
+        log_document = {
+          name: "Pack::Piece",
+          erreur_type: "Piece can't be saved or signed file not genereted (#{to_sign_file.to_s}",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            validation_model: self.valid?,
+            model: self.inspect,
+            user: self.user.inspect,
+            method: "sign_piece"
+          }
+        }
+        ErrorScriptMailer.error_notification(log_document).deliver
+
       end
     rescue => e
-      logger.info "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})"
+      LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})")
+
       Pack::Piece.delay_for(2.hours, queue: :low).correct_pdf_signature_of(self.id)
+
+      log_document = {
+        name: "Pack::Piece",
+        erreur_type: "Piece - Signing rescue",
+        date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+        more_information: {
+          validation_model: self.valid?,
+          model: self.inspect,
+          user: self.user.inspect,
+          method: "sign_piece"
+        }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
+
     end
   end
 
@@ -368,9 +398,5 @@ class Pack::Piece < ApplicationRecord
 
   def set_number
     self.number = DbaSequence.next('Piece') unless number
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_pieces_events.log")
   end
 end

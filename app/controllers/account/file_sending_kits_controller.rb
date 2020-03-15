@@ -9,7 +9,20 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/file_sending_kit
   def update
-    if @file_sending_kit.update(file_sending_kit_params)
+    @file_sending_kit.title             = params[:file_sending_kit][:title].strip
+    @file_sending_kit.position          = params[:file_sending_kit][:position].strip
+    @file_sending_kit.instruction       = params[:file_sending_kit][:instruction].strip
+    @file_sending_kit.logo_path         = params[:file_sending_kit][:logo_path].strip
+    @file_sending_kit.logo_height       = params[:file_sending_kit][:logo_height].strip
+    @file_sending_kit.logo_width        = params[:file_sending_kit][:logo_width].strip
+    @file_sending_kit.left_logo_path    = params[:file_sending_kit][:left_logo_path].strip
+    @file_sending_kit.left_logo_height  = params[:file_sending_kit][:left_logo_height].strip
+    @file_sending_kit.left_logo_width   = params[:file_sending_kit][:left_logo_width].strip
+    @file_sending_kit.right_logo_path   = params[:file_sending_kit][:right_logo_path].strip
+    @file_sending_kit.right_logo_height = params[:file_sending_kit][:right_logo_height].strip
+    @file_sending_kit.right_logo_width  = params[:file_sending_kit][:right_logo_width].strip
+
+    if @file_sending_kit.save
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
     else
@@ -109,23 +122,6 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
   def load_file_sending_kit
     @file_sending_kit = @organization.find_or_create_file_sending_kit
-  end
-
-  def file_sending_kit_params
-    params.require(:file_sending_kit).permit(
-      :title,
-      :position,
-      :instruction,
-      :logo_path,
-      :logo_height,
-      :logo_width,
-      :left_logo_path,
-      :left_logo_height,
-      :left_logo_width,
-      :right_logo_path,
-      :right_logo_height,
-      :right_logo_width
-    )
   end
 
   def send_pdf(filename)

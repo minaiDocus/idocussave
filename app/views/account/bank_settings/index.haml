@@ -1,0 +1,71 @@
+#bank_settings.select
+  .box
+    .row
+      .col-md-12
+        .box.clearfix
+          .float-left
+            %h3.float-left
+              = @account.info
+
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box
+        %table.table.table-striped.table-condensed.margin0bottom.table-bordered-inner.table-detachable-head
+          %thead
+            %tr.bg-brown.text-white
+              %th= t('activerecord.models.bank_account.attributes.bank_name')
+              %th= t('activerecord.models.bank_account.attributes.name')
+              %th= t('activerecord.models.bank_account.attributes.number')
+              %th= t('activerecord.models.bank_account.attributes.journal')
+              %th= t('activerecord.models.bank_account.attributes.accounting_number')
+              %th= t('activerecord.models.bank_account.attributes.start_date')
+              %th Paramétrer
+          %tbody
+            - @bank_accounts.each do |bank_account|
+              %tr
+                %td= bank_account.bank_name
+                %td= bank_account.name
+                %td= bank_account.number
+                %td= bank_account.journal
+                %td= bank_account.accounting_number
+                %td= bank_account.start_date
+                %td= link_to t('actions.edit'), edit_account_bank_setting_path(bank_account), class: 'btn btn-light'
+
+    .card.retractable-filter
+      = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[bank_account][bank_name]', 'Banque'
+              .control-section
+                = text_field_tag 'bank_setting_contains[bank_account][bank_name]', (params[:bank_account_contains][:bank_account][:bank_name] rescue ''), include_blank: true
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[bank_account][name]', 'Nom'
+              .control-section
+                = text_field_tag 'bank_account_contains[bank_account][name]', (params[:bank_account_contains][:bank_account][:name] rescue ''), include_blank: true
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[bank_account][number]', 'Numéro de compte'
+              .control-section
+                = text_field_tag 'bank_account_contains[bank_account][number]', (params[:bank_account_contains][:bank_account][:number] rescue ''), include_blank: true
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[bank_account][journal]', 'Code journal'
+              .control-section
+                = text_field_tag 'bank_account_contains[bank_account][journal]', (params[:bank_account_contains][:bank_account][:journal] rescue ''), include_blank: true
+            .form-group.clearfix
+              .label-section
+                = label_tag 'bank_account_contains[bank_account][accounting_number]', 'Compte de trésorerie'
+              .control-section
+                = text_field_tag 'bank_account_contains[bank_account][accounting_number]', (params[:bank_account_contains][:bank_account][:accounting_number] rescue ''), include_blank: true
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), account_bank_settings_path({account_id: @account.try(:id)}), class: 'btn btn-light'

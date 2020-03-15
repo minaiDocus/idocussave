@@ -58,7 +58,8 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
 
 
   def create_temp_document(file_path)
-    temp_document = TempDocument.new
+    file_name                                 = File.basename(file_path)
+    temp_document                             = TempDocument.new
     temp_document.temp_pack                   = @temp_pack
     temp_document.user                        = @temp_pack.user
     temp_document.organization                = @temp_pack.organization
@@ -74,9 +75,10 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.parent_document_id          = original_temp_document.id
     temp_document.scan_bundling_document_ids  = bundling_document_ids
     temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
+    temp_document.original_fingerprint        = DocumentTools.checksum(file_path)
 
     if temp_document.save && temp_document.ready
-      temp_document.cloud_content_object.attach(File.open(file_path), File.basename(file_path))
+      temp_document.cloud_content_object.attach(File.open(file_path), file_name)
       true
     else
       false

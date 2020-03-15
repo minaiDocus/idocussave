@@ -9,7 +9,7 @@
     = csrf_meta_tag
     = stylesheet_link_tag 'application'
     = stylesheet_link_tag 'account/profiles' if controller_name == 'profiles'
-    = stylesheet_link_tag 'account/retrievers' if controller_name.in? %w(retrievers new_provider_requests retrieved_banking_operations retrieved_documents bank_accounts)
+    = stylesheet_link_tag 'account/retrievers' if controller_name.in? %w(retrievers new_provider_requests retrieved_banking_operations retrieved_documents bank_accounts bank_settings)
     = stylesheet_link_tag 'account/charts' if controller_name.in? %w(operations balances)
     = stylesheet_link_tag 'account/organizations' if controller_name == 'organizations'
     = stylesheet_link_tag 'account/paper_processes' if controller_name == 'paper_processes'
@@ -44,7 +44,7 @@
       = javascript_include_tag 'account/reporting'
     - elsif controller_name == 'profiles' && action_name == 'show'
       = javascript_include_tag 'account/profile'
-    - elsif controller_name.in? %w(retrievers new_provider_requests retrieved_banking_operations retrieved_documents bank_accounts)
+    - elsif controller_name.in? %w(retrievers new_provider_requests retrieved_banking_operations retrieved_documents bank_accounts bank_settings)
       = javascript_include_tag 'account/retrievers'
     - elsif controller_name.in? %w(operations balances)
       = javascript_include_tag 'aight.min', 'aight.d3.min', 'sizzle', 'd3', 'd3-tip', 'account/charts', "account/charts/#{controller_name}"

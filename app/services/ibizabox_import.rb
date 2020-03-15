@@ -138,13 +138,17 @@ class IbizaboxImport
           Dir.mktmpdir do |dir|
             begin
               file_path = File.join(dir, file_name)
-              if file = get_file(document_id, file_path)
+              file = get_file(document_id, file_path)
+
+              if File.exist?(file_path) && File.size(file_path) > 0
                 IbizaboxDocument.new(file, @folder, document_id, prev_period_offset)
               end
             ensure
               file.close if file
             end
           end
+
+          sleep(5)
         end
       end
     end

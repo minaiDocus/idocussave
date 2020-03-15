@@ -309,20 +309,16 @@ class CreateInvoicePdf
       uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
 
       if uploaded_document.valid?
-        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded"
+        LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded")
       else
-        logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}"
+        LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}")
       end
     rescue => e
-      logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
+      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}")
     end
   end
 
 private
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_auto_upload_invoice.log")
-  end
 
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0

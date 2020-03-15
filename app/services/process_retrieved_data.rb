@@ -14,7 +14,7 @@ class ProcessRetrievedData
   end
 
   def execute
-    logger.info "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start"
+    LogService.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start")
     start_time = Time.now
     user = @retrieved_data.user
     json_content = @retrieved_data.json_content
@@ -234,7 +234,7 @@ class ProcessRetrievedData
       end
     end
 
-    logger.info "[#{user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
+    LogService.info('processing', "[#{user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec")
 
     if (!json_content[:success] && json_content[:content] != 'File not found') || @retrieved_data.error?
       if !json_content[:success]
@@ -321,9 +321,5 @@ private
     bank_account.lock_old_operation &&
       bank_account.created_at < 1.month.ago &&
       operation.date < bank_account.permitted_late_days.days.ago.to_date
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end

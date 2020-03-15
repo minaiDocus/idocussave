@@ -4,7 +4,7 @@ class UploadedDocument
   attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
 
 
-  VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif).freeze
+  VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
 
 
   def self.valid_extensions
@@ -51,10 +51,10 @@ class UploadedDocument
 
     if @errors.empty?
       pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      logger.info "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack"
+      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack")
 
       pack.update_pack_state # Create or update pack related to temp_pack
-      logger.info "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack"
+      LogService.info('document_upload', "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack")
 
       options = {
         delivered_by:          @uploader.code,
@@ -125,17 +125,7 @@ class UploadedDocument
           re_create_pdf @file.path, file_path
         end
       else
-        tmp_file_path = @file.path
-        begin
-          geometry = Paperclip::Geometry.from_file @file.path
-          if geometry.height > 2000 || geometry.width > 2000
-            tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
-            DocumentTools.resize_img(@file.path, tmp_file_path)
-          end
-        rescue => e
-          tmp_file_path = @file.path
-        end
-        DocumentTools.to_pdf(tmp_file_path, file_path)
+        DocumentTools.to_pdf(@file.path, file_path, @dir)
       end
 
       @temp_file = File.open(file_path, 'r')
@@ -218,11 +208,7 @@ class UploadedDocument
 
 
   def valid_file_size?
-    if @api_name == 'mobile'
-      @file.size <= 250_000_000
-    else
-      @file.size <= 10_000_000
-    end
+    @file.size <= 1_000_000_000
   end
 
 
@@ -236,9 +222,5 @@ class UploadedDocument
 
   def fingerprint
     @fingerprint ||= DocumentTools.checksum(@file.path)
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_document_upload.log")
   end
 end

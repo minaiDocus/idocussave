@@ -119,20 +119,7 @@ class EmailedDocument::Attachment
     if @temp_file_path
       @temp_file_path
     else
-      @temp_file_path = if original_extension != '.pdf'
-        geometry = Paperclip::Geometry.from_file @file_path
-
-        tmp_file_path = @file_path
-        if geometry.height > 2000 || geometry.width > 2000
-          tmp_file_path = File.join(dir, "resized_#{File.basename(@file_path)}")
-          DocumentTools.resize_img(@file_path, tmp_file_path)
-        end
-
-        DocumentTools.to_pdf(tmp_file_path, File.join(dir, @file_name))
-        File.join(dir, @file_name)
-      else
-        @file_path
-      end
+      @temp_file_path = DocumentTools.to_pdf(@file_path, File.join(dir, @file_name), dir)
     end
   end
 

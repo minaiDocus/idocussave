@@ -335,12 +335,17 @@ class Account::DocumentsController < Account::AccountController
     if preseizures.any? && export_format.in?(supported_format)
       preseizures = preseizures.by_position
 
-      export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
-
-      if export.error?
-        render plain: "Traitement impossible : #{export.error_message}"
-      else
+      retries = 0
+      begin
+        export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
         send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
+      rescue => e
+        if (retries += 1) <= 3
+          sleep(retries)
+          retry
+        else
+          render plain: "Traitement impossible : #{e.to_s}"
+        end
       end
     elsif !export_format.in?(supported_format)
       render plain: 'Traitement impossible : le format est incorrect.'
@@ -517,18 +522,21 @@ class Account::DocumentsController < Account::AccountController
       piece.save
 
       temp_document = piece.temp_document
-      temp_document.original_fingerprint    = nil
-      temp_document.content_fingerprint     = nil
-      temp_document.raw_content_fingerprint = nil
-      temp_document.save
 
-      parent_document = temp_document.parent_document
+      if temp_document
+        temp_document.original_fingerprint    = nil
+        temp_document.content_fingerprint     = nil
+        temp_document.raw_content_fingerprint = nil
+        temp_document.save
 
-      if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
-        parent_document.original_fingerprint    = nil
-        parent_document.content_fingerprint     = nil
-        parent_document.raw_content_fingerprint = nil
-        parent_document.save
+        parent_document = temp_document.parent_document
+
+        if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
+          parent_document.original_fingerprint    = nil
+          parent_document.content_fingerprint     = nil
+          parent_document.raw_content_fingerprint = nil
+          parent_document.save
+        end
       end
 
       pack ||= piece.pack

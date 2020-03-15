@@ -30,7 +30,7 @@ class DebitMandateResponseService
 
             @debit_mandate.organization.update(is_suspended: false) if @debit_mandate.organization.is_suspended
 
-            logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Refilled : Order state : #{@order_reference['state']}"
+            LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Refilled : Order state : #{@order_reference['state']}")
           end
         end
       else
@@ -38,10 +38,20 @@ class DebitMandateResponseService
         @checkout_iframe_64 = client.get_checkout_frame
         @checkout_uri = client.get_checkout_uri_redirection
 
-        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Started : Order state : #{@order_reference['state']}"
+        LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Started : Order state : #{@order_reference['state']}")
       end
     rescue => e
       @errors = e.message
+
+      log_document = {
+          name: "DebitMandateResponseService",
+          erreur_type: "Error Slimpay",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            error: e.message
+          }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
     end
   end
 
@@ -67,7 +77,7 @@ class DebitMandateResponseService
       @debit_mandate.save
     end
 
-    logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Finished : Order state : #{@order_reference['state']} - closed : #{finished.to_s}"
+    LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Finished : Order state : #{@order_reference['state']} - closed : #{finished.to_s}")
   end
 
   def get_frame
@@ -91,53 +101,54 @@ class DebitMandateResponseService
     if @debit_mandate.reference.present?
       @order_reference = client.get_order @debit_mandate
 
-      logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Order state : #{@order_reference['state']}"
+      LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - Order state : #{@order_reference['state']}")
 
       if @order_reference['state'] == 'closed.completed'
         @mandate = client.get_mandate
         @bank_account = client.get_bank_account
 
-        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - RUM : #{@mandate['rum']}"
-        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - IBAN : #{@bank_account['iban']}"
-        logger.info "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - bic : #{@bank_account['bic']}"
+        LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - RUM : #{@mandate['rum']}")
+        LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - IBAN : #{@bank_account['iban']}")
+        LogService.info('slimpay', "[Slimpay: #{@debit_mandate.id} - #{@debit_mandate.reference}] - bic : #{@bank_account['bic']}")
       end
     end
   end
 
 private
 
-  #NOTE: only used by administrator
+  #NOTE: keep this method private : only used by administrator
   def revoke_payment
-    fetch_order_infos
+    begin
+      fetch_order_infos
 
-    if @mandate && @bank_account
-      begin
-        if client.revoke_mandate.try(:[], 'state') == 'revoked'
-          @debit_mandate.transactionStatus = nil
-          @debit_mandate.reference = nil
-
-          @debit_mandate.RUM = nil
-          @debit_mandate.iban = nil
-          @debit_mandate.bic = nil
-
-          @debit_mandate.save
-          true
-        else
-          p @errors = 'Impossible de supprimer le payment!'
-          false
-        end
-      rescue => e
-        p @errors = "Impossible de supprimer le payment! (#{e.message})"
-        false
+      if @mandate && @bank_account
+          if client.revoke_mandate.try(:[], 'state') == 'revoked'
+            reset_mandate
+            nil #need to return nil if success
+          else
+            'Impossible de supprimer le mandat!'
+          end
+      else
+        reset_mandate
+        nil #need to return nil if success
       end
+    rescue => e
+      "Impossible de supprimer le mandat! (#{e.message})"
     end
+  end
+
+  def reset_mandate
+    @debit_mandate.transactionStatus = nil
+    @debit_mandate.reference = nil
+
+    @debit_mandate.RUM = nil
+    @debit_mandate.iban = nil
+    @debit_mandate.bic = nil
+
+    @debit_mandate.save
   end
 
   def client
     @client ||= SlimpayCheckout::Client.new
-  end
-
-  def logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_slimpay.log")
   end
 end
