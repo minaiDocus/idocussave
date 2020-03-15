@@ -329,43 +329,18 @@ class AccountingWorkflow::TempPackProcessor
       else
         if uses_analytics?
           if @inserted_piece.from_web? || @inserted_piece.from_mobile?
-            if !@inserted_piece.waiting_pre_assignment
-              log_document = {
-                name: "AccountingWorkflow::TempPackProcessor",
-                erreur_type: "Piece: preassignment state not changed",
-                date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-                more_information: {
-                  piece_id: @inserted_piece.id,
-                  piece_name: @inserted_piece.name,
-                  error: @inserted_piece.try(:errors).try(:messages).to_s,
-                  with_ibiza_analytics: 'true',
-                  piece: @inserted_piece.inspect
-                }
-              }
-
-              ErrorScriptMailer.error_notification(log_document).deliver
-            end
+            @inserted_piece.waiting_pre_assignment
           else
             @inserted_piece.waiting_analytics_pre_assignment
           end
         else
-          if !@inserted_piece.waiting_pre_assignment
-            log_document = {
-              name: "AccountingWorkflow::TempPackProcessor",
-              erreur_type: "Piece: preassignment state not changed",
-              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-              more_information: {
-                piece_id: @inserted_piece.id,
-                piece_name: @inserted_piece.name,
-                error: @inserted_piece.try(:errors).try(:messages).to_s,
-                with_ibiza_analytics: 'false',
-                piece: @inserted_piece.inspect
-              }
-            }
-
-            ErrorScriptMailer.error_notification(log_document).deliver
-          end
+          @inserted_piece.waiting_pre_assignment
         end
+
+        ### TODO: activate supplier recognition ####
+        ### Find a way to use supplier recognition with waiting_pre_assignment state ###
+        # added_pieces.flatten!
+        # AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
       end
     end
   end
