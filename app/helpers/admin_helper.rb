@@ -44,7 +44,7 @@ module AdminHelper
     klass += ' badge-success'   if delivery.state == 'sent'
     klass += ' badge-danger' if delivery.state == 'error'
 
-    content_tag 'span', PreAssignmentDelivery.state_machine.states[delivery.state].human_name, class: klass
+    content_tag 'span', PreAssignmentDelivery.state_machine.states[delivery.state].try(:human_name), class: klass
   end
 
 

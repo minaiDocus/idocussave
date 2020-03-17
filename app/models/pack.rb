@@ -413,7 +413,12 @@ class Pack < ApplicationRecord
       return true
     elsif overwrite_original
       if file_merged
-        FileUtils.copy merged_file_path, target_file_path
+        if target_file_path.present?
+          FileUtils.copy merged_file_path, target_file_path
+        else
+          original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name.gsub('_2.pdf', '.pdf')) if original_document.save
+        end
+
         return true
       else
         FileUtils.rm target_file_path if File.exist? target_file_path
