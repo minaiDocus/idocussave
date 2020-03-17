@@ -17,7 +17,9 @@ class JobProcessorService
 
     job_pass_unlocked_2h = %w[PublishDocument McfProcessor]
 
-    job_pass_unlocked_8h = %w[UpdateAccountingPlan_all ImportFromDropbox ImportFromAllFTP InitializeIbizaboxImport]
+    job_pass_unlocked_8h = %w[UpdateAccountingPlan_all ImportFromDropbox ImportFromAllFTP InitializeIbizaboxImport DeliverPreAssignments]
+
+    # Default unlock after 3h
 
     JobProcessing.not_finished.not_killed.select(:name).distinct.each do |job|
       jobs = JobProcessing.where(name: job.name).not_killed.order(started_at: :desc)

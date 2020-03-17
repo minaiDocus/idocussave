@@ -238,7 +238,7 @@ class Pack::Piece < ApplicationRecord
   end
 
   def correct_pdf_signature
-    sign_piece if DocumentTools.remake_pdf(self.cloud_content_object.path)
+    sign_piece if DocumentTools.correct_pdf_if_needed(self.cloud_content_object.path)
   end
 
   def sign_piece
