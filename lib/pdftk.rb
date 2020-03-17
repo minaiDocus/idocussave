@@ -17,13 +17,21 @@ class Pdftk
 
 
   def merge(source_array, destination_path)
-    @source_files = source_array
-    @merged_file_path = destination_path
+    success_merged = false
+    retries        = 0
+    while !success_merged && retries < 3
+      retries += 1
+      @source_files = source_array
+      @merged_file_path = destination_path
 
-    command = "#{@exe_path} #{@source_files.join(' ')} cat output #{@merged_file_path}"
-    `#{command}`
-  rescue Exception => e
-    raise "Failed to execute:\n#{command}\nError: #{e}"
+      command = "#{@exe_path} #{@source_files.join(' ')} cat output #{@merged_file_path}"
+      `#{command}`
+
+      if File.exist?(@merged_file_path) && @merged_file_path.size > 0
+        success_merged = true
+      end
+    end
+    success_merged
   end
 
 

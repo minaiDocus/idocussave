@@ -378,6 +378,7 @@ class Pack < ApplicationRecord
   private
 
   def _append(file_path, dir, overwrite_original = false)
+    file_merged = true
     original_file = original_document.cloud_content_object
     target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
     target_file_path = overwrite_original ? original_file.path.to_s.gsub('.pdf', '_2.pdf') : original_file.path
@@ -386,19 +387,35 @@ class Pack < ApplicationRecord
     FileUtils.rm merged_file_path if File.exist? merged_file_path
 
     if File.exist? target_file_path.to_s
-      Pdftk.new.merge([target_file_path, file_path], merged_file_path)
+      file_merged = Pdftk.new.merge([target_file_path, file_path], merged_file_path)
+
+      if !file_merged
+        log_document = {
+          name: "Pack",
+          erreur_type: "Pdftk fail merged",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            original_file_path: original_file.path,
+            file_path: file_path,
+            merged_file_path: merged_file_path
+          }
+        }
+        ErrorScriptMailer.error_notification(log_document).deliver
+
+        merged_file_path = target_file_path
+      end
     else
       FileUtils.copy file_path, merged_file_path
     end
 
     if !overwrite_original && DocumentTools.modifiable?(merged_file_path)
-      original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if original_document.save
+      original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if file_merged && original_document.save
       return true
     elsif overwrite_original
-      begin
+      if file_merged
         FileUtils.copy merged_file_path, target_file_path
         return true
-      rescue
+      else
         FileUtils.rm target_file_path if File.exist? target_file_path
         return false
       end
