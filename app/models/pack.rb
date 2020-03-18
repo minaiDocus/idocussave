@@ -306,7 +306,7 @@ class Pack < ApplicationRecord
 
 
   def prepend(file_path, dir = nil)
-    return false if dir.nil?
+    return false if dir.nil? || !DocumentTools.is_mergeable?(file_path)
 
     original_file = original_document.cloud_content_object
     new_file_name = self.name.tr(' ', '_') + '.pdf'
@@ -340,15 +340,16 @@ class Pack < ApplicationRecord
 
     self.update(locked_at: Time.now)
     pieces  = self.pieces.by_position
-    success = false
     sleep_counter = 5
+
+    temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
+    FileUtils.rm temp_file_path if File.exist? temp_file_path
 
     if pieces.present?
       Dir.mktmpdir do |dir|
         pieces.each do |piece|
-          success = append(piece.cloud_content_object.path, true, dir)
+          append(piece.cloud_content_object.path, true, dir)
 
-          break unless success
           #add a sleeping time to prevent disk access overload
           sleep_counter -= 1
           if sleep_counter <= 0
@@ -358,14 +359,10 @@ class Pack < ApplicationRecord
         end
       end
 
-      temp_file_path = self.original_document.cloud_content_object.path.to_s.gsub('.pdf', '_2.pdf')
+      original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
 
-      if success
-        original_document.cloud_content_object.attach(File.open(temp_file_path), self.name.tr(' ', '_') + '.pdf') if original_document.save && File.exist?(temp_file_path) && DocumentTools.modifiable?(temp_file_path)
-
-        set_pages_count
-        save
-      end
+      set_pages_count
+      save
 
       FileUtils.rm temp_file_path if File.exist? temp_file_path
     else
@@ -378,6 +375,8 @@ class Pack < ApplicationRecord
   private
 
   def _append(file_path, dir, overwrite_original = false)
+    return false if !DocumentTools.is_mergeable?(file_path)
+
     file_merged = true
     original_file = original_document.cloud_content_object
     target_file_name = overwrite_original ? self.name.tr(' ', '_') + '_2.pdf' : self.name.tr(' ', '_') + '.pdf'
@@ -395,9 +394,10 @@ class Pack < ApplicationRecord
           erreur_type: "Pdftk fail merged",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
-            original_file_path: original_file.path,
+            target_file_path: target_file_path,
             file_path: file_path,
-            merged_file_path: merged_file_path
+            merged_file_path: merged_file_path,
+            modifiable_target_pdf?: DocumentTools.modifiable?(target_file_path).to_s
           }
         }
         ErrorScriptMailer.error_notification(log_document).deliver
@@ -412,18 +412,15 @@ class Pack < ApplicationRecord
       original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name) if file_merged && original_document.save
       return true
     elsif overwrite_original
-      if file_merged
-        if target_file_path.present?
-          FileUtils.copy merged_file_path, target_file_path
-        else
-          original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name.gsub('_2.pdf', '.pdf')) if original_document.save
-        end
+      return false if !file_merged
 
-        return true
+      if target_file_path.present?
+        FileUtils.copy merged_file_path, target_file_path
       else
-        FileUtils.rm target_file_path if File.exist? target_file_path
-        return false
+        original_document.cloud_content_object.attach(File.open(merged_file_path), target_file_name.gsub('_2.pdf', '.pdf')) if DocumentTools.modifiable?(merged_file_path) && original_document.save
       end
+
+      return true
     else
       return false
     end
