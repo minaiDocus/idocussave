@@ -78,6 +78,14 @@ class DocumentTools
     system "heif-convert '#{input_file_path}' '#{output_file_path}'"
   end
 
+  def self.is_mergeable?(file_path)
+    output_file = File.dirname(file_path) + "/test_merge_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+    file_merged = Pdftk.new.merge([file_path, file_path], output_file)
+    FileUtils.rm output_file, force: true
+
+    return file_merged
+  end
+
   def self.modifiable?(file_path, strict = true)
     if completed? file_path, strict
       begin
