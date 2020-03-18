@@ -107,6 +107,10 @@ RetrievePreAssignmentsWorker:
   queue: high
   cron: '*/10 * * * * *'
 
+PreAssignmentDeliveryXmlBuilderWorker:
+  queue: default
+  cron: '*/10 * * * * *'
+
 DeliverPreAssignmentsWorker:
   queue: default
   cron: '*/10 * * * * *'

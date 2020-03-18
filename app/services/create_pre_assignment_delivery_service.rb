@@ -83,8 +83,6 @@ class CreatePreAssignmentDeliveryService
         if delivery.save
           preseizures.first.save if preseizures.size == 1
 
-          PreAssignmentDeliveryXmlBuilderWorker.perform_async(delivery.id)
-
           deliveries << delivery
         end
       end
@@ -123,8 +121,6 @@ class CreatePreAssignmentDeliveryService
         delivery.preseizures  = preseizures
         if delivery.save
           preseizures.first.save if preseizures.size == 1
-
-          PreAssignmentDeliveryXmlBuilderWorker.perform_async(delivery.id)
 
           deliveries << delivery
         end

@@ -17,7 +17,7 @@ class JobProcessorService
 
     job_pass_unlocked_2h = %w[PublishDocument McfProcessor]
 
-    job_pass_unlocked_8h = %w[UpdateAccountingPlan_all ImportFromDropbox ImportFromAllFTP InitializeIbizaboxImport DeliverPreAssignments]
+    job_pass_unlocked_8h = %w[UpdateAccountingPlan_all ImportFromDropbox ImportFromAllFTP InitializeIbizaboxImport DeliverPreAssignments PreAssignmentDeliveryXmlBuilder]
 
     # Default unlock after 3h
 

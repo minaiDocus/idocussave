@@ -1,14 +1,20 @@
 # Delivery's xml for a specific pre assignment delivery
 class PreAssignmentDeliveryXmlBuilder
-  def initialize(delivery_id)
-    @delivery    = PreAssignmentDelivery.find(delivery_id)
+
+  def self.execute
+    PreAssignmentDelivery.pending.order(id: :asc).each do |delivery|
+      PreAssignmentDeliveryXmlBuilder.new(delivery).execute
+    end
+  end
+
+  def initialize(delivery)
+    @delivery    = delivery
 
     @user        = @delivery.user
     @software    = @delivery.deliver_to == 'ibiza' ? @delivery.organization.ibiza : @delivery.user.exact_online
     @report      = @delivery.report
     @preseizures = @delivery.preseizures
   end
-
 
   def execute
     if @delivery.deliver_to == 'ibiza'
