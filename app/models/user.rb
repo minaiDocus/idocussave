@@ -174,7 +174,7 @@ class User < ApplicationRecord
 
   # Do not keep this bad idea to override active_record methods for nothing
   def self.find_by_token(token)
-    return nil unless token.is_a?(String) && token.size == AUTHENTICATION_TOKEN_LENGTH
+    return nil unless token.is_a?(String)
     User.where(authentication_token: token).first
   end
 
