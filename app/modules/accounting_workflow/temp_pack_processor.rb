@@ -41,6 +41,11 @@ class AccountingWorkflow::TempPackProcessor
     FileUtils.makedirs(dir)
     FileUtils.chmod(0755, dir)
 
+    next_original_document = pack.original_document.cloud_content_object.path.to_s
+    next_original_document = File.join(dir, "next_original_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf") if !File.exist?(next_original_document)
+    can_merge_original = !pack.locked_at.present?
+    pack.update(locked_at: Time.now)
+
       temp_documents.each_with_index do |temp_document, document_index|
         #add a sleeping time to prevent disk access overload
         sleep_counter -= 1
@@ -153,12 +158,12 @@ class AccountingWorkflow::TempPackProcessor
             end
 
             ## Original document
-            if pack.original_document.present?
+            if can_merge_original && pack.original_document.present?
               if pack.original_document.cloud_content_object.size.to_i < 400.megabytes
                 if is_a_cover
-                  pack.prepend piece_file_path, dir
+                  pack.prepend piece_file_path, dir, next_original_document
                 else
-                  recreate_original = true if !pack.append(piece_file_path, false, dir)
+                  recreate_original = true if !pack.append(piece_file_path, dir, next_original_document)
                 end
               end
             end
@@ -240,9 +245,7 @@ class AccountingWorkflow::TempPackProcessor
         LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
       end
 
-    FileUtils.remove_entry dir if dir
-
-    if recreate_original
+    if recreate_original || !can_merge_original
       log_document = {
         name: "AccountingWorkflow::TempPackProcessor",
         erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
@@ -255,8 +258,10 @@ class AccountingWorkflow::TempPackProcessor
 
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      Pack.delay_for(10.minutes, queue: :low).try(:recreate_original_document, pack.id)
+      Pack.delay_for(1.hours, queue: :low).try(:recreate_original_document, pack.id)
     end
+
+    pack.original_document.cloud_content_object.attach(File.open(next_original_document), pack.pdf_name) if pack.original_document.save
 
     pack.set_original_document_id
     pack.set_content_url
@@ -268,7 +273,12 @@ class AccountingWorkflow::TempPackProcessor
     if temp_pack.document_bundling_count == 0 && temp_pack.document_bundle_needed_count == 0
       pack.is_fully_processed = true
     end
+
     pack.save
+    pack.update(locked_at: nil)
+
+    FileUtils.remove_entry dir if dir
+
     Reporting.update(pack)
 
     #Do not archive piece's files any more because of active storage
