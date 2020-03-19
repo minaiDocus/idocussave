@@ -15,7 +15,7 @@ class Pack::Report < ApplicationRecord
   belongs_to :organization
 
   scope :delivered,                 -> { where.not(is_delivered_to: [nil, '']) }
-  scope :not_delivered,             -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_reports.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']) }
+  scope :not_delivered,             -> { joins(:preseizures).merge(Pack::Report::Preseizure.not_deleted.not_delivered).distinct }
   scope :ibiza_delivered,           -> { where('is_delivered_to = "ibiza"') }
   scope :exact_online_delivered,    -> { where('is_delivered_to = "exact_online"') }
   scope :locked,                    -> { where(is_locked: true) }
@@ -26,8 +26,8 @@ class Pack::Report < ApplicationRecord
   def self.search(options)
     reports = self.all
 
-    reports = reports.where(id: options[:ids])                                if options[:ids].present?
-    reports = reports.where(user_id: options[:user_ids])                      if options[:user_ids].present?
+    reports = reports.where(id: options[:ids])                                  if options[:ids].present?
+    reports = reports.where(user_id: options[:user_ids])                        if options[:user_ids].present?
     reports = reports.where('pack_reports.name LIKE ?', "%#{options[:name]}%")  if options[:name].present?
 
     reports
@@ -50,13 +50,17 @@ class Pack::Report < ApplicationRecord
   end
 
   def is_delivered?
-    ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
-    ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
+    self.preseizures.not_deleted.ibiza_delivered.first.present? ||
+    self.preseizures.not_deleted.exact_online_delivered.first.present?
+    # ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
+    # ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
-    ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
+    self.preseizures.not_deleted.not_ibiza_delivered.first.present? ||
+    self.preseizures.not_deleted.not_exact_online_delivered.first.present?
+    # ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
+    # ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
   end
 
   def self.failed_delivery(user_ids = [], limit = 50)
@@ -66,9 +70,9 @@ class Pack::Report < ApplicationRecord
       collections = []
 
       if user_ids.present?
-        collections = Pack::Report::Preseizure.failed_delivery.where(user_id: user_ids).joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
+        collections = Pack::Report::Preseizure.not_deleted.failed_delivery.where(user_id: user_ids).joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
       else
-        collections = Pack::Report::Preseizure.failed_delivery.joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
+        collections = Pack::Report::Preseizure.not_deleted.failed_delivery.joins(:report).select(:id, :delivery_tried_at, :delivery_message, :report_id, 'pack_reports.name as name').to_a
       end
 
       result = []
@@ -118,7 +122,12 @@ class Pack::Report < ApplicationRecord
   end
 
   def is_delivered_to?(software='ibiza')
-    self.is_delivered_to.to_s.match(/#{software}/) ? true : false
+    # self.is_delivered_to.to_s.match(/#{software}/) ? true : false
+    if software == 'ibiza'
+      self.preseizures.not_deleted.ibiza_delivered.first.present?
+    else
+      self.preseizures.not_deleted.exact_online_delivered.first.present?
+    end
   end
 
   def set_delivery_message_for(software='ibiza', message)

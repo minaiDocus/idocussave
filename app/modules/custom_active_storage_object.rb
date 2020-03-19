@@ -115,7 +115,7 @@ class CustomActiveStorageObject
         FileUtils.makedirs(dir)
         FileUtils.chmod(0755, dir)
 
-        FileUtils.delay_for(1.hours, queue: :low).remove_dir(dir, true)
+        FileUtils.delay_for(12.hours, queue: :low).remove_dir(dir, true)
 
         tmp_file = File.open(tmp_file_path, 'wb')
         tmp_file.write blob.download
