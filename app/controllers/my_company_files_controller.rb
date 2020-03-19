@@ -12,6 +12,22 @@ class MyCompanyFilesController < ApplicationController
         original_file_name: params[:Name],
         access_token: params[:Token]
       )
+
+      if !mcf_document.persisted?
+        log_document = {
+          name: "MyCompanyFilesController",
+          erreur_type: "[MCF] - Document not persisted",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            code: params[:IdBaseClient],
+            journal: params[:Type].upcase,
+            original_file_name: params[:Name],
+            access_token: params[:Token]
+          }
+        }
+        ErrorScriptMailer.error_notification(log_document, { attachements: [{name: params[:Name], file: StringIO.open(Base64.decode64(params[:ByteResponse]))}] }).deliver
+      end
+
       respond_to do |format|
         format.json { render json: { 'Status' => 600, 'Message' => 'Success' }.to_json, status: :ok }
       end
