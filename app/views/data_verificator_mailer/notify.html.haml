@@ -1,0 +1,25 @@
+!!!
+%html
+  %head
+    %title [iDocus] Verificateur de données journalière
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Verificateur de données journalière du #{@notify_content[:date_scan]} :
+    %br
+    %br
+    Détails:
+    %ul
+    - @notify_content[:details].each do |info|
+      %li
+        %i= info[:title].to_s
+        - if info[:message].present?
+          %br
+          %p= info[:message].to_s
+      %br
+    %br
+    Cordialement
+    %br
+    SI iDocus

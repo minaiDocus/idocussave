@@ -128,6 +128,11 @@ DatabaseCleanerWorker:
   queue: default
   cron: '0 2 * * *'
 
+## Daily data verifier worker
+DataVerificatorWorker:
+  queue: default
+  cron: '0 3 * * *'
+
 
 ## Delivery workers
 
