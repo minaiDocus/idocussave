@@ -79,11 +79,14 @@ class DocumentTools
   end
 
   def self.is_mergeable?(file_path)
+    merge_tester_file = Rails.root.join('spec', 'support', 'files', 'upload.pdf')
     output_file = File.dirname(file_path) + "/test_merge_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
-    file_merged = Pdftk.new.merge([file_path, file_path], output_file)
+
+    is_merged = Pdftk.new.merge([file_path, merge_tester_file], output_file)
+
     FileUtils.rm output_file, force: true
 
-    return file_merged
+    return is_merged
   end
 
   def self.modifiable?(file_path, strict = true)
