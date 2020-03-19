@@ -20,17 +20,17 @@ class Pack::Report::Preseizure < ApplicationRecord
 
   scope :locked,                        -> { where(is_locked: true) }
   scope :delivered,                     -> { where.not(is_delivered_to: [nil, '']) }
-  scope :not_delivered,                 -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']) }
+  scope :not_delivered,                 -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']).distinct }
   scope :ibiza_delivered,               -> { where('is_delivered_to = "ibiza"') }
-  scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"') }
+  scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"').distinct }
   scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
-  scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"') }
+  scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"').distinct }
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
   scope :not_deleted,                   -> { joins(:piece) } #IMPORTANT: piece model has default scope so the inner join inherit that scope which is deleted_at presence
-  scope :exported,                      -> { joins('INNER JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id > 0') }
-  scope :not_exported,                  -> { joins('LEFT JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id IS NULL') }
+  scope :exported,                      -> { joins('INNER JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id > 0').distinct }
+  scope :not_exported,                  -> { joins('LEFT JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id IS NULL').distinct }
 
 
   scope :blocked_duplicates,            -> { where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
