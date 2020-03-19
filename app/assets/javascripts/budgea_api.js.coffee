@@ -380,7 +380,8 @@ class Idocus.BudgeaApi
           onSuccess(data)
         else
           onError(data.error_message)
-      error: (data) -> onError("Service interne non disponible")
+      error: (data) ->
+        onError("Service interne non disponible")
 
   remote_fetch: (options)->
     method = options.type || 'GET'
