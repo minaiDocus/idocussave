@@ -226,4 +226,42 @@ describe DocumentTools do
       expect(DocumentTools.mimetype('TS0001_Ts_201501_001.png')).to be_nil
     end
   end
+
+  context 'force correct pdf', :force_correct do
+    before(:all) do
+      @dir = Dir.mktmpdir
+    end
+
+    after(:all) do
+      FileUtils.remove_dir(@dir, true)
+    end
+
+    it 'return corrected pdf with 1 page document', :correct_corrupted do
+      input_file_path = File.join(@dir, 'not_mergeable.pdf')
+      FileUtils.cp(Rails.root.join('spec', 'support', 'files', 'not_mergeable.pdf'), input_file_path)
+
+      DocumentTools.force_correct_pdf(input_file_path)
+
+      output_file_name = input_file_path.to_s.gsub('.pdf','_corrected.pdf')
+      file_jpg         = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
+
+      expect(DocumentTools.modifiable?(output_file_name)).to be true
+      expect(File.exist?(file_jpg)).to be true
+    end
+
+    it 'return corrected pdf with 5 pages document', :correct_5pages do
+      input_file_path = File.join(@dir, '5pages.pdf')
+      FileUtils.cp(Rails.root.join('spec', 'support', 'files', '5pages.pdf'), input_file_path)
+
+      DocumentTools.force_correct_pdf(input_file_path)
+
+      output_file_name = input_file_path.to_s.gsub('.pdf','_corrected.pdf')
+      file_jpg1        = input_file_path.to_s.gsub('.pdf','_corrected-0.jpg')
+      file_jpg2        = input_file_path.to_s.gsub('.pdf','_corrected-4.jpg')
+
+      expect(DocumentTools.modifiable?(output_file_name)).to be true
+      expect(File.exist?(file_jpg1)).to be true
+      expect(File.exist?(file_jpg2)).to be true
+    end
+  end
 end

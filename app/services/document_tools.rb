@@ -89,6 +89,35 @@ class DocumentTools
     return is_merged
   end
 
+  def self.force_correct_pdf(input_file_path)
+    begin
+      page_number = DocumentTools.pages_number(input_file_path)
+
+      pdf_to_correct_jpg = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
+      pdf_corrected      = pdf_to_correct_jpg.to_s.gsub('.jpg','.pdf')
+
+      command = "convert -density 400 -colorspace rgb #{input_file_path} #{pdf_to_correct_jpg}"
+      `#{command}`
+
+      input_images = []
+      if page_number > 1
+        page_number.times do |i|
+          input_images << pdf_to_correct_jpg.to_s.gsub('.jpg', "-#{i}.jpg")
+        end
+      else
+        input_images = [pdf_to_correct_jpg]
+      end
+
+      command = "convert -density 500 #{input_images.join(' ')} -quality 100 'pdf:#{pdf_corrected}' 2>&1"
+      `#{command}`
+    rescue => e
+      LogService.info('poppler_errors', "[force_correct_pdf] - #{input_file_path.to_s} - #{e.to_s}")
+      pdf_corrected = input_file_path
+    end
+
+    return pdf_corrected
+  end
+
   def self.modifiable?(file_path, strict = true)
     if completed? file_path, strict
       begin

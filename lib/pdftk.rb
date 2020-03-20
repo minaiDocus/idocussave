@@ -16,14 +16,25 @@ class Pdftk
   end
 
 
-  def merge(source_array, destination_path)
+  def merge(source_array, destination_path, merge_type = 'append')
+    command = "#{@exe_path} #{source_array.join(' ')} cat output #{destination_path}"
+    `#{command}`
+
+    return true if File.exist?(destination_path) && destination_path.size > 0 && DocumentTools.modifiable?(destination_path)
+    FileUtils.rm destination_path, force: true
+
+    if merge_type == 'append'
+      source_array[1] = DocumentTools.force_correct_pdf(source_array.last)
+    else
+      source_array[0] = DocumentTools.force_correct_pdf(source_array.first)
+    end
+
     command = "#{@exe_path} #{source_array.join(' ')} cat output #{destination_path}"
     `#{command}`
 
     return true if File.exist?(destination_path) && destination_path.size > 0 && DocumentTools.modifiable?(destination_path)
     return false
   end
-
 
   def burst(file_path, path = '/tmp', prefix = 'page', counter_size = 3, remake = false)
     @path      = path
