@@ -28,7 +28,7 @@ class Pack::Report::Preseizure < ApplicationRecord
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
-  scope :not_deleted,                   -> { joins(:piece) } #IMPORTANT: piece model has default scope so the inner join inherit that scope which is deleted_at presence
+  scope :not_deleted,                   -> { joins('LEFT JOIN pack_pieces ON pack_report_preseizures.piece_id = pack_pieces.id').where('pack_pieces.id IS NULL OR pack_pieces.delete_at is NULL') }
   scope :exported,                      -> { joins('INNER JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id > 0').distinct }
   scope :not_exported,                  -> { joins('LEFT JOIN pack_report_preseizures_pre_assignment_exports ON pack_report_preseizures.id = pack_report_preseizures_pre_assignment_exports.preseizure_id').where('pack_report_preseizures_pre_assignment_exports.id IS NULL').distinct }
 
