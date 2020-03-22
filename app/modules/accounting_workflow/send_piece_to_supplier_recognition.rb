@@ -13,7 +13,7 @@ class AccountingWorkflow::SendPieceToSupplierRecognition
     request = SupplierRecognition::Document.new(name: @piece.name, external_id: @piece.id, content: @piece.content_text)
 
     if request.create
-      #@piece.recognize_supplier
+      @piece.recognize_supplier_pre_assignment
     end
 
     @piece
