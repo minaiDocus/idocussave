@@ -43,7 +43,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
 
-    _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}_recycle.pdf" : @piece.name.tr(' ', '_') + '.pdf'
+    _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}_recycle.pdf" : @piece.name.tr(' ', '_') + "-#{@piece.detected_third_party_id}" + '.pdf'
 
     POSIX::Spawn.system("cp #{@piece.temp_document.cloud_content_object.path} #{File.join(dir, _piece_name)}")
   end

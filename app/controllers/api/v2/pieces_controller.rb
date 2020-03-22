@@ -8,6 +8,8 @@ class Api::V2::PiecesController < ActionController::Base
     piece = Pack::Piece.find(params[:id])
 
     if piece.update(piece_params)
+      AccountingWorkflow::SendPieceToPreAssignment.new(piece).execute if piece.pre_assignment_state == 'supplier_recognition'
+
       render json: serializer.new(piece)
     else
       render json: piece.errors, status: :unprocessable_entity
