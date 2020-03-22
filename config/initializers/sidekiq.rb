@@ -22,9 +22,11 @@ $remote_lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new(redis)))
 Sidekiq::Extensions.enable_delay!
 
 Sidekiq.configure_server do |config|
-  config.on(:startup) do
-    Sidekiq.schedule = YAML.load_file(scheduler_config_file)
-    Sidekiq::Scheduler.reload_schedule!
+  if Rails.env.production?
+    config.on(:startup) do
+      Sidekiq.schedule = YAML.load_file(scheduler_config_file)
+      Sidekiq::Scheduler.reload_schedule!
+    end
   end
 
   config.redis = redis
