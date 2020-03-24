@@ -28,6 +28,14 @@ class CustomActiveStorageObject
     end
   end
 
+  def service_url()
+    if as_attached.attached?
+      as_attached.service_url
+    else
+      pc_attached.url(:original)
+    end
+  end
+
   def url(style = '')
     if as_attached.attached?
       return nil unless @base_url

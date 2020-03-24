@@ -471,6 +471,7 @@ Rails.application.routes.draw do
 
       resources :system, only: %w(index) do
         post 'my_customers', on: :collection
+        post 'piece_url', on: :collection
       end
     end
 
