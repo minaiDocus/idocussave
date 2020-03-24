@@ -2,9 +2,9 @@
 class AccountingWorkflow::TempPackProcessor
   POSITION_SIZE = 3
 
-  def self.process(temp_pack_id)
-    UniqueJobs.for "PublishDocument-#{temp_pack_id}", 2.hours, 2 do
-      temp_pack = TempPack.find temp_pack_id
+  def self.process(temp_pack_name)
+    UniqueJobs.for "PublishDocument-#{temp_pack_name}", 2.hours, 2 do
+      temp_pack = TempPack.find_by_name temp_pack_name
       execute(temp_pack) if temp_pack.not_processed?
       sleep(60) #lock multi temp pack processing to avoid access disk overload
     end

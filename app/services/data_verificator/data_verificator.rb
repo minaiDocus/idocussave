@@ -17,6 +17,8 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::TempPackWithoutTempDocument.new().execute
 
+    @mail_infos << DataVerificator::PackOrTempPackDuplicatedName.new().execute
+
     @mail_infos << DataVerificator::UpdateAccountingPlanIsUpdatingTrueError.new().execute
 
     daily_mail
