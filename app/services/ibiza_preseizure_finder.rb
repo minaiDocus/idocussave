@@ -12,8 +12,8 @@ class IbizaPreseizureFinder
     new(preseizures).not_delivered
   end
 
-  def self.is_delivered?(preseizure)
-    not_delivered(preseizure).empty?
+  def self.is_delivered?(preseizures)
+    not_delivered(preseizures).empty?
   end
 
   def not_delivered

@@ -5,7 +5,11 @@ class PreAssignmentDeliveryService
 
   class << self
     def execute(notify_now=false)
+      counter = 0
       PreAssignmentDelivery.data_built.order(id: :asc).each do |delivery|
+        counter += 1
+        sleep(7) if((counter % 20) == 0)
+
         PreAssignmentDeliveryService.new(delivery).execute
         notify if @@notified_at <= 15.minutes.ago
 
@@ -73,6 +77,11 @@ class PreAssignmentDeliveryService
   def send_to_ibiza
     @delivery.sending
 
+    if @preseizures.first.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(@preseizures)
+      handle_delivery_error 'already sent'
+      return false
+    end
+
     ibiza_client.request.clear
     ibiza_client.company(@user.ibiza_id).entries!(@delivery.data_to_deliver)
 
@@ -100,6 +109,11 @@ class PreAssignmentDeliveryService
 
   def send_to_exact_online
     @delivery.sending
+
+    if @preseizures.first.pre_assignment_deliveries.sent.size > 0
+      handle_delivery_error 'already sent'
+      return false
+    end
 
     response = ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver)
 
