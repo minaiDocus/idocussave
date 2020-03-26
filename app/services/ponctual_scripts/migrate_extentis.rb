@@ -10,15 +10,31 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
   private
 
   def execute
+    #[IMPORTANT] : account number rules must be migrate before customer migration
     migrate_accounts_rules  unless @options[:rules_only]
     migrate_collaborators   unless @options[:customers_only]
     migrate_customers       unless @options[:collaborators_only]
+
+    # migrate_ibiza           unless @options[:ibiza_only]
+    migrate_mcf             unless @options[:mcf_only]
   end
 
   def backup
     migrate_accounts_rules(true)  unless @options[:rules_only]
     migrate_collaborators(true)   unless @options[:customers_only]
     migrate_customers(true)       unless @options[:collaborators_only]
+
+    # migrate_ibiza(true)           unless @options[:ibiza_only]
+    migrate_mcf(true)             unless @options[:mcf_only]
+  end
+
+  def extentis_group_ids
+    return @extentis_group_ids unless @extentis_group_ids
+
+    @extentis_group_ids = { 'FBC' => Organization.find_by_code('FBC').id,
+                            'FIDA' => Organization.find_by_code('FIDA').id,
+                            'FIDC' => Organization.find_by_code('FIDC').id,
+                            'EG' => Organization.find_by_code('EG').id }
   end
 
   def models
@@ -26,7 +42,7 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
   end
 
   def extentis_group
-    ['FBC','FIDA','FIDC']
+    ['FBC','FIDA','FIDC', 'EG']
   end
 
   def extentis_id
@@ -37,10 +53,8 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
   end
 
   def previous_org_of(user)
-    ids = {'FBC'=> 53, 'FIDA'=> 47, 'FIDC'=> 52}
-
     org_code  = user.code.split('%')[0]
-    ids[org_code.strip.to_s].to_i
+    extentis_group_ids[org_code.strip.to_s].to_i
   end
 
   def migrate_customers(rollback = false)
@@ -148,5 +162,17 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
         logger_infos("======================= END - Org - #{organization.code} ======================")
       end
     end
+  end
+
+  def migrate_mcf(rollback = false)
+    if rollback
+      mcf = Organization.find_by_code('EXT').mcf_settings
+      mcf.organization_id = extentis_group_ids['FIDA'] if mcf
+    else
+      mcf = Organization.find_by_code('FIDA').mcf_settings
+      mcf.organization_id = extentis_id if mcf
+    end
+
+    mcf.save
   end
 end
