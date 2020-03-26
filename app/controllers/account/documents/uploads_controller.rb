@@ -18,7 +18,32 @@ class Account::Documents::UploadsController < Account::AccountController
       filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename}")
       FileUtils.copy params[:files][0].tempfile, filename
 
-      uploaded_document = UploadedDocument.new(params[:files][0].tempfile,
+      final_file = filename
+      corrected  = false
+
+      if File.extname(filename).downcase == '.pdf' && !DocumentTools.modifiable?(filename)
+        final_file = DocumentTools.force_correct_pdf(filename)
+        corrected  = true
+
+        log_document = {
+          name: "Account::Documents::UploadsController",
+          erreur_type: "File corrupted, this file force to correct",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            code: customer.code,
+            customer: customer.inspect,
+            params_file: params[:files][0].inspect
+          }
+        }
+
+        begin
+          ErrorScriptMailer.error_notification(log_document, { attachements: [{name: params[:files][0].original_filename, file: File.read(filename)}] } ).deliver
+        rescue
+          ErrorScriptMailer.error_notification(log_document).deliver
+        end
+      end
+
+      uploaded_document = UploadedDocument.new(File.open(final_file),
                                                params[:files][0].original_filename,
                                                customer,
                                                params[:file_account_book_type],
@@ -27,8 +52,9 @@ class Account::Documents::UploadsController < Account::AccountController
                                                'web',
                                                params[:analytic])
 
-      if uploaded_document.errors.empty?
-       FileUtils.rm_rf filename
+      if uploaded_document.errors.empty? || uploaded_document.errors.detect { |e| e.first == :already_exist }.present?
+       FileUtils.rm filename   if !corrected
+       FileUtils.rm final_file if final_file.present? && File.exist?(final_file.to_s)
       else
         log_document = {
           name: "Account::Documents::UploadsController",
