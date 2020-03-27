@@ -136,6 +136,8 @@ class Pack::Report::Preseizure < ApplicationRecord
   def computed_date(exercise=nil)
     date = self.date.try(:to_date)
 
+    return date if self.operation
+
     if self.is_period_range_used
       out_of_period_range = begin
                               date < self.period_start_date || self.period_end_date < date
