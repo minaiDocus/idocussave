@@ -33,7 +33,7 @@ class JobProcessorService
       job_test_2h = job_pass_unlocked_2h.include?(job_pass_name) && time_duration >= 2
       job_test_8h = job_pass_unlocked_8h.include?(job_pass_name) && time_duration >= 8
 
-      if job_test_8h || (!job_test_8h && (time_duration >= 3 || job_test_2h || job_test_1h))
+      if job_test_8h || (!job_pass_unlocked_8h.include?(job_pass_name) && (time_duration >= 3 || job_test_2h || job_test_1h))
         result = $remote_lock.release_lock "#{job_processing.name.strip}"
 
         jobs.each(&:kill)
