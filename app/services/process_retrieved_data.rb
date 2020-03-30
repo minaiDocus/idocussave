@@ -239,6 +239,7 @@ class ProcessRetrievedData
     if (!json_content[:success] && json_content[:content] != 'File not found') || @retrieved_data.error?
       if !json_content[:success]
         @retrieved_data.update(error_message: json_content[:content].to_s)
+        @retrieved_data.error
         @retrieved_data.reload
       end
 
