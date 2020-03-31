@@ -248,7 +248,7 @@ class ProcessRetrievedData
         NotificationMailer.notify(
           addresses,
           '[iDocus] Erreur lors du traitement des notifications Budgea',
-          @retrieved_data.error_message).deliver
+          "#{@retrieved_data.id.to_s} - #{@retrieved_data.error_message}").deliver
       end
       @retrieved_data.error_message
     else
