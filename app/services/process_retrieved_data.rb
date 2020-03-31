@@ -243,13 +243,14 @@ class ProcessRetrievedData
         @retrieved_data.reload
       end
 
-      addresses = Array(Settings.first.try(:notify_errors_to))
-      if addresses.size > 0
-        NotificationMailer.notify(
-          addresses,
-          '[iDocus] Erreur lors du traitement des notifications Budgea',
-          "#{@retrieved_data.id.to_s} - #{@retrieved_data.error_message}").deliver
-      end
+      # addresses = Array(Settings.first.try(:notify_errors_to))
+      # if addresses.size > 0
+      #   NotificationMailer.notify(
+      #     addresses,
+      #     '[iDocus] Erreur lors du traitement des notifications Budgea',
+      #     "#{@retrieved_data.id.to_s} - #{@retrieved_data.error_message}").deliver
+      # end
+      LogService.info('retrieved_data', "[#{user.code}][RetrievedData:#{@retrieved_data.id}] Error: #{@retrieved_data.error_message}")
       @retrieved_data.error_message
     else
       @retrieved_data.processed if json_content[:success] || !@retrieved_data.cloud_content.attached?
