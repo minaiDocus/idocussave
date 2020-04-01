@@ -65,7 +65,7 @@ class JobProcessorService
   def clear_all_lock
     JobProcessing.all.select(:name).distinct.each do |job|
       result = $remote_lock.release_lock "#{job.name.strip}"
-      p "#{name.strip} - #{result.to_s}" if result.to_i > 0
+      p "#{job.name.strip} - #{result.to_s}" if result.to_i > 0
     end
 
     di = SidekiqUniqueJobs::Digests.all
