@@ -11,48 +11,115 @@ class CreateInvoicePdf
       end; nil
 
 
-      Organization.billed.each do |organization|
-        organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', '2020-02-02', '2020-02-02').first
+      # Organization.billed.each do |organization|
+      #   organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', '2020-02-02', '2020-02-02').first
 
-        UpdateOrganizationPeriod.new(organization_period).fetch_all
+      #   UpdateOrganizationPeriod.new(organization_period).fetch_all
+      # end
+
+      #FIDC must not be treated here
+      Organization.where.not(code: 'FIDC').billed.order(created_at: :asc).each do |organization|
+        generate_invoice_of organization
       end
 
-      Organization.billed.order(created_at: :asc).each do |organization|
-        organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
-        periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
-
-        next if organization_period.nil?
-        next if organization_period.invoices.present?
-        next if periods.empty? && organization_period.price_in_cents_wo_vat == 0
-        next if organization.addresses.select{ |a| a.is_for_billing }.empty?
-
-        UpdateOrganizationPeriod.new(organization_period).fetch_all
-        #Update discount only for organization and when generating invoice
-        DiscountBillingService.update_period(organization_period)
-
-        puts "Generating invoice for organization : #{organization.name}"
-        invoice = Invoice.new
-        invoice.organization = organization
-        invoice.period       = organization_period
-        invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
-        invoice.save
-        print "-> Invoice #{invoice.number}..."
-        CreateInvoicePdf.new(invoice).execute
-        print "done\n"
-
-        #organization.admins.each do |admin|
-        #  notification = Notification.new
-        #  notification.user        = admin
-        #  notification.notice_type = 'invoice'
-        #  notification.title       = 'Nouvelle facture disponible'
-        #  notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
-        #  notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
-        #  notification.save
-        #end
-
-        InvoiceMailer.delay(queue: :high).notify(invoice)
+      #Generate FIDC invoice at last, which mean EG, FIDC, FBC have already been generated
+      Organization.where(code: 'FIDC').billed.order(created_at: :asc).each do |organization|
+        generate_invoice_of organization
       end
+
       Invoice.archive
+    end
+
+    def generate_invoice_of(organization)
+      time = 1.month.ago.beginning_of_month + 15.days
+      organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+      periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+
+      return false if organization_period.nil?
+      return false if organization_period.invoices.present?
+      return false if periods.empty? && organization_period.price_in_cents_wo_vat == 0
+      return false if organization.addresses.select{ |a| a.is_for_billing }.empty?
+
+      UpdateOrganizationPeriod.new(organization_period).fetch_all
+      #Update discount only for organization and when generating invoice
+      DiscountBillingService.update_period(organization_period)
+
+      #Merge invoice of extentis group to FIDC
+      merge_extentis_invoice if organization.code == 'FIDC'
+
+
+      #We dont generate EG, FIDC , FBC's invoices
+      return false if ['EG', 'FIDA', 'FBC'].include? organization.code
+
+      puts "Generating invoice for organization : #{organization.name}"
+      invoice = Invoice.new
+      invoice.organization = organization
+      invoice.period       = organization_period
+      invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
+      invoice.save
+      print "-> Invoice #{invoice.number}..."
+      CreateInvoicePdf.new(invoice).execute
+      print "done\n"
+
+      #organization.admins.each do |admin|
+      #  notification = Notification.new
+      #  notification.user        = admin
+      #  notification.notice_type = 'invoice'
+      #  notification.title       = 'Nouvelle facture disponible'
+      #  notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+      #  notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
+      #  notification.save
+      #end
+
+      # InvoiceMailer.delay(queue: :high).notify(invoice)
+    end
+
+    def merge_extentis_invoice
+      time = 1.month.ago.beginning_of_month + 15.days
+      fidec = Organization.find_by_code 'FIDC'
+      orders = []
+
+      ['FBC', 'FIDA', 'EG'].each do |code|
+        organization = Organization.find_by_code code
+        customer_ids = organization.customers.active_at(time.to_date).map(&:id)
+        periods = Period.where(user_id: customer_ids).where("start_date <= ? AND end_date >= ?", time.to_date, time.to_date)
+
+        total_amount = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
+
+        options = begin
+                    organization.subscription.periods.select { |period| period.start_date <= time && period.end_date >= time }
+                                .first
+                                .product_option_orders
+                                .by_position
+                  rescue
+                    []
+                  end
+
+        options.each do |option|
+          total_amount += option.price_in_cents_wo_vat
+        end
+
+        total_amount = total_amount * 1.2 if organization.subject_to_vat #TTC amount
+        orders << create_fidc_order_of(organization, total_amount)
+      end
+
+      fidec_period = fidec.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+      fidec_period.product_option_orders = orders.compact if fidec_period
+    end
+
+    def create_fidc_order_of(organization, price)
+      return nil unless organization.present?
+
+      option = ProductOptionOrder.new
+
+      option.title       = "#{organization.name}"
+      option.name        = 'extra_option'
+      option.duration    = 1
+      option.group_title = 'Autres'
+      option.is_an_extra = true
+      option.price_in_cents_wo_vat = price
+
+      option
     end
   end
 
@@ -296,11 +363,14 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    auto_upload_last_invoice if @invoice.present? && @invoice.persisted?
+    # auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
   def auto_upload_last_invoice
     begin
+      #We dont send extentis group invoices to ACC%IDO except FIDC, cause FIDC is a merge of the 4 invoices
+      return false if ['EG', 'FIDA', 'FBC'].include? @invoice.organization.code
+
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
 
       file = File.new @invoice.cloud_content_object.path
