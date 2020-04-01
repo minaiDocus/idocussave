@@ -99,7 +99,6 @@ class CreateInvoicePdf
           total_amount += option.price_in_cents_wo_vat
         end
 
-        total_amount = total_amount * 1.2 if organization.subject_to_vat #TTC amount
         orders << create_fidc_order_of(organization, total_amount)
       end
 
