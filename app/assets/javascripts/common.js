@@ -10,8 +10,11 @@
 //= require jquery.tokeninput.min
 //= require jquery.livequery.min
 //= require jquery_nested_form
+//= require file-uploader/vendor/jquery.ui.widget
 //= require file-uploader/fileupload-tpl
 //= require file-uploader/fileupload-load-image
+//= require file-uploader/fileupload-canvas-to-blob
+//= require file-uploader/fileupload-blueimp-gallery
 //= require file-uploader/jquery.iframe-transport
 //= require file-uploader/jquery.fileupload
 //= require file-uploader/jquery.fileupload-process
