@@ -226,9 +226,11 @@ class Pack::Piece < ApplicationRecord
       DocumentTools.correct_pdf_if_needed original_file_path
 
       DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
-      self.cloud_content_object.attach(File.open(piece_file_path), self.name)
+      self.cloud_content_object.attach(File.open(piece_file_path), piece_file_name)
       
       self.try(:sign_piece)
+
+      self.get_pages_number
     end
   end
 
@@ -256,6 +258,8 @@ class Pack::Piece < ApplicationRecord
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {
             validation_model: self.valid?,
+            file_to_sign_exist: File.exist?(to_sign_file.to_s),
+            file_to_sign: to_sign_file.to_s,
             model: self.inspect,
             user: self.user.inspect,
             method: "sign_piece"
@@ -275,9 +279,11 @@ class Pack::Piece < ApplicationRecord
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {
           validation_model: self.valid?,
+          file_to_sign: to_sign_file.to_s,
           model: self.inspect,
           user: self.user.inspect,
-          method: "sign_piece"
+          method: "sign_piece",
+          error: e.to_s
         }
       }
       ErrorScriptMailer.error_notification(log_document).deliver

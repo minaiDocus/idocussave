@@ -52,7 +52,7 @@ class Account::Documents::UploadsController < Account::AccountController
                                                'web',
                                                params[:analytic])
 
-      if uploaded_document.errors.empty? || uploaded_document.errors.detect { |e| e.first == :already_exist }.present?
+      if uploaded_document.errors.empty? || !uploaded_document.errors.detect { |e| e.first == :file_is_corrupted_or_protected }.present?
        FileUtils.rm filename   if !corrected
        FileUtils.rm final_file if final_file.present? && File.exist?(final_file.to_s)
       else
@@ -61,10 +61,12 @@ class Account::Documents::UploadsController < Account::AccountController
           erreur_type: "Uploaded document failed",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
+            error_reason: uploaded_document.errors.inspect,
             code: customer.code,
             customer: customer.inspect,
+            journal: params[:file_account_book_type].to_s,
+            period: params[:file_prev_period_offset].to_s,
             params_file: params[:files][0].inspect,
-            error_reason: uploaded_document.errors.inspect
           }
         }
 
