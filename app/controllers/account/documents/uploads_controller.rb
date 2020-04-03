@@ -15,7 +15,7 @@ class Account::Documents::UploadsController < Account::AccountController
       FileUtils.makedirs(dir)
       FileUtils.chmod(0755, dir)
 
-      filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename}")
+      filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename.tr(' ', '_')}")
       FileUtils.copy params[:files][0].tempfile, filename
 
       final_file = filename

@@ -246,7 +246,6 @@ describe DocumentTools do
       file_jpg         = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
 
       expect(DocumentTools.modifiable?(output_file_name)).to be true
-      expect(File.exist?(file_jpg)).to be true
     end
 
     it 'return corrected pdf with 5 pages document', :correct_5pages do
@@ -260,8 +259,6 @@ describe DocumentTools do
       file_jpg2        = input_file_path.to_s.gsub('.pdf','_corrected-4.jpg')
 
       expect(DocumentTools.modifiable?(output_file_name)).to be true
-      expect(File.exist?(file_jpg1)).to be true
-      expect(File.exist?(file_jpg2)).to be true
     end
   end
 end
