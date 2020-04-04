@@ -27,12 +27,14 @@ class Account::Documents::UploadsController < Account::AccountController
 
         log_document = {
           name: "Account::Documents::UploadsController",
-          erreur_type: "File corrupted, this file force to correct",
+          erreur_type: "File corrupted, forcing to correct ...",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
             code: customer.code,
-            customer: customer.inspect,
-            params_file: params[:files][0].inspect
+            journal: params[:file_account_book_type].to_s,
+            period: params[:file_prev_period_offset].to_s,
+            file_corrupted: filename.to_s,
+            file_corrected: final_file
           }
         }
 

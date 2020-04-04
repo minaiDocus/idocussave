@@ -91,21 +91,21 @@ class DocumentTools
 
   def self.force_correct_pdf(input_file_path)
     input_images = []
+    extension   = File.extname input_file_path
+    pdf_to_correct_jpg = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
+    pdf_corrected      = pdf_to_correct_jpg.to_s.gsub('.jpg','.pdf')
 
     begin
-      Timeout::timeout 20 do
-        extension   = File.extname input_file_path
+      if extension != '.pdf'
+        output_file_path = input_file_path.to_s.gsub(extension,'_out.pdf')
+        DocumentTools.to_pdf input_file_path, output_file_path
+        pdf_corrected = output_file_path
+      else
+        page_number = DocumentTools.pages_number(input_file_path)
+        safe_time   = page_number > 0 ? (page_number * 10) : 5
+        safe_time   = safe_time > 70 ? 70 : safe_time
 
-        if extension != '.pdf'
-          output_file_path = input_file_path.to_s.gsub(extension,'_out.pdf')
-          DocumentTools.to_pdf input_file_path, output_file_path
-          pdf_corrected = output_file_path
-        else
-          page_number = DocumentTools.pages_number(input_file_path)
-
-          pdf_to_correct_jpg = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
-          pdf_corrected      = pdf_to_correct_jpg.to_s.gsub('.jpg','.pdf')
-
+        Timeout::timeout safe_time do
           command = "convert -density 400 -colorspace rgb '#{input_file_path}' '#{pdf_to_correct_jpg}'"
           `#{command}`
 
