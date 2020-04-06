@@ -34,7 +34,8 @@ class UploadedDocument
         unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
           @errors << [:file_is_corrupted_or_protected, nil]
         end
-      rescue Errno::ENOENT
+      rescue => e
+        LogService.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
         @errors << [:file_is_corrupted_or_protected, nil]
       end
 
@@ -115,14 +116,20 @@ class UploadedDocument
         _file = @file.path
 
         if DocumentTools.protected?(@file.path)
-          DocumentTools.remove_pdf_security(@file.path, file_path)
-          _file = file_path
+          safe_file = file_path.gsub('.pdf', '_safe.pdf')
+          DocumentTools.remove_pdf_security(@file.path, safe_file)
+          _file = safe_file
         end
 
         if File.exist?(_file) && DocumentTools.modifiable?(_file)
-          FileUtils.cp @file.path, file_path
+          FileUtils.cp _file, file_path
         else
+          LogService.info('document_upload', "[Upload error] #{@file.path} - attempt to recreate")
           re_create_pdf @file.path, file_path
+          if !DocumentTools.modifiable?(file_path)
+            LogService.info('document_upload', "[Upload error] #{@file.path} - force correction")
+            force_correct_pdf(@file.path, file_path)
+          end
         end
       else
         DocumentTools.to_pdf(@file.path, file_path, @dir)
@@ -139,6 +146,33 @@ class UploadedDocument
     success ? FileUtils.cp(_tmp_file, destination) : FileUtils.cp(source, destination)
 
     File.unlink _tmp_file
+  end
+
+  def force_correct_pdf(source, destination)
+    correction_data = DocumentTools.force_correct_pdf(source)
+    FileUtils.cp correction_data[:output_file], destination
+
+    log_document = {
+        name: "Account::Documents::UploadsController",
+        erreur_type: "File corrupted, forcing to correct ...",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          api_name: @api_name,
+          code: @code,
+          journal: @journal,
+          period: @prev_period_offset,
+          file_corrupted: @file.path,
+          file_corrected: correction_data[:output_file],
+          corrected: correction_data[:corrected],
+          correction_errors: correction_data[:errors]
+        }
+      }
+
+      begin
+        ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
+      rescue
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
   end
 
   def clean_tmp

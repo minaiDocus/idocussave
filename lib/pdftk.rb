@@ -24,9 +24,9 @@ class Pdftk
     FileUtils.rm destination_path, force: true
 
     if merge_type == 'append'
-      source_array[1] = DocumentTools.force_correct_pdf(source_array.last)
+      source_array[1] = DocumentTools.force_correct_pdf(source_array.last)[:output_file]
     else
-      source_array[0] = DocumentTools.force_correct_pdf(source_array.first)
+      source_array[0] = DocumentTools.force_correct_pdf(source_array.first)[:output_file]
     end
 
     command = "#{@exe_path} #{source_array.join(' ')} cat output #{destination_path}"

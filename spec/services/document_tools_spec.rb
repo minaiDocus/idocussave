@@ -240,11 +240,12 @@ describe DocumentTools do
       input_file_path = File.join(@dir, 'not_mergeable.pdf')
       FileUtils.cp(Rails.root.join('spec', 'support', 'files', 'not_mergeable.pdf'), input_file_path)
 
-      DocumentTools.force_correct_pdf(input_file_path)
+      corrected = DocumentTools.force_correct_pdf(input_file_path)[:corrected]
 
       output_file_name = input_file_path.to_s.gsub('.pdf','_corrected.pdf')
       file_jpg         = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
 
+      expect(corrected).to be true
       expect(DocumentTools.modifiable?(output_file_name)).to be true
     end
 
@@ -252,12 +253,13 @@ describe DocumentTools do
       input_file_path = File.join(@dir, '5pages.pdf')
       FileUtils.cp(Rails.root.join('spec', 'support', 'files', '5pages.pdf'), input_file_path)
 
-      DocumentTools.force_correct_pdf(input_file_path)
+      corrected = DocumentTools.force_correct_pdf(input_file_path)[:corrected]
 
       output_file_name = input_file_path.to_s.gsub('.pdf','_corrected.pdf')
       file_jpg1        = input_file_path.to_s.gsub('.pdf','_corrected-0.jpg')
       file_jpg2        = input_file_path.to_s.gsub('.pdf','_corrected-4.jpg')
 
+      expect(corrected).to be true
       expect(DocumentTools.modifiable?(output_file_name)).to be true
     end
   end

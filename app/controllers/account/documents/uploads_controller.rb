@@ -18,34 +18,7 @@ class Account::Documents::UploadsController < Account::AccountController
       filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename.tr(' ', '_')}")
       FileUtils.copy params[:files][0].tempfile, filename
 
-      final_file = filename
-      corrected  = false
-
-      if File.extname(filename).downcase == '.pdf' && !DocumentTools.modifiable?(filename)
-        final_file = DocumentTools.force_correct_pdf(filename)
-        corrected  = true
-
-        log_document = {
-          name: "Account::Documents::UploadsController",
-          erreur_type: "File corrupted, forcing to correct ...",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-          more_information: {
-            code: customer.code,
-            journal: params[:file_account_book_type].to_s,
-            period: params[:file_prev_period_offset].to_s,
-            file_corrupted: filename.to_s,
-            file_corrected: final_file
-          }
-        }
-
-        begin
-          ErrorScriptMailer.error_notification(log_document, { attachements: [{name: params[:files][0].original_filename, file: File.read(filename)}] } ).deliver
-        rescue
-          ErrorScriptMailer.error_notification(log_document).deliver
-        end
-      end
-
-      uploaded_document = UploadedDocument.new(File.open(final_file),
+      uploaded_document = UploadedDocument.new(File.open(filename),
                                                params[:files][0].original_filename,
                                                customer,
                                                params[:file_account_book_type],
@@ -55,24 +28,7 @@ class Account::Documents::UploadsController < Account::AccountController
                                                params[:analytic])
 
       if uploaded_document.errors.empty? || !uploaded_document.errors.detect { |e| e.first == :file_is_corrupted_or_protected }.present?
-       FileUtils.rm filename   if !corrected
-       FileUtils.rm final_file if final_file.present? && File.exist?(final_file.to_s)
-      else
-        log_document = {
-          name: "Account::Documents::UploadsController",
-          erreur_type: "Uploaded document failed",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-          more_information: {
-            error_reason: uploaded_document.errors.inspect,
-            code: customer.code,
-            customer: customer.inspect,
-            journal: params[:file_account_book_type].to_s,
-            period: params[:file_prev_period_offset].to_s,
-            params_file: params[:files][0].inspect,
-          }
-        }
-
-        ErrorScriptMailer.error_notification(log_document).deliver
+       FileUtils.rm filename
       end
 
       data = present(uploaded_document).to_json
