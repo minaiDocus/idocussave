@@ -44,7 +44,7 @@ class PaperProcess < ApplicationRecord
     paper_processes = self.all
 
     if options[:customer_company].present?
-      paper_processes.joins(:user).where('users.company LIKE ?', "%#{options[:customer_company]}%")
+      paper_processes = paper_processes.joins(:user).where('LOWER(users.company) LIKE ?', "%#{options[:customer_company].downcase}%")
     end
 
     paper_processes = paper_processes.where(type: options[:type]) if options[:type]

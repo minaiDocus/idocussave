@@ -46,7 +46,7 @@ class DocumentTools
         if geometry.height > 2000 || geometry.width > 2000
           resized_file_path = File.join(dirname, "resized_#{filename}")
           DocumentTools.resize_img(tmp_file_path, resized_file_path)
-          tmp_file_path = resized_file_path
+          tmp_file_path = resized_file_path if File.exist?(resized_file_path)
         end
       rescue => e
         tmp_file_path ||= file_path
