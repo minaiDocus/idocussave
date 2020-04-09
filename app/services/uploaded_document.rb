@@ -39,7 +39,7 @@ class UploadedDocument
         @errors << [:file_is_corrupted_or_protected, nil]
       end
 
-      @errors << [:file_size_is_too_big, size_in_mo: size_in_mo]         unless valid_file_size?
+      @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:already_exist, nil]                                   unless unique?
 
@@ -235,19 +235,25 @@ class UploadedDocument
 
 
   def pages_number
-    DocumentTools.pages_number(@file.path)
-  rescue
-    0
-  end
+    return @pages_number if @pages_number.to_i > 0
 
+    @pages_number = DocumentTools.pages_number(@file.path)
+  end
 
   def valid_file_size?
-    @file.size <= 1_000_000_000
+    File.size(@file.path) <= authorized_file_size
   end
 
+  def authorized_file_size
+    70_000_000 * pages_number
+  end
+
+  def authorized_size_mo
+    '%0.2f' % (authorized_file_size / 1_000_000.0)
+  end
 
   def size_in_mo
-    '%0.2f' % (@file.size / 1_000_000.0)
+    '%0.2f' % (File.size(@file.path) / 1_000_000.0)
   end
 
   def unique?
