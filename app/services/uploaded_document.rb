@@ -237,14 +237,16 @@ class UploadedDocument
   def pages_number
     return @pages_number if @pages_number.to_i > 0
 
-    @pages_number = DocumentTools.pages_number(@file.path)
+    @pages_number = DocumentTools.pages_number(processed_file.path)
   end
 
   def valid_file_size?
-    File.size(@file.path) <= authorized_file_size
+    File.size(processed_file.path) <= authorized_file_size
   end
 
   def authorized_file_size
+    return 70_000_000 if pages_number <= 0
+
     70_000_000 * pages_number
   end
 
