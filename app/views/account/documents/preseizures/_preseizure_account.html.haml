@@ -141,5 +141,5 @@
                     %li= analysis[:axis2]
                   -if analysis[:axis3].present?
                     %li= analysis[:axis3]
-              %td.text-center= analysis[:ventilation].to_f + " %"
+              %td.text-center= analysis[:ventilation].to_f.to_s + " %"
               %td.text-center= @pre_tax_amount.to_f * (analysis[:ventilation].to_f / 100)
