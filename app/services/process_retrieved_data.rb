@@ -125,7 +125,7 @@ class ProcessRetrievedData
                     end.each do |document|
                       already_exist = retriever.temp_documents.where(api_id: document['id']).first
                       unless already_exist
-                        tries = 1
+                        tries      = 1
                         is_success = false
                         error = nil
                         while tries <= 3 && !is_success
@@ -141,7 +141,10 @@ class ProcessRetrievedData
                           end
                           tries += 1
                         end
+
                         unless is_success
+                          RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, 0)
+
                           is_connection_ok = false
                           if client.response.code == 200
                             errors << "[#{connection['id']}] Document '#{document['id']}' cannot process : [#{error.class}] #{error.message}"

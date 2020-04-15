@@ -2,6 +2,46 @@
 class RetrievedDocument
   attr_reader :temp_document
 
+  def self.retry_get_file(retriever_id, document, count_day=0)
+    retriever  = Retriever.find retriever_id
+    already_exist = retriever.temp_documents.where(api_id: document['id']).first
+
+    return false if count_day >= 3 || already_exist
+
+    client     = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
+    is_success = false
+
+    temp_file_path = client.get_file document['id']
+
+    begin
+      if client.response.code == 200
+        RetrievedDocument.new(retriever, document, temp_file_path)
+        retriever.update(error_message: "") if retriever.error_message.match(/Certains documents n'ont pas/)
+        is_success = true
+      end
+    rescue
+    end
+
+    RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, (count_day+1)) if !is_success
+
+    log_document = {
+      name: "RetrievedDocument",
+      erreur_type: "Retry get file from retriever : #{retriever.name.to_s}",
+      date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+      more_information: {
+        is_success: is_success,
+        count_day: count_day,
+        retriever: retriever.inspect,
+        client: client.inspect,
+        reponse_code: client.response.code.to_s,
+        document: document.inspect,
+        temp_file_path: temp_file_path.to_s
+      }
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
+  end
+
   def initialize(retriever, document, temp_file_path)
     @retriever      = retriever
     @user           = retriever.user
