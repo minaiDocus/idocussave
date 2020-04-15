@@ -57,11 +57,11 @@ class SendToDropbox < SendToStorage
 
   def manage_failure(error)
     if (error.class == DropboxApi::Errors::UploadWriteFailedError && error.message.match(/\Apath\/insufficient_space/))
-      @storage.disable
-      NotifyDropboxError.new(@storage.user, 'dropbox_insufficient_space').execute
+      @storage.try(:disable)
+      NotifyDropboxError.new(@storage.try(:user), 'dropbox_insufficient_space').execute if @storage.try(:user)
     elsif (error.class == DropboxApi::Errors::HttpError && error.message.match(/invalid_access_token/))
-      @storage.reset_access_token
-      NotifyDropboxError.new(@storage.user, 'dropbox_invalid_access_token').execute
+      @storage.try(:reset_access_token)
+      NotifyDropboxError.new(@storage.try(:user), 'dropbox_invalid_access_token').execute if @storage.try(:user)
     end
   end
 end

@@ -229,6 +229,12 @@ class Pack < ApplicationRecord
     @events
   end
 
+  def is_locked?
+    return false if !self.locked_at.present?
+
+    self.locked_at > 1.hours.ago
+  end
+
 
   def archive_name
     name.gsub(/\s/, '_') + '.zip'
@@ -329,9 +335,8 @@ class Pack < ApplicationRecord
   end
 
   def recreate_original_document
-    return false if self.locked_at.present?
+    return false if self.is_locked?
 
-    self.update(locked_at: Time.now)
     pieces  = self.pieces.by_position
     sleep_counter = 5
 
@@ -341,6 +346,8 @@ class Pack < ApplicationRecord
         FileUtils.rm temp_final_file, force: true
 
         pieces.each do |piece|
+          self.update(locked_at: Time.now)
+
           append(piece.cloud_content_object.path, dir, temp_final_file)
 
           #add a sleeping time to prevent disk access overload

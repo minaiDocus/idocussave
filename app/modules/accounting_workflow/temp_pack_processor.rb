@@ -43,7 +43,7 @@ class AccountingWorkflow::TempPackProcessor
 
     next_original_document = pack.original_document.cloud_content_object.path.to_s
     next_original_document = File.join(dir, "next_original_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf") if !File.exist?(next_original_document)
-    can_merge_original = !pack.locked_at.present?
+    is_locked              = pack.is_locked?
     pack.update(locked_at: Time.now)
 
       temp_documents.each_with_index do |temp_document, document_index|
@@ -158,7 +158,7 @@ class AccountingWorkflow::TempPackProcessor
             end
 
             ## Original document
-            if can_merge_original && pack.original_document.present?
+            if !is_locked && pack.original_document.present?
               if pack.original_document.cloud_content_object.size.to_i < 400.megabytes
                 if is_a_cover
                   pack.prepend piece_file_path, dir, next_original_document
@@ -245,14 +245,16 @@ class AccountingWorkflow::TempPackProcessor
         LogService.info('document_processor', "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end")
       end
 
-    if recreate_original || !can_merge_original
+    if recreate_original || is_locked
       log_document = {
         name: "AccountingWorkflow::TempPackProcessor",
         erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {
           pack_name: pack.name,
-          model: pack.inspect
+          model: pack.inspect,
+          recreate_original: recreate_original.to_s,
+          is_locked: is_locked.to_s
         }
       }
 
