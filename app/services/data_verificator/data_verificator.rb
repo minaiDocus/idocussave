@@ -21,6 +21,8 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::UpdateAccountingPlanIsUpdatingTrueError.new().execute
 
+    @mail_infos << DataVerificator::RemoteFileServiceNameSynchronization.new().execute
+
     daily_mail
   end
 
