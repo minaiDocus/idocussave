@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::PackWithoutPiece < DataVerificator::DataVerificator
   def execute
-    packs = Pack.where("updated_at >= ? AND updated_at <= ?", 2.days.ago, Time.now)
+    packs = Pack.where("updated_at >= ? AND updated_at <= ?", 2.days.ago, 1.hours.ago)
 
     counter = 0
 

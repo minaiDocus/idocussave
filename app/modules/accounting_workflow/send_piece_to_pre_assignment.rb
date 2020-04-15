@@ -12,13 +12,18 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def execute
-    return false if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+    begin
+      return false if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
 
-    copy_to_dir manual_dir
+      copy_to_dir manual_dir
 
-    @piece.update(is_awaiting_pre_assignment: true)
+      @piece.update(is_awaiting_pre_assignment: true)
 
-    @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+      @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+    rescue => e
+      LogService.info('sending_to_preaff', "[Error] #{@piece.id} - #{@piece.name} - #{e.to_s}")
+      return false
+    end
   end
 
 
