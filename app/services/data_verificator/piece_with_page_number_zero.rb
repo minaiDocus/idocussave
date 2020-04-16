@@ -6,11 +6,12 @@ class DataVerificator::PieceWithPageNumberZero < DataVerificator::DataVerificato
     messages = []
 
     pieces.each do |piece|
-      messages << "#{piece.id} - #{piece.name}"
+      messages << "piece_id: #{piece.id}, piece_name: #{piece.name}"
     end
 
     {
       title: "PiecePageNumberZero - #{pieces.size} piece(s) with page number zero found",
+      type: "table",
       message: messages.join('; ')
     }
 

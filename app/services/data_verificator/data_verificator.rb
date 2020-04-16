@@ -23,6 +23,8 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::RemoteFileServiceNameSynchronization.new().execute
 
+    @mail_infos << DataVerificator::TempDocumentUploadedByApiName.new().execute
+
     daily_mail
   end
 

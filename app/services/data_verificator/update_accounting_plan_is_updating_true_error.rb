@@ -9,11 +9,12 @@ class DataVerificator::UpdateAccountingPlanIsUpdatingTrueError < DataVerificator
 
     accounting_plans.each do |accounting_plan|
       counter += 1
-      messages << "#{accounting_plan.id} - #{accounting_plan.user.code}"
+      messages << "accounting_plan_id: #{accounting_plan.id}, accounting_plan_user_code: #{accounting_plan.user.code}"
     end
 
     {
       title: "UpdateAccountingPlanIsUpdatingTrueError - #{counter} UpdateAccountingPlan(s) with is_updating true and last checked is before 6 hours ago",
+      type: "table",
       message: messages.join('; ')
     }
   end

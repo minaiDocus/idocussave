@@ -10,12 +10,13 @@ class DataVerificator::TempPackWithoutTempDocument < DataVerificator::DataVerifi
     temp_packs.each do |temp_pack|
       if temp_pack.temp_documents.empty?
         counter += 1
-        messages << "#{temp_pack.id} - #{temp_pack.name}"
+        messages << "temp_pack_id: #{temp_pack.id}, temp_pack_name: #{temp_pack.name}"
       end
     end
 
     {
       title: "TempPackWithoutTempDocument - #{counter} tempPack(s) without tempDocument found",
+      type: "table",
       message: messages.join('; ')
     }
   end

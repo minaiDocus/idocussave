@@ -10,12 +10,13 @@ class DataVerificator::PackWithoutPiece < DataVerificator::DataVerificator
     packs.each do |pack|
       if pack.pieces.unscoped.where(pack_id: pack.id).count <= 0
         counter += 1
-        messages << "#{pack.id} - #{pack.name}"
+        messages << "pack_id: #{pack.id}, pack_name: #{pack.name}"
       end
     end
 
     {
       title: "PackWithoutPiece - #{counter} pack(s) without piece found",
+      type: "table",
       message: messages.join('; ')
     }
   end
