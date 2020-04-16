@@ -98,11 +98,14 @@ class Admin::AdminController < ApplicationController
   def failed_packs_delivery
     pack_ids = RemoteFile.not_processed.not_retryable.where('created_at >= ?', 6.months.ago).pluck(:pack_id)
 
+    error_messages = []
+
     @failed_packs_delivery = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.not_retryable.order(created_at: :asc)
         data = remote_files.map do |remote_file|
           name = remote_file.user.try(:my_code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          error_messages << remote_file.error_message
           [name, remote_file.service_name].join(' : ')
         end.uniq
 
@@ -111,6 +114,7 @@ class Admin::AdminController < ApplicationController
         object.name           = pack.name.sub(/ all\z/, '')
         object.document_count = remote_files.count
         object.message        = data.join(', ')
+        object.error_message  = error_messages.uniq.join(', ')
         object
       end
     end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
