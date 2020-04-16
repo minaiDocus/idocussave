@@ -55,6 +55,7 @@ class Pack::Piece < ApplicationRecord
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
   scope :deleted,                -> { where.not(delete_at: nil) }
+  scope :need_preassignment,     -> { where(pre_assignment_state: 'waiting') }
 
   default_scope { where(delete_at: [nil, '']) }
 
@@ -75,6 +76,7 @@ class Pack::Piece < ApplicationRecord
 
   state_machine :pre_assignment_state, initial: :ready, namespace: :pre_assignment do
     state :ready
+    state :waiting
     state :processing
     state :waiting_analytics
     state :force_processing
@@ -87,16 +89,20 @@ class Pack::Piece < ApplicationRecord
       transition any => :ready
     end
 
+    event :waiting do
+      transition :ready => :waiting
+    end
+
     event :waiting_analytics do
       transition :ready => :waiting_analytics
     end
 
     event :processing do
-      transition [:ready, :waiting_analytics] => :processing
+      transition [:waiting, :waiting_analytics] => :processing
     end
 
     event :force_processing do
-      transition [:ready, :waiting_analytics, :ignored] => :force_processing
+      transition [:ready, :waiting, :waiting_analytics, :ignored] => :force_processing
     end
 
     event :processed do

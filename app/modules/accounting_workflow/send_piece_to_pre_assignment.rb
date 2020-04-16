@@ -13,7 +13,10 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def execute
     begin
-      return false if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+      if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+        @piece.update(pre_assignment_state: 'ready') if @piece.pre_assignment_state == 'waiting'
+        return false
+      end
 
       copy_to_dir manual_dir
 

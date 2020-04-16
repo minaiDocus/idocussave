@@ -263,7 +263,10 @@ class AccountingWorkflow::TempPackProcessor
       Pack.delay_for(1.hours, queue: :low).try(:recreate_original_document, pack.id)
     end
 
-    pack.original_document.cloud_content_object.attach(File.open(next_original_document), pack.pdf_name) if pack.original_document.save
+    begin
+      pack.original_document.cloud_content_object.attach(File.open(next_original_document), pack.pdf_name) if pack.original_document.save
+    rescue
+    end
 
     pack.set_original_document_id
     pack.set_content_url
@@ -289,23 +292,18 @@ class AccountingWorkflow::TempPackProcessor
     #   DocumentTools.archive(pack.archive_file_path, group)
     # end
 
-    pieces_to_pre_assigned = []
-
     if temp_pack.is_pre_assignment_needed?
       if user.validate_ibiza_analytics?
         added_pieces.each do |piece|
           if piece.from_web? || piece.from_mobile?
-            pieces_to_pre_assigned << piece
+            piece.waiting_pre_assignment
           else
             piece.waiting_analytics_pre_assignment
           end
         end
       else
-        pieces_to_pre_assigned << added_pieces
+        added_pieces.each(&:waiting_pre_assignment)
       end
-
-      pieces_to_pre_assigned.flatten!
-      AccountingWorkflow::SendPieceToPreAssignment.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
 
       AutoPreAssignedInvoicePieces.execute(invoice_pieces) if invoice_pieces.any?
     end
