@@ -29,9 +29,14 @@ class PreAssignmentDeliveryXmlBuilder
     @delivery.building_data
 
     if ibiza_exercise
-      @delivery.data_to_deliver = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
+      response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
+      @delivery.data_to_deliver = response[:data_built]
       @delivery.save
-      @delivery.data_built
+      if response[:data_count] > 0
+        building_success response[:data_count]
+      else
+        building_failed 'No preseizure to send'
+      end
     else
       if is_ibiza_exercises_present?
         error_message = "L'exercice correspondant n'est pas défini dans iBiza."
@@ -61,6 +66,15 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
   private
+
+  def building_success(data_count)
+    if data_count != @preseizures.size
+      @delivery.error_message = "#{@preseizures.size - data_count} preseizure(s) already sent"
+      @delivery.save
+    end
+
+    @delivery.data_built
+  end
 
   def building_failed(error_message)
     @delivery.error_message = error_message
