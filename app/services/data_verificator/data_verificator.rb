@@ -9,8 +9,6 @@ class DataVerificator::DataVerificator
   end
 
   def execute
-    @mail_infos << DataVerificator::PackWithoutPiece.new().execute
-
     @mail_infos << DataVerificator::PieceWithoutTempDocument.new().execute
 
     @mail_infos << DataVerificator::PieceWithPageNumberZero.new().execute

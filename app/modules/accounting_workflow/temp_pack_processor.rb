@@ -15,7 +15,9 @@ class AccountingWorkflow::TempPackProcessor
     temp_documents = temp_pack.ready_documents
     user_code = temp_pack.name.split[0]
     user = User.find_by_code user_code
+
     return false unless user && temp_documents.any?
+
     pack = Pack.find_or_initialize temp_pack.name, user
     current_piece_position = begin
                                  pack.pieces.unscoped.where(pack_id: pack.id).by_position.last.position + 1
