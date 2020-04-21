@@ -98,7 +98,7 @@ class Pack::Piece < ApplicationRecord
     end
 
     event :processing do
-      transition [:waiting, :waiting_analytics] => :processing
+      transition [:ready, :waiting, :waiting_analytics] => :processing
     end
 
     event :force_processing do
