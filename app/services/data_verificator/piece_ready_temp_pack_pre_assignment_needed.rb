@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::PieceReadyTempPackPreAssignmentNeeded < DataVerificator::DataVerificator
   def execute
-    pieces = Pack::Piece.where(pre_assignment_state: 'ready').where(created_at: [2.days.ago..Time.now]).order(created_at: :desc)
+    pieces = Pack::Piece.where(pre_assignment_state: 'ready', is_a_cover: false, created_at: [2.days.ago..Time.now]).order(created_at: :desc)
 
     messages = []
     pieces.each do |pi|
