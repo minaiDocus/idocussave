@@ -638,6 +638,7 @@ Rails.application.routes.draw do
     resources :job_processing, only: :index do
       get 'kill_job_softly', on: :collection
       get 'real_time_event', on: :collection
+      get 'launch_data_verif', on: :collection
     end
 
     resources :news do
