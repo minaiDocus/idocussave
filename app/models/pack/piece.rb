@@ -92,6 +92,7 @@ class Pack::Piece < ApplicationRecord
 
     event :waiting do
       transition :ready => :waiting
+    end
 
     event :recognize_supplier do
       transition :ready => :supplier_recognition
