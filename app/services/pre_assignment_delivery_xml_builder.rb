@@ -30,8 +30,9 @@ class PreAssignmentDeliveryXmlBuilder
 
     if ibiza_exercise
       response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
-      @delivery.data_to_deliver = response[:data_built]
-      @delivery.save
+
+      building_active_storage response[:data_built]
+
       if response[:data_count] > 0
         building_success response[:data_count]
       else
@@ -57,8 +58,8 @@ class PreAssignmentDeliveryXmlBuilder
     response = ExactOnlineDataBuilder.new(@delivery).execute
 
     if response[:data_built]
-      @delivery.data_to_deliver = response[:data]
-      @delivery.save
+      building_active_storage response[:data]
+
       @delivery.data_built
     else
       building_failed response[:error_messages]
@@ -66,6 +67,20 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
   private
+
+  def building_active_storage(data_built)
+    Dir.mktmpdir do |dir|
+      extension = 'txt'
+      extension = 'xml' if @delivery.deliver_to == 'ibiza'
+      file_name = @delivery.pack_name.tr('% ', '_')
+      file_path = "#{dir}/#{file_name}_#{@delivery.id}.#{extension}"
+
+      File.open file_path, 'w' do |f|
+        f.write(data_built.to_s)
+      end
+      @delivery.cloud_content_object.attach(File.open(file_path), "#{file_name}_#{@delivery.id}.#{extension}") if data_built.present? && @delivery.save
+    end
+  end
 
   def building_success(data_count)
     if data_count != @preseizures.size

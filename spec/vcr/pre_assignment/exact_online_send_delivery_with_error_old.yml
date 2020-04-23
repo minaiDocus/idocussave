@@ -61,10 +61,10 @@ http_interactions:
         \"https://start.exactonline.fr/api/v1/current/Me(guid'05bee804-0253-4ecc-a637-e2d6b9ce0aa9')\",
         \"type\": \"Exact.Web.Api.System.Me\"\r\n}, \"CurrentDivision\": 65941\r\n}\r\n]\r\n}\r\n}"
     http_version: 
-  recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
+  recorded_at: Tue, 18 Dec 2018 12:25:59 GMT
 - request:
     method: post
-    uri: https://start.exactonline.fr/api/v1/65941/purchaseentry/PurchaseEntries
+    uri: https://start.exactonline.fr/api/v1/65941/salesentry/SalesEntries
     body:
       encoding: UTF-8
       string: '{"Supplier":"f4e06755-79f4-4b4a-a29a-bc5968473679","Journal":"60","EntryDate":"2018-12-18","PurchaseEntryLines":[{"AmountFC":"1011.23","GLAccount":"e51e8dda-f010-44ad-a53e-c5f605c33072","VATCode":"AR"}]}'
@@ -124,4 +124,4 @@ http_interactions:
         specified for type 'Exact.Web.Api.Models.SalesEntry' is not valid.\"\r\n}\r\n}\r\n}"
     http_version: 
   recorded_at: Tue, 18 Dec 2018 12:25:59 GMT
-recorded_with: VCR 5.0.0
+recorded_with: VCR 3.0.3

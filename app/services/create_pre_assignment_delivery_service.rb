@@ -48,6 +48,8 @@ class CreatePreAssignmentDeliveryService
 
       Pack::Report::Preseizure.where(id: ids).update_all(is_locked: true)
 
+      @to_deliver_preseizures = @preseizures
+
       grouped_preseizures = group_preseizures
 
       if ibiza.two_channel_delivery?

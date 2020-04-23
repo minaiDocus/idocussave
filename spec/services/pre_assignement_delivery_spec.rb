@@ -50,8 +50,8 @@ describe PreAssignmentDelivery do
     @organization = FactoryBot.create :organization, code: 'IDO'
     @user         = FactoryBot.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
     @report       = FactoryBot.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
-    pack          = FactoryBot.create :pack, owner: @user, name: (@report.name + ' all')
-    @piece        = FactoryBot.create :piece, pack: pack, name: (@report.name + ' 001'), analytic_reference: analytic
+    pack          = FactoryBot.create :pack, owner: @user, organization: @organization , name: (@report.name + ' all')
+    @piece        = FactoryBot.create :piece, pack: pack, user: @user, organization: @organization, name: (@report.name + ' 001'), analytic_reference: analytic
     # pack = Pack.new
     # pack.owner = @user
     # pack.name = @report.name + ' all'
@@ -104,14 +104,22 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         p delivery.error_message
         expect(delivery.state).to eq 'data_built'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
         expect(delivery.error_message).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+
+        expect(delivery.cloud_content_object.path).to be_present
+
+        expect(delivery.cloud_content_object.path).to eq '/home/infodrm/Projects/idocussave/tmp/PreAssignmentDelivery/20181219/1/AC0003_AC_201812_1.xml'
+
+        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_1.xml'
       end
 
       it "Building data error with undefined exercices" do
@@ -120,7 +128,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
@@ -136,13 +144,21 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         expect(delivery.state).to eq 'data_built'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
         expect(delivery.error_message).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+
+        expect(delivery.cloud_content_object.path).to be_present
+
+        expect(delivery.cloud_content_object.path).to eq '/home/infodrm/Projects/idocussave/tmp/PreAssignmentDelivery/20181219/3/AC0003_AC_201812_3.txt'
+
+        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_3.txt'
       end
 
       it "Building data error with undefined journal" do
@@ -150,7 +166,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
@@ -168,7 +184,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery') do
@@ -177,7 +193,9 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'sent'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to be_present
         expect(delivery.preseizures.first.is_delivered_to?('ibiza')).to be true
       end
 
@@ -187,7 +205,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery_with_error') do
@@ -196,7 +214,9 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'error'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to be_present
         expect(delivery.error_message).to match /journal NotFound est inconnu/
         expect(delivery.preseizures.first.is_delivered_to?('ibiza')).to be false
       end
@@ -209,7 +229,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/exact_online_send_delivery') do
@@ -218,7 +238,9 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'sent'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to be_present
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be true
         expect(delivery.preseizures.first.exact_online_id).to be_present
       end
@@ -229,13 +251,11 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
-        data = JSON.parse(delivery.data_to_deliver)
-        data['header']['type'] = 20
-        delivery.update(data_to_deliver: data.to_json.to_s)
+        delivery.update(data_to_deliver: nil)
 
         result = VCR.use_cassette('pre_assignment/exact_online_send_delivery_with_error') do
           PreAssignmentDeliveryService.new(delivery.reload).execute
@@ -243,7 +263,9 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'error'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to be_present
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be false
         expect(delivery.preseizures.first.exact_online_id).not_to be_present
       end

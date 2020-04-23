@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/entries
+    uri: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/entries
     body:
       encoding: UTF-8
       string: |
@@ -12,59 +12,47 @@ http_interactions:
           <wsImportEntry>
             <importEntry>
               <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 001</piece>
+              <date>2018-12-05</date>
+              <piece>AC0000 AC 201804 01</piece>
+              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544018864&amp;token=s3zp0twcssppmfvaa0a8wycvgbw7yh3qdjueevzlzx0wpgfpo6</voucherID>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
-              <accountNumber>601109</accountNumber>
-              <accountName>601109</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
+              <accountNumber>0ZZCHQ</accountNumber>
+              <accountName>0ZZCHQ</accountName>
+              <description>2018-12-05 - 500.25 - NotFound - AC0000 AC 201804 01</description>
               <debit>1213.48</debit>
             </importEntry>
             <importEntry>
               <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 001</piece>
+              <date>2018-12-05</date>
+              <piece>AC0000 AC 201804 01</piece>
+              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544018864&amp;token=s3zp0twcssppmfvaa0a8wycvgbw7yh3qdjueevzlzx0wpgfpo6</voucherID>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
               <accountNumber>471000</accountNumber>
               <accountName>471000</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
-              <credit>1011.23</credit>
-              <importAnalyticalEntries>
-                <importAnalyticalEntry>
-                  <analysis>CASH</analysis>
-                  <axis1>AACE</axis1>
-                  <axis2>ABCD</axis2>
-                  <axis3/>
-                  <credit>1011.23</credit>
-                </importAnalyticalEntry>
-                <importAnalyticalEntry>
-                  <analysis>SAISON</analysis>
-                  <axis1>AH11</axis1>
-                  <axis2/>
-                  <axis3/>
-                  <credit>505.615</credit>
-                </importAnalyticalEntry>
-                <importAnalyticalEntry>
-                  <analysis>SAISON</analysis>
-                  <axis1>PE09</axis1>
-                  <axis2/>
-                  <axis3/>
-                  <credit>505.615</credit>
-                </importAnalyticalEntry>
-              </importAnalyticalEntries>
+              <description>2018-12-05 - 500.25 - NotFound - AC0000 AC 201804 01</description>
+              <credit>1213.48</credit>
             </importEntry>
             <importEntry>
               <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 001</piece>
+              <date>2018-12-05</date>
+              <piece>AC0000 AC 201804 01</piece>
+              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544018864&amp;token=s3zp0twcssppmfvaa0a8wycvgbw7yh3qdjueevzlzx0wpgfpo6</voucherID>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
-              <accountNumber>471001</accountNumber>
-              <accountName>471001</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
-              <credit>202.25</credit>
+              <accountNumber>0ZZCHQ</accountNumber>
+              <accountName>0ZZCHQ</accountName>
+              <description>2018-12-05 - 500.25 - NotFound - AC0000 AC 201804 01</description>
+              <debit>1213.48</debit>
+            </importEntry>
+            <importEntry>
+              <journalRef>NotFound</journalRef>
+              <date>2018-12-05</date>
+              <piece>AC0000 AC 201804 01</piece>
+              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544018864&amp;token=s3zp0twcssppmfvaa0a8wycvgbw7yh3qdjueevzlzx0wpgfpo6</voucherID>
+              <voucherRef>12345</voucherRef>
+              <accountNumber>471000</accountNumber>
+              <accountName>471000</accountName>
+              <description>2018-12-05 - 500.25 - NotFound - AC0000 AC 201804 01</description>
+              <credit>1213.48</credit>
             </importEntry>
           </wsImportEntry>
         </importEntryRequest>
@@ -97,14 +85,14 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Date:
-      - Thu, 23 Apr 2020 07:20:12 GMT
+      - Wed, 05 Dec 2018 14:08:12 GMT
       Content-Length:
-      - '331'
+      - '417'
     body:
       encoding: UTF-8
       string: <WCFRestIRFEntriesResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><category>Mouvement
         comptable</category><state>4</state><message>Le journal NotFound est inconnu</message><reference>NotFound
         - 05/12/2018</reference></error></message><datetime>2018-12-05T15:08:04.7571465+01:00</datetime><duration>00:00:08.188</duration></response></WCFRestIRFEntriesResult>
     http_version: 
-  recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
-recorded_with: VCR 5.0.0
+  recorded_at: Wed, 05 Dec 2018 14:07:58 GMT
+recorded_with: VCR 3.0.3

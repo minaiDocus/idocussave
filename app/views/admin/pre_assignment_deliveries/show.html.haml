@@ -40,4 +40,11 @@
         %tr
           %th= t('activerecord.models.pre_assignment_delivery.attributes.data_to_deliver')
           %td
-            %textarea{ rows: 50 }= @delivery.data_to_deliver
+            - begin
+              - if @delivery.data_to_deliver.present?
+                %textarea{ rows: 50 }= @delivery.data_to_deliver
+              - elsif @delivery.cloud_content_object.try(:path).present?
+                %textarea{ rows: 50 }= File.read(@delivery.cloud_content_object.try(:path))
+            - rescue => e
+              Erreur:
+              = e.to_s
