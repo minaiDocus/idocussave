@@ -1,8 +1,12 @@
 # -*- encoding : UTF-8 -*-
 class PreAssignmentDelivery < ApplicationRecord
+  ATTACHMENTS_URLS={'cloud_content' => '/admin/deliveries'}
+
   belongs_to :user
   belongs_to :report, class_name: 'Pack::Report'
   belongs_to :organization
+
+  has_one_attached :cloud_content
 
 
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
@@ -23,6 +27,10 @@ class PreAssignmentDelivery < ApplicationRecord
   scope :building_data, -> { where(state: 'building_data') }
   scope :not_notified,  -> { where(is_to_notify: true, is_notified: [nil, false]) }
 
+
+  before_destroy do |delivery|
+    delivery.cloud_content.purge
+  end
 
   state_machine initial: :pending do
     state :sent
@@ -53,6 +61,10 @@ class PreAssignmentDelivery < ApplicationRecord
     end
   end
 
+
+  def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
 
   def ibiza
     @ibiza ||= organization.ibiza

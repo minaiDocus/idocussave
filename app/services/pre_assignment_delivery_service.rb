@@ -74,7 +74,24 @@ class PreAssignmentDeliveryService
     @delivery.sending
 
     ibiza_client.request.clear
-    ibiza_client.company(@user.ibiza_id).entries!(@delivery.data_to_deliver)
+
+    begin
+      if @delivery.cloud_content_object.try(:path).present?
+        ibiza_client.company(@user.ibiza_id).entries!(File.read(@delivery.cloud_content_object.try(:path)))
+      else
+        ibiza_client.company(@user.ibiza_id).entries!(@delivery.data_to_deliver)
+      end
+    rescue => e
+      log_document = {
+        name: "PreAssignmentDeliveryService",
+        erreur_type: "Active Storage, can't read file",
+        date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+        more_information: {
+          object: e.to_s
+        }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
+    end
 
     if ibiza_client.response.success?
       handle_delivery_success
@@ -101,7 +118,19 @@ class PreAssignmentDeliveryService
   def send_to_exact_online
     @delivery.sending
 
-    response = ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver)
+    begin
+      response = @delivery.cloud_content_object.try(:path).present? ? ExactOnlineData.new(@user).send_pre_assignment(File.read(@delivery.cloud_content_object.try(:path))) : ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver)
+    rescue => e
+      log_document = {
+        name: "PreAssignmentDeliveryService",
+        erreur_type: "Active Storage, can't read file",
+        date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+        more_information: {
+          object: e.to_s
+        }
+      }
+      ErrorScriptMailer.error_notification(log_document).deliver
+    end
 
     if response[:error].present?
       handle_delivery_error(response[:error])
