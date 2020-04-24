@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe UploadedDocument do
   before(:all) do
-    Timecop.freeze(Time.local(2013,1,10))
+    Timecop.freeze(Time.local(2020,4,22))
   end
 
   after(:all) do
@@ -22,7 +22,7 @@ describe UploadedDocument do
     context 'when arguments are valid' do
       context 'when current period' do
         before(:all) do
-          Timecop.freeze(Time.local(2013,1,12))
+          Timecop.freeze(Time.local(2020,4,22))
         end
 
         after(:all) do
@@ -431,6 +431,20 @@ describe UploadedDocument do
             expect(subject.full_error_messages).to eq(message.join(', '))
           end
         end
+      end
+    end
+
+    context 'when create temp_doc file with integrator', :processed_file do
+      it 'create new file' do
+        @user = FactoryBot.create(:user, code: 'TS0001')
+        @user.account_book_types.create(name: 'TS', description: 'TEST')
+
+        allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
+
+        @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
+
+        expect(File.exist?(@uploaded_document.file)).to eq true
+        expect(DocumentTools.completed?(@uploaded_document.file.path)).to eq true
       end
     end
   end
