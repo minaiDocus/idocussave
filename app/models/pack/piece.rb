@@ -219,29 +219,52 @@ class Pack::Piece < ApplicationRecord
     CustomActiveStorageObject.new(self, :cloud_content)
   end
 
-  def recreate_pdf
-    return false unless temp_document
+  def recreate_pdf(temp_dir = nil)
+    unless temp_document
+      log_document = {
+          name: "Pack::Piece",
+          erreur_type: "Piece without temp_document - recreate_pdf",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            model: self.inspect,
+            user: self.user.inspect,
+            method: "recreate_pdf"
+          }
+        }
 
-    Dir.mktmpdir do |dir|
-      piece_file_name = DocumentTools.file_name self.name
-      piece_file_path = File.join(dir, piece_file_name)
+      ErrorScriptMailer.error_notification(log_document).deliver
 
-      original_file_path = File.join(dir, 'original.pdf')
-
-      FileUtils.cp temp_document.cloud_content_object.path, original_file_path
-      DocumentTools.correct_pdf_if_needed original_file_path
-
-      DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
-      self.cloud_content_object.attach(File.open(piece_file_path), piece_file_name)
-      
-      self.try(:sign_piece)
-
-      self.get_pages_number
+      return false
     end
+
+    dir = temp_dir || Dir.mktmpdir
+
+    piece_file_name = DocumentTools.file_name self.name
+    piece_file_path = File.join(dir, piece_file_name)
+
+    original_file_path = File.join(dir, 'original.pdf')
+
+    FileUtils.cp temp_document.cloud_content_object.path, original_file_path
+    DocumentTools.correct_pdf_if_needed original_file_path
+
+    DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
+    self.cloud_content_object.attach(File.open(piece_file_path), piece_file_name)
+
+    self.try(:sign_piece)
+
+    self.get_pages_number
+
+    FileUtils.rm(dir, force: true) if !temp_dir.present?
+
+    piece_file_path
   end
 
   def correct_pdf_signature
-    sign_piece if DocumentTools.correct_pdf_if_needed(self.cloud_content_object.path)
+    begin
+      sign_piece if DocumentTools.correct_pdf_if_needed(self.cloud_content_object.path)
+    rescue => e
+      recreate_pdf
+    end
   end
 
   def sign_piece

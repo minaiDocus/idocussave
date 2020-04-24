@@ -9,6 +9,7 @@ FactoryBot.define do
       sequence(:first_name) { |n| "User#{n}" }
       last_name { 'Test' }
       company { 'Test' }
+      is_prescriber { false }
       sequence(:code) { |n| is_prescriber ? nil : "TS#{'%04d' % n}" }
       sequence(:email_code) { |n| "%08d" % n }
       trait :admin do
@@ -32,7 +33,7 @@ FactoryBot.define do
 
     factory :organization do
       sequence(:name) { |n| "organization_#{n}" }
-      sequence(:code) { |n| "O#{n}" }
+      sequence(:code) { |n| "ORG#{n}" }
     end
 
     factory :account_book_type do
@@ -67,9 +68,31 @@ FactoryBot.define do
       period_id { 1 }
     end
 
+    factory :temp_pack do
+      name { 'AC0000 AC 202001 ALL' }
+      position_counter { 1 }
+      user_id { 1 }
+      organization_id { 1 }
+    end
+
+    factory :temp_document do
+      sequence(:original_file_name) { |n| "test_document_#{n}" }
+      pages_number { 1 }
+      sequence(:position) { |n| n }
+      is_an_original { true }
+      is_a_cover { false }
+      delivery_type { 'upload' }
+      state { 'ready' }
+      original_fingerprint { '---' }
+      temp_pack_id { 1 }
+      user_id { 1 }
+      organization_id { 1 }
+      api_name { 'web' }
+    end
+
     factory :pack do
       #name { 'AC0000 AC 201812 ALL' }
-      sequence(:name) { |n| "AC0000 AC 201812 ALL#{n}" }
+      sequence(:name) { |n| "ACC%000 AC 201812 ALL#{n}" }
       original_document_id { "1550058" }
       content_url { "/account/documents/1550058/download/original?15238" }
       pages_count { 2 }
