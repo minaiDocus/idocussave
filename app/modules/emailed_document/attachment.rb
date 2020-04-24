@@ -6,14 +6,7 @@ class EmailedDocument::Attachment
     @file_name = file_name
     @user      = user
     @file_path = get_file_path
-    if protected?
-      _tmp_protected = "#{File.dirname(processed_file_path)}/not_protected.pdf"
-      DocumentTools.remove_pdf_security processed_file_path, _tmp_protected
-      if File.exist? _tmp_protected
-        FileUtils.rm processed_file_path
-        FileUtils.mv _tmp_protected, processed_file_path
-      end
-    end
+    @dir_temp = []
   end
 
 
@@ -107,19 +100,23 @@ class EmailedDocument::Attachment
 
 
   def dir
-    @dir ||= Dir.mktmpdir
+    @dir = Dir.mktmpdir
   end
 
+  def dir_2
+    @dir_2 = Dir.mktmpdir
+  end
 
   def clean_dir
     FileUtils.remove_entry @dir if @dir
+    FileUtils.remove_entry @dir_2 if @dir_2
   end
 
   def processed_file_path
     if @temp_file_path
       @temp_file_path
     else
-      @temp_file_path = DocumentTools.to_pdf(@file_path, File.join(dir, @file_name), dir)
+      @temp_file_path = PdfIntegrator.processed_file(File.open(@file_path, 'r'), File.join(dir_2, @file_name), 'Attachment').path
     end
   end
 
