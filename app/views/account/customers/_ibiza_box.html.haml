@@ -30,4 +30,4 @@
           - if ibiza_journal_accessible?(folder, ibiza_journals)
             = link_to "#{folder.active? ? 'Désactiver' : 'Activer'}", account_organization_customer_ibizabox_folder_path(@organization, @customer, folder), method: 'patch', class: "btn btn-light btn-#{folder.active? ? 'danger' : 'primary'}"
           - else
-            = link_to "Activer", '#', class: "btn btn-light btn-primary", disabled: true
+            = link_to "Journal ibiza inaccessible", '#', class: "btn btn-light btn-primary", disabled: true

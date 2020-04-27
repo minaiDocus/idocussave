@@ -99,6 +99,10 @@ PublishDocumentWorker:
   queue: high
   cron: '*/2 * * * * *'
 
+SendPieceToPreAssignmentWorker:
+  queue: high
+  cron: '*/5 * * * * *'
+
 ProcessRetrievedDataWorker:
   queue: high
   cron: '*/2 * * * * *'

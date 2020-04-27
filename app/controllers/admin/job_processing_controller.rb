@@ -22,6 +22,13 @@ class Admin::JobProcessingController < Admin::AdminController
     render partial: 'real_time_event'
   end
 
+  def launch_data_verif
+    DataVerificatorWorker.perform_async
+    flash[:success] = 'Data vérificator lanché avec succès'
+
+    redirect_to admin_job_processing_index_path
+  end
+
   private
 
   def sort_column

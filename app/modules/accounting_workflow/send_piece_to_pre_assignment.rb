@@ -12,13 +12,38 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def execute
-    return false if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+    begin
+      if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+        @piece.update(pre_assignment_state: 'ready') if @piece.pre_assignment_state == 'waiting'
 
-    copy_to_dir manual_dir
+        log_document = {
+          name: "AccountingWorkflow::SendPieceToPreAssignment",
+          erreur_type: "Re-init pre assignment state",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            piece_id: @piece.id,
+            piece_name: @piece.name,
+            temp_doc: @piece.temp_document.nil?,
+            preseizures: @piece.preseizures.any?,
+            is_awaiting: @piece.is_awaiting_pre_assignment,
+            piece:  @piece.inspect
+          }
+        }
 
-    @piece.update(is_awaiting_pre_assignment: true)
+        ErrorScriptMailer.error_notification(log_document).deliver
 
-    @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+        return false
+      end
+
+      copy_to_dir manual_dir
+
+      @piece.update(is_awaiting_pre_assignment: true)
+
+      @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+    rescue => e
+      LogService.info('sending_to_preaff', "[Error] #{@piece.id} - #{@piece.name} - #{e.to_s}")
+      return false
+    end
   end
 
 

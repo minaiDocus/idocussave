@@ -9,7 +9,7 @@
             .col-2
               %button.btn.btn-primary.btn-sm.float-right{type:'button', :data => {:toggle => 'modal', :target => '#invoice_config_dialog'}, style: 'position:relative;top:-3px;' }
                 = glyphicon('cog', { class: 'mr-sm-1', color: '#fff' })
-                Paramètrer des factures
+                Paramètre d'integration factures
         .card-body
           %table.table.table-striped.table-detachable-head.table-border-inner
             %thead
@@ -53,7 +53,7 @@
       .modal-content
         .modal-header.text-center
           %h3{class: 'modal-title w-100 font-weight-bold', id: 'title_info'}
-            Paramètrer les dossiers à facturer
+            Integration automatique des factures
           %button.close{type: 'button', data: {dismiss:'modal'}, aria: {label: 'Close'}} &times;
         .modal-body
           = simple_form_for @invoice_setting, :url => insert_account_organization_invoices_path(@organization), :controller => 'account/invoices_controller', :method => :post, html: { class: 'form form-horizontal margin0 clearfix', :id => 'data-invoice-upload', data: { params: file_upload_params.to_json } } do |f|
@@ -69,7 +69,7 @@
               = f.button :submit, 'Annuler', class: 'btn btn-light cancel', type: 'reset'
           %hr
           %h3.text-center
-            Paramètre de factures disponibles
+            Dossiers paramétrés
           %hr
           .row
             .col-md-12

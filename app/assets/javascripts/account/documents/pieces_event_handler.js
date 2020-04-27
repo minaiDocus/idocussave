@@ -237,7 +237,7 @@ $('#uploadDialog').on('shown.bs.modal', function() {
     window.setAnalytics($('#h_file_code').val(), $('#h_file_account_book_type').val(), 'journal', true);
 });
 
-$('#uploadDialog').on('hide', function() {
+$('#uploadDialog').on('hidden.bs.modal', function() {
   window.analytic_target_form = null
   clearInterval(lock_or_unlock_file_upload_params_interval);
 });
@@ -255,7 +255,7 @@ $('#comptaAnalysisEdition').on('show.bs.modal', function() {
   }
 });
 
-$('#comptaAnalysisEdition').on('hide', function() {
+$('#comptaAnalysisEdition').on('hidden.bs.modal', function() {
   $("#comptaAnalysisEdition .length_alert").html('');
 
   if(window.analytic_target_form == '#fileupload'){

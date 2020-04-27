@@ -12,9 +12,6 @@ module Account::IbizaboxHelper
   end
 
   def ibiza_journal_accessible?(folder, ibiza_journals)
-    return @is_accessible if @folder == folder && !@is_accessible.nil?
-
-    @folder = folder
     @is_accessible = false
 
     unless ibiza_journals.nil? || ibiza_journals.at_css('data').children.empty?

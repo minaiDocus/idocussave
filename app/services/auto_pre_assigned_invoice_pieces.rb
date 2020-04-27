@@ -52,7 +52,7 @@ class AutoPreAssignedInvoicePieces
         entry.save
 
         ### 2 ###
-        account_number = @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat ? '7060900' : '706000'
+        account_number = !@invoice.organization.subject_to_vat ? '7060900' : '706000'
         
         account = Pack::Report::Preseizure::Account.new
         account.preseizure = preseizure

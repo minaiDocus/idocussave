@@ -9,15 +9,21 @@ class DataVerificator::DataVerificator
   end
 
   def execute
-    @mail_infos << DataVerificator::PackWithoutPiece.new().execute
-
     @mail_infos << DataVerificator::PieceWithoutTempDocument.new().execute
 
     @mail_infos << DataVerificator::PieceWithPageNumberZero.new().execute
 
     @mail_infos << DataVerificator::TempPackWithoutTempDocument.new().execute
 
+    @mail_infos << DataVerificator::PackOrTempPackDuplicatedName.new().execute
+
     @mail_infos << DataVerificator::UpdateAccountingPlanIsUpdatingTrueError.new().execute
+
+    @mail_infos << DataVerificator::RemoteFileServiceNameSynchronization.new().execute
+
+    @mail_infos << DataVerificator::TempDocumentUploadedByApiName.new().execute
+
+    @mail_infos << DataVerificator::PieceReadyTempPackPreAssignmentNeeded.new().execute
 
     daily_mail
   end

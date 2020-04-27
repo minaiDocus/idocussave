@@ -22,7 +22,8 @@
               \-
           %td.aligncenter= object.name
           %td.aligncenter= object.document_count
-          %td.aligncenter= object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
+          %td.aligncenter{ title: object.error_message.presence || '-' }
+            = object.message == false ? '-' : sanitize(object.message, :tags => %w(br))
       %tr
         %td
         %td
@@ -31,5 +32,5 @@
         %td
     - else
       %tr
-        %td.aligncenter{ colspan: 4 }
+        %td.aligncenter{ colspan: 5 }
           %i Aucun

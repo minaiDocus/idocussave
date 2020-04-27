@@ -785,4 +785,54 @@ describe ProcessRetrievedData do
       expect(@retriever.budgea_error_message).to be_nil
     end
   end
+
+  ##############################################################################
+  ## 2.0
+  ## DEV iDocus
+  ##############################################################################
+
+  context 'retry to get document when retriever has an error', :retry_get_file do
+    before(:each) do
+      TempDocument.destroy_all
+
+      allow_any_instance_of(Budgea::Client).to receive(:get_file).and_return(Rails.root.join('spec', 'support', 'files', '3pages.pdf'))
+      allow_any_instance_of(RetrievedDocument).to receive(:valid?).and_return(true)
+      allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
+
+      json_content  = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+      @document      = json_content['connections'][0]['subscriptions'][0]['documents'][0]
+      @count_day     = 0
+    end
+
+    it 'makes successsed retry' do
+      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.code').and_return(200)
+
+      RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+
+      expect(TempDocument.last.user.id).to eq @retriever.user.id
+      expect(TempDocument.last.api_name).to eq 'budgea'
+      expect(TempDocument.last.delivery_type).to eq 'retriever'
+      expect(TempDocument.last.delivered_by).to eq 'budgea'
+      expect(TempDocument.last.api_id).to eq @document['id'].to_s
+    end
+
+    it 'return false when document is already exist', :retry_already_exist do
+      allow_any_instance_of(Retriever).to receive_message_chain('temp_documents.where.first').and_return(true)
+
+      result = RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+
+      expect(result).to be false
+      expect(TempDocument.last.try(:user).try(:id)).to eq nil
+      expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s
+    end
+
+    it 'makes failed retry' do
+      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.code').and_return(401)
+
+      RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+
+      expect(TempDocument.last.try(:user).try(:id)).to eq nil
+      expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s
+    end
+  end
 end

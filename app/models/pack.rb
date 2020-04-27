@@ -229,6 +229,12 @@ class Pack < ApplicationRecord
     @events
   end
 
+  def is_locked?
+    return false if !self.locked_at.present?
+
+    self.locked_at > 1.hours.ago
+  end
+
 
   def archive_name
     name.gsub(/\s/, '_') + '.zip'
@@ -329,9 +335,8 @@ class Pack < ApplicationRecord
   end
 
   def recreate_original_document
-    return false if self.locked_at.present?
+    return false if self.is_locked?
 
-    self.update(locked_at: Time.now)
     pieces  = self.pieces.by_position
     sleep_counter = 5
 
@@ -341,6 +346,8 @@ class Pack < ApplicationRecord
         FileUtils.rm temp_final_file, force: true
 
         pieces.each do |piece|
+          self.update(locked_at: Time.now)
+
           append(piece.cloud_content_object.path, dir, temp_final_file)
 
           #add a sleeping time to prevent disk access overload
@@ -370,8 +377,6 @@ class Pack < ApplicationRecord
   private
 
   def merge_document(merge_type, file_path, dir, append_to = nil)
-    return false if !DocumentTools.is_mergeable?(file_path)
-
     target_file = append_to.presence || original_document.cloud_content_object.path
     temp_file_merge = File.join(dir, "temp_file_merge_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf")
     is_merged = true
@@ -379,7 +384,7 @@ class Pack < ApplicationRecord
 
     if File.exist?(target_file.to_s)
       data_merge = (merge_type == 'append')? [target_file, file_path] : [file_path, target_file]
-      is_merged = Pdftk.new.merge(data_merge, temp_file_merge)
+      is_merged = Pdftk.new.merge(data_merge, temp_file_merge, merge_type)
     else
       begin
         FileUtils.copy file_path, temp_file_merge

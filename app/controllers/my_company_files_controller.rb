@@ -25,7 +25,12 @@ class MyCompanyFilesController < ApplicationController
             access_token: params[:Token]
           }
         }
-        ErrorScriptMailer.error_notification(log_document, { attachements: [{name: params[:Name], file: StringIO.open(Base64.decode64(params[:ByteResponse]))}] }).deliver
+
+        begin
+          ErrorScriptMailer.error_notification(log_document, { attachements: [{name: params[:Name], file: StringIO.open(Base64.decode64(params[:ByteResponse]))}] }).deliver
+        rescue
+          ErrorScriptMailer.error_notification(log_document).deliver
+        end
       end
 
       respond_to do |format|

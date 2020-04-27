@@ -24,7 +24,15 @@ class CustomActiveStorageObject
       generate_file style
       @base_path
     else
-      pc_attached.path(style.to_sym)
+      pc_attached.path(style.to_s.to_sym)
+    end
+  end
+
+  def service_url()
+    if as_attached.attached?
+      as_attached.service_url
+    else
+      pc_attached.url(:original)
     end
   end
 
@@ -37,7 +45,7 @@ class CustomActiveStorageObject
                .gsub(':basename', @object.try(:basename).to_s)
                .gsub(':extension', @object.try(:extension).to_s)
     else
-      pc_attached.url(style.to_sym)
+      pc_attached.url(style.to_s.to_sym)
     end
   end
 

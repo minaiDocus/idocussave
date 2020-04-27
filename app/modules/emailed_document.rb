@@ -70,7 +70,7 @@ class EmailedDocument
     mail.subject = mail.subject.gsub(/fwd([ ]+)?(:)?/i, '').strip
 
     unless email
-      mail_to = mail.to.grep(/@fw.idocus.com/i).first
+      mail_to = mail.to.try(:grep, /@fw.idocus.com/i).try(:first)
       mail_to = mail.cc.grep(/@fw.idocus.com/i).first unless mail_to.present?
 
       email                       = Email.new

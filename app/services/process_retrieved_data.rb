@@ -125,7 +125,7 @@ class ProcessRetrievedData
                     end.each do |document|
                       already_exist = retriever.temp_documents.where(api_id: document['id']).first
                       unless already_exist
-                        tries = 1
+                        tries      = 1
                         is_success = false
                         error = nil
                         while tries <= 3 && !is_success
@@ -141,7 +141,10 @@ class ProcessRetrievedData
                           end
                           tries += 1
                         end
+
                         unless is_success
+                          RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, 0)
+
                           is_connection_ok = false
                           if client.response.code == 200
                             errors << "[#{connection['id']}] Document '#{document['id']}' cannot process : [#{error.class}] #{error.message}"
@@ -239,16 +242,18 @@ class ProcessRetrievedData
     if (!json_content[:success] && json_content[:content] != 'File not found') || @retrieved_data.error?
       if !json_content[:success]
         @retrieved_data.update(error_message: json_content[:content].to_s)
+        @retrieved_data.error
         @retrieved_data.reload
       end
 
-      addresses = Array(Settings.first.try(:notify_errors_to))
-      if addresses.size > 0
-        NotificationMailer.notify(
-          addresses,
-          '[iDocus] Erreur lors du traitement des notifications Budgea',
-          @retrieved_data.error_message).deliver
-      end
+      # addresses = Array(Settings.first.try(:notify_errors_to))
+      # if addresses.size > 0
+      #   NotificationMailer.notify(
+      #     addresses,
+      #     '[iDocus] Erreur lors du traitement des notifications Budgea',
+      #     "#{@retrieved_data.id.to_s} - #{@retrieved_data.error_message}").deliver
+      # end
+      LogService.info('retrieved_data', "[#{user.code}][RetrievedData:#{@retrieved_data.id}] Error: #{@retrieved_data.error_message}")
       @retrieved_data.error_message
     else
       @retrieved_data.processed if json_content[:success] || !@retrieved_data.cloud_content.attached?

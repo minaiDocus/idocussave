@@ -10,12 +10,13 @@ class DataVerificator::PieceWithoutTempDocument < DataVerificator::DataVerificat
     pieces.each do |piece|
       if piece.temp_document.nil?
         counter += 1
-        messages << "#{piece.id} - #{piece.name}"
+        messages << "piece_id: #{piece.id}, piece_name: #{piece.name}"
       end
     end
 
     {
       title: "PieceWithoutTempDocument - #{counter} piece(s) without tempDocument found",
+      type: "table",
       message: messages.join('; ')
     }
   end

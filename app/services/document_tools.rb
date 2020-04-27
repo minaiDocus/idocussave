@@ -46,7 +46,7 @@ class DocumentTools
         if geometry.height > 2000 || geometry.width > 2000
           resized_file_path = File.join(dirname, "resized_#{filename}")
           DocumentTools.resize_img(tmp_file_path, resized_file_path)
-          tmp_file_path = resized_file_path
+          tmp_file_path = resized_file_path if File.exist?(resized_file_path)
         end
       rescue => e
         tmp_file_path ||= file_path
@@ -87,6 +87,62 @@ class DocumentTools
     FileUtils.rm output_file, force: true
 
     return is_merged
+  end
+
+  def self.force_correct_pdf(input_file_path)
+    input_images       = []
+    corrected          = false
+    errors             = ''
+    extension          = File.extname input_file_path
+    pdf_to_correct_jpg = input_file_path.to_s.gsub('.pdf','_corrected.jpg')
+    pdf_corrected      = pdf_to_correct_jpg.to_s.gsub('.jpg','.pdf')
+
+    begin
+      if extension != '.pdf'
+        output_file_path = input_file_path.to_s.gsub(extension,'_out.pdf')
+        DocumentTools.to_pdf input_file_path, output_file_path
+        pdf_corrected = output_file_path
+      else
+        page_number = DocumentTools.pages_number(input_file_path)
+        safe_time   = page_number > 0 ? (page_number * 25) : 5
+        safe_time   = safe_time > 70 ? 70 : safe_time
+
+        Timeout::timeout safe_time do
+          command = "convert -density 400 -colorspace rgb '#{input_file_path}' '#{pdf_to_correct_jpg}'"
+          `#{command}`
+
+          if page_number > 1
+            page_number.times do |i|
+              input_images << pdf_to_correct_jpg.to_s.gsub('.jpg', "-#{i}.jpg")
+            end
+          else
+            input_images = [pdf_to_correct_jpg]
+          end
+
+          command = "convert -density 500 #{input_images.join(' ')} -quality 100 'pdf:#{pdf_corrected}' 2>&1"
+          `#{command}`
+          corrected = true
+
+          unless File.exist?(pdf_corrected)
+            errors        = "#{pdf_corrected} : Output file not created"
+            corrected     = false
+            pdf_corrected = input_file_path
+          end
+        end
+      end
+
+      pdf_corrected
+    rescue => e
+      LogService.info('poppler_errors', "[force_correct_pdf] - #{input_file_path.to_s} - #{e.to_s}")
+      errors        = e.to_s
+      pdf_corrected = input_file_path
+    end
+
+    input_images.each do |file|
+      FileUtils.rm file, force: true
+    end
+
+    return { corrected: corrected, output_file: pdf_corrected, errors: errors }
   end
 
   def self.modifiable?(file_path, strict = true)
