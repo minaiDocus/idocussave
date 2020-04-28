@@ -27,7 +27,7 @@ class CreateInvoicePdf
         generate_invoice_of organization
       end
 
-      Invoice.archive
+      archive_invoice
     end
 
     def generate_invoice_of(organization)
@@ -119,6 +119,24 @@ class CreateInvoicePdf
       option.price_in_cents_wo_vat = price
 
       option
+    end
+
+    def archive_invoice(time = Time.now)
+      invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
+      files_path = invoices.map { |e| e.cloud_content_object.path }
+
+      archive_name = "invoices_#{(time - 1.month).strftime('%Y%m')}.zip"
+
+      Dir.mktmpdir do |dir|
+        FileUtils.chmod(0755, dir)
+        file_path = "#{dir}/#{archive_name}"
+        file_path = DocumentTools.archive(file_path, files_path)
+
+        _archive_invoice      = ArchiveInvoice.new
+        _archive_invoice.name = archive_name
+
+        _archive_invoice.cloud_content_object.attach(File.open(file_path), archive_name) if _archive_invoice.save
+      end
     end
   end
 

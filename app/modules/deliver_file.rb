@@ -6,7 +6,7 @@ module DeliverFile
     pack_ids = RemoteFile.not_processed.retryable.of_service(service_name).select(:pack_id).distinct
 
     pack_ids.each do |row|
-      FileSender.delay(queue: :file_delivery).execute(row.pack_id, service_name, service_class)
+      FileSender.execute(row.pack_id, service_name, service_class)
     end
   end
 

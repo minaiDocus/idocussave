@@ -14,7 +14,7 @@ class Admin::InvoicesController < Admin::AdminController
 
   # GET /admin/invoices/archive
   def archive
-    file_path = Invoice.archive_path(params[:file_name])
+    file_path = ArchiveInvoice.archive_path(params[:file_name])
 
     if File.exist? file_path
       send_file(file_path, type: 'application/zip', filename: params[:file_name], x_sendfile: true)
