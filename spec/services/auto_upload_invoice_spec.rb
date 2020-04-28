@@ -13,8 +13,8 @@ describe CreateInvoicePdf do
 			@user.save
 
 	  	@invoice = Invoice.create(number: "2019090001", organization_id: @organization.id, user_id: @user.id)
-	  	@invoice.content = File.new "#{Rails.root}/spec/support/files/2019090001.pdf"
-	    @invoice.save
+      @invoice.cloud_content.attach(Rack::Test::UploadedFile.new("#{Rails.root}/spec/support/files/2019090001.pdf"))
+      @invoice.save
     end
 
     after(:all) do
@@ -23,12 +23,24 @@ describe CreateInvoicePdf do
 
     context 'temp_document need Timecop' do
     	before(:each) do
-    		Timecop.freeze(Time.local(2019,10,1))
+    		Timecop.freeze(Time.local(2020,04,1))
 	    end
 
 	    after(:each) do
 	      Timecop.return
 	    end
+
+	    it 'archive invoice', :archive_invoice do
+		  	CreateInvoicePdf.archive_invoice
+
+		  	archive_invoice = ArchiveInvoice.last
+
+		  	expect(archive_invoice.name).to eq 'invoices_202003.zip'
+		  	expect(archive_invoice.cloud_content).to be_attached
+	      expect(archive_invoice.cloud_content_object.path).to be_present
+	      expect(archive_invoice.cloud_content_object.path).to eq '/home/infodrm/Projects/idocussave/tmp/ArchiveInvoice/20200401/1/invoices_202003.zip'
+	      expect(archive_invoice.cloud_content.filename).to eq 'invoices_202003.zip'
+	  	end
 
     	it 'returns a valid temp document', :temp_doc_created do
 		  	create_invoice_pdf = CreateInvoicePdf.new(@invoice)
@@ -41,7 +53,7 @@ describe CreateInvoicePdf do
 		  	expect(temp_document.api_name).to eq 'invoice_auto'
 
 		   	expect(temp_document.original_file_name).to eq '2019090001.pdf'
-		   	expect(temp_document.content_file_name).to  eq 'ACC_IDO_VT_201909.pdf'
+		   	expect(temp_document.content_file_name).to  eq 'ACC%IDO_VT_202003'
 		    expect(temp_document.state).to  eq 'ready'
 	  	end
 
