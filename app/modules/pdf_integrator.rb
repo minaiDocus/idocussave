@@ -1,40 +1,44 @@
 class PdfIntegrator
-  def self.processed_file(file, file_path, api="")
+  def initialize(file, file_path, api='')
     @file      = file
     @file_path = file_path
     @api       = api
+  end
 
+  def processed_file
     if extension == '.pdf'
-      _file = file.path
+      _file = @file.path
 
-      if DocumentTools.protected?(file.path)
-        safe_file = file_path.gsub('.pdf', '_safe.pdf')
-        DocumentTools.remove_pdf_security(file.path, safe_file)
+      if DocumentTools.protected?(@file.path)
+        safe_file = @file_path.gsub('.pdf', '_safe.pdf')
+        DocumentTools.remove_pdf_security(@file.path, safe_file)
         _file = safe_file
       end
 
       if File.exist?(_file) && DocumentTools.modifiable?(_file)
-        FileUtils.cp _file, file_path
+        FileUtils.cp _file, @file_path
       else
-        LogService.info('document_upload', "[Upload error] #{file.path} - attempt to recreate")
-        re_create_pdf file.path, file_path
-        if !DocumentTools.modifiable?(file_path)
-          LogService.info('document_upload', "[Upload error] #{file.path} - force correction")
-          force_correct_pdf(file.path, file_path)
+        LogService.info('document_upload', "[Upload error] #{@file.path} - attempt to recreate")
+        re_create_pdf @file.path, @file_path
+        if !DocumentTools.modifiable?(@file_path)
+          LogService.info('document_upload', "[Upload error] #{@file.path} - force correction")
+          force_correct_pdf(@file.path, @file_path)
         end
       end
     else
-      DocumentTools.to_pdf(file.path, file_path)
+      DocumentTools.to_pdf(@file.path, @file_path)
     end
 
-    temp_file = File.open(file_path, 'r')
+    temp_file = File.open(@file_path, 'r')
   end
 
-  def self.extension
+  private
+
+  def extension
     File.extname(@file.path).downcase
   end
 
-  def self.re_create_pdf(source, destination)
+  def re_create_pdf(source, destination)
     _tmp_file = Tempfile.new('tmp_pdf').path
     success   = DocumentTools.to_pdf_hight_quality source, _tmp_file
 
@@ -43,7 +47,7 @@ class PdfIntegrator
     File.unlink _tmp_file
   end
 
-  def self.force_correct_pdf(source, destination)
+  def force_correct_pdf(source, destination)
     correction_data = DocumentTools.force_correct_pdf(source)
 
     FileUtils.cp correction_data[:output_file], destination

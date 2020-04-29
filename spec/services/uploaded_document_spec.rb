@@ -440,11 +440,14 @@ describe UploadedDocument do
         @user.account_book_types.create(name: 'TS', description: 'TEST')
 
         allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
+        allow_any_instance_of(UploadedDocument).to receive(:clean_tmp).and_return(true)
 
-        @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
+        uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
 
-        expect(File.exist?(@uploaded_document.file)).to eq true
-        expect(DocumentTools.completed?(@uploaded_document.file.path)).to eq true
+        expect(File.exist?(uploaded_document.processed_file.path)).to eq true
+        expect(DocumentTools.completed?(uploaded_document.processed_file.path)).to eq true
+
+        FileUtils.rm File.dirname(uploaded_document.processed_file.path), force: true
       end
     end
   end

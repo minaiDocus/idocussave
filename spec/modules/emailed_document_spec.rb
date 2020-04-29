@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
+require 'spec_module'
 
 describe EmailedDocument do
   describe '.new' do
@@ -547,9 +548,11 @@ describe EmailedDocument do
         allow_any_instance_of(Mail).to receive(:subject).and_return('AC 202004')
         allow_any_instance_of(Email).to receive(:from_user).and_return(@user)
         allow_any_instance_of(Email).to receive(:to_user).and_return(@user)
+
         allow_any_instance_of(EmailedDocument).to receive(:user).and_return(@user)
         allow_any_instance_of(EmailedDocument).to receive(:journal).and_return('VT')
         allow_any_instance_of(EmailedDocument).to receive(:period).and_return('202004')
+
         allow(User).to receive(:find_by_email).with(any_args).and_return(@user)
         allow(DocumentTools).to receive(:need_ocr).with(any_args).and_return(false)
         allow_any_instance_of(TempPack).to receive(:organization) { organization }
@@ -559,6 +562,7 @@ describe EmailedDocument do
         expect(TempDocument.last.user.id).to eq @user.id
         expect(TempDocument.last.api_name).to eq 'email'
         expect(TempDocument.last.delivery_type).to eq 'upload'
+        expect(TempDocument.last.cloud_content.attached?).to be true
         expect(TempDocument.last.delivered_by).to eq @user.code
       end
     end

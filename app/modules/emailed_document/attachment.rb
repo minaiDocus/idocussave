@@ -116,7 +116,7 @@ class EmailedDocument::Attachment
     if @temp_file_path
       @temp_file_path
     else
-      @temp_file_path = PdfIntegrator.processed_file(File.open(@file_path, 'r'), File.join(dir_2, @file_name), 'Attachment').path
+      @temp_file_path = PdfIntegrator.new(File.open(@file_path, 'r'), File.join(dir_2, @file_name), 'Attachment').processed_file.path
     end
   end
 
