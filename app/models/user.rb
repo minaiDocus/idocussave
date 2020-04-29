@@ -326,6 +326,10 @@ class User < ApplicationRecord
     is_admin
   end
 
+  def pre_assignement_displayed?
+    collaborator? || is_pre_assignement_displayed
+  end
+
   # TODO : need a test
   def self.search(contains)
     users = self.all

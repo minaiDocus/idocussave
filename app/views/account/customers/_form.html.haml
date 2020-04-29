@@ -17,6 +17,7 @@
           = f.input :last_name
           = f.input :phone_number
           = f.input :email, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
+          = f.input :is_pre_assignement_displayed, collection: [["Oui", true], ["Non", false]], as: :radio_buttons, required: true, label: "Activer la vue écriture comptable pour ce compte"
   .card-footer
     .form-actions.margin0bottom
       - if params[:action].in?(%w(new create))
