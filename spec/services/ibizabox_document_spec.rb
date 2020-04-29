@@ -1,10 +1,14 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
+require 'spec_module'
 
 describe IbizaboxDocument do
+  before(:all){ SpecModule.create_tmp_dir }
+  after(:all) { SpecModule.remove_tmp_dir }
+
   context 'Make file for temp_document' do
     it 'create temp document file' do
-      file    = File.open("#{Rails.root}/spec/support/files/upload.pdf", "r")
+      file    = SpecModule.new.use_file("#{Rails.root}/spec/support/files/upload.pdf")
       user    = FactoryBot.create(:user)
       journal = FactoryBot.create(:account_book_type)
       organization = FactoryBot.create(:organization)
@@ -20,6 +24,7 @@ describe IbizaboxDocument do
       expect(TempDocument.last.delivery_type).to eq 'upload'
       expect(TempDocument.last.delivered_by).to eq 'ibiza'
       expect(TempDocument.last.api_id).to eq "125"
+      expect(TempDocument.last.cloud_content.attached?).to be true
     end
   end
 end

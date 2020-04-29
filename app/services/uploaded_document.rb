@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 # Handler for incoming documents. Used for web uploads and dropbox imports
 class UploadedDocument
-  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
+  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document, :processed_file
 
 
   VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
@@ -32,7 +32,7 @@ class UploadedDocument
     if @errors.empty?
       @dir            = Dir.mktmpdir
       file_path       = File.join(@dir, file_name)
-      @processed_file = PdfIntegrator.processed_file(@file, file_path, 'web')
+      @processed_file = PdfIntegrator.new(@file, file_path, api_name).processed_file
 
       begin
         unless File.exist?(@file.path) && DocumentTools.modifiable?(@processed_file.path)
@@ -55,11 +55,11 @@ class UploadedDocument
     end
 
     if @errors.empty?
-      pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack")
+      temp_pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
+      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
 
-      pack.update_pack_state # Create or update pack related to temp_pack
-      LogService.info('document_upload', "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack")
+      temp_pack.update_pack_state # Create or update pack related to temp_pack
+      LogService.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
 
       options = {
         delivered_by:          @uploader.code,
@@ -71,7 +71,7 @@ class UploadedDocument
         analytic:              analytic_validator.analytic_params_present? ? analytic : nil
       }
 
-      @temp_document = AddTempDocumentToTempPack.execute(pack, @processed_file, options) # Create temp document for temp pack
+      @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options) # Create temp document for temp pack
     end
     clean_tmp
   end

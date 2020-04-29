@@ -12,7 +12,7 @@ class IbizaboxDocument
 
     @dir            = Dir.mktmpdir
     file_path       = File.join(@dir, file_name)
-    @processed_file = PdfIntegrator.processed_file(@file, file_path, 'ibiza')
+    @processed_file = PdfIntegrator.new(@file, file_path, 'ibiza').processed_file
 
     if valid?
       temp_pack = TempPack.find_or_create_by_name pack_name
