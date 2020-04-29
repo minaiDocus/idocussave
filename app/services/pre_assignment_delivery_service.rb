@@ -76,10 +76,29 @@ class PreAssignmentDeliveryService
     ibiza_client.request.clear
 
     begin
-      if @delivery.cloud_content_object.try(:path).present?
-        ibiza_client.company(@user.ibiza_id).entries!(File.read(@delivery.cloud_content_object.try(:path)))
+      if @delivery.cloud_content_object.path.present?
+        ibiza_client.company(@user.ibiza_id).entries!(File.read(@delivery.cloud_content_object.path))
       else
         ibiza_client.company(@user.ibiza_id).entries!(@delivery.data_to_deliver)
+      end
+
+      if ibiza_client.response.success?
+        handle_delivery_success
+      else
+        handle_delivery_error ibiza_client.response.message.to_s.presence || ibiza_client.response.code.to_s
+
+        retry_delivery = true
+
+        ['Le journal est inconnu'].each do |message|
+          retry_delivery = false if ibiza_client.response.message.to_s.match /#{message}/
+        end
+
+        if retry_delivery && @preseizures.size > 1
+          @preseizures.each do |preseizure|
+            deliveries = CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
+            deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
+          end
+        end
       end
     rescue => e
       log_document = {
@@ -87,29 +106,13 @@ class PreAssignmentDeliveryService
         erreur_type: "Active Storage, can't read file",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {
-          object: e.to_s
+          delivery: @delivery.inspect,
+          error: e.to_s
         }
       }
       ErrorScriptMailer.error_notification(log_document).deliver
-    end
 
-    if ibiza_client.response.success?
-      handle_delivery_success
-    else
-      handle_delivery_error ibiza_client.response.message.to_s.presence || ibiza_client.response.code.to_s
-
-      retry_delivery = true
-
-      ['Le journal est inconnu'].each do |message|
-        retry_delivery = false if ibiza_client.response.message.to_s.match /#{message}/
-      end
-
-      if retry_delivery && @preseizures.size > 1
-        @preseizures.each do |preseizure|
-          deliveries = CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
-          deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
-        end
-      end
+      @delivery.update(state: 'data_built')
     end
 
     @delivery.sent?
@@ -119,23 +122,26 @@ class PreAssignmentDeliveryService
     @delivery.sending
 
     begin
-      response = @delivery.cloud_content_object.try(:path).present? ? ExactOnlineData.new(@user).send_pre_assignment(File.read(@delivery.cloud_content_object.try(:path))) : ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver)
+      response = @delivery.data_to_deliver.present? ? ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver) : ExactOnlineData.new(@user).send_pre_assignment(File.read(@delivery.cloud_content_object.path))
+
+      if response[:error].present?
+        handle_delivery_error(response[:error])
+      else
+        handle_delivery_success
+      end
     rescue => e
       log_document = {
         name: "PreAssignmentDeliveryService",
         erreur_type: "Active Storage, can't read file",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {
-          object: e.to_s
+          delivery: @delivery.inspect,
+          error: e.to_s
         }
       }
       ErrorScriptMailer.error_notification(log_document).deliver
-    end
 
-    if response[:error].present?
-      handle_delivery_error(response[:error])
-    else
-      handle_delivery_success
+      @delivery.update(state: 'data_built')
     end
 
     @delivery.sent?
@@ -172,7 +178,7 @@ class PreAssignmentDeliveryService
       preseizure.is_locked         = false
       preseizure.save
       preseizure.delivered_to(@delivery.deliver_to)
-      preseizure.set_delivery_message_for(@delivery.deliver_to, '')
+      preseizure.set_delivery_message_for(@delivery.deliver_to, '') if preseizure.get_delivery_message_of('ibiza') != 'already sent'
     end
 
     @report.delivery_tried_at = time

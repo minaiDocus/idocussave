@@ -43,8 +43,8 @@
             - begin
               - if @delivery.data_to_deliver.present?
                 %textarea{ rows: 50 }= @delivery.data_to_deliver
-              - elsif @delivery.cloud_content_object.try(:path).present?
-                %textarea{ rows: 50 }= File.read(@delivery.cloud_content_object.try(:path))
+              - else
+                %textarea{ rows: 50 }= File.read(@delivery.cloud_content_object.path)
             - rescue => e
-              Erreur:
+              Erreur de chargement du fichier :
               = e.to_s
