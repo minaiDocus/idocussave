@@ -11,8 +11,8 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
       begin
         if delivery.data_to_deliver.present?
           attachments["#{delivery.id}.#{extension}"] = delivery.data_to_deliver
-        elsif delivery.cloud_content_object.present?
-          attachments["#{delivery.id}.#{extension}"] = File.read(delivery.cloud_content_object.try(:path))
+        elsif File.exist?(delivery.cloud_content_object.path)
+          attachments["#{delivery.id}.#{extension}"] = File.read(delivery.cloud_content_object.path)
         end
       rescue => e
         log_document = {
@@ -20,7 +20,8 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
           erreur_type: "Active Storage, can't read file",
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {
-            object: e.to_s
+            delivery: delivery.inspect,
+            error: e.to_s
           }
         }
         ErrorScriptMailer.error_notification(log_document).deliver

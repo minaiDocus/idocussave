@@ -1,3 +1,4 @@
+
 class CreateInvoicePdf
   class << self
     def for_all
@@ -123,19 +124,17 @@ class CreateInvoicePdf
 
     def archive_invoice(time = Time.now)
       invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
-      files_path = invoices.map { |e| e.cloud_content_object.path }
+      invoices_files_path = invoices.map { |e| e.cloud_content_object.path }
 
       archive_name = "invoices_#{(time - 1.month).strftime('%Y%m')}.zip"
 
       Dir.mktmpdir do |dir|
-        FileUtils.chmod(0755, dir)
-        file_path = "#{dir}/#{archive_name}"
-        file_path = DocumentTools.archive(file_path, files_path)
+        archive_path = DocumentTools.archive("#{dir}/#{archive_name}", invoices_files_path)
 
         _archive_invoice      = ArchiveInvoice.new
         _archive_invoice.name = archive_name
 
-        _archive_invoice.cloud_content_object.attach(File.open(file_path), archive_name) if _archive_invoice.save
+        _archive_invoice.cloud_content_object.attach(File.open(archive_path), archive_name) if _archive_invoice.save
       end
     end
   end

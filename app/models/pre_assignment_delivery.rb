@@ -66,6 +66,11 @@ class PreAssignmentDelivery < ApplicationRecord
     CustomActiveStorageObject.new(self, :cloud_content)
   end
 
+  #this method is required to avoid custom_active_storage bug when seeking for paperclip equivalent method
+  def content
+    object = FakeObject.new
+  end
+
   def ibiza
     @ibiza ||= organization.ibiza
   end

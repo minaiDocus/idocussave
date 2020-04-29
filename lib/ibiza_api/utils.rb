@@ -62,7 +62,10 @@ class IbizaAPI::Utils
         xml.importDate exercise.end_date
         xml.wsImportEntry do
           preseizures.each do |preseizure|
-            next if preseizure.pre_assignment_deliveries.sent.size > 0 || !IbizaPreseizureFinder.not_delivered(preseizure)
+            if preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(preseizure)
+              preseizure.set_delivery_message_for('ibiza', 'already sent')
+              next
+            end
 
             preseizures_to_deliver_size += 1
             preseizure.accounts.each do |account|

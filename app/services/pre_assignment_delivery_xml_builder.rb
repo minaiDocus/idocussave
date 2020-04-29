@@ -31,9 +31,9 @@ class PreAssignmentDeliveryXmlBuilder
     if ibiza_exercise
       response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
 
-      building_active_storage response[:data_built]
-
       if response[:data_count] > 0
+        save_data_to_storage response[:data_built]
+
         building_success response[:data_count]
       else
         building_failed 'No preseizure to send'
@@ -58,7 +58,7 @@ class PreAssignmentDeliveryXmlBuilder
     response = ExactOnlineDataBuilder.new(@delivery).execute
 
     if response[:data_built]
-      building_active_storage response[:data]
+      save_data_to_storage response[:data]
 
       @delivery.data_built
     else
@@ -68,17 +68,20 @@ class PreAssignmentDeliveryXmlBuilder
 
   private
 
-  def building_active_storage(data_built)
-    Dir.mktmpdir do |dir|
-      extension = 'txt'
-      extension = 'xml' if @delivery.deliver_to == 'ibiza'
-      file_name = @delivery.pack_name.tr('% ', '_')
-      file_path = "#{dir}/#{file_name}_#{@delivery.id}.#{extension}"
+  def save_data_to_storage(data_built)
+    if data_built.present?
+      Dir.mktmpdir do |dir|
+        extension = 'txt'
+        extension = 'xml' if @delivery.deliver_to == 'ibiza'
+        file_name = @delivery.pack_name.tr('% ', '_')
+        file_path = "#{dir}/#{file_name}_#{@delivery.id}.#{extension}"
 
-      File.open file_path, 'w' do |f|
-        f.write(data_built.to_s)
+        File.open file_path, 'w' do |f|
+          f.write(data_built.to_s)
+        end
+
+        @delivery.cloud_content_object.attach(File.open(file_path), "#{file_name}_#{@delivery.id}.#{extension}") if @delivery.save
       end
-      @delivery.cloud_content_object.attach(File.open(file_path), "#{file_name}_#{@delivery.id}.#{extension}") if data_built.present? && @delivery.save
     end
   end
 

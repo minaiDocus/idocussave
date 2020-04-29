@@ -88,7 +88,7 @@ describe CreateInvoicePdf do
 		  	expect(archive_invoice.name).to eq 'invoices_202003.zip'
 		  	expect(archive_invoice.cloud_content).to be_attached
 	      expect(archive_invoice.cloud_content_object.path).to be_present
-	      expect(archive_invoice.cloud_content_object.path).to eq '/home/infodrm/Projects/idocussave/tmp/ArchiveInvoice/20200401/1/invoices_202003.zip'
+	      expect(archive_invoice.cloud_content_object.path).to match /ArchiveInvoice\/20200401\/1\/invoices_202003\.zip/
 	      expect(archive_invoice.cloud_content.filename).to eq 'invoices_202003.zip'
 	  	end
 
