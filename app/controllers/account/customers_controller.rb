@@ -360,6 +360,7 @@ class Account::CustomersController < Account::OrganizationController
       :first_name,
       :last_name,
       :email,
+      :is_pre_assignement_displayed,
       :phone_number,
       { group_ids: [] },
       :manager_id,

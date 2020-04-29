@@ -38,8 +38,9 @@
         .subView
           %span{ class: 'tab-nav selected', id: 'view_packs' }
             Documents
-          %span{ class: 'tab-nav', id: 'view_reports' }
-            Opé. bancaires
+          - if @user.pre_assignement_displayed?
+            %span{ class: 'tab-nav', id: 'view_reports' }
+              Opé. bancaires
         .packsList
           .actions.clearfix
             %h3.float-left
