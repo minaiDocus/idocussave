@@ -66,11 +66,13 @@ class AccountingWorkflow::TempPackProcessor
       Reporting.update(pack)
 
       FileDelivery.prepare(pack)
+
+      pack.add_to_archive
     end
   end
 
   private
-
+  
   def pack
     return @new_pack if @new_pack
 
