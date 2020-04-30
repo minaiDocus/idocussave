@@ -1,6 +1,5 @@
 - ### TODO : HANDLE COMPOSITION DOCUMENTS OR PIECES
 - Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
-- piece = Pack::Piece.find(document.id)
 - preseizures = document.preseizures
 - size = preseizures.length
 - stamp_url = document.get_state_to :image
@@ -73,16 +72,16 @@
                 %tr
                   %td.piece_name.text-center#piece_name
                     .content_piece_name
-                      = piece.name
+                      = document.name
                   %td.date.text-center#date
                     .content_date
-                      = piece.created_at.try(:to_date)
+                      = document.created_at.try(:to_date)
                   %td.pages_number.text-center#pages_number
                     .content_pages_number
-                      = piece.pages_number
+                      = document.pages_number
                   %td.piece_tags.text-center#piece_tags
                     .content_piece_tags
-                      = piece.tags
+                      = document.tags
       - else
         .content_details
           .no_preseizure
