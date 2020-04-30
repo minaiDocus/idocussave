@@ -1,6 +1,13 @@
 module AccountingWorkflow
   def self.dir
-    Rails.root.join('files', Rails.env, 'prepa_compta')
+    case Rails.env
+    when 'production'
+      Rails.root.join('files', Rails.env, 'prepa_compta')
+    when 'staging'
+      Pathname.new('/ftp/prepa_compta')
+    when 'development'
+      Pathname.new('/Users/toto/ftp/prepa_compta')
+    end
   end
 
   def self.grouping_dir
@@ -8,7 +15,14 @@ module AccountingWorkflow
   end
 
   def self.ocr_processing_dir
-    Rails.root.join('files', Rails.env, 'ocr_processing')
+    case Rails.env
+    when 'production'
+      Rails.root.join('files', Rails.env, 'ocr_processing')
+    when 'staging'
+      Pathname.new('/ftp/ocr_processing')
+    when 'development'
+      Pathname.new('/Users/toto/ftp/ocr_processing')
+    end
   end
 
   def self.pre_assignments_dir

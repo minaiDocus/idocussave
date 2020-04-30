@@ -3,6 +3,8 @@
 class Account::InvoicesController < Account::OrganizationController
   def show
     @invoices = @organization.invoices.order(created_at: :desc).page(params[:page])
+    @invoice_settings = @organization.invoice_settings.order(created_at: :desc)
+    @invoice_setting = InvoiceSetting.new
   end
 
   def download
@@ -18,5 +20,34 @@ class Account::InvoicesController < Account::OrganizationController
     else
       render body: nil, status: 404
     end
+  end
+
+  def insert
+    @invoice_setting = (params[:invoice_setting][:id].present?) ? InvoiceSetting.find(params[:invoice_setting][:id]) : InvoiceSetting.new()
+    @invoice_setting.update(invoice_setting_params)
+    @invoice_setting.organization = @organization
+    @invoice_setting.user         = User.find_by_code params[:invoice_setting][:user_code]
+
+    if @invoice_setting.save
+      flash[:success] = (params[:invoice_setting][:id].present?) ? 'Modifié avec succès' : 'Ajout avec succès.'
+    else
+      flash[:error] = 'Enregistrement non valide, veuillez verifier les informations.'
+    end
+
+    redirect_to account_organization_invoices_path(@organization)
+  end
+
+
+  def remove
+    InvoiceSetting.find(params[:id]).destroy
+
+    flash[:success] = 'Suppression avec succès.'
+
+    redirect_to account_organization_invoices_path(@organization)
+  end
+
+  private
+  def invoice_setting_params
+    params.require(:invoice_setting).permit(:user_code, :journal_code)
   end
 end

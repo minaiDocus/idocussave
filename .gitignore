@@ -38,6 +38,7 @@ config/storage.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
 config/symmetric-encryption.yml
+config/supplier_recognition.yml
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

@@ -25,6 +25,7 @@ class Invoice < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :period, optional: true
   belongs_to :subscription, optional: true
+  has_many   :invoice_settings
 
   before_destroy do |invoice|
     invoice.cloud_content.purge

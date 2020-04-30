@@ -15,7 +15,6 @@ class Pdftk
     raise "#{EXE_NAME} is not executable" unless File.executable?(@exe_path)
   end
 
-
   def merge(source_array, destination_path, merge_type = 'append')
     command = "#{@exe_path} #{source_array.join(' ')} cat output #{destination_path}"
     `#{command}`

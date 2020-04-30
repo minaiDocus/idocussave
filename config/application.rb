@@ -15,12 +15,14 @@ module Idocus
     config.load_defaults 5.2
 
     # development files
+    Dir.glob("#{Rails.root}/lib/api_broker/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/app/workers/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/patches/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/ibiza_api/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/knowings_api/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/google_drive/*.{rb}").each { |file| require file }
+    Dir.glob("#{Rails.root}/lib/supplier_recognition/*.{rb}").each { |file| require file }
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -106,7 +108,14 @@ module Idocus
     end
 
     Bearer.init_config do |config|
-      config.secret_key = "sk_production_vTCclbqjXkL0UPtVvZujIFxj3N2uWX8v" if Rails.env.production?
+      case Rails.env
+      when 'production'
+        config.secret_key = "sk_production_vTCclbqjXkL0UPtVvZujIFxj3N2uWX8v"
+      when 'staging'
+        config.secret_key = "sk_sandbox__-JEG31Ur5ZhEYK2F3zHgh8LxJm1i0ko"
+      when 'development'
+        config.secret_key = "sk_development_-Ya4X5tH19UxFHhqagBy_SB01ZNaaaQC"
+      end
     end
   end
 end

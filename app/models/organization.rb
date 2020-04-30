@@ -33,6 +33,7 @@ class Organization < ApplicationRecord
   has_many :reports, class_name: 'Pack::Report'
   has_many :expenses, class_name: 'Pack::Report::Expense'
   has_many :invoices
+  has_many :invoice_settings
   has_many :addresses, as: :locatable
   has_many :temp_packs
   has_many :preseizures, class_name: 'Pack::Report::Preseizure'

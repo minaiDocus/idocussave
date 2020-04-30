@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_19_121248) do
+ActiveRecord::Schema.define(version: 2020_03_15_122741) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -600,6 +600,8 @@ ActiveRecord::Schema.define(version: 2020_02_19_121248) do
     t.datetime "updated_at"
     t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
     t.boolean "is_configured", default: false, null: false
+    t.datetime "error_fetched_at"
+    t.text "error_message", limit: 4294967295
     t.integer "external_file_storage_id"
     t.string "encrypted_host"
     t.string "encrypted_login"
@@ -1101,6 +1103,7 @@ ActiveRecord::Schema.define(version: 2020_02_19_121248) do
     t.boolean "is_finalized", default: false
     t.datetime "delete_at"
     t.string "delete_by"
+    t.integer "detected_third_party_id"
     t.index ["analytic_reference_id"], name: "index_pack_pieces_on_analytic_reference_id"
     t.index ["delete_at"], name: "index_pack_pieces_on_delete_at"
     t.index ["delete_by"], name: "index_pack_pieces_on_delete_by"
