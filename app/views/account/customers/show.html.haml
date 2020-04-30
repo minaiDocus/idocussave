@@ -112,6 +112,9 @@
                     %th= t('activerecord.models.user.attributes.email')
                     %td= @customer.email
                   %tr
+                    %th= t('activerecord.models.user.attributes.is_pre_assignement_displayed')
+                    %td= @customer.is_pre_assignement_displayed ? t('yes_value') : t('no_value')
+                  %tr
                     %th= t('activerecord.models.user.attributes.phone_number')
                     %td= @customer.phone_number
                   %tr
@@ -141,10 +144,6 @@
                     %td
                       = "#{@customer.email_code}@fw.idocus.com - "
                       = link_to "détails", upload_email_infos_account_organization_customer_path(@organization, @customer)
-                  %tr
-                    %th Activer la vue écriture comptable pour ce compte
-                    %td
-                      = @customer.is_pre_assignement_displayed ? 'Oui' : 'Non'
             - if @customer.active?
               .row
                 .col-md-12
