@@ -67,12 +67,12 @@ class AccountingWorkflow::TempPackProcessor
 
       FileDelivery.prepare(pack)
 
-      pack.add_to_archive
+      Pack.delay(queue: :low).store_archive_of(pack.id)
     end
   end
 
   private
-  
+
   def pack
     return @new_pack if @new_pack
 

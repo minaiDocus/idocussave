@@ -103,6 +103,10 @@ class Pack < ApplicationRecord
     end
   end
 
+  def self.store_archive_of(pack_id)
+    Pack.find(pack_id).save_archive_to_storage
+  end
+
   def cloud_content_object
     CustomActiveStorageObject.new(self, :cloud_content)
   end
@@ -271,7 +275,7 @@ class Pack < ApplicationRecord
     zip_path
   end
 
-  def add_to_archive
+  def save_archive_to_storage
     cloud_archive_object.attach(File.open(archive_file_path), archive_name)
   end
 
