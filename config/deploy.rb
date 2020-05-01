@@ -15,6 +15,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
 )
 
 set :linked_files, fetch(:linked_files, []).push(
+  'config/bearer.yml',
   'config/database.yml',
   'config/secrets.yml',
   'config/dematbox.yml',
@@ -37,30 +38,8 @@ set :slack_url, 'https://hooks.slack.com/services/TFH4T0PEK/BRGM3QACE/PXqbWQ4qvc
 
 namespace :deploy do
   after :finished, :restart_passenger do
-    on roles(:all) do
+    on roles(:web) do
       execute :touch, release_path.join('tmp/restart.txt')
-    end
-  end
-end
-
-namespace :utils do
-  desc 'Upload uncommited modified files'
-  task :upload_modified do
-    on roles(:all) do
-      data = %x(git ls-files --other --exclude-standard -m | uniq)
-      data.split(/\n/).each do |file_path|
-        upload! file_path, release_path.join(file_path)
-      end
-    end
-  end
-
-  desc 'Upload modified files in last commit'
-  task :upload_last_commit do
-    on roles(:all) do
-      data = %x(git log --name-only --pretty=oneline --full-index HEAD^..HEAD | grep -vE '^[0-9a-f]{40} ' | sort | uniq)
-      data.split(/\n/).each do |file_path|
-        upload! file_path, release_path.join(file_path)
-      end
     end
   end
 end

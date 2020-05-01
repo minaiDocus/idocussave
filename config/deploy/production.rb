@@ -1,4 +1,4 @@
-set :deploy_to, '/data/idocus/deploy/production'
+set :deploy_to, '/home/main/'
 
 set :repo_url, 'git@github.com:i-docus/main.git'
 
@@ -6,12 +6,8 @@ set :branch, 'master'
 
 set :rvm_ruby_version, '2.6.5'
 
-server 'legacy.idocus.com', user: 'idocus', roles: %w{app db web}
+server 'app-1.idocus.tech', user: 'deploy', roles: %w{app db web}
+server 'app-2.idocus.tech', user: 'deploy', roles: %w{app web}
+server 'sidekiq-1.idocus.tech', user: 'deploy', roles: %w{app worker}
+server 'sidekiq-2.idocus.tech', user: 'deploy', roles: %w{app worker}
 
-namespace :deploy do
-  after :updated, :link_production_data do
-    on roles(:all) do
-      execute "ln -s /data/idocus/production_data/files #{release_path}"
-    end
-  end
-end
