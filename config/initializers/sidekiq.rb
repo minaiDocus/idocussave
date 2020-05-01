@@ -18,7 +18,7 @@ if Rails.env.production?
     failover_reconnect_timeout: 20
   }
 else
-  redis = { "redis://localhost:6379/0" } 
+  redis = { url: "redis://localhost:6379/0" } 
 end
 
 $remote_lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new(redis)))
