@@ -145,6 +145,9 @@ gem 'faraday'
 # JSON Serialization
 gem 'fast_jsonapi'
 
+# Cache
+gem 'redis-rails'
+
 group :production do
   # APM
   gem 'elastic-apm'
