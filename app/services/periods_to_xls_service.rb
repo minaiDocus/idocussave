@@ -41,13 +41,16 @@ class PeriodsToXlsService
     list = []
 
     documents.each do |document|
+      user_code     = document.period.user ? document.period.user.code : ''
+      user_company  = document.period.user ? document.period.user.company : ''
+
       data = []
       data << document.period.user.try(:organization).try(:name) if @with_organization_info
       data += [
         document.period.end_date.month,
         document.period.start_date.year,
-        document.period.user.code,
-        document.period.user.company,
+        user_code,
+        user_company,
         document.name,
         document.pieces,
         document.scanned_pieces,
@@ -68,13 +71,13 @@ class PeriodsToXlsService
 
     range = @with_organization_info ? 0..5 : 0..4
     month_index = @with_organization_info ? 1 : 0
-    list = list.sort do |a, b|
-      _a = a[range]
-      _b = b[range]
-      _a[month_index] = ("%02d" % _a[month_index])
-      _b[month_index] = ("%02d" % _b[month_index])
-      _a <=> _b
-    end
+    #list = list.sort do |a, b|
+    #  _a = a[range]
+    #  _b = b[range]
+    #  _a[month_index] = ("%02d" % _a[month_index])
+    #  _b[month_index] = ("%02d" % _b[month_index])
+    #  _a <=> _b
+    #end
 
     list.each_with_index do |data, index|
       sheet1.row(index + 1).replace(data)
