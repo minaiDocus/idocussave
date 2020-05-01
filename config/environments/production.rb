@@ -34,7 +34,20 @@ Idocus::Application.configure do
   # config.logger = SyslogLogger.new
 
   # Use a different cache store in production
-  config.cache_store = :dalli_store, { namespace: 'iDocus_production' }
+  config.cache_store = :redis_store, { 
+                                      db: 1,
+                                      host: 'mymaster',
+                                      role: :master,
+                                      sentinels: [
+                                        { host: '172.16.0.171', port: 26379 },
+                                        { host: '172.16.0.172', port: 26379 },
+                                        { host: '172.16.0.161', port: 26379 },
+                                        { host: '172.16.0.161', port: 26379 },
+                                        { host: '172.16.0.191', port: 26379 },
+                                        { host: '172.16.0.192', port: 26379 }
+                                      ],
+                                      failover_reconnect_timeout: 20
+                                    }
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
