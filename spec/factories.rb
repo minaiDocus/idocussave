@@ -170,6 +170,13 @@ FactoryBot.define do
       organization_id { 1 }
     end
 
+    factory :ibizabox_folders, class: 'IbizaboxFolder' do
+      is_selection_needed { true }
+      state { "ready" }
+      journal_id { 1 }
+      user_id { 1 }
+    end
+
   #####################################
   # Bank operations fetcher factories #
   #####################################

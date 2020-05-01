@@ -340,6 +340,8 @@ Rails.application.routes.draw do
 
       resource :invoices, only: %w(index show) do
         get 'download(/:id)', action: 'download', as: :download
+        post 'insert', action: 'insert'
+        delete 'remove', action: 'remove'
       end
     end
 
@@ -464,6 +466,10 @@ Rails.application.routes.draw do
   end
 
   namespace :api, defaults: { format: 'json' } do
+    namespace :v2 do
+      resources :pieces, only: %w(update)
+    end
+
     namespace :v1 do
       resources :pre_assignments do
         post 'update_comment', on: :collection

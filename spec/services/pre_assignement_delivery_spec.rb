@@ -5,7 +5,9 @@ describe PreAssignmentDelivery do
   def delivery_exact_online
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_exact_online?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
+
     preseizure   = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
+
     accounts = Pack::Report::Preseizure::Account.create([
                                                           { type: 1, number: '0000001', preseizure_id: preseizure.id },
                                                           { type: 2, number: '101000', preseizure_id: preseizure.id },
@@ -16,24 +18,35 @@ describe PreAssignmentDelivery do
                                                         { type: 2, number: '1', amount: 1011.23, preseizure_id: preseizure.id, account_id: accounts[1].id },
                                                         { type: 2, number: '1', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
                                                       ])
+
     CreatePreAssignmentDeliveryService.new(preseizure, ['exact_online']).execute.first
   end
 
   def delivery_ibiza
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_ibiza?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
-    preseizure   = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
-    accounts = Pack::Report::Preseizure::Account.create([
-                                                          { type: 1, number: '601109', preseizure_id: preseizure.id },
-                                                          { type: 2, number: '471000', preseizure_id: preseizure.id },
-                                                          { type: 3, number: '471001', preseizure_id: preseizure.id },
+    allow(Settings).to receive_message_chain(:first, :notify_on_ibiza_delivery).and_return('no')
+
+    preseizures = []
+    pieces      = [@piece, @piece_2]
+
+    pieces.each do |piece|
+      preseizure = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: piece
+      accounts  = Pack::Report::Preseizure::Account.create([
+                                                            { type: 1, number: '601109', preseizure_id: preseizure.id },
+                                                            { type: 2, number: '471000', preseizure_id: preseizure.id },
+                                                            { type: 3, number: '471001', preseizure_id: preseizure.id },
+                                                          ])
+      entries  = Pack::Report::Preseizure::Entry.create([
+                                                          { type: 1, number: '1', amount: 1213.48, preseizure_id: preseizure.id, account_id: accounts[0].id },
+                                                          { type: 2, number: '1', amount: 1011.23, preseizure_id: preseizure.id, account_id: accounts[1].id },
+                                                          { type: 2, number: '1', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
                                                         ])
-    entries  = Pack::Report::Preseizure::Entry.create([
-                                                        { type: 1, number: '1', amount: 1213.48, preseizure_id: preseizure.id, account_id: accounts[0].id },
-                                                        { type: 2, number: '1', amount: 1011.23, preseizure_id: preseizure.id, account_id: accounts[1].id },
-                                                        { type: 2, number: '1', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
-                                                      ])
-    CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza']).execute.first
+
+      preseizures << preseizure
+    end
+
+    CreatePreAssignmentDeliveryService.new(preseizures, ['ibiza']).execute.first
   end
 
   before(:all) do
@@ -50,8 +63,9 @@ describe PreAssignmentDelivery do
     @organization = FactoryBot.create :organization, code: 'IDO'
     @user         = FactoryBot.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
     @report       = FactoryBot.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
-    pack          = FactoryBot.create :pack, owner: @user, name: (@report.name + ' all')
-    @piece        = FactoryBot.create :piece, pack: pack, name: (@report.name + ' 001'), analytic_reference: analytic
+    pack          = FactoryBot.create :pack, owner: @user, organization: @organization , name: (@report.name + ' all')
+    @piece        = FactoryBot.create :piece, pack: pack, user: @user, organization: @organization, name: (@report.name + ' 001'), analytic_reference: analytic
+    @piece_2      = FactoryBot.create :piece, pack: pack, user: @user, organization: @organization, name: (@report.name + ' 002')
     # pack = Pack.new
     # pack.owner = @user
     # pack.name = @report.name + ' all'
@@ -104,14 +118,59 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         p delivery.error_message
         expect(delivery.state).to eq 'data_built'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
         expect(delivery.error_message).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(File.exist?(delivery.cloud_content_object.path)).to be true
+
+        expect(delivery.preseizures.size).to eq 2
+        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_1.xml'
+      end
+
+      it 'Building data error with already sent preseizures' do
+        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true)
+        delivery = delivery_ibiza
+
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
+        end
+
+        delivery.reload
+
+        expect(delivery.state).to eq 'error'
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).not_to be_attached
+        expect(delivery.error_message).to eq 'No preseizure to send'
+      end
+
+      it 'Building data error with only one already sent preseizure' do
+        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
+        delivery = delivery_ibiza
+
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
+        end
+
+        delivery.reload
+
+        expect(delivery.state).to eq 'data_built'
+        expect(delivery.data_to_deliver).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+
+        expect(delivery.preseizures.size).to eq 2
+        expect(delivery.preseizures.first.get_delivery_message_of('ibiza')).to eq 'already sent'
+        expect(delivery.preseizures.second.get_delivery_message_of('ibiza')).to eq ''
+        expect(delivery.error_message).to eq '1 preseizure(s) already sent'
       end
 
       it "Building data error with undefined exercices" do
@@ -120,12 +179,15 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         expect(delivery.state).to eq 'error'
         expect(delivery.data_to_deliver).not_to be_present
+
+        expect(delivery.cloud_content).not_to be_attached
+        expect(delivery.cloud_content_object.path).to be nil
         expect(delivery.error_message).to match /exercice correspondant n'est pas défini/
       end
     end
@@ -136,13 +198,19 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         expect(delivery.state).to eq 'data_built'
-        expect(delivery.data_to_deliver).to be_present
+        expect(delivery.data_to_deliver).to be nil
         expect(delivery.error_message).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+        expect(File.exist?(delivery.cloud_content_object.path)).to be true
+        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_3.txt'
       end
 
       it "Building data error with undefined journal" do
@@ -150,12 +218,15 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
         expect(delivery.state).to eq 'error'
         expect(delivery.data_to_deliver).not_to be_present
+
+        expect(delivery.cloud_content).not_to be_attached
+        expect(delivery.cloud_content_object.path).to be nil
         expect(delivery.error_message).to eq 'Journal Exact Online introuvable'
       end
     end
@@ -168,7 +239,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery') do
@@ -177,7 +248,13 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'sent'
-        expect(delivery.data_to_deliver).to be_present
+
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(File.exist?(delivery.cloud_content_object.path)).to be true
+
+        expect(delivery.preseizures.size).to eq 2
         expect(delivery.preseizures.first.is_delivered_to?('ibiza')).to be true
       end
 
@@ -187,7 +264,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_ibiza
 
         result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery_with_error') do
@@ -196,9 +273,43 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'error'
-        expect(delivery.data_to_deliver).to be_present
+
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(File.exist?(delivery.cloud_content_object.path)).to be true
+
         expect(delivery.error_message).to match /journal NotFound est inconnu/
         expect(delivery.preseizures.first.is_delivered_to?('ibiza')).to be false
+      end
+
+      it 'deliver xml even if there is already sent preseizures' do
+        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
+        delivery = delivery_ibiza
+
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
+        end
+
+        result = VCR.use_cassette('pre_assignment/ibiza_send_delivery') do
+          PreAssignmentDeliveryService.new(delivery.reload).execute
+        end
+
+        delivery.reload
+
+        expect(delivery.state).to eq 'sent'
+        expect(delivery.data_to_deliver).to be nil
+
+        expect(delivery.cloud_content).to be_attached
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+
+        expect(delivery.preseizures.size).to eq 2
+        expect(delivery.error_message).to eq '1 preseizure(s) already sent'
+
+        expect(delivery.preseizures.first.is_delivered_to?('ibiza')).to be true
+        expect(delivery.preseizures.first.get_delivery_message_of('ibiza')).to eq 'already sent'
+        expect(delivery.preseizures.second.is_delivered_to?('ibiza')).to be true
+        expect(delivery.preseizures.second.get_delivery_message_of('ibiza')).to eq ''
       end
     end
 
@@ -209,7 +320,7 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         result = VCR.use_cassette('pre_assignment/exact_online_send_delivery') do
@@ -218,7 +329,10 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'sent'
-        expect(delivery.data_to_deliver).to be_present
+
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be true
         expect(delivery.preseizures.first.exact_online_id).to be_present
       end
@@ -229,13 +343,11 @@ describe PreAssignmentDelivery do
         delivery = delivery_exact_online
 
         result = VCR.use_cassette('pre_assignment/exact_online_delivery_data_building') do
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
         delivery.reload
-        data = JSON.parse(delivery.data_to_deliver)
-        data['header']['type'] = 20
-        delivery.update(data_to_deliver: data.to_json.to_s)
+        delivery.update(data_to_deliver: nil)
 
         result = VCR.use_cassette('pre_assignment/exact_online_send_delivery_with_error') do
           PreAssignmentDeliveryService.new(delivery.reload).execute
@@ -243,7 +355,10 @@ describe PreAssignmentDelivery do
 
         delivery.reload
         expect(delivery.state).to eq 'error'
-        expect(delivery.data_to_deliver).to be_present
+
+        expect(delivery.data_to_deliver).to be nil
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be false
         expect(delivery.preseizures.first.exact_online_id).not_to be_present
       end

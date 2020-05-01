@@ -25,6 +25,7 @@ class Invoice < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :period, optional: true
   belongs_to :subscription, optional: true
+  has_many   :invoice_settings
 
   before_destroy do |invoice|
     invoice.cloud_content.purge
@@ -62,27 +63,6 @@ class Invoice < ApplicationRecord
     end
 
     invoices
-  end
-
-
-  def self.archive(time = Time.now)
-    invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
-    file_path  = archive_path archive_name(time - 1.month)
-    files_path = invoices.map { |e| e.cloud_content_object.path }
-
-    DocumentTools.archive(file_path, files_path)
-  end
-
-
-  def self.archive_name(time = Time.now)
-    "invoices_#{time.strftime('%Y%m')}.zip"
-  end
-
-
-  def self.archive_path(file_name)
-    _file_name = File.basename file_name
-
-    File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
   end
 
   def cloud_content_object

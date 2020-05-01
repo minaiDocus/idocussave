@@ -77,6 +77,7 @@ class Pack::Piece < ApplicationRecord
   state_machine :pre_assignment_state, initial: :ready, namespace: :pre_assignment do
     state :ready
     state :waiting
+    state :supplier_recognition
     state :processing
     state :waiting_analytics
     state :force_processing
@@ -93,12 +94,16 @@ class Pack::Piece < ApplicationRecord
       transition :ready => :waiting
     end
 
+    event :recognize_supplier do
+      transition :ready => :supplier_recognition
+    end
+
     event :waiting_analytics do
       transition :ready => :waiting_analytics
     end
 
     event :processing do
-      transition [:ready, :waiting, :waiting_analytics] => :processing
+      transition [:ready, :waiting, :waiting_analytics, :supplier_recognition] => :processing
     end
 
     event :force_processing do

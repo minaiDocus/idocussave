@@ -50,17 +50,24 @@ class IbizaAPI::Utils
 
 
   def self.to_import_xml(exercise, preseizures, ibiza=nil)
-    fields                = ibiza.try(:description).presence || {}
-    separator             = ibiza.try(:description_separator).presence || ' - '
-    piece_name_format     = ibiza.try(:piece_name_format).presence || {}
-    piece_name_format_sep = ibiza.try(:piece_name_format_sep).presence || ' '
-    voucher_ref_target    = ibiza.try(:voucher_ref_target).presence || 'piece_number'
+    fields                      = ibiza.try(:description).presence || {}
+    separator                   = ibiza.try(:description_separator).presence || ' - '
+    piece_name_format           = ibiza.try(:piece_name_format).presence || {}
+    piece_name_format_sep       = ibiza.try(:piece_name_format_sep).presence || ' '
+    voucher_ref_target          = ibiza.try(:voucher_ref_target).presence || 'piece_number'
+    preseizures_to_deliver_size = 0
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.importEntryRequest do
         xml.importDate exercise.end_date
         xml.wsImportEntry do
           preseizures.each do |preseizure|
+            if preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(preseizure)
+              preseizure.set_delivery_message_for('ibiza', 'already sent')
+              next
+            end
+
+            preseizures_to_deliver_size += 1
             preseizure.accounts.each do |account|
               xml.importEntry do
                 xml.journalRef preseizure.journal_name
@@ -149,6 +156,6 @@ class IbizaAPI::Utils
       end
     end
 
-    builder.to_xml
+    return { data_count: preseizures_to_deliver_size, data_built: builder.to_xml }
   end
 end

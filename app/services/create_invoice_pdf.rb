@@ -1,3 +1,4 @@
+
 class CreateInvoicePdf
   class << self
     def for_all
@@ -27,7 +28,7 @@ class CreateInvoicePdf
         generate_invoice_of organization
       end
 
-      Invoice.archive
+      archive_invoice
     end
 
     def generate_invoice_of(organization)
@@ -119,6 +120,22 @@ class CreateInvoicePdf
       option.price_in_cents_wo_vat = price
 
       option
+    end
+
+    def archive_invoice(time = Time.now)
+      invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
+      invoices_files_path = invoices.map { |e| e.cloud_content_object.path }
+
+      archive_name = "invoices_#{(time - 1.month).strftime('%Y%m')}.zip"
+
+      Dir.mktmpdir do |dir|
+        archive_path = DocumentTools.archive("#{dir}/#{archive_name}", invoices_files_path)
+
+        _archive_invoice      = ArchiveInvoice.new
+        _archive_invoice.name = archive_name
+
+        _archive_invoice.cloud_content_object.attach(File.open(archive_path), archive_name) if _archive_invoice.save
+      end
     end
   end
 
@@ -365,6 +382,8 @@ class CreateInvoicePdf
     # auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
+private
+  
   def auto_upload_last_invoice
     begin
       #We dont send extentis group invoices to ACC%IDO except FIDC, cause FIDC is a merge of the 4 invoices
@@ -377,17 +396,30 @@ class CreateInvoicePdf
 
       uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
 
-      if uploaded_document.valid?
-        LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded")
-      else
-        LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}")
-      end
+      logger_message_content(uploaded_document)
+
+      auto_upload_invoice_setting(file, content_file_name)
     rescue => e
-      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}")
+      logger.info "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{e.to_s}"
     end
   end
 
-private
+  def auto_upload_invoice_setting(file, content_file_name)
+    invoice_settings = @invoice.organization.invoice_settings || []
+
+    invoice_settings.each do |invoice_setting|
+      uploaded_document = UploadedDocument.new( file, content_file_name, invoice_setting.user, invoice_setting.journal_code, 1, nil, 'invoice_setting', nil )
+      logger_message_content(uploaded_document)
+    end
+  end
+
+  def logger_message_content(uploaded_document)
+    if uploaded_document.valid?
+      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded")
+    else
+      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}")
+    end
+  end
 
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0

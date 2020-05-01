@@ -8,6 +8,7 @@ class CreatePreAssignmentDeliveryService
     @deliver_to  = Array(deliver_to)
     @report      = @preseizures.first.try(:report)
     @is_auto     = options[:is_auto] || false
+    @verify      = options[:verify]  || false
     @deliveries  = []
   end
 
@@ -43,42 +44,41 @@ class CreatePreAssignmentDeliveryService
   def deliver_to_ibiza
     if valid_ibiza?
       deliveries = []
+      ids = @preseizures.map(&:id)
 
-      @preseizures.each do |preseizure|
-        @preseizure = preseizure
+      Pack::Report::Preseizure.where(id: ids).update_all(is_locked: true)
 
-        preseizure.update(is_locked: true)
+      @to_deliver_preseizures = @preseizures
 
-        grouped_preseizures = date_preseizure
+      grouped_preseizures = group_preseizures
 
-        if ibiza.two_channel_delivery?
-          groups = {}
-          grouped_preseizures.each do |(date, channel), preseizures|
-            bank_preseizures   = preseizures.select(&:operation)
-            normal_preseizures = preseizures - bank_preseizures
-            groups = groups.merge({ [date, true] => bank_preseizures })   if bank_preseizures.size > 0
-            groups = groups.merge({ [date, nil]  => normal_preseizures }) if normal_preseizures.size > 0
-          end
-          grouped_preseizures = groups
-        end
-
+      if ibiza.two_channel_delivery?
+        groups = {}
         grouped_preseizures.each do |(date, channel), preseizures|
-          delivery = PreAssignmentDelivery.new
-          delivery.report       = @report
-          delivery.deliver_to   = 'ibiza'
-          delivery.user         = @report.user
-          delivery.organization = @report.organization
-          delivery.pack_name    = @report.name
-          delivery.software_id  = @report.user.ibiza_id
-          delivery.is_auto      = @is_auto
-          delivery.grouped_date = date
-          delivery.total_item   = preseizures.size
-          delivery.preseizures  = preseizures
-          if delivery.save
-            preseizures.first.save if preseizures.size == 1
+          bank_preseizures = preseizures.select(&:operation)
+          normal_preseizures = preseizures - bank_preseizures
+          groups = groups.merge({ [date, true] => bank_preseizures })   if bank_preseizures.size > 0
+          groups = groups.merge({ [date, nil]  => normal_preseizures }) if normal_preseizures.size > 0
+        end
+        grouped_preseizures = groups
+      end
 
-            deliveries << delivery
-          end
+      grouped_preseizures.each do |(date, channel), preseizures|
+        delivery = PreAssignmentDelivery.new
+        delivery.report       = @report
+        delivery.deliver_to   = 'ibiza'
+        delivery.user         = @report.user
+        delivery.organization = @report.organization
+        delivery.pack_name    = @report.name
+        delivery.software_id  = @report.user.ibiza_id
+        delivery.is_auto      = @is_auto
+        delivery.grouped_date = date
+        delivery.total_item   = preseizures.size
+        delivery.preseizures  = preseizures
+        if delivery.save
+          preseizures.first.save if preseizures.size == 1
+
+          deliveries << delivery
         end
       end
 
@@ -92,28 +92,32 @@ class CreatePreAssignmentDeliveryService
     if valid_exact_online?
       deliveries = []
 
-      @preseizures.each do |preseizure|
-        @preseizure = preseizure
+      @to_deliver_preseizures = @verify ? @preseizures.select{ |p| !p.exact_online_id.present? } : @preseizures
 
-        preseizure.update(is_locked: true)
+      return [] if @to_deliver_preseizures.empty?
 
-        date_preseizure.each do |(date, channel), preseizures|
-          delivery = PreAssignmentDelivery.new
-          delivery.report       = @report
-          delivery.deliver_to   = 'exact_online'
-          delivery.user         = @report.user
-          delivery.organization = @report.organization
-          delivery.pack_name    = @report.name
-          delivery.software_id  = @report.user.exact_online.client_id
-          delivery.is_auto      = @is_auto
-          delivery.grouped_date = date
-          delivery.total_item   = preseizures.size
-          delivery.preseizures  = preseizures
-          if delivery.save
-            preseizures.first.save if preseizures.size == 1
+      ids                   = @to_deliver_preseizures.map(&:id)
+      already_delivered_ids = @preseizures.map(&:id) - ids
 
-            deliveries << delivery
-          end
+      Pack::Report::Preseizure.where(id: ids).update_all(is_locked: true)
+      Pack::Report::Preseizure.where(id: already_delivered_ids).each { |p| p.delivered_to('exact_online') } if already_delivered_ids.any?
+
+      group_preseizures.each do |(date, channel), preseizures|
+        delivery = PreAssignmentDelivery.new
+        delivery.report       = @report
+        delivery.deliver_to   = 'exact_online'
+        delivery.user         = @report.user
+        delivery.organization = @report.organization
+        delivery.pack_name    = @report.name
+        delivery.software_id  = @report.user.exact_online.client_id
+        delivery.is_auto      = @is_auto
+        delivery.grouped_date = date
+        delivery.total_item   = preseizures.size
+        delivery.preseizures  = preseizures
+        if delivery.save
+          preseizures.first.save if preseizures.size == 1
+
+          deliveries << delivery
         end
       end
 
@@ -125,14 +129,18 @@ class CreatePreAssignmentDeliveryService
 
 private
 
-  def date_preseizure
+  def group_preseizures
+    grouped_preseizures = {}
     if @report.user.options.pre_assignment_date_computed?
       date = DocumentTools.to_period(@report.name)
+      grouped_preseizures = { [date, nil] => @to_deliver_preseizures }
     else
-      date = @preseizure.date.try(:beginning_of_month).try(:to_date) || DocumentTools.to_period(@report.name)
+      grouped_preseizures = @to_deliver_preseizures.group_by do |preseizure|
+        date = preseizure.date.try(:beginning_of_month).try(:to_date) || DocumentTools.to_period(@report.name)
+        [date, nil]
+      end
     end
-
-    { [date, nil] => [@preseizure] }
+    grouped_preseizures
   end
 
   def ibiza

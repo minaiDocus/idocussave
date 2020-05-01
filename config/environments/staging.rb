@@ -62,6 +62,8 @@ Idocus::Application.configure do
   # config.assets.digest = true
   config.assets.digest = true
 
+  config.active_storage.service = :openstack_staging
+
   # Adding js files
   config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)
 

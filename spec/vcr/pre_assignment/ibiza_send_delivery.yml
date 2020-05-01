@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/entries
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/entries
     body:
       encoding: UTF-8
       string: |
@@ -12,43 +12,43 @@ http_interactions:
           <wsImportEntry>
             <importEntry>
               <journalRef>AC</journalRef>
-              <date>2018-12-13</date>
-              <piece>AC0000 AC 201804 01</piece>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544697205&amp;token=hmbk0mb7ee66kh4r0zy4kuitwfhrjspy89go07og2y7tod83su</voucherID>
+              <date>2018-12-18</date>
+              <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
-              <accountNumber>0ZZCHQ</accountNumber>
-              <accountName>0ZZCHQ</accountName>
-              <description>2018-12-13 - 500.25 - AC - AC0000 AC 201804 01</description>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=3dwutpvqc53de2xecl7xlgj5notqgcwcimd2bzb7pflvjbgq96</voucherID>
+              <accountNumber>601109</accountNumber>
+              <accountName>601109</accountName>
+              <description>2018-12-18 - 500.25 - AC - AC0003 AC 201812 001</description>
               <debit>1213.48</debit>
             </importEntry>
             <importEntry>
               <journalRef>AC</journalRef>
-              <date>2018-12-13</date>
-              <piece>AC0000 AC 201804 01</piece>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544697205&amp;token=hmbk0mb7ee66kh4r0zy4kuitwfhrjspy89go07og2y7tod83su</voucherID>
+              <date>2018-12-18</date>
+              <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=3dwutpvqc53de2xecl7xlgj5notqgcwcimd2bzb7pflvjbgq96</voucherID>
               <accountNumber>471000</accountNumber>
               <accountName>471000</accountName>
-              <description>2018-12-13 - 500.25 - AC - AC0000 AC 201804 01</description>
+              <description>2018-12-18 - 500.25 - AC - AC0003 AC 201812 001</description>
               <credit>1011.23</credit>
               <importAnalyticalEntries>
                 <importAnalyticalEntry>
                   <analysis>CASH</analysis>
-                  <axis1>AG</axis1>
-                  <axis2>ASS</axis2>
+                  <axis1>AACE</axis1>
+                  <axis2>ABCD</axis2>
+                  <axis3/>
+                  <credit>1011.23</credit>
+                </importAnalyticalEntry>
+                <importAnalyticalEntry>
+                  <analysis>SAISON</analysis>
+                  <axis1>AH11</axis1>
+                  <axis2/>
                   <axis3/>
                   <credit>505.615</credit>
                 </importAnalyticalEntry>
                 <importAnalyticalEntry>
                   <analysis>SAISON</analysis>
-                  <axis1>PE10</axis1>
-                  <axis2/>
-                  <axis3/>
-                  <credit>1011.23</credit>
-                </importAnalyticalEntry>
-                <importAnalyticalEntry>
-                  <analysis>CASH</analysis>
-                  <axis1>AACE</axis1>
+                  <axis1>PE09</axis1>
                   <axis2/>
                   <axis3/>
                   <credit>505.615</credit>
@@ -57,13 +57,13 @@ http_interactions:
             </importEntry>
             <importEntry>
               <journalRef>AC</journalRef>
-              <date>2018-12-13</date>
-              <piece>AC0000 AC 201804 01</piece>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download?1544697205&amp;token=hmbk0mb7ee66kh4r0zy4kuitwfhrjspy89go07og2y7tod83su</voucherID>
+              <date>2018-12-18</date>
+              <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=3dwutpvqc53de2xecl7xlgj5notqgcwcimd2bzb7pflvjbgq96</voucherID>
               <accountNumber>471001</accountNumber>
               <accountName>471001</accountName>
-              <description>2018-12-13 - 500.25 - AC - AC0000 AC 201804 01</description>
+              <description>2018-12-18 - 500.25 - AC - AC0003 AC 201812 001</description>
               <credit>202.25</credit>
             </importEntry>
           </wsImportEntry>
@@ -97,11 +97,11 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Date:
-      - Thu, 13 Dec 2018 10:33:50 GMT
+      - Thu, 23 Apr 2020 07:14:45 GMT
       Content-Length:
-      - '499'
+      - '331'
     body:
-      encoding: ASCII-8BIT
+      encoding: UTF-8
       string: !binary |-
         PFdDRlJlc3RJUkZFbnRyaWVzUmVzdWx0IHhtbG5zOmk9Imh0dHA6Ly93d3cu
         dzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIj48cmVzcG9uc2U+PHJl
@@ -116,5 +116,5 @@ http_interactions:
         OTwvZHVyYXRpb24+PC9yZXNwb25zZT48L1dDRlJlc3RJUkZFbnRyaWVzUmVz
         dWx0Pg==
     http_version: 
-  recorded_at: Thu, 13 Dec 2018 10:33:34 GMT
-recorded_with: VCR 3.0.3
+  recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
+recorded_with: VCR 5.0.0

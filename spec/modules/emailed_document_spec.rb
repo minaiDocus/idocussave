@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
+require 'spec_module'
 
 describe EmailedDocument do
   describe '.new' do
@@ -534,6 +535,36 @@ describe EmailedDocument do
       expect(email.attachment_names).to eql(['ido1.tiff'])
       expect(email.to_user).to eql(@user)
       expect(email.from_user).to be_nil
+    end
+
+    context 'for processed file with pdfintegrator', :pdf_integrator do
+      it 'make new file pdf' do
+        test_email_path = File.join(Rails.root, 'spec/support/files/test_mail.eml')
+        organization = FactoryBot.create(:organization)
+
+        mail = Mail.new File.read(test_email_path)
+
+        allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
+        allow_any_instance_of(Mail).to receive(:subject).and_return('AC 202004')
+        allow_any_instance_of(Email).to receive(:from_user).and_return(@user)
+        allow_any_instance_of(Email).to receive(:to_user).and_return(@user)
+
+        allow_any_instance_of(EmailedDocument).to receive(:user).and_return(@user)
+        allow_any_instance_of(EmailedDocument).to receive(:journal).and_return('VT')
+        allow_any_instance_of(EmailedDocument).to receive(:period).and_return('202004')
+
+        allow(User).to receive(:find_by_email).with(any_args).and_return(@user)
+        allow(DocumentTools).to receive(:need_ocr).with(any_args).and_return(false)
+        allow_any_instance_of(TempPack).to receive(:organization) { organization }
+
+        EmailedDocument.receive(mail)
+
+        expect(TempDocument.last.user.id).to eq @user.id
+        expect(TempDocument.last.api_name).to eq 'email'
+        expect(TempDocument.last.delivery_type).to eq 'upload'
+        expect(TempDocument.last.cloud_content.attached?).to be true
+        expect(TempDocument.last.delivered_by).to eq @user.code
+      end
     end
   end
 end

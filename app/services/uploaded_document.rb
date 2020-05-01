@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 # Handler for incoming documents. Used for web uploads and dropbox imports
 class UploadedDocument
-  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
+  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document, :processed_file
 
 
   VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
@@ -30,8 +30,12 @@ class UploadedDocument
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
     if @errors.empty?
+      @dir            = Dir.mktmpdir
+      file_path       = File.join(@dir, file_name)
+      @processed_file = PdfIntegrator.new(@file, file_path, api_name).processed_file
+
       begin
-        unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+        unless File.exist?(@file.path) && DocumentTools.modifiable?(@processed_file.path)
           @errors << [:file_is_corrupted_or_protected, nil]
         end
       rescue => e
@@ -51,11 +55,11 @@ class UploadedDocument
     end
 
     if @errors.empty?
-      pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{pack.name} - #{TempPack.where(name: pack.name).size} found - temp_pack")
+      temp_pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
+      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
 
-      pack.update_pack_state # Create or update pack related to temp_pack
-      LogService.info('document_upload', "[Pack - #{api_name}] #{pack.name} - #{Pack.where(name: pack.name).size} found - pack")
+      temp_pack.update_pack_state # Create or update pack related to temp_pack
+      LogService.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
 
       options = {
         delivered_by:          @uploader.code,
@@ -67,17 +71,14 @@ class UploadedDocument
         analytic:              analytic_validator.analytic_params_present? ? analytic : nil
       }
 
-      @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
+      @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options) # Create temp document for temp pack
     end
-
     clean_tmp
   end
-
 
   def valid?
     @errors.empty?
   end
-
 
   def invalid?
     !valid?
@@ -97,100 +98,19 @@ class UploadedDocument
     results.join(', ')
   end
 
-
   def file_name
     "#{@code}_#{@journal}_#{period}.pdf"
   end
 
   private
 
-  def processed_file
-    if @temp_file
-      @temp_file
-    else
-      @dir = Dir.mktmpdir
-
-      file_path = File.join(@dir, file_name)
-
-      if extension == '.pdf'
-        _file = @file.path
-
-        if DocumentTools.protected?(@file.path)
-          safe_file = file_path.gsub('.pdf', '_safe.pdf')
-          DocumentTools.remove_pdf_security(@file.path, safe_file)
-          _file = safe_file
-        end
-
-        if File.exist?(_file) && DocumentTools.modifiable?(_file)
-          FileUtils.cp _file, file_path
-        else
-          LogService.info('document_upload', "[Upload error] #{@file.path} - attempt to recreate")
-          re_create_pdf @file.path, file_path
-          if !DocumentTools.modifiable?(file_path)
-            LogService.info('document_upload', "[Upload error] #{@file.path} - force correction")
-            force_correct_pdf(@file.path, file_path)
-          end
-        end
-      else
-        DocumentTools.to_pdf(@file.path, file_path, @dir)
-      end
-
-      @temp_file = File.open(file_path, 'r')
-    end
-  end
-
-  def re_create_pdf(source, destination)
-    _tmp_file = Tempfile.new('tmp_pdf').path
-    success = DocumentTools.to_pdf_hight_quality source, _tmp_file
-
-    success ? FileUtils.cp(_tmp_file, destination) : FileUtils.cp(source, destination)
-
-    File.unlink _tmp_file
-  end
-
-  def force_correct_pdf(source, destination)
-    correction_data = DocumentTools.force_correct_pdf(source)
-    FileUtils.cp correction_data[:output_file], destination
-
-    log_document = {
-        name: "Account::Documents::UploadsController",
-        erreur_type: "File corrupted, forcing to correct ...",
-        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-        more_information: {
-          api_name: @api_name,
-          code: @code,
-          journal: @journal,
-          period: @prev_period_offset,
-          file_corrupted: @file.path,
-          file_corrected: correction_data[:output_file],
-          corrected: correction_data[:corrected],
-          correction_errors: correction_data[:errors]
-        }
-      }
-
-      begin
-        ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
-      rescue
-        ErrorScriptMailer.error_notification(log_document).deliver
-      end
-  end
-
-  def clean_tmp
-    @temp_file.close if @temp_file
-
-    FileUtils.remove_entry @dir if @dir
-  end
-
-
   def extension
-    File.extname(@original_file_name).downcase
+    File.extname(@file.path).downcase
   end
-
 
   def valid_extension?
     extension.in? VALID_EXTENSION
   end
-
 
   def period
     @period ||= Period.period_name(period_service.period_duration, @prev_period_offset)
@@ -233,15 +153,18 @@ class UploadedDocument
     pages_number <= 100
   end
 
+  def clean_tmp
+    FileUtils.remove_entry @dir if @dir
+  end
 
   def pages_number
     return @pages_number if @pages_number.to_i > 0
 
-    @pages_number = DocumentTools.pages_number(processed_file.path)
+    @pages_number = DocumentTools.pages_number(@processed_file.path)
   end
 
   def valid_file_size?
-    File.size(processed_file.path) <= authorized_file_size
+    File.size(@processed_file.path) <= authorized_file_size
   end
 
   def authorized_file_size

@@ -37,6 +37,7 @@ class User < ApplicationRecord
   has_one :accounting_plan
   has_one :external_file_storage, autosave: true, dependent: :destroy
   has_one :notify, dependent: :destroy
+  has_one :invoice_settings
 
   has_many :packs, class_name: 'Pack', inverse_of: :owner, foreign_key: :owner_id
   has_many :orders
@@ -323,6 +324,10 @@ class User < ApplicationRecord
 
   def admin?
     is_admin
+  end
+
+  def pre_assignement_displayed?
+    collaborator? || is_pre_assignement_displayed
   end
 
   # TODO : need a test

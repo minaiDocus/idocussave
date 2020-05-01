@@ -43,15 +43,16 @@
           %a.zip_download.margin3.do-tooltip{ :title => "Télécharger une archive zip", :target => "_blank" }
             = glyphicon('cloud-download')
           |           
-          - if (@user.collaborator? && @software != '' && @need_delivery != 'no')
+          - if (@user.pre_assignement_displayed? && @software != '' && @need_delivery != 'no')
             %a.do-deliverAllPreseizure.do-tooltip.margin3{href: '#', title: "Livraison écriture comptable (#{@software_human_name})"}
               = glyphicon('loop-circular')
           - if (@user.collaborator?) 
             %a.tip_edit_multiple.do-editSelectedPreseizures.do-tooltip.margin3.hide{"data-toggle"=>"modal", :href => "#editSelectedPreseizures", :title => "Edition multiple"}
               = glyphicon('brush')
-          %a.do-exportSelectedPreseizures.do-tooltip.margin3{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
-            = glyphicon('share')
-          |                        
+          - if @user.pre_assignement_displayed?
+            %a.do-exportSelectedPreseizures.do-tooltip.margin3{href: '#exportSelectedPreseizures', title: 'Export écritures comptables', data: { toggle: 'modal' } }
+              = glyphicon('share')
+            |
           %a.do-selectAllPages.do-tooltip.margin3{:href => "#", :title => "Tous"}
             = glyphicon('check')
           %a.do-unselectAllPages.do-tooltip.margin3{:href => "#", :title => "Aucun"}

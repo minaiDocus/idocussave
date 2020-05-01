@@ -29,9 +29,15 @@ class PreAssignmentDeliveryXmlBuilder
     @delivery.building_data
 
     if ibiza_exercise
-      @delivery.data_to_deliver = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
-      @delivery.save
-      @delivery.data_built
+      response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
+
+      if response[:data_count] > 0
+        save_data_to_storage response[:data_built]
+
+        building_success response[:data_count]
+      else
+        building_failed 'No preseizure to send'
+      end
     else
       if is_ibiza_exercises_present?
         error_message = "L'exercice correspondant n'est pas défini dans iBiza."
@@ -52,8 +58,8 @@ class PreAssignmentDeliveryXmlBuilder
     response = ExactOnlineDataBuilder.new(@delivery).execute
 
     if response[:data_built]
-      @delivery.data_to_deliver = response[:data]
-      @delivery.save
+      save_data_to_storage response[:data]
+
       @delivery.data_built
     else
       building_failed response[:error_messages]
@@ -61,6 +67,32 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
   private
+
+  def save_data_to_storage(data_built)
+    if data_built.present?
+      Dir.mktmpdir do |dir|
+        extension = 'txt'
+        extension = 'xml' if @delivery.deliver_to == 'ibiza'
+        file_name = @delivery.pack_name.tr('% ', '_')
+        file_path = "#{dir}/#{file_name}_#{@delivery.id}.#{extension}"
+
+        File.open file_path, 'w' do |f|
+          f.write(data_built.to_s)
+        end
+
+        @delivery.cloud_content_object.attach(File.open(file_path), "#{file_name}_#{@delivery.id}.#{extension}") if @delivery.save
+      end
+    end
+  end
+
+  def building_success(data_count)
+    if data_count != @preseizures.size
+      @delivery.error_message = "#{@preseizures.size - data_count} preseizure(s) already sent"
+      @delivery.save
+    end
+
+    @delivery.data_built
+  end
 
   def building_failed(error_message)
     @delivery.error_message = error_message

@@ -63,6 +63,7 @@ fr:
         last_name: Nom
         email: Courriel
         phone_number: Numéro de téléphone
+        is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte
         password: Mot de passe
         password_confirmation: Comfirmer le mot de passe
         is_admin: Est admin ?

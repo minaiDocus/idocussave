@@ -39,7 +39,7 @@ class IbizaPreseizureFinder
       response = Nokogiri::XML client.response.body.force_encoding('UTF-8')
       response.at_css('data').children.presence ?  true : false
     else
-      true
+      false
     end
   end
 

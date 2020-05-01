@@ -8,7 +8,24 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
     extension = 'xml' if @deliver_to == 'ibiza'
 
     @deliveries.each do |delivery|
-      attachments["#{delivery.id}.#{extension}"] = delivery.data_to_deliver if delivery.data_to_deliver.present?
+      begin
+        if delivery.data_to_deliver.present?
+          attachments["#{delivery.id}.#{extension}"] = delivery.data_to_deliver
+        elsif File.exist?(delivery.cloud_content_object.path)
+          attachments["#{delivery.id}.#{extension}"] = File.read(delivery.cloud_content_object.path)
+        end
+      rescue => e
+        log_document = {
+          name: "PreAssignmentDeliveryMailer",
+          erreur_type: "Active Storage, can't read file",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            delivery: delivery.inspect,
+            error: e.to_s
+          }
+        }
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
     end
 
     addresses.delete('emmanuel.pliez@ibizasoftware.fr') if @deliver_to != 'ibiza'

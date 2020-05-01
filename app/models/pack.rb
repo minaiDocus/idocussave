@@ -49,6 +49,7 @@ class Pack < ApplicationRecord
 
   before_destroy do |pack|
     pack.cloud_content.purge
+    pack.cloud_archive.purge
   end
 
   def as_indexed_json(_options = {})
@@ -102,8 +103,21 @@ class Pack < ApplicationRecord
     end
   end
 
+  def self.store_archive_of(pack_id)
+    Pack.find(pack_id).save_archive_to_storage
+  end
+
   def cloud_content_object
     CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def cloud_archive_object
+    CustomActiveStorageObject.new(self, :cloud_archive)
+  end
+
+  #this method is required to avoid custom_active_storage bug when seeking for paperclip equivalent method
+  def archive
+    object = FakeObject.new
   end
 
   def user
@@ -259,6 +273,10 @@ class Pack < ApplicationRecord
     end
 
     zip_path
+  end
+
+  def save_archive_to_storage
+    cloud_archive_object.attach(File.open(archive_file_path), archive_name)
   end
 
   def self.find_by_name(name)
