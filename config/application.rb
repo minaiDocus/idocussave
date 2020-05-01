@@ -106,16 +106,5 @@ module Idocus
       config.dsn = 'https://8a88cb7b80654dc5bd2bc9bfd8b160a0:b79bb42c43bc4c918442ebd04f5f61b9@sentry.idocus.com/2'
       config.environments = ['sandbox', 'staging', 'production']
     end
-
-    Bearer.init_config do |config|
-      case Rails.env
-      when 'production'
-        config.secret_key = "sk_production_vTCclbqjXkL0UPtVvZujIFxj3N2uWX8v"
-      when 'staging'
-        config.secret_key = "sk_sandbox__-JEG31Ur5ZhEYK2F3zHgh8LxJm1i0ko"
-      when 'development'
-        config.secret_key = "sk_development_-Ya4X5tH19UxFHhqagBy_SB01ZNaaaQC"
-      end
-    end
   end
 end

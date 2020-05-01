@@ -72,7 +72,7 @@ GEM
     barby (0.6.8)
     bcrypt (3.1.13)
     bcrypt_pbkdf (1.0.1)
-    bearer-agent (2.0.11)
+    bearer-agent (3.1.0)
       rack
     better_errors (2.5.1)
       coderay (>= 1.0.0)
