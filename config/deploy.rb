@@ -10,7 +10,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
   'tmp/barcode',
   'vendor/bundle',
   'public/system',
-  'files'
+  'files',
   'data',
   'keys'
 )
