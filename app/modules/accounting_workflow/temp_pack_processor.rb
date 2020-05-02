@@ -175,7 +175,7 @@ class AccountingWorkflow::TempPackProcessor
     rescue
     end
 
-    pack.original_document.cloud_content_object.attach(File.open(next_original_document), pack.pdf_name) if pack.original_document.save
+    pack.original_document.cloud_content_object.attach(File.open(@next_original_document), pack.pdf_name) if pack.original_document.save
 
     pack.set_original_document_id
     pack.set_content_url
