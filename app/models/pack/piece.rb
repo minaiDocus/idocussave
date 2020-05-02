@@ -255,7 +255,7 @@ class Pack::Piece < ApplicationRecord
     DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
     self.cloud_content_object.attach(File.open(piece_file_path), piece_file_name)
 
-    self.try(:sign_piece)
+    #self.try(:sign_piece)
 
     self.get_pages_number
 
@@ -277,7 +277,7 @@ class Pack::Piece < ApplicationRecord
       content_file_path = self.cloud_content_object.path
       to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
 
-      #DocumentTools.sign_pdf(content_file_path, to_sign_file)
+      DocumentTools.sign_pdf(content_file_path, to_sign_file)
 
       if self.save && File.exist?(to_sign_file.to_s)
         self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
