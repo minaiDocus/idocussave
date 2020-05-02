@@ -170,7 +170,7 @@ class DocumentTools
     rescue => e
       LogService.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
       is_ok    = false
-      dir      = "#{Rails.root}/files/#{Rails.env}/temp_pack_processor/poppler_error/"
+      dir      = "#{Rails.root}/files/temp_pack_processor/poppler_error/"
 
       FileUtils.makedirs(dir)
       FileUtils.chmod(0755, dir)

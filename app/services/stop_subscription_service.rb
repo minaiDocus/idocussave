@@ -59,8 +59,8 @@ class StopSubscriptionService
 
 
     # Remove composition
-    if @user.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
-      system("rm -r #{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
+    if @user.composition.present? && File.exist?("#{Rails.root}/files/compositions/#{@user.composition.id}")
+      system("rm -r #{Rails.root}/files/compositions/#{@user.composition.id}")
     end
     @user.composition.try(:destroy)
 

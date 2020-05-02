@@ -8,8 +8,8 @@ class CloseCollaboratorAccount
   def execute
     @collaborator.subscription.try(:destroy)
 
-    if @collaborator.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
-      system("rm -r #{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
+    if @collaborator.composition.present? && File.exist?("#{Rails.root}/files/compositions/#{@collaborator.composition.id}")
+      system("rm -r #{Rails.root}/files/compositions/#{@collaborator.composition.id}")
     end
 
     @collaborator.composition.try(:destroy)

@@ -22,7 +22,7 @@ class AccountingPlan < ApplicationRecord
         return false if file.content_type != "text/plain"
         file_path  = file.path
 
-        dir = "#{Rails.root}/files/#{Rails.env}/imports/FEC/"
+        dir = "#{Rails.root}/files/imports/FEC/"
 
         FileUtils.makedirs(dir)
         FileUtils.chmod(0755, dir)

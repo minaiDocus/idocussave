@@ -35,12 +35,12 @@ class Composition < ApplicationRecord
       composition = Composition.where(user_id: user_id).first
       composition = Composition.create(user_id: user_id) unless composition
 
-      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions && mkdir -p #{composition.id}"
+      cmd = "cd #{Rails.root}/files/compositions && mkdir -p #{composition.id}"
       system(cmd)
-      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions/#{composition.id} && rm *.pdf"
+      cmd = "cd #{Rails.root}/files/compositions/#{composition.id} && rm *.pdf"
       system(cmd)
 
-      combined_name = "#{Rails.root}/files/#{Rails.env}/compositions/#{composition.id}/#{name}.pdf"
+      combined_name = "#{Rails.root}/files/compositions/#{composition.id}/#{name}.pdf"
       cmd = "#{Pdftk.config[:exe_path]} #{temp_paths.join(' ')} output #{combined_name}"
 
       Rails.logger.debug("Will compose new document with #{cmd}")

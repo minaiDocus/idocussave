@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class FileSendingKitGenerator
-  TEMPDIR_PATH = "#{Rails.root}/files/#{Rails.env}/kit/"
+  TEMPDIR_PATH = "#{Rails.root}/files/kit/"
 
   class << self
     def generate(clients_data,file_sending_kit, one_workshop_labels_page_per_customer=false)
