@@ -2,7 +2,7 @@ module AccountingWorkflow
   def self.dir
     case Rails.env
     when 'production'
-      Rails.root.join('files', Rails.env, 'prepa_compta')
+      Pathname.new('/nfs/staffing')
     when 'staging'
       Pathname.new('/ftp/prepa_compta')
     when 'development'
@@ -17,7 +17,7 @@ module AccountingWorkflow
   def self.ocr_processing_dir
     case Rails.env
     when 'production'
-      Rails.root.join('files', Rails.env, 'ocr_processing')
+      Pathname.new('/nfs/ocr')
     when 'staging'
       Pathname.new('/ftp/ocr_processing')
     when 'development'
