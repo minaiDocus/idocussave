@@ -148,11 +148,6 @@ gem 'fast_jsonapi'
 # Cache
 gem 'redis-rails'
 
-group :production do
-  # APM
-  gem 'elastic-apm'
-end
-
 group :development, :test do
   gem 'better_errors'
   gem 'binding_of_caller'
