@@ -277,7 +277,7 @@ class Pack::Piece < ApplicationRecord
       content_file_path = self.cloud_content_object.path
       to_sign_file = File.dirname(content_file_path) + '/signed.pdf'
 
-      DocumentTools.sign_pdf(content_file_path, to_sign_file)
+      #DocumentTools.sign_pdf(content_file_path, to_sign_file)
 
       if self.save && File.exist?(to_sign_file.to_s)
         self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
