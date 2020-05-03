@@ -71,7 +71,7 @@ class IbizaAPI::Client
 
 
     def url
-      "#{base}#{@path}"
+      URI.encode("#{base}#{@path}")
     end
 
 
