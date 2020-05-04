@@ -4,7 +4,7 @@ class Account::DocsController < Account::AccountController
   def download
     raise_not_found unless @user.is_prescriber
 
-    dir = Rails.root.join('files', Rails.env, 'miscellaneous_docs')
+    dir = Rails.root.join('files', 'miscellaneous_docs')
     list = Dir.entries(dir).reject { |f| File.directory? f }
 
     raise_not_found unless params[:name].in?(list)
