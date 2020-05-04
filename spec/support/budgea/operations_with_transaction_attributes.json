@@ -1,0 +1,74 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : null,
+          "id" : 4,
+          "name" : "Compte courant",
+          "number" : "2002700001",
+          "transactions" : [
+            {
+              "application_date" : "2017-01-02",
+              "comment" : null,
+              "date" : "2017-01-02",
+              "deleted" : null,
+              "id" : 1,
+              "last_update" : "2017-01-02 12:20:30",
+              "original_wording" : "Paiement à Boualem Mezrar",
+              "rdate" : "2017-01-02",
+              "type" : "card",
+              "coming" : false,
+              "value" : null,
+              "gross_value": 300.0000000000,
+              "commission": -15.0500000000
+            },
+            {
+              "application_date" : "2017-01-02",
+              "comment" : null,
+              "date" : "2017-01-02",
+              "deleted" : null,
+              "id" : 2,
+              "last_update" : "2017-01-02 12:20:30",
+              "original_wording" : "Paiement à Wafa Ali Ammar",
+              "rdate" : "2017-01-02",
+              "type" : "transfer",
+              "coming" : false,
+              "value" : 20.0,
+              "gross_value": 25.0,
+              "commission": -5.0
+            },
+            {
+              "application_date" : "2017-01-31",
+              "comment" : null,
+              "date" : "2017-01-31",
+              "deleted" : null,
+              "id" : 3,
+              "last_update" : "2017-01-02 12:20:30",
+              "original_wording" : "PAIEMENT À SALIH KIRATI",
+              "rdate" : "2017-01-02",
+              "type" : "deferred_card",
+              "coming" : true,
+              "value" : null,
+              "gross_value": null,
+              "commission": -2.0
+            }
+          ],
+          "type" : "checking"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2017-01-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2017-01-01 18:12:54",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}
