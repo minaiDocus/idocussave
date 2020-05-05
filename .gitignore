@@ -22,6 +22,7 @@ db/schema.rb
 config/deploy/sandbox.rb
 
 config/secrets.yml
+config/bearer.yml
 config/elastic_apm.yml
 config/database.yml
 config/dematbox.yml

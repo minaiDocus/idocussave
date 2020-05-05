@@ -838,26 +838,30 @@ describe ProcessRetrievedData do
   end
 
   context 'check transaction value nul for bank account "Paypal REST API"', :check_transaction_value do
+    def init_retrieved_data
+      @retrieved_data = RetrievedData.new
+      @retrieved_data.user = @user
+
+      FileUtils.rm @retrieved_data.cloud_content_object.path.to_s, force: true
+
+      @retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'operations_with_transaction_attributes.json')))
+      @retrieved_data.save
+    end
+
     it 'operation with transaction value null and bank account "Paypal REST API"' do
+      init_retrieved_data
+
       @retriever.reload
       @retriever.name           = 'Paypal REST API'
       @retriever.service_name   = 'Paypal REST API'
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      retrieved_data = RetrievedData.new
-      retrieved_data.user = @user
-
-      FileUtils.rm retrieved_data.cloud_content_object.path.to_s, force: true
-
-      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'operations_with_transaction_attributes.json')))
-      retrieved_data.save
-
-      ProcessRetrievedData.new(retrieved_data).execute
+      ProcessRetrievedData.new(@retrieved_data).execute
 
       expect(@user.operations.count).to eq 2
 
-      first_operation = @user.operations[0]
+      first_operation = @user.operations.first
 
       expect(first_operation.label).to eq 'Paiement à Boualem Mezrar'
       expect(first_operation.is_coming).to eq false
@@ -865,21 +869,15 @@ describe ProcessRetrievedData do
     end
 
     it 'operation with bank account different of "Paypal REST API"' do
+      init_retrieved_data
+
       @retriever.reload
       @retriever.name           = 'Connecteur de test'
       @retriever.service_name   = 'Connecteur de test'
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      retrieved_data = RetrievedData.new
-      retrieved_data.user = @user
-
-      FileUtils.rm retrieved_data.cloud_content_object.path.to_s, force: true
-
-      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'operations_with_transaction_attributes.json')))
-      retrieved_data.save
-
-      ProcessRetrievedData.new(retrieved_data).execute
+      ProcessRetrievedData.new(@retrieved_data).execute
 
       expect(@user.operations.count).to eq 1
 
@@ -891,25 +889,20 @@ describe ProcessRetrievedData do
     end
 
     it 'operation with transaction value, gross_value null and bank account "Paypal REST API"' do
+      init_retrieved_data
+
       @retriever.reload
       @retriever.name           = 'Paypal REST API'
       @retriever.service_name   = 'Paypal REST API'
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      retrieved_data = RetrievedData.new
-      retrieved_data.user = @user
+      ProcessRetrievedData.new(@retrieved_data).execute
 
-      FileUtils.rm retrieved_data.cloud_content_object.path.to_s, force: true
+      amounts = @user.operations.collect(&:amount)
 
-      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'operations_with_transaction_attributes.json')))
-      retrieved_data.save
-
-      ProcessRetrievedData.new(retrieved_data).execute
-
-      last_operation = @user.operations[2]
-
-      expect(last_operation).to eq nil
+      expect(@user.operations.count).to eq 2
+      expect(amounts).to eq [284.95, 20.0]
     end
   end
 end

@@ -107,7 +107,7 @@ class BudgeaTransactionFetcher
       orphaned_operation = operations.where(
         date:       transaction['date'],
         value_date: transaction['rdate'],
-        amount:     transaction['value'],
+        amount:     set_transaction_value(bank_account, transaction),
         comment:    transaction['comment'],
         api_id:     nil
       )
@@ -133,7 +133,7 @@ class BudgeaTransactionFetcher
       else
         operation.label     = transaction['original_wording']
       end
-      operation.amount      = transaction['value']
+      operation.amount      = set_transaction_value(bank_account, transaction)
       operation.comment     = transaction['comment']
       operation.type_name   = transaction['type']
       operation.category_id = transaction['id_category']
@@ -170,4 +170,13 @@ class BudgeaTransactionFetcher
       end
       @client
     end
+
+    def set_transaction_value(bank_account, transaction)
+      if (transaction['value'].nil? && bank_account.bank_name.downcase == 'paypal rest api')
+        transaction['gross_value'] + transaction['commission'] if (transaction['gross_value'].present? && transaction['commission'].present?)
+      else
+        transaction['value']
+      end
+    end
+
 end
