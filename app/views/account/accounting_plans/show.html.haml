@@ -13,7 +13,7 @@
                 = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
             .col-md-6{style: "padding-top: 3px;padding-left: 50px;border-radius: 3px;background-color: #f8f9fa;"}
               .float-right
-                = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+                = form_tag import_fec_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
                   .form-group.clearfix.float-left.margin0
                     .control-section
                       = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-secondary', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%", accept: "text/plain"
@@ -21,10 +21,6 @@
                     .for_submit.col-md-10pr-4.pl-2
                       .submit
                         = submit_tag 'Importer FEC', class: 'btn btn-primary'
-                      .for_coala.pt-2.pr-2{ style: "line-height: 10px;" }
-                        %label.checkbox
-                          = check_box_tag "is_coala", 1, false, class: "float-left"
-                          %span.font-italic.float-left{ style: "margin-top: 3px;" } Origine Coala ?
                     .for_description.col-md-2.pr-2.pl-2
                       %span.badge.badge-info.fs-origin .txt
           - else
@@ -103,3 +99,6 @@
                       %td= customer.third_party_account
                       %td= customer.conterpart_account
                       %td= customer.code
+
+- if @params_fec.present?
+  = render :partial => "/account/accounting_plans/dialog_box"

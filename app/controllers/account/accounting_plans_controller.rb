@@ -8,7 +8,12 @@ class Account::AccountingPlansController < Account::OrganizationController
   before_action :load_accounting_plan
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
-  def show; end
+  def show
+    if params[:format].present?
+      FileUtils.remove_entry params[:format]
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    end
+  end
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/edit
   def edit; end
@@ -33,21 +38,16 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import
   def import
-    is_coala = false
     if params[:providers_file]
       file = params[:providers_file]
       type = 'providers'
     elsif params[:customers_file]
       file = params[:customers_file]
       type = 'customers'
-    elsif params[:fec_file]
-      file = params[:fec_file]
-      type = 'fec'
-      is_coala = true if params[:is_coala].present?
     end
 
     if file
-      if @accounting_plan.import(file, type, is_coala)
+      if @accounting_plan.import(file, type)
         flash[:success] = 'Importé avec succès.'
       else
         flash[:error] = 'Fichier non valide.'
@@ -55,6 +55,47 @@ class Account::AccountingPlansController < Account::OrganizationController
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
+
+    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+  end
+
+  def import_fec
+    if params[:fec_file].present?
+      return false if params[:fec_file].content_type != "text/plain"
+
+      @dir    = Dir.mktmpdir
+      @file   = File.join(@dir, "import_fec_file.txt")
+      journal = []
+
+      FileUtils.cp params[:fec_file].path, @file
+
+      @params_fec = ImportFecService.new(@file).before_processing
+
+      @customer.account_book_types.each { |jl| journal << jl.name }
+
+      @params_fec = @params_fec.merge(dir: @dir, file: @file, journal_ido: journal)
+    else
+      flash[:error] = 'Aucun fichier choisi.'
+    end
+
+    render :show
+  end
+
+  def import_fec_processing
+    file_path  = params[:file_path]
+
+    dir = "#{Rails.root}/files/#{Rails.env}/imports/FEC/"
+
+    FileUtils.makedirs(dir)
+    FileUtils.chmod(0755, dir)
+
+    file_path_dir = File.join(dir, "import_fec_file_#{Time.now.strftime('%Y%m%d%H%M')}" )
+
+    FileUtils.cp file_path, file_path_dir
+
+    ImportFecService.new(file_path).execute(@customer, params)
+
+    FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
 
     redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end

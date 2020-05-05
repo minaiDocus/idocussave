@@ -227,7 +227,9 @@ Rails.application.routes.draw do
         resource :accounting_plan, except: %w(new create destroy) do
           member do
             patch  :import
+            patch  :import_fec
             get    :import_model
+            get    :import_fec_processing
             delete :destroy_providers
             delete :destroy_customers
           end

@@ -21,7 +21,7 @@ Rails.application.config.assets.precompile += %w( paper_process.css account/repo
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
                                                   admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js admin/retriever_services.js admin/job_processing.js )
 
-Rails.application.config.assets.precompile += %w( paper_process.js inner.js welcome.js account/ftps.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js
+Rails.application.config.assets.precompile += %w( paper_process.js account/accounting_plans.js inner.js welcome.js account/ftps.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js
                                                   account/subscriptions.js account/organization_subscriptions.js account/groups.js account/journals.js account/account_number_rules.js account/paper_set_orders.js 
                                                   account/account_sharings.js account/invoices.js account/customers.js account/file_naming_policies.js account/organization_period_options.js account/csv_descriptors.js 
                                                   account/orders.js account/organization_retrievers.js account/ibizabox_documents.js account/compta_analytics.js account/retrievers.js account/documents.js account/pre_assignment_ignored.js 

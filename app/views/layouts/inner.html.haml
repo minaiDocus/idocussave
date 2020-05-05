@@ -55,7 +55,7 @@
       = javascript_include_tag 'account/addresses'
     - elsif controller_name == 'group_organizations'
       = javascript_include_tag 'account/group_organizations'
-    - elsif controller_name.in?(%w(pre_assignment_blocked_duplicates pre_assignment_ignored))
+    - elsif controller_name.in?(%w(pre_assignment_blocked_duplicates pre_assignment_ignored accounting_plan))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'

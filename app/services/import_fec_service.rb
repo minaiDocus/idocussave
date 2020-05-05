@@ -1,13 +1,44 @@
 # -*- encoding : UTF-8 -*-
 class ImportFecService
+
   def initialize(file_path)
     @file_path = file_path
   end
 
-  def execute(user,is_coala=false)
+  def execute(user,params)
     @user     = user
-    @is_coala = is_coala
+    @params   = params
     import_txt
+  end
+
+  def before_processing
+    journal_on_fec = []
+    head_list_fec  = ''
+
+    txt_file = File.read(@file_path)
+    txt_file.encode!('UTF-8')
+
+    begin
+      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
+    rescue => e
+      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+    end
+
+    txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+
+    count = 0
+
+    txt_file.each_line do |line|
+      column      = line.split(/\t/)
+
+      head_list_fec = column if count == 0
+
+      journal_on_fec << column[0]
+
+      count += 1
+    end
+
+    { head_list_fec: head_list_fec, journal_on_fec: journal_on_fec.uniq!.flatten[1..-1] }
   end
 
   private
@@ -35,9 +66,14 @@ class ImportFecService
     @third_parties  = []
     @for_num_pieces = []
     @for_pieces     = []
+    book_accepted   = []
+
+    @params[:journal].each { |key,val| book_accepted << key }
 
     txt_file.each_line do |line|
       column      = line.split(/\t/)
+
+      next if !book_accepted.include?(column[0])
 
       compauxnum  = column[6]
       compauxlib  = column[7]
@@ -45,7 +81,7 @@ class ImportFecService
       comptelib   = column[5]
       debit       = column[11]
       credit      = column[12]
-      pieceref    = @is_coala ? column[2] : column[8]
+      pieceref    = column[@params[:piece_ref].to_i]
 
       @third_parties  << { account_number: compauxnum, account_name: compauxlib, general_account: comptenum }
 
@@ -54,7 +90,7 @@ class ImportFecService
       @for_pieces     << { compauxnum: compauxnum, pieceref: pieceref, comptenum: comptenum, debit: debit, credit: credit }
     end
 
-    @third_parties   = @third_parties.uniq!.flatten[1..-1]
+    @third_parties   = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
 
     import_processing
   end
