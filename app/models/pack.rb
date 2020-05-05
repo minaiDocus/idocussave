@@ -264,7 +264,7 @@ class Pack < ApplicationRecord
       FileUtils.chmod(0755, dir)
 
       pieces.each do |piece|
-        piece_file_path = piece.cloud_content_object.path
+        piece_file_path = piece.cloud_content_object.path.to_s
         FileUtils.copy piece_file_path, File.join(dir, File.basename(piece_file_path)) if File.exist?(piece_file_path)
       end
 

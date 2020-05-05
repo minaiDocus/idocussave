@@ -21,6 +21,7 @@ class PeriodsToXlsService
       'Société',
       'Nom du document',
       'Piéces total',
+      'Pré-affectation',
       'Piéces numérisées',
       'Piéces versées',
       'Piéces iDocus\'Box',
@@ -41,8 +42,9 @@ class PeriodsToXlsService
     list = []
 
     documents.each do |document|
-      user_code     = document.period.user ? document.period.user.code : ''
-      user_company  = document.period.user ? document.period.user.company : ''
+      user_code         = document.period.user ? document.period.user.code : ''
+      user_company      = document.period.user ? document.period.user.company : ''
+      preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
 
       data = []
       data << document.period.user.try(:organization).try(:name) if @with_organization_info
@@ -53,6 +55,7 @@ class PeriodsToXlsService
         user_company,
         document.name,
         document.pieces,
+        preseizures_count,
         document.scanned_pieces,
         document.uploaded_pieces,
         document.dematbox_scanned_pieces,

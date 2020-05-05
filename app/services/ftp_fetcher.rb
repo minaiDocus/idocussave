@@ -45,6 +45,7 @@ class FtpFetcher
 
               document = document_delivery.add_or_replace(file, original_file_name: file_name,
                                                                 delivery_type: 'scan',
+                                                                api_name: 'scan',
                                                                 delivered_by: provider,
                                                                 pack_name: pack_name)
             end

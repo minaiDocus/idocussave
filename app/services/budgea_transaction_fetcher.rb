@@ -128,6 +128,7 @@ class BudgeaTransactionFetcher
     def assign_attributes(bank_account, operation, transaction)
       operation.date        = transaction['date']
       operation.value_date  = transaction['rdate']
+      operation.currency    = bank_account.original_currency
       if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
         operation.label     = '[CB] ' + transaction['original_wording']
       else
