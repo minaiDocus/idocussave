@@ -344,6 +344,7 @@ Rails.application.routes.draw do
         get 'download(/:id)', action: 'download', as: :download
         post 'insert', action: 'insert'
         delete 'remove', action: 'remove'
+        get 'synchronize', action: 'synchronize'
       end
     end
 

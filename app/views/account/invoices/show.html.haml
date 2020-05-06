@@ -48,7 +48,7 @@
         .modal-body
           %iframe{ src: '' }
 
-  .modal.fade{id: 'invoice_config_dialog', tabindex: '-1', role: 'dialog', aria: {labelledby: 'title_info', hidden: 'true'}}
+  .modal.fade{id: 'invoice_config_dialog', tabindex: '-1', 'data-focus-on' => 'input:first', role: 'dialog', aria: {labelledby: 'title_info', hidden: 'true'}}
     .modal-dialog.modal-dialog-centered{role: 'document'}
       .modal-content
         .modal-header.text-center
@@ -78,13 +78,15 @@
                   %tr{class: 'bg-brown text-white'}
                     %th Code de dossiers
                     %th Journal
-                    %th{style: 'width: 200px; text-align: center'} Action
+                    %th{style: 'width: 290px; text-align: center'} Action
                 %tbody{class: 'retractable slidedown', style: 'opacity:1;'}
                   -@invoice_settings.each do |invoice_setting|
                     %tr
                       %td{id:'edit-user-code'}= User.find_by_code(invoice_setting.user_code).info
                       %td{id:'edit-journal-code'}= invoice_setting.journal_code
                       %td{style: 'text-align: center'}
+                        = link_to 'Synchroniser factures',  "#invoice-setting-synchronize-form", id: 'invoice-setting-synchronize', class: 'btn btn-sm btn-primary', type:'button', :data => {:toggle => 'modal', :target => '#invoice-setting-synchronize-form'}, invoice_setting_id: invoice_setting.id, user_info: User.find_by_code(invoice_setting.user_code).info
+                        |
                         = link_to 'Modifier',  "#", id: 'invoice-setting-edit', class: 'btn btn-sm btn-info', invoice_setting_id: invoice_setting.id, code: invoice_setting.user_code, journal: invoice_setting.journal_code
                         |
                         = link_to 'Supprimer', remove_account_organization_invoices_path(@organization, {id: invoice_setting.id}), data: {:confirm => 'Voulez-vous vraiment le supprimer?'}, :method => :delete, class: 'btn btn-sm btn-danger'
@@ -92,3 +94,31 @@
         .modal-footer
           .float-right
             %a{ :class=>"modal-close btn btn-light", "data-dismiss"=>"modal" } Fermer
+
+
+  .modal.fade{id: 'invoice-setting-synchronize-form', tabindex: '-1', 'data-focus-on' => 'input:first', :style => 'overflow:auto', role: 'dialog', aria: {labelledby: 'invoice-synchronize', hidden: 'true'}}
+    .modal-dialog.modal-sm.modal-dialog-centered{role: 'document'}
+      .modal-content
+        .modal-header.text-center
+          %h5{class: 'modal-title w-100 font-weight-bold', id: 'synchronize_user_info'}
+          %button.close{type: 'button', 'data-dismiss' => 'modal', 'aria-hidden' => "true"} &times;
+        .modal-body
+          = form_tag synchronize_account_organization_invoices_path(@organization), method: :get, class: 'form-filter' do
+            .card-header.clearfix
+              .text-center
+                %h4
+                  Récuperer ou synchroniser des factures dépuis la période à sélectionner
+            .retractable-filter-content
+              .card-body
+                .form-group.clearfix
+                  = hidden_field_tag 'invoice_setting_id'
+                .form-group.clearfix
+                  .label-section
+                    = label_tag 'invoice_setting_synchronize_contains[period]', 'Sélectionner la période:'
+                  .control-section
+                    = select_tag 'invoice_setting_synchronize_contains[period]', options_for_select( @synchronize_months, (params[:invoice_setting_synchronize_contains][:period] rescue '') )
+              .card-footer
+                .form-actions
+                  = submit_tag 'Synchroniser', class: 'btn btn-primary mb-2', id: 'synchronize-invoice-setting'
+                  = submit_tag 'Annuler', class: 'btn btn-light', type: 'reset'
+                  = submit_tag 'x' , class: 'btn btn-danger close', type: 'button', 'data-dismiss' => 'modal', 'aria-hidden' => "true"

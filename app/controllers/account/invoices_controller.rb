@@ -5,6 +5,12 @@ class Account::InvoicesController < Account::OrganizationController
     @invoices = @organization.invoices.order(created_at: :desc).page(params[:page])
     @invoice_settings = @organization.invoice_settings.order(created_at: :desc)
     @invoice_setting = InvoiceSetting.new
+
+    @synchronize_date = Date.today
+    @synchronize_months = []
+    (0..35).each do |month|
+      @synchronize_months << [@synchronize_date.prev_month(month).strftime("%b %Y"), @synchronize_date.prev_month(month)]
+    end
   end
 
   def download
@@ -32,6 +38,24 @@ class Account::InvoicesController < Account::OrganizationController
       flash[:success] = (params[:invoice_setting][:id].present?) ? 'Modifié avec succès' : 'Ajout avec succès.'
     else
       flash[:error] = 'Enregistrement non valide, veuillez verifier les informations.'
+    end
+
+    redirect_to account_organization_invoices_path(@organization)
+  end
+
+  def synchronize
+    if params[:invoice_setting_id].present?
+      invoice_setting = InvoiceSetting.find(params[:invoice_setting_id])
+      organization = invoice_setting.organization
+      if params[:invoice_setting_synchronize_contains][:period].present?
+        period = (params[:invoice_setting_synchronize_contains][:period]).to_date
+
+        flash[:success] = 'Synchronisation des factures en cours ...'
+
+        InvoiceSetting.delay(queue: :low).invoice_synchronize(period, invoice_setting, organization)
+      end
+    else
+      flash[:error] = 'Synchronisation échouée, veuillez verifier les informations.'
     end
 
     redirect_to account_organization_invoices_path(@organization)

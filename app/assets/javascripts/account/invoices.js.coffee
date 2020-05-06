@@ -52,3 +52,15 @@ jQuery ->
     $("input:hidden[name="+'"invoice_setting[id]"'+"]").val(id)
 
     $("#insert-invoice-setting").val('Modifier')
+
+  #invoice_setting_synchronize
+  $('#invoice-setting-table tr td #invoice-setting-synchronize').on 'click', (e) ->
+    e.preventDefault()
+    user_info = $(this).attr("user_info")
+    id = $(this).attr("invoice_setting_id")
+
+    $("input:hidden[name="+'"invoice_setting_id"'+"]").val(id)
+    $("#synchronize_user_info").text(user_info)
+    #$('#invoice_config_dialog').modal('hide')
+    $('#invoice_config_dialog').fadeOut 500, ->
+      $('#invoice_config_dialog').modal 'hide'
