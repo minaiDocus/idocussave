@@ -13,17 +13,17 @@ describe ImportFecService do
     AccountingPlanItem.destroy_all
   end
 
-  context 'for the FEC import' do
-    it  'try before processing' do
-      params_fec = ImportFecService.new(@file).before_processing
+  context 'FEC import' do
+    it 'parsing metadata' do
+      params_fec = ImportFecService.new(@file).parse_metadata
 
-      expect(params_fec[:head_list_fec]).not_to eq nil
-      expect(params_fec[:journal_on_fec]).not_to eq nil
+      expect(params_fec[:head_list_fec][0]).to eq 'JournalCode'
+      expect(params_fec[:journal_on_fec][0]).to eq 'AN'
+      expect(params_fec[:journal_on_fec][1]).to eq 'BQ'
     end
 
-    it 'try import when it is completed' do
+    it 'import when it is completed' do
       customer = FactoryBot.create(:user)
-      params = {}
       params = { journal: {"BQ"=>"on", "CS"=>"on", "OI"=>"on", "VT"=>"on"}, piece_ref: "2" }
 
       allow(customer).to receive_message_chain('accounting_plan.id').and_return(1)
@@ -34,9 +34,9 @@ describe ImportFecService do
       ImportFecService.new(@file).execute(customer, params)
 
       expect(AccountingPlanItem.first.id).not_to eq nil
-      expect(AccountingPlanItem.first.third_party_account).not_to eq nil
-      expect(AccountingPlanItem.first.third_party_name).not_to eq nil
-      expect(AccountingPlanItem.first.conterpart_account).not_to eq nil
+      expect(AccountingPlanItem.first.third_party_account).to eq '411AGIRH'
+      expect(AccountingPlanItem.first.third_party_name).to eq 'AGIRH'
+      expect(AccountingPlanItem.first.conterpart_account).to eq '708002'
       expect(AccountingPlanItem.first.accounting_plan_itemable_id).to eq 1
     end
   end

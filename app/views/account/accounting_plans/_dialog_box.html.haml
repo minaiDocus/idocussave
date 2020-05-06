@@ -1,4 +1,4 @@
-#importDialog.modal.fade{data: { backdrop: "static" } }
+#import_dialog.modal.fade{data: { backdrop: "static" } }
   .modal-dialog
     .modal-content
       .modal-header
@@ -10,17 +10,11 @@
         %input.file{ type: :hidden, value: "#{@params_fec[:dir]}", name: "dir_tmp"}
         %input.count_books{ type: :hidden, value: "#{@params_fec[:journal_on_fec].size}"}
         .modal-body
-          .journal_present
-            %span Les journaux présentent dans le fichier FEC :
-            %span.list_on_grey{ style: "background: #F2F2F2; padding: 8px; border-radius: 4px;" }
-              - if @params_fec.present?
-                = @params_fec[:journal_on_fec].join(' ')
-          %br
           .row
             .col-md-6
               .journal_fec.row{ style: "margin:0 !important" }
                 .select_section.col-md-8{ style: "padding:0 !important" }
-                  Veuillez choisir le(s) journal(s) à injecter :
+                  Veuillez choisir les journaux à injecter :
                 .checked_section.col-md-4.text-right{ style: "padding:0 !important" }
                   /%input#for_all{ type: :checkbox, name: 'book_for_all'}
                 %br
@@ -33,15 +27,16 @@
                       %tr
                         %td= journal
                         %td
-                          %input{ class: "check_journal #{journal}", checked: true, type: :checkbox, name: "journal[#{journal}]" }
+                          %input{ class: "check_journal #{journal}", checked: (@params_fec[:journal_ido].include?(journal)), type: :checkbox, name: "journal[#{journal}]" }
               .journal_idocus
-                %span Pour info, vos journaux sont :
-                %span.list_on_grey{ style: "background: #F2F2F2; padding: 8px; border-radius: 4px;" }
+                %span Journaux idocus disponibles:
+                %span.list_on_grey{ style: "padding: 8px" }
                   - if @params_fec.present?
-                    = @params_fec[:journal_ido].join(' ')
+                    - @params_fec[:journal_ido].each do |journal|
+                      %span.badge.fs-origin.badge-secondary= journal
             .col-md-6
               .piece_reference_choise
-                %span Sélectionner la colonne pour la pièce de référence
+                %span Sélectionner la colonne pour la référence des pièces
                 .select_piece
                   %select.piece{name: "piece_ref"}
                     %option{ value: '' } -----------------
@@ -51,6 +46,6 @@
                       - indexation += 1
 
         .modal-footer
-          %button.fermer_modal_fec.btn{ style: "margin: 0 15px 0 0; padding: 0;cursor: context-menu" }
+          .btn.close_modal_fec{ style: "margin: 0 15px 0 0; padding: 0;cursor: context-menu" }
             = link_to 'Fermer', account_organization_customer_accounting_plan_path(@organization, @customer, @params_fec[:dir]), :class=>"modal-close"
-          %input#importButton.btn.btn-primary{ :type => "submit", :value => "Valider" }
+          %input#import_button.btn.btn-primary{ :type => "submit", :value => "Valider" }

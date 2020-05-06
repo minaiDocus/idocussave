@@ -359,10 +359,9 @@ class Account::DocumentsController < Account::AccountController
     pack = Pack.find(params[:id])
     pack = nil unless pack.owner.in?(accounts)
     zip_path = pack.cloud_archive_object.path.presence || pack.archive_file_path
-    archive_file_name = pack.cloud_archive_object.filename.presence || pack.archive_name
 
     if pack && File.exist?(zip_path)
-      send_file(zip_path, type: 'application/zip', filename: archive_file_name, x_sendfile: true)
+      send_file(zip_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
     else
       render plain: "File unavalaible"
     end

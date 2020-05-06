@@ -10,7 +10,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
   def show
     if params[:format].present?
-      FileUtils.remove_entry params[:format]
+      FileUtils.rm params[:format], force: true
       redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     end
   end
@@ -63,13 +63,16 @@ class Account::AccountingPlansController < Account::OrganizationController
     if params[:fec_file].present?
       return false if params[:fec_file].content_type != "text/plain"
 
-      @dir    = Dir.mktmpdir
-      @file   = File.join(@dir, "import_fec_file.txt")
+      @dir = "#{Rails.root}/files/imports/FEC/"
+      FileUtils.makedirs(@dir)
+      FileUtils.chmod(0777, @dir)
+
+      @file   = File.join(@dir, "file_#{Time.now.strftime('%Y%m%d%H%M')}.txt")
       journal = []
 
       FileUtils.cp params[:fec_file].path, @file
 
-      @params_fec = ImportFecService.new(@file).before_processing
+      @params_fec = ImportFecService.new(@file).parse_metadata
 
       @customer.account_book_types.each { |jl| journal << jl.name }
 
@@ -83,15 +86,6 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   def import_fec_processing
     file_path  = params[:file_path]
-
-    dir = "#{Rails.root}/files/#{Rails.env}/imports/FEC/"
-
-    FileUtils.makedirs(dir)
-    FileUtils.chmod(0755, dir)
-
-    file_path_dir = File.join(dir, "import_fec_file_#{Time.now.strftime('%Y%m%d%H%M')}" )
-
-    FileUtils.cp file_path, file_path_dir
 
     ImportFecService.new(file_path).execute(@customer, params)
 

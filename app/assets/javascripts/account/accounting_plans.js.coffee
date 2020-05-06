@@ -1,15 +1,16 @@
 jQuery ->
-  if ($('#importDialog').length > 0)
-    $('#importDialog').modal('show')
+  if ($('#import_dialog').length > 0)
+    $('#import_dialog').modal('show')
 
-  $('#importButton').click (e) ->
+  $('#import_button').click (e) ->
     if ($('select.piece').val() == '')
-      alert('Veuillez sélectionner la colonne pour la pièce de référence svp !')
+      alert('Veuillez sélectionner la colonne pour la référence des pièces svp !')
+      $(this).removeAttr('disabled')
       return false
 
-  $('.fermer_modal_fec').click (e) ->
+  $('.close_modal_fec').click (e) ->
     $(this).attr('disabled', true)
     $(this).html('<img src="/assets/application/bar_loading.gif" alt="chargement..." >')
 
-  $('#importButton').click (e) ->
+  $('#import_button').click (e) ->
 	  $(this).attr('disabled', true)

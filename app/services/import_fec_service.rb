@@ -1,17 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class ImportFecService
-
   def initialize(file_path)
     @file_path = file_path
   end
 
-  def execute(user,params)
-    @user     = user
-    @params   = params
-    import_txt
-  end
-
-  def before_processing
+  def parse_metadata
     journal_on_fec = []
     head_list_fec  = ''
 
@@ -41,6 +34,12 @@ class ImportFecService
     { head_list_fec: head_list_fec, journal_on_fec: journal_on_fec.uniq!.flatten[1..-1] }
   end
 
+  def execute(user,params)
+    @user     = user
+    @params   = params
+    import_txt
+  end
+
   private
 
   def import_csv
@@ -68,12 +67,10 @@ class ImportFecService
     @for_pieces     = []
     book_accepted   = []
 
-    @params[:journal].each { |key,val| book_accepted << key }
-
     txt_file.each_line do |line|
       column      = line.split(/\t/)
 
-      next if !book_accepted.include?(column[0])
+      next if !@params[:journal].select{|j| j[column[0]].present? }.present?
 
       compauxnum  = column[6]
       compauxlib  = column[7]
@@ -90,7 +87,7 @@ class ImportFecService
       @for_pieces     << { compauxnum: compauxnum, pieceref: pieceref, comptenum: comptenum, debit: debit, credit: credit }
     end
 
-    @third_parties   = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
+    @third_parties = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
 
     import_processing
   end
