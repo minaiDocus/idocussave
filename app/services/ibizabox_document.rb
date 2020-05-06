@@ -24,6 +24,7 @@ class IbizaboxDocument
         user_id:                @user.id,
         api_id:                 document_id,
         api_name:               'ibiza',
+        original_fingerprint:   fingerprint,
         is_content_file_valid:  true,
         wait_selection:         @folder.is_selection_needed
       }
@@ -44,7 +45,11 @@ class IbizaboxDocument
 private
 
   def valid?
-    @valid ||= valid_extension? && valid_pages_number? && valid_file_size? && DocumentTools.modifiable?(@processed_file.path)
+    @valid ||= unique? && valid_extension? && valid_pages_number? && valid_file_size? && DocumentTools.modifiable?(@processed_file.path)
+  end
+
+  def unique?
+    TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).first ? false : true
   end
 
   def valid_extension?
@@ -80,5 +85,9 @@ private
   def clean_tmp
     @temp_file.close if @temp_file
     FileUtils.remove_entry @dir if @dir
+  end
+
+  def fingerprint
+    @fingerprint ||= DocumentTools.checksum(@file.path)
   end
 end
