@@ -22,6 +22,9 @@ class ReturnsController < PaperProcessesController
   def create
     _params = paper_process_params
 
+    #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
+    _params[:customer_code] = _params[:customer_code].gsub('AC0162', 'MVN%GRHCONSULT') if _params[:customer_code].match(/^AC0162/)
+
     @paper_process = PaperProcess.where(type: 'return', tracking_number: _params[:tracking_number]).first
 
     @paper_process ||= PaperProcess.new(type: 'return')

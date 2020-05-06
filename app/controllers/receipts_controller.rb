@@ -18,6 +18,10 @@ class ReceiptsController < PaperProcessesController
 
   def create
     _params = paper_process_params
+
+    #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
+    _params[:customer_code] = _params[:customer_code].gsub('AC0162', 'MVN%GRHCONSULT') if _params[:customer_code].match(/^AC0162/)
+
     user = User.find_by_code(_params[:customer_code])
     if user
       user.options.with_lock(timeout: 1, retries: 10, retry_sleep: 0.1) do
