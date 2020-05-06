@@ -107,7 +107,7 @@
             .card-header.clearfix
               .text-center
                 %h4
-                  Récuperer ou synchroniser des factures dépuis la période à sélectionner
+                  Récuperer ou synchroniser les factures dépuis la période sélectionnée
             .retractable-filter-content
               .card-body
                 .form-group.clearfix
@@ -120,5 +120,3 @@
               .card-footer
                 .form-actions
                   = submit_tag 'Synchroniser', class: 'btn btn-primary mb-2', id: 'synchronize-invoice-setting'
-                  = submit_tag 'Annuler', class: 'btn btn-light', type: 'reset'
-                  = submit_tag 'x' , class: 'btn btn-danger close', type: 'button', 'data-dismiss' => 'modal', 'aria-hidden' => "true"

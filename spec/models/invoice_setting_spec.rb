@@ -51,14 +51,13 @@ describe InvoiceSetting do
       File.unlink(@log_file) if File.exist? @log_file
     end
 
-    it 'returns a log state "upladed"', :log_success do
+    it 'returns a log state "uploaded"', :log_success do
       allow_any_instance_of(UploadedDocument).to receive(:valid?).and_return(true)
 
       invoice_setting = InvoiceSetting.last
-      organization = invoice_setting.organization
-      period = Time.now - 1
+      period = 1.month.ago
 
-      InvoiceSetting.invoice_synchronize(period, invoice_setting, organization)
+      InvoiceSetting.invoice_synchronize(period, invoice_setting.id)
 
       log_content = File.read(@log_file)
 
@@ -71,10 +70,9 @@ describe InvoiceSetting do
       allow_any_instance_of(UploadedDocument).to receive(:full_error_messages).and_return('journal error')
 
       invoice_setting = InvoiceSetting.last
-      organization = invoice_setting.organization
-      period = Time.now - 1
+      period = 1.month.ago
 
-      InvoiceSetting.invoice_synchronize(period, invoice_setting, organization)
+      InvoiceSetting.invoice_synchronize(period, invoice_setting.id)
 
       log_content = File.read(@log_file)
 
@@ -84,14 +82,15 @@ describe InvoiceSetting do
 
     it 'returns a log state "already exist"', :log_error_v2 do
       invoice_setting = InvoiceSetting.last
-      organization = invoice_setting.organization
-      period = Time.now - 1
+      period = 1.month.ago
 
-      InvoiceSetting.invoice_synchronize(period, invoice_setting, organization)
-      InvoiceSetting.invoice_synchronize(period, invoice_setting, organization)
+      InvoiceSetting.invoice_synchronize(period, invoice_setting.id)
+      InvoiceSetting.invoice_synchronize(period, invoice_setting.id)
 
       log_content = File.read(@log_file)
 
+      expect(TempDocument.count).to eq 1
+      expect(TempDocument.last.api_name).to eq 'invoice_setting'
       expect(File.exist?(@log_file)).to be true
       expect(log_content).to match /existe déjà/
     end

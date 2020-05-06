@@ -8,7 +8,7 @@ class Account::InvoicesController < Account::OrganizationController
 
     @synchronize_date = Date.today
     @synchronize_months = []
-    (0..35).each do |month|
+    (0..24).each do |month|
       @synchronize_months << [@synchronize_date.prev_month(month).strftime("%b %Y"), @synchronize_date.prev_month(month)]
     end
   end
@@ -46,13 +46,13 @@ class Account::InvoicesController < Account::OrganizationController
   def synchronize
     if params[:invoice_setting_id].present?
       invoice_setting = InvoiceSetting.find(params[:invoice_setting_id])
-      organization = invoice_setting.organization
+
       if params[:invoice_setting_synchronize_contains][:period].present?
         period = (params[:invoice_setting_synchronize_contains][:period]).to_date
 
         flash[:success] = 'Synchronisation des factures en cours ...'
 
-        InvoiceSetting.delay(queue: :low).invoice_synchronize(period, invoice_setting, organization)
+        InvoiceSetting.delay(queue: :high).invoice_synchronize(period, invoice_setting.id)
       end
     else
       flash[:error] = 'Synchronisation échouée, veuillez verifier les informations.'
@@ -71,6 +71,7 @@ class Account::InvoicesController < Account::OrganizationController
   end
 
   private
+
   def invoice_setting_params
     params.require(:invoice_setting).permit(:user_code, :journal_code)
   end
