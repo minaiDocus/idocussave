@@ -26,7 +26,9 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
 
       logger_infos mod.to_s + " => " + datas.size.to_s + " new organization : " + organization.id.to_s
 
-      datas.update_all(organization_id: organization.id)
+      datas.each do |data|
+        data.update(organization_id: organization_id) if data.organization_id.present?
+      end
     end
 
     user.code = 'FOO%0366'
@@ -58,7 +60,9 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
 
       logger_infos mod.to_s + " => " + datas.size.to_s + " rollback organization : " + organization_id.to_s
 
-      datas.update_all(organization_id: organization_id)
+      datas.each do |data|
+        data.update(organization_id: organization_id) if data.organization_id.present?
+      end
     end
 
     user.code = 'ACC%0366'
@@ -70,7 +74,7 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
   end
 
   def models
-    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, Order, PaperProcess, PeriodDocument, Period, PreAssignmentDelivery, PreAssignmentExport, RemoteFile, Subscription, TempDocument, TempPack ]
+    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, PaperProcess, PeriodDocument, PreAssignmentDelivery, PreAssignmentExport, TempDocument, TempPack, Order ]
   end
 
   private
