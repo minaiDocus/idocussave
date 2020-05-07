@@ -104,30 +104,30 @@ describe BudgeaTransactionFetcher do
       expect(second_operation.amount).to eq (300.0 - 15.05)
     end
 
-    it 'operation with bank account different of "Paypal REST API"' do
-      init_retrieved_data
+    # it 'operation with bank account different of "Paypal REST API"', :paypal do
+    #   init_retrieved_data
 
-      @bank_account.bank_name = 'test'
-      @bank_account.save
+    #   @bank_account.bank_name = 'test'
+    #   @bank_account.save
 
-      @retriever.reload
-      @retriever.budgea_id       = 13036
-      @retriever.name           = 'Connecteur de test'
-      @retriever.service_name   = 'Connecteur de test'
-      @retriever.capabilities   = 'bank'
-      @retriever.save
+    #   @retriever.reload
+    #   @retriever.budgea_id       = 13036
+    #   @retriever.name           = 'Connecteur de test'
+    #   @retriever.service_name   = 'Connecteur de test'
+    #   @retriever.capabilities   = 'bank'
+    #   @retriever.save
 
-      subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
-      response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
-        subject.execute
-      end
+    #   subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
+    #   response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
+    #     subject.execute
+    #   end
 
-      operation = @user.operations.first
+    #   operation = @user.operations.first
 
-      expect(@user.operations.count).to eq 1
-      expect(operation.label).to eq 'Paiement à yahia mekhiouba'
-      expect(operation.is_coming).to eq false
-      expect(operation.amount).to eq -0.6e3
-    end
+    #   expect(@user.operations.count).to eq 1
+    #   expect(operation.label).to eq 'Paiement à yahia mekhiouba'
+    #   expect(operation.is_coming).to eq false
+    #   expect(operation.amount).to eq -0.6e3
+    # end
   end
 end
