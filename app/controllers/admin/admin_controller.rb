@@ -16,7 +16,7 @@ class Admin::AdminController < ApplicationController
   def ocr_needed_temp_packs
     @ocr_needed_temp_packs = TempDocument.where(state: 'ocr_needed').group(:temp_pack_id).includes(:temp_pack).map do |data|
       object = OpenStruct.new
-      object.date           = data.try(:updated_at)
+      object.date           = data.try(:updated_at).try(:localtime)
       object.name           = data.temp_pack.name.sub(/ all\z/, '')
       object.document_count = data.temp_pack.temp_documents.ocr_needed.count
       object.message        = false
@@ -31,7 +31,7 @@ class Admin::AdminController < ApplicationController
     @bundle_needed_temp_packs = TempPack.bundle_needed.map do |temp_pack|
       temp_documents = temp_pack.temp_documents.bundle_needed.by_position
       object = OpenStruct.new
-      object.date           = temp_documents.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at).try(:localtime)
       object.name           = temp_pack.name.sub(/ all\z/, '')
       object.document_count = temp_documents.count
       object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
@@ -46,7 +46,7 @@ class Admin::AdminController < ApplicationController
     @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
       temp_documents = temp_pack.temp_documents.bundling.by_position
       object = OpenStruct.new
-      object.date           = temp_documents.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at).try(:localtime)
       object.name           = temp_pack.name.sub(/ all\z/, '')
       object.document_count = temp_documents.count
       object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
@@ -61,7 +61,7 @@ class Admin::AdminController < ApplicationController
     @processing_temp_packs = TempPack.not_processed.map do |temp_pack|
       temp_documents = temp_pack.temp_documents.ready.by_position
       object = OpenStruct.new
-      object.date           = temp_documents.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at).try(:localtime)
       object.name           = temp_pack.name.sub(/ all\z/, '')
       object.document_count = temp_documents.count
       object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
@@ -83,7 +83,7 @@ class Admin::AdminController < ApplicationController
         end.uniq
 
         object = OpenStruct.new
-        object.date           = remote_files.last.try(:created_at)
+        object.date           = remote_files.last.try(:created_at).try(:localtime)
         object.name           = pack.name.sub(/ all\z/, '')
         object.document_count = remote_files.count
         object.message        = data.join(', ')
@@ -110,7 +110,7 @@ class Admin::AdminController < ApplicationController
         end.uniq
 
         object = OpenStruct.new
-        object.date           = remote_files.last.try(:created_at)
+        object.date           = remote_files.last.try(:created_at).try(:localtime)
         object.name           = pack.name.sub(/ all\z/, '')
         object.document_count = remote_files.count
         object.message        = data.join(', ')
@@ -134,11 +134,24 @@ class Admin::AdminController < ApplicationController
     render partial: 'awaiting_pre_assignments', locals: { collection: @awaiting_pre_assignments }
   end
 
+  # GET /admin/awaiting_supplier_recognition
+  def awaiting_supplier_recognition
+    @awaiting_supplier_recognition = Pack::Piece.pre_assignment_supplier_recognition.group(:pack_id).group(:pre_assignment_comment).order(created_at: :desc).includes(:pack).map do |e|
+        object = OpenStruct.new
+        object.date           = e.created_at.try(:localtime)
+        object.name           = e.pack.name.sub(/\s\d+\z/, '').sub(' all', '') if e.pack
+        object.document_count = Pack::Piece.pre_assignment_supplier_recognition.where(pack_id: e.pack_id).count
+        object
+    end
+
+    render partial: 'awaiting_supplier_recognition', locals: { collection: @awaiting_supplier_recognition }
+  end
+
   # GET /admin/reports_delivery
   def reports_delivery
     @reports_delivery = Pack::Report.locked.order(updated_at: :desc).map do |report|
       object = OpenStruct.new
-      object.date           = report.updated_at
+      object.date           = report.updated_at.try(:localtime)
       object.name           = report.name.sub(/ all\z/, '')
       object.document_count = report.preseizures.locked.count
       object.message        = false

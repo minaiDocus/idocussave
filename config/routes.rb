@@ -665,6 +665,7 @@ Rails.application.routes.draw do
   get 'admin/blocked_pre_assignments',         controller: 'admin/admin', action: 'blocked_pre_assignments'
   get 'admin/bundle_needed_temp_packs',        controller: 'admin/admin', action: 'bundle_needed_temp_packs'
   get 'admin/awaiting_pre_assignments',        controller: 'admin/admin', action: 'awaiting_pre_assignments'
+  get 'admin/awaiting_supplier_recognition',   controller: 'admin/admin', action: 'awaiting_supplier_recognition'
   get 'admin/currently_being_delivered_packs', controller: 'admin/admin', action: 'currently_being_delivered_packs'
   get '/admin/process_reporting(/:year)(/:month)', controller: 'admin/process_reporting', action: :index
 

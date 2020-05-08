@@ -28,6 +28,9 @@
                 %a#v-failed_packs_delivery.nav-link{"aria-controls": "v-failed_packs_delivery", "aria-selected": "false", "data-toggle": "pill", href: "#failed_packs_delivery", role: "tab"}
                   %span.badge-tags.badge-pill.badge-danger.fs-origin Livraison GED client - Echecs (6 mois)
                   %span.float-right.badge.badge-tags.badge-pill.badge-danger.fs-origin -
+                %a#v-awaiting_pre_assignments.nav-link{"aria-controls": "v-awaiting_supplier_recognition", "aria-selected": "false", "data-toggle": "pill", href: "#awaiting_supplier_recognition", role: "tab"}
+                  %span.badge-tags.badge-pill.badge-success.fs-origin Reconaissance Fournisseur
+                  %span.float-right.badge.badge-tags.badge-pill.badge-success.fs-origin -
                 %a#v-blocked_pre_assignments.nav-link{"aria-controls": "v-blocked_pre_assignments", "aria-selected": "false", "data-toggle": "pill", href: "#blocked_pre_assignments", role: "tab"}
                   %span.badge-tags.badge-pill.badge-secondary.fs-origin Pré-affectation - En attente
                   %span.float-right.badge.badge-tags.badge-pill.badge-secondary.fs-origin -
@@ -48,6 +51,7 @@
               #processing_temp_packs.tab-pane
               #currently_being_delivered_packs.tab-pane
               #failed_packs_delivery.tab-pane
+              #awaiting_supplier_recognition.tab-pane
               #blocked_pre_assignments.tab-pane
               #awaiting_pre_assignments.tab-pane
               #reports_delivery.tab-pane

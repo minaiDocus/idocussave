@@ -26,7 +26,8 @@ $(document).ready(function() {
     'blocked_pre_assignments',
     'awaiting_pre_assignments',
     'reports_delivery',
-    'failed_reports_delivery'
+    'failed_reports_delivery',
+    'awaiting_supplier_recognition'
   ];
 
   load_resources(resources);
