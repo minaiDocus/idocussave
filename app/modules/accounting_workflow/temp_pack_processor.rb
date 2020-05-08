@@ -318,7 +318,7 @@ class AccountingWorkflow::TempPackProcessor
         page.origin         = temp_document.delivery_type
         page.is_a_cover     = @is_a_cover
 
-        #DocumentTools.sign_pdf(page_file_path, page_file_signed_path)
+        DocumentTools.sign_pdf(page_file_path, page_file_signed_path)
         page.cloud_content_object.attach(File.open(page_file_signed_path), page_file_name) if page.save
       end
     end
@@ -330,7 +330,7 @@ class AccountingWorkflow::TempPackProcessor
         AutoPreAssignedInvoicePieces.execute([@inserted_piece])
       else
         Pack::Piece.extract_content(@inserted_piece)
-        
+
         if uses_analytics?
           if @inserted_piece.from_web? || @inserted_piece.from_mobile?
             AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])

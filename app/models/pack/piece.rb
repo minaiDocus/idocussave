@@ -256,7 +256,7 @@ class Pack::Piece < ApplicationRecord
     DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, self.name, {origin: temp_document.delivery_type, is_stamp_background_filled: user.is_stamp_background_filled, dir: dir}
     self.cloud_content_object.attach(File.open(piece_file_path), piece_file_name)
 
-    #self.try(:sign_piece)
+    self.try(:sign_piece)
 
     self.get_pages_number
 
