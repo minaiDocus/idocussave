@@ -71,7 +71,7 @@ class DocumentTools
   end
 
   def self.sign_pdf(file_path, output_file_path)
-    system "/usr/local/bin/PortableSigner -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
+    system "/usr/local/bin/PortableSigner -p '1d0cu5' -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
   end
 
   def self.convert_heic_to_jpg(input_file_path, output_file_path)
