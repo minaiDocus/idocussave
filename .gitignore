@@ -38,6 +38,7 @@ config/fiduceo.yml
 config/storage.yml
 config/ftp_delivery.yml
 config/slimpay_checkout.yml
+config/api_authentication.yml
 config/symmetric-encryption.yml
 config/supplier_recognition.yml
 
