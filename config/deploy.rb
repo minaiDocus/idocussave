@@ -31,7 +31,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/ftp_delivery.yml',
   'config/storage.yml',
   'config/elastic_apm.yml',
-  'config/supplier_recognition.yml'
+  'config/supplier_recognition.yml',
+  'config/api_authentication.yml'
 )
 
 set :slack_url, 'https://hooks.slack.com/services/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'
