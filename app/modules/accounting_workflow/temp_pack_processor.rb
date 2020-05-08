@@ -329,20 +329,17 @@ class AccountingWorkflow::TempPackProcessor
       if @inserted_piece.temp_document.api_name == 'invoice_auto'
         AutoPreAssignedInvoicePieces.execute([@inserted_piece])
       else
+        Pack::Piece.extract_content(@inserted_piece)
+        
         if uses_analytics?
           if @inserted_piece.from_web? || @inserted_piece.from_mobile?
-            @inserted_piece.waiting_pre_assignment
+            AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
           else
             @inserted_piece.waiting_analytics_pre_assignment
           end
         else
-          @inserted_piece.waiting_pre_assignment
+          AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
         end
-
-        ### TODO: activate supplier recognition ####
-        ### Find a way to use supplier recognition with waiting_pre_assignment state ###
-        # added_pieces.flatten!
-        # AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
       end
     end
   end

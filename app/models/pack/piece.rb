@@ -56,6 +56,7 @@ class Pack::Piece < ApplicationRecord
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
   scope :deleted,                -> { where.not(delete_at: nil) }
   scope :need_preassignment,     -> { where(pre_assignment_state: 'waiting') }
+  scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
   default_scope { where(delete_at: [nil, '']) }
 
@@ -91,7 +92,7 @@ class Pack::Piece < ApplicationRecord
     end
 
     event :waiting do
-      transition :ready => :waiting
+      transition [:supplier_recognition, :ready] => :waiting
     end
 
     event :recognize_supplier do

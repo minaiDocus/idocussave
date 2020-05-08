@@ -2,7 +2,7 @@ module SupplierRecognition
   class Document
     include ActiveModel::Model
 
-    attr_accessor :id, :name, :content, :created_at, :updated_at, :state, :third_party_id, :external_id
+    attr_accessor :id, :name, :content, :created_at, :updated_at, :state, :third_party_id, :external_id, :training
 
     def self.get(id)
       verb = :get
@@ -17,7 +17,7 @@ module SupplierRecognition
       verb = :post
       path = '/v1/documents'
 
-      payload = { name: name, content: content, external_id: external_id }.to_json
+      payload = { name: name, content: content, external_id: external_id, training: training }.to_json
 
       json = SupplierRecognition::Base.connection.perform(path, verb, nil, payload)
 

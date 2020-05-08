@@ -1,0 +1,1 @@
+API_KEY = YAML.load_file('config/api_authentication.yml').freeze['token']
