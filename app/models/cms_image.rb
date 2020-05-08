@@ -2,6 +2,7 @@
 class CmsImage < ApplicationRecord
   ATTACHMENTS_URLS={'cloud_content' => ''}
   has_one_attached :cloud_content
+  has_one_attached :cloud_content_thumbnail
   
   has_attached_file :content,
                             styles: {
@@ -16,11 +17,45 @@ class CmsImage < ApplicationRecord
     cms_image.cloud_content.purge
   end
 
+  after_create_commit do |cms_image|
+      cms_image.generate_thumbs
+  end
+
+  def self.get_path_of(identity)
+    _id = identity.gsub('cms_image:', '')
+
+    begin
+      cms_image = CmsImage.find _id.to_i
+      cms_image.cloud_content_object.path
+    rescue
+      ''
+    end
+  end
+
+  def generate_thumbs
+    begin
+      image = MiniMagick::Image.read(self.cloud_content.download).format('png').resize('92x133')
+
+      self.cloud_content_thumbnail.attach(io: File.open(image.tempfile), 
+                                         filename: "#{self.id}_thumb.png", 
+                                         content_type: "image/png")
+    rescue
+    end
+  end
+
+  def get_identity
+    "cms_image:#{self.id}"
+  end
+
   def name
     original_file_name || content_file_name
   end
 
   def cloud_content_object
+    CustomActiveStorageObject.new(self, :cloud_content)
+  end
+
+  def cloud_content_thumbnail_object
     CustomActiveStorageObject.new(self, :cloud_content)
   end
 end

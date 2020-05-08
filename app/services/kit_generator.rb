@@ -96,11 +96,11 @@ class KitGenerator
         # LOGO
         pdf.float do
           pdf.bounding_box [0, pdf.cursor], width: 265, height: 169 do
-            pdf.image "#{Rails.root}/public#{file_sending_kit.left_logo_path}", height: file_sending_kit.left_logo_height, width: file_sending_kit.left_logo_width, vposition: :center, position: :center
+            pdf.image "#{file_sending_kit.real_left_logo_path}", height: file_sending_kit.left_logo_height, width: file_sending_kit.left_logo_width, vposition: :center, position: :center
           end
         end
         pdf.bounding_box [265, pdf.cursor], width: 265, height: 169 do
-          pdf.image "#{Rails.root}/public#{file_sending_kit.right_logo_path}", height: file_sending_kit.right_logo_height, width: file_sending_kit.right_logo_width, vposition: :center, position: :center
+          pdf.image "#{file_sending_kit.real_right_logo_path}", height: file_sending_kit.right_logo_height, width: file_sending_kit.right_logo_width, vposition: :center, position: :center
         end
 
         pdf.move_down 10
@@ -162,7 +162,7 @@ class KitGenerator
       end
 
       pdf.move_down 15
-      pdf.image "#{Rails.root}/public#{file_sending_kit.logo_path}", width: file_sending_kit.logo_width, height: file_sending_kit.logo_height, position: :center
+      pdf.image "#{file_sending_kit.real_logo_path}", width: file_sending_kit.logo_width, height: file_sending_kit.logo_height, position: :center
 
       pdf.font_size 10
 

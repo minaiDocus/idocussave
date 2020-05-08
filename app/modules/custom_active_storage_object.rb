@@ -30,7 +30,11 @@ class CustomActiveStorageObject
 
   def service_url()
     if as_attached.attached?
-      as_attached.service_url
+      begin
+        as_attached.service_url
+      rescue
+        path
+      end
     else
       pc_attached.url(:original)
     end
