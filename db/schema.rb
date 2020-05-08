@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_15_122741) do
+ActiveRecord::Schema.define(version: 2020_04_28_091307) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -180,6 +180,12 @@ ActiveRecord::Schema.define(version: 2020_03_15_122741) do
     t.string "a3_axis1"
     t.string "a3_axis2"
     t.string "a3_axis3"
+  end
+
+  create_table "archive_invoices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "audits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -683,6 +689,17 @@ ActiveRecord::Schema.define(version: 2020_03_15_122741) do
     t.boolean "is_analysis_activated", default: false
     t.boolean "is_analysis_to_validate", default: false
     t.index ["organization_id"], name: "organization_id"
+  end
+
+  create_table "invoice_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.bigint "user_id"
+    t.string "user_code"
+    t.string "journal_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_invoice_settings_on_organization_id"
+    t.index ["user_id"], name: "index_invoice_settings_on_user_id"
   end
 
   create_table "invoices", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1969,6 +1986,7 @@ ActiveRecord::Schema.define(version: 2020_03_15_122741) do
     t.datetime "organization_rights_updated_at"
     t.boolean "organization_rights_is_groups_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_collaborators_management_authorized", default: false, null: false
+    t.boolean "is_pre_assignement_displayed", default: false
     t.boolean "organization_rights_is_customers_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_journals_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_customer_journals_management_authorized", default: true, null: false
