@@ -1,7 +1,7 @@
 - ### TODO : HANDLE COMPOSITION DOCUMENTS OR PIECES
 - Pack::Piece.delay_for(5.seconds, queue: :low).finalize_piece(document.id) unless document.is_finalized #process not finalized piece
 - preseizures = document.preseizures
-- size = preseizures.length
+- preseizure_size = preseizures.length
 - stamp_url = document.get_state_to :image
 
 %li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages", style: 'display: none' }
@@ -37,19 +37,19 @@
           - if (stamp_url.present? && @user.pre_assignement_displayed?)
             .stamp_head= image_tag(stamp_url, alt: 'stamp_state', class: 'img_stamp')     
     .preseizure_description
-      - if size > 0
-        - if @user.pre_assignement_displayed?
+      - if @user.pre_assignement_displayed?
+        - if preseizure_size > 0
           .content_details
             %input{type: :hidden, class: :list_preseizure_id, value: preseizures.ids}
-            .tab_preseizures{class: "#{size == 1 ? 'hide' : ''} "}
+            .tab_preseizures{class: "#{preseizure_size == 1 ? 'hide' : ''} "}
               - active = nil
               - preseizures.each do |preseizure|
                 - if @ibiza
                   - preseizure_name = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
                 - else
                   - preseizure_name = preseizure.piece_name
-                %div.word_wrap{id: "span_#{preseizure.id}", class: "#{(size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && size >1) ? 'tab_active' : ''}", title: "#{(size > 1) ? preseizure_name : ''}"}
-                  - if size == 1
+                %div.word_wrap{id: "span_#{preseizure.id}", class: "#{(preseizure_size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && preseizure_size >1) ? 'tab_active' : ''}", title: "#{(preseizure_size > 1) ? preseizure_name : ''}"}
+                  - if preseizure_size == 1
                     %input{type: :hidden, id: ""}
                   - else
                     %div.check_modif_preseizure{ title: "Sélection"}
@@ -59,30 +59,30 @@
           - preseizures.each do |preseizure|
             .content_preseizure{id: "div_#{preseizure.id}"}
         - else
-          /.content_details
-          .no_preseizure
-            %table.table.table-striped.table-condensed.margin0bottom.information
-              %thead
-                %tr
-                  %th.piece_name.text-center Nom
-                  %th.date.text-center Date de cr&eacute;ation
-                  %th.pages_number.text-center Nombre de pages
-                  %th.piece_tags.text-center Tags
-              %tbody
-                %tr
-                  %td.piece_name.text-center#piece_name
-                    .content_piece_name
-                      = document.name
-                  %td.date.text-center#date
-                    .content_date
-                      = document.created_at.try(:to_date)
-                  %td.pages_number.text-center#pages_number
-                    .content_pages_number
-                      = document.pages_number
-                  %td.piece_tags.text-center#piece_tags
-                    .content_piece_tags
-                      = document.tags
+          .content_details
+            .no_preseizure
+              Aucune &eacute;criture comptable
       - else
-        .content_details
-          .no_preseizure
-            Aucune &eacute;criture comptable
+        /.content_details
+        .no_preseizure
+          %table.table.table-striped.table-condensed.margin0bottom.information
+            %thead
+              %tr
+                %th.piece_name.text-center Nom
+                %th.date.text-center Date de cr&eacute;ation
+                %th.pages_number.text-center Nombre de pages
+                %th.piece_tags.text-center Tags
+            %tbody
+              %tr
+                %td.piece_name.text-center#piece_name
+                  .content_piece_name
+                    = document.name
+                %td.date.text-center#date
+                  .content_date
+                    = document.created_at.try(:to_date)
+                %td.pages_number.text-center#pages_number
+                  .content_pages_number
+                    = document.pages_number
+                %td.piece_tags.text-center#piece_tags
+                  .content_piece_tags
+                    = document.tags

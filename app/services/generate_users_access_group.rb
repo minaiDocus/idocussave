@@ -4,7 +4,7 @@ class GenerateUsersAccessGroup
 
     def execute
       p start_time = Time.now
-      File.open Rails.root.join('files', Rails.env, 'users_access_group.txt'), 'w' do |f|
+      File.open Rails.root.join('files', 'users_access_group.txt'), 'w' do |f|
         customers = User.customers.active
         p customers.size
         customers.each do |customer|

@@ -12,6 +12,7 @@
                 = label_tag 'import_file', 'Fichier à importer'
               .control-section
                 = file_field_tag :file, class: 'filestyle', data: { classButton: 'btn btn-secondary pointer', input: true, buttonText: (glyphicon('file') + ' CSV') }
+                %br
                 = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_account_number_rules_path(@organization)
             .form-group.clearfix.radio_buttons
               .label-section

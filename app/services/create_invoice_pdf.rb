@@ -1,4 +1,3 @@
-
 class CreateInvoicePdf
   class << self
     def for_all
@@ -78,7 +77,8 @@ class CreateInvoicePdf
     def merge_extentis_invoice
       time = 1.month.ago.beginning_of_month + 15.days
       fidec = Organization.find_by_code 'FIDC'
-      orders = []
+      fidec_period = fidec.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+      orders = fidec_period.product_option_orders
 
       ['FBC', 'FIDA', 'EG'].each do |code|
         organization = Organization.find_by_code code
@@ -103,7 +103,6 @@ class CreateInvoicePdf
         orders << create_fidc_order_of(organization, total_amount)
       end
 
-      fidec_period = fidec.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
       fidec_period.product_option_orders = orders.compact if fidec_period
     end
 

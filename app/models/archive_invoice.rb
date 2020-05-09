@@ -30,7 +30,7 @@ class ArchiveInvoice < ApplicationRecord
     else
       _file_name = File.basename file_name
 
-      File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
+      File.join Rails.root, 'files', 'archives', 'invoices', _file_name
     end
   end
 end

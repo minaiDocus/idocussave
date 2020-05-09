@@ -26,7 +26,9 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
 
       logger_infos mod.to_s + " => " + datas.size.to_s + " new organization : " + organization.id.to_s
 
-      datas.update_all(organization_id: organization.id)
+      datas.each do |data|
+        data.update(organization_id: organization_id) if data.organization_id.present?
+      end
     end
 
     user.code = 'FOO%0366'
@@ -35,6 +37,9 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
     user.reload
 
     logger_infos "[MigrationCustomer] - user_code: #{user.try(:my_code) || 'no_user'} - new organization_id: #{user.organization_id} - End"
+
+    #WARNING : call account number rules migration manually, because this method can't be rollback
+    #migrate account number rules
   end
 
   def backup
@@ -55,7 +60,9 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
 
       logger_infos mod.to_s + " => " + datas.size.to_s + " rollback organization : " + organization_id.to_s
 
-      datas.update_all(organization_id: organization_id)
+      datas.each do |data|
+        data.update(organization_id: organization_id) if data.organization_id.present?
+      end
     end
 
     user.code = 'ACC%0366'
@@ -67,6 +74,29 @@ class PonctualScripts::MigrateCustomersToOrganization < PonctualScripts::Ponctua
   end
 
   def models
-    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, Order, PaperProcess, PeriodDocument, Period, PreAssignmentDelivery, PreAssignmentExport, RemoteFile, Subscription, TempDocument, TempPack ]
+    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, PaperProcess, PeriodDocument, PreAssignmentDelivery, PreAssignmentExport, TempDocument, TempPack, Order ]
   end
+
+  private
+
+  #WARNING: This method can't be rollback
+  def migrate_rules
+    account_rules = Organization.find_by_code('ACC').account_number_rules.customers
+    organization  = Organization.find_by_code('FOO')
+    user          = User.find_by_code 'FOO%0366'
+
+    account_rules.each do |rule|
+      if rule.users.any? && rule.users.collect(&:code).include?('FOO%0366')
+        new_rule                  = rule.dup
+        new_rule.organization_id  = organization.id
+        new_rule.users            = user
+        new_rule.save
+
+        ancient_users = rule.users
+        rule.users    = ancient_users - [user]
+        rule.save
+      end
+    end
+  end
+
 end

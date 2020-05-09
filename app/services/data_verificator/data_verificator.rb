@@ -25,6 +25,10 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::PieceReadyTempPackPreAssignmentNeeded.new().execute
 
+    @mail_infos << DataVerificator::IbizaboxFolderStateProcessing.new().execute
+
+    @mail_infos << DataVerificator::TempDocumentDuplicated.new().execute
+
     daily_mail
   end
 

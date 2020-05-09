@@ -38,7 +38,7 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
   end
 
   def models
-    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, Order, PaperProcess, PeriodDocument, Period, PreAssignmentDelivery, PreAssignmentExport, RemoteFile, Subscription, TempDocument, TempPack ]
+    [ Pack, Pack::Report, Pack::Piece, Pack::Report::Preseizure, Pack::Report::Expense, Operation, PaperProcess, PeriodDocument, PreAssignmentDelivery, PreAssignmentExport, RemoteFile, TempDocument, TempPack, Order ]
   end
 
   def extentis_group
@@ -90,7 +90,9 @@ class PonctualScripts::MigrateExtentis < PonctualScripts::PonctualScript
             if next_id > 0
               logger_infos("Migration #{mod.to_s} : #{datas.size.to_s} : #{user.id.to_s} - #{user.code.to_s} from => #{current_org.to_s} to => #{next_id.to_s}")
               user.organization_id = next_id
-              datas.update_all(organization_id: next_id)
+              datas.each do |data|
+                data.update(organization_id: next_id) if data.organization_id.present?
+              end
             end
           end
 

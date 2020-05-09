@@ -51,18 +51,18 @@ class Account::FileSendingKitsController < Account::OrganizationController
       clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
     end
 
-    is_logo_present = true
-    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
-      is_logo_present = false
+    error_logo = []
+    unless File.exist?(@file_sending_kit.real_logo_path)
+      error_logo << 'Logo central introuvable.</br>'
     end
-    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
-      is_logo_present = false
+    unless File.exist?(@file_sending_kit.real_left_logo_path)
+      error_logo << 'Logo gauche introuvable.</br>'
     end
-    unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
-      is_logo_present = false
+    unless File.exist?(@file_sending_kit.real_right_logo_path)
+      error_logo << 'Logo droite introuvable.</br>'
     end
 
-    if without_shipping_address.count == 0 && is_logo_present
+    if without_shipping_address.count == 0 && error_logo.empty?
       FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1')
       flash[:notice] = 'Généré avec succès.'
     else
@@ -73,17 +73,9 @@ class Account::FileSendingKitsController < Account::OrganizationController
           errors << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
         end
       end
-      unless is_logo_present
+      if error_logo.any?
         errors << '</br></br>' if without_shipping_address.count != 0
-        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.logo_path]))
-          errors << 'Logo central introuvable.</br>'
-        end
-        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.left_logo_path]))
-          errors << 'Logo gauche introuvable.</br>'
-        end
-        unless File.file?(File.join([Rails.root, 'public', @file_sending_kit.right_logo_path]))
-          errors << 'Logo droite introuvable.</br>'
-        end
+        errors << error_logo.join(' ')
       end
 
       flash[:error] = errors.join(' ') if errors.any?
@@ -125,7 +117,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   end
 
   def send_pdf(filename)
-    filepath = File.join([Rails.root, 'files', Rails.env, 'kit', filename])
+    filepath = File.join([Rails.root, 'files', 'kit', filename])
     if File.file? filepath
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
