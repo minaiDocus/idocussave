@@ -170,7 +170,7 @@ class FtpFetcher
 
   class FtpProcessor
     def initialize(ftp, root)
-      @root_path = "/data/ppp/"
+      @root_path = "/nfs/ppp/"
       @ftp = ftp
 
       @ftp.chdir root
