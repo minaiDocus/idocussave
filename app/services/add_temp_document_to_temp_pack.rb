@@ -67,18 +67,19 @@ class AddTempDocumentToTempPack
 
         if temp_document.save
           if temp_document.retrieved?
-            options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
+            options[:wait_selection] ? temp_document.wait_selection : temp_document.ocr_needed
           else
             if temp_document.from_ibizabox? && options[:wait_selection]
               temp_document.wait_selection
-            elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
-              temp_document.ocr_needed
-              NotifyDocumentBeingProcessed.new(temp_document).execute
-            elsif temp_pack.is_bundle_needed? && !temp_document.from_ibizabox? && (temp_document.scanned? || temp_document.pages_number > 2)
-              temp_document.bundle_needed
-              NotifyDocumentBeingProcessed.new(temp_document).execute
+            # elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
+            #   temp_document.ocr_needed
+            #   NotifyDocumentBeingProcessed.new(temp_document).execute
+            # elsif temp_document.is_bundle_needed?
+            #   temp_document.bundle_needed
+            #   NotifyDocumentBeingProcessed.new(temp_document).execute
             else
-              temp_document.ready
+              #Temp modification : replace ready state to ocr_needed
+              temp_document.ocr_needed
             end
           end
         else
