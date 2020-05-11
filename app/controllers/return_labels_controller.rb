@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ReturnLabelsController < ApplicationController
-  before_action :authenticate
+class ReturnLabelsController < PaperProcessesController
+  layout false
 
   # GET /scans/return_labels
   def show
@@ -35,19 +35,5 @@ class ReturnLabelsController < ApplicationController
       @return_labels.render_pdf
     end
     redirect_to '/scans/return_labels'
-  end
-
-  private
-
-  def authenticate
-    unless current_user&.is_admin
-      authenticate_or_request_with_http_basic do |name, password|
-        operators = [{ "username": 'ppp', "password": 'QIuVMP5dwMExgrYqClLc', "scanning_provider": 'ppp', "is_return_labels_authorized": true }]
-        @user = operators.select do |_operator|
-          name == 'ppp' && password == 'QIuVMP5dwMExgrYqClLc'
-        end.first
-        @user.present?
-      end
-    end
   end
 end
