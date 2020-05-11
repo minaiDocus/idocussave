@@ -1,0 +1,42 @@
+%table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+  %thead
+    %tr.bg-brown.text-white
+      %th N°
+      %th.text-center User code
+      %th.text-center Active?
+      %th.text-center Nom retriever
+      %th.text-center Journal retriever
+      %th.text-center Identifier
+      %th.text-center.word_wrap Access token
+      %th.text-center Etat
+      %th.text-center Service name
+      %th.text-center Etat retriever
+      %th.text-center Message retriever
+      %th.text-center Etat budgea
+      %th.text-center Id connecteur Budgea
+      %th.text-center.word_wrap Message erreur budgea
+      %th.text-center Code reponse
+      %th.text-center ID connection
+      %th.text-center User ID
+  %tbody
+    - count = 0
+    - @body.each do |normal|
+      - count += 1
+      %tr
+        %td= count
+        %td= normal[0]
+        %td= normal[1]
+        %td= normal[2]
+        %td= normal[3]
+        %td= normal[4]
+        %td.word_wrap= normal[5]
+        %td= normal[6]
+        %td= normal[7]
+        %td= normal[8]
+        %td= normal[9]
+        %td= normal[10]
+        %td= normal[11]
+        %td.word_wrap= normal[12]
+        %td= normal[13]
+        %td= normal[14]
+        %td= normal[15]

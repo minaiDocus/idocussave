@@ -62,6 +62,7 @@
           .dropdown-menu
             - if current_user.is_developer
               = link_to 'Suivi Job Process', admin_job_processing_index_path, class: 'dropdown-item'
+              = link_to 'Suivi Retriever Budgea', admin_budgea_retriever_index_path, class: 'dropdown-item'
             = link_to 'Récupération de transactions manquants', fetcher_admin_retrievers_path, class: 'dropdown-item'
     %span.auto-scroll-span-right.hide.mr-auto.ml-1
       %button.btn

@@ -10,6 +10,7 @@
     = stylesheet_link_tag 'admin'
     = stylesheet_link_tag 'admin/subscriptions'
     = stylesheet_link_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
+    = stylesheet_link_tag 'admin/budgea_retriever' if params[:controller] == 'admin/budgea_retriever'
     :plain
       <!--[if lt IE 9]>
         <script src="/assets/html5.js" type="text/javascript"></script>
@@ -28,6 +29,7 @@
     = javascript_include_tag 'admin/mobile_reporting' if params[:controller] == 'admin/mobile_reporting'
     = javascript_include_tag 'admin/retriever_services' if params[:controller] == 'admin/retriever_services'
     = javascript_include_tag 'admin/job_processing' if params[:controller] == 'admin/job_processing'
+    = javascript_include_tag 'admin/budgea_retriever' if params[:controller] == 'admin/budgea_retriever'
   %body
     = render 'layouts/admin/navigation'
 

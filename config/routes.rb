@@ -650,6 +650,10 @@ Rails.application.routes.draw do
       get 'launch_data_verif', on: :collection
     end
 
+    resources :budgea_retriever, only: :index do
+      get 'export_xls', on: :collection
+    end
+
     resources :news do
       post :publish, on: :member
     end

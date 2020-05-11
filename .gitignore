@@ -18,29 +18,28 @@ doc_data.txt
 db/schema.rb
 /storage/
 
+config/deploy/sandbox.rbs
 
-config/deploy/sandbox.rb
-
-config/secrets.yml
+config/api_authentication.yml
 config/bearer.yml
-config/elastic_apm.yml
+config/budgea.yml
 config/database.yml
 config/dematbox.yml
 config/dematbox_service_api.yml
-config/knowings.yml
+config/elastic_apm.yml
 config/emailed_document.yml
-config/ibiza.yml
-config/slimpay.yml
-config/pdftk.yml
-config/smtp.yml
-config/budgea.yml
 config/fiduceo.yml
-config/storage.yml
 config/ftp_delivery.yml
+config/ibiza.yml
+config/knowings.yml
+config/pdftk.yml
+config/secrets.yml
+config/slimpay.yml
 config/slimpay_checkout.yml
-config/api_authentication.yml
-config/symmetric-encryption.yml
+config/smtp.yml
+config/storage.yml
 config/supplier_recognition.yml
+config/symmetric-encryption.yml
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

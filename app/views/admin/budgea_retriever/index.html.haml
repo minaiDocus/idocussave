@@ -1,0 +1,32 @@
+#budgea_retriever_template
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Suivi budgea retriever
+        .float-right
+          = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: '') + ' Export XLS', "/admin/budgea_retriever/export_xls", title: 'Export XLS', class: 'float-right'
+
+  .row.retractable
+    .col-md-12
+      .box
+        %button.btn.btn-primary#normal.font-weight-bold.onglets
+          Normal
+        %button.btn.btn-warning#failed.font-weight-bold.onglets
+          Failed
+        %button.btn.btn-danger#bug.font-weight-bold.onglets
+          Bug
+    .col-md-12
+      .box.normal_table.active.body_table
+        .row
+          - @body = @body_normal
+          = render partial: 'result', locals: { collection: @body }
+      .box.failed_table.hide.body_table
+        .row
+          - @body = @body_failed
+          = render partial: 'result', locals: { collection: @body }
+      .box.bug_table.hide.body_table
+        .row
+          - @body = @body_bug
+          = render partial: 'result', locals: { collection: @body }
