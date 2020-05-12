@@ -15,6 +15,7 @@ class CmsImage < ApplicationRecord
 
   before_destroy do |cms_image|
     cms_image.cloud_content.purge
+    cms_image.cloud_content_thumbnail.purge
   end
 
   after_create_commit do |cms_image|
@@ -55,7 +56,11 @@ class CmsImage < ApplicationRecord
     CustomActiveStorageObject.new(self, :cloud_content)
   end
 
+  def content_thumbnail
+    object = FakeObject.new
+  end
+
   def cloud_content_thumbnail_object
-    CustomActiveStorageObject.new(self, :cloud_content)
+    CustomActiveStorageObject.new(self, :cloud_content_thumbnail)
   end
 end
