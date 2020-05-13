@@ -48,15 +48,20 @@ class FirebaseNotification
 
     def send_request_fcm(payload)
       begin
-        response = Typhoeus::Request.new(
-          api_uri,
-          method:  :post,
-          headers:  { 
-                      'Content-type' => 'application/json', 
-                      'Authorization' => basic_server_key 
-                    },
-          body:  payload.to_json
-        ).run
+        connection = Faraday.new(:url => api_uri) do |f|
+          f.response :logger
+          f.request :json
+          f.adapter Faraday.default_adapter
+        end
+
+        response = connection.post do |request|
+          request.headers = {
+                        'Content-type' => 'application/json',
+                        'Authorization' => basic_server_key
+                      }
+          request.body = payload.to_json
+        end
+
         true
       rescue Exception => e
         e.to_s

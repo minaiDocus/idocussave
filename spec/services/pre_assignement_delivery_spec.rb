@@ -117,7 +117,7 @@ describe PreAssignmentDelivery do
       it "create successfull xml data" do
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
@@ -128,7 +128,7 @@ describe PreAssignmentDelivery do
         expect(delivery.error_message).to be nil
 
         expect(delivery.cloud_content).to be_attached
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.xml/
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
 
         expect(delivery.preseizures.size).to eq 2
@@ -165,7 +165,7 @@ describe PreAssignmentDelivery do
         expect(delivery.data_to_deliver).to be nil
 
         expect(delivery.cloud_content).to be_attached
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.xml/
 
         expect(delivery.preseizures.size).to eq 2
         expect(delivery.preseizures.first.get_delivery_message_of('ibiza')).to eq 'already sent'
@@ -208,9 +208,9 @@ describe PreAssignmentDelivery do
 
         expect(delivery.cloud_content).to be_attached
 
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.txt/
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
-        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_3.txt'
+        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_5.txt'
       end
 
       it "Building data error with undefined journal" do
@@ -251,7 +251,7 @@ describe PreAssignmentDelivery do
 
         expect(delivery.data_to_deliver).to be nil
         expect(delivery.cloud_content).to be_attached
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.xml/
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
 
         expect(delivery.preseizures.size).to eq 2
@@ -276,7 +276,7 @@ describe PreAssignmentDelivery do
 
         expect(delivery.data_to_deliver).to be nil
         expect(delivery.cloud_content).to be_attached
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.xml/
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
 
         expect(delivery.error_message).to match /journal NotFound est inconnu/
@@ -301,7 +301,7 @@ describe PreAssignmentDelivery do
         expect(delivery.data_to_deliver).to be nil
 
         expect(delivery.cloud_content).to be_attached
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.xml/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.xml/
 
         expect(delivery.preseizures.size).to eq 2
         expect(delivery.error_message).to eq '1 preseizure(s) already sent'
@@ -331,7 +331,7 @@ describe PreAssignmentDelivery do
         expect(delivery.state).to eq 'sent'
 
         expect(delivery.data_to_deliver).to be nil
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.txt/
 
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be true
         expect(delivery.preseizures.first.exact_online_id).to be_present
@@ -357,7 +357,7 @@ describe PreAssignmentDelivery do
         expect(delivery.state).to eq 'error'
 
         expect(delivery.data_to_deliver).to be nil
-        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/[0-9]\/AC0003_AC_201812_[0-9]\.txt/
+        expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.txt/
 
         expect(delivery.preseizures.first.is_delivered_to?('exact_online')).to be false
         expect(delivery.preseizures.first.exact_online_id).not_to be_present

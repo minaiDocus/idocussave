@@ -1,0 +1,91 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%20AC%20201812%20001'
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - application/xml
+      Irftoken:
+      - hdr5PCKduafvngDBuJAQfuH/koQhDQW4dmtd8TAXQxLv90s54WaBodvxotKNQ6OUjuB7btv9dKOhlf3ye3H5s5iC0KI/Mz2WlGf7uTJ3yCUAkH834DtgNpCP5Ge6OOv5MnWa7/yIzrYa0JwjQUAmGO19mX1Y6UArkmqUgPHsqMFepjdjMoVP3j/88mDUW515nmuUru8Mwcc3lqVcFBiRmm+iafRVHXuumc3o5YTPxbLoYt3UBJbhicAIfyQi6CZ0Ujc2UooOySb0pSShHdiKuQPg01ICYTCGyJMORO4/G5wbT+9CFRdCOs7xhgUM+i/j+SiZ9JTN57E5MngL6aztY5gOYWyuFIewM3EITmkY8A1A4EMslP0STrVzFyiGWCtTKJh1m5OcmpHoD5M1/LdXTMYqbMDV4jME+5CKj5ayrMcOCZMKHOyz83CEq9nkdnqVY0ffiyxv7fD7BR1BCc4b9j55bXetAIsUTZDJMkiUErQ=
+      Partnerid:
+      - "{BE62697A-C2EE-4757-9A86-747A656FF0D7}"
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - private
+      Content-Type:
+      - application/xml; charset=utf-8
+      Server:
+      - Microsoft-IIS/10.0
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Access-Control-Allow-Origin:
+      - "*"
+      Date:
+      - Wed, 29 Apr 2020 12:19:43 GMT
+      Content-Length:
+      - '341'
+    body:
+      encoding: UTF-8
+      string: <WCFRestIRFGeneralLegerResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><details>Impossible
+        de se connecter au serveur distant</details></error></message><datetime>2020-04-29T14:19:41.9099055+02:00</datetime><duration>00:00:01.482</duration></response></WCFRestIRFGeneralLegerResult>
+    http_version: 
+  recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
+- request:
+    method: get
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%20AC%20201812%20002'
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - application/xml
+      Irftoken:
+      - hdr5PCKduafvngDBuJAQfuH/koQhDQW4dmtd8TAXQxLv90s54WaBodvxotKNQ6OUjuB7btv9dKOhlf3ye3H5s5iC0KI/Mz2WlGf7uTJ3yCUAkH834DtgNpCP5Ge6OOv5MnWa7/yIzrYa0JwjQUAmGO19mX1Y6UArkmqUgPHsqMFepjdjMoVP3j/88mDUW515nmuUru8Mwcc3lqVcFBiRmm+iafRVHXuumc3o5YTPxbLoYt3UBJbhicAIfyQi6CZ0Ujc2UooOySb0pSShHdiKuQPg01ICYTCGyJMORO4/G5wbT+9CFRdCOs7xhgUM+i/j+SiZ9JTN57E5MngL6aztY5gOYWyuFIewM3EITmkY8A1A4EMslP0STrVzFyiGWCtTKJh1m5OcmpHoD5M1/LdXTMYqbMDV4jME+5CKj5ayrMcOCZMKHOyz83CEq9nkdnqVY0ffiyxv7fD7BR1BCc4b9j55bXetAIsUTZDJMkiUErQ=
+      Partnerid:
+      - "{BE62697A-C2EE-4757-9A86-747A656FF0D7}"
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - private
+      Content-Type:
+      - application/xml; charset=utf-8
+      Server:
+      - Microsoft-IIS/10.0
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Access-Control-Allow-Origin:
+      - "*"
+      Date:
+      - Wed, 29 Apr 2020 12:20:06 GMT
+      Content-Length:
+      - '341'
+    body:
+      encoding: UTF-8
+      string: <WCFRestIRFGeneralLegerResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><details>Impossible
+        de se connecter au serveur distant</details></error></message><datetime>2020-04-29T14:20:05.3864543+02:00</datetime><duration>00:00:01.031</duration></response></WCFRestIRFGeneralLegerResult>
+    http_version: 
+  recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
+recorded_with: VCR 5.0.0

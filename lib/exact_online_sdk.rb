@@ -8,6 +8,16 @@ class ExactOnlineSdk
     def config
       @config ||= Configuration.new
     end
+
+    def connection
+      Faraday.new(:url => @config.endpoint) do |f|
+        f.response :logger
+        f.request :url_encoded
+        f.request :oauth2, 'token', token_type: :bearer
+        f.request :json
+        f.adapter Faraday.default_adapter
+      end
+    end
   end
 
   class Configuration
@@ -32,26 +42,34 @@ class ExactOnlineSdk
     end
 
     def get_authorize_url(redirect_uri=nil, force=false)
-      Typhoeus::Request.new("#{@config.endpoint}/api/oauth2/auth", params: {
-        client_id:     @config.client_id,
-        redirect_uri:  redirect_uri,
-        response_type: 'code',
-        force_login:   (force ? '1' : '0')
-      }).url
+
+      Faraday.new(:url => "#{@config.endpoint}/api/oauth2/auth") do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.params = {
+          client_id:     @config.client_id,
+          redirect_uri:  redirect_uri,
+          response_type: 'code',
+          force_login:   (force ? '1' : '0')
+        }
+        f.use FaradayMiddleware::FollowRedirects
+      end.get.env[:url].to_s
     end
 
     def get_access_token(code, redirect_uri=nil)
-      @request = Typhoeus::Request.new "#{@config.endpoint}/api/oauth2/token",
-        method: :post,
-        body: {
+      @response = ExactOnlineSdk.connection.post do |request|
+        request.url "/api/oauth2/token"
+        request.headers['Content-Type'] = 'application/json'
+        request.body = {
           code:          code,
           grant_type:    'authorization_code',
           redirect_uri:  redirect_uri,
           client_id:     @config.client_id,
           client_secret: @config.client_secret
-        }
-      @response = @request.run
-      if @response.code == 200
+        }.to_json
+      end
+
+      if @response.status.to_i == 200
         data = JSON.parse @response.body
         @refresh_token = data['refresh_token']
         @access_token  = data['access_token']
@@ -62,16 +80,18 @@ class ExactOnlineSdk
     end
 
     def refresh_tokens
-      @request = Typhoeus::Request.new "#{@config.endpoint}/api/oauth2/token",
-        method: :post,
-        body: {
+      @response = ExactOnlineSdk.connection.post do |request|
+        request.url "/api/oauth2/token"
+        request.headers['Content-Type'] = 'application/json'
+        request.body = {
           refresh_token: @refresh_token,
           grant_type:    'refresh_token',
           client_id:     @config.client_id,
           client_secret: @config.client_secret
-        }
-      @response = @request.run
-      if @response.code == 200
+        }.to_json
+      end
+
+      if @response.status.to_i == 200
         data = JSON.parse @response.body
         @refresh_token = data['refresh_token']
         @access_token  = data['access_token']
@@ -168,30 +188,32 @@ class ExactOnlineSdk
     end
 
     def do_http_post(path, datas=nil, division=current_division, params=nil)
-      url = "#{@config.endpoint}/api/v1/#{division}#{'/' if division}#{path}"
-      @request = Typhoeus::Request.new(
-        url,
-        method:  :post,
-        headers: headers,
-        body:  datas
-      )
-      @response = @request.run
+      url = "/api/v1/#{division}#{'/' if division}#{path}"
+      @response = ExactOnlineSdk.connection.post do |request|
+        request.url url
+        request.headers = headers
+        request.body    = datas
+      end
     end
 
     def do_http_get(path, division, params=nil)
-      url = "#{@config.endpoint}/api/v1/#{division}#{'/' if division}#{path}"
+      url = "/api/v1/#{division}#{'/' if division}#{path}"
       if params
         url += '?' + params.collect {|k, v|
           CGI.escape(k) + '=' + CGI.escape(v.to_s)
         }.join('&')
       end
-      @request = Typhoeus::Request.new url, headers: headers
-      @response = @request.run
+
+      @response = ExactOnlineSdk.connection.get do |request|
+        request.url url
+        request.headers = headers
+      end
+
       parse_response
     end
 
     def parse_response
-      if @response.code.in?([200, 201])
+      if @response.status.in?([200, 201])
         data = JSON.parse @response.body
         @result_count = data['d']['__count'].try(:to_i) if data['d'].is_a? Hash
         _data = data['d'].is_a?(Array) ? data['d'] : data['d']['results']

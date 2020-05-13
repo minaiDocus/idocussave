@@ -87,22 +87,25 @@ class IbizaAPI::Client
 
 
     def run
-      @original = Typhoeus::Request.new(
-        url,
-        method:  @method,
-        body:    @body,
-        headers: {
-          'content-type' => 'application/xml',
-          irfToken: @client.token,
-          partnerID: @client.partner_id
-        }
-      )
+      headers = {'content-type' => 'application/xml',
+        irfToken: '@client.token',
+        partnerID: '@client.partner_id'
+      }
 
-      @client.response.original = @original.run
+      connection = Faraday.new(:url => url) do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.request :url_encoded
+        f.adapter Faraday.default_adapter
+      end
+
+      @original = connection.run_request(@method, url, @body, headers)
+
+      @client.response.original = @original
 
       @callback.after_run(@client.response) if @callback
 
-      @client.response.result || @client.response.code
+      @client.response.result || @client.response.status
     end
   end
 

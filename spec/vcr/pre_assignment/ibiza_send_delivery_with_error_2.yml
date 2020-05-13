@@ -15,7 +15,7 @@ http_interactions:
               <date>2018-12-18</date>
               <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=epmv3hqmzbculw2wtqiewciaamjva4i7cezxkt2n5ytngk1kl4</voucherID>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
               <accountNumber>601109</accountNumber>
               <accountName>601109</accountName>
               <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
@@ -26,7 +26,7 @@ http_interactions:
               <date>2018-12-18</date>
               <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=epmv3hqmzbculw2wtqiewciaamjva4i7cezxkt2n5ytngk1kl4</voucherID>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
               <accountNumber>471000</accountNumber>
               <accountName>471000</accountName>
               <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
@@ -60,64 +60,29 @@ http_interactions:
               <date>2018-12-18</date>
               <piece>AC0003 AC 201812 001</piece>
               <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=epmv3hqmzbculw2wtqiewciaamjva4i7cezxkt2n5ytngk1kl4</voucherID>
+              <voucherID>https://my.idocus.com/account/documents/pieces/2/download/original?token=mmcxnqnjhthh8o3henenduy7djzq6oagfax9cwrpp9x86imfn8</voucherID>
               <accountNumber>471001</accountNumber>
               <accountName>471001</accountName>
               <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 001</description>
-              <credit>202.25</credit>
-            </importEntry>
-            <importEntry>
-              <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 002</piece>
-              <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download/original?token=ini62d31duju15rl6r6ep3j915ttdzsxjh9lhw1ufza4b8r1n9</voucherID>
-              <accountNumber>601109</accountNumber>
-              <accountName>601109</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 002</description>
-              <debit>1213.48</debit>
-            </importEntry>
-            <importEntry>
-              <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 002</piece>
-              <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download/original?token=ini62d31duju15rl6r6ep3j915ttdzsxjh9lhw1ufza4b8r1n9</voucherID>
-              <accountNumber>471000</accountNumber>
-              <accountName>471000</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 002</description>
-              <credit>1011.23</credit>
-            </importEntry>
-            <importEntry>
-              <journalRef>NotFound</journalRef>
-              <date>2018-12-18</date>
-              <piece>AC0003 AC 201812 002</piece>
-              <voucherRef>12345</voucherRef>
-              <voucherID>https://my.idocus.com/account/documents/pieces/3/download/original?token=ini62d31duju15rl6r6ep3j915ttdzsxjh9lhw1ufza4b8r1n9</voucherID>
-              <accountNumber>471001</accountNumber>
-              <accountName>471001</accountName>
-              <description>2018-12-18 - 500.25 - NotFound - AC0003 AC 201812 002</description>
               <credit>202.25</credit>
             </importEntry>
           </wsImportEntry>
         </importEntryRequest>
     headers:
       User-Agent:
-      - Faraday v1.0.0
+      - Typhoeus - https://github.com/typhoeus/typhoeus
       Content-Type:
       - application/xml
       Irftoken:
-      - "@client.token"
+      - hdr5PCKduafvngDBuJAQfuH/koQhDQW4dmtd8TAXQxLv90s54WaBodvxotKNQ6OUjuB7btv9dKOhlf3ye3H5s5iC0KI/Mz2WlGf7uTJ3yCUAkH834DtgNpCP5Ge6OOv5MnWa7/yIzrYa0JwjQUAmGO19mX1Y6UArkmqUgPHsqMFepjdjMoVP3j/88mDUW515nmuUru8Mwcc3lqVcFBiRmm+iafRVHXuumc3o5YTPxbLoYt3UBJbhicAIfyQi6CZ0Ujc2UooOySb0pSShHdiKuQPg01ICYTCGyJMORO4/G5wbT+9CFRdCOs7xhgUM+i/j+SiZ9JTN57E5MngL6aztY5gOYWyuFIewM3EITmkY8A1A4EMslP0STrVzFyiGWCtTKJh1m5OcmpHoD5M1/LdXTMYqbMDV4jME+5CKj5ayrMcOCZMKHOyz83CEq9nkdnqVY0ffiyxv7fD7BR1BCc4b9j55bXetAIsUTZDJMkiUErQ=
       Partnerid:
-      - "@client.partner_id"
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
+      - "{BE62697A-C2EE-4757-9A86-747A656FF0D7}"
+      Expect:
+      - ''
   response:
     status:
-      code: 400
-      message: Bad Request
+      code: 200
+      message: OK
     headers:
       Cache-Control:
       - private
@@ -132,14 +97,14 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Date:
-      - Wed, 13 May 2020 09:30:22 GMT
+      - Thu, 23 Apr 2020 07:20:12 GMT
       Content-Length:
-      - '487'
+      - '331'
     body:
       encoding: UTF-8
       string: <WCFRestIRFEntriesResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><category>Mouvement
         comptable</category><state>4</state><message>Le journal NotFound est inconnu</message><reference>NotFound
         - 05/12/2018</reference></error></message><datetime>2018-12-05T15:08:04.7571465+01:00</datetime><duration>00:00:08.188</duration></response></WCFRestIRFEntriesResult>
-    http_version: null
+    http_version: 
   recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
-recorded_with: VCR 5.1.0
+recorded_with: VCR 5.0.0

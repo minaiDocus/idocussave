@@ -52,21 +52,20 @@ class McfApi
       remote_storage = file_paths.first.split("/")[0]
       file_paths = file_paths.map { |path| path.sub("#{remote_storage}/", "") }
 
-      @request = Typhoeus::Request.new(
-        'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile',
-        method:  :post,
-        headers: { accept: :json },
-        timeout: 20,
-        body:    {
+      url = 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile'
+
+      @response = connection(url).post do |request|
+        request.headers = { accept: :json }
+        request.options.timeout = 20
+        request.body = {
           AccessToken:    @access_token,
           AttributeName:  "Storage",
           AttributeValue: remote_storage,
           ListPath:       file_paths
         }
-      )
-      @response = @request.run
+      end
       
-      if @response.code == 200
+      if @response.status.to_i == 200
         if @response.body.match(/(access token doesn't exist|argument missing AccessToken)/i)
           raise Errors::Unauthorized
         else
@@ -77,43 +76,48 @@ class McfApi
             { path: File.join(remote_storage, info['Path']), md5: info['Md5'] }
           end
         end
-      elsif @response.code.nil? || @response.code == 0
+      elsif @response.status.to_i == 0
         []
       else
-        raise Errors::Unknown.new("#{@response.code} / verif=> #{@response.body}")
+        raise Errors::Unknown.new("#{@response.status} / verif=> #{@response.body}")
       end
     end
 
     private
 
+    def connection(url)
+      Faraday.new(:url => url) do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.response :json, :content_type => 'application/json'
+        f.adapter Faraday.default_adapter
+      end
+    end
+
     def handle_response
-      if @response.code == 200
+      if @response.status.to_i == 200
         data = JSON.parse(@response.body)
         if data['Status'] == 600 || data['CodeError'] == 600
           data
         elsif data['Message'].match(/(access token doesn't exist|argument missing AccessToken)/i)
           raise Errors::Unauthorized
         else
-          raise Errors::Unknown.new("#{@response.code} / response=> #{data.to_s}")
+          raise Errors::Unknown.new("#{@response.status} / response=> #{data.to_s}")
         end
       else
-        error_mess = @response.code if @response.code.present?
-        error_mess = @response.return_code if @response.return_code.present?
+        error_mess = @response.status if @response.status.present?
         error_mess = @response.body if @response.body.present?
 
-        raise Errors::Unknown.new("#{@response.code} / response=> #{error_mess}")
+        raise Errors::Unknown.new("#{@response.status} / response=> #{error_mess}")
       end
     end
 
     def send_request(uri, params)
-      @request = Typhoeus::Request.new(
-        uri,
-        method:  :post,
-        headers: { accept: :json },
-        timeout: 20,
-        body: params   
-      )
-      @request.run
+      @response = connection(uri).post do |request|
+        request.headers = { accept: :json }
+        request.options.timeout = 20
+        request.body = params.to_json
+      end
     end
 
   end

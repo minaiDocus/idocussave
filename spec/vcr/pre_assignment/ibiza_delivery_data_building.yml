@@ -2,90 +2,144 @@
 http_interactions:
 - request:
     method: get
-    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%20AC%20201812%20001'
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%2520AC%2520201812%2520001'
     body:
       encoding: UTF-8
-      string: ''
+      base64_string: ''
     headers:
       User-Agent:
-      - Typhoeus - https://github.com/typhoeus/typhoeus
+      - Faraday v1.0.0
       Content-Type:
       - application/xml
       Irftoken:
-      - hdr5PCKduafvngDBuJAQfuH/koQhDQW4dmtd8TAXQxLv90s54WaBodvxotKNQ6OUjuB7btv9dKOhlf3ye3H5s5iC0KI/Mz2WlGf7uTJ3yCUAkH834DtgNpCP5Ge6OOv5MnWa7/yIzrYa0JwjQUAmGO19mX1Y6UArkmqUgPHsqMFepjdjMoVP3j/88mDUW515nmuUru8Mwcc3lqVcFBiRmm+iafRVHXuumc3o5YTPxbLoYt3UBJbhicAIfyQi6CZ0Ujc2UooOySb0pSShHdiKuQPg01ICYTCGyJMORO4/G5wbT+9CFRdCOs7xhgUM+i/j+SiZ9JTN57E5MngL6aztY5gOYWyuFIewM3EITmkY8A1A4EMslP0STrVzFyiGWCtTKJh1m5OcmpHoD5M1/LdXTMYqbMDV4jME+5CKj5ayrMcOCZMKHOyz83CEq9nkdnqVY0ffiyxv7fD7BR1BCc4b9j55bXetAIsUTZDJMkiUErQ=
+      - "@client.token"
       Partnerid:
-      - "{BE62697A-C2EE-4757-9A86-747A656FF0D7}"
-      Expect:
-      - ''
+      - "@client.partner_id"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
     headers:
-      Cache-Control:
-      - private
       Content-Type:
-      - application/xml; charset=utf-8
+      - text/html
       Server:
       - Microsoft-IIS/10.0
-      X-Aspnet-Version:
-      - 4.0.30319
       X-Powered-By:
       - ASP.NET
       Access-Control-Allow-Origin:
       - "*"
       Date:
-      - Wed, 29 Apr 2020 12:19:43 GMT
+      - Wed, 13 May 2020 09:29:55 GMT
+      Connection:
+      - close
       Content-Length:
-      - '341'
+      - '1259'
     body:
       encoding: UTF-8
-      string: <WCFRestIRFGeneralLegerResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><details>Impossible
-        de se connecter au serveur distant</details></error></message><datetime>2020-04-29T14:19:41.9099055+02:00</datetime><duration>00:00:01.482</duration></response></WCFRestIRFGeneralLegerResult>
-    http_version: 
+      base64_string: |
+        PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBYSFRNTCAxLjAg
+        U3RyaWN0Ly9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL3hodG1sMS9EVEQv
+        eGh0bWwxLXN0cmljdC5kdGQiPg0KPGh0bWwgeG1sbnM9Imh0dHA6Ly93d3cu
+        dzMub3JnLzE5OTkveGh0bWwiPg0KPGhlYWQ+DQo8bWV0YSBodHRwLWVxdWl2
+        PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD1p
+        c28tODg1OS0xIi8+DQo8dGl0bGU+NDA0IC0gRmljaGllciBvdSBy6XBlcnRv
+        aXJlIGludHJvdXZhYmxlLjwvdGl0bGU+DQo8c3R5bGUgdHlwZT0idGV4dC9j
+        c3MiPg0KPCEtLQ0KYm9keXttYXJnaW46MDtmb250LXNpemU6LjdlbTtmb250
+        LWZhbWlseTpWZXJkYW5hLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlm
+        O2JhY2tncm91bmQ6I0VFRUVFRTt9DQpmaWVsZHNldHtwYWRkaW5nOjAgMTVw
+        eCAxMHB4IDE1cHg7fSANCmgxe2ZvbnQtc2l6ZToyLjRlbTttYXJnaW46MDtj
+        b2xvcjojRkZGO30NCmgye2ZvbnQtc2l6ZToxLjdlbTttYXJnaW46MDtjb2xv
+        cjojQ0MwMDAwO30gDQpoM3tmb250LXNpemU6MS4yZW07bWFyZ2luOjEwcHgg
+        MCAwIDA7Y29sb3I6IzAwMDAwMDt9IA0KI2hlYWRlcnt3aWR0aDo5NiU7bWFy
+        Z2luOjAgMCAwIDA7cGFkZGluZzo2cHggMiUgNnB4IDIlO2ZvbnQtZmFtaWx5
+        OiJ0cmVidWNoZXQgTVMiLCBWZXJkYW5hLCBzYW5zLXNlcmlmO2NvbG9yOiNG
+        RkY7DQpiYWNrZ3JvdW5kLWNvbG9yOiM1NTU1NTU7fQ0KI2NvbnRlbnR7bWFy
+        Z2luOjAgMCAwIDIlO3Bvc2l0aW9uOnJlbGF0aXZlO30NCi5jb250ZW50LWNv
+        bnRhaW5lcntiYWNrZ3JvdW5kOiNGRkY7d2lkdGg6OTYlO21hcmdpbi10b3A6
+        OHB4O3BhZGRpbmc6MTBweDtwb3NpdGlvbjpyZWxhdGl2ZTt9DQotLT4NCjwv
+        c3R5bGU+DQo8L2hlYWQ+DQo8Ym9keT4NCjxkaXYgaWQ9ImhlYWRlciI+PGgx
+        PkVycmV1ciBkZSBzZXJ2ZXVyPC9oMT48L2Rpdj4NCjxkaXYgaWQ9ImNvbnRl
+        bnQiPg0KIDxkaXYgY2xhc3M9ImNvbnRlbnQtY29udGFpbmVyIj48ZmllbGRz
+        ZXQ+DQogIDxoMj40MDQgLSBGaWNoaWVyIG91IHLpcGVydG9pcmUgaW50cm91
+        dmFibGUuPC9oMj4NCiAgPGgzPkxhIHJlc3NvdXJjZSBxdWUgdm91cyByZWNo
+        ZXJjaGV6IGEgcGV1dC3qdHJlIOl06SBzdXBwcmlt6WUgb3UgcmVub21t6WUs
+        IG91IGVzdCB0ZW1wb3JhaXJlbWVudCBpbmRpc3BvbmlibGUuPC9oMz4NCiA8
+        L2ZpZWxkc2V0PjwvZGl2Pg0KPC9kaXY+DQo8L2JvZHk+DQo8L2h0bWw+DQo=
+    http_version: null
   recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
 - request:
     method: get
-    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%20AC%20201812%20002'
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=piece='AC0003%2520AC%2520201812%2520002'
     body:
       encoding: UTF-8
-      string: ''
+      base64_string: ''
     headers:
       User-Agent:
-      - Typhoeus - https://github.com/typhoeus/typhoeus
+      - Faraday v1.0.0
       Content-Type:
       - application/xml
       Irftoken:
-      - hdr5PCKduafvngDBuJAQfuH/koQhDQW4dmtd8TAXQxLv90s54WaBodvxotKNQ6OUjuB7btv9dKOhlf3ye3H5s5iC0KI/Mz2WlGf7uTJ3yCUAkH834DtgNpCP5Ge6OOv5MnWa7/yIzrYa0JwjQUAmGO19mX1Y6UArkmqUgPHsqMFepjdjMoVP3j/88mDUW515nmuUru8Mwcc3lqVcFBiRmm+iafRVHXuumc3o5YTPxbLoYt3UBJbhicAIfyQi6CZ0Ujc2UooOySb0pSShHdiKuQPg01ICYTCGyJMORO4/G5wbT+9CFRdCOs7xhgUM+i/j+SiZ9JTN57E5MngL6aztY5gOYWyuFIewM3EITmkY8A1A4EMslP0STrVzFyiGWCtTKJh1m5OcmpHoD5M1/LdXTMYqbMDV4jME+5CKj5ayrMcOCZMKHOyz83CEq9nkdnqVY0ffiyxv7fD7BR1BCc4b9j55bXetAIsUTZDJMkiUErQ=
+      - "@client.token"
       Partnerid:
-      - "{BE62697A-C2EE-4757-9A86-747A656FF0D7}"
-      Expect:
-      - ''
+      - "@client.partner_id"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
     headers:
-      Cache-Control:
-      - private
       Content-Type:
-      - application/xml; charset=utf-8
+      - text/html
       Server:
       - Microsoft-IIS/10.0
-      X-Aspnet-Version:
-      - 4.0.30319
       X-Powered-By:
       - ASP.NET
       Access-Control-Allow-Origin:
       - "*"
       Date:
-      - Wed, 29 Apr 2020 12:20:06 GMT
+      - Wed, 13 May 2020 09:29:55 GMT
+      Connection:
+      - close
       Content-Length:
-      - '341'
+      - '1259'
     body:
       encoding: UTF-8
-      string: <WCFRestIRFGeneralLegerResult xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><response><result>Error</result><message><error><details>Impossible
-        de se connecter au serveur distant</details></error></message><datetime>2020-04-29T14:20:05.3864543+02:00</datetime><duration>00:00:01.031</duration></response></WCFRestIRFGeneralLegerResult>
-    http_version: 
+      base64_string: |
+        PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBYSFRNTCAxLjAg
+        U3RyaWN0Ly9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL3hodG1sMS9EVEQv
+        eGh0bWwxLXN0cmljdC5kdGQiPg0KPGh0bWwgeG1sbnM9Imh0dHA6Ly93d3cu
+        dzMub3JnLzE5OTkveGh0bWwiPg0KPGhlYWQ+DQo8bWV0YSBodHRwLWVxdWl2
+        PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD1p
+        c28tODg1OS0xIi8+DQo8dGl0bGU+NDA0IC0gRmljaGllciBvdSBy6XBlcnRv
+        aXJlIGludHJvdXZhYmxlLjwvdGl0bGU+DQo8c3R5bGUgdHlwZT0idGV4dC9j
+        c3MiPg0KPCEtLQ0KYm9keXttYXJnaW46MDtmb250LXNpemU6LjdlbTtmb250
+        LWZhbWlseTpWZXJkYW5hLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlm
+        O2JhY2tncm91bmQ6I0VFRUVFRTt9DQpmaWVsZHNldHtwYWRkaW5nOjAgMTVw
+        eCAxMHB4IDE1cHg7fSANCmgxe2ZvbnQtc2l6ZToyLjRlbTttYXJnaW46MDtj
+        b2xvcjojRkZGO30NCmgye2ZvbnQtc2l6ZToxLjdlbTttYXJnaW46MDtjb2xv
+        cjojQ0MwMDAwO30gDQpoM3tmb250LXNpemU6MS4yZW07bWFyZ2luOjEwcHgg
+        MCAwIDA7Y29sb3I6IzAwMDAwMDt9IA0KI2hlYWRlcnt3aWR0aDo5NiU7bWFy
+        Z2luOjAgMCAwIDA7cGFkZGluZzo2cHggMiUgNnB4IDIlO2ZvbnQtZmFtaWx5
+        OiJ0cmVidWNoZXQgTVMiLCBWZXJkYW5hLCBzYW5zLXNlcmlmO2NvbG9yOiNG
+        RkY7DQpiYWNrZ3JvdW5kLWNvbG9yOiM1NTU1NTU7fQ0KI2NvbnRlbnR7bWFy
+        Z2luOjAgMCAwIDIlO3Bvc2l0aW9uOnJlbGF0aXZlO30NCi5jb250ZW50LWNv
+        bnRhaW5lcntiYWNrZ3JvdW5kOiNGRkY7d2lkdGg6OTYlO21hcmdpbi10b3A6
+        OHB4O3BhZGRpbmc6MTBweDtwb3NpdGlvbjpyZWxhdGl2ZTt9DQotLT4NCjwv
+        c3R5bGU+DQo8L2hlYWQ+DQo8Ym9keT4NCjxkaXYgaWQ9ImhlYWRlciI+PGgx
+        PkVycmV1ciBkZSBzZXJ2ZXVyPC9oMT48L2Rpdj4NCjxkaXYgaWQ9ImNvbnRl
+        bnQiPg0KIDxkaXYgY2xhc3M9ImNvbnRlbnQtY29udGFpbmVyIj48ZmllbGRz
+        ZXQ+DQogIDxoMj40MDQgLSBGaWNoaWVyIG91IHLpcGVydG9pcmUgaW50cm91
+        dmFibGUuPC9oMj4NCiAgPGgzPkxhIHJlc3NvdXJjZSBxdWUgdm91cyByZWNo
+        ZXJjaGV6IGEgcGV1dC3qdHJlIOl06SBzdXBwcmlt6WUgb3UgcmVub21t6WUs
+        IG91IGVzdCB0ZW1wb3JhaXJlbWVudCBpbmRpc3BvbmlibGUuPC9oMz4NCiA8
+        L2ZpZWxkc2V0PjwvZGl2Pg0KPC9kaXY+DQo8L2JvZHk+DQo8L2h0bWw+DQo=
+    http_version: null
   recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
-recorded_with: VCR 5.0.0
+recorded_with: VCR 5.1.0

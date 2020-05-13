@@ -26,16 +26,14 @@ describe McfProcessor do
       allow(@process_return).to receive(:valid?).and_return(true)
       McfProcessor.new(@mcf_document).execute_process
 
-      expect(@mcf_document.content_file_size).to eq 15
-      expect(@mcf_document.content_file_name).to eq 'test.pdf'
-      expect(@mcf_document.content.path).to eq '/home/infodrm/Projects/idocussave/files/test/mcf_documents/1/original/test.pdf'
+      expect(@mcf_document.cloud_content_object.filename).to eq 'test.pdf'
+      expect(@mcf_document.cloud_content_object.path).to match /tmp\/McfDocument\/20200513\/([0-9]+)\/test\.pdf/
       expect(@mcf_document.file64).to be nil
       expect(@mcf_document.user).to eq @user
     end
 
     it 'Requests a new file to MCF if content is nil', :request_resend_file do
-      @mcf_document.update(content: nil)
-      @mcf_document.reload
+      #@mcf_document.reload
 
       McfProcessor.new(@mcf_document).execute_process
 
@@ -80,7 +78,7 @@ describe McfProcessor do
     end
 
     it 'returns state: "needs_retake" when content is nil', :needs_retake do
-      @mcf_document.update(content: nil, is_generated: false)
+      @mcf_document.update(is_generated: false)
       @mcf_document.reload
 
       McfProcessor.new(@mcf_document).execute_process

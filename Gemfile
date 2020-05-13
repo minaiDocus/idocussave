@@ -48,7 +48,8 @@ gem 'rabl'
 
 # Query & Network management
 gem 'net-sftp'
-gem 'typhoeus'
+gem 'faraday'
+gem 'faraday_middleware'
 
 # Cache
 gem 'dalli'
@@ -138,9 +139,6 @@ gem 'ruby-progressbar', require: false
 
 # Boot
 gem 'bootsnap'
-
-# API Calls
-gem 'faraday'
 
 # JSON Serialization
 gem 'fast_jsonapi'

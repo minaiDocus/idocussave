@@ -127,7 +127,7 @@ private
       next if preseizure.exact_online_id.present?
 
       rep     = client.send type.to_sym, payload.except('preseizure_id').to_json.to_s
-      tmp_rep = JSON.parse(rep.response_body)
+      tmp_rep = JSON.parse(rep.body)
 
       if tmp_rep['error'].present?
         message = tmp_rep['error']['message']['value'] || 'erreur inconnu'

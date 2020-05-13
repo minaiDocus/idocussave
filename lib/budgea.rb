@@ -41,14 +41,12 @@ class Budgea
 
     def destroy_user
       if @access_token.present?
-        @request = Typhoeus::Request.new(
-          @settings[:base_url] + '/users/me',
-          method:  :delete,
-          proxy:   @settings[:proxy],
-          headers: headers
-        )
-        @response = @request.run
-        if @response.code == 200
+        @response = connection.delete do |request|
+          request.url "/users/me"
+          request.headers = headers
+        end
+
+        if @response.status.to_i == 200
           @access_token = nil
           true
         else
@@ -60,78 +58,71 @@ class Budgea
     end
 
     def get_categories
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/categories',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: { accept: :json },
-        params:  authentification_params
-      )
+      @response = connection.get do |request|
+        request.url '/categories'
+        request.headers['Accept'] = 'application/json'
+        request.params = authentification_params
+        request.body = { application: 'sharedAccess' }
+      end
+
       run_and_parse_response 'categories'
     end
 
     def get_new_access_token(user_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/#{user_id}/token",
-        method:  :post,
-        proxy:   @settings[:proxy],
-        headers: headers,
-        body:  { application: 'sharedAccess' }
-      )
+      @response = connection.post do |request|
+        request.url "/users/#{user_id}/token"
+        request.headers = headers
+        request.body = { application: 'sharedAccess' }
+      end
+
       run_and_parse_response
     end
 
     def delete_access_token
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/token',
-        method:  :delete,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      @response = @request.run
-      @response.code == 200
+      @response = connection.delete do |request|
+        request.url '/users/me/token'
+        request.headers = headers
+      end
+
+      @response.status.to_i == 200
     end
 
     def get_all_accounts(connexion_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/connections/#{connexion_id}/accounts?all",
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
+      @response = connection.get do |request|
+        request.url "/users/me/connections/#{connexion_id}/accounts?all"
+        request.headers = headers
+      end
+
       run_and_parse_response 'accounts'
     end
 
     def get_accounts ##used by transaction fetcher
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + '/users/me/accounts',
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
+      @response = connection.get do |request|
+        request.url "/users/me/accounts"
+        request.headers = headers
+      end
+
       run_and_parse_response 'accounts'
     end
 
     def get_transactions(account_id, min_date=nil, max_date=nil) ##used by transaction fetcher
       request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions#{request_filters}",
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
+
+      @response = connection.get do |request|
+        request.url "/users/me/accounts/#{account_id}/transactions#{request_filters}"
+        request.headers = headers
+      end
+
       run_and_parse_response 'transactions'
     end
 
     def get_file(document_id)
-      @request = Typhoeus::Request.new(
-        @settings[:base_url] + "/users/me/documents/#{document_id}/file",
-        method:  :get,
-        proxy:   @settings[:proxy],
-        headers: headers
-      )
-      @response = @request.run
-      if @response.code == 200
+      @response = connection.get do |request|
+        request.url "/users/me/documents/#{document_id}/file"
+        request.headers = headers
+      end
+
+      if @response.status.to_i == 200
         file = Tempfile.new(['', '.pdf'])
         file.write @response.body.force_encoding('UTF-8')
         file.close
@@ -146,17 +137,25 @@ class Budgea
     end
 
   private
+    def connection
+      Faraday.new(:url => @settings[:base_url]) do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.adapter Faraday.default_adapter
+        f.proxy = @settings[:proxy]
+      end
+    end
 
     #Fix retriever freez running state
     def trigger_connexion(retriever)
       if retriever.state == 'running' && retriever.budgea_id.present?
         @error_message = nil
-        @request = Typhoeus::Request.new(
-          @settings[:base_url] + "/users/me/connections/#{retriever.budgea_id}",
-          method:  :put,
-          proxy:   @settings[:proxy],
-          headers: headers
-        )
+
+        @response = connection.put do |request|
+          request.url "/users/me/connections/#{retriever.budgea_id}"
+          request.headers = headers
+        end
+
         result = run_and_parse_response(nil)
 
         if !@error_message.present?
@@ -179,7 +178,7 @@ class Budgea
 
     def headers
       {
-        accept: :json,
+        'Accept' => 'application/json',
         'Authorization' => "Bearer #{@access_token}"
       }
     end
@@ -192,10 +191,9 @@ class Budgea
     end
 
     def run_and_parse_response(collection_name=nil)
-      @response = @request.run
-      if @response.code.in? [200, 202, 204, 400, 403, 500, 503]
+      if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
         result = JSON.parse(@response.body)
-        @error_message = case result['code']
+        @error_message = case result['status']
                          when 'wrongpass'
                            'Mot de passe incorrect.'
                          when 'websiteUnavailable'
