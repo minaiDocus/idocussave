@@ -212,7 +212,7 @@ class ProcessRetrievedData
                 retriever.update(budgea_error_message: connection['error_message'].presence || connection['error'])
                 retriever.fail_budgea_connection
 
-                RetrieverNotification.new(retriever).notify_bug
+                RetrieverNotification.new(retriever).notify_not_registered_error
               elsif is_new_document_present || is_new_transaction_present || retriever.error?
                 retriever.success_budgea_connection
 

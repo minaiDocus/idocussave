@@ -79,11 +79,31 @@ class RetrieverNotification
         notification.notice_type = 'retriever_bug'
         notification.title       = 'Automate - Bug'
         if user == @retriever.user
-          notification.message   = "Votre automate #{name} ne fonctionne pas correctement."
+          notification.message   = "Votre automate #{name} ne fonctionne pas correctement. #{@retriever.budgea_error_message.to_s}"
         else
-          notification.message   = "L'automate #{name} du dossier #{user_info} ne fonctionne pas correctement."
+          notification.message   = "L'automate #{name} du dossier #{user_info} ne fonctionne pas correctement. #{@retriever.budgea_error_message.to_s}"
         end
         notification.save
+      end
+    end
+  end
+
+  def notify_not_registered_error
+    if @retriever.budgea_error_message.present?
+      users.map do |user|
+        if user.notify.try(:r_bug)
+          notification = Notification.new
+          notification.user        = user
+          notification.url         = url_for user
+          notification.notice_type = 'retriever_bug'
+          notification.title       = 'Automate - Erreur'
+          if user == @retriever.user
+            notification.message   = "Votre automate #{name} a rencontré l'erreur suivante: #{@retriever.budgea_error_message.to_s}"
+          else
+            notification.message   = "L'automate #{name} du dossier #{user_info} a rencontré l'erreur suivante: #{@retriever.budgea_error_message.to_s}"
+          end
+          notification.save
+        end
       end
     end
   end
