@@ -280,17 +280,20 @@ class Pack::Piece < ApplicationRecord
 
       DocumentTools.sign_pdf(content_file_path, to_sign_file)
 
-      if self.save && File.exist?(to_sign_file.to_s)
-        self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename)
+      if File.exist?(to_sign_file.to_s)
+        self.is_signed = true
+        self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename) if self.save
       else
         LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})")
+        self.is_signed = false
+        self.save
 
-        Pack::Piece.delay_for(5.minutes, queue: :low).correct_pdf_signature_of(self.id)
+        Pack::Piece.delay_for(20.minutes, queue: :low).correct_pdf_signature_of(self.id)
 
         log_document = {
           name: "Pack::Piece",
           erreur_type: "Piece can't be saved or signed file not genereted (#{to_sign_file.to_s}",
-          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
             validation_model: self.valid?,
             file_to_sign_exist: File.exist?(to_sign_file.to_s),
@@ -301,17 +304,18 @@ class Pack::Piece < ApplicationRecord
           }
         }
         ErrorScriptMailer.error_notification(log_document).deliver
-
       end
     rescue => e
       LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})")
+      self.is_signed = false
+      self.save
 
       Pack::Piece.delay_for(2.hours, queue: :low).correct_pdf_signature_of(self.id)
 
       log_document = {
         name: "Pack::Piece",
         erreur_type: "Piece - Signing rescue",
-        date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {
           validation_model: self.valid?,
           file_to_sign: to_sign_file.to_s,
@@ -322,7 +326,6 @@ class Pack::Piece < ApplicationRecord
         }
       }
       ErrorScriptMailer.error_notification(log_document).deliver
-
     end
   end
 
