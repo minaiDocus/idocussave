@@ -359,7 +359,7 @@ class TempDocument < ApplicationRecord
   end
 
   def is_bundle_needed?
-    (self.scanned? || self.pages_number > 2) && self.temp_pack.is_bundle_needed? && !self.from_ibizabox?
+    (self.scanned? || self.pages_number > 2) && self.temp_pack.is_bundle_needed? && !self.from_ibizabox? && !self.retrieved?
   end
 
   def corruption_notified
