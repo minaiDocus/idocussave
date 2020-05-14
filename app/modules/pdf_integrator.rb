@@ -54,6 +54,7 @@ class PdfIntegrator
 
     log_document = {
         name: "PdfIntegrator",
+        error_group: "[pdf-integrator] file corrupted, forcing to correct",
         erreur_type: "File corrupted, forcing to correct ...",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {

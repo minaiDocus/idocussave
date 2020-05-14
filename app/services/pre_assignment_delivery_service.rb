@@ -103,6 +103,7 @@ class PreAssignmentDeliveryService
     rescue => e
       log_document = {
         name: "PreAssignmentDeliveryService",
+        error_group: "[pre-assignment-delivery-service] active storage, can't read file",
         erreur_type: "Active Storage, can't read file",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {
@@ -132,6 +133,7 @@ class PreAssignmentDeliveryService
     rescue => e
       log_document = {
         name: "PreAssignmentDeliveryService",
+        error_group: "[pre-assignment-delivery-service] active storage, can't read file",
         erreur_type: "Active Storage, can't read file",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {

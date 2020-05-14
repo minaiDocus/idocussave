@@ -229,6 +229,7 @@ class Pack::Piece < ApplicationRecord
     unless temp_document
       log_document = {
           name: "Pack::Piece",
+          error_group: "[pack-piece] piece without temp_document - recreate_pdf",
           erreur_type: "Piece without temp_document - recreate_pdf",
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {
@@ -292,6 +293,7 @@ class Pack::Piece < ApplicationRecord
 
         log_document = {
           name: "Pack::Piece",
+          error_group: "[pack-piece] piece can't be saved or signed file not genereted",
           erreur_type: "Piece can't be saved or signed file not genereted (#{to_sign_file.to_s}",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
@@ -314,6 +316,7 @@ class Pack::Piece < ApplicationRecord
 
       log_document = {
         name: "Pack::Piece",
+        error_group: "[pack-piece] piece signing rescue",
         erreur_type: "Piece - Signing rescue",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {

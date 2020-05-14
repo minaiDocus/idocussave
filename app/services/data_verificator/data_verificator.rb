@@ -29,6 +29,8 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::TempDocumentDuplicated.new().execute
 
+    @mail_infos << DataVerificator::ErrorScriptMailerInfo.new().execute
+
     daily_mail
   end
 

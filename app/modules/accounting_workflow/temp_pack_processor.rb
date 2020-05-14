@@ -150,6 +150,7 @@ class AccountingWorkflow::TempPackProcessor
       if !@original_doc_merged || @pack_locked
         log_document = {
           name: "AccountingWorkflow::TempPackProcessor",
+          error_group: "[accounting-workflow-temp-pack-processor] recreate bundle all document, pack id",
           erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
@@ -220,6 +221,7 @@ class AccountingWorkflow::TempPackProcessor
       rescue => e
         log_document = {
           name: "AccountingWorkflow::TempPackProcessor",
+          error_group: "[accounting-workflow-temp-pack-processor] piece file not generated",
           erreur_type: "Piece file not generated",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
@@ -237,6 +239,7 @@ class AccountingWorkflow::TempPackProcessor
     else
       log_document = {
         name: "AccountingWorkflow::TempPackProcessor",
+        error_group: "[accounting-workflow-temp-pack-processor] piece not saved",
         erreur_type: "Piece not saved",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {

@@ -16,6 +16,7 @@ class MyCompanyFilesController < ApplicationController
       if !mcf_document.persisted?
         log_document = {
           name: "MyCompanyFilesController",
+          error_group: "[my-company-files-controller] mcf - document not persisted",
           erreur_type: "[MCF] - Document not persisted",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {

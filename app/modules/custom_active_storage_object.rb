@@ -139,6 +139,7 @@ class CustomActiveStorageObject
 
         log_document = {
             name: "CustomActiveStorageObject",
+            error_group: "[custom-active-storage-object] not generated file",
             erreur_type: "Active Storage, Not generated file",
             date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
             more_information: {
@@ -162,6 +163,7 @@ class CustomActiveStorageObject
 
       log_document = {
         name: "CustomActiveStorageObject",
+        error_group: "[custom-active-storage-object] generate file retry",
         erreur_type: "Active Storage, Generate File Retry",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {

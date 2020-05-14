@@ -18,6 +18,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
         log_document = {
           name: "AccountingWorkflow::SendPieceToPreAssignment",
+          error_group: "[accounting-workflow-send-piece-to-pre-assignment] re-init pre assignment state",
           erreur_type: "Re-init pre assignment state",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {

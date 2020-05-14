@@ -26,6 +26,7 @@ class RetrievedDocument
 
     log_document = {
       name: "RetrievedDocument",
+      error_group: "[retrieved-document] retry get file from retriever",
       erreur_type: "Retry get file from retriever : #{retriever.name.to_s}",
       date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
       more_information: {

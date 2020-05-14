@@ -45,6 +45,7 @@ class DebitMandateResponseService
 
       log_document = {
           name: "DebitMandateResponseService",
+          error_group: "[debit-mandates-response-service] error slimpay",
           erreur_type: "Error Slimpay",
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {

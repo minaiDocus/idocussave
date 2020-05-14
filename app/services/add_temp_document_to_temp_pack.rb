@@ -85,6 +85,7 @@ class AddTempDocumentToTempPack
         else
           log_document = {
             name: "AddTempDocumentToTempPack",
+            error_group: "[add-temp-document-to-temp-pack] temp document not saved",
             erreur_type: "Temp Document not saved",
             date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
             more_information: {

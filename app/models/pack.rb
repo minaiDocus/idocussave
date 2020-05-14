@@ -424,6 +424,7 @@ class Pack < ApplicationRecord
     else
      log_document = {
         name: "Pack",
+        error_group: "[pack] Pdftk fail merged",
         erreur_type: "Pdftk fail merged",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {
