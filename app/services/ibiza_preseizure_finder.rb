@@ -33,7 +33,7 @@ class IbizaPreseizureFinder
       preseizure.operation_name
     end
 
-    client.company(user.ibiza_id).grandlivregeneral?(URI.escape("q=piece='#{piece_name}'"))
+    client.company(user.ibiza_id).grandlivregeneral?("q=piece='#{piece_name}'")
 
     if client.response.success?
       response = Nokogiri::XML client.response.body.force_encoding('UTF-8')

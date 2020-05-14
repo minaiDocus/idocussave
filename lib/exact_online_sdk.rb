@@ -12,7 +12,6 @@ class ExactOnlineSdk
     def connection
       Faraday.new(:url => @config.endpoint) do |f|
         f.response :logger
-        f.request :url_encoded
         f.request :oauth2, 'token', token_type: :bearer
         f.request :json
         f.adapter Faraday.default_adapter

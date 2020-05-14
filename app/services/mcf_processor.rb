@@ -42,7 +42,7 @@ class McfProcessor
   def execute_process
     @mcf_document.processing
 
-    unless File.exist? @file_path
+    unless File.exist? @file_path.to_s
       @mcf_document.needs_retake
     else
       process_file

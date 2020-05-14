@@ -5,18 +5,17 @@ http_interactions:
     uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
     body:
       encoding: UTF-8
-      base64_string: |
-        QWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
-        NjMxMDc1NWNlMDE0MDRmJkF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZBdHRyaWJ1
-        dGVWYWx1ZT1Kb2huJTIwRG9lJkxpc3RQYXRoJTVCJTVEPTIwMTgwNCUyRkFD
-        JTJGMnBhZ2VzLnBkZg==
+      string: '{"AccessToken":"64b01bda571f47aea8814cb7a29a7dc356310755ce01404f","AttributeName":"Storage","AttributeValue":"John
+        Doe","ListPath":["201804/AC/test.pdf"]}'
     headers:
-      User-Agent:
-      - Typhoeus - https://github.com/typhoeus/typhoeus
       Accept:
-      - json
-      Expect:
-      - ''
+      - application/json
+      Authorization:
+      - Bearer token
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
   response:
     status:
       code: 200
@@ -39,35 +38,30 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Fri, 13 Apr 2018 13:38:11 GMT
+      - Mon, 18 May 2020 12:03:17 GMT
       Content-Length:
-      - '92'
+      - '2'
     body:
       encoding: UTF-8
-      base64_string: |
-        W3siUGF0aCI6IjIwMTgwNC9BQy8ycGFnZXMucGRmIiwiTWQ1IjoiIiwiU3Rh
-        dHVzIjozMTIsIk1lc3NhZ2UiOiJUaGUgZm9sZGVyIGRvZXNuJ3QgZXhpc3Qi
-        fV0=
-    http_version: 
-  recorded_at: Fri, 13 Apr 2018 13:38:12 GMT
+      string: "[]"
+    http_version: null
+  recorded_at: Mon, 18 May 2020 11:59:42 GMT
 - request:
     method: post
     uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
     body:
       encoding: UTF-8
-      base64_string: |
-        YWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
-        NjMxMDc1NWNlMDE0MDRmJmF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZhdHRyaWJ1
-        dGVWYWx1ZT1Kb2huJTIwRG9lJmZpbGU9JTIzJTNDRmlsZSUzQTB4MDAwMDAw
-        MGExZjNkZDAlM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT0yMDE4MDQlMkZBQyUy
-        RjJwYWdlcy5wZGYmc2VuZE1haWw9ZmFsc2U=
+      string: '{"AccessToken":"64b01bda571f47aea8814cb7a29a7dc356310755ce01404f","AttributeName":"Storage","AttributeValue":"John
+        Doe","SendMail":"false","Force":"true","PathFile":"201804/AC/test.pdf","File":"#\u003cFile:0x0000000008c670c0\u003e"}'
     headers:
-      User-Agent:
-      - Typhoeus - https://github.com/typhoeus/typhoeus
       Accept:
-      - json
-      Expect:
-      - ''
+      - application/json
+      Authorization:
+      - Bearer token
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
   response:
     status:
       code: 200
@@ -90,15 +84,12 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Fri, 13 Apr 2018 13:38:12 GMT
+      - Mon, 18 May 2020 12:03:18 GMT
       Content-Length:
-      - '104'
+      - '42'
     body:
       encoding: UTF-8
-      base64_string: |
-        eyJTdGF0dXMiOjYwMCwiUHJvdmlkZXJJZCI6NDczLCJQcm92aWRlck5hbWUi
-        OiJCb2Nhc2F5IiwiTWVzc2FnZSI6IlN1Y2Nlc3MiLCJTdG9yYWdlTGltaXRS
-        ZWFjaGVkIjpmYWxzZX0=
-    http_version: 
-  recorded_at: Fri, 13 Apr 2018 13:38:14 GMT
-recorded_with: VCR 3.0.3
+      string: '{"Status":600,"ProviderId":473,"ProviderName":"Bocasay","Message":"Success","StorageLimitReached":false}'
+    http_version: null
+  recorded_at: Mon, 18 May 2020 11:59:42 GMT
+recorded_with: VCR 5.1.0

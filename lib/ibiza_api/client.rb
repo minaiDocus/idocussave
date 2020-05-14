@@ -71,7 +71,7 @@ class IbizaAPI::Client
 
 
     def url
-      URI.encode("#{base}#{@path}")
+      URI.escape("#{base}#{@path}")
     end
 
 
@@ -88,14 +88,15 @@ class IbizaAPI::Client
 
     def run
       headers = {'content-type' => 'application/xml',
-        irfToken: '@client.token',
-        partnerID: '@client.partner_id'
+        irfToken: @client.token,
+        partnerID: @client.partner_id
       }
 
-      connection = Faraday.new(:url => url) do |f|
+      p url
+
+      connection = Faraday.new(:url => url, request: { timeout: 180 }) do |f|
         f.response :logger
         f.request :oauth2, 'token', token_type: :bearer
-        f.request :url_encoded
         f.adapter Faraday.default_adapter
       end
 

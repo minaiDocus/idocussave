@@ -69,7 +69,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
     if @customer.budgea_account
       @customer.retrievers.each do |retriever|
         remote_accounts = client.get_all_accounts retriever.budgea_id
-        next unless client.response.code == 200 && client.error_message.nil?
+        next unless client.response.status == 200 && client.error_message.nil?
 
         remote_accounts.each do |account|
           bank_account = @customer.bank_accounts.where(

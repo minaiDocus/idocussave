@@ -16,7 +16,7 @@ class BudgeaConnector
     def get(type)
       client = Budgea::Client.new
       connectors = client.send("get_#{type}")
-      if client.response.code == 200
+      if client.response.status == 200
         connectors.select do |connector|
           connector['hidden'] == false
         end.sort_by do |connector|

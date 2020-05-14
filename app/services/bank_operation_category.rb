@@ -5,7 +5,7 @@ class BankOperationCategory
       Rails.cache.fetch(['bank_operation_categories', 'all'], :expires_in => 7.days, :compress => true) do
         client = Budgea::Client.new
         categories = client.get_categories
-        client.response.code == 200 ? categories : []
+        client.response.status == 200 ? categories : []
       end
     end
 

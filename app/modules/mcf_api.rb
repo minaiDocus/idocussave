@@ -43,7 +43,7 @@ class McfApi
                                                                                               sendMail:    'false',
                                                                                               force:       force.to_s,
                                                                                               pathFile:    remote_path,
-                                                                                              file:        File.open(file_path, 'r') 
+                                                                                              file:        File.open(file_path, 'r')
                                                                                             })
       data_response = handle_response
     end
@@ -52,19 +52,13 @@ class McfApi
       remote_storage = file_paths.first.split("/")[0]
       file_paths = file_paths.map { |path| path.sub("#{remote_storage}/", "") }
 
-      url = 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile'
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile', {
+                                                                                                  AccessToken:    @access_token,
+                                                                                                  AttributeName:  "Storage",
+                                                                                                  AttributeValue: remote_storage,
+                                                                                                  ListPath:       file_paths
+                                                                                                })
 
-      @response = connection(url).post do |request|
-        request.headers = { accept: :json }
-        request.options.timeout = 20
-        request.body = {
-          AccessToken:    @access_token,
-          AttributeName:  "Storage",
-          AttributeValue: remote_storage,
-          ListPath:       file_paths
-        }
-      end
-      
       if @response.status.to_i == 200
         if @response.body.match(/(access token doesn't exist|argument missing AccessToken)/i)
           raise Errors::Unauthorized
@@ -88,8 +82,6 @@ class McfApi
     def connection(url)
       Faraday.new(:url => url) do |f|
         f.response :logger
-        f.request :oauth2, 'token', token_type: :bearer
-        f.response :json, :content_type => 'application/json'
         f.adapter Faraday.default_adapter
       end
     end
@@ -114,9 +106,9 @@ class McfApi
 
     def send_request(uri, params)
       @response = connection(uri).post do |request|
-        request.headers = { accept: :json }
+        request.headers = { accept: 'json' }
         request.options.timeout = 20
-        request.body = params.to_json
+        request.body = params.to_query
       end
     end
 

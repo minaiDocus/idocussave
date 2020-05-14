@@ -132,7 +132,7 @@ class ProcessRetrievedData
                           sleep(tries) if tries > 1
                           temp_file_path = client.get_file document['id']
                           begin
-                            if client.response.code == 200
+                            if client.response.status == 200
                               RetrievedDocument.new(retriever, document, temp_file_path)
                               is_success = true
                             end
@@ -146,10 +146,10 @@ class ProcessRetrievedData
                           RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, 0)
 
                           is_connection_ok = false
-                          if client.response.code == 200
+                          if client.response.status == 200
                             errors << "[#{connection['id']}] Document '#{document['id']}' cannot process : [#{error.class}] #{error.message}"
                           else
-                            errors << "[#{connection['id']}] Document '#{document['id']}' cannot be downloaded : [#{client.response.code}] #{client.response.body}"
+                            errors << "[#{connection['id']}] Document '#{document['id']}' cannot be downloaded : [#{client.response.status}] #{client.response.body}"
                           end
                         end
                       end

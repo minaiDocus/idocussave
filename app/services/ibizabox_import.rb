@@ -119,7 +119,7 @@ class IbizaboxImport
   def get_ibiza_folder_contents(period)
     client.request.clear
     client.company(@user.ibiza_id).box.accountingdocuments
-    client.request.path += "?" + URI.escape("journal=#{@journal_ref}&period=#{period}")
+    client.request.path += "?journal=#{@journal_ref}&period=#{period}"
     client.request.run
 
     if client.response.success?

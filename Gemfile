@@ -48,6 +48,7 @@ gem 'rabl'
 
 # Query & Network management
 gem 'net-sftp'
+gem 'typhoeus'
 gem 'faraday'
 gem 'faraday_middleware'
 

@@ -91,7 +91,7 @@ describe BudgeaTransactionFetcher do
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-05-13', '2020-05-30')
+      subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
       response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
         subject.execute
       end

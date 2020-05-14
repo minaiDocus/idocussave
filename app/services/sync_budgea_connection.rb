@@ -24,14 +24,14 @@ class SyncBudgeaConnection
           client.trigger_connection(@retriever.budgea_id)
         end
 
-        if client.response.code.in?([200, 202]) && client.error_message.nil?
+        if client.response.status.in?([200, 202]) && client.error_message.nil?
           if @retriever.budgea_id.nil?
             @retriever.budgea_id = data['id']
             @retriever.sync_at   = Time.parse data['last_update'] if data['last_update'].present?
             @retriever.save
           end
 
-          if client.response.code == 200
+          if client.response.status == 200
             @retriever.success_budgea_connection
             
             if @retriever.user.organization.code == 'AFH'
@@ -45,7 +45,7 @@ class SyncBudgeaConnection
                                                     })
               UpdatePeriod.new(@retriever.user.subscription.current_period).execute
             end
-          elsif client.response.code == 202
+          elsif client.response.status == 202
             @retriever.update(budgea_additionnal_fields: data['fields']) if data['fields'].present?
             @retriever.pause_budgea_connection
           end

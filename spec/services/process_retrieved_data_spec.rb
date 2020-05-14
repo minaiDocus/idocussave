@@ -806,7 +806,7 @@ describe ProcessRetrievedData do
     end
 
     it 'makes successsed retry' do
-      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.code').and_return(200)
+      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(200)
 
       RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
 
@@ -828,7 +828,7 @@ describe ProcessRetrievedData do
     end
 
     it 'makes failed retry' do
-      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.code').and_return(401)
+      allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(401)
 
       RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
 

@@ -1,4 +1,5 @@
 require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
 
 describe SendToMcf do
   # Disable transactionnal database clean, needed for multi-thread
@@ -8,6 +9,10 @@ describe SendToMcf do
   after(:each) { DatabaseCleaner.clean_with(:truncation) }
 
   before(:each) do
+    allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
+    allow(FileUtils).to receive(:delay_for).and_return(FileUtils)
+    allow(FileUtils).to receive(:remove_dir).and_return(true)
+
     @leader = FactoryBot.create :user, code: 'IDO%LEAD'
     @organization = create :organization, code: 'IDO'
     @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
@@ -22,16 +27,16 @@ describe SendToMcf do
 
     @pack = Pack.new
     @pack.owner = @user
+    @pack.organization = @organization
     @pack.name = 'IDO%0001 AC 201804 all'
     @pack.save
 
     @document = Document.new
     @document.pack       = @pack
     @document.position   = 1
-    @document.content    = File.open Rails.root.join('spec/support/files/2pages.pdf')
     @document.origin     = 'upload'
     @document.is_a_cover = false
-    @document.save
+    @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
 
     @remote_file              = RemoteFile.new
     @remote_file.receiver     = @organization
@@ -48,7 +53,6 @@ describe SendToMcf do
 
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
-    expect(WebMock).to have_requested(:any, /.*/).times(2)
 
     expect(@remote_file.reload.state).to eq 'synced'
   end
@@ -60,18 +64,19 @@ describe SendToMcf do
       DeliverFile.to "mcf"
     end
 
-    expect(WebMock).to have_requested(:any, /.*/).times(0)
     expect(@remote_file.reload.state).to eq 'cancelled'
   end
 
   context 'a file has already been uploaded', :upload_existing_file do
     it 'does not update an existing file' do
+      allow_any_instance_of(Storage::Metafile).to receive(:fingerprint).and_return('97f90eac0d07fe5ade8f60a0fa54cdfc')
+
       result = VCR.use_cassette('mcf/does_not_update_an_existing_file') do
         DeliverFile.to "mcf"
       end
 
       expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
-      expect(WebMock).to have_requested(:any, /.*/).times(1)
+      expect(WebMock).to have_not_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
 
       expect(@remote_file.reload.state).to eq 'synced'
     end
@@ -81,16 +86,15 @@ describe SendToMcf do
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
 
-        @document.content = File.open file_path
+        @document.cloud_content_object.attach(File.open(file_path), 'test.pdf')
         @document.save
 
-        result = VCR.use_cassette('mcf/update_a_file', preserve_exact_body_bytes: true) do
+        result = VCR.use_cassette('mcf/update_a_file') do
           DeliverFile.to "mcf"
         end
 
         expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
         expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
-        expect(WebMock).to have_requested(:any, /.*/).times(2)
 
         expect(@remote_file.reload.state).to eq 'synced'
       end
@@ -124,10 +128,11 @@ describe SendToMcf do
     expect(@leader.notifications.size).to eq 1
   end
 
-  it 'cancels the remote sending if no receiver' do
-    @remote_file.update(organization_id: nil, user_id: nil, group_id: nil)
-    DeliverFile.to "mcf"
+  # TEMP: Not used for now
+  # it 'cancels the remote sending if no receiver' do
+  #   @remote_file.update(organization_id: nil, user_id: nil, group_id: nil)
+  #   DeliverFile.to "mcf"
 
-    expect(@remote_file.reload.state).to eq 'cancelled'
-  end
+  #   expect(@remote_file.reload.state).to eq 'cancelled'
+  # end
 end

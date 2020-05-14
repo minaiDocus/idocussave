@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://idocus-sandbox.biapi.pro/users/me/accounts
+    uri: https://idocus-test.biapi.pro/2.0/users/me/accounts
     body:
       encoding: US-ASCII
       string: ''
@@ -17,22 +17,528 @@ http_interactions:
       - Ruby
   response:
     status:
-      code: 401
-      message: UNAUTHORIZED
+      code: 200
+      message: OK
     headers:
       Date:
-      - Thu, 14 May 2020 06:25:46 GMT
+      - Thu, 14 May 2020 12:58:52 GMT
       Content-Type:
-      - application/json
+      - application/json; charset=utf-8
       Content-Length:
-      - '24'
-      X-Request-Id:
-      - 19c12e36-13ba-403f-898f-c09c006dbd36
+      - '3282'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Vary:
+      - Authorization
+      Server:
+      - Budgea/2.16.32 Weboob/1.6+budgea.485
       X-Recruiting:
       - 'Budget Insight is hiring! Do not hesitate to contact us at jobs@budget-insight.com
         or on #budget-insight @ Freenode'
+      X-Request-Id:
+      - 10def341-4236-4626-8edf-eddb91c05969
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+      - DENY
+      X-Varnish:
+      - '237801339'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish (Varnish/6.1)
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"total": 4, "balance": 17557.8500000000, "balances": {"EUR": 12709.5800000000,
+        "GBP": 1701.0600000000, "USD": 3147.2100000000}, "coming_balances": {"EUR":
+        12709.5800000000, "GBP": 1701.0600000000, "USD": 3147.2100000000}, "accounts":
+        [{"id": 14442, "id_connection": 12083, "id_user": 3325, "id_source": 149,
+        "id_parent": null, "number": "****1393", "webid": "2741588268268091098702995570958043288679457493922419043177",
+        "original_name": "Rachad Paris IDF", "balance": 0E-10, "coming": null, "display":
+        true, "last_update": "2020-03-15 22:00:41", "deleted": null, "disabled": null,
+        "iban": "FR7630004003770001022139368", "currency": {"id": "EUR", "symbol":
+        "€", "prefix": false, "crypto": false, "precision": 2, "marketcap": null,
+        "datetime": null, "name": "Euro"}, "id_type": 6, "bookmarked": 0, "name":
+        "Rachad Paris IDF", "error": null, "usage": null, "ownership": "co-owner",
+        "company_name": null, "bic": "BNPAFRPPXXX", "coming_balance": 0E-10, "formatted_balance":
+        "0 €", "type": "checking", "information": {}, "loan": null}, {"id": 15578,
+        "id_connection": 13036, "id_user": 3325, "id_source": 1795, "id_parent": null,
+        "number": "EUR", "webid": "EUR", "original_name": "Nazim Taleb EUR BUSINESS",
+        "balance": 12709.5800000000, "coming": null, "display": true, "last_update":
+        "2020-05-13 21:23:06", "deleted": null, "disabled": null, "iban": null, "currency":
+        {"id": "EUR", "symbol": "€", "prefix": false, "crypto": false, "precision":
+        2, "marketcap": null, "datetime": null, "name": "Euro"}, "id_type": 6, "bookmarked":
+        0, "name": "Nazim Taleb EUR BUSINESS", "error": null, "usage": null, "ownership":
+        null, "company_name": null, "bic": null, "coming_balance": 12709.5800000000,
+        "formatted_balance": "12709,58 €", "type": "checking", "information": {},
+        "loan": null}, {"id": 15579, "id_connection": 13036, "id_user": 3325, "id_source":
+        1795, "id_parent": null, "number": "GBP", "webid": "GBP", "original_name":
+        "Nazim Taleb GBP BUSINESS", "balance": 1701.0600000000, "coming": null, "display":
+        true, "last_update": "2020-05-13 21:23:08", "deleted": null, "disabled": null,
+        "iban": null, "currency": {"id": "GBP", "symbol": "£", "prefix": false, "crypto":
+        false, "precision": 2, "marketcap": null, "datetime": null, "name": "British
+        Pound Sterling"}, "id_type": 6, "bookmarked": 0, "name": "Nazim Taleb GBP
+        BUSINESS", "error": null, "usage": null, "ownership": null, "company_name":
+        null, "bic": null, "coming_balance": 1701.0600000000, "formatted_balance":
+        "1701,06 £", "type": "checking", "information": {}, "loan": null}, {"id":
+        15580, "id_connection": 13036, "id_user": 3325, "id_source": 1795, "id_parent":
+        null, "number": "USD", "webid": "USD", "original_name": "Nazim Taleb USD BUSINESS",
+        "balance": 3147.2100000000, "coming": null, "display": true, "last_update":
+        "2020-05-13 21:23:09", "deleted": null, "disabled": null, "iban": null, "currency":
+        {"id": "USD", "symbol": "$", "prefix": true, "crypto": false, "precision":
+        2, "marketcap": null, "datetime": null, "name": "US Dollar"}, "id_type": 6,
+        "bookmarked": 0, "name": "Nazim Taleb USD BUSINESS", "error": null, "usage":
+        null, "ownership": null, "company_name": null, "bic": null, "coming_balance":
+        3147.2100000000, "formatted_balance": "$3147.21", "type": "checking", "information":
+        {}, "loan": null}]}'
+    http_version: null
+  recorded_at: Thu, 14 May 2020 12:56:56 GMT
+- request:
+    method: get
+    uri: https://idocus-test.biapi.pro/2.0/users/me/accounts/15578/transactions?max_date=2020-04-30&min_date=2020-04-17
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer iiEjDOvcC0lIMhmDMgZLhUTq2RbCnGKW
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 May 2020 12:58:53 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '25250'
+      Access-Control-Allow-Origin:
+      - "*"
       Access-Control-Allow-Headers:
       - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Vary:
+      - Authorization
+      Server:
+      - Budgea/2.16.32 Weboob/1.6+budgea.485
+      X-Recruiting:
+      - 'Budget Insight is hiring! Do not hesitate to contact us at jobs@budget-insight.com
+        or on #budget-insight @ Freenode'
+      X-Request-Id:
+      - 54c0b1dc-8a1b-467b-843b-3f45f34b2657
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+      - DENY
+      X-Varnish:
+      - '253657815'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish (Varnish/6.1)
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"total": 287, "first_date": "2017-04-30", "last_date": "2020-05-11",
+        "result_min_date": "2020-04-17", "result_max_date": "2020-04-30", "transactions":
+        [{"id": 5904407, "id_account": 15578, "webid": "44C81162MC8258012", "application_date":
+        "2020-04-29", "date": "2020-04-29", "value": null, "gross_value": 30.0000000000,
+        "original_wording": "Paiement à miloud zitout", "simplified_wording": "Paiement
+        à miloud zitout", "stemmed_wording": "PAIEMENT À MILOUD ZITOUT", "wording":
+        "Paiement à miloud zitout", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-30 21:51:23", "rdate": "2020-04-29", "vdate": null,
+        "bdate": "2020-04-29", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-30 21:51:23", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -1.2200000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897776, "id_account": 15578,
+        "webid": "20V14747P0704953C", "application_date": "2020-04-26", "date": "2020-04-26",
+        "value": null, "gross_value": 300.0000000000, "original_wording": "Paiement
+        à Boualem Mezrar", "simplified_wording": "Paiement à Boualem Mezrar", "stemmed_wording":
+        "PAIEMENT À BOUALEM MEZRAR", "wording": "Paiement à Boualem Mezrar", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:18",
+        "rdate": "2020-04-26", "vdate": null, "bdate": "2020-04-26", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -15.0500000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897777, "id_account": 15578, "webid": "4K953973L6844044X", "application_date":
+        "2020-04-24", "date": "2020-04-24", "value": null, "gross_value": 100.0000000000,
+        "original_wording": "Paiement à Boualem Ghezali", "simplified_wording": "Paiement
+        à Boualem Ghezali", "stemmed_wording": "PAIEMENT À BOUALEM GHEZALI", "wording":
+        "Paiement à Boualem Ghezali", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:18", "rdate": "2020-04-24", "vdate": null,
+        "bdate": "2020-04-24", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -3.2500000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897778, "id_account": 15578,
+        "webid": "73T96928CT566484T", "application_date": "2020-04-23", "date": "2020-04-23",
+        "value": null, "gross_value": 500.0000000000, "original_wording": "Paiement
+        à abdelaziz mezine", "simplified_wording": "Paiement à abdelaziz mezine",
+        "stemmed_wording": "PAIEMENT À ABDELAZIZ MEZINE", "wording": "Paiement à abdelaziz
+        mezine", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-23", "vdate": null, "bdate": "2020-04-23",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -14.8500000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897779, "id_account": 15578, "webid": "1XX88078KX0899847", "application_date":
+        "2020-04-22", "date": "2020-04-22", "value": null, "gross_value": 100.0000000000,
+        "original_wording": "Paiement à Youssouf ZIANE", "simplified_wording": "Paiement
+        à Youssouf ZIANE", "stemmed_wording": "PAIEMENT À YOUSSOUF ZIANE", "wording":
+        "Paiement à Youssouf ZIANE", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-22", "vdate": null,
+        "bdate": "2020-04-22", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -3.2500000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897780, "id_account": 15578,
+        "webid": "3DH35399XH1830009", "application_date": "2020-04-22", "date": "2020-04-22",
+        "value": null, "gross_value": 21.6700000000, "original_wording": "Paiement
+        à Salih Kirati", "simplified_wording": "Paiement à Salih Kirati", "stemmed_wording":
+        "PAIEMENT À SALIH KIRATI", "wording": "Paiement à Salih Kirati", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-22", "vdate": null, "bdate": "2020-04-22", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -0.9800000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897781, "id_account": 15578, "webid": "3R375606BT1088816", "application_date":
+        "2020-04-21", "date": "2020-04-21", "value": null, "gross_value": 50.0000000000,
+        "original_wording": "Paiement à Omar Rabia", "simplified_wording": "Paiement
+        à Omar Rabia", "stemmed_wording": "PAIEMENT À OMAR RABIA", "wording": "Paiement
+        à Omar Rabia", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-21", "vdate": null, "bdate": "2020-04-21",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -1.8000000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897782, "id_account": 15578, "webid": "8MX41461FB813181D", "application_date":
+        "2020-04-21", "date": "2020-04-21", "value": null, "gross_value": 1000.0000000000,
+        "original_wording": "Paiement à Mohamed Boulegheb", "simplified_wording":
+        "Paiement à Mohamed Boulegheb", "stemmed_wording": "PAIEMENT À MOHAMED BOULEGHEB",
+        "wording": "Paiement à Mohamed Boulegheb", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-21", "vdate": null,
+        "bdate": "2020-04-21", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -29.3500000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897783, "id_account": 15578,
+        "webid": "41298112S8494863T", "application_date": "2020-04-21", "date": "2020-04-21",
+        "value": null, "gross_value": 200.0000000000, "original_wording": "Paiement
+        à Mohammed REZAL", "simplified_wording": "Paiement à Mohammed REZAL", "stemmed_wording":
+        "PAIEMENT À MOHAMMED REZAL", "wording": "Paiement à Mohammed REZAL", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-21", "vdate": null, "bdate": "2020-04-21", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -10.1500000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897784, "id_account": 15578, "webid": "8N1523647A1051334", "application_date":
+        "2020-04-21", "date": "2020-04-21", "value": null, "gross_value": 30.0000000000,
+        "original_wording": "Paiement à Mohamed Midouna", "simplified_wording": "Paiement
+        à Mohamed Midouna", "stemmed_wording": "PAIEMENT À MOHAMED MIDOUNA", "wording":
+        "Paiement à Mohamed Midouna", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-21", "vdate": null,
+        "bdate": "2020-04-21", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -1.2200000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897785, "id_account": 15578,
+        "webid": "0ME2005342980011M", "application_date": "2020-04-20", "date": "2020-04-20",
+        "value": null, "gross_value": 10.0000000000, "original_wording": "Paiement
+        à omar bekkaye", "simplified_wording": "Paiement à omar bekkaye", "stemmed_wording":
+        "PAIEMENT À OMAR BEKKAYE", "wording": "Paiement à omar bekkaye", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-20", "vdate": null, "bdate": "2020-04-20", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -0.8400000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897786, "id_account": 15578, "webid": "6M9505705G7575442", "application_date":
+        "2020-04-20", "date": "2020-04-20", "value": -600.0000000000, "gross_value":
+        null, "original_wording": "Paiement à yahia mekhiouba", "simplified_wording":
+        "Paiement à yahia mekhiouba", "stemmed_wording": "PAIEMENT À YAHIA MEKHIOUBA",
+        "wording": "Paiement à yahia mekhiouba", "id_category": 139, "state": "categorized_by_keyword",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-20", "vdate": null,
+        "bdate": "2020-04-20", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        null, "commission_currency": null, "country": null, "counterparty": null,
+        "card": null, "type": "bank", "formatted_value": "-600,00 €", "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897787, "id_account": 15578,
+        "webid": "26G03142NC718260N", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 25.0000000000, "original_wording": "Paiement
+        à Belbhim Karim", "simplified_wording": "Paiement à Belbhim Karim", "stemmed_wording":
+        "PAIEMENT À BELBHIM KARIM", "wording": "Paiement à Belbhim Karim", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -1.0800000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897788, "id_account": 15578, "webid": "73C28494A0527930F", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 5.0000000000,
+        "original_wording": "Paiement à Fatima Bouziane", "simplified_wording": "Paiement
+        à Fatima Bouziane", "stemmed_wording": "PAIEMENT À FATIMA BOUZIANE", "wording":
+        "Paiement à Fatima Bouziane", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -0.5000000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897789, "id_account": 15578,
+        "webid": "34990393E0103242L", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 100.0000000000, "original_wording": "Paiement
+        à Nourreddine AISSAOUI", "simplified_wording": "Paiement à Nourreddine AISSAOUI",
+        "stemmed_wording": "PAIEMENT À NOURREDDINE AISSAOUI", "wording": "Paiement
+        à Nourreddine AISSAOUI", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -3.2500000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897790, "id_account": 15578,
+        "webid": "6BN005779T4062603", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 5.0000000000, "original_wording": "Paiement
+        à Soumia Bentebbouche", "simplified_wording": "Paiement à Soumia Bentebbouche",
+        "stemmed_wording": "PAIEMENT À SOUMIA BENTEBBOUCHE", "wording": "Paiement
+        à Soumia Bentebbouche", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -0.5000000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897791, "id_account": 15578,
+        "webid": "803675179V447625C", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 274.1200000000, "original_wording": "Paiement
+        à Zoubir Ait Oubelli", "simplified_wording": "Paiement à Zoubir Ait Oubelli",
+        "stemmed_wording": "PAIEMENT À ZOUBIR AIT OUBELLI", "wording": "Paiement à
+        Zoubir Ait Oubelli", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -8.3000000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897792, "id_account": 15578, "webid": "21L49571U8561211G", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 40.0000000000,
+        "original_wording": "Paiement à Boukortt Mahmoud", "simplified_wording": "Paiement
+        à Boukortt Mahmoud", "stemmed_wording": "PAIEMENT À BOUKORTT MAHMOUD", "wording":
+        "Paiement à Boukortt Mahmoud", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -1.5100000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897793, "id_account": 15578,
+        "webid": "7CN71682N3871804U", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 20.0000000000, "original_wording": "Paiement
+        à omar chareb yssaad", "simplified_wording": "Paiement à omar chareb yssaad",
+        "stemmed_wording": "PAIEMENT À OMAR CHAREB YSSAAD", "wording": "Paiement à
+        omar chareb yssaad", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -0.9300000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897794, "id_account": 15578, "webid": "8G057682X0788370U", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 20.0000000000,
+        "original_wording": "Paiement à Benhalima Mohamed Azzouz", "simplified_wording":
+        "Paiement à Benhalima Mohamed Azzouz", "stemmed_wording": "PAIEMENT À BENHALIMA
+        MOHAMED AZZOUZ", "wording": "Paiement à Benhalima Mohamed Azzouz", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -0.9300000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897795, "id_account": 15578, "webid": "3A462268UB391820M", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 50.0000000000,
+        "original_wording": "Paiement à Nadir GHEZALI", "simplified_wording": "Paiement
+        à Nadir GHEZALI", "stemmed_wording": "PAIEMENT À NADIR GHEZALI", "wording":
+        "Paiement à Nadir GHEZALI", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -1.8000000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897796, "id_account": 15578,
+        "webid": "3HP26981CG6204218", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 20.0000000000, "original_wording": "Paiement
+        à mouloud guemghar", "simplified_wording": "Paiement à mouloud guemghar",
+        "stemmed_wording": "PAIEMENT À MOULOUD GUEMGHAR", "wording": "Paiement à mouloud
+        guemghar", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -0.9300000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897797, "id_account": 15578, "webid": "6FN40510UP3267731", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 10.0000000000,
+        "original_wording": "Paiement à hitham saoudi", "simplified_wording": "Paiement
+        à hitham saoudi", "stemmed_wording": "PAIEMENT À HITHAM SAOUDI", "wording":
+        "Paiement à hitham saoudi", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -0.8400000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897798, "id_account": 15578,
+        "webid": "5F947623YD498300F", "application_date": "2020-04-19", "date": "2020-04-19",
+        "value": null, "gross_value": 50.0000000000, "original_wording": "Paiement
+        à miloud akel", "simplified_wording": "Paiement à miloud akel", "stemmed_wording":
+        "PAIEMENT À MILOUD AKEL", "wording": "Paiement à miloud akel", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-19", "vdate": null, "bdate": "2020-04-19", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -1.8000000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897799, "id_account": 15578, "webid": "4SL237092G2772219", "application_date":
+        "2020-04-19", "date": "2020-04-19", "value": null, "gross_value": 50.0000000000,
+        "original_wording": "Paiement à raouf arbaoui", "simplified_wording": "Paiement
+        à raouf arbaoui", "stemmed_wording": "PAIEMENT À RAOUF ARBAOUI", "wording":
+        "Paiement à raouf arbaoui", "id_category": 9998, "state": "fail_categorizing",
+        "date_scraped": "2020-04-27 10:55:19", "rdate": "2020-04-19", "vdate": null,
+        "bdate": "2020-04-19", "coming": false, "active": true, "id_cluster": null,
+        "comment": null, "last_update": "2020-04-27 10:55:19", "deleted": null, "original_value":
+        null, "original_gross_value": null, "original_currency": null, "commission":
+        -1.8000000000, "commission_currency": null, "country": null, "counterparty":
+        null, "card": null, "type": "bank", "formatted_value": null, "documents_count":
+        0, "informations": {}, "nopurge": 0}, {"id": 5897800, "id_account": 15578,
+        "webid": "6PX464491X336992W", "application_date": "2020-04-17", "date": "2020-04-17",
+        "value": null, "gross_value": 50.0000000000, "original_wording": "Paiement
+        à Yazid Zioueche", "simplified_wording": "Paiement à Yazid Zioueche", "stemmed_wording":
+        "PAIEMENT À YAZID ZIOUECHE", "wording": "Paiement à Yazid Zioueche", "id_category":
+        9998, "state": "fail_categorizing", "date_scraped": "2020-04-27 10:55:19",
+        "rdate": "2020-04-17", "vdate": null, "bdate": "2020-04-17", "coming": false,
+        "active": true, "id_cluster": null, "comment": null, "last_update": "2020-04-27
+        10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -1.8000000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}, {"id": 5897801, "id_account": 15578, "webid": "5J626761R7020983Y", "application_date":
+        "2020-04-17", "date": "2020-04-17", "value": null, "gross_value": 100.0000000000,
+        "original_wording": "Paiement à tis tis", "simplified_wording": "Paiement
+        à tis tis", "stemmed_wording": "PAIEMENT À TIS TIS", "wording": "Paiement
+        à tis tis", "id_category": 9998, "state": "fail_categorizing", "date_scraped":
+        "2020-04-27 10:55:19", "rdate": "2020-04-17", "vdate": null, "bdate": "2020-04-17",
+        "coming": false, "active": true, "id_cluster": null, "comment": null, "last_update":
+        "2020-04-27 10:55:19", "deleted": null, "original_value": null, "original_gross_value":
+        null, "original_currency": null, "commission": -5.2500000000, "commission_currency":
+        null, "country": null, "counterparty": null, "card": null, "type": "bank",
+        "formatted_value": null, "documents_count": 0, "informations": {}, "nopurge":
+        0}]}'
+    http_version: null
+  recorded_at: Thu, 14 May 2020 12:56:57 GMT
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"devpc"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"protocol":"https","hostname":"idocus.biapi.pro","port":443,"logLevel":"DETECTED"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 May 2020 12:58:54 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '9'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Thu, 14 May 2020 12:56:57 GMT
+- request:
+    method: get
+    uri: https://idocus-test.biapi.pro/2.0/categories?client_id=30638817&client_secret=8PCMiaJzWIkhvgAemdb0GiHrqpb7oAp3
+    body:
+      encoding: UTF-8
+      string: '{ application: "sharedAccess" }'
+    headers:
+      User-Agent:
+      - Faraday v1.0.0
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer token
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 May 2020 12:58:55 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '31619'
       Access-Control-Allow-Origin:
       - "*"
       Access-Control-Allow-Methods:
@@ -40,14 +546,489 @@ http_interactions:
       Vary:
       - Authorization
       Server:
-      - Budgea/2.16.31 Weboob/1.6+budgea.483
+      - Budgea/2.16.32 Weboob/1.6+budgea.485
+      X-Recruiting:
+      - 'Budget Insight is hiring! Do not hesitate to contact us at jobs@budget-insight.com
+        or on #budget-insight @ Freenode'
+      X-Request-Id:
+      - 05b145c1-cce0-47e2-83ba-d97877899135
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       X-Frame-Options:
       - DENY
+      - DENY
+      X-Varnish:
+      - '237801351'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish (Varnish/6.1)
+      Accept-Ranges:
+      - bytes
     body:
       encoding: UTF-8
-      string: '{"code": "unauthorized"}'
+      string: '{"categories": [{"id": 9998, "id_parent_category": null, "name": "Indéfini",
+        "income": null, "color": "D7D3BC", "id_parent_category_in_menu": null, "name_displayed":
+        "Indéfini", "refundable": false, "id_user": null, "id_logo": null, "hidden":
+        false, "accountant_account": null, "children": [{"id": 112, "id_parent_category":
+        112, "name": "Chèque", "income": false, "color": "FFB100", "id_parent_category_in_menu":
+        9998, "name_displayed": null, "refundable": false, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true}, {"id":
+        115, "id_parent_category": 115, "name": "Chèque", "income": true, "color":
+        "FFEB00", "id_parent_category_in_menu": 9998, "name_displayed": null, "refundable":
+        true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true}, {"id": 236, "id_parent_category": 236, "name": "Dépôt",
+        "income": false, "color": "BBA455", "id_parent_category_in_menu": 9998, "name_displayed":
+        "Dépôt", "refundable": false, "id_user": null, "id_logo": null, "hidden":
+        false, "accountant_account": null, "checkable": true}, {"id": 108, "id_parent_category":
+        108, "name": "E-commerce", "income": false, "color": "FF7600", "id_parent_category_in_menu":
+        9998, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true}, {"id":
+        237, "id_parent_category": 237, "name": "Prélèvement", "income": false, "color":
+        "BBA455", "id_parent_category_in_menu": 9998, "name_displayed": "Prélèvement",
+        "refundable": false, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true}, {"id": 1, "id_parent_category": 1, "name": "Retrait",
+        "income": false, "color": "FF0000", "id_parent_category_in_menu": 9998, "name_displayed":
+        null, "refundable": false, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true}, {"id": 88, "id_parent_category":
+        88, "name": "Virement", "income": true, "color": "FF3B00", "id_parent_category_in_menu":
+        9998, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true}], "checkable":
+        false}, {"id": 200, "id_parent_category": 200, "name": "Achat et production",
+        "income": false, "color": "FF00B1", "id_parent_category_in_menu": 200, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": [{"id": 206, "id_parent_category":
+        200, "name": "Abonnements et cotisations", "income": false, "color": "FFB8E9",
+        "id_parent_category_in_menu": 200, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 202, "id_parent_category": 200, "name": "Achats de marchandises", "income":
+        false, "color": "A30071", "id_parent_category_in_menu": 200, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 203, "id_parent_category": 200, "name":
+        "Achats matières", "income": false, "color": "E0009B", "id_parent_category_in_menu":
+        200, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 205, "id_parent_category":
+        200, "name": "Documentation", "income": false, "color": "FF7AD6", "id_parent_category_in_menu":
+        200, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 201, "id_parent_category":
+        200, "name": "Sous-traitance", "income": false, "color": "660047", "id_parent_category_in_menu":
+        200, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 204, "id_parent_category":
+        200, "name": "Transports sur achats", "income": false, "color": "FF3DC3",
+        "id_parent_category_in_menu": 200, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null}]},
+        {"id": 166, "id_parent_category": 166, "name": "Banque / Assurance", "income":
+        null, "color": "6200FF", "id_parent_category_in_menu": 166, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": [{"id": 168, "id_parent_category":
+        166, "name": "Agios", "income": false, "color": "4500B3", "id_parent_category_in_menu":
+        166, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 170, "id_parent_category":
+        166, "name": "Assurances", "income": false, "color": "C099FF", "id_parent_category_in_menu":
+        166, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 169, "id_parent_category":
+        166, "name": "Caisse", "income": false, "color": "914DFF", "id_parent_category_in_menu":
+        166, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 167, "id_parent_category":
+        166, "name": "Frais bancaires", "income": false, "color": "270066", "id_parent_category_in_menu":
+        166, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 171, "id_parent_category":
+        166, "name": "Virement inter banques", "income": null, "color": "EFE6FF",
+        "id_parent_category_in_menu": 166, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null}]},
+        {"id": 158, "id_parent_category": 158, "name": "Capital", "income": null,
+        "color": "2700FF", "id_parent_category_in_menu": 158, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true, "children": [{"id": 159, "id_parent_category": 158,
+        "name": "Capital", "income": false, "color": "100066", "id_parent_category_in_menu":
+        158, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 163, "id_parent_category":
+        158, "name": "Caution reçue", "income": false, "color": "5233FF", "id_parent_category_in_menu":
+        158, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 165, "id_parent_category":
+        158, "name": "Compte courant d''associés", "income": null, "color": "A999FF",
+        "id_parent_category_in_menu": 158, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 161, "id_parent_category": 158, "name": "Cotisations sociales complémentaires
+        du dirigeant", "income": false, "color": "1F00CC", "id_parent_category_in_menu":
+        158, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 162, "id_parent_category":
+        158, "name": "Cotisations sociales obligatoires du dirigeant", "income": false,
+        "color": "2700FF", "id_parent_category_in_menu": 158, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 164, "id_parent_category": 158, "name": "Emprunt", "income":
+        null, "color": "7E66FF", "id_parent_category_in_menu": 158, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 160, "id_parent_category": 158, "name":
+        "Rémunération du dirigeant", "income": false, "color": "180099", "id_parent_category_in_menu":
+        158, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}]}, {"id": 189, "id_parent_category":
+        189, "name": "Déplacements", "income": false, "color": "FF00EB", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        [{"id": 199, "id_parent_category": 189, "name": "Amendes", "income": false,
+        "color": "FFAAF8", "id_parent_category_in_menu": 189, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 197, "id_parent_category": 189, "name": "Entretien véhicule",
+        "income": false, "color": "FF66F3", "id_parent_category_in_menu": 189, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 193, "id_parent_category": 189, "name":
+        "Essence", "income": false, "color": "CC00BC", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 192, "id_parent_category":
+        189, "name": "Frais de transport", "income": false, "color": "AA009D", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 194, "id_parent_category":
+        189, "name": "Gas-Oil", "income": false, "color": "EE00DC", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 190, "id_parent_category":
+        189, "name": "Hôtels", "income": false, "color": "66005E", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 198, "id_parent_category":
+        189, "name": "Location véhicule", "income": false, "color": "FF88F6", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 195, "id_parent_category":
+        189, "name": "Péages / Parking", "income": false, "color": "FF22EE", "id_parent_category_in_menu":
+        189, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 196, "id_parent_category":
+        189, "name": "Remboursement kilométrique", "income": false, "color": "FF44F1",
+        "id_parent_category_in_menu": 189, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 191, "id_parent_category": 189, "name": "Restaurants", "income": false,
+        "color": "88007E", "id_parent_category_in_menu": 189, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}]}, {"id": 172, "id_parent_category": 172, "name": "Finance", "income":
+        false, "color": "9D00FF", "id_parent_category_in_menu": 172, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": [{"id": 174, "id_parent_category":
+        172, "name": "Compte à terme", "income": false, "color": "D899FF", "id_parent_category_in_menu":
+        172, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 175, "id_parent_category":
+        172, "name": "Crédit", "income": false, "color": "113132", "id_parent_category_in_menu":
+        172, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 173, "id_parent_category":
+        172, "name": "Valeurs mobilières de placement", "income": false, "color":
+        "3F0066", "id_parent_category_in_menu": 172, "name_displayed": null, "refundable":
+        true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}]}, {"id": 134, "id_parent_category": 134, "name": "Gains divers", "income":
+        true, "color": "00FFC4", "id_parent_category_in_menu": 134, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": []}, {"id": 151,
+        "id_parent_category": 151, "name": "Gestion / Administratif", "income": false,
+        "color": "0014FF", "id_parent_category_in_menu": 151, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true, "children": [{"id": 156, "id_parent_category": 151,
+        "name": "Autres frais de gestion", "income": false, "color": "7A85FF", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 157, "id_parent_category":
+        151, "name": "Dons / pourboires", "income": false, "color": "B8BDFF", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 152, "id_parent_category":
+        151, "name": "Frais administratifs", "income": false, "color": "000866", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 153, "id_parent_category":
+        151, "name": "Frais de congrés", "income": false, "color": "000DA3", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 154, "id_parent_category":
+        151, "name": "Frais postaux", "income": false, "color": "0011E0", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 155, "id_parent_category":
+        151, "name": "Honoraires", "income": false, "color": "3D4CFF", "id_parent_category_in_menu":
+        151, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}]}, {"id": 214, "id_parent_category":
+        214, "name": "Impôts", "income": false, "color": "FF003B", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        [{"id": 217, "id_parent_category": 214, "name": "Autres taxes", "income":
+        false, "color": "B30029", "id_parent_category_in_menu": 214, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 222, "id_parent_category": 214, "name":
+        "CESU", "income": false, "color": "FF99B1", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 218, "id_parent_category":
+        214, "name": "CET", "income": false, "color": "D90032", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 221, "id_parent_category":
+        214, "name": "Crédit de TVA", "income": false, "color": "FF7393", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 220, "id_parent_category":
+        214, "name": "IS", "income": false, "color": "FF4D76", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 223, "id_parent_category":
+        214, "name": "Taxe d''apprentissage", "income": false, "color": "FFBFCE",
+        "id_parent_category_in_menu": 214, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 215, "id_parent_category": 214, "name": "Taxes foncières", "income":
+        false, "color": "660018", "id_parent_category_in_menu": 214, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 216, "id_parent_category": 214, "name":
+        "Taxes sur les véhicules", "income": false, "color": "8C0020", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 219, "id_parent_category":
+        214, "name": "TVA", "income": false, "color": "FF2658", "id_parent_category_in_menu":
+        214, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}]}, {"id": 176, "id_parent_category":
+        176, "name": "Investissement / R&D", "income": false, "color": "D800FF", "id_parent_category_in_menu":
+        176, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        [{"id": 187, "id_parent_category": 176, "name": "Dépôt cautions versées",
+        "income": false, "color": "ED8BFF", "id_parent_category_in_menu": 176, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 183, "id_parent_category": 176, "name":
+        "Droit d''entrée franchise", "income": false, "color": "DC1CFF", "id_parent_category_in_menu":
+        176, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 185, "id_parent_category":
+        176, "name": "Fond commercial", "income": false, "color": "E553FF", "id_parent_category_in_menu":
+        176, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 188, "id_parent_category":
+        176, "name": "Immeuble, constructions", "income": false, "color": "F1A7FF",
+        "id_parent_category_in_menu": 176, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 179, "id_parent_category": 176, "name": "Logiciel", "income": false,
+        "color": "85009E", "id_parent_category_in_menu": 176, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 184, "id_parent_category": 176, "name": "Matériel et outillage
+        de travail", "income": false, "color": "E038FF", "id_parent_category_in_menu":
+        176, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 180, "id_parent_category":
+        176, "name": "Matériel Informatique", "income": false, "color": "9D00B9",
+        "id_parent_category_in_menu": 176, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 182, "id_parent_category": 176, "name": "Mobilier", "income": false,
+        "color": "CC00F1", "id_parent_category_in_menu": 176, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 178, "id_parent_category": 176, "name": "Redevance de brevet",
+        "income": false, "color": "6E0082", "id_parent_category_in_menu": 176, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 177, "id_parent_category": 176, "name":
+        "Site Internet", "income": false, "color": "560066", "id_parent_category_in_menu":
+        176, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 186, "id_parent_category":
+        176, "name": "Titres de participation", "income": false, "color": "E96FFF",
+        "id_parent_category_in_menu": 176, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 181, "id_parent_category": 176, "name": "Véhicule", "income": false,
+        "color": "B400D5", "id_parent_category_in_menu": 176, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}]}, {"id": 224, "id_parent_category": 224, "name": "Locaux et fluides",
+        "income": false, "color": "FF0000", "id_parent_category_in_menu": 224, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": [{"id": 232, "id_parent_category":
+        224, "name": "Accessoires et petits matériels", "income": false, "color":
+        "FF5C5C", "id_parent_category_in_menu": 224, "name_displayed": null, "refundable":
+        true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 235, "id_parent_category": 224, "name": "Aménagement et agencement
+        de locaux", "income": false, "color": "FFB8B8", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 234, "id_parent_category":
+        224, "name": "Crédit bail", "income": false, "color": "FF9999", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 228, "id_parent_category":
+        224, "name": "Eau", "income": false, "color": "C20000", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 230, "id_parent_category":
+        224, "name": "Électricité", "income": false, "color": "FF1F1F", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 227, "id_parent_category":
+        224, "name": "Fourniture de bureau", "income": false, "color": "A30000", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 229, "id_parent_category":
+        224, "name": "Gaz", "income": false, "color": "E00000", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 233, "id_parent_category":
+        224, "name": "Location de matériel", "income": false, "color": "FF7A7A", "id_parent_category_in_menu":
+        224, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 225, "id_parent_category":
+        224, "name": "Loyers et charges locatives", "income": false, "color": "660000",
+        "id_parent_category_in_menu": 224, "name_displayed": "Loyers et<br />charges
+        locatives", "refundable": true, "id_user": null, "id_logo": null, "hidden":
+        false, "accountant_account": null}, {"id": 231, "id_parent_category": 224,
+        "name": "Nettoyage, entretien et réparations", "income": false, "color": "FF3D3D",
+        "id_parent_category_in_menu": 224, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 226, "id_parent_category": 224, "name": "Télécom", "income": false,
+        "color": "850000", "id_parent_category_in_menu": 224, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}]}, {"id": 207, "id_parent_category": 207, "name": "Marketing", "income":
+        false, "color": "FF0076", "id_parent_category_in_menu": 207, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": [{"id": 211, "id_parent_category":
+        207, "name": "Affiliation", "income": false, "color": "FF3D97", "id_parent_category_in_menu":
+        207, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 213, "id_parent_category":
+        207, "name": "Cadeau client", "income": false, "color": "FFB8D9", "id_parent_category_in_menu":
+        207, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 210, "id_parent_category":
+        207, "name": "Prestataire de service", "income": false, "color": "E00068",
+        "id_parent_category_in_menu": 207, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 208, "id_parent_category": 207, "name": "Publicité", "income": false,
+        "color": "66002F", "id_parent_category_in_menu": 207, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 209, "id_parent_category": 207, "name": "Salon", "income": false,
+        "color": "A3004B", "id_parent_category_in_menu": 207, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null}, {"id": 212, "id_parent_category": 207, "name": "Supports marketing",
+        "income": false, "color": "FF7AB8", "id_parent_category_in_menu": 207, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}]}, {"id": 138, "id_parent_category": 138, "name":
+        "Personnel", "income": false, "color": "004EFF", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        [{"id": 140, "id_parent_category": 138, "name": "Charges sociales", "income":
+        false, "color": "002882", "id_parent_category_in_menu": 138, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}, {"id": 146, "id_parent_category": 138, "name":
+        "Contribution sociale de solidarité", "income": false, "color": "3875FF",
+        "id_parent_category_in_menu": 138, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 147, "id_parent_category": 138, "name": "Formation professionnelle
+        continue", "income": false, "color": "5388FF", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 145, "id_parent_category":
+        138, "name": "Médecine du travail", "income": false, "color": "1C62FF", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 141, "id_parent_category":
+        138, "name": "Note de frais", "income": false, "color": "00319E", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 149, "id_parent_category":
+        138, "name": "PEE", "income": false, "color": "8BAFFF", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 148, "id_parent_category":
+        138, "name": "PERCO", "income": false, "color": "6F9BFF", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 143, "id_parent_category":
+        138, "name": "Restaurants", "income": false, "color": "0042D5", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 139, "id_parent_category":
+        138, "name": "Salaires nets", "income": false, "color": "001F66", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 142, "id_parent_category":
+        138, "name": "Stagiaires", "income": false, "color": "0039B9", "id_parent_category_in_menu":
+        138, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null}, {"id": 150, "id_parent_category":
+        138, "name": "Taxe sur les salaires", "income": false, "color": "A7C2FF",
+        "id_parent_category_in_menu": 138, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null},
+        {"id": 144, "id_parent_category": 138, "name": "Tickets restaurants", "income":
+        false, "color": "004AF1", "id_parent_category_in_menu": 138, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null}]}, {"id": 137, "id_parent_category": 137, "name":
+        "Prestataire de services", "income": false, "color": "0089FF", "id_parent_category_in_menu":
+        137, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        []}, {"id": 131, "id_parent_category": 131, "name": "Produits financiers",
+        "income": true, "color": "00FF14", "id_parent_category_in_menu": 131, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": []}, {"id": 127,
+        "id_parent_category": 127, "name": "Recettes", "income": true, "color": "D8FF00",
+        "id_parent_category_in_menu": 127, "name_displayed": null, "refundable": true,
+        "id_user": null, "id_logo": null, "hidden": false, "accountant_account": null,
+        "checkable": true, "children": []}, {"id": 132, "id_parent_category": 132,
+        "name": "Revenus activités annexes", "income": true, "color": "00FF4E", "id_parent_category_in_menu":
+        132, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        []}, {"id": 133, "id_parent_category": 133, "name": "Subventions", "income":
+        true, "color": "00FF89", "id_parent_category_in_menu": 133, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": []}, {"id": 128,
+        "id_parent_category": 128, "name": "Vente d''un investissement", "income":
+        true, "color": "9DFF00", "id_parent_category_in_menu": 128, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": []}, {"id": 130,
+        "id_parent_category": 130, "name": "Vente de licence", "income": true, "color":
+        "27FF00", "id_parent_category_in_menu": 130, "name_displayed": null, "refundable":
+        true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true, "children": []}, {"id": 129, "id_parent_category":
+        129, "name": "Vente de services", "income": true, "color": "62FF00", "id_parent_category_in_menu":
+        129, "name_displayed": null, "refundable": true, "id_user": null, "id_logo":
+        null, "hidden": false, "accountant_account": null, "checkable": true, "children":
+        []}, {"id": 135, "id_parent_category": 135, "name": "Ventes de biens", "income":
+        true, "color": "00FFFF", "id_parent_category_in_menu": 135, "name_displayed":
+        null, "refundable": true, "id_user": null, "id_logo": null, "hidden": false,
+        "accountant_account": null, "checkable": true, "children": []}, {"id": 136,
+        "id_parent_category": 136, "name": "Ventes de marchandises", "income": true,
+        "color": "00C4FF", "id_parent_category_in_menu": 136, "name_displayed": null,
+        "refundable": true, "id_user": null, "id_logo": null, "hidden": false, "accountant_account":
+        null, "checkable": true, "children": []}]}'
     http_version: null
-  recorded_at: Thu, 14 May 2020 06:24:52 GMT
+  recorded_at: Thu, 14 May 2020 12:56:58 GMT
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"devpc"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"protocol":"https","hostname":"idocus.biapi.pro","port":443,"logLevel":"DETECTED"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 May 2020 12:58:55 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '14'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Thu, 14 May 2020 12:56:58 GMT
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"devpc"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"protocol":"https","hostname":"idocus.biapi.pro","port":443,"logLevel":"DETECTED"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 May 2020 12:58:56 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '12'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Thu, 14 May 2020 12:56:59 GMT
 recorded_with: VCR 5.1.0

@@ -30,7 +30,7 @@ class Budgea
 
     def initialize(access_token=nil)
       @settings = {
-        base_url:      "https://#{Budgea.config.domain}/2.0",
+        base_url:      "https://#{Budgea.config.domain}",
         client_id:     Budgea.config.client_id,
         client_secret: Budgea.config.client_secret,
         proxy:         Budgea.config.proxy
@@ -42,7 +42,7 @@ class Budgea
     def destroy_user
       if @access_token.present?
         @response = connection.delete do |request|
-          request.url "/users/me"
+          request.url "/2.0/users/me"
           request.headers = headers
         end
 
@@ -59,10 +59,10 @@ class Budgea
 
     def get_categories
       @response = connection.get do |request|
-        request.url '/categories'
+        request.url '/2.0/categories'
         request.headers['Accept'] = 'application/json'
         request.params = authentification_params
-        request.body = { application: 'sharedAccess' }
+        request.body = '{ application: "sharedAccess" }'
       end
 
       run_and_parse_response 'categories'
@@ -70,9 +70,9 @@ class Budgea
 
     def get_new_access_token(user_id)
       @response = connection.post do |request|
-        request.url "/users/#{user_id}/token"
+        request.url "/2.0/users/#{user_id}/token"
         request.headers = headers
-        request.body = { application: 'sharedAccess' }
+        request.body = '{ application: "sharedAccess" }'
       end
 
       run_and_parse_response
@@ -80,7 +80,7 @@ class Budgea
 
     def delete_access_token
       @response = connection.delete do |request|
-        request.url '/users/me/token'
+        request.url '/2.0/users/me/token'
         request.headers = headers
       end
 
@@ -89,7 +89,7 @@ class Budgea
 
     def get_all_accounts(connexion_id)
       @response = connection.get do |request|
-        request.url "/users/me/connections/#{connexion_id}/accounts?all"
+        request.url "/2.0/users/me/connections/#{connexion_id}/accounts?all"
         request.headers = headers
       end
 
@@ -98,7 +98,7 @@ class Budgea
 
     def get_accounts ##used by transaction fetcher
       @response = connection.get do |request|
-        request.url "/users/me/accounts"
+        request.url "/2.0/users/me/accounts"
         request.headers = headers
       end
 
@@ -109,7 +109,7 @@ class Budgea
       request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
 
       @response = connection.get do |request|
-        request.url "/users/me/accounts/#{account_id}/transactions#{request_filters}"
+        request.url "/2.0/users/me/accounts/#{account_id}/transactions#{request_filters}"
         request.headers = headers
       end
 
@@ -118,7 +118,7 @@ class Budgea
 
     def get_file(document_id)
       @response = connection.get do |request|
-        request.url "/users/me/documents/#{document_id}/file"
+        request.url "/2.0/users/me/documents/#{document_id}/file"
         request.headers = headers
       end
 
@@ -152,7 +152,7 @@ class Budgea
         @error_message = nil
 
         @response = connection.put do |request|
-          request.url "/users/me/connections/#{retriever.budgea_id}"
+          request.url "/2.0/users/me/connections/#{retriever.budgea_id}"
           request.headers = headers
         end
 

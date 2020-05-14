@@ -45,7 +45,7 @@ class PreAssignmentDeliveryXmlBuilder
         if @software.client.response.message.to_s.size > 255
           error_message = 'Erreur inconnu.'
         else
-          error_message = @software.client.response.message.to_s.presence || @software.client.response.code.to_s
+          error_message = @software.client.response.message.to_s.presence || @software.client.response.status.to_s
         end
       end
 

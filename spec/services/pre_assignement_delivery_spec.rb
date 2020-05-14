@@ -5,6 +5,7 @@ describe PreAssignmentDelivery do
   def delivery_exact_online
     allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_exact_online?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
+    allow(Settings).to receive_message_chain(:first, :notify_errors_to).and_return('test@idocus.com')
 
     preseizure   = FactoryBot.create :preseizure, user: @user, organization: @organization, report_id: @report.id, piece: @piece
 
@@ -112,7 +113,7 @@ describe PreAssignmentDelivery do
     DatabaseCleaner.clean
   end
 
-  describe "Build pre assignment data" do
+  describe "Build pre assignment data", :data_builder do
     context "Ibiza", :ibiza_builder do
       it "create successfull xml data" do
         delivery = delivery_ibiza
@@ -132,14 +133,14 @@ describe PreAssignmentDelivery do
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
 
         expect(delivery.preseizures.size).to eq 2
-        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_1.xml'
+        expect(delivery.cloud_content_object.filename).to match /AC0003_AC_201812_([0-9]+)\.xml/
       end
 
       it 'Building data error with already sent preseizures' do
         allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true)
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
@@ -155,7 +156,7 @@ describe PreAssignmentDelivery do
         allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
@@ -178,7 +179,7 @@ describe PreAssignmentDelivery do
         allow_any_instance_of(PreAssignmentDeliveryXmlBuilder).to receive(:is_ibiza_exercises_present?).and_return(true)
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
@@ -210,7 +211,7 @@ describe PreAssignmentDelivery do
 
         expect(delivery.cloud_content_object.path).to match /tmp\/PreAssignmentDelivery\/20181219\/([0-9]+)\/AC0003_AC_201812_([0-9]+)\.txt/
         expect(File.exist?(delivery.cloud_content_object.path)).to be true
-        expect(delivery.cloud_content.filename).to eq 'AC0003_AC_201812_5.txt'
+        expect(delivery.cloud_content_object.filename).to match /AC0003_AC_201812_([0-9]+)\.txt/
       end
 
       it "Building data error with undefined journal" do
@@ -232,7 +233,7 @@ describe PreAssignmentDelivery do
     end
   end
 
-  describe "Deliver pre assignment" do
+  describe "Deliver pre assignment", :data_delivery do
     context "Ibiza", :ibiza_delivery do
       it "send pre_assignment successfully" do
         allow(Settings).to receive_message_chain('first.notify_on_ibiza_delivery').and_return('no')
@@ -263,7 +264,7 @@ describe PreAssignmentDelivery do
         allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('NotFound')
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 
@@ -287,7 +288,7 @@ describe PreAssignmentDelivery do
         allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
         delivery = delivery_ibiza
 
-        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building') do
+        result = VCR.use_cassette('pre_assignment/ibiza_delivery_data_building', preserve_exact_body_bytes: true) do
           PreAssignmentDeliveryXmlBuilder.new(delivery).execute
         end
 

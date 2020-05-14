@@ -27,13 +27,13 @@ describe McfProcessor do
       McfProcessor.new(@mcf_document).execute_process
 
       expect(@mcf_document.cloud_content_object.filename).to eq 'test.pdf'
-      expect(@mcf_document.cloud_content_object.path).to match /tmp\/McfDocument\/20200513\/([0-9]+)\/test\.pdf/
+      expect(@mcf_document.cloud_content_object.path).to match /tmp\/McfDocument\/([0-9]{8})\/([0-9]+)\/test\.pdf/
       expect(@mcf_document.file64).to be nil
       expect(@mcf_document.user).to eq @user
     end
 
     it 'Requests a new file to MCF if content is nil', :request_resend_file do
-      #@mcf_document.reload
+      allow(@mcf_document).to receive_message_chain('cloud_content', 'attached?').and_return(false)
 
       McfProcessor.new(@mcf_document).execute_process
 
@@ -78,6 +78,7 @@ describe McfProcessor do
     end
 
     it 'returns state: "needs_retake" when content is nil', :needs_retake do
+      allow(@mcf_document).to receive_message_chain('cloud_content', 'attached?').and_return(false)
       @mcf_document.update(is_generated: false)
       @mcf_document.reload
 

@@ -14,7 +14,7 @@ class RetrievedDocument
     temp_file_path = client.get_file document['id']
 
     begin
-      if client.response.code == 200
+      if client.response.status == 200
         RetrievedDocument.new(retriever, document, temp_file_path)
         retriever.update(error_message: "") if retriever.error_message.match(/Certains documents n'ont pas/)
         is_success = true
@@ -34,7 +34,7 @@ class RetrievedDocument
         count_day: count_day,
         retriever: retriever.inspect,
         client: client.inspect,
-        reponse_code: client.response.code.to_s,
+        reponse_code: client.response.status.to_s,
         document: document.inspect,
         temp_file_path: temp_file_path.to_s
       }

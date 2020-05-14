@@ -15,6 +15,9 @@ require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/rspec'
 
+require 'sidekiq/testing'
+# Sidekiq::Testing.inline! #execute jobs immediatly
+
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
@@ -72,6 +75,10 @@ RSpec.configure do |config|
       Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}
     end
   end
+
+  # config.before(:each) do
+  #   Sidekiq::Worker.clear_all
+  # end
 
   config.before(:all) do
     DatabaseCleaner.start

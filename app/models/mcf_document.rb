@@ -80,6 +80,10 @@ class McfDocument < ApplicationRecord
     mcf_doc || nil
   end
 
+  def content
+    object = FakeObject.new
+  end
+
   def cloud_content_object
     CustomActiveStorageObject.new(self, :cloud_content)
   end
