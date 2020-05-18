@@ -255,9 +255,13 @@
                         %span{ :class => "hide oversized value_7" }
                           #{month[:oversized]}
                         %span{ :class => "hide price value_8" }
+                          - time = Time.local(@year,(index+1),15,0,0)
                           - if @user.leader? && (@user.has_one_organization? || @user.scoped?)
-                            - time = Time.local(@year,(index+1),15,0,0)
                             - price = price_of_period_by_time(@user.organization.periods,time)
+                            - month[:price_in_cents] = month[:price_in_cents] + price
+                          - elsif @user.leader? && !params[:organization_id].present?
+                            - price = 0
+                            - @user.organizations.each{|organization| price += price_of_period_by_time(organization.periods, time)}
                             - month[:price_in_cents] = month[:price_in_cents] + price
                           #{format_price_00 month[:price_in_cents]} €
                         %span{ :class => "hide price value_9" }
