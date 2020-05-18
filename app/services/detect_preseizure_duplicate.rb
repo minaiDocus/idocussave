@@ -23,6 +23,7 @@ class DetectPreseizureDuplicate
   end
 
   def similar_preseizure
+    return nil if @preseizure.organization.code == 'MCN'
     @similar_preseizure ||= Pack::Report::Preseizure.where(scope).where.not(id: @preseizure.id).first
   end
 
