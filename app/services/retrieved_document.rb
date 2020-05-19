@@ -12,7 +12,7 @@ class RetrievedDocument
     is_success = false
 
     temp_file_path = client.get_file document['id']
-    dir            = Dir.mktmpdir(nil, "/nfs/tmp/")
+    dir            = Dir.mktmpdir
     file_path      = File.join(dir, 'retriever_processed_file.pdf')
     processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
 
@@ -34,7 +34,7 @@ class RetrievedDocument
       name: "RetrievedDocument",
       error_group: "[retrieved-document] retry get file from retriever",
       erreur_type: "Retry get file from retriever : #{retriever.name.to_s}",
-      date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
       more_information: {
         is_success: is_success,
         count_day: count_day,
@@ -76,6 +76,20 @@ class RetrievedDocument
       }
       @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       retriever.temp_documents << @temp_document
+    else
+      log_document = {
+        name: "RetrievedDocument",
+        error_group: "[retrieved-document] invalid retrieved document",
+        erreur_type: "Invalid document from retriever : #{retriever.name.to_s}",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          retriever: retriever.inspect,
+          document: document.inspect,
+          modifiable: DocumentTools.modifiable?(@temp_file_path).to_s
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
     end
     clean_tmp
   end
