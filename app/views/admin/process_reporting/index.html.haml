@@ -33,66 +33,7 @@
               %th.aligncenter LS500
               %th.aligncenter LS1000
               %th.aligncenter LS3000
-          %tbody.retractable.slidedown
-            - total = [0,0,0,0,0,0,0,0,0,0,0]
+          %tbody.organization_list.retractable.slidedown
             - @organizations.each do |organization|
-              - customers = organization.customers
-              %tr
-                %td= link_to organization.name, [:account, organization]
-                - sum = sum_of_requested_kits(customers, @time)
-                - total[0] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_sent_kits(organization, @time)
-                - total[1] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_receipts(organization, @time)
-                - total[2] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_scanned_sheets(organization, @time)
-                - total[3] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_oversized(customers, @time)
-                - total[4] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_paperclips(customers, @time)
-                - total[5] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_bundled(organization, @time)
-                - total[6] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_pre_assignments(organization, @time)
-                - total[7] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_returns_500(organization, @time)
-                - total[8] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_returns_1000(organization, @time)
-                - total[9] += sum
-                %td.aligncenter= sum
-                - sum = sum_of_returns_3000(organization, @time)
-                - total[10] += sum
-                %td.aligncenter= sum
-            %tr
-              %td Total
-              %td.aligncenter
-                %b= total[0]
-              %td.aligncenter
-                %b= total[1]
-              %td.aligncenter
-                %b= total[2]
-              %td.aligncenter
-                %b= total[3]
-              %td.aligncenter
-                %b= total[4]
-              %td.aligncenter
-                %b= total[5]
-              %td.aligncenter
-                %b= total[6]
-              %td.aligncenter
-                %b= total[7]
-              %td.aligncenter
-                %b= total[8]
-              %td.aligncenter
-                %b= total[9]
-              %td.aligncenter
-                %b= total[10]
+              %tr{ id: "row-#{organization.id}", class: 'row_organizations' }
+                %td{colspan: 12}

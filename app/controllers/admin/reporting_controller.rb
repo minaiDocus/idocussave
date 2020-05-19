@@ -9,8 +9,8 @@ class Admin::ReportingController < Admin::AdminController
             end
     date = Date.parse("#{@year}-01-01")
     @organizations = Organization.billed_for_year(@year).order(name: :asc)
-    @invoices = Invoice.where(organization_id: @organizations.map(&:id))
-                       .where(created_at: date.end_of_month..(date.end_of_month + 12.month))
+
+    @total = 12.times.map { |e| [0,0,0] }
 
     respond_to do |format|
       format.html
@@ -45,5 +45,33 @@ class Admin::ReportingController < Admin::AdminController
         raise 'Request too long'
       end
     end
+  end
+
+  def row_organization
+    @year = begin
+              Integer(params[:year])
+            rescue StandardError
+              Time.now.year
+            end
+    date = Date.parse("#{@year}-01-01")
+
+
+    @organization = Organization.find(params[:organization_id])
+
+    @invoices = Invoice.where(organization_id: params[:organization_id]).invoice_at(date)
+
+    render partial: 'row_organization'
+  end
+
+  def total_footer
+    @year = begin
+              Integer(params[:year])
+            rescue StandardError
+              Time.now.year
+            end
+
+    @total = params[:total].transpose
+
+    render partial: 'total_footer'
   end
 end

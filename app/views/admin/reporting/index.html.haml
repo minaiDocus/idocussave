@@ -6,8 +6,10 @@
           %h3
             Reporting de l'année #{@year}
         .float-right
-          = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls", class: "btn btn-light"
-          = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1", class: "btn btn-light"
+          #show-export-xls-link.d-inline
+
+          = link_to image_tag('application/icon-xls.png', alt: 'Export xls', class: 'generate-export-xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls", class: "btn btn-light download-export_xls"
+          = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', class: 'generate-export-xls', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1", class: "btn btn-light download-export_xls simplified_xls"
 
   .row
     .col-12
@@ -23,69 +25,7 @@
                 = link_to (@year + 1), "/admin/reporting/#{(@year + 1)}"
               - t('date.month_names').compact.each do |month_name|
                 %th= month_name.capitalize
-          %tbody.retractable.slidedown
-            - @total = 12.times.map { |e| [0,0,0] }
-            - @organizations.each do |organization|
-              %tr
-                %td.organization.clearfix
-                  = link_to organization.name, [:account, organization]
-                  = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS', class: 'float-right'
-                - user_ids = organization.customers.pluck(:id)
-                - 12.times.each do |i|
-                  %td
-                    - time = Time.local(@year, i+1, 15)
-                    - centralized_periods, not_centralized_periods = periods_at(time.to_date, organization, user_ids)
-                    - price_in_cents_wo_vat = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, centralized_periods)
-                    - price_in_cents_w_vat  = price_in_cents_wo_vat * (centralized_periods.try(:first).try(:tva_ratio).to_f || Billing::PeriodBilling.vat_ratio(time))
-                    - not_centralized_price_in_cents_wo_vat = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, not_centralized_periods)
-                    - not_centralized_price_in_cents_w_vat = not_centralized_price_in_cents_wo_vat * Billing::PeriodBilling.vat_ratio(time)
-
-                    - if centralized_periods.size > 0 || not_centralized_periods.size > 0
-                      %div
-                        = "#{format_price_00(price_in_cents_wo_vat)} €"
-                        %span.df_symbol HT
-                      - invoice = invoice_at(time, organization, @invoices)
-                      - if invoice
-                        %div
-                          != link_to "#{format_price_00(price_in_cents_w_vat)} €", admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                          %span.vat_symbol TTC
-                      - else
-                        %div
-                          = "#{format_price_00(price_in_cents_w_vat)} €"
-                          %span.vat_symbol TTC
-                      - @total[i][0] += price_in_cents_wo_vat
-                      - @total[i][1] += price_in_cents_w_vat
-                      - if not_centralized_price_in_cents_wo_vat > 0
-                        %div
-                          = "#{format_price_00(not_centralized_price_in_cents_wo_vat)} €"
-                          %span.df_symbol HT
-                        %div
-                          = "#{format_price_00(not_centralized_price_in_cents_w_vat)} €"
-                          %span.vat_symbol TTC
-                        - @total[i][0] += not_centralized_price_in_cents_wo_vat
-                        - @total[i][1] += not_centralized_price_in_cents_w_vat
-                      %div
-                        - organization_periods = centralized_periods.includes(:organization).select { |e| e.organization }
-                        - size = centralized_periods.size + not_centralized_periods.size - organization_periods.size
-                        = size
-                        - @total[i][2] += size
-                    - else
-                      \-
-            %tr
-              %td.total Total
-              - 12.times.each do |i|
-                %td
-                  - if @total[i][0] != 0
-                    %div
-                      %b= "#{format_price_00(@total[i][0])} €"
-                      %span.df_symbol HT
-                    %div
-                      = link_to content_tag(:b, "#{format_price_00(@total[i][1])} €"), archive_admin_invoices_path(file_name: ArchiveInvoice.archive_name(Time.local(@year, i+1, 1)))
-                      %span.vat_symbol TTC
-                    %div
-                      %b= @total[i][2]
-                  - else
-                    \-
+          = render partial: 'reporting_table', locals: { collection: @organizations }
 
   #showInvoice.modal.hide.fade
     .modal-dialog

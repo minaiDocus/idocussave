@@ -27,6 +27,9 @@ class Invoice < ApplicationRecord
   belongs_to :subscription, optional: true
   has_many   :invoice_settings
 
+
+  scope :invoice_at, -> (time) { where(created_at: time.end_of_month..(time.end_of_month + 12.month)) }
+
   before_destroy do |invoice|
     invoice.cloud_content.purge
   end
