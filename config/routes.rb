@@ -729,6 +729,15 @@ Rails.application.routes.draw do
       get 'budgea_users',      controller: 'archives', action: 'budgea_users',      on: :collection
       get 'budgea_retrievers', controller: 'archives', action: 'budgea_retrievers', on: :collection
     end
+
+    resources :reporting, only: :index do
+      get 'row_organization', on: :collection
+      post 'total_footer',     on: :collection
+    end
+
+    resources :process_reporting, only: :index do
+      get 'process_reporting_table', action: 'process_reporting_table', on: :collection
+    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'

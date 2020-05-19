@@ -1,0 +1,14 @@
+%td.total Total
+- 12.times.each do |i|
+  %td
+    - if @total[i][0] != 0
+      %div
+        %b= "#{format_price_00(@total[i][0])} €"
+        %span.df_symbol HT
+      %div
+        = link_to content_tag(:b, "#{format_price_00(@total[i][1])} €"), archive_admin_invoices_path(file_name: ArchiveInvoice.archive_name(Time.local(@year, i+1, 1)))
+        %span.vat_symbol TTC
+      %div
+        %b= @total[i][2]
+    - else
+      \-

@@ -1,0 +1,6 @@
+%tbody.organization_list.retractable.slidedown
+  - @organizations.each do |organization|
+    %tr{ id: "row-#{organization.id}", class: 'row_organizations' }
+      %td{colspan: 13}
+  %tr#total_footer
+    = render partial: 'total_footer'
