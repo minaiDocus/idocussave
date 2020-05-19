@@ -1,10 +1,13 @@
+<% uri_location =  window.location.href %>
 <div class='card'>
   <div class='card-header row'>
     <div class='col-md-10'>
       <h3>Liste des automates disponibles</h3>
     </div>
     <div class='col-md-2 text-right'>
-      <input type="button" class="btn btn-success export_connector_xls" value="Exporter en format XLS">
+      <% if !uri_location.match(/admin/g): %>
+        <input type="button" class="btn btn-success export_connector_xls" value="Exporter en format XLS">
+      <% end %>
     </div>
   </div>
   <div class='card-body'>
@@ -28,7 +31,6 @@
       </table>
     </div>
     <div class='row'>
-      <% uri_location =  window.location.href %>
       <%if @loading: %>
         <div class='col-md-12 loading'>Chargement en cours ...</span>
       <% else: %>
