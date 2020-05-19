@@ -12,17 +12,23 @@ class RetrievedDocument
     is_success = false
 
     temp_file_path = client.get_file document['id']
+    dir            = Dir.mktmpdir(nil, "/nfs/tmp/")
+    file_path      = File.join(dir, 'retriever_processed_file.pdf')
+    processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
 
     begin
       if client.response.status == 200
-        RetrievedDocument.new(retriever, document, temp_file_path)
-        retriever.update(error_message: "") if retriever.error_message.match(/Certains documents n'ont pas/)
+        RetrievedDocument.new(retriever, document, processed_file.path)
+        retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
         is_success = true
       end
-    rescue
+    rescue => e
+      error_message = e.to_s
     end
 
     RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, (count_day+1)) if !is_success
+
+    FileUtils.remove_entry dir
 
     log_document = {
       name: "RetrievedDocument",
@@ -36,6 +42,7 @@ class RetrievedDocument
         client: client.inspect,
         reponse_code: client.response.status.to_s,
         document: document.inspect,
+        error_message: error_message.to_s,
         temp_file_path: temp_file_path.to_s
       }
     }
