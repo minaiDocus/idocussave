@@ -219,7 +219,7 @@ class RetrieverNotification
   end
 
   def prescribers
-    return @prescribers if @prescribers.any?
+    return @prescribers if @prescribers.present?
 
     @prescribers = @retriever.user.prescribers + developpers
     @prescribers = @prescribers.flatten.compact
