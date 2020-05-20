@@ -37,14 +37,15 @@ class McfApi
       remote_storage = remote_path.split("/")[0]
       remote_path.slice!("#{remote_storage}/")
 
-      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/Upload', { accessToken: @access_token,
-                                                                                              attributeName:  "Storage",
-                                                                                              attributeValue: remote_storage,
-                                                                                              sendMail:    'false',
-                                                                                              force:       force.to_s,
-                                                                                              pathFile:    remote_path,
-                                                                                              file:        File.open(file_path, 'r')
-                                                                                            })
+      #IMPORTANT-WORKAROUND : Mcf upload doesn't support faraday request
+      @response = send_typhoeus_request('https://uploadservice.mycompanyfiles.fr/api/idocus/Upload', {  accessToken: @access_token,
+                                                                                                        attributeName:  "Storage",
+                                                                                                        attributeValue: remote_storage,
+                                                                                                        sendMail:    'false',
+                                                                                                        force:       force.to_s,
+                                                                                                        pathFile:    remote_path,
+                                                                                                        file:        File.open(file_path, 'r')
+                                                                                                      })
       data_response = handle_response
     end
 
@@ -87,20 +88,22 @@ class McfApi
     end
 
     def handle_response
-      if @response.status.to_i == 200
+      status = @response.try(:code).presence || @response.try(:status).presence
+
+      if status.to_i == 200
         data = JSON.parse(@response.body)
         if data['Status'] == 600 || data['CodeError'] == 600
           data
         elsif data['Message'].match(/(access token doesn't exist|argument missing AccessToken)/i)
           raise Errors::Unauthorized
         else
-          raise Errors::Unknown.new("#{@response.status} / response=> #{data.to_s}")
+          raise Errors::Unknown.new("#{status} / response=> #{data.to_s}")
         end
       else
-        error_mess = @response.status if @response.status.present?
+        error_mess = status
         error_mess = @response.body if @response.body.present?
 
-        raise Errors::Unknown.new("#{@response.status} / response=> #{error_mess}")
+        raise Errors::Unknown.new("#{status} / response=> #{error_mess}")
       end
     end
 
@@ -108,8 +111,19 @@ class McfApi
       @response = connection(uri).post do |request|
         request.headers = { accept: 'json' }
         request.options.timeout = 20
-        request.body = params.to_query
+        request.body = params.to_query #params.to_json not supported
       end
+    end
+
+    def send_typhoeus_request(uri, params)
+      @request = Typhoeus::Request.new(
+        uri,
+        method:  :post,
+        headers: { accept: :json },
+        timeout: 20,
+        body: params
+      )
+      @request.run
     end
 
   end
