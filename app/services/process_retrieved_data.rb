@@ -115,6 +115,8 @@ class ProcessRetrievedData
             unless retriever.bank? || retriever.journal.nil?
               if connection['subscriptions'].present?
                 errors = []
+                dir    = Dir.mktmpdir
+
                 connection['subscriptions'].each do |subscription|
                   if subscription['documents'].present?
                     client = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
@@ -131,14 +133,20 @@ class ProcessRetrievedData
                         while tries <= 3 && !is_success
                           sleep(tries) if tries > 1
                           temp_file_path = client.get_file document['id']
+
+                          file_path      = File.join(dir, "retrieved_data_#{document['id']}.pdf")
+                          processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'process_retrieved_data').processed_file
+
                           begin
                             if client.response.status == 200
-                              RetrievedDocument.new(retriever, document, temp_file_path)
+                              RetrievedDocument.new(retriever, document, processed_file.path)
                               is_success = true
                             end
                           rescue Errno::ENOENT => e
                             error = e
                           end
+                          FileUtils.rm file_path, force: true
+
                           tries += 1
                         end
 
@@ -156,6 +164,8 @@ class ProcessRetrievedData
                     end
                   end
                 end
+
+                FileUtils.remove_entry dir
 
                 if errors.present?
                   if @retrieved_data.error_message.present?
