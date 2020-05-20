@@ -16,7 +16,7 @@ class DropboxesController < ApplicationController
 
       log_document = {
         name: "DropboxesController",
-        error_group: "[dropboxes-controller] webhook - dropboxes",
+        error_group: "[dropboxes-controller] webhook dropboxes",
         erreur_type: "Webhook - Dropboxes",
         date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
         more_information: {

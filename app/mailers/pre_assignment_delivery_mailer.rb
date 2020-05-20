@@ -17,7 +17,7 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
       rescue => e
         log_document = {
           name: "PreAssignmentDeliveryMailer",
-          error_group: "[pre-assignment-delivery-mailer] active Storage, can't read file",
+          error_group: "[pre-assignment-delivery-mailer] active Storage can't read file",
           erreur_type: "Active Storage, can't read file",
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {

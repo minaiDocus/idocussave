@@ -229,7 +229,7 @@ class Pack::Piece < ApplicationRecord
     unless temp_document
       log_document = {
           name: "Pack::Piece",
-          error_group: "[pack-piece] piece without temp_document - recreate_pdf",
+          error_group: "[pack-piece] piece without temp_document recreate_pdf",
           erreur_type: "Piece without temp_document - recreate_pdf",
           date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
           more_information: {

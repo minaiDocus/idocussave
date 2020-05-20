@@ -150,7 +150,7 @@ class AccountingWorkflow::TempPackProcessor
       if !@original_doc_merged || @pack_locked
         log_document = {
           name: "AccountingWorkflow::TempPackProcessor",
-          error_group: "[accounting-workflow-temp-pack-processor] recreate bundle all document, pack id",
+          error_group: "[accounting-workflow-temp-pack-processor] recreate bundle all document pack id",
           erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {

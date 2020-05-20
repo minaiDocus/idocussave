@@ -1,7 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::TempDocumentDuplicated < DataVerificator::DataVerificator
   def execute
-    temp_documents = TempDocument.where(updated_at: [2.days.ago..Time.now])
+    mcn_organization = Organization.find_by_code 'MCN'
+    temp_documents = TempDocument.where('updated_at >= ? AND updated_at <= ? AND organization_id != ?', 2.days.ago, Time.now, mcn_organization.id)
 
     messages = []
 
