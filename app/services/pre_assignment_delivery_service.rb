@@ -159,7 +159,7 @@ class PreAssignmentDeliveryService
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message.to_s)
+      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message.to_s) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time
@@ -180,7 +180,7 @@ class PreAssignmentDeliveryService
       preseizure.is_locked         = false
       preseizure.save
       preseizure.delivered_to(@delivery.deliver_to)
-      preseizure.set_delivery_message_for(@delivery.deliver_to, '') if preseizure.get_delivery_message_of('ibiza') != 'already sent'
+      preseizure.set_delivery_message_for(@delivery.deliver_to, '') if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time

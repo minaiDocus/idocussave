@@ -105,7 +105,7 @@ class PreAssignmentDeliveryXmlBuilder
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message)
+      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time

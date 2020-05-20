@@ -63,7 +63,9 @@ class IbizaAPI::Utils
         xml.wsImportEntry do
           preseizures.each do |preseizure|
             if preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(preseizure)
+              preseizure.delivered_to('ibiza')
               preseizure.set_delivery_message_for('ibiza', 'already sent')
+              preseizure.save
               next
             end
 

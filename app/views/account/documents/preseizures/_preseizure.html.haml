@@ -45,7 +45,7 @@
           le : 
           = preseizure.delivery_tried_at.try(:to_formatted_s, :db) 
         - software_erreur = @software != '' ? preseizure.get_delivery_message_of(@software) : ''
-        - if software_erreur.present?
+        - if software_erreur.present? && (!software_erreur.match(/already sent/i) || current_user.try(:is_admin))
           %p
             Message d'erreur (
             %strong
