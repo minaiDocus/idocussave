@@ -64,14 +64,19 @@ class BudgeaRetrieverAdminToXlsService
   end
 
   def get_connector_budgea_with(access_token)
-    headers           = { 'accept' => 'Application/json', 'Authorization'=> 'Bearer ' + access_token}
+    headers = { 'Accept' => 'application/json', 'Authorization'=> 'Bearer ' + access_token}
 
     connection = Faraday.new(:url => @settings[:base_url]) do |f|
-      f.request :url_encoded
+      f.request :oauth2, 'token', token_type: :bearer
+      f.response :logger
       f.adapter Faraday.default_adapter
+      f.proxy = @settings[:proxy]
     end
 
-    connection.run_request(:get, '/2.0/users/me/connections/', '', headers)
+    connection.get do |request|
+      request.url "/2.0/users/me/connections"
+      request.headers = headers
+    end
   end
 
   private
