@@ -1,0 +1,28 @@
+.card.retractable-filter
+  = form_tag admin_counter_error_script_mailer_index_path, method: :get, class: 'form-filter' do
+    .card-header.clearfix
+      .float-left
+        %h3 Filtres
+      .float-right.margin1left
+        %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+    .retractable-filter-content
+      .card-body
+        = hidden_field_tag :direction, sort_direction
+        = hidden_field_tag :sort, sort_column
+        = hidden_field_tag :per_page, per_page
+
+        .form-group
+          .label-section
+            = label_tag 'error_script_mailer_contains[error_type]', 'Type d\'erreurs'
+          .control-section
+            = select_tag 'error_script_mailer_contains[error_type]', options_for_select(CounterErrorScriptMailer.all.map { |error_script_mailer| [error_script_mailer.error_type, error_script_mailer.error_type] }, (params[:error_script_mailer_contains][:error_type] rescue '')), include_blank: true, class: 'form-control'
+        .form-group
+          .label-section
+            = label_tag 'error_script_mailer_contains[is_enable]', 'Etat'
+          .control-section
+            = select_tag 'error_script_mailer_contains[is_enable]', options_for_select([["Activé", true],['Desactivé', false]], (params[:error_script_mailer_contains][:is_enable] rescue '')), include_blank: true, class: 'form-control'
+
+      .card-footer
+        .form-actions
+          = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+          = link_to glyphicon('x'), admin_counter_error_script_mailer_index_path, class: 'btn btn-light', title: t('filters.reset')

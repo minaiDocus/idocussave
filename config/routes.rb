@@ -650,6 +650,11 @@ Rails.application.routes.draw do
       get 'launch_data_verif', on: :collection
     end
 
+    resources :counter_error_script_mailer, only: :index do
+      post 'set_state', action: 'set_state', on: :collection
+      post 'set_counter', action: 'set_counter', on: :collection
+    end
+
     resources :budgea_retriever, only: :index do
       get 'export_xls', on: :collection
     end

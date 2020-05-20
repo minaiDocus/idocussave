@@ -1,0 +1,22 @@
+#counter_error_script_mailer
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Counter error script mailer
+
+  .row.retractable.with-filter
+    .col-md-12
+      .box
+        .row
+          .col.mt-4
+            = render partial: 'shared/list_options', locals: { collection: @counter_error_script_mailers }
+        #error_script_table
+          = render partial: 'error_script_mailer', locals: { collection: @counter_error_script_mailers }
+
+        %br
+        .row
+          .col.mb-4
+            = render partial: 'shared/list_options', locals: { collection: @counter_error_script_mailers }
+    = render partial: 'sidebar', locals: { collection: @counter_error_script_mailers }

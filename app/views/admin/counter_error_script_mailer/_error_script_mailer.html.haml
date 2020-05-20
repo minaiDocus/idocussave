@@ -1,0 +1,30 @@
+%table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+  %thead
+    %tr.bg-brown.text-white
+      %th N°
+      %th.text-center=sortable :error_type,"Type d'erreurs"
+      %th.text-center=sortable :is_enable, "Etat"
+      %th.text-center=sortable :counter, "Compte"
+      %th.text-center=sortable :created_at, "Date de Création"
+      %th.text-center=sortable :updated_at, "Date de Modification"
+      %th.text-center Action
+  %tbody
+    - @counter_error_script_mailers.each do |error_script_mailer|
+      %input#error_script_mailer_id{ name: :id, value: error_script_mailer.id, type: 'hidden' }
+      %tr{id:"tr_#{error_script_mailer.id}"}
+        %td= error_script_mailer.id
+        %td= error_script_mailer.error_type
+        %td.text-center= error_script_mailer.is_enable
+        %td.text-center= error_script_mailer.counter
+        %td.text-center= error_script_mailer.created_at.try(:to_formatted_s, :db)
+        %td.text-center= error_script_mailer.updated_at.try(:to_formatted_s, :db)
+        %td.text-center
+          - state = error_script_mailer.is_enable
+          - if state == true
+            = link_to 'Descativer', '#', id: "state_#{error_script_mailer.id}", class: 'btn btn-sm btn-danger set-state', state: state
+          - else
+            = link_to 'Activer', '#', id: "state_#{error_script_mailer.id}", class: 'btn btn-sm btn-success set-state', state: state
+          - counter = error_script_mailer.counter
+          - if counter > 0
+            |
+            = link_to 'Réinitialiser', '#', id: "initialize_#{error_script_mailer.id}", class: 'btn btn-sm btn-dark set-counter-to-initialize', counter: counter
