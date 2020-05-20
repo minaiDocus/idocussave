@@ -1,15 +1,6 @@
 # -*- encoding : UTF-8 -*-
 
 class BudgeaRetrieverAdminToXlsService
-  def initialize
-    @settings = {
-        base_url:      "https://#{Budgea.config.domain}",
-        client_id:     Budgea.config.client_id,
-        client_secret: Budgea.config.client_secret,
-        proxy:         Budgea.config.proxy
-      }
-  end
-
   def execute(export_csv=false)
     accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
     list_retriever_budgea = []
@@ -18,10 +9,10 @@ class BudgeaRetrieverAdminToXlsService
     body_csv_bug          = []
 
     accounts.each do |account|
-      access_token   = account.encrypted_access_token
+      access_token   = account.access_token
       account_active = account.user.active?
 
-      response       = get_connector_budgea_with access_token
+      response       = Budgea::Client.new(access_token).get_all_connections
 
       json_content   = JSON.parse(response.body)
 
@@ -50,6 +41,7 @@ class BudgeaRetrieverAdminToXlsService
           body_csv_failed << [account.user.code, account_active, '', '', account.identifier, access_token, '', '', '', '', budgea_state, id_connector_budgea, error_message_budgea, response.status, id_connection, id_user]
         end
       end
+
     end
 
     list_retriever_budgea.uniq! if list_retriever_budgea.any?
@@ -57,25 +49,9 @@ class BudgeaRetrieverAdminToXlsService
     body_csv_bug = verify_retriever_idocus_and_not_at_budgea_with list_retriever_budgea if list_retriever_budgea.any?
 
     if export_csv
-      for_export(body_csv_normal, body_csv_failed,body_csv_bug)
+      for_export(body_csv_normal, body_csv_failed, body_csv_bug)
     else
       { normal: body_csv_normal, failed: body_csv_failed, bug: body_csv_bug }
-    end
-  end
-
-  def get_connector_budgea_with(access_token)
-    headers = { 'Accept' => 'application/json', 'Authorization'=> 'Bearer ' + access_token}
-
-    connection = Faraday.new(:url => @settings[:base_url]) do |f|
-      f.request :oauth2, 'token', token_type: :bearer
-      f.response :logger
-      f.adapter Faraday.default_adapter
-      f.proxy = @settings[:proxy]
-    end
-
-    connection.get do |request|
-      request.url "/2.0/users/me/connections"
-      request.headers = headers
     end
   end
 

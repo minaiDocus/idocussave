@@ -136,6 +136,13 @@ class Budgea
       end
     end
 
+    def get_all_connections
+      connection.get do |request|
+        request.url "/2.0/users/me/connections"
+        request.headers = headers
+      end
+    end
+
   private
     def connection
       Faraday.new(:url => @settings[:base_url]) do |f|
