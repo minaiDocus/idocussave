@@ -215,11 +215,18 @@ class RetrieverNotification
   private
 
   def users
-    [@retriever.user, @retriever.user.collaborators, prescribers].flatten.compact
+    [@retriever.user, @retriever.user.collaborators, prescribers, developpers].flatten.compact
   end
 
   def prescribers
-    @prescribers ||= @retriever.user.prescribers
+    return @prescribers if @prescribers.any?
+
+    @prescribers = @retriever.user.prescribers + developpers
+    @prescribers = @prescribers.flatten.compact
+  end
+
+  def developpers
+    User.where(email: Settings.first.notify_errors_to)
   end
 
   def url_for(user)
