@@ -57,7 +57,7 @@
                       = f.check_box :is_mini_package_active, class: "light_package #{'commitment_pending' if !@customer.subscription.commitment_end?}", disabled: !lock || (@subscription.heavy_package? && !@customer.subscription.commitment_end?), data: { original_value: ((@subscription.is_mini_package_active || @subscription.is_mini_package_to_be_disabled) ? 1 : 0) }
                       %b iDo’Mini
                       %i (Téléchargement + Pré-saisie comptable + Engagement 12 mois)
-                - if @user.is_admin || @organization.code.in?(['DPA','ADV','CRE','GMBA','AEC','EXTE','ACC','FBC','FIDA','FIDC','EG'])
+                - if @user.is_admin || @organization.code.in?(['DPA','ADV','CRE','GMBA','AEC','EXTE','ACC','FBC','FIDA','FIDC','EG', '2AP'])
                   .package_choice
                     %label
                       = f.check_box :is_micro_package_active, class: "light_package #{'commitment_pending' if !@customer.subscription.commitment_end?}", disabled: !lock || (@subscription.heavy_package? && !@customer.subscription.commitment_end?), data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
