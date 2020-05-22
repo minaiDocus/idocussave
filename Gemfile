@@ -48,7 +48,7 @@ gem 'rabl'
 
 # Query & Network management
 gem 'net-sftp'
-gem 'typhoeus' #used by MCF requests
+gem 'typhoeus' #used by MCF and Slimpay requests
 gem 'faraday'
 gem 'faraday_middleware'
 
