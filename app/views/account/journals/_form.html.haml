@@ -76,16 +76,16 @@
                   iDocus saisira
                   %b systématiquement
                   toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable.
-            = f.input :meta_account_number, required: true
-            = f.input :meta_charge_account, required: true
+            = f.input :meta_account_number, input_html: { class: 'can_be_required' }
+            = f.input :meta_charge_account, input_html: { class: 'can_be_required' }
             - if !@customer || @customer.options.is_taxable
               - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
-              = f.input :vat_account, required: @customer.present?, hint: hint
+              = f.input :vat_account, hint: hint
               = f.input :vat_account_10
               = f.input :vat_account_8_5
               = f.input :vat_account_5_5
               = f.input :vat_account_2_1
-            = f.input :anomaly_account, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+            = f.input :anomaly_account, input_html: { class: 'can_be_required' }, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
             - # Disabled for now
             - if false && @user.is_admin
               = f.input :is_expense_categories_editable, as: :boolean

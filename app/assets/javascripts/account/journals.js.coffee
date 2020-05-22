@@ -1,7 +1,9 @@
 update_form = ->
   if parseInt($("#account_book_type_entry_type").val()) > 1
+    toggle_required_field('enable')
     $('.pre-assignment-attributes').fadeIn('slow')
   else
+    toggle_required_field('disable')
     $('.pre-assignment-attributes').fadeOut('fast')
 
 create_prev_button = (i) ->
@@ -45,6 +47,12 @@ form_to_wizard = ->
         create_next_button(i, count)
 
       $(this).fadeIn('slow')
+
+toggle_required_field = (type) ->
+  if (type == 'enable')
+    $('#new_account_book_type .can_be_required').attr('required', 'required')
+  else
+    $('#new_account_book_type .can_be_required').removeAttr('required')
 
 jQuery ->
   if $('#journal form').length > 0
