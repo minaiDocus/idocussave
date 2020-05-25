@@ -7,7 +7,9 @@ class FtpFetcher
 
   def self.fetch(url, username, password, dir = '/', provider = '')
     begin
-      ftp = Net::FTP.new(url, username, password)
+      ftp = Net::FTP.new
+      ftp.connect url, 21
+      ftp.login username, password
       ftp.passive = true
 
       FtpFetcher::FtpProcessor.new(ftp, dir).execute
@@ -92,15 +94,15 @@ class FtpFetcher
       end
 
       ftp.close
-    rescue Errno::ETIMEDOUT
-      LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : timeout")
+    rescue Errno::ETIMEDOUT, EOFError => e
+      LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : #{e.to_s}")
       false
     rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
       content = "#{e.class}<br /><br />#{e.message}"
       addresses = Array(Settings.first.notify_errors_to)
 
       unless addresses.empty?
-        NotificationMailer.notify(addresses, "[iDocus] Erreur lors de la récupération des documents", content).deliver_later
+        NotificationMailer.notify(addresses, "[iDocus] Erreur lors de la récupération des documents ppp", content).deliver_later
       end
 
       false
