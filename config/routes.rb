@@ -515,6 +515,7 @@ Rails.application.routes.draw do
       resources :remote_authentication do
         collection do
           post :request_connexion
+          post :get_user_parameters
           post :ping
         end
       end
