@@ -1,7 +1,18 @@
 class FTPClient
   def initialize(ftp)
-    @client = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
     @ftp = ftp
+
+    begin
+      #Verify auth ssl / tls support
+      tester = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
+      tester.connect ftp.domain, ftp.port
+      tester.login ftp.login, ftp.password
+      tester.close
+
+      @client = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
+    rescue
+      @client = Net::FTP.new(nil)
+    end
   end
 
   def method_missing(name, *args, &block)
