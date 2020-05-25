@@ -47,6 +47,12 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     invalid_login_attempt
   end
 
+  def get_user_parameters
+    user = User.find params[:user_id]
+
+    render json: { success: true, parameters: { show_preseizures: user.try(:pre_assignement_displayed?) || false } }, status: 200
+  end
+
   # def destroy
   #   current_user.reset_authentication_token
   #   render json: { success: true }, status: 200
