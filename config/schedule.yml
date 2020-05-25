@@ -65,11 +65,11 @@ NotifyProcessedRequestsWorker:
 
 FtpFetcherWorker:
   queue: default
-  cron: '* * * * *'
+  cron: '*/10 * * * * *'
 
 RetrieveEmailedDocumentWorker:
   queue: default
-  cron: '* * * * *'
+  cron: '*/10 * * * * *'
 
 ImportFromDropboxWorker:
   queue: file_import

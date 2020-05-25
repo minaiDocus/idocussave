@@ -6,105 +6,105 @@ class FtpFetcher
   FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
 
   def self.fetch(url, username, password, dir = '/', provider = '')
-    ftp = Net::FTP.new(url, username, password)
-    ftp.passive = true
+    begin
+      ftp = Net::FTP.new(url, username, password)
+      ftp.passive = true
 
-    FtpFetcher::FtpProcessor.new(ftp, dir).execute
+      FtpFetcher::FtpProcessor.new(ftp, dir).execute
 
-    ftp.chdir dir
-
-    dirs = ftp.nlst.sort
-
-    if (uncomplete_deliveries = check_uncomplete_delivery(ftp, dirs)).any?
-      ScanService.notify_uncompleted_delivery uncomplete_deliveries
       ftp.chdir dir
-      uncomplete_deliveries.each { |file_path| ftp.delete("#{file_path}.uncomplete") rescue false }
-    end
+
+      dirs = ftp.nlst.sort
+
+      if (uncomplete_deliveries = check_uncomplete_delivery(ftp, dirs)).any?
+        ScanService.notify_uncompleted_delivery uncomplete_deliveries
+        ftp.chdir dir
+        uncomplete_deliveries.each { |file_path| ftp.delete("#{file_path}.uncomplete") rescue false }
+      end
 
 
-    ready_dirs(dirs).each do |dir|
-      ftp.chdir dir
-      date      = dir[0..9]
-      position = dir[11..-7] || 1
+      ready_dirs(dirs).each do |dir|
+        ftp.chdir dir
+        date      = dir[0..9]
+        position = dir[11..-7] || 1
 
-      corrupted_documents = []
+        corrupted_documents = []
 
-      document_delivery = DocumentDelivery.find_or_create_by(date, provider, position)
+        document_delivery = DocumentDelivery.find_or_create_by(date, provider, position)
 
-      file_names = valid_file_names(ftp.nlst.sort)
+        file_names = valid_file_names(ftp.nlst.sort)
 
-      grouped_packs(file_names).each do |pack_name, file_names|
-        documents = []
-        file_names.each do |file_name|
-          document = document_delivery.temp_documents.where(original_file_name: file_name).first
+        grouped_packs(file_names).each do |pack_name, file_names|
+          documents = []
+          file_names.each do |file_name|
+            document = document_delivery.temp_documents.where(original_file_name: file_name).first
 
-          if !document || (document && document.unreadable?)
-            get_file ftp, file_name, clean_file_name(file_name) do |file|
-              #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-              pack_name = pack_name.gsub('AC0162', 'MVN%GRHCONSULT') if pack_name.match(/^AC0162/)
+            if !document || (document && document.unreadable?)
+              get_file ftp, file_name, clean_file_name(file_name) do |file|
+                #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
+                pack_name = pack_name.gsub('AC0162', 'MVN%GRHCONSULT') if pack_name.match(/^AC0162/)
 
-              document = document_delivery.add_or_replace(file, original_file_name: file_name,
-                                                                delivery_type: 'scan',
-                                                                api_name: 'scan',
-                                                                delivered_by: provider,
-                                                                pack_name: pack_name)
+                document = document_delivery.add_or_replace(file, original_file_name: file_name,
+                                                                  delivery_type: 'scan',
+                                                                  api_name: 'scan',
+                                                                  delivered_by: provider,
+                                                                  pack_name: pack_name)
+              end
             end
+
+            documents << document
+            corrupted_documents << document if document.unreadable? && !document.is_corruption_notified
           end
 
-          documents << document
-          corrupted_documents << document if document.unreadable? && !document.is_corruption_notified
+          if documents.select(&:unreadable?).count == 0 && documents.select(&:is_locked).count > 0
+            document_ids = documents.map(&:id)
+            TempDocument.where(id: document_ids).update_all(is_locked: false)
+          end
         end
 
-        if documents.select(&:unreadable?).count == 0 && documents.select(&:is_locked).count > 0
-          document_ids = documents.map(&:id)
-          TempDocument.where(id: document_ids).update_all(is_locked: false)
+        ftp.chdir '..'
+
+        if document_delivery.valid_documents?
+          document_delivery.processed
+
+          ftp.rename dir, fetched_dir(dir)
+
+          document_delivery.temp_documents.group_by(&:user).each do |user, temp_documents|
+            NotifyNewScannedDocuments.new(user, temp_documents.count).execute
+          end
         end
+
+        # notify corrupted documents
+        next unless corrupted_documents.count > 0
+
+        subject = '[iDocus] Documents corrompus'
+        content = "Livraison : #{dir}\n"
+        content = "Total : #{corrupted_documents.count}\n"
+        content << "Fichier(s) : #{corrupted_documents.map(&:original_file_name).join(', ')}"
+
+        addresses = Array(Settings.first.notify_errors_to)
+
+        unless addresses.empty?
+          NotificationMailer.notify(addresses, subject, content)
+        end
+
+        corrupted_documents.each(&:corruption_notified)
       end
 
-      ftp.chdir '..'
-
-      if document_delivery.valid_documents?
-        document_delivery.processed
-
-        ftp.rename dir, fetched_dir(dir)
-
-        document_delivery.temp_documents.group_by(&:user).each do |user, temp_documents|
-          NotifyNewScannedDocuments.new(user, temp_documents.count).execute
-        end
-      end
-
-      # notify corrupted documents
-      next unless corrupted_documents.count > 0
-
-      subject = '[iDocus] Documents corrompus'
-      content = "Livraison : #{dir}\n"
-      content = "Total : #{corrupted_documents.count}\n"
-      content << "Fichier(s) : #{corrupted_documents.map(&:original_file_name).join(', ')}"
-
+      ftp.close
+    rescue Errno::ETIMEDOUT
+      LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : timeout")
+      false
+    rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
+      content = "#{e.class}<br /><br />#{e.message}"
       addresses = Array(Settings.first.notify_errors_to)
 
       unless addresses.empty?
-        NotificationMailer.notify(addresses, subject, content)
+        NotificationMailer.notify(addresses, "[iDocus] Erreur lors de la récupération des documents", content).deliver_later
       end
 
-      corrupted_documents.each(&:corruption_notified)
+      false
     end
-
-    ftp.close
-
-  rescue Errno::ETIMEDOUT
-    LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : timeout")
-    false
-
-  rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
-    content = "#{e.class}<br /><br />#{e.message}"
-    addresses = Array(Settings.first.notify_errors_to)
-
-    unless addresses.empty?
-      NotificationMailer.notify(addresses, "[iDocus] Erreur lors de la récupération des documents", content).deliver_later
-    end
-
-    false
   end
 
 
