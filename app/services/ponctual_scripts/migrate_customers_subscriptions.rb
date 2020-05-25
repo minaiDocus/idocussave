@@ -10,12 +10,15 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
   private 
 
   def execute
+    not_updated_lists = []
+
     get_customers.each do |customer|
-      customer = customer.strip
+      customer     = customer.strip
       subscription = get_user(customer).try(:subscription)
 
       if !subscription || subscription.try(:heavy_package?)
         logger_infos "[MigrateCustomersSubscriptions] - customer: #{customer.to_s} - subscription ID : #{subscription.id.to_s} - can't be updated"
+        not_updated_lists << { subscription_id: subscription.id, customer: customer }
         next
       end
 
@@ -33,12 +36,26 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
 
       SubscriptionForm.new(subscription, requester).submit(params_update)
     end
+
+    if not_updated_lists.present?
+      log_document = {
+        name: "MigrateCustomersSubscriptions",
+        error_group: "[PonctualScripts] Migration Extentis to Ido micro",
+        erreur_type: "Migration Extentis to Ido micro",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          not_updated_lists: not_updated_lists.join(',')
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
+    end
   end
 
   def backup
     get_customers.each do |customer|
       customer = customer.strip
-      params = JSON.parse(File.read(File.join(ponctual_dir, "#{customer}.json"))).with_indifferent_access
+      params   = JSON.parse(File.read(File.join(ponctual_dir, "#{customer}.json"))).with_indifferent_access
 
       subscription = Subscription.find params[:id]
 
