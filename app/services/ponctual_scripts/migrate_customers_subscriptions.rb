@@ -55,7 +55,14 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
   def backup
     get_customers.each do |customer|
       customer = customer.strip
-      params   = JSON.parse(File.read(File.join(ponctual_dir, "#{customer}.json"))).with_indifferent_access
+      file     = File.join(ponctual_dir, "#{customer}.json")
+
+      if !File.exist?(file)
+        logger_infos "[MigrateCustomersSubscriptions] - customer: #{customer.to_s} - file not exist"
+        next
+      end
+
+      params = JSON.parse(File.read(file)).with_indifferent_access
 
       subscription = Subscription.find params[:id]
 
