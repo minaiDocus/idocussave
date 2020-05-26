@@ -41,9 +41,15 @@ class IbizaPreseizureFinder
     end
 
     if preseizure.piece
-      search_term = preseizure.piece_number
-      search_query_A = 'piece'
-      search_query_B = 'voucherRef'
+      if preseizure.piece_number.present?
+        search_term = preseizure.piece_number
+        search_query_A = 'piece'
+        search_query_B = 'voucherRef'
+      else
+        search_term = IbizaAPI::Utils.piece_name(preseizure.piece.name, ibiza.piece_name_format , ibiza.piece_name_format_sep)
+        search_query_A = 'voucherRef'
+        search_query_B = 'piece'
+      end
     else
       search_term = preseizure.operation_name
       search_query_A ='voucherRef'
