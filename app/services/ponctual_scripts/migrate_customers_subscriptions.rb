@@ -17,8 +17,8 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
       subscription = get_user(customer).try(:subscription)
 
       if !subscription || subscription.try(:heavy_package?)
-        logger_infos "[MigrateCustomersSubscriptions] - customer: #{customer.to_s} - subscription ID : #{subscription.id.to_s} - can't be updated"
-        not_updated_lists << { subscription_id: subscription.id, customer: customer }
+        logger_infos "[MigrateCustomersSubscriptions] - customer: #{customer.to_s} - subscription ID : #{subscription.try(:id).to_s} - can't be updated"
+        not_updated_lists << { subscription_id: subscription.try(:id), customer: customer }
         next
       end
 
@@ -72,7 +72,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
   end
 
   def get_user(code)
-    User.find_by_code(code.strip) || nil
+    User.where(code: code.strip).active.first || nil
   end
 
   def ponctual_dir
@@ -88,6 +88,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
   end
 
   def requester
-    User.find_by_email 'bweinberger-fidalex@extentis.fr'
+    collab = User.find_by_email 'bweinberger-fidalex@extentis.fr'
+    Collaborator.new collab
   end
 end
