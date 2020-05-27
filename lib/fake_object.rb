@@ -1,5 +1,17 @@
-class FakeObject < OpenStruct
+class FakeObject
+  def initialize
+    @object = OpenStruct.new
+  end
+
   def method_missing(name, *args, &block)
-    return nil
+    begin
+      @object.send(name, args)
+    rescue
+      begin
+        @object.send(name).first
+      rescue
+        nil
+      end
+    end
   end
 end

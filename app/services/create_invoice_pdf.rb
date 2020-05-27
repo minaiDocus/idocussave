@@ -1,4 +1,6 @@
 class CreateInvoicePdf
+  attr_accessor :data, :total
+
   class << self
     def for_all
       time = 1.month.ago.beginning_of_month + 15.days
@@ -160,16 +162,23 @@ class CreateInvoicePdf
   end
 
   def execute
-    months = I18n.t('date.month_names').map { |e| e.capitalize if e }
+    initialize_data_utilities
 
-    current_month  = months[@invoice.created_at.month]
-    previous_month = months[(@invoice.created_at - 1.month).month]
+    made_invoice_pdf
 
-    year  = (@invoice.created_at - 1.month).year
-    month = (@invoice.created_at - 1.month).month
+    # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
+    @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    @total = 0
-    @data = []
+    # auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
+  end
+
+  def initialize_data_utilities
+    @data    = []
+    @total   = 0
+    @months  = I18n.t('date.month_names').map { |e| e.capitalize if e }
+    @previous_month = @months[(@invoice.created_at - 1.month).month]
+
+    @year  = (@invoice.created_at - 1.month).year
 
     time = @invoice.created_at - 1.month
 
@@ -213,7 +222,7 @@ class CreateInvoicePdf
 
     @data = [
       ["Nombre de dossiers actifs : #{periods.count}", ''],
-      ['Forfaits et options iDocus pour ' + previous_month.downcase + ' ' + year.to_s + ' :', format_price(@total) + " €"]
+      ['Forfaits et options iDocus pour ' + @previous_month.downcase + ' ' + @year.to_s + ' :', format_price(@total) + " €"]
     ]
 
     if micro_package_count > 0
@@ -262,143 +271,186 @@ class CreateInvoicePdf
               end
 
     options.each do |option|
-      @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
-      @total += option.price_in_cents_wo_vat
+      @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"] if @invoice.organization.code != 'FIDC' || (@invoice.organization.code == 'FIDC' && !option.title.match(/FB CONSEIL/i) && !option.title.match(/FIDALEX/i) && !option.title.match(/EGIDE/))
+
+      @total += option.price_in_cents_wo_vat unless ['EG', 'FIDA', 'FBC'].include? @invoice.organization.code
     end
 
     @address = @invoice.organization.addresses.for_billing.first
 
-    @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round
+    @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round unless ['EG', 'FIDA', 'FBC'].include? @invoice.organization.code
+  end
+
+  private
+
+  def made_invoice_pdf
+    @pdf.destroy if @pdf
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{@invoice.number}.pdf" do |pdf|
-      pdf.font 'Helvetica'
-      pdf.fill_color '49442A'
+      @pdf = pdf
+      with_extentis = false
 
-      # Header
-      pdf.font_size 8
-      pdf.default_leading 4
-      header_data = [
-        [
-          "IDOCUS\n17, rue Galilée\n75116 Paris.",
-          "SAS au capital de 50 000 €\nRCS PARIS: 804 067 726\nTVA FR12804067726",
-          "contact@idocus.com\nwww.idocus.com\nTél : 01 84 250 251"
-        ]
+      make_header
+      with_extentis = true if @invoice.organization.code == 'FIDC'
+      make_body(with_extentis,@invoice.organization.name)
+      make_footer
+
+      @pdf
+    end
+  end
+
+  def make_header
+    @pdf.font 'Helvetica'
+    @pdf.fill_color '49442A'
+
+    @pdf.font_size 8
+    @pdf.default_leading 4
+    header_data = [
+      [
+        "IDOCUS\n17, rue Galilée\n75116 Paris.",
+        "SAS au capital de 50 000 €\nRCS PARIS: 804 067 726\nTVA FR12804067726",
+        "contact@idocus.com\nwww.idocus.com\nTél : 01 84 250 251"
       ]
+    ]
 
-      pdf.table(header_data, width: 540) do
-        style(row(0), borders: [:top, :bottom], border_color: 'AFA6A6', text_color: 'AFA6A6')
-        style(columns(1), align: :center)
-        style(columns(2), align: :right)
+    @pdf.table(header_data, width: 540) do
+      style(row(0), borders: [:top, :bottom], border_color: 'AFA6A6', text_color: 'AFA6A6')
+      style(columns(1), align: :center)
+      style(columns(2), align: :right)
+    end
+
+    @pdf.move_down 10
+    @pdf.image "#{Rails.root}/app/assets/images/logo/small_logo.png", width: 85, height: 40, at: [4, @pdf.cursor]
+
+    @pdf.stroke_color '49442A'
+    @pdf.font_size 10
+    @pdf.default_leading 5
+
+    formatted_address = [@address.company, @address.first_name + ' ' + @address.last_name, @address.address_1, @address.address_2, @address.zip.to_s + ' ' + @address.city, @address.country]
+                        .reject { |a| a.nil? || a.empty? }
+                        .join("\n")
+
+    @pdf.move_down 33
+    @pdf.bounding_box([252, @pdf.cursor], width: 240) do
+      @pdf.text formatted_address, align: :right, style: :bold
+
+      if @invoice.organization.vat_identifier
+        @pdf.move_down 7
+
+        @pdf.text "TVA : #{@invoice.organization.vat_identifier}", align: :right, style: :bold
       end
+    end
 
-      pdf.move_down 10
-      pdf.image "#{Rails.root}/app/assets/images/logo/small_logo.png", width: 85, height: 40, at: [4, pdf.cursor]
+    @pdf.font_size(14) do
+      @pdf.move_down 30
+      @pdf.text "Facture n°" + @invoice.number.to_s + ' du ' + (@invoice.created_at - 1.month).end_of_month.day.to_s + ' ' + @previous_month + ' ' + (@invoice.created_at - 1.month).year.to_s, align: :left, style: :bold
+    end
 
-      #  Body
-      pdf.stroke_color '49442A'
-      pdf.font_size 10
-      pdf.default_leading 5
+    @pdf.move_down 14
+    @pdf.text "<b>Période concernée :</b> " + @previous_month + ' ' + @year.to_s, align: :left, inline_format: true
 
-      # Address
-      formatted_address = [@address.company, @address.first_name + ' ' + @address.last_name, @address.address_1, @address.address_2, @address.zip.to_s + ' ' + @address.city, @address.country]
-                          .reject { |a| a.nil? || a.empty? }
-                          .join("\n")
+    unless @invoice.organization
+      @pdf.move_down 7
+      @pdf.text "<b>Votre code client :</b> #{user.code}", align: :left, inline_format: true
+    end
+  end
 
-      pdf.move_down 33
-      pdf.bounding_box([252, pdf.cursor], width: 240) do
-        pdf.text formatted_address, align: :right, style: :bold
+  def make_body(with_extentis=false, organization_name='')
+    @pdf.move_down 30
+    data = [['<b>Forfaits & Prestations</b>', '<b>Prix HT</b>']]
+    data += [["<b><i>#{organization_name}</i></b>", '']] if with_extentis
+    data +=  @data
+    data += [['', '']]
 
-        if @invoice.organization.vat_identifier
-          pdf.move_down 7
+    @pdf.table(data, width: 540, cell_style: { inline_format: true }) do
+      style(row(0..-1), borders: [], text_color: '49442A')
+      style(row(0), borders: [:bottom])
+      style(row(-1), borders: [:bottom])
+      style(columns(2), align: :right)
+      style(columns(1), align: :right)
+    end
 
-          pdf.text "TVA : #{@invoice.organization.vat_identifier}", align: :right, style: :bold
-        end
-      end
+    append_extentis_additionnal_details if with_extentis
+  end
 
-      # Information
-      pdf.font_size(14) do
-        pdf.move_down 30
-        pdf.text "Facture n°" + @invoice.number.to_s + ' du ' + (@invoice.created_at - 1.month).end_of_month.day.to_s + ' ' + previous_month + ' ' + (@invoice.created_at - 1.month).year.to_s, align: :left, style: :bold
-      end
+  def append_extentis_additionnal_details
+    time = 1.month.ago.beginning_of_month + 15.days
 
-      pdf.move_down 14
-      pdf.text "<b>Période concernée :</b> " + previous_month + ' ' + year.to_s, align: :left, inline_format: true
+    ['FBC', 'FIDA', 'EG'].each do |code|
+      organization        = Organization.find_by_code code
+      organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
 
-      unless @invoice.organization
-        pdf.move_down 7
-        pdf.text "<b>Votre code client :</b> #{user.code}", align: :left, inline_format: true
-      end
+      invoice              = FakeObject.new
+      invoice.created_at   = Time.now
+      invoice.organization = organization
+      invoice.period       = organization_period
+      invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
+      invoice.save
 
-      # Detail
-      pdf.move_down 30
-      data = [['<b>Forfaits & Prestations</b>', '<b>Prix HT</b>']] + @data + [['', '']]
+      data_extentis  = CreateInvoicePdf.new(invoice)
+      data_extentis.initialize_data_utilities
 
-      pdf.table(data, width: 540, cell_style: { inline_format: true }) do
+      data = [["<b><i>#{organization.name}</i></b>", '']] + data_extentis.data + [['', '']]
+
+      @pdf.table(data, width: 540, cell_style: { inline_format: true }) do
         style(row(0..-1), borders: [], text_color: '49442A')
-        style(row(0), borders: [:bottom])
         style(row(-1), borders: [:bottom])
         style(columns(2), align: :right)
         style(columns(1), align: :right)
       end
-
-      # Total
-      pdf.move_down 7
-      pdf.float do
-        pdf.text_box 'Total HT', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
-      end
-      pdf.text_box format_price(@total) + " €", at: [470, pdf.cursor], width: 66, align: :right
-      pdf.move_down 10
-      pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
-
-      pdf.move_down 7
-      pdf.float do
-        if @invoice.organization.subject_to_vat
-          pdf.text_box 'TVA (20%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
-        else
-          pdf.text_box 'TVA (0%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
-        end
-      end
-      if @invoice.organization.subject_to_vat
-        pdf.text_box format_price(@total * @invoice.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
-      else
-        pdf.text_box "0 €", at: [470, pdf.cursor], width: 66, align: :right
-      end
-      pdf.move_down 10
-      pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
-
-      pdf.move_down 7
-      pdf.float do
-        pdf.text_box 'Total TTC', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
-      end
-      if @invoice.organization.subject_to_vat
-        pdf.text_box format_price(@total * @invoice.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
-      else
-        pdf.text_box format_price(@total) + " €", at: [470, pdf.cursor], width: 66, align: :right
-      end
-      pdf.move_down 10
-      pdf.stroke_color '000000'
-      pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
-
-      # Other information
-      pdf.move_down 13
-      pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[@invoice.created_at.month].downcase} #{@invoice.created_at.year}"
-
-      if @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat
-        pdf.move_down 7
-        pdf.text 'Auto-liquidation par le preneur - Art 283-2 du CGI'
-      end
-
-      pdf.move_down 7
-      pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
     end
-
-    # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
-    @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
-
-    # auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
-private
+  def make_footer
+    @pdf.move_down 7
+    @pdf.float do
+      @pdf.text_box 'Total HT', at: [400, @pdf.cursor], width: 60, align: :right, style: :bold
+    end
+    @pdf.text_box format_price(@total) + " €", at: [470, @pdf.cursor], width: 66, align: :right
+    @pdf.move_down 10
+    @pdf.stroke_horizontal_line 470, 540, at: @pdf.cursor
+
+    @pdf.move_down 7
+    @pdf.float do
+      if @invoice.organization.subject_to_vat
+        @pdf.text_box 'TVA (20%)', at: [400, @pdf.cursor], width: 60, align: :right, style: :bold
+      else
+        @pdf.text_box 'TVA (0%)', at: [400, @pdf.cursor], width: 60, align: :right, style: :bold
+      end
+    end
+    if @invoice.organization.subject_to_vat
+      @pdf.text_box format_price(@total * @invoice.vat_ratio - @total) + " €", at: [470, @pdf.cursor], width: 66, align: :right
+    else
+      @pdf.text_box "0 €", at: [470, @pdf.cursor], width: 66, align: :right
+    end
+    @pdf.move_down 10
+    @pdf.stroke_horizontal_line 470, 540, at: @pdf.cursor
+
+    @pdf.move_down 7
+    @pdf.float do
+      @pdf.text_box 'Total TTC', at: [400, @pdf.cursor], width: 60, align: :right, style: :bold
+    end
+    if @invoice.organization.subject_to_vat
+      @pdf.text_box format_price(@total * @invoice.vat_ratio) + " €", at: [470, @pdf.cursor], width: 66, align: :right
+    else
+      @pdf.text_box format_price(@total) + " €", at: [470, @pdf.cursor], width: 66, align: :right
+    end
+    @pdf.move_down 10
+    @pdf.stroke_color '000000'
+    @pdf.stroke_horizontal_line 470, 540, at: @pdf.cursor
+
+    # Other information
+    @pdf.move_down 13
+    @pdf.text "Cette somme sera prélevée sur votre compte le 4 #{@months[@invoice.created_at.month].downcase} #{@invoice.created_at.year}"
+
+    if @invoice.organization.vat_identifier && !@invoice.organization.subject_to_vat
+      @pdf.move_down 7
+      @pdf.text 'Auto-liquidation par le preneur - Art 283-2 du CGI'
+    end
+
+    @pdf.move_down 7
+    @pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
+  end
   
   def auto_upload_last_invoice
     begin
