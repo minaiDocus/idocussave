@@ -103,6 +103,7 @@ class CreateInvoicePdf
         orders << create_fidc_order_of(organization, total_amount)
       end
 
+      orders << create_discount_april_fidec(fidec) #TEMP : Forgotten FIDEC discount billing (april)
       fidec_period.product_option_orders = orders.compact if fidec_period
     end
 
@@ -117,6 +118,22 @@ class CreateInvoicePdf
       option.group_title = 'Autres'
       option.is_an_extra = true
       option.price_in_cents_wo_vat = price
+
+      option
+    end
+
+    # TEMP : Forgotten FIDEC discount billing (april)
+    def create_discount_april_fidec(organization)
+      return nil if !organization.present? || Time.now.month != 6
+
+      option = ProductOptionOrder.new
+
+      option.title       = "Remise sur CA Avril"
+      option.name        = 'discount_option'
+      option.duration    = 1
+      option.group_title = 'Autres'
+      option.is_an_extra = true
+      option.price_in_cents_wo_vat = -126 * 100.0
 
       option
     end
