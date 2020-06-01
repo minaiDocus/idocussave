@@ -285,6 +285,27 @@ class CreateInvoicePdf
     @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round unless CreateInvoicePdf.extentis_group.include? @invoice.organization.code
   end
 
+  # TEMP : TO PUT BACK A PRIVATE METHOD
+  def auto_upload_last_invoice
+    begin
+      #We dont send extentis group invoices to ACC%IDO except FIDC, cause FIDC is a merge of the 4 invoices
+      return false if CreateInvoicePdf.extentis_group.include? @invoice.organization.code
+
+      user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
+
+      file = File.new @invoice.cloud_content_object.path
+      content_file_name = @invoice.cloud_content_object.filename
+
+      uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
+
+      logger_message_content(uploaded_document)
+
+      auto_upload_invoice_setting(file, content_file_name)
+    rescue => e
+      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Error: #{e.to_s}")
+    end
+  end
+
   private
 
   def make_invoice_pdf
@@ -448,26 +469,6 @@ class CreateInvoicePdf
         style(columns(2), align: :right)
         style(columns(1), align: :right)
       end
-    end
-  end
-  
-  def auto_upload_last_invoice
-    begin
-      #We dont send extentis group invoices to ACC%IDO except FIDC, cause FIDC is a merge of the 4 invoices
-      return false if CreateInvoicePdf.extentis_group.include? @invoice.organization.code
-
-      user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
-
-      file = File.new @invoice.cloud_content_object.path
-      content_file_name = @invoice.cloud_content_object.filename
-
-      uploaded_document = UploadedDocument.new( file, content_file_name, user, 'VT', 1, nil, 'invoice_auto', nil )
-
-      logger_message_content(uploaded_document)
-
-      auto_upload_invoice_setting(file, content_file_name)
-    rescue => e
-      LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Error: #{e.to_s}")
     end
   end
 
