@@ -14,9 +14,10 @@ class RetrievedDocument
     temp_file_path = client.get_file document['id']
     dir            = Dir.mktmpdir
     file_path      = File.join(dir, 'retriever_processed_file.pdf')
-    processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
 
     begin
+      processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
+
       if client.response.status == 200
         RetrievedDocument.new(retriever, document, processed_file.path)
         retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
