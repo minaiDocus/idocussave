@@ -112,7 +112,7 @@ class ProcessRetrievedData
 
             initial_documents_count = retriever.temp_documents.count
 
-            unless retriever.bank? || retriever.journal.nil?
+            if retriever.provider? && retriever.journal.present?
               if connection['subscriptions'].present?
                 errors = []
                 dir    = Dir.mktmpdir
