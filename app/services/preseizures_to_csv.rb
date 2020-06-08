@@ -11,6 +11,7 @@ class PreseizuresToCsv
   def execute
     lines = []
     @preseizures.each do |preseizure|
+      @preseizure = preseizure
       preseizure.entries.by_position.each do |entry|
         lines << format_line(entry)
       end
@@ -207,6 +208,8 @@ class PreseizuresToCsv
           part[1].to_i > 0 ? entry.preseizure.operation_label.try(:[], [0, part[1].to_i]) : entry.preseizure.operation_label
         when /\Alettering\z/
           part[1].to_i > 0 ? entry.account.lettering[0, part[1].to_i] : entry.account.lettering
+        when /\Atags\z/
+          @preseizure.piece.tags
         when /\Aother\z/
           part[1].nil? ? '' : part[1]
         when /\Aseparator\z/

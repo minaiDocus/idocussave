@@ -327,6 +327,7 @@ module ApplicationHelper
       [t('activerecord.models.csv_descriptor.attributes.piece_url'), :piece_url],
       [t('activerecord.models.csv_descriptor.attributes.remark'), :remark],
       [t('activerecord.models.csv_descriptor.attributes.third_party'), :third_party],
+      [t('activerecord.models.csv_descriptor.attributes.tags'), :tags],
       ['Autre', :other]
     ]
   end

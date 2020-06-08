@@ -125,6 +125,8 @@ class Account::DocumentsController < Account::AccountController
   def preseizure_account
     @preseizure = Pack::Report::Preseizure.find params[:id]
 
+    @tags = @preseizure.piece.tags
+
     user = @preseizure.try(:user)
     @ibiza = user.try(:organization).try(:ibiza)
     @software = @software_human_name = ''
