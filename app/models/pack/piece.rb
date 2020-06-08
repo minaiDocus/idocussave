@@ -55,7 +55,11 @@ class Pack::Piece < ApplicationRecord
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
   scope :deleted,                -> { where.not(delete_at: nil) }
-  scope :need_preassignment,     -> { where(pre_assignment_state: 'waiting') }
+
+  #WORKARROUND : Get pieces with suplier_recognition state and detected_third_party_id present
+  # scope :need_preassignment,   -> { where(pre_assignment_state: 'waiting') }
+  scope :need_preassignment,     -> { where('pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0)') }
+
   scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
   default_scope { where(delete_at: [nil, '']) }
