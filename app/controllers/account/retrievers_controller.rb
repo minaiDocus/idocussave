@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
-  before_action :verif_account, except: %w[index export_connector_to_xls get_connector_xls]
+  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls]
   before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls]
   before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls]
   before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls]
