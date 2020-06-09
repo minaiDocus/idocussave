@@ -42,7 +42,7 @@
             - if @user.collaborator?
               .edit_content_third_party.hide
                 %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
-          - tags = explod_tag_for @tags
+          - tags = explod_tag_for @tags.presence
           %td.tags.text_center{title: "#{tags}"}
             .content_tags
               = tags.length < 15 ? tags : tags[0..15] + "..."

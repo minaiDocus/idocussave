@@ -83,7 +83,7 @@
                 %td.pages_number.text-center#pages_number
                   .content_pages_number
                     = document.pages_number
-                - tags = explod_tag_for document.tags
+                - tags = explod_tag_for document.tags.presence
                 %td.piece_tags.text-center#piece_tags{title: "#{tags}"}
                   .content_piece_tags
                     = tags.length < 15 ? tags : tags[0..15] + "..."

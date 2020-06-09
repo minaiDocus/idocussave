@@ -68,12 +68,7 @@ module Account::DocumentsHelper
     data_analytics
   end
 
-  def explod_tag_for(tags)
-    tags_return = ''
-    tags.each do |tag|
-      tags_return = tags_return.to_s + "#" + tag.to_s + ' '
-    end
-
-    tags_return.strip
+  def explod_tag_for(tags=[])
+    tags.map {|tag| "#" + tag.to_s }.join(' ')
   end
 end
