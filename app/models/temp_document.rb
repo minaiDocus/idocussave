@@ -134,7 +134,7 @@ class TempDocument < ApplicationRecord
 
 
     after_transition on: :ocr_needed do |temp_document, _transition|
-      AccountingWorkflow::OcrProcessing.send_document(temp_document.id)
+      AccountingWorkflow::OcrProcessing.delay_for(10.seconds, queue: :low).send_document(temp_document.id)
     end
 
 
