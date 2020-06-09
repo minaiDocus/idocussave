@@ -844,12 +844,12 @@ describe ProcessRetrievedData do
       expect(TempDocument.last.api_id).to eq @document['id'].to_s
     end
 
-    it 'return false when document is already exist', :retry_already_exist do
+    it 'return true when document is already exist', :retry_already_exist do
       allow_any_instance_of(Retriever).to receive_message_chain('temp_documents.where.first').and_return(true)
 
       result = RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
-      expect(result[:success]).to be false
+      expect(result[:success]).to be true
       expect(TempDocument.last.try(:user).try(:id)).to eq nil
       expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s
     end

@@ -6,30 +6,33 @@ class RetrievedDocument
     retriever     = Retriever.find retriever_id
     already_exist = retriever.temp_documents.where(api_id: document['id']).first
 
-    return { success: false, error_object: nil } if count_day >= 3 || already_exist
+    return { success: true, return_object: nil } if count_day >= 3 || already_exist
 
     client     = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
     is_success = false
     tries      = 1
-
-    dir            = Dir.mktmpdir
-    file_path      = File.join(dir, 'retriever_processed_file.pdf')
+    dir        = Dir.mktmpdir
+    file_path  = File.join(dir, 'retriever_processed_file.pdf')
 
     while tries <= 3 && !is_success
       sleep(tries)
       temp_file_path = client.get_file document['id']
 
       begin
-        processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
-
         if client.response.status == 200
+          processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
           RetrievedDocument.new(retriever, document, processed_file.path)
+
           retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
-          is_success = true
-          count_day  = 3
+          is_success    = true
+          return_object = client.response
+          count_day     = 3
+        else
+          is_success    = false
+          return_object = client.response
         end
       rescue Errno::ENOENT => e
-        error_object = e
+        return_object = e
       end
       tries += 1
     end
@@ -50,14 +53,14 @@ class RetrievedDocument
         client: client.inspect,
         reponse_code: client.response.status.to_s,
         document: document.inspect,
-        error_message: error_object.to_s,
+        error_message: return_object.to_s,
         temp_file_path: temp_file_path.to_s
       }
     }
 
-    ErrorScriptMailer.error_notification(log_document).deliver
+    ErrorScriptMailer.error_notification(log_document).deliver if !is_success
 
-    { success: is_success, error_object: error_object }
+    { success: is_success, return_object: return_object }
   end
 
   def initialize(retriever, document, temp_file_path)

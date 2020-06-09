@@ -90,19 +90,19 @@ class ProcessRetrievedData
     connections = json_content[:content]['connections']
 
     connections.each do |connection|
-      unless connection['id'].in?(@retrieved_data.processed_connection_ids)
-        @is_connection_ok = true
-        @connection_id    = connection['id']
+      next if connection['id'].in?(@retrieved_data.processed_connection_ids)
 
-        process connection if retriever
+      @is_connection_ok = true
+      @connection_id    = connection['id']
 
-        if @is_connection_ok
-          @retrieved_data.processed_connection_ids << connection['id']
-          @retrieved_data.save
-        end
+      process connection if retriever
 
-        break if @run_until && @run_until < Time.now
+      if @is_connection_ok
+        @retrieved_data.processed_connection_ids << connection['id']
+        @retrieved_data.save
       end
+
+      break if @run_until && @run_until < Time.now
     end
   end
 
@@ -119,7 +119,7 @@ class ProcessRetrievedData
 
     initial_documents_count = retriever.temp_documents.count
 
-    get_document_file_of(connection['subscriptions'])  if retriever.provider? && retriever.journal.present? && connection['subscriptions'].present?
+    get_document_file_of(connection) if retriever.provider? && retriever.journal.present? && connection['subscriptions'].present?
 
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
@@ -129,8 +129,8 @@ class ProcessRetrievedData
 
     retriever.update(sync_at: Time.parse(connection['last_update'])) if connection['last_update'].present?
 
-    if retriever.is_selection_needed && (@is_new_document_present || @is_new_transaction_present) && retriever.wait_selection
-      retriever.update(is_selection_needed: false)
+    if retriever.is_selection_needed && (@is_new_document_present || @is_new_transaction_present)
+      retriever.update(is_selection_needed: false) if retriever.wait_selection
     end
   end
 
@@ -165,7 +165,7 @@ class ProcessRetrievedData
       bank_account.destroy
       bank_account = nil
     else
-      bank_account                   = BankAccount.new if bank_account.nil?
+      bank_account                   = bank_account || BankAccount.new
       bank_account.user              = @user
       bank_account.retriever         = retriever
       bank_account.api_id            = account['id']
@@ -175,19 +175,20 @@ class ProcessRetrievedData
       bank_account.type_name         = account['type']
       bank_account.original_currency = account['currency']
       bank_account.api_name          = 'budgea'
+      is_new                         = !bank_account.persisted?
 
-      historic = @user.retrievers_historics.where(retriever_id: retriever.id).first
-      historic.update(banks_count: (historic.banks_count.to_i + 1)) if historic && bank_account.persisted?
-
-      bank_account.save
+      if bank_account.save
+        historic = @user.retrievers_historics.where(retriever_id: retriever.id).first
+        historic.update(banks_count: (historic.banks_count.to_i + 1)) if historic && is_new
+      end
     end
 
     bank_account
   end
 
-  def get_document_file_of(subscriptions)
+  def get_document_file_of(connection)
     errors = []
-    subscriptions.each do |subscription|
+    connection['subscriptions'].each do |subscription|
       if subscription['documents'].present?
         subscription['documents'].select do |document|
           retriever.service_name.in?(['Nespresso', 'Online.net']) && document['date'].nil? ? false : true
@@ -198,10 +199,10 @@ class ProcessRetrievedData
 
           if !file_state[:success]
             @is_connection_ok = false
-            if client.response.status == 200
-              errors << "[#{connection['id']}] Document '#{document['id']}' cannot process : [#{file_state[:error_object].try(:class)}] #{file_state[:error_object].try(:message)}"
+            if file_state[:return_object].try(:status).present?
+              errors << "[#{connection['id']}] Document '#{document['id']}' cannot be downloaded : [#{file_state[:return_object].try(:status)}] #{file_state[:return_object].try(:body)}"
             else
-              errors << "[#{connection['id']}] Document '#{document['id']}' cannot be downloaded : [#{client.response.status}] #{client.response.body}"
+              errors << "[#{connection['id']}] Document '#{document['id']}' cannot be downloaded : #{file_state[:return_object].to_s}"
             end
           end
         end
@@ -345,6 +346,7 @@ class ProcessRetrievedData
     operation.date        = transaction['date']
     operation.value_date  = transaction['rdate']
     operation.currency    = bank_account.original_currency
+
     if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
       operation.label     = '[CB] ' + transaction['original_wording']
     else
@@ -352,12 +354,14 @@ class ProcessRetrievedData
       label << bank_account.number if bank_account.type_name == 'card'
       operation.label     = label.join(' ')
     end
+
     operation.amount      = set_transaction_value(bank_account, transaction)
     operation.comment     = transaction['comment']
     operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
     operation.category    = BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
     operation.deleted_at  = Time.parse(transaction['deleted']) if transaction['deleted'].present?
+
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
       if lock_operation?(bank_account, operation)
