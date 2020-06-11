@@ -445,6 +445,16 @@ class Pack::Piece < ApplicationRecord
     return img_url
   end
 
+  def get_tags(separator='-')
+    filters = self.name.split.collect do |f|
+      f.strip.match(/^[0-9]+$/) ? f.strip.to_i.to_s : f.strip.downcase
+    end
+
+    _tags = self.tags.present? ? self.tags.select{ |tag| !filters.include?(tag.to_s.strip.downcase) } : []
+
+    _tags.join(" #{separator} ").presence || '-'
+  end
+
   private
 
   def set_number
