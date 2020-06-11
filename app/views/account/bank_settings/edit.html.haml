@@ -11,7 +11,7 @@
     = simple_form_for @bank_account, url: account_bank_setting_path, html: { class: 'form-horizontal label-medium' } do |f|
       .card-body
         = f.input :number, disabled: true
-        = f.input :journal, required: true
+        = f.input :journal
         - if @account.uses_ibiza?
           - if @account.organization.ibiza.configured?
             = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus'
