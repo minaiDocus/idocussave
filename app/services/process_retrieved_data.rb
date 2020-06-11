@@ -223,51 +223,11 @@ class ProcessRetrievedData
   end
 
   def notify(connection)
-    case connection['error']
-    when 'wrongpass'
-      error_message = connection['error_message'].presence || 'Mot de passe incorrect.'
-      retriever.update(
-        is_new_password_needed: true,
-        budgea_error_message: error_message
-      )
-      retriever.fail_budgea_connection
+    retriever.update_state_with connection
 
-      RetrieverNotification.new(retriever).notify_wrong_pass
-    when 'additionalInformationNeeded'
-      retriever.success_budgea_connection if retriever.budgea_connection_failed?
-      if connection['fields'].present?
-        retriever.pause_budgea_connection
-      end
-
-      RetrieverNotification.new(retriever).notify_info_needed
-    when 'actionNeeded'
-      error_message = connection['error_message'].presence || 'Veuillez confirmer les nouveaux termes et conditions.'
-      retriever.update budgea_error_message: error_message
-      retriever.fail_budgea_connection
-
-      RetrieverNotification.new(retriever).notify_action_needed
-    when 'websiteUnavailable'
-      retriever.update(budgea_error_message: 'Site web indisponible.')
-      retriever.fail_budgea_connection
-
-      RetrieverNotification.new(retriever).notify_website_unavailable
-    when 'bug'
-      retriever.update(budgea_error_message: 'Service indisponible.')
-      retriever.fail_budgea_connection
-
-      RetrieverNotification.new(retriever).notify_bug
-    else
-      if connection['error'].present?
-        retriever.update(budgea_error_message: connection['error_message'].presence || connection['error'])
-        retriever.fail_budgea_connection
-
-        RetrieverNotification.new(retriever).notify_bug
-      elsif @is_new_document_present || @is_new_transaction_present || retriever.error?
-        retriever.success_budgea_connection
-
-        RetrieverNotification.new(retriever).notify_new_documents @new_documents_count if @new_documents_count > 0
-        RetrieverNotification.new(retriever).notify_new_operations @new_operations_count if @new_operations_count > 0
-      end
+    if retriever.reload.budgea_connection_successful?
+      RetrieverNotification.new(retriever).notify_new_documents(@new_documents_count) if @new_documents_count > 0
+      RetrieverNotification.new(retriever).notify_new_operations(@new_operations_count) if @new_operations_count > 0
     end
   end
 

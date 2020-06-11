@@ -48,6 +48,10 @@ ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
+BudgeaErrorEventHandlerWorker:
+  queue: low
+  cron: '* * 1 * * *'
+
 # TO DO : Remove
 # RemoveOldestRetrievedDataWorker:
 #   queue: default

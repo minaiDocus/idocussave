@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Retriever < ApplicationRecord
+  RECOVERABLE_ERRORS = ['SCARequired','decoupled']
+
   attr_accessor :confirm_dyn_params, :check_journal
 
   belongs_to :user
@@ -41,6 +43,7 @@ class Retriever < ApplicationRecord
   scope :not_processed,            -> { where(state: %w(configuring destroying running)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
   scope :linked,                   -> { where('budgea_id IS NOT NULL AND budgea_id != ""') }
+  scope :need_refresh,             -> { where(budgea_error_message: RECOVERABLE_ERRORS).where('sync_at > ? ', 5.hours.ago) }
 
   scope :providers,           -> { where("capabilities LIKE '%document%'") }
   scope :banks,               -> { where("capabilities LIKE '%bank%'") }
@@ -114,7 +117,6 @@ class Retriever < ApplicationRecord
     end
 
     after_transition any => :failed do |retriever, transition|
-      retriever.error_message = retriever.budgea_error_message
       retriever.error
     end
 
@@ -235,6 +237,53 @@ class Retriever < ApplicationRecord
 
   def linked?
     budgea_id.present?
+  end
+
+  def update_state_with(connection, notify=true)
+    case connection['error']
+    when 'wrongpass'
+      error_message = connection['error_message'].presence || 'Mot de passe incorrect.'
+      self.update(
+        is_new_password_needed: true,
+        error_message: error_message,
+        budgea_error_message: connection['error']
+      )
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_wrong_pass if notify
+    when 'additionalInformationNeeded'
+      self.success_budgea_connection if self.budgea_connection_failed?
+      if connection['fields'].present?
+        self.pause_budgea_connection
+      end
+
+      RetrieverNotification.new(self).notify_info_needed if notify
+    when 'actionNeeded'
+      error_message = connection['error_message'].presence || 'Veuillez confirmer les nouveaux termes et conditions.'
+      self.update({error_message: error_message, budgea_error_message: connection['error']})
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_action_needed if notify
+    when 'websiteUnavailable'
+      self.update({error_message: 'Site web indisponible.', budgea_error_message: connection['error']})
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_website_unavailable if notify
+    when 'bug'
+      self.update({error_message: 'Service indisponible.', budgea_error_message: connection['error']})
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_bug if notify
+    else
+      if connection['error'].present?
+        self.update({error_message: connection['error_message'].presence || connection['error'], budgea_error_message: connection['error']})
+        self.fail_budgea_connection
+
+        RetrieverNotification.new(self).notify_bug if notify
+      else
+        self.success_budgea_connection
+      end
+    end
   end
 
 private
