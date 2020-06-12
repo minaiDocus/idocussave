@@ -2,10 +2,6 @@
 require 'spec_helper'
 
 describe BudgeaErrorEventHandlerService do
-  before(:each) do
-    allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
-  end
-
   before(:all) do
     DatabaseCleaner.start
 
@@ -28,7 +24,7 @@ describe BudgeaErrorEventHandlerService do
     @retriever.name           = 'Connecteur de test'
     @retriever.service_name   = 'Connecteur de test'
     @retriever.journal        = @journal
-    @retriever.state          = 'ready'
+    @retriever.state          = 'error'
     @retriever.budgea_state   = 'failed'
     @retriever.capabilities   = 'bank'
     @retriever.sync_at        = Time.now
@@ -45,6 +41,10 @@ describe BudgeaErrorEventHandlerService do
 
   after(:all) do
     DatabaseCleaner.clean
+  end
+
+  before(:each) do
+    allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
   end
 
   context 'get retrievers to refresh' do
@@ -72,7 +72,7 @@ describe BudgeaErrorEventHandlerService do
       end
     end
 
-    it "inspect retriever state after refresh when the error's SCARequired and the error's null" do
+    it "updates state of retriever to success if connection response is nil" do
       time = Time.now
 
       @retriever.budgea_error_message = 'SCARequired'
@@ -89,24 +89,7 @@ describe BudgeaErrorEventHandlerService do
       expect(@retriever.sync_at).not_to eq(time)
     end
 
-    it "inspect retriever state after refresh when the error's decoupled and the error's null" do
-      time = Time.now
-
-      @retriever.budgea_error_message = 'SCARequired'
-      @retriever.sync_at = time
-      @retriever.save
-
-      VCR.use_cassette('budgea/inspect_other_errors') do
-        BudgeaErrorEventHandlerService.new().execute
-      end
-
-      @retriever.reload
-
-      expect(@retriever.budgea_connection_successful?).to be true
-      expect(@retriever.sync_at).not_to eq(time)
-    end
-
-    it "inspect retriever state after refresh when the error's SCARequired" do
+    it "updates state to SCARequired when refreshing return error is SCARequired" do
       time = Time.now
 
       @retriever.budgea_error_message = 'decoupled'
@@ -114,7 +97,6 @@ describe BudgeaErrorEventHandlerService do
       @retriever.save
 
       json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'scarequired_error.json')))
-      allow_any_instance_of(Budgea::Client).to receive(:scaRequired_refresh).with(any_args).and_return(json_content)
       allow_any_instance_of(Budgea::Client).to receive(:decoupled_refresh).with(any_args).and_return(json_content)
 
       VCR.use_cassette('budgea/inspect_other_errors') do
@@ -128,7 +110,7 @@ describe BudgeaErrorEventHandlerService do
       expect(@retriever.sync_at).not_to eq(time)
     end
 
-    it "inspect retriever state after refresh when the error's decoupled" do
+    it "updates state to SCARequired when refreshing return error is decoupled" do
       time = Time.now
 
       @retriever.budgea_error_message = 'SCARequired'
@@ -137,7 +119,6 @@ describe BudgeaErrorEventHandlerService do
 
       json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'decoupled_error.json')))
       allow_any_instance_of(Budgea::Client).to receive(:scaRequired_refresh).with(any_args).and_return(json_content)
-      allow_any_instance_of(Budgea::Client).to receive(:decoupled_refresh).with(any_args).and_return(json_content)
 
       VCR.use_cassette('budgea/inspect_other_errors') do
         BudgeaErrorEventHandlerService.new().execute
@@ -150,7 +131,7 @@ describe BudgeaErrorEventHandlerService do
       expect(@retriever.sync_at).not_to eq(time)
     end
 
-    it "inspect retriever state after refresh when the error's Other" do
+    it "updates retriver's state to error (other errors) when refreshing state returns error" do
       time = Time.now
 
       @retriever.budgea_error_message = 'SCARequired'
@@ -159,7 +140,6 @@ describe BudgeaErrorEventHandlerService do
 
       json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'other_error.json')))
       allow_any_instance_of(Budgea::Client).to receive(:scaRequired_refresh).with(any_args).and_return(json_content)
-      allow_any_instance_of(Budgea::Client).to receive(:decoupled_refresh).with(any_args).and_return(json_content)
 
       VCR.use_cassette('budgea/inspect_other_errors') do
         BudgeaErrorEventHandlerService.new().execute
@@ -170,6 +150,25 @@ describe BudgeaErrorEventHandlerService do
       expect(@retriever.budgea_connection_successful?).to be false
       expect(@retriever.budgea_error_message).to eq 'Other error'
       expect(@retriever.sync_at).not_to eq(time)
+    end
+
+
+    it "does not make any changes if update params is nil" do
+      @retriever.budgea_error_message = 'SCARequired'
+      @retriever.sync_at = Time.now
+      @retriever.save
+
+      initial_state = @retriever
+
+      allow_any_instance_of(Budgea::Client).to receive(:scaRequired_refresh).with(any_args).and_return(nil)
+
+      VCR.use_cassette('budgea/inspect_other_errors') do
+        BudgeaErrorEventHandlerService.new().execute
+      end
+
+      @retriever.reload
+
+      expect(@retriever.inspect).to eq initial_state.inspect
     end
   end
 end
