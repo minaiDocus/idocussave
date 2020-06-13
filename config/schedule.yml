@@ -50,7 +50,7 @@ ProcessOperationsWorker:
 
 BudgeaErrorEventHandlerWorker:
   queue: low
-  cron: '0 20 */1 * * *'
+  cron: '0 */15 * * * *'
 
 # TO DO : Remove
 # RemoveOldestRetrievedDataWorker:

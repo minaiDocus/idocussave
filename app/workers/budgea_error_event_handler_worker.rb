@@ -4,7 +4,7 @@ class BudgeaErrorEventHandlerWorker
 
   def perform
     UniqueJobs.for 'BudgeaErrorEventHandlerWorker' do
-      BudgeaErrorEventHandlerService.new.execute
+      BudgeaErrorEventHandlerService.new.execute(Retriever.need_refresh.first(10))
     end
   end
 end

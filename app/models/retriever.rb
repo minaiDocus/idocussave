@@ -43,7 +43,7 @@ class Retriever < ApplicationRecord
   scope :not_processed,            -> { where(state: %w(configuring destroying running)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
   scope :linked,                   -> { where('budgea_id IS NOT NULL AND budgea_id != ""') }
-  scope :need_refresh,             -> { where(budgea_error_message: Retriever::RECOVERABLE_ERRORS).where('sync_at > ? ', 5.hours.ago) }
+  scope :need_refresh,             -> { where(budgea_state: 'failed', budgea_error_message: Retriever::RECOVERABLE_ERRORS).where('sync_at < ? ', 5.hours.ago) }
 
   scope :providers,           -> { where("capabilities LIKE '%document%'") }
   scope :banks,               -> { where("capabilities LIKE '%bank%'") }

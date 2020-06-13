@@ -127,7 +127,7 @@ class ProcessRetrievedData
     notify connection
     retriever.reload
 
-    retriever.update(sync_at: Time.parse(connection['last_update'])) if connection['last_update'].present?
+    retriever.update(sync_at: Time.now)
 
     if retriever.is_selection_needed && (@is_new_document_present || @is_new_transaction_present)
       retriever.update(is_selection_needed: false) if retriever.wait_selection
