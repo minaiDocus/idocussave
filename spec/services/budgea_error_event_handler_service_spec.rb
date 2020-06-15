@@ -170,5 +170,24 @@ describe BudgeaErrorEventHandlerService do
 
       expect(@retriever.inspect).to eq initial_state.inspect
     end
+
+    it "call decoupled_refresh function when error's scarequired", :sca do
+      @retriever.budgea_error_message = 'SCARequired'
+      @retriever.sync_at = Time.now
+      @retriever.save
+
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'decoupled_error.json')))
+      allow_any_instance_of(Budgea::Client).to receive(:scaRequired_refresh).with(any_args).and_return(json_content)
+      allow_any_instance_of(BudgeaErrorEventHandlerService).to receive(:prepare_notification).with(any_args).and_return(true)
+      allow_any_instance_of(BudgeaErrorEventHandlerService).to receive(:send_notification).with(any_args).and_return(true)
+
+      expect_any_instance_of(Retriever).to receive(:update_state_with).with(any_args).exactly(:once)
+      expect(BudgeaErrorEventHandlerService).to receive_message_chain('new.execute').with(any_args).exactly(:once)
+
+      VCR.use_cassette('budgea/inspect_other_errors') do
+        BudgeaErrorEventHandlerService.new().execute
+      end
+
+    end
   end
 end
