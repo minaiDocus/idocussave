@@ -245,6 +245,8 @@ class Retriever < ApplicationRecord
 
       RetrieverNotification.new(self).notify_wrong_pass
     when 'additionalInformationNeeded'
+      self.update(budgea_error_message: nil)
+
       self.success_budgea_connection if self.budgea_connection_failed?
       self.pause_budgea_connection if connection['fields'].present?
 
@@ -265,26 +267,6 @@ class Retriever < ApplicationRecord
       self.fail_budgea_connection
 
       RetrieverNotification.new(self).notify_bug
-    when 'SCARequired'
-      self.update({budgea_error_message: connection['error']})
-
-      next_connection = BudgeaErrorEventHandlerService.new(self).execute
-
-      if next_connection['error'] != 'SCARequired'
-        self.update_state_with(next_connection)
-      else
-        self.fail_budgea_connection
-      end
-    when 'decoupled'
-      self.update({budgea_error_message: connection['error']})
-
-      next_connection = BudgeaErrorEventHandlerService.new(self).execute
-
-      if next_connection['error'] != 'decoupled' && next_connection['error'] != 'SCARequired'
-        self.update_state_with(next_connection)
-      else
-        self.fail_budgea_connection
-      end
     else
       if connection['error'].present?
         self.update({error_message: connection['error_message'].presence || connection['error'], budgea_error_message: connection['error']})

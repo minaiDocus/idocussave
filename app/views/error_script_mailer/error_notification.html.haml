@@ -16,9 +16,12 @@
     %br
     Détails :
     %ul
-    - @script[:more_information].each do |libelle, value|
-      %li #{libelle} : #{value}
-      %br
+    - if @script[:more_information].present?
+      - @script[:more_information].each do |libelle, value|
+        %li #{libelle} : #{value}
+        %br
+    - if @script[:raw_information].present?
+      = raw(@script[:raw_information])
     %br
     Cordialement
     %br

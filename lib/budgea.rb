@@ -155,7 +155,7 @@ class Budgea
     def decoupled_refresh(id_connection)
       @response = connection.post do |request|
         request.url "/2.0/users/me/connections/#{id_connection}"
-        request.body = '{  "resume": true }'
+        request.body = { resume: true }.to_query
         request.headers = headers
       end
 
@@ -219,7 +219,7 @@ class Budgea
     def run_and_parse_response(collection_name=nil)
       if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
         result = JSON.parse(@response.body)
-        @error_message = case result['status']
+        @error_message = case result['code']
                          when 'wrongpass'
                            'Mot de passe incorrect.'
                          when 'websiteUnavailable'
