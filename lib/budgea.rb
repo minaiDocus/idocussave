@@ -143,24 +143,24 @@ class Budgea
       end
     end
 
-    def scaRequired_refresh(id_connection)
-      @response = connection.post do |request|
-        request.url "/2.0/users/me/connections/#{id_connection}"
-        request.headers = headers
-      end
+    # def scaRequired_refresh(id_connection)
+    #   @response = connection.post do |request|
+    #     request.url "/2.0/users/me/connections/#{id_connection}"
+    #     request.headers = headers
+    #   end
 
-      run_and_parse_response
-    end
+    #   run_and_parse_response
+    # end
 
-    def decoupled_refresh(id_connection)
-      @response = connection.post do |request|
-        request.url "/2.0/users/me/connections/#{id_connection}"
-        request.body = { resume: true }.to_query
-        request.headers = headers
-      end
+    # def decoupled_refresh(id_connection)
+    #   @response = connection.post do |request|
+    #     request.url "/2.0/users/me/connections/#{id_connection}"
+    #     request.body = { resume: true }.to_query
+    #     request.headers = headers
+    #   end
 
-      run_and_parse_response
-    end
+    #   run_and_parse_response
+    # end
 
   private
     def connection
