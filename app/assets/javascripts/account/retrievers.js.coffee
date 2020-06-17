@@ -354,7 +354,7 @@ jQuery ->
 
         Idocus.budgeaApi.update_my_accounts(accounts, {force_disable: true}).then(
           ()->
-            window.location.href = "#{Idocus.budgeaApi.local_host}/account/retrievers"
+            window.location.href = "#{Idocus.budgeaApi.local_host}/account/bank_accounts"
             $('#all_accounts_list').html('<span class="text-info">Modifié avec succès.</span>')
           (error)->
             $('.form-actions').html('<span>Impossible de modifier la séléction</span>')

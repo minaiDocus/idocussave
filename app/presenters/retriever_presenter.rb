@@ -7,17 +7,17 @@ class RetrieverPresenter < BasePresenter
     if retriever.waiting_selection?
       if retriever.provider? || retriever.provider_and_bank?
         if scope == :account
-          h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path({ account_id: retriever.user.id, document_contains: { retriever_id: retriever }}), class: 'btn btn-light'
+          h.content_tag :span, 'INFO: En attente de séléction de documents', class: 'badge fs-origin badge-warning'
         elsif scope == :collaborator
-          h.link_to 'Sélectionnez les documents', h.select_account_organization_customer_retrieved_documents_path(user.organization, user, document_contains: { retriever_id: retriever }), class: 'btn btn-light'
+          h.content_tag :span, 'INFO: En attente de séléction de documents', class: 'badge fs-origin badge-warning'
         elsif scope == :admin
           h.content_tag :span, 'Sélection des documents', class: 'badge fs-origin badge-secondary'
         end
       else
         if scope == :account
-          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever, retriever_budgea_id: retriever.budgea_id }}), class: 'btn btn-light'
+          h.content_tag :span, 'INFO: En attente de séléction de comptes', class: 'badge fs-origin badge-warning'
         elsif scope == :collaborator
-          h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: retriever }), class: 'btn btn-light'
+          h.content_tag :span, 'INFO: En attente de séléction de comptes', class: 'badge fs-origin badge-warning'
         elsif scope == :admin
           h.content_tag :span, 'Sélection des comptes', class: 'badge fs-origin badge-secondary'
         end
@@ -69,7 +69,7 @@ private
   def formatted_state(options={})
     if retriever.error?
       str = 'Erreur'
-      str = 'Info' if retriever.budgea_error_message == 'decoupled'
+      str = 'INFO' if retriever.budgea_error_message == 'decoupled'
       if retriever.error_message.present?
         full_str = "#{str}: #{retriever.error_message}"
 

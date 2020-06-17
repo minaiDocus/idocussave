@@ -4,6 +4,7 @@
 = hidden_field_tag :page, page
 
 = render partial: 'account/retrievers/list_options'
+
 %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
   %thead
     %tr.bg-brown.text-white
@@ -38,5 +39,10 @@
             - if retriever.budgea_error_message == 'decoupled'
               %button#decoupled.btn.btn-success.scarequire_decoupled_button{ data: { id: retriever.id } }
                 Valider la reprise de la synchronisation
+            - if retriever.waiting_selection?
+              - if retriever.provider?
+                = link_to 'Sélectionnez vos documents', select_account_retrieved_documents_path({ account_id: retriever.user.id, document_contains: { retriever_id: retriever }}), class: 'btn btn-primary'
+              - else
+                = link_to 'Sélectionnez vos comptes', account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever, retriever_budgea_id: retriever.budgea_id }}), class: 'btn btn-primary'
 
 = render partial: 'account/retrievers/list_options'
