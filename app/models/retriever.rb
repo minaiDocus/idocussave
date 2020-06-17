@@ -279,10 +279,27 @@ class Retriever < ApplicationRecord
       RetrieverNotification.new(self).notify_bug
     else
       if error_connection.present?
+        initial_state = self.to_json
+
         self.update({error_message: connection_error_message.presence || error_connection, budgea_error_message: error_connection})
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug
+
+        if error_connection == 'webauthRequired'
+          log_document = {
+            name: "BudgeaWebAuthRequired",
+            error_group: "[Budgea Error Handler] : webauthRequired - retrievers",
+            erreur_type: "webauthRequired retrievers",
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+            raw_information: "<table><tbody><tr><td colspan='2' style='text-align:center; background-color: #CCC;'> #{self.id}</td></tr>
+                    <tr><td>Initial</td><td> #{initial_state} </td></tr>
+                    <tr><td>Final</td><td> #{self.reload.to_json.to_s} </td></tr>
+                    <tr><td>Connection</td><td> #{connection} </td></tr></tbody></table>"
+          }
+
+          ErrorScriptMailer.error_notification(log_document).deliver
+        end
       elsif connection.try(:[], 'id').to_i == self.budgea_id.to_i
         self.success_budgea_connection
       end

@@ -196,6 +196,6 @@ class RetrieversController < ApiController
               <tr><td>Connection</td><td> #{connection} </td></tr></tbody></table>"
     }
 
-    ErrorScriptMailer.error_notification(log_document).deliver if @retrievers_infos.any?
+    ErrorScriptMailer.error_notification(log_document).deliver
   end
 end
