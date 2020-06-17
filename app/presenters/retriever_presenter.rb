@@ -39,8 +39,9 @@ class RetrieverPresenter < BasePresenter
       #   content + h.content_tag(:span, "Demander la création d'un automate", class: 'badge fs-origin badge-secondary')
       # end
     else
-      label_type = 'success'   if retriever.ready?
-      label_type = 'danger' if retriever.error?
+      label_type = 'success'  if retriever.ready?
+      label_type = 'danger'   if retriever.error?
+      label_type = 'warning'  if retriever.error? && retriever.budgea_error_message == 'decoupled'
       formatted_state({class: "badge fs-origin badge-#{label_type}"})
     end
   end
@@ -68,10 +69,11 @@ private
   def formatted_state(options={})
     if retriever.error?
       str = 'Erreur'
+      str = 'Info' if retriever.budgea_error_message == 'decoupled'
       if retriever.error_message.present?
         full_str = "#{str}: #{retriever.error_message}"
 
-        str += retriever.error_message.length < 40 ? ": #{retriever.error_message}" : ": #{retriever.error_message.slice(0..40)} ..."
+        str += retriever.error_message.length < 40 || retriever.budgea_error_message == 'decoupled' ? ": #{retriever.error_message}" : ": #{retriever.error_message.slice(0..40)} ..."
       end
     else
       full_str  = ''

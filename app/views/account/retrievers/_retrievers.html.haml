@@ -26,10 +26,17 @@
           %td{class: "state_field_#{retriever.id}"}= retriever_presenter.state(scope)
           %td
             = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
-            - if retriever.ready? || retriever.error? || retriever.waiting_additionnal_info?
+            - if (retriever.ready? || retriever.waiting_additionnal_info?) || (retriever.error? && !retriever.budgea_error_message.in?(['SCARequired', 'decoupled']))
               - if retriever.budgea_id.present?
                 = retriever_presenter.action_link
               = link_to glyphicon('pencil'), edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip', class: 'btn btn-light'
             - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
               = link_to glyphicon('x'), '#', class: "destroy_retriever destroy_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
+            - if retriever.budgea_error_message == 'SCARequired'
+              %button#SCARequired.btn.btn-primary.scarequire_decoupled_button{ data: { id: retriever.id } }
+                Lancer la procédure d'authentification
+            - if retriever.budgea_error_message == 'decoupled'
+              %button#decoupled.btn.btn-success.scarequire_decoupled_button{ data: { id: retriever.id } }
+                Valider la reprise de la synchronisation
+
 = render partial: 'account/retrievers/list_options'

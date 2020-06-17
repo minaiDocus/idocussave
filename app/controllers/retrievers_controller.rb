@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class RetrieversController < ApiController
-  before_action :load_retriever, only: %i[destroy trigger get_retriever_infos]
-  before_action :authenticate_current_user, except: %i[callback webauth_callback destroy trigger get_retriever_infos]
+  before_action :load_retriever, only: %i[destroy trigger get_retriever_infos update_budgea_error_message]
+  before_action :authenticate_current_user, except: %i[callback webauth_callback destroy trigger get_retriever_infos update_budgea_error_message]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_rights
 
@@ -168,9 +168,34 @@ class RetrieversController < ApiController
     render json: { success: true, accounts: accounts || [] }, status: 200
   end
 
+  def update_budgea_error_message
+    initial_state = @retriever.to_json
+
+    @retriever.update_state_with params[:connections] if params[:connections]
+
+    send_notification(@retriever.reload, initial_state, params[:connections])
+
+    render json: { success: true }, status: 200
+  end
+
   private
 
   def load_retriever
     @retriever = Retriever.find params[:id]
+  end
+
+  def send_notification(retriever, initial_state, connection)
+    log_document = {
+      name: "BudgeaErrorEventHandlerService",
+      error_group: "[Budgea Error Handler] : SCARequired/decoupled - retrievers",
+      erreur_type: "SCARequired/decoupled retrievers",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      raw_information: "<table><tbody><tr><td colspan='2' style='text-align:center; background-color: #CCC;'> #{retriever.id}</td></tr>
+              <tr><td>Initial</td><td> #{initial_state} </td></tr>
+              <tr><td>Final</td><td> #{retriever.to_json.to_s} </td></tr>
+              <tr><td>Connection</td><td> #{connection} </td></tr></tbody></table>"
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver if @retrievers_infos.any?
   end
 end

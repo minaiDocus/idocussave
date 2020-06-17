@@ -327,6 +327,50 @@ class Idocus.BudgeaApi
       })
     )
 
+  refresh_connection: (id, data_refresh) ->
+    self      = this
+    budgea_id = ''
+
+    promise = new Promise((resolve, reject)->
+      local_request = (params)->
+          self.local_fetch({
+            url: "/retriever/update_budgea_error_message"
+            type: 'POST'
+            data: params
+            onSuccess: (data)-> resolve(data)
+            onError: (error)-> reject(error)
+          })
+
+      do_sync = ()->
+        if budgea_id != ''
+          self.remote_fetch({
+            url: "/users/me/connections/#{budgea_id}"
+            type: 'POST'
+            data: data_refresh
+            onSuccess: (connections)-> local_request({id: id, success: true, connections: connections})
+            onError: (error)->
+              if error.match(/Erreur: 404/) && remote_method == 'DELETE'
+                local_request({id: id, success: true, connections: {}})
+              else
+                local_request({id: id, success: false, error_message: error})
+          })
+        else
+          local_request({ id: id, success: false, connections: {} })
+
+      self.local_fetch({
+        url: "/retriever/get_retriever_infos"
+        data: {id: id, remote_method: 'POST'}
+        onSuccess: (data)->
+          budgea_id = data.budgea_id
+          self.set_tokens({ bi_token: data.bi_token })
+          if data.deleted != undefined && data.deleted == true
+            resolve({success: true})
+          else
+            do_sync()
+        onError: (error)-> reject(error)
+      })
+    )
+
   webauth: (id, is_new)->
     user_id = $('#account_id').val()
     state = btoa("{
