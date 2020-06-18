@@ -309,6 +309,20 @@ class TempDocument < ApplicationRecord
     "#{name}_%0#{DataProcessor::TempPack::POSITION_SIZE}d" % position
   end
 
+  def get_token
+    if token.present?
+      token
+    else
+      update_attribute(:token, rand(36**50).to_s(36))
+
+      token
+    end
+  end
+
+  def get_access_url(style = :original)
+    "/account/documents/temp_documents/#{id}/download/#{style}" + '?token=' + get_token
+  end
+
 
   def file_name_with_position
     extension = File.extname(self.cloud_content_object.filename)

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get '/account/documents/:id/download/:style',            controller: 'account/documents', action: 'download'
   get '/account/documents/processing/:id/download(/:style)', controller: 'account/documents', action: 'download_processing'
   get '/account/documents/pieces/:id/download(/:style)',   controller: 'account/documents', action: 'piece'
+  get '/account/documents/temp_documents/:id/download(/:style)',   controller: 'account/documents', action: 'temp_document'
   get '/account/documents/pack/:id/download',              controller: 'account/documents', action: 'pack'
   get '/account/documents/multi_pack_download',            controller: 'account/documents', action: 'multi_pack_download'
   post '/account/documents/select_to_export',              controller: 'account/documents', action: 'select_to_export'
@@ -590,6 +591,15 @@ Rails.application.routes.draw do
 
       resources :error_report do
         post 'send_error_report', on: :collection
+      end
+    end
+
+    namespace :sgi do
+      namespace :v1 do
+        resources :grouping do
+          get 'temp_document_bundle_needed', on: :collection
+          post 'handle_piece_bundled', on: :collection
+        end
       end
     end
   end
