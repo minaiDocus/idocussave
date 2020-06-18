@@ -2,7 +2,7 @@
 
 class RetrieversController < ApiController
   before_action :load_retriever, only: %i[destroy trigger get_retriever_infos update_budgea_error_message]
-  before_action :authenticate_current_user, except: %i[callback webauth_callback destroy trigger get_retriever_infos update_budgea_error_message]
+  before_action :authenticate_current_user, except: %i[callback destroy trigger get_retriever_infos update_budgea_error_message fetch_webauth_url]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_rights
 
@@ -23,6 +23,8 @@ class RetrieversController < ApiController
         render plain: '', status: :unauthorized
       end
     else #callback for webauth
+      send_webauth_notification(params, 'callback', '', 'callback')
+
       if params[:error_description].present? && params[:error_description] != 'None'
         flash[:error] = params[:error_description].presence || 'Id connection not found'
 
@@ -58,8 +60,13 @@ class RetrieversController < ApiController
       target = "id_connection=#{params[:id]}"
       target = "id_connector=#{params[:id]}" if params[:is_new].to_s == 'true'
 
-      paypal_dom = `curl '#{base_uri}/webauth?#{target}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{params[:state]}' -H 'Authorization: Bearer #{budgea_account.access_token}'`
-      render json: { success: true, paypal_dom: paypal_dom }, status: 200
+      url = "curl '#{base_uri}/webauth?#{target}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{params[:state]}' -H 'Authorization: Bearer #{budgea_account.access_token}'"
+
+      html_dom = `curl '#{base_uri}/webauth?#{target}&redirect_uri=#{redirect_uri}&client_id=#{client_id}&state=#{params[:state]}' -H 'Authorization: Bearer #{budgea_account.access_token}'`
+
+      send_webauth_notification(params, url, html_dom)
+
+      render json: { success: true, html_dom: html_dom }, status: 200
     else
       render json: { success: false, error: 'Erreur de service interne' }, status: 200
     end
@@ -175,7 +182,7 @@ class RetrieversController < ApiController
 
     sleep(5)
 
-    send_notification(@retriever.reload, initial_state, params[:connections])
+    send_notification(@retriever.reload, initial_state, params)
 
     render json: { success: true }, status: 200
   end
@@ -198,6 +205,19 @@ class RetrieversController < ApiController
                           <tr style='background-color: #F5F5F5;'><td style='border: 1px solid #CCC;text-align:center;'>Final</td><td style='border: 1px solid #CCC;'> #{retriever.to_json.to_s} </td></tr>
                           <tr><td style='border: 1px solid #CCC;text-align:center;'>Connection</td><td style='border: 1px solid #CCC;'> #{connection.inspect} </td></tr>
                         </tbody></table>"
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
+  end
+
+  def send_webauth_notification(parameters, url='', html_dom='', type = 'fetch')
+    log_document = {
+      name: "BudgeaWebAuth",
+      error_group: "[Budgea Error Handler] : webAuth - retrievers - #{type}",
+      erreur_type: "webAuth retrievers #{type}",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: { params: parameters.inspect, url: url.to_s  },
+      raw_information: html_dom
     }
 
     ErrorScriptMailer.error_notification(log_document).deliver

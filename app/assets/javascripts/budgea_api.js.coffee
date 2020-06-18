@@ -372,13 +372,25 @@ class Idocus.BudgeaApi
     )
 
   webauth: (id, is_new)->
-    user_id = $('#account_id').val()
+    if ($('#account_id_'+ id ).length > 0)
+      user_id                 = $('#account_id_'+ id ).val()
+      field_ido_capabilities  = $('#field_ido_capabilities_'+ id)
+      ido_connector_id        = $('#ido_connector_id_'+ id )
+      field_ido_custom_name   = $('#field_ido_custom_name_'+ id )
+      ido_connector_name      = $('#ido_connector_name_'+ id )
+    else
+      user_id                 = $('#account_id').val()
+      field_ido_capabilities  = $('#field_ido_capabilities')
+      ido_connector_id        = $('#ido_connector_id')
+      field_ido_custom_name   = $('#field_ido_custom_name')
+      ido_connector_name      = $('#ido_connector_name')
+
     state = btoa("{
                     \"user_id\": \"#{user_id}\",
-                    \"ido_capabilities\": \"#{$('#field_ido_capabilities').val().replace('"', '\'')}\",
-                    \"ido_connector_id\": \"#{$('#ido_connector_id').val().replace('"', '\'')}\",
-                    \"ido_custom_name\": \"#{$('#field_ido_custom_name').val().replace('"', '\'')}\",
-                    \"ido_connector_name\": \"#{$('#ido_connector_name').val().replace('"', '\'')}\"
+                    \"ido_capabilities\": \"#{field_ido_capabilities.val().replace('"', '\'')}\",
+                    \"ido_connector_id\": \"#{ido_connector_id.val().replace('"', '\'')}\",
+                    \"ido_custom_name\": \"#{field_ido_custom_name.val().replace('"', '\'')}\",
+                    \"ido_connector_name\": \"#{ido_connector_name.val().replace('"', '\'')}\"
                 }")
 
     url = '/retriever/fetch_webauth_url'
@@ -392,7 +404,7 @@ class Idocus.BudgeaApi
       $('#budgea_information_fields .feedparagraph').remove()
       $('#budgea_information_fields .actions').show()
       domparser = new DOMParser()
-      data = domparser.parseFromString(response.paypal_dom, 'text/html')
+      data = domparser.parseFromString(response.html_dom, 'text/html')
       redirect_url = $(data).find('a').attr('href')
 
       if(redirect_url != undefined && redirect_url != null)

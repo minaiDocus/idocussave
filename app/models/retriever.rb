@@ -270,19 +270,15 @@ class Retriever < ApplicationRecord
       self.fail_budgea_connection
 
       RetrieverNotification.new(self).notify_website_unavailable
-    when 'bug'
-      self.update({error_message: 'Service indisponible.', budgea_error_message: error_connection})
-      self.fail_budgea_connection
-
-      RetrieverNotification.new(self).notify_bug
-    when 'SCARequired'
-      self.update({error_message: 'Authentification forte requise (SCARequired).', budgea_error_message: error_connection})
-      self.fail_budgea_connection
-
-      RetrieverNotification.new(self).notify_bug
     else
       if error_connection.present?
-        self.update({error_message: connection_error_message.presence || error_connection, budgea_error_message: error_connection})
+        error_message = connection_error_message || error_connection
+
+        error_message = 'Service indisponible.'                         if error_connection == 'bug'
+        error_message = 'Authentification forte requise (SCARequired).' if error_connection == 'SCARequired'
+        error_message = 'Authentification Web requise.'                 if error_connection == 'webauthRequired'
+
+        self.update({error_message: error_message, budgea_error_message: error_connection})
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug

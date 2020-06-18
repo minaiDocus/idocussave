@@ -195,6 +195,20 @@ jQuery ->
             fShow()
             $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
 
+          $('.webauth_button').on 'click', (e) ->
+            e.preventDefault()
+            self = $(this)
+
+            if confirm("Voulez-vous vraiement lancer la procédure d'authentification ?")
+              id = self.attr('data-id')
+              releaseRetrieversTimer(id)
+              $('#loading_'+id).removeClass('hide')
+              self.attr("disabled", true)
+
+              id_connection = $('#ido_connector_id_'+ id).val() || 0
+              if id_connection != 0
+                budgeaApi.webauth(id_connection, false)
+
     releaseRetrieversTimer()    
     window.retrievers_url = 'retrievers?part=true'
     refreshRetrievers()
