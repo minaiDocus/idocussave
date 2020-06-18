@@ -78,6 +78,16 @@ class Budgea
       run_and_parse_response
     end
 
+    def renew_access_token(user_id)
+      @response = connection.post do |request|
+        request.url "/2.0/auth/jwt"
+        request.headers['Accept'] = 'application/json'
+        request.body = authentification_params.merge({ id_user: user_id, expire: false }).to_query
+      end
+
+      run_and_parse_response
+    end
+
     def delete_access_token
       @response = connection.delete do |request|
         request.url '/2.0/users/me/token'
