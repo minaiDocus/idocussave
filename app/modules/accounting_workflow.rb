@@ -22,6 +22,8 @@ module AccountingWorkflow
       Pathname.new('/ftp/ocr_processing')
     when 'development'
       Pathname.new('/Users/toto/ftp/ocr_processing')
+    when 'test'
+      Rails.root.join('files', 'test', 'ocr_processing')
     end
   end
 
