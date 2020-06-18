@@ -56,7 +56,7 @@ class Retriever < ApplicationRecord
     state :error
     state :unavailable
 
-    before_transition :error => :ready do |retriever, transition|
+    before_transition any  => :ready do |retriever, transition|
       retriever.error_message = nil
     end
 
@@ -142,7 +142,7 @@ class Retriever < ApplicationRecord
     end
 
     event :pause do
-      transition [:synchronizing, :successful] => :paused
+      transition [:synchronizing, :successful, :failed] => :paused
     end
 
     event :destroy do
@@ -250,12 +250,15 @@ class Retriever < ApplicationRecord
 
       RetrieverNotification.new(self).notify_wrong_pass
     when 'additionalInformationNeeded'
-      self.update(budgea_error_message: nil)
+      self.update({error_message: connection_error_message, budgea_error_message: nil})
 
-      self.success_budgea_connection if self.budgea_connection_failed?
-      self.pause_budgea_connection if connection['fields'].present?
+      if connection['fields'].present?
+        self.pause_budgea_connection
 
-      RetrieverNotification.new(self).notify_info_needed
+        RetrieverNotification.new(self).notify_info_needed
+      elsif self.budgea_connection_failed?
+        self.success_budgea_connection
+      end
     when 'actionNeeded'
       error_message = connection_error_message.presence || 'Veuillez confirmer les nouveaux termes et conditions.'
       self.update({error_message: error_message, budgea_error_message: error_connection})
@@ -279,27 +282,10 @@ class Retriever < ApplicationRecord
       RetrieverNotification.new(self).notify_bug
     else
       if error_connection.present?
-        initial_state = self.to_json
-
         self.update({error_message: connection_error_message.presence || error_connection, budgea_error_message: error_connection})
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug
-
-        if error_connection == 'webauthRequired'
-          log_document = {
-            name: "BudgeaWebAuthRequired",
-            error_group: "[Budgea Error Handler] : webauthRequired - retrievers",
-            erreur_type: "webauthRequired retrievers",
-            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-            raw_information: "<table><tbody><tr><td colspan='2' style='text-align:center; background-color: #CCC;'> #{self.id}</td></tr>
-                    <tr><td>Initial</td><td> #{initial_state} </td></tr>
-                    <tr><td>Final</td><td> #{self.reload.to_json.to_s} </td></tr>
-                    <tr><td>Connection</td><td> #{connection} </td></tr></tbody></table>"
-          }
-
-          ErrorScriptMailer.error_notification(log_document).deliver
-        end
       elsif connection.try(:[], 'id').to_i == self.budgea_id.to_i
         self.success_budgea_connection
       end

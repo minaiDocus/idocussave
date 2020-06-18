@@ -173,6 +173,8 @@ class RetrieversController < ApiController
 
     @retriever.update_state_with params[:connections] if params[:connections]
 
+    sleep(5)
+
     send_notification(@retriever.reload, initial_state, params[:connections])
 
     render json: { success: true }, status: 200
@@ -190,10 +192,12 @@ class RetrieversController < ApiController
       error_group: "[Budgea Error Handler] : SCARequired/decoupled - retrievers",
       erreur_type: "SCARequired/decoupled retrievers",
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-      raw_information: "<table><tbody><tr><td colspan='2' style='text-align:center; background-color: #CCC;'> #{retriever.id}</td></tr>
-              <tr><td>Initial</td><td> #{initial_state} </td></tr>
-              <tr><td>Final</td><td> #{retriever.to_json.to_s} </td></tr>
-              <tr><td>Connection</td><td> #{connection} </td></tr></tbody></table>"
+      raw_information: "<table style='border: 1px solid #CCC;font-family: \"Open Sans\", sans-serif; font-size:12px;'><tbody>
+                          <tr><td colspan='2' style='text-align:center; background-color: #BBD8E6;'> #{retriever.id} </td></tr>
+                          <tr><td style='border: 1px solid #CCC;text-align:center;'>Initial</td><td style='border: 1px solid #CCC;'> #{initial_state} </td></tr>
+                          <tr style='background-color: #F5F5F5;'><td style='border: 1px solid #CCC;text-align:center;'>Final</td><td style='border: 1px solid #CCC;'> #{retriever.to_json.to_s} </td></tr>
+                          <tr><td style='border: 1px solid #CCC;text-align:center;'>Connection</td><td style='border: 1px solid #CCC;'> #{connection.inspect} </td></tr>
+                        </tbody></table>"
     }
 
     ErrorScriptMailer.error_notification(log_document).deliver

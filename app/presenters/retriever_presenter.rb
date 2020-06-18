@@ -23,7 +23,7 @@ class RetrieverPresenter < BasePresenter
         end
       end
     elsif retriever.waiting_additionnal_info?
-      h.content_tag :span, "Inforamtion de connexion manquante", class: 'badge fs-origin badge-secondary'
+      h.content_tag :span, "Information manquante : #{retriever.error_message}", class: 'badge fs-origin badge-warning'
     elsif retriever.configuring? || retriever.running?
       h.content_tag :span, 'Synchronisation en cours', class: 'badge fs-origin badge-secondary'
     elsif retriever.destroying?
