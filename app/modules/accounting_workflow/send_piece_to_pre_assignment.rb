@@ -69,9 +69,9 @@ class AccountingWorkflow::SendPieceToPreAssignment
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
 
-    detected_third_party_id = @piece.detected_third_party_id ? @piece.detected_third_party_id : 6930
+    detected_third_party_id = @piece.detected_third_party_id.presence || 6930
 
-    _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}_recycle.pdf" : @piece.name.tr(' ', '_') + "_#{detected_third_party_id}" + '.pdf'
+    _piece_name = @piece.pre_assignment_force_processing? ? "#{@piece.name.tr(' ', '_')}_recycle_#{detected_third_party_id}.pdf" : @piece.name.tr(' ', '_') + "_#{detected_third_party_id}" + '.pdf'
 
     POSIX::Spawn.system("cp #{@piece.temp_document.cloud_content_object.path} #{File.join(dir, _piece_name)}")
   end
