@@ -147,10 +147,12 @@ class Budgea
     end
 
     def get_all_connections
-      connection.get do |request|
+      @response = connection.get do |request|
         request.url "/2.0/users/me/connections"
         request.headers = headers
       end
+
+      run_and_parse_response
     end
 
     # def scaRequired_refresh(id_connection)
@@ -227,6 +229,8 @@ class Budgea
     end
 
     def run_and_parse_response(collection_name=nil)
+      return @error_message = 'Service indisponible...' if @response.nil?
+
       if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
         result = JSON.parse(@response.body)
         @error_message = case result['code']
