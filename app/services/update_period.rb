@@ -6,7 +6,6 @@ class UpdatePeriod
     @subscription    = period.subscription
   end
 
-
   def execute
     @period.with_lock(timeout: 3, retries: 30, retry_sleep: 0.1) do
       @subscription.reload
@@ -47,7 +46,6 @@ class UpdatePeriod
     ]
   end
 
-
   def options
     if @subscription.organization
       _options = [extra_options, discount_options]
@@ -60,166 +58,201 @@ class UpdatePeriod
     end
   end
 
-
   def base_options
     if @subscription.is_annual_package_active
       annual_subscription_option
     else
-      type = @subscription.period_duration == 1 ? 0 : 1
+      # type = @subscription.period_duration == 1 ? 0 : 1
 
       selected_options = []
 
-      is_base_package_priced = false
+      # is_base_package_priced = false
 
-      if @subscription.is_basic_package_active
-        is_base_package_priced = true
-
-        price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
+      @subscription.get_active_packages.each do |package|
+        package_infos = SubscriptionPackage.infos_of(package)
 
         option = ProductOptionOrder.new
 
-        option.title    = 'Téléchargement + Pré-saisie comptable'
-        option.name     = 'basic_package_subscription'
+        option.title    = package_infos[:label]
+        option.name     = package_infos[:name]
         option.duration = 0
         option.quantity = 1
-        option.group_title = "iDo'Basique"
-        option.is_to_be_disabled = @subscription.is_basic_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+        option.group_title = package_infos[:group]
+        option.is_to_be_disabled = @subscription.is_to_be_disabled_package?(package)
+        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(package) * 100.0
+
+        selected_options << option
+
+        selected_options << micro_remaining_months_option if package == :ido_micro && micro_remaining_months_option.present?
+        selected_options << mini_remaining_months_option  if package == :ido_micro && mini_remaining_months_option.present?
+      end
+
+      @subscription.get_active_options.each do |option|
+        option_infos = SubscriptionPackage.infos_of(option)
+
+        organization_code = @subscription.organization.try(:code) || @subscription.user.organization.code
+        reduced = ['ADV'].include?(organization_code)
+
+        option = ProductOptionOrder.new
+
+        option.title    = option_infos[:label]
+        option.name     = option_infos[:name]
+        option.duration = 0
+        option.quantity = 1
+        option.group_title = option_infos[:group]
+        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(option, reduced) * 100.0
 
         selected_options << option
       end
 
-      if @subscription.is_micro_package_active
-        is_base_package_priced = true
+      # if @subscription.is_basic_package_active
+      #   is_base_package_priced = true
 
-        price = package_options_price([:subscription], type)
+      #   price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
 
-        option = ProductOptionOrder.new
+      #   option = ProductOptionOrder.new
 
-        option.title    = "Téléchargement + iDo'FacBanque + Pré-saisie comptable + Engagement 12 mois"
-        option.name     = 'micro_package_subscription'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = "iDo'Micro"
-        option.is_to_be_disabled     = @subscription.is_micro_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+      #   option.title    = 'Téléchargement + Pré-saisie comptable'
+      #   option.name     = 'basic_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'Basique"
+      #   option.is_to_be_disabled = @subscription.is_basic_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = price
 
-        selected_options << option
+      #   selected_options << option
+      # end
 
-        selected_options << micro_remaining_months_option if micro_remaining_months_option.present?
-      end
+      # if @subscription.is_micro_package_active
+      #   is_base_package_priced = true
 
-      if @subscription.is_mini_package_active
-        is_base_package_priced = true
+      #   price = package_options_price([:subscription], type)
 
-        price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
+      #   option = ProductOptionOrder.new
 
-        option = ProductOptionOrder.new
+      #   option.title    = "Téléchargement + iDo'FacBanque + Pré-saisie comptable + Engagement 12 mois"
+      #   option.name     = 'micro_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'Micro"
+      #   option.is_to_be_disabled     = @subscription.is_micro_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = price
 
-        option.title    = 'Téléchargement + Pré-saisie comptable + Engagement 12 mois'
-        option.name     = 'mini_package_subscription'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = "iDo'Mini"
-        option.is_to_be_disabled     = @subscription.is_mini_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+      #   selected_options << option
 
-        selected_options << option
+      #   selected_options << micro_remaining_months_option if micro_remaining_months_option.present?
+      # end
 
-        selected_options << mini_remaining_months_option if mini_remaining_months_option.present?
-      end
+      # if @subscription.is_mini_package_active
+      #   is_base_package_priced = true
 
-      if @subscription.is_mail_package_active
-        if is_base_package_priced
-          price = package_options_price([:return_paper], type)
-        else
-          is_base_package_priced = true
+      #   price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
 
-          price = package_options_price([:subscription, :subscription_plus, :pre_assignment, :return_paper], type)
-        end
+      #   option = ProductOptionOrder.new
 
-        option = ProductOptionOrder.new
+      #   option.title    = 'Téléchargement + Pré-saisie comptable + Engagement 12 mois'
+      #   option.name     = 'mini_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'Mini"
+      #   option.is_to_be_disabled     = @subscription.is_mini_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = price
 
-        option.title    = 'Téléchargement + Envoi par courrier A/R + Pré-saisie comptable'
-        option.name     = 'mail_package_subscription'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = "iDo'Courrier"
-        option.is_to_be_disabled     = @subscription.is_mail_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+      #   selected_options << option
 
-        selected_options << option
-      end
+      #   selected_options << mini_remaining_months_option if mini_remaining_months_option.present?
+      # end
 
-      if @subscription.is_scan_box_package_active
-        if is_base_package_priced
-          price = 0.0
-        else
-          price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
-        end
+      # if @subscription.is_mail_package_active
+      #   if is_base_package_priced
+      #     price = package_options_price([:return_paper], type)
+      #   else
+      #     is_base_package_priced = true
 
-        option = ProductOptionOrder.new
+      #     price = package_options_price([:subscription, :subscription_plus, :pre_assignment, :return_paper], type)
+      #   end
 
-        option.title   = "Téléchargement + Scan par iDocus'Box + Pré-saisie comptable"
-        option.name = 'dematbox_package_subscription'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = "iDo'Box"
-        option.is_to_be_disabled     = @subscription.is_scan_box_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+      #   option = ProductOptionOrder.new
 
-        selected_options << option
-      end
+      #   option.title    = 'Téléchargement + Envoi par courrier A/R + Pré-saisie comptable'
+      #   option.name     = 'mail_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'Courrier"
+      #   option.is_to_be_disabled     = @subscription.is_mail_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = price
 
-      if @subscription.is_retriever_package_active
-        option = ProductOptionOrder.new
+      #   selected_options << option
+      # end
 
-        option.title    = 'Récupération banque + Factures sur Internet'
-        option.name = 'retriever_package_subscription'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = "iDo'FacBanque"
-        option.is_to_be_disabled     = @subscription.is_retriever_package_to_be_disabled
-        option.price_in_cents_wo_vat = package_options_price([@subscription.retriever_price_option], type)
+      # if @subscription.is_scan_box_package_active
+      #   if is_base_package_priced
+      #     price = 0.0
+      #   else
+      #     price = package_options_price([:subscription, :subscription_plus, :pre_assignment], type)
+      #   end
 
-        selected_options << option
+      #   option = ProductOptionOrder.new
 
-        if @subscription.user.organization.code == 'AFH'
-          retrievers_count = @subscription.user.retrievers_historics.banks.has_operations.count
+      #   option.title   = "Téléchargement + Scan par iDocus'Box + Pré-saisie comptable"
+      #   option.name = 'dematbox_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'Box"
+      #   option.is_to_be_disabled     = @subscription.is_scan_box_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = price
 
-          if retrievers_count > 2
-            option = ProductOptionOrder.new
+      #   selected_options << option
+      # end
 
-            option.title    = "#{retrievers_count} automates bancaires supplémentaires"
-            option.name     = 'excess_retrievers'
-            option.duration = 0
-            option.quantity = retrievers_count
-            option.group_title = "iDo'FacBanque"
-            option.price_in_cents_wo_vat = (retrievers_count * 200.0)
+      # if @subscription.is_retriever_package_active
+      #   option = ProductOptionOrder.new
 
-            selected_options << option
-          end
-        end
-      end
+      #   option.title    = 'Récupération banque + Factures sur Internet'
+      #   option.name = 'retriever_package_subscription'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = "iDo'FacBanque"
+      #   option.is_to_be_disabled     = @subscription.is_retriever_package_to_be_disabled
+      #   option.price_in_cents_wo_vat = package_options_price([@subscription.retriever_price_option], type)
+
+      #   selected_options << option
+
+      #   if @subscription.user.organization.code == 'AFH'
+      #     retrievers_count = @subscription.user.retrievers_historics.banks.has_operations.count
+
+      #     if retrievers_count > 2
+      #       option = ProductOptionOrder.new
+
+      #       option.title    = "#{retrievers_count} automates bancaires supplémentaires"
+      #       option.name     = 'excess_retrievers'
+      #       option.duration = 0
+      #       option.quantity = retrievers_count
+      #       option.group_title = "iDo'FacBanque"
+      #       option.price_in_cents_wo_vat = (retrievers_count * 200.0)
+
+      #       selected_options << option
+      #     end
+      #   end
+      # end
 
 
-      if (@subscription.is_basic_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
-        option = ProductOptionOrder.new
+      # if (@subscription.is_basic_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
+      #   option = ProductOptionOrder.new
 
-        option.title    = 'Suppression pré-saisie comptable des factures'
-        option.name = 'all_package-disable_pre_assignment'
-        option.duration = 0
-        option.quantity = 1
-        option.group_title = 'Tous forfaits'
-        option.price_in_cents_wo_vat = -package_options_price([:pre_assignment], type)
+      #   option.title    = 'Suppression pré-saisie comptable des factures'
+      #   option.name = 'all_package-disable_pre_assignment'
+      #   option.duration = 0
+      #   option.quantity = 1
+      #   option.group_title = 'Tous forfaits'
+      #   option.price_in_cents_wo_vat = -package_options_price([:pre_assignment], type)
 
-        selected_options << option
-      end
+      #   selected_options << option
+      # end
 
       selected_options
     end
   end
-
 
   def annual_subscription_option
     option = ProductOptionOrder.new
@@ -241,8 +274,6 @@ class UpdatePeriod
     months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0
-      price = package_options_price([:subscription], 0) * months_remaining
-
       option = ProductOptionOrder.new
 
       option.title       = "iDo'Micro : engagement #{months_remaining} mois restant(s)"
@@ -250,7 +281,7 @@ class UpdatePeriod
       option.duration    = 1
       option.group_title = 'Autres'
       option.is_an_extra = true
-      option.price_in_cents_wo_vat = price
+      option.price_in_cents_wo_vat = SubscriptionPackage.price_of(:ido_micro) * 100.0 * months_remaining
 
       @micro_remaining_months_option = option
     end
@@ -265,8 +296,6 @@ class UpdatePeriod
     months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0 && ['GAP%STAYHOME'].include?(@subscription.user.code)
-      price = package_options_price([:subscription, :subscription_plus, :pre_assignment], 0) * months_remaining
-
       option = ProductOptionOrder.new
 
       option.title       = "iDo'Mini : engagement #{months_remaining} mois restant(s)"
@@ -274,7 +303,7 @@ class UpdatePeriod
       option.duration    = 1
       option.group_title = 'Autres'
       option.is_an_extra = true
-      option.price_in_cents_wo_vat = price
+      option.price_in_cents_wo_vat = SubscriptionPackage.price_of(:ido_mini) * 100.0 * months_remaining
 
       @mini_remaining_months_option = option
     end
@@ -304,7 +333,6 @@ class UpdatePeriod
       option
     end
   end
-
 
   def extra_options
     @subscription.options.by_position.map do |extra_option|
@@ -368,31 +396,6 @@ class UpdatePeriod
 
       option
     end
-  end
-
-
-  def prices_list
-    @prices_list ||= {
-      #standard prices
-      retriever:          [5,  15],
-      reduced_retriever:  [3, 9],
-      subscription:       [10, 30],
-      return_paper:       [10, 10],
-      pre_assignment:     [9,  15],
-      #special prices
-      subscription_plus:  [1, 3],
-    }
-  end
-
-
-  def package_options_price(options, type)
-    price = 0.0
-
-    options.each do |option|
-      price += prices_list[option][type] * 100.0
-    end
-
-    price
   end
 
   def difference_in_months(date1, date2)

@@ -22,7 +22,7 @@ class CreateCustomerService
 
       @customer.options = UserOptions.new(user: @customer)
       @customer.create_notify
-      @customer.current_configuration_step = 'account'
+      @customer.current_configuration_step = nil
 
       @customer.save
 

@@ -98,16 +98,63 @@ class Subscription < ApplicationRecord
     user || organization
   end
 
+  def get_active_packages
+    result = []
+
+    result << :ido_classique if self.is_basic_package_active
+    result << :ido_mini      if self.is_mini_package_active
+    result << :ido_micro     if self.is_micro_package_active
+    result << :ido_x         if self.is_idox_package_active
+
+    result
+  end
+
+  def current_active_package
+    current_package = get_active_packages.first
+
+    current_package = :ido_classique if self.is_basic_package_active && self.is_basic_package_to_be_disabled
+    current_package = :ido_mini      if self.is_mini_package_active  && self.is_mini_package_to_be_disabled
+    current_package = :ido_micro     if self.is_micro_package_active && self.is_micro_package_to_be_disabled
+    current_package = :ido_x         if self.is_idox_package_active  && self.is_idox_package_to_be_disabled
+  end
+
+  def is_to_be_disabled_package?(package)
+    case package
+      when :ido_classique
+        self.is_basic_package_active && self.is_basic_package_to_be_disabled
+      when :ido_mini
+        self.is_mini_package_active && self.is_mini_package_to_be_disabled
+      when :ido_micro
+        self.is_micro_package_active && self.is_micro_package_to_be_disabled
+      when :ido_x
+        self.is_idox_package_active && self.is_idox_package_to_be_disabled
+      else
+        false
+    end
+  end
+
+  def get_active_options
+    result = []
+
+    result << :mail_option      if self.is_mail_package_active
+    result << :retriever_option if self.is_retriever_package_active
+
+    result
+  end
+
   def set_start_date_and_end_date
-    if self.is_micro_package_active || self.is_mini_package_active
+    commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
+    commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
+
+    if commitment_period > 0
       # Updating start_date and end_date when subscription term is reached
       if self.end_date.present? && self.end_date < Date.today
         self.start_date = self.period_duration == 1 ? (self.end_date + 1.day) : (self.end_date + 1.day).beginning_of_quarter
-        self.end_date   = self.start_date + 1.year - 1.day
+        self.end_date   = self.start_date + commitment_period.months - 1.day
       end
       # When unset
       self.start_date ||= self.period_duration == 1 ? Date.today.beginning_of_month : Date.today.beginning_of_quarter
-      self.end_date   ||= self.start_date + 1.year - 1.day
+      self.end_date   ||= self.start_date + commitment_period.months - 1.day
 
       save
     end
@@ -143,25 +190,21 @@ class Subscription < ApplicationRecord
     cumulative_value     = current_preceeding_periods(period, excess_duration).map(&value.to_sym).sum
     max_authorized_value = self.send(max_value.to_sym)
 
-    if cumulative_value > max_authorized_value
+    if cumulative_value > max_authorized_value && max_authorized_value > 0
       current_value
-    elsif cumulative_value + current_value > max_authorized_value
+    elsif cumulative_value + current_value > max_authorized_value && max_authorized_value > 0
       cumulative_value + current_value - max_authorized_value
     else
       0
     end
   end
 
-  def retriever_price_option
-    organization_code = organization.try(:code) || user.organization.code
-    %w(ADV).include?(organization_code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
-  end
-
   def commitment_end?(check_micro_package = true)
-    if self.is_mini_package_active || ( check_micro_package && self.is_micro_package_active )
-      self.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
-    else
-      true
-    end
+    commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
+    commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
+
+    return true if commitment_period <= 0 || (!check_micro_package && self.is_micro_package_active)
+
+    self.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
   end
 end
