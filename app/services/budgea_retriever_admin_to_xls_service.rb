@@ -2,7 +2,7 @@
 
 class BudgeaRetrieverAdminToXlsService
   def execute(export_csv=false)
-    accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
+    accounts              = BudgeaAccount.where.not(encrypted_access_token: nil).last(10)
     list_retriever_budgea = []
     body_csv_normal       = []
     body_csv_failed       = []

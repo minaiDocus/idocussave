@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class Admin::BudgeaRetrieverController < Admin::AdminController
-  def index
-    export_connector_list
-  end
+  def index; end
 
   def export_xls
     filename = "suivi_budgea_retriever.xls"
@@ -17,5 +15,7 @@ class Admin::BudgeaRetrieverController < Admin::AdminController
     @body_normal = body[:normal]
     @body_failed = body[:failed]
     @body_bug    = body[:bug]
+
+    render partial: 'admin/budgea_retriever/body'
   end
 end

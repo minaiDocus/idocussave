@@ -17,16 +17,14 @@
           Failed
         %button.btn.btn-danger#bug.font-weight-bold.onglets
           Bug
+        %button.btn.btn-success#launcher.font-weight-bold.onglets.float-right
+          Lancer le suivi
+
     .col-md-12
-      .box.normal_table.active.body_table
+      #body_table_loading.hide.box
         .row
-          - @body = @body_normal
-          = render partial: 'result', locals: { collection: @body }
-      .box.failed_table.hide.body_table
-        .row
-          - @body = @body_failed
-          = render partial: 'result', locals: { collection: @body }
-      .box.bug_table.hide.body_table
-        .row
-          - @body = @body_bug
-          = render partial: 'result', locals: { collection: @body }
+          .col.align-self-center.text-center
+            %img{ src: "/assets/application/bar_loading.gif", alt: "chargement. . ." }
+      
+      #body_table
+        

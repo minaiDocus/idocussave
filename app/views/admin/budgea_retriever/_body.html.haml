@@ -1,0 +1,12 @@
+.box.normal_table.active.body_table
+  .row
+    - @body = @body_normal
+    = render partial: 'result', locals: { collection: @body }
+.box.failed_table.hide.body_table
+  .row
+    - @body = @body_failed
+    = render partial: 'result', locals: { collection: @body }
+.box.bug_table.hide.body_table
+  .row
+    - @body = @body_bug
+    = render partial: 'result', locals: { collection: @body }

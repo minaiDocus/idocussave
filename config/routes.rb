@@ -668,6 +668,7 @@ Rails.application.routes.draw do
 
     resources :budgea_retriever, only: :index do
       get 'export_xls', on: :collection
+      get 'export_connector_list', on: :collection
     end
 
     resources :news do
