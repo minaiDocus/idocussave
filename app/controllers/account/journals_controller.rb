@@ -20,22 +20,10 @@ class Account::JournalsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/journals
   def create
-    @journal = AccountBookType.new journal_params
-
-    (@customer || @organization).account_book_types << @journal
-
-    if @journal.save
-      flash[:success] = 'Créé avec succès.'
+    if AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
+      flash[:success] = 'Créer avec succès.'
 
       if @customer
-        UpdateJournalRelationService.new(@journal).execute
-
-        EventCreateService.add_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
-
-        @customer.dematbox.subscribe if @customer.dematbox.try(:is_configured)
-
-        DropboxImport.changed(@customer)
-
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -89,21 +77,10 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
-    @journal.assign_attributes(journal_params)
-    changes = @journal.changes.dup
-    if @journal.save
+    if AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
       flash[:success] = 'Modifié avec succès.'
+
       if @customer
-        UpdateJournalRelationService.new(@journal).execute
-
-        EventCreateService.journal_update(@journal, @customer, changes, current_user, path: request.path, ip_address: request.remote_ip)
-
-        if changes['name'].present? && @customer.dematbox.try(:is_configured)
-          @customer.dematbox.subscribe
-        end
-
-        DropboxImport.changed(@customer)
-
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -116,17 +93,10 @@ class Account::JournalsController < Account::OrganizationController
   # DELETE /account/organizations/:organization_id/journals/:journal_id
   def destroy
     if @user.is_admin || Settings.first.is_journals_modification_authorized || !@customer || @journal.is_open_for_modification?
-      @journal.destroy
+      AccountBookTypeWriter.new({journal: @journal, current_user: current_user, request: request}).destroy
+
       flash[:success] = 'Supprimé avec succès.'
       if @customer
-        UpdateJournalRelationService.new(@journal).execute
-
-        EventCreateService.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
-
-        @customer.dematbox.subscribe if @customer.dematbox.try(:is_configured)
-
-        DropboxImport.changed(@customer)
-
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
