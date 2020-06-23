@@ -241,6 +241,7 @@ class Account::JournalsController < Account::OrganizationController
         vat_account_5_5
         vat_account_2_1
         anomaly_account
+        jefacture_enabled
       ]
     end
 

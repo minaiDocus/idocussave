@@ -4,6 +4,8 @@ require 'mini_magick'
 class TempDocument < ApplicationRecord
   ATTACHMENTS_URLS={'cloud_content' => '/account/documents/processing/:id/download/:style'}
 
+  attr_accessor :file_base64, :accounting_type
+
   serialize :scan_bundling_document_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)

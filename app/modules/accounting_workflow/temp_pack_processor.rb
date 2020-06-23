@@ -321,16 +321,18 @@ class AccountingWorkflow::TempPackProcessor
         page.origin         = temp_document.delivery_type
         page.is_a_cover     = @is_a_cover
 
-        DocumentTools.sign_pdf(page_file_path, page_file_signed_path)
+        DocumentTools.sign_pdf(page_file_path, page_file_signed_path) unless temp_document.api_name == 'jefacture'
         page.cloud_content_object.attach(File.open(page_file_signed_path), page_file_name) if page.save
       end
     end
   end
 
-  def prepare_piece_for_pre_assignment
+  def prepare_piece_for_pre_assignment    
     if need_pre_assignment?
       if @inserted_piece.temp_document.api_name == 'invoice_auto'
         AutoPreAssignedInvoicePieces.execute([@inserted_piece])
+      elsif @inserted_piece.temp_document.api_name == 'jefacture'
+        AutoPreAssignedJefacturePieces.execute([@inserted_piece])
       else
         Pack::Piece.extract_content(@inserted_piece)
 

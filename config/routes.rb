@@ -471,7 +471,13 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
     namespace :v2 do
+      resources :users, only: %w() do
+        collection do 
+          get :jefacture
+        end
+      end
       resources :pieces, only: %w(update)
+      resources :temp_documents, only: %w(create)
     end
 
     namespace :v1 do

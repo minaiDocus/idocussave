@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_28_091307) do
+ActiveRecord::Schema.define(version: 2020_06_17_091257) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2020_04_28_091307) do
     t.integer "organization_id"
     t.integer "user_id"
     t.integer "analytic_reference_id"
+    t.boolean "jefacture_enabled"
     t.index ["organization_id"], name: "organization_id"
     t.index ["user_id"], name: "user_id"
   end
@@ -303,6 +304,14 @@ ActiveRecord::Schema.define(version: 2020_04_28_091307) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text "urls"
+  end
+
+  create_table "counter_error_script_mailers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.string "error_type"
+    t.integer "counter", default: 0
+    t.boolean "is_enable", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "csv_descriptors", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1072,6 +1081,7 @@ ActiveRecord::Schema.define(version: 2020_04_28_091307) do
     t.boolean "is_fec_agiris_used", default: false
     t.boolean "is_fec_agiris_auto_deliver", default: false
     t.string "vat_identifier"
+    t.string "jefacture_api_key"
     t.index ["leader_id"], name: "leader_id"
     t.index ["organization_group_id"], name: "index_organizations_on_organization_group_id"
   end
@@ -1099,6 +1109,7 @@ ActiveRecord::Schema.define(version: 2020_04_28_091307) do
     t.string "name"
     t.integer "number"
     t.boolean "is_a_cover", default: false, null: false
+    t.boolean "is_signed", default: false
     t.string "origin"
     t.integer "position"
     t.integer "pages_number", default: 0
@@ -1998,6 +2009,7 @@ ActiveRecord::Schema.define(version: 2020_04_28_091307) do
     t.datetime "news_read_at"
     t.string "mcf_storage"
     t.integer "manager_id"
+    t.string "jefacture_account_id"
     t.index ["manager_id"], name: "index_users_on_manager_id"
     t.index ["organization_id"], name: "organization_id"
     t.index ["parent_id"], name: "parent_id"

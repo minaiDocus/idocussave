@@ -23,6 +23,7 @@ module Idocus
     Dir.glob("#{Rails.root}/lib/knowings_api/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/google_drive/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/supplier_recognition/*.{rb}").each { |file| require file }
+    Dir.glob("#{Rails.root}/lib/jefacture/*.{rb}").each { |file| require file }
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

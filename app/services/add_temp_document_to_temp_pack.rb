@@ -79,7 +79,11 @@ class AddTempDocumentToTempPack
             #   NotifyDocumentBeingProcessed.new(temp_document).execute
             else
               #Temp modification : replace ready state to ocr_needed
-              temp_document.ocr_needed
+              if temp_document.api_name == 'jefacture'
+                temp_document.ready
+              else
+                temp_document.ocr_needed
+              end
             end
           end
         else

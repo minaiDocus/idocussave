@@ -9,6 +9,7 @@
           = f.input :group_ids, collection: @user.groups.order(name: :asc), as: :check_boxes, label: 'A quel groupe, le dossier doit-il être attribué ?'
           = f.association :manager, collection: managers_options_for_select, include_blank: false, label: 'Quel est le collaborateur en charge du dossier?', hint: 'IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.'
           = f.input :company
+          = f.input :jefacture_account_id
       .col-md-6
         .box.bg-light.height_groups.groups_1
           %h4 Contact principal
