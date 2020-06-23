@@ -33,6 +33,7 @@ config/ftp_delivery.yml
 config/ibiza.yml
 config/knowings.yml
 config/pdftk.yml
+config/jefacture.yml
 config/secrets.yml
 config/slimpay.yml
 config/slimpay_checkout.yml
