@@ -8,6 +8,7 @@
         = hidden_field_tag :part, params[:part]
         - if params[:part] != 'other_software'
           = f.input :name
+          = f.input :jefacture_api_key
           - if @user.is_admin
             = f.input :is_detail_authorized, as: :boolean
             = f.input :is_test,              as: :boolean

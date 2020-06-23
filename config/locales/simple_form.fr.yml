@@ -62,6 +62,7 @@ fr:
         first_name: Prénom
         last_name: Nom
         email: Courriel
+        jefacture_account_id: Identifiant Jefactrure (SIREN)
         phone_number: Numéro de téléphone
         is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte
         password: Mot de passe
@@ -122,6 +123,7 @@ fr:
         preseizure_date_option: Date de l'écriture des opérations bancaires
         is_exact_online_used: Utilise Exact Online?
         is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+        jefacture_api_key: Clé API Jefacture
       organization_group:
         name: Nom du groupe
         organizations: Organisations membre du groupe
@@ -161,6 +163,7 @@ fr:
         position: Position
         is_default: Par défaut ?
         clients: Clients
+        jefacture_enabled: Utiliser ce journal pour les flux JeFacture
       knowings:
         is_active: Activer la livraison ?
         username: Identifiant

@@ -259,7 +259,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :subject_to_vat,
         :invoice_mails,
         :is_exact_online_used,
-        :is_exact_online_auto_deliver
+        :is_exact_online_auto_deliver,
+        :jefacture_api_key
       )
     else
       params.require(:organization).permit(
@@ -283,7 +284,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :preseizure_date_option,
         :invoice_mails,
         :is_exact_online_used,
-        :is_exact_online_auto_deliver
+        :is_exact_online_auto_deliver,
+        :jefacture_api_key
       )
     end
   end

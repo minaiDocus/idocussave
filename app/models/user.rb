@@ -142,6 +142,10 @@ class User < ApplicationRecord
     code
   end
 
+  def jefacture_api_key
+    organization.jefacture_api_key
+  end
+
 
   def username=(param)
     self.code = param

@@ -364,6 +364,7 @@ class Account::CustomersController < Account::OrganizationController
       :phone_number,
       { group_ids: [] },
       :manager_id,
+      :jefacture_account_id,
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
       { softwares_attributes: [] }
     ]

@@ -86,6 +86,7 @@
               = f.input :vat_account_5_5
               = f.input :vat_account_2_1
             = f.input :anomaly_account, input_html: { class: 'can_be_required' }, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+            = f.input :jefacture_enabled, input_html: { class: 'can_be_required' }
             - # Disabled for now
             - if false && @user.is_admin
               = f.input :is_expense_categories_editable, as: :boolean

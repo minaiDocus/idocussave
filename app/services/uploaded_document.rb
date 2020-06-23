@@ -12,11 +12,12 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil)
     @file     = file
     @user     = user
     @code     = @user.code
     @journal  = journal
+    @api_id   = api_id
     @api_name = api_name
     @uploader = uploader || user
 
@@ -64,6 +65,7 @@ class UploadedDocument
       options = {
         delivered_by:          @uploader.code,
         delivery_type:         'upload',
+        api_id:                api_id,
         api_name:              api_name,
         original_file_name:    @original_file_name,
         is_content_file_valid: true,
