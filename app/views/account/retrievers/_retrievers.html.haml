@@ -4,6 +4,7 @@
 = hidden_field_tag :page, page
 
 = render partial: 'account/retrievers/list_options'
+
 %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
   %thead
     %tr.bg-brown.text-white
@@ -25,11 +26,6 @@
           %td= retriever_presenter.journal.try(:name) || '-'
           %td{class: "state_field_#{retriever.id}"}= retriever_presenter.state(scope)
           %td
-            = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
-            - if retriever.ready? || retriever.error? || retriever.waiting_additionnal_info?
-              - if retriever.budgea_id.present?
-                = retriever_presenter.action_link
-              = link_to glyphicon('pencil'), edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip', class: 'btn btn-light'
-            - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
-              = link_to glyphicon('x'), '#', class: "destroy_retriever destroy_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
+            = render partial: 'account/retrievers/actions', locals: { retriever: retriever, retriever_presenter: retriever_presenter }
+
 = render partial: 'account/retrievers/list_options'

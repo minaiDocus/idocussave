@@ -89,6 +89,7 @@ Rails.application.routes.draw do
   post 'retriever/trigger', controller: 'retrievers', action: 'trigger'
   post 'retriever/create_budgea_user', controller: 'retrievers', action: 'create_budgea_user'
   post 'retriever/get_retriever_infos', controller: 'retrievers', action: 'get_retriever_infos'
+  post 'retriever/update_budgea_error_message', controller: 'retrievers', action: 'update_budgea_error_message'
 
   get '/docs/download', controller: 'account/docs', action: 'download'
 
@@ -667,6 +668,12 @@ Rails.application.routes.draw do
 
     resources :news do
       post :publish, on: :member
+    end
+
+    resources :zoho_crm, only: %w(index) do
+      get 'dpl_org', action: 'duplicate_organizations', on: :collection
+      get 'dpl_usr', action: 'duplicate_users', on: :collection
+      get 'synchronize', action: 'synchronize', on: :collection
     end
   end
 

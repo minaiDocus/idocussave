@@ -327,14 +327,70 @@ class Idocus.BudgeaApi
       })
     )
 
+  refresh_connection: (id, data_refresh) ->
+    self      = this
+    budgea_id = ''
+
+    promise = new Promise((resolve, reject)->
+      local_request = (params)->
+          self.local_fetch({
+            url: "/retriever/update_budgea_error_message"
+            type: 'POST'
+            data: params
+            onSuccess: (data)-> resolve(data)
+            onError: (error)-> reject(error)
+          })
+
+      do_sync = ()->
+        if budgea_id != ''
+          self.remote_fetch({
+            url: "/users/me/connections/#{budgea_id}"
+            type: 'POST'
+            data: data_refresh
+            onSuccess: (connections)-> local_request({id: id, success: true, connections: connections})
+            onError: (error)->
+              if error.match(/Erreur: 404/) && remote_method == 'DELETE'
+                local_request({id: id, success: true, connections: {}})
+              else
+                local_request({id: id, success: false, error_message: error})
+          })
+        else
+          local_request({ id: id, success: false, connections: {} })
+
+      self.local_fetch({
+        url: "/retriever/get_retriever_infos"
+        data: {id: id, remote_method: 'POST'}
+        onSuccess: (data)->
+          budgea_id = data.budgea_id
+          self.set_tokens({ bi_token: data.bi_token })
+          if data.deleted != undefined && data.deleted == true
+            resolve({success: true})
+          else
+            do_sync()
+        onError: (error)-> reject(error)
+      })
+    )
+
   webauth: (id, is_new)->
-    user_id = $('#account_id').val()
+    if ($('#account_id_'+ id ).length > 0)
+      user_id                 = $('#account_id_'+ id ).val()
+      field_ido_capabilities  = $('#field_ido_capabilities_'+ id)
+      ido_connector_id        = $('#ido_connector_id_'+ id )
+      field_ido_custom_name   = $('#field_ido_custom_name_'+ id )
+      ido_connector_name      = $('#ido_connector_name_'+ id )
+    else
+      user_id                 = $('#account_id').val()
+      field_ido_capabilities  = $('#field_ido_capabilities')
+      ido_connector_id        = $('#ido_connector_id')
+      field_ido_custom_name   = $('#field_ido_custom_name')
+      ido_connector_name      = $('#ido_connector_name')
+
     state = btoa("{
                     \"user_id\": \"#{user_id}\",
-                    \"ido_capabilities\": \"#{$('#field_ido_capabilities').val().replace('"', '\'')}\",
-                    \"ido_connector_id\": \"#{$('#ido_connector_id').val().replace('"', '\'')}\",
-                    \"ido_custom_name\": \"#{$('#field_ido_custom_name').val().replace('"', '\'')}\",
-                    \"ido_connector_name\": \"#{$('#ido_connector_name').val().replace('"', '\'')}\"
+                    \"ido_capabilities\": \"#{field_ido_capabilities.val().replace('"', '\'')}\",
+                    \"ido_connector_id\": \"#{ido_connector_id.val().replace('"', '\'')}\",
+                    \"ido_custom_name\": \"#{field_ido_custom_name.val().replace('"', '\'')}\",
+                    \"ido_connector_name\": \"#{ido_connector_name.val().replace('"', '\'')}\"
                 }")
 
     url = '/retriever/fetch_webauth_url'
@@ -348,7 +404,7 @@ class Idocus.BudgeaApi
       $('#budgea_information_fields .feedparagraph').remove()
       $('#budgea_information_fields .actions').show()
       domparser = new DOMParser()
-      data = domparser.parseFromString(response.paypal_dom, 'text/html')
+      data = domparser.parseFromString(response.html_dom, 'text/html')
       redirect_url = $(data).find('a').attr('href')
 
       if(redirect_url != undefined && redirect_url != null)

@@ -137,6 +137,10 @@ DataVerificatorWorker:
   queue: default
   cron: '0 3 * * *'
 
+## Zoho CRM sync
+ZohoCrmSynchronizerWorker:
+  queue: default
+  cron: '0 1 1 * *'
 
 ## Delivery workers
 

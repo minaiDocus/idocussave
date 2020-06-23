@@ -56,7 +56,7 @@ class Retriever < ApplicationRecord
     state :error
     state :unavailable
 
-    before_transition :error => :ready do |retriever, transition|
+    before_transition any  => :ready do |retriever, transition|
       retriever.error_message = nil
     end
 
@@ -114,7 +114,6 @@ class Retriever < ApplicationRecord
     end
 
     after_transition any => :failed do |retriever, transition|
-      retriever.error_message = retriever.budgea_error_message
       retriever.error
     end
 
@@ -143,7 +142,7 @@ class Retriever < ApplicationRecord
     end
 
     event :pause do
-      transition [:synchronizing, :successful] => :paused
+      transition [:synchronizing, :successful, :failed] => :paused
     end
 
     event :destroy do
@@ -235,6 +234,58 @@ class Retriever < ApplicationRecord
 
   def linked?
     budgea_id.present?
+  end
+
+  def update_state_with(connection={})
+    return false if connection.try(:[], 'id').present? && connection.try(:[], 'id').to_i != self.budgea_id.to_i
+
+    error_connection            = connection['error'].presence || connection['code']
+    connection_error_message    = connection['error_message'].presence || connection['message']
+
+    case error_connection
+    when 'wrongpass'
+      error_message = connection_error_message.presence || 'Mot de passe incorrect.'
+      self.update(is_new_password_needed: true, error_message: error_message, budgea_error_message: error_connection)
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_wrong_pass
+    when 'additionalInformationNeeded'
+      self.update({error_message: connection_error_message, budgea_error_message: nil})
+
+      if connection['fields'].present?
+        self.pause_budgea_connection
+
+        RetrieverNotification.new(self).notify_info_needed
+      elsif self.budgea_connection_failed?
+        self.success_budgea_connection
+      end
+    when 'actionNeeded'
+      error_message = connection_error_message.presence || 'Veuillez confirmer les nouveaux termes et conditions.'
+      self.update({error_message: error_message, budgea_error_message: error_connection})
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_action_needed
+    when 'websiteUnavailable'
+      self.update({error_message: 'Site web indisponible.', budgea_error_message: error_connection})
+      self.fail_budgea_connection
+
+      RetrieverNotification.new(self).notify_website_unavailable
+    else
+      if error_connection.present?
+        error_message = connection_error_message || error_connection
+
+        error_message = 'Service indisponible.'                         if error_connection == 'bug'
+        error_message = 'Authentification forte requise (SCARequired).' if error_connection == 'SCARequired'
+        error_message = 'Authentification Web requise.'                 if error_connection == 'webauthRequired'
+
+        self.update({error_message: error_message, budgea_error_message: error_connection})
+        self.fail_budgea_connection
+
+        RetrieverNotification.new(self).notify_bug
+      elsif connection.try(:[], 'id').to_i == self.budgea_id.to_i
+        self.success_budgea_connection
+      end
+    end
   end
 
 private

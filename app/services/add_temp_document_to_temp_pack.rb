@@ -101,7 +101,10 @@ class AddTempDocumentToTempPack
           ErrorScriptMailer.error_notification(log_document).deliver
         end
       else
+        temp_document.original_fingerprint = nil
         temp_document.unreadable
+
+        temp_document.save
       end
 
       temp_pack.save

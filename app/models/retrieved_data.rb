@@ -44,7 +44,7 @@ class RetrievedData < ApplicationRecord
   end
 
   def json_content
-    if File.exist?(cloud_content_object.path.to_s)
+    if File.exist?(cloud_content_object.reload.path.to_s)
       begin
         { success: true, content: Oj.load(SymmetricEncryption.decrypt(File.read(cloud_content_object.path.to_s))) }
       rescue => e

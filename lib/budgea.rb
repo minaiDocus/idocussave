@@ -78,6 +78,16 @@ class Budgea
       run_and_parse_response
     end
 
+    def renew_access_token(user_id)
+      @response = connection.post do |request|
+        request.url "/2.0/auth/jwt"
+        request.headers['Accept'] = 'application/json'
+        request.body = authentification_params.merge({ id_user: user_id, expire: false }).to_query
+      end
+
+      run_and_parse_response
+    end
+
     def delete_access_token
       @response = connection.delete do |request|
         request.url '/2.0/users/me/token'
@@ -137,11 +147,32 @@ class Budgea
     end
 
     def get_all_connections
-      connection.get do |request|
+      @response = connection.get do |request|
         request.url "/2.0/users/me/connections"
         request.headers = headers
       end
+
+      run_and_parse_response
     end
+
+    # def scaRequired_refresh(id_connection)
+    #   @response = connection.post do |request|
+    #     request.url "/2.0/users/me/connections/#{id_connection}"
+    #     request.headers = headers
+    #   end
+
+    #   run_and_parse_response
+    # end
+
+    # def decoupled_refresh(id_connection)
+    #   @response = connection.post do |request|
+    #     request.url "/2.0/users/me/connections/#{id_connection}"
+    #     request.body = { resume: true }.to_query
+    #     request.headers = headers
+    #   end
+
+    #   run_and_parse_response
+    # end
 
   private
     def connection
@@ -198,9 +229,11 @@ class Budgea
     end
 
     def run_and_parse_response(collection_name=nil)
+      return @error_message = 'Service indisponible...' if @response.nil?
+
       if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
         result = JSON.parse(@response.body)
-        @error_message = case result['status']
+        @error_message = case result['code']
                          when 'wrongpass'
                            'Mot de passe incorrect.'
                          when 'websiteUnavailable'

@@ -2,31 +2,42 @@
 class RetrievedDocument
   attr_reader :temp_document
 
-  def self.retry_get_file(retriever_id, document, count_day=0)
-    retriever  = Retriever.find retriever_id
+  def self.process_file(retriever_id, document, count_day=0)
+    retriever     = Retriever.find retriever_id
     already_exist = retriever.temp_documents.where(api_id: document['id']).first
 
-    return false if count_day >= 3 || already_exist
+    return { success: true, return_object: nil } if count_day >= 3 || already_exist
 
     client     = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
     is_success = false
+    tries      = 1
+    dir        = Dir.mktmpdir
+    file_path  = File.join(dir, 'retriever_processed_file.pdf')
 
-    temp_file_path = client.get_file document['id']
-    dir            = Dir.mktmpdir
-    file_path      = File.join(dir, 'retriever_processed_file.pdf')
-    processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
+    while tries <= 3 && !is_success
+      sleep(tries)
+      temp_file_path = client.get_file document['id']
 
-    begin
-      if client.response.status == 200
-        RetrievedDocument.new(retriever, document, processed_file.path)
-        retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
-        is_success = true
+      begin
+        if client.response.status == 200
+          processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
+          RetrievedDocument.new(retriever, document, processed_file.path)
+
+          retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
+          is_success    = true
+          return_object = client.response
+          count_day     = 3
+        else
+          is_success    = false
+          return_object = client.response
+        end
+      rescue Errno::ENOENT => e
+        return_object = e
       end
-    rescue => e
-      error_message = e.to_s
+      tries += 1
     end
 
-    RetrievedDocument.delay_for(24.hours).retry_get_file(retriever.id, document, (count_day+1)) if !is_success
+    RetrievedDocument.delay_for(24.hours).process_file(retriever.id, document, (count_day+1)) if !is_success && count_day <= 2
 
     FileUtils.remove_entry dir
 
@@ -42,12 +53,14 @@ class RetrievedDocument
         client: client.inspect,
         reponse_code: client.response.status.to_s,
         document: document.inspect,
-        error_message: error_message.to_s,
+        error_message: return_object.to_s,
         temp_file_path: temp_file_path.to_s
       }
     }
 
-    ErrorScriptMailer.error_notification(log_document).deliver
+    ErrorScriptMailer.error_notification(log_document).deliver if !is_success
+
+    { success: is_success, return_object: return_object }
   end
 
   def initialize(retriever, document, temp_file_path)

@@ -2,6 +2,10 @@
 require 'spec_helper'
 
 describe ProcessRetrievedData do
+  def prepare_user_token
+    allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('VNEr6s0xI8ZIho8/zna1uNP81yxHFccb')
+  end
+
   before(:each) do
     DatabaseCleaner.start
     Timecop.freeze(Time.local(2017,1,4))
@@ -27,8 +31,12 @@ describe ProcessRetrievedData do
     @retriever.journal        = @journal
     @retriever.state          = 'ready'
     @retriever.budgea_state   = 'successful'
-    #@retriever.capabilities   = 'bank'
+    @retriever.capabilities   = 'bank'
     @retriever.save
+
+    allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
+
+    RetrievedData.destroy_all
   end
 
   after(:each) do
@@ -120,10 +128,11 @@ describe ProcessRetrievedData do
       expect(@user.notifications.count).to eq 0
     end
 
-    it 'destroys the bank account, but not the operation' do
+    it 'destroys the bank account, but not the operation', :bank_accounts_destroy do
       operation = Operation.new
       operation.user         = @user
       operation.bank_account = @bank_account
+      operation.organization = @organization
       operation.api_id       = 309
       operation.api_name     = 'budgea'
       operation.is_locked    = true
@@ -177,6 +186,7 @@ describe ProcessRetrievedData do
         @operation = Operation.new
         @operation.user         = @user
         @operation.bank_account = @bank_account
+        @operation.organization = @organization
         @operation.api_id       = 309
         @operation.api_name     = 'budgea'
         @operation.is_locked    = true
@@ -331,10 +341,12 @@ describe ProcessRetrievedData do
       expect(@user.notifications.first.message).to match(/^3/)
     end
 
-    context '3 operations already exist' do
+    context '3 operations already exist', :operation_already_exist do
       before(:each) do
         @operation = Operation.new
         @operation.user         = @user
+        @operation.organization = @organization
+        @operation.bank_account = @bank_account
         @operation.api_name     = 'budgea'
         @operation.is_locked    = true
         @operation.date         = '2017-01-01'
@@ -348,6 +360,8 @@ describe ProcessRetrievedData do
 
         @operation2 = Operation.new
         @operation2.user         = @user
+        @operation2.organization = @organization
+        @operation2.bank_account = @bank_account2
         @operation2.api_name     = 'budgea'
         @operation2.is_locked    = true
         @operation2.date         = '2017-01-02'
@@ -361,6 +375,8 @@ describe ProcessRetrievedData do
 
         @operation3 = Operation.new
         @operation3.user         = @user
+        @operation3.organization = @organization
+        @operation3.bank_account = @bank_account
         @operation3.api_name     = 'budgea'
         @operation3.is_locked    = true
         @operation3.date         = '2017-01-03'
@@ -382,21 +398,21 @@ describe ProcessRetrievedData do
 
         ProcessRetrievedData.new(retrieved_data).execute
 
-        @operation.reload
-        @operation2.reload
-        @operation3.reload
-
         expect(@user.operations.count).to eq 3
 
-        expect(@operation.api_id).to eq '1'
-        expect(@operation.bank_account).to eq @bank_account
+        expect(@user.operations.first).to eq @operation
+        expect(@user.operations.second).to eq @operation2
+        expect(@user.operations.last).to eq @operation3
 
-        expect(@operation2.api_id).to eq '2'
-        expect(@operation2.bank_account).to eq @bank_account2
+        expect(@user.operations.first.api_id).to eq '1'
+        expect(@user.operations.first.bank_account).to eq @bank_account
+
+        expect(@user.operations.second.api_id).to eq '2'
+        expect(@user.operations.second.bank_account).to eq @bank_account2
 
         # should detect '[CB] ...' here
-        expect(@operation3.api_id).to eq '3'
-        expect(@operation3.bank_account).to eq @bank_account
+        expect(@user.operations.last.api_id).to eq '3'
+        expect(@user.operations.last.bank_account).to eq @bank_account
 
         expect(@user.notifications.count).to eq 1
         expect(@user.notifications.first.message).to match(/^3/)
@@ -586,8 +602,12 @@ describe ProcessRetrievedData do
       budgea_account = BudgeaAccount.new
       budgea_account.user = @user
       budgea_account.identifier = 7
-      budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
+      # budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
+      budgea_account.access_token = "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E"
       budgea_account.save
+
+      @retriever.capabilities   = 'document'
+      @retriever.save
     end
 
     it 'does not create any document' do
@@ -620,6 +640,8 @@ describe ProcessRetrievedData do
       @retriever.reload
       expect(retrieved_data).to be_processed
       expect(retrieved_data.processed_connection_ids).to eq [7]
+
+
       expect(@retriever).to be_waiting_selection
       expect(@user.temp_documents.count).to eq 1
 
@@ -627,26 +649,28 @@ describe ProcessRetrievedData do
       expect(@user.notifications.first.title).to eq 'Automate - Nouveau document'
     end
 
-    it 'fails to fetch document' do
-      retrieved_data = RetrievedData.new
-      retrieved_data.user = @user
-      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
-      retrieved_data.save
+    # it 'fails to fetch document' do
+    #   retrieved_data = RetrievedData.new
+    #   retrieved_data.user = @user
+    #   retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+    #   retrieved_data.save
 
-      VCR.use_cassette('budgea/failed_to_fetch_document') do
-        ProcessRetrievedData.new(retrieved_data).execute
-      end
+    #   VCR.use_cassette('budgea/failed_to_fetch_document') do
+    #     ProcessRetrievedData.new(retrieved_data).execute
+    #   end
 
-      @retriever.reload
-      expect(@user.temp_documents.count).to eq 0
-      expect(retrieved_data).to be_error
-      expect(retrieved_data.error_message).to eq "[7] Document '15' cannot be downloaded : [0] "
-      expect(retrieved_data.processed_connection_ids).to be_empty
-      expect(@retriever).to be_error
-      expect(@retriever.error_message).to eq "Certains documents n'ont pas pu être récupérés."
+    #   debugger
 
-      expect(@user.notifications.count).to eq 0
-    end
+    #   @retriever.reload
+    #   expect(@user.temp_documents.count).to eq 0
+    #   expect(retrieved_data).to be_error
+    #   expect(retrieved_data.error_message).to eq "[7] Document '15' cannot be downloaded : [0] "
+    #   expect(retrieved_data.processed_connection_ids).to be_empty
+    #   expect(@retriever).to be_error
+    #   expect(@retriever.error_message).to eq "Certains documents n'ont pas pu être récupérés."
+
+    #   expect(@user.notifications.count).to eq 0
+    # end
   end
 
   context 'a document already exist', :document_exist do
@@ -654,14 +678,15 @@ describe ProcessRetrievedData do
       budgea_account = BudgeaAccount.new
       budgea_account.user = @user
       budgea_account.identifier = 7
-      budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
+      # budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
+      budgea_account.access_token = "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E"
       budgea_account.save
 
       pack = TempPack.find_or_create_by_name "#{@user.code} #{@journal.name} #{Time.now.strftime('%Y%M')}"
       options = {
         user_id:               @user.id,
         delivery_type:         'retriever',
-        api_id:                15,
+        api_id:                115829,
         api_name:              'budgea',
         is_content_file_valid: true
       }
@@ -669,6 +694,8 @@ describe ProcessRetrievedData do
       temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       @retriever.temp_documents << temp_document
       file.close
+
+      allow_any_instance_of(TempDocument).to receive(:retrieved?).and_return(Pathname.new('/tmp'))
     end
 
     it 'does not create a document' do
@@ -808,7 +835,7 @@ describe ProcessRetrievedData do
     it 'makes successsed retry' do
       allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(200)
 
-      RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+      RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
       expect(TempDocument.last.user.id).to eq @retriever.user.id
       expect(TempDocument.last.api_name).to eq 'budgea'
@@ -817,12 +844,12 @@ describe ProcessRetrievedData do
       expect(TempDocument.last.api_id).to eq @document['id'].to_s
     end
 
-    it 'return false when document is already exist', :retry_already_exist do
+    it 'return true when document is already exist', :retry_already_exist do
       allow_any_instance_of(Retriever).to receive_message_chain('temp_documents.where.first').and_return(true)
 
-      result = RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+      result = RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
-      expect(result).to be false
+      expect(result[:success]).to be true
       expect(TempDocument.last.try(:user).try(:id)).to eq nil
       expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s
     end
@@ -830,7 +857,7 @@ describe ProcessRetrievedData do
     it 'makes failed retry' do
       allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(401)
 
-      RetrievedDocument.retry_get_file(@retriever.id, @document, @count_day)
+      RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
       expect(TempDocument.last.try(:user).try(:id)).to eq nil
       expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s
@@ -905,4 +932,105 @@ describe ProcessRetrievedData do
       expect(amounts).to eq [284.95, 20.0]
     end
   end
+
+  # context 'Budgea transaction fetcher', :budgea_transaction_fetcher do
+  #   before(:each) do
+  #     organization = create :organization, code: 'IDOC'
+  #     @user_t = create :user, code: 'IDOC%001', organization: organization
+  #     @retriever = create :retriever, user: @user_t
+  #     @bank_account = create :bank_account, user: @user_t, retriever: @retriever
+  #   end
+
+  #   it 'returns log client invalid if user not found' do
+  #     subject = ProcessRetrievedData.new(nil, nil, nil)
+  #     response = subject.execute_with('1234', '2018-04-12', '2018-04-13')
+
+  #     expect(response).to match /Budgea client invalid!/
+  #     expect(subject.send(:client)).to be nil
+  #   end
+
+  #   it 'returns invalid parameters when some parameters is missing' do
+  #     prepare_user_token
+  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     response = subject.execute_with([], '2018-04-12', '2018-04-13')
+
+  #     expect(response).to match /Parameters invalid!/
+  #     expect(subject.send(:client)).to be_a Budgea::Client
+  #   end
+
+  #   it 'returns unauthorized access when token or budgea webservice is invalid', :unauthorized_token do
+  #     allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('FakeToken')
+
+  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     response = VCR.use_cassette('budgea/unauthorize_access') do
+  #       subject.execute_with('1234', '2018-04-12', '2018-04-13')
+  #     end
+
+  #     expect(response).to match /\{"code": "unauthorized"\}/
+  #     expect(subject.send(:client)).to be_a Budgea::Client
+  #   end
+
+  #   it 'fetch all operations from budgea account, according to parameters', :test_1 do
+  #     prepare_user_token
+  #     allow_any_instance_of(User).to receive_message_chain('retrievers.where.order.first').and_return(@retriever)
+  #     allow_any_instance_of(User).to receive_message_chain('bank_accounts.where.first').and_return(@bank_account)
+
+  #     @bank_account.bank_name = 'Paypal REST API'
+  #     @bank_account.save
+
+  #     @retriever.budgea_id = 13036
+  #     @retriever.save
+
+  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     response = VCR.use_cassette('budgea/transaction_fetcher') do
+  #       subject.execute_with('15578', '2020-04-17', '2020-04-30')
+  #     end
+
+  #     expect(response).to match /New operations: 27/
+  #   end
+
+  #   context 'check transaction value nul for bank account "Paypal REST API"', :budgea_check_transaction_value do
+  #     before(:each){ DatabaseCleaner.start }
+  #     after(:each){ DatabaseCleaner.clean }
+
+  #     def init_retrieved_data
+  #       allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('iiEjDOvcC0lIMhmDMgZLhUTq2RbCnGKW')
+  #       allow_any_instance_of(User).to receive_message_chain('bank_accounts.where.first').and_return(@bank_account)
+
+  #       @retrieved_data = RetrievedData.new
+  #       @retrieved_data.user = @user_t
+
+  #       FileUtils.rm @retrieved_data.cloud_content_object.path.to_s, force: true
+
+  #       @retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'operations_with_transaction_attributes.json')))
+  #       @retrieved_data.save
+  #     end
+
+  #     it 'operation with transaction value null and bank account "Paypal REST API"' do
+  #       init_retrieved_data
+
+  #       @bank_account.bank_name = 'Paypal REST API'
+  #       @bank_account.save
+
+  #       @retriever.reload
+  #       @retriever.budgea_id       = 13036
+  #       @retriever.name           = 'Paypal REST API'
+  #       @retriever.service_name   = 'Paypal REST API'
+  #       @retriever.capabilities   = 'bank'
+  #       @retriever.save
+
+  #       subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #       response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
+  #         subject.execute_with('15578', '2020-04-17', '2020-04-30')
+  #       end
+
+  #       second_operation = @user_t.operations.second
+
+  #       expect(@user_t.operations.size).to eq 27
+  #       expect(second_operation.label).to eq 'Paiement à Boualem Mezrar'
+  #       expect(second_operation.is_coming).to eq false
+  #       expect(second_operation.amount).to eq (300.0 - 15.05)
+  #     end
+  #   end
+  # end
 end

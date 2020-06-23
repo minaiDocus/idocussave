@@ -28,6 +28,11 @@ class CustomActiveStorageObject
     end
   end
 
+  def reload
+    FileUtils.remove_dir(path, true)
+    self
+  end
+
   def service_url()
     if as_attached.attached?
       begin

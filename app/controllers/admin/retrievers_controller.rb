@@ -10,12 +10,14 @@ class Admin::RetrieversController < Admin::AdminController
   def fetcher
     if params[:post_action_budgea_fetcher]
       if params_fetcher_valid?
-        @message = BudgeaTransactionFetcher.new(
-          User.get_by_code(params[:budgea_fetcher_contains][:user_code]),
+        @message = ProcessRetrievedData.new(
+          nil,
+          nil,
+          User.get_by_code(params[:budgea_fetcher_contains][:user_code])
+        ).execute_with(
           params[:budgea_fetcher_contains][:account_ids].split(',').collect { |id| id.delete(' ') },
           params[:budgea_fetcher_contains][:min_date],
-          params[:budgea_fetcher_contains][:max_date]
-        ).execute
+          params[:budgea_fetcher_contains][:max_date])
       else
         @message = 'Paramètre manquant!!'
       end

@@ -55,7 +55,11 @@ class Pack::Piece < ApplicationRecord
   scope :dematbox_scanned,       -> { where(origin: 'dematbox_scan') }
   scope :pre_assignment_ignored, -> { where(pre_assignment_state: ['ignored', 'force_processing']) }
   scope :deleted,                -> { where.not(delete_at: nil) }
-  scope :need_preassignment,     -> { where(pre_assignment_state: 'waiting') }
+
+  #WORKARROUND : Get pieces with suplier_recognition state and detected_third_party_id present
+  # scope :need_preassignment,   -> { where(pre_assignment_state: 'waiting') }
+  scope :need_preassignment,     -> { where('pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0)') }
+
   scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
   default_scope { where(delete_at: [nil, '']) }
@@ -439,6 +443,16 @@ class Pack::Piece < ApplicationRecord
 
     return text if type.to_s == 'text'
     return img_url
+  end
+
+  def get_tags(separator='-')
+    filters = self.name.split.collect do |f|
+      f.strip.match(/^[0-9]+$/) ? f.strip.to_i.to_s : f.strip.downcase
+    end
+
+    _tags = self.tags.present? ? self.tags.select{ |tag| !filters.include?(tag.to_s.strip.downcase) } : []
+
+    _tags.join(" #{separator} ").presence || '-'
   end
 
   private

@@ -64,11 +64,10 @@ class AccountNumberFinderService
 
     words.each do |word|
       scores.each_with_index do |(name, _), index|
-        if name.include? '*'
-          scores[index][1] += 1 if /#{Regexp.quote(name).gsub('\\ ', '|').gsub('\\*', '\w*')}/i =~ word
-        else
-          scores[index][1] += 1 if name =~ /#{Regexp.quote(word)}/i
-        end
+        pattern = name.gsub('*', ' ').strip
+        patterns = pattern.split(/\s+/)
+
+        patterns.each{ |pt| scores[index][1] += 1 if word =~ /#{Regexp.quote(pt)}/i }
       end
     end
 
@@ -81,7 +80,12 @@ class AccountNumberFinderService
 
     match_rules = rules.select { |rule| rule.rule_target == 'both' || rule.rule_target == target }
     match_rules = match_rules.select { |rule| rule.rule_type == 'match' }
-    match_rules = match_rules.select { |rule| label.match /#{Regexp.quote(rule.content.delete('*'))}/i }
+    match_rules = match_rules.select do |rule|
+      patterns = rule.content.strip.split('*')
+      patterns << '' if rule.content.match(/.*[*]$/) #add a last empty string if there is a * at the end of the content
+      pattern  = '\\b' + patterns.map{|pt| Regexp.quote(pt.strip) }.join('.*') + '\\b'
+      label.match /#{pattern}/i
+    end
 
     name = get_the_highest_match(label, match_rules.map(&:content))
 
@@ -105,7 +109,7 @@ class AccountNumberFinderService
       end
     end
 
-    matches += accounting_plan.select { |account| label.match /#{Regexp.quote(account[0])}/i }
+    matches += accounting_plan.select { |account| label.match /#{'\\b'+Regexp.quote(account[0])+'\\b'}/i }
 
     matches.uniq!
 

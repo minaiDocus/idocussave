@@ -3,7 +3,7 @@
     = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
     - if @user.leader?
       = f.input :role, collection: organization_role_options, required: true, prompt: ''
-    = f.input :group_ids, collection: @organization.groups, as: :check_boxes, required: (not @user.leader?), label: t('activerecord.models.group.name').pluralize
+    = f.input :group_ids, collection: @organization.groups, as: :check_boxes, label: t('activerecord.models.group.name').pluralize
     = f.simple_fields_for :user do |uf|
       = uf.input :company
       = uf.input :first_name

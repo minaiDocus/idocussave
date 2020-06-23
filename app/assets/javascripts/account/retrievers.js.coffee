@@ -79,10 +79,13 @@ jQuery ->
           $('thead a, .list_options a').unbind 'click'
           $('.destroy_retriever').unbind 'click'
           $('.trigger_retriever').unbind 'click'
+          $('.scarequire_decoupled_button').unbind 'click'
           if $('.retrievers_list').html() != data
             $('.retrievers_list').html(data)
           $('[rel=popover]').popover()
           $('[rel=tooltip]').tooltip()
+
+
 
           $('.list_options a').bind 'click', (e) ->
             e.preventDefault()
@@ -129,14 +132,18 @@ jQuery ->
             $("#delConfirm.modal #del_confirm_button").unbind().one('click', onConfirm)
             $("#delConfirm.modal #del_cancel_button").unbind().one("click", fClose)
 
+          fClose = () ->
+            $('#syncConfirm.modal .loading').addClass('hide')
+            $('#syncConfirm.modal .buttonsAction').removeClass('hide')
+            $('#syncConfirm.modal').modal('hide')
+
+          fShow = () ->
+            $('#syncConfirm.modal').modal('show')
+            $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
+
           $('.trigger_retriever').bind 'click', (e)->
             e.preventDefault()
             self = $(this)
-
-            fClose = () ->
-              $('#syncConfirm.modal .loading').addClass('hide')
-              $('#syncConfirm.modal .buttonsAction').removeClass('hide')
-              $('#syncConfirm.modal').modal('hide')
 
             onConfirm = () ->
               id = self.attr('data-id')
@@ -154,9 +161,53 @@ jQuery ->
                   $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur de synchronisation</span>')
               )
 
-            $('#syncConfirm.modal').modal('show')
+            # $('#syncConfirm.modal').modal('show')
+            # $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
+
+            fShow()
             $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
-            $("#syncConfirm.modal #sync_cancel_button").unbind().one("click", fClose)
+
+          $('.scarequire_decoupled_button').on 'click', (e) ->
+            e.preventDefault()
+            self = $(this)
+
+            onConfirm = () ->
+              id = self.attr('data-id')
+              releaseRetrieversTimer(id)
+              $('#syncConfirm.modal .loading').removeClass('hide')
+              $('#syncConfirm.modal .buttonsAction').addClass('hide')
+              $('.state_field_'+id).html("<span class='badge fs-origin badge-secondary'>Procedure d'authentification en cours</span>")
+
+              data = ''
+              if self.attr('id') == 'decoupled'
+                data = { resume: true }
+
+              budgeaApi.refresh_connection(id, data).then(
+                ()->
+                  fClose()
+                  refreshRetrievers(id)
+                ()->
+                  fClose()
+                  refreshRetrievers(id)
+                  $('.state_field_'+id).html('<span class="badge fs-origin badge-danger">Erreur d\'authentification</span>')
+              )
+
+            fShow()
+            $("#syncConfirm.modal #sync_confirm_button").unbind().one('click', onConfirm)
+
+          $('.webauth_button').on 'click', (e) ->
+            e.preventDefault()
+            self = $(this)
+
+            if confirm("Voulez-vous vraiement lancer la procédure d'authentification ?")
+              id = self.attr('data-id')
+              releaseRetrieversTimer(id)
+              $('#loading_'+id).removeClass('hide')
+              self.attr("disabled", true)
+
+              id_connection = $('#ido_connector_id_'+ id).val() || 0
+              if id_connection != 0
+                budgeaApi.webauth(id_connection, false)
 
     releaseRetrieversTimer()    
     window.retrievers_url = 'retrievers?part=true'
@@ -317,7 +368,7 @@ jQuery ->
 
         Idocus.budgeaApi.update_my_accounts(accounts, {force_disable: true}).then(
           ()->
-            window.location.href = "#{Idocus.budgeaApi.local_host}/account/retrievers"
+            window.location.href = "#{Idocus.budgeaApi.local_host}/account/bank_accounts"
             $('#all_accounts_list').html('<span class="text-info">Modifié avec succès.</span>')
           (error)->
             $('.form-actions').html('<span>Impossible de modifier la séléction</span>')
@@ -344,3 +395,4 @@ jQuery ->
     Idocus.retriever_contains_name  = $('#retriever_contains_name').val()
     Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
     load_retrievers_list()
+

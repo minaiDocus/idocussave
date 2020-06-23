@@ -1,10 +1,57 @@
 module AccountingWorkflow::OcrProcessing
   class << self
-    def send_document(temp_document_id)
+    def send_document(temp_document_id, retry_count=0)
       temp_document = TempDocument.find_by_id(temp_document_id)
       if temp_document && temp_document.ocr_needed?
-        FileUtils.cp temp_document.cloud_content_object.path, input_path.join(temp_document.file_name_with_position)
+        begin
+          FileUtils.cp temp_document.cloud_content_object.path, input_path.join(temp_document.file_name_with_position)
+          AccountingWorkflow::OcrProcessing.delay_for(2.hours, queue: :low).release_document(temp_document.id)
+        rescue => e
+          if retry_count < 3
+            AccountingWorkflow::OcrProcessing.delay_for(30.minutes, queue: :low).send_document(temp_document.id, (retry_count+1))
+          else
+            log_document = {
+              name: "OcrProcessing",
+              error_group: "[OcrProcessing] sending temp doc to ocr",
+              erreur_type: "Can't send temp doc to ocr : #{temp_document.original_file_name.to_s}",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                retry_count: retry_count,
+                temp_document: temp_document.inspect,
+                error_message: e.to_s
+              }
+            }
+
+            ErrorScriptMailer.error_notification(log_document).deliver
+          end
+        end
       end
+    end
+
+    #This function is used to unlock a blocked ocr_needed document
+    def release_document(temp_document_id)
+      temp_document = TempDocument.find temp_document_id
+      return false unless temp_document.ocr_needed?
+
+      temp_document.with_lock do
+        if temp_document.is_bundle_needed?
+          temp_document.bundle_needed
+        else
+          temp_document.ready
+        end
+      end
+
+      log_document = {
+        name: "OcrProcessing",
+        error_group: "[OcrProcessing] unlock blocked ocr_needed document",
+        erreur_type: "An ocr pending document has been released : #{temp_document.original_file_name.to_s}",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          temp_document: temp_document.inspect,
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
     end
 
     def fetch

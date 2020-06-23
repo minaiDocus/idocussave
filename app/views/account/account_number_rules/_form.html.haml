@@ -7,7 +7,20 @@
         = f.input :categorization, required: false, hint: "Donnez un nom de catégorie à votre règle afin de pouvoir filtrer plus simplement. Ex: banque, impôts, chèques…"
         = f.input :affect, collection: affect_options_for_select, as: :radio_buttons, disabled: action_name.in?(%w(edit update)), hint: ('Ne pourra plus être changé par la suite.' if action_name.in?(%w(new create)))
         = f.input :rule_type, collection: rule_type_options_for_select, as: :radio_buttons, hint: 'Effectue une recherche ou une correction du plan de compte avec le champ "Contenu" ci-dessous.'
-        = f.input :content, hint: "Saisir le contenu à rechercher dans le libellé. Utiliser un astérisque (*) pour représenter du texte ou des caractères avant ou après le contenu recherché (ex : 0001Google devient *Google ou 012F5SFR2253 devient *SFR*)"
+        = f.input :content
+        .form-group.clearfix{ style: "margin-top: -15px" }
+          %i.help-block{ style: 'color: #666' }
+            Saisir le contenu à rechercher dans le libellé. Utiliser un astérisque (*) pour représenter du texte ou caractères avant/après le contenu recherché
+            %br
+            ex :
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>station 2015</strong> match avec libellé: <strong>Prélèvement station 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>station 2015</strong> ne match pas avec libellé : <strong>Prélèvement station janvier 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>station 2015</strong> ne match pas avec libellé : <strong>Prélèvement préstation 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>station*2015</strong> match avec libellé: <strong>Prélèvement station janvier 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>*station 2015</strong> match avec libellé: <strong>Prélèvement préstation 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>*station*2015</strong> match avec libellé: <strong>Prélèvement préstation janvier 2015 001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>*station*2015</strong> ne match pas avec libellé: <strong>Prélèvement préstation janvier 2015001</strong>
+            %span{style: "display: block; margin-left: 15px"} - recherche: <strong style='font-size: 14px'>*station*2015*</strong> match avec libellé: <strong>Prélèvement préstation janvier 2015001</strong>
         = f.input :priority, as: :integer, hint: "Quand deux règles sont similaires, indiquer laquelle est prioritaire sur l'autre. 0 étant prioritaire sur 1, 1 étant prioritaire sur 2..."
         = f.input :third_party_account, required: true, hint: 'Le numéro qui sera assigné si la recherche est un succès.'
       .col-md-6.affect_to{ style: 'display:none' }
@@ -16,4 +29,3 @@
     .form-actions.margin0bottom
       = f.submit t('actions.submit'), class: 'btn btn-primary'
       = link_to t('actions.cancel'), account_organization_account_number_rules_path(@organization), class: 'btn btn-light'
-

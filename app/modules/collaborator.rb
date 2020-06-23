@@ -51,6 +51,10 @@ class Collaborator
     @user.organizations.count == 1
   end
 
+  def has_many_organization?
+    @user.organizations.count > 1
+  end
+
   def organizations_suspended?
     organizations.detect(&:is_suspended)
   end

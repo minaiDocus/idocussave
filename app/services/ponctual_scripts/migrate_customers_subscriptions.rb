@@ -30,11 +30,30 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
       params_update[:is_mini_package_active]              = false
       params_update[:is_annual_package_active]            = false
       params_update[:is_micro_package_active]             = true
+      params_update[:is_to_apply_now]                     = true
+
+      params_update[:unit_price_of_excess_sheet]          = subscription.unit_price_of_excess_sheet.to_s
+      params_update[:max_upload_pages_authorized]         = subscription.max_upload_pages_authorized.to_s
+      params_update[:max_sheets_authorized]               = subscription.max_sheets_authorized.to_s
+      params_update[:unit_price_of_excess_upload]         = subscription.unit_price_of_excess_upload.to_s
+      params_update[:max_dematbox_scan_pages_authorized]  = subscription.max_dematbox_scan_pages_authorized.to_s
+      params_update[:unit_price_of_excess_dematbox_scan]  = subscription.unit_price_of_excess_dematbox_scan.to_s
+      params_update[:max_preseizure_pieces_authorized]    = subscription.max_preseizure_pieces_authorized.to_s
+      params_update[:unit_price_of_excess_preseizure]     = subscription.unit_price_of_excess_preseizure.to_s
+      params_update[:max_paperclips_authorized]           = subscription.max_paperclips_authorized.to_s
+      params_update[:max_oversized_authorized]            = subscription.max_oversized_authorized.to_s
+      params_update[:max_expense_pieces_authorized]       = subscription.max_expense_pieces_authorized.to_s
+      params_update[:unit_price_of_excess_oversized]      = subscription.unit_price_of_excess_oversized.to_s
+      params_update[:unit_price_of_excess_expense]        = subscription.unit_price_of_excess_expense.to_s
+      params_update[:unit_price_of_excess_paperclips]     = subscription.unit_price_of_excess_paperclips.to_s
+
       params_update[:is_pre_assignment_active]            = subscription.is_pre_assignment_active
 
       File.write(File.join(ponctual_dir, "#{customer}.json"), subscription.to_json)
 
-      SubscriptionForm.new(subscription, requester).submit(params_update)
+      params = ActionController::Parameters.new(params_update)
+
+      SubscriptionForm.new(subscription, requester).submit(params)
     end
 
     if not_updated_lists.present?
@@ -95,7 +114,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
   end
 
   def requester
-    collab = User.find_by_email 'bweinberger-fidalex@extentis.fr'
+    collab = User.find_by_email 'mina@idocus.com'
     Collaborator.new collab
   end
 end

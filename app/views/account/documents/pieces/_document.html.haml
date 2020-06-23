@@ -27,10 +27,10 @@
     .piece_image
       %input{ type: :hidden, name: :page_number, value: document.position }
       %input{ type: :hidden, name: :tags, value: document.tags.try(:join, ' ') }         
-          
+
       .pagethumb 
         .zoom.custom_popover{title: 'Visualiser la pièce', "data-content" => html_piece_view(document)}              
-        .image_piece                
+        .image_piece
           = image_tag document_thumb_url(document)        
       .foot
         %span
@@ -83,6 +83,7 @@
                 %td.pages_number.text-center#pages_number
                   .content_pages_number
                     = document.pages_number
-                %td.piece_tags.text-center#piece_tags
+                - tags = document.get_tags
+                %td.piece_tags.text-center#piece_tags{title: "#{tags}"}
                   .content_piece_tags
-                    = document.tags
+                    = tags.length < 15 ? tags : tags[0..15] + "..."

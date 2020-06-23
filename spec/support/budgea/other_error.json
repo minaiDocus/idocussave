@@ -1,0 +1,17 @@
+{
+  "id": 13139,
+  "id_user": 2448,
+  "id_connector": 40,
+  "last_update": "2020-06-10 14:28:17",
+  "created": "2020-02-21 07:36:04",
+  "active": true,
+  "last_push": null,
+  "next_try": "2020-06-11 16:52:17",
+  "error": "Other error",
+  "error_message": "Other error",
+  "state": null,
+  "expire": null,
+  "id_provider": 40,
+  "id_bank": 40,
+  "connector_uuid": "338178e6-3d01-564f-9a7b-52ca442459bf"
+}
