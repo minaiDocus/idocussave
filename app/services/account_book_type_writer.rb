@@ -61,7 +61,7 @@ class AccountBookTypeWriter
     if customer
       UpdateJournalRelationService.new(@journal).execute
 
-      EventCreateService.remove_journal(@journal, customer, current_user, path: request.path, ip_address: request.remote_ip)
+      EventCreateService.remove_journal(@journal, customer, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
       customer.dematbox.subscribe if customer.dematbox.try(:is_configured)
 

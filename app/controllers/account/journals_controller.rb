@@ -21,15 +21,24 @@ class Account::JournalsController < Account::OrganizationController
   # POST /account/organizations/:organization_id/journals
   def create
     if AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
-      flash[:success] = 'Créer avec succès.'
-
-      if @customer
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      
+      text = 'Créer avec succès.'
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: text }, status: 200
       else
-        redirect_to account_organization_journals_path(@organization)
-      end
+        flash[:success] = text
+        if @customer
+          redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+        else
+          redirect_to account_organization_journals_path(@organization)
+        end
+      end      
     else
-      render :new
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: 'Erreur lors de création du journal' }, status: 200
+      else
+        render :new
+      end
     end
   end
 
@@ -77,16 +86,26 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
+    debugger 
     if AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
-      flash[:success] = 'Modifié avec succès.'
-
-      if @customer
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      
+      text = 'Modifié avec succès.'
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: text }, status: 200
       else
-        redirect_to account_organization_journals_path(@organization)
+        flash[:success] = text
+        if @customer
+          redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+        else
+          redirect_to account_organization_journals_path(@organization)
+        end
       end
     else
-      render :edit
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: 'Erreur lors de création du journal' }, status: 200
+      else        
+        render :edit
+      end
     end
   end
 
@@ -229,6 +248,7 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def load_customer
+    debugger
     if params[:customer_id].present?
       @customer = customers.find params[:customer_id]
     end
@@ -250,8 +270,13 @@ class Account::JournalsController < Account::OrganizationController
 
   def verify_max_number
     if @customer && is_max_number_reached?
-      flash[:error] = "Nombre maximum de journaux comptables atteint : #{@customer.account_book_types.count}/#{@customer.options.max_number_of_journals}."
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      text = "Nombre maximum de journaux comptables atteint : #{@customer.account_book_types.count}/#{@customer.options.max_number_of_journals}."
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: text }, status: 200
+      else
+        flash[:error] = text
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      end
     end
   end
 end

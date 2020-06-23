@@ -1,0 +1,32 @@
+.card
+  .card-header
+    %h3 Création du dossier : Etape 2 - Paramètrage comptable
+
+  .card-body
+    %input#organization_id{ type: :hidden, value: "#{@organization.id}"}
+    %input#customer_id{ type: :hidden, value: "#{@customer.id}"}
+      = render partial: 'book_type'
+             
+    %br
+    - if ( 1 == 1)
+      = render partial: 'vat_account'
+      %br
+      = render partial: 'accounting_plan'
+
+      
+  .card-footer.text-center
+    %button.btn.btn-success.text-bold.small-shadow
+      Terminer
+
+.modal.fade{ :id=>"for_step_two" }
+  .modal-dialog
+    .modal-content
+      .modal-header.clearfix
+        %h3{style: "display: inline-block; float: left"}
+          Ajouter
+        %button.close{ data: { dismiss: "modal", aria: { label: "close" }}}
+          %span{ aria: { hidden: "true" } } &times;
+      .modal-body
+      .modal-footer
+        #informations.mrc-5
+        %button.small-shadow.text-bold#valider{ :class=>"btn btn-primary" } Valider

@@ -1,0 +1,18 @@
+.box.text-center.small-shadow
+  .header_box.mb-5.border_bottom
+    Compte de TVA
+  .body_box
+    %table.table.table-striped.table-bordered-inner.table-condensed#table_vat_account
+      %thead
+        %tr.bg-brown.text-white
+          %th Code TVA
+          %th Nature
+          %th Numéro de compte
+      %tbody
+
+  .box_footer.text-right
+    %button.btn.btn-info.small-shadow.text-bold#add_vat_account
+      %span.mrc-5
+        = glyphicon('plus')  
+      %span
+        Ajouter un compte

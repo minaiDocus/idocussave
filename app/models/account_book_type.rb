@@ -185,7 +185,6 @@ class AccountBookType < ApplicationRecord
     errors.add(:name, :invalid) unless name =~ /\A[A-Z][A-Z0-9]+\z/
   end
 
-
   def uniqueness_of_name
     if user
       journal = user.account_book_types.where(name: name).first

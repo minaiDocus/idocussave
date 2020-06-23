@@ -26,7 +26,7 @@ module Account::OrganizationHelper
   end
 
   def journal_form_url(organization, customer, journal)
-    if action_name == 'new' || !journal.persisted?
+    if action_name == 'new' || !journal.try(:persisted?)
       if customer
         account_organization_customer_journals_url(organization, customer)
       else

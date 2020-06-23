@@ -1,4 +1,132 @@
+load_account_book_type_function= () ->
+  $('.add_book_type').on 'click', (e) ->
+    $('#for_step_two .modal-header h3').text('Ajouter un journal')
+    $('#for_step_two .modal-body').html('')
+    organization_id = $('#organization_id').val()
+
+    $.ajax
+      url: "/account/organizations/#{organization_id}/customers/2164/book_type_creator/",      
+      type: 'GET',
+      success: (data) ->
+        $('#for_step_two .modal-body').html(data)
+        $('#for_step_two').modal('show')
+        load_modal_function('')
+
+  $('.edit_book_type').unbind 'click'
+  $('.edit_book_type').on 'click', (e) ->
+    e.stopPropagation()
+    id = $(this).attr('id')
+    organization_id = $('#organization_id').val()
+    customer_id = $('#customer_id').val()
+    $('#for_step_two .modal-header h3').text('Modifier un journal')
+    $('#for_step_two .modal-body').html('')
+
+    $.ajax
+      url: "/account/organizations/#{organization_id}/customers/#{customer_id}/book_type_creator/#{id}",      
+      type: 'GET',
+      success: (data) ->
+        $('#for_step_two .modal-body').html(data)
+        $('#for_step_two').modal('show')
+        load_modal_function(id)
+
+load_modal_function= (id) ->
+  $('#account_book_type_entry_type').on 'change', (e) ->
+    if ( $(this).val() == '2' || $(this).val() == '3')
+      $('#pre-assignment-attributes').removeClass('hide')
+    else
+      $('#pre-assignment-attributes').addClass('hide')
+
+  $('#valider').unbind 'click'
+  $('#valider').on 'click', (e) ->
+    e.stopPropagation()    
+    data            = $(".modal form#account_book_type").serialize()
+    organization_id = $('#organization_id').val()
+    self = $(this)
+    self.attr('disabled', true)
+    $('.modal#for_step_two #informations').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">')
+
+    url = "/account/organizations/#{organization_id}/journals"
+    if (id != '')
+      url = "/account/organizations/#{organization_id}/journals/#{id}"
+
+    $.ajax
+      url: url,
+      data: data,
+      type: 'POST',
+      success: (data) -> 
+        if data.response.indexOf('avec succ') > 0
+          $('.modal#for_step_two #informations').html('<div class="alert alert-success margin0" role="alert">'+data.response+'</div>')
+          setTimeout(()->
+            $('.modal#for_step_two').modal('hide');
+          , 4000)
+        else
+          $('.modal#for_step_two #informations').html('<div class="alert alert-warning margin0" role="alert">'+data.response+'</div>')
+          self.attr('disabled', false)
+
+load_vat_function= (id, controlleur) ->
+  add   = '#add_'+ id
+  table = "#table_"+ id
+  table_div = table + " td div"
+
+  $(table_div).unbind 'click'
+  $(table_div).on 'click', (e) ->
+    e.stopPropagation()
+    clas = $(this).attr('class')   
+    input_edit  = $(this).parent('td').find('.edit_' + clas).removeClass('hide')
+    input_edit.attr('placeholder', $(this).text().trim() )
+    content     = $(this).hide()
+    input_edit.unbind('focusout')
+    input_edit.select()
+    input_edit.closest('tr').removeClass('verify')
+    input_edit.blur().focus().focusout((e) ->
+      e.stopPropagation()
+      new_value = $(this).val()      
+      if (new_value == $(this).attr('placeholder') || new_value == "")
+        content.show()
+        input_edit.addClass('hide')        
+      else 
+        content.html(new_value).show()
+        input_edit.addClass('hide')
+        input_edit.parent('td').addClass('verify')        
+        verify_before_validate(input_edit, controlleur)
+      ).on 'keypress',(e) ->
+        if(e.which == 13)                
+          new_value = $(this).val()
+          if (new_value == $(this).attr('placeholder') || new_value == "")
+            content.show()
+            input_edit.addClass('hide')
+          else 
+            content.html(new_value).show()
+            input_edit.addClass('hide')
+            input_edit.parent('td').addClass('verify')
+            verify_before_validate(input_edit, controlleur)
+
+  $(add).unbind 'click'
+  $(add).on 'click', (e) ->
+    line = '<tr><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td></tr>'
+    $(table).append(line)
+    load_vat_function(id, controlleur)
+
+verify_before_validate= (link) ->
+  tr     = link.closest('tr')
+  verify = tr.find('.verify')
+  if (tr.find('.verify').length == 3 && !tr.hasClass('verify'))
+    tr.addClass('verify')
+    alert("ok")
+    # $.ajax
+    #   url: '',
+    #   data: '',
+    #   dataType: 'json',
+    #   type: 'POST',
+    #   success: (data) ->
+    #     
+
 jQuery ->
+  load_account_book_type_function()
+  load_vat_function('vat_account', 'vats_accounts')
+  load_vat_function('vatc_account', 'accounting_plans')
+  load_vat_function('vatp_account', 'accounting_plans')
+
   if $('#customer.edit_period_options').length > 0
     $('#user_authd_prev_period').on 'change', ->
       $('#user_auth_prev_period_until_day').val(0)

@@ -1,0 +1,76 @@
+.box.small-shadow
+  .header_box.mb-5.text-center.border_bottom
+    Plan comptable
+  .body_box
+    .row.mb-5
+      .col-md-12.text-center              
+        = form_tag import_fec_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+          .form-group.clearfix.mt-5
+            .control-section{ style: "float:none !important;" }
+              = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%"
+              %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+                %span.mrc-5
+                  = glyphicon('data-transfer-download')  
+                %span
+                  Charger un FEC
+              %span.badge.badge-info.fs-origin .txt
+
+    .row.mb-10
+      .col-md-6
+        .row
+          .header_box.text-left.col-md-4{ style: "padding-left: 34px; padding-top: 10px"} Fournisseurs
+          .file_import.text-right.col-md-8
+            = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+              .form-group.clearfix{ style: "margin-bottom: 0 !important" }
+                .control-section{ style: "float:none !important;" }
+                  = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+                    %span.mrc-5
+                      = glyphicon('data-transfer-download')  
+                    %span
+                      Importer
+
+        .box
+          %table.table.table-striped.table-bordered-inner.table-condensed#table_vatp_account
+            %thead
+              %tr.bg-brown.text-white
+                %th Code TVA
+                %th Nature
+                %th Numéro de compte
+            %tbody
+
+          .box_footer.text-right
+            %button.btn.btn-info.small-shadow.text-bold#add_vatp_account
+              %span.mrc-5
+                = glyphicon('plus')  
+              %span
+                Ajouter un compte
+                  
+
+      .col-md-6
+        .row
+          .header_box.text-left.col-md-4{ style: "padding-left: 34px; padding-top: 10px"} Clients
+          .file_import.text-right.col-md-8
+            = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
+              .form-group.clearfix{ style: "margin-bottom: 0 !important" }
+                .control-section{ style: "float:none !important;" }
+                  = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+                    %span.mrc-5
+                      = glyphicon('data-transfer-download')  
+                    %span
+                      Importer
+        .box
+          %table.table.table-striped.table-bordered-inner.table-condensed#table_vatc_account
+            %thead
+              %tr.bg-brown.text-white
+                %th Code TVA
+                %th Nature
+                %th Numéro de compte
+            %tbody                  
+          .box_footer.text-right
+            %button.btn.btn-info.small-shadow.text-bold#add_vatc_account
+              %span.mrc-5
+                = glyphicon('plus')  
+              %span
+                Ajouter un compte

@@ -40,6 +40,16 @@ class Account::CustomersController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/info
   def info; end
 
+  # GET /account/organizations/:organization_id/customers/:id/new_customer_step_two
+  def new_customer_step_two;  end
+
+  # GET /account/organizations/:organization_id/customers/:id/book_type_creator/:journal_id
+  def book_type_creator
+    @journal = AccountBookType.where(id: params[:journal_id]).first.presence || AccountBookType.new
+
+    render partial: 'book_type_creator'
+  end
+
   # GET /account/organizations/:organization_id/customers/new
   def new
     @customer = User.new(code: "#{@organization.code}%")
