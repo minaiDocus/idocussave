@@ -8,11 +8,17 @@ class SubscriptionForm
   end
 
   def submit(params)
+    @params = params
     @to_apply_now = @subscription.user.recently_created? || (@requester.is_admin && get_param(:is_to_apply_now).to_i == 1)
+
+    @subscription.is_annual_package_active           = value_of(:is_annual_package_active)   || false
+    @subscription.is_scan_box_package_active         = value_of(:is_scan_box_package_active) || false
+    @subscription.is_scan_box_package_to_be_disabled = false
+
     is_new = !@subscription.configured?
 
     @subscription.is_basic_package_to_be_disabled = (!@to_apply_now && @subscription.is_basic_package_active && get_param(:is_basic_package_active).to_i == 0)
-    @subscription.is_idox_package_to_be_disabled = (!@to_apply_now && @subscription.is_idox_package_active && get_param(:is_idox_package_active).to_i == 0)
+    @subscription.is_idox_package_to_be_disabled  = (!@to_apply_now && @subscription.is_idox_package_active  && get_param(:is_idox_package_active).to_i == 0)
     @subscription.is_micro_package_to_be_disabled = (!@to_apply_now && @subscription.is_micro_package_active && get_param(:is_micro_package_active).to_i == 0)
     @subscription.is_mini_package_to_be_disabled  = (!@to_apply_now && @subscription.is_mini_package_active  && get_param(:is_mini_package_active).to_i == 0)
 
@@ -30,7 +36,7 @@ class SubscriptionForm
     @subscription.period_duration = 1
     @subscription.is_pre_assignment_active = true
 
-    @subscription.number_of_journals = get_params(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count
+    @subscription.number_of_journals = get_param(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count
 
     set_prices_and_limits
 
@@ -53,17 +59,17 @@ class SubscriptionForm
     excess_data = SubscriptionPackage.excess_of(@subscription.current_active_package)
 
     values = {
-      max_upload_pages_authorized: excess_data[:pieces][:limit],
-      unit_price_of_excess_upload: excess_data[:pieces][:price],
+                max_upload_pages_authorized: excess_data[:pieces][:limit],
+                unit_price_of_excess_upload: excess_data[:pieces][:price],
 
-      max_preseizure_pieces_authorized: excess_data[:preassignments][:limit],
-      unit_price_of_excess_preseizure: excess_data[:preassignments][:price],
+                max_preseizure_pieces_authorized: excess_data[:preassignments][:limit],
+                unit_price_of_excess_preseizure: excess_data[:preassignments][:price],
 
-      max_expense_pieces_authorized: excess_data[:preassignments][:limit],
-      unit_price_of_excess_expense: excess_data[:preassignments][:price]
-    }
+                max_expense_pieces_authorized: excess_data[:preassignments][:limit],
+                unit_price_of_excess_expense: excess_data[:preassignments][:price]
+              }
 
-    @subscription.assign_attributes(_params)
+    @subscription.assign_attributes(values)
 
     # NOTE: this is not used now, pending dev ...
     # if @requester.is_admin
@@ -123,6 +129,6 @@ class SubscriptionForm
   end
 
   def get_param(pr)
-    params[pr].to_s.gsub('true', '1').gsub('false', '0')
+    @params[pr].to_s.gsub('true', '1').gsub('false', '0')
   end
 end

@@ -116,6 +116,8 @@ class Subscription < ApplicationRecord
     current_package = :ido_mini      if self.is_mini_package_active  && self.is_mini_package_to_be_disabled
     current_package = :ido_micro     if self.is_micro_package_active && self.is_micro_package_to_be_disabled
     current_package = :ido_x         if self.is_idox_package_active  && self.is_idox_package_to_be_disabled
+
+    current_package
   end
 
   def is_to_be_disabled_package?(package)
@@ -146,7 +148,7 @@ class Subscription < ApplicationRecord
     commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
     commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
 
-    if commitment_period > 0
+    if commitment_period.to_i > 0
       # Updating start_date and end_date when subscription term is reached
       if self.end_date.present? && self.end_date < Date.today
         self.start_date = self.period_duration == 1 ? (self.end_date + 1.day) : (self.end_date + 1.day).beginning_of_quarter
