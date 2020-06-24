@@ -90,8 +90,7 @@ class UpdatePeriod
       @subscription.get_active_options.each do |option|
         option_infos = SubscriptionPackage.infos_of(option)
 
-        organization_code = @subscription.organization.try(:code) || @subscription.user.organization.code
-        reduced = ['ADV'].include?(organization_code)
+        reduced = ['ADV'].include?(@subscription.organization.try(:code) || @subscription.user.organization.code)
 
         option = ProductOptionOrder.new
 

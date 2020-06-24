@@ -55,9 +55,9 @@ class SubscriptionPackage
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro" }
         #options
         when :mail_option
-          { label: 'Envoi par courrier A/R', name: 'extra_option', group: "Tous forfaits" }
+          { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "iDo'Courrier" }
         when :retriever_option
-          { label: 'Récupération banque + Factures sur Internet', name: 'extra_option', group: "Tous forfaits" }
+          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "iDo'FacBanque" }
         else
           { label: '', name: '', group: "" }
       end

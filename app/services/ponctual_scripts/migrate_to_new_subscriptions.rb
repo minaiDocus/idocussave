@@ -18,8 +18,9 @@ class PonctualScripts::MigrateToNewSubscriptions < PonctualScripts::PonctualScri
 
       prepare_params
 
-      prepare_annual if subscription.is_annual_package_active
+      prepare_mail   if subscription.is_mail_package_active
       prepare_box    if subscription.is_scan_box_package_active
+      prepare_annual if subscription.is_annual_package_active
 
       if @has_changed
         logger_infos "[MigrateSubscriptions] - subscription ID : #{subscription.id.to_s}"
@@ -105,11 +106,19 @@ class PonctualScripts::MigrateToNewSubscriptions < PonctualScripts::PonctualScri
     @params_update[:is_annual_package_active]   = false
   end
 
+  def prepare_mail
+    @has_changed                                = true
+    @params_update[:is_basic_package_active]    = !@subscription.is_micro_package_active && !@subscription.is_mini_package_active
+    @params_update[:is_scan_box_package_active] = false
+    @params_update[:is_mail_package_active]     = true
+    @params_update[:is_annual_package_active]   = false
+  end
+
   def prepare_box
     @has_changed                                = true
-    @params_update[:is_basic_package_active]    = true
+    @params_update[:is_basic_package_active]    = !@subscription.is_micro_package_active && !@subscription.is_mini_package_active
     @params_update[:is_scan_box_package_active] = false
-    @params_update[:is_mail_package_active]     = @subscription.is_mail_package_active
+    @params_update[:is_annual_package_active]   = false
   end
 
   def migrate_subscription
