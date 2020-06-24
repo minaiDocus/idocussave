@@ -1,0 +1,146 @@
+#create_customer
+  .card
+    .card-header
+      %h3
+        %center Création d’un dossier client: Etape 1 - Création du dossier
+    = form_tag customer_form_url(@organization, @customer), method: :post, class: 'simple_form form form-horizontal margin0' do
+      .card-body{ style: 'font-size:12p' }
+        .row
+          .col-md-6
+            .box.bg-light.height_groups.groups_1.clearfix.small-shadow
+              %h4 Identification du client
+              %hr
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[company]', "Nom de la société"
+                .control-section  
+                  = text_field_tag 'user[company]', nil, class: 'form-control'
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[code]', "Code du dossier"
+                .control-section  
+                  = text_field_tag 'user[code]', nil, class: 'form-control'
+                  %i.help-block
+                    Doit impérativement commencer par : 
+                    =@organization.code
+                    , 15 caractères alphanumériques maximum, code cabinet inclus.
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[first_name]', "Prénom"
+                .control-section  
+                  = text_field_tag 'user[first_name]', nil, class: 'form-control'
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[last_name]', "Nom"
+                .control-section  
+                  = text_field_tag 'user[last_name]', nil, class: 'form-control'
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[phone_number]', "Numéro du téléphone"
+                .control-section  
+                  = text_field_tag 'user[phone_number]', nil, class: 'form-control'
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[email]', "Courriel"
+                .control-section  
+                  = text_field_tag 'user[email]', nil, class: 'form-control', :required => true
+                  %i.help-block Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus
+          .col-md-6
+            = render 'subscription_options'
+        %br
+        .row
+          .col-md-6
+            .box.bg-light.height_groups.groups_1.clearfix.small-shadow
+              .form-group.clearfix.radio_buttons
+                .label-section
+                  = label_tag 'user[is_pre_assignement_displayed]', "Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte"
+                .control-section
+                  %span.radio
+                    %label
+                      = radio_button_tag 'user[is_pre_assignement_displayed]', true, false
+                      Oui
+                  %span.radio
+                    %label
+                      = radio_button_tag 'user[is_pre_assignement_displayed]', false, true
+                      Non
+              .form-group.clearfix.check_boxes
+                .label-section
+                  = label_tag 'user[group_ids][]', "A quel groupe, le dossier doit-il être attribué ?", class: 'control-label'
+                .control-section
+                  - @user.groups.order(name: :asc).each do |group_id|
+                    %span.checkbox
+                      %label
+                        = check_box_tag 'user[group_ids][]', group_id.id, false, class: 'form-control select optional'
+                        = group_id.name
+              .form-group.clearfix
+                .label-section
+                  = label_tag 'user[manager_id]', "Quel est le collaborateur en charge du dossier?", class: 'control-label'
+                .control-section  
+                  = select_tag 'user[manager_id]', options_for_select(managers_options_for_select), class: 'form-control select optional'
+                  %i.help-block IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.
+              .form-group.clearfix.radio_buttons
+                .label-section
+                  = label_tag 'user[options][is_taxable]', "Le dossier est-il assujetti à TVA?"
+                .control-section
+                  %span.radio
+                    %label
+                      = radio_button_tag 'user[options][is_taxable]', true, false
+                      Oui
+                  %span.radio
+                    %label
+                      = radio_button_tag 'user[options][is_taxable]', false, true
+                      Non (aucune TVA ne sera reportée en pré-saisie)
+
+          .col-md-6
+            .box.bg-light.height_groups.groups_1.clearfix.small-shadow
+              %h4 Séléction de logiciels comptables pour le dossier
+              %hr
+              - if @organization.try(:ibiza).try(:used?)
+                .row
+                  .col-md-6
+                    %table.table.table-condensed.table-striped
+                    -if @organization.ibiza.try(:used?)
+                      %tr
+                        %td Ce dossier utilise Ibiza ?
+                        %td= check_box_tag 'user[softwares][is_ibiza_used]', true, false, class: 'softwares_setting ibiza-customer-select', style: "float:right;margin-right:20px;position:unset"
+                  .col-md-6.softwares-section
+                    .form-group.clearfix.form-inline
+                      .label-section
+                        = label_tag 'user[softwares][ibiza_id]', "Sélectionner le dossier correspondant dans iBiza", class: 'control-label'
+                      .controls-section
+                        = select_tag 'user[softwares][ibiza_id]', nil, class: 'form-control select optional ibiza-customers-list', placeholder: 'Choisir un dossier', data: { original_value: nil, users_list_url: account_organization_ibiza_users_path(@organization, format: 'json') }
+
+              .row
+                .col-md-6
+                  %table.table.table-condensed.table-striped
+                    - if @organization.is_exact_online_used
+                      %tr
+                        %td Ce dossier utilise Exact Online ?
+                        %td= check_box_tag 'user[softwares][is_exact_online_used]', true, false, class: 'softwares_setting', style: "position:unset"
+                    - if @organization.is_coala_used
+                      %tr
+                        %td Ce dossier utilise Coala ?
+                        %td= check_box_tag 'user[softwares][is_coala_used]', true, false, style: "position:unset"
+                    - if @organization.is_quadratus_used
+                      %tr
+                        %td Ce dossier utilise Quadratus ?
+                        %td= check_box_tag 'user[softwares][is_quadratus_used]', true, false, style: "position:unset"
+                    - if @organization.is_cegid_used
+                      %tr
+                        %td Ce dossier utilise Cegid ?
+                        %td= check_box_tag 'user[softwares][is_cegid_used]', true, false, style: "position:unset"
+                    - if @organization.is_fec_agiris_used
+                      %tr
+                        %td Ce dossier utilise Fec Agiris ?
+                        %td= check_box_tag 'user[softwares][is_fec_agiris_used]', true, false, style: "position:unset"
+                    - if @organization.is_csv_descriptor_used
+                      %tr
+                        %td Ce dossier utilise un format d'export .csv ? (personnalisable)
+                        %td= check_box_tag 'user[softwares][is_csv_descriptor_used]', true, false, style: "position:unset"
+          
+      .card-footer
+        .form-actions
+          .for_submit
+            .submit
+              %center
+                = submit_tag 'Créer et paramètrer la comptabilité', class: 'btn btn-primary small-shadow'

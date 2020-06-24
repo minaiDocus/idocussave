@@ -138,6 +138,82 @@ verify_before_validate= (link) ->
     #   success: (data) ->
     #     
 
+get_ibiza_customers_list = (element)->
+  element.after('<div class="removable-feedback feedback"></div>')
+  $.ajax
+    url: element.data('users-list-url'),
+    data: '',
+    dataType: 'json',
+    type: 'GET',
+    success: (data) ->
+      original_value = element.data('original-value') || ''
+      for d in data
+        option_html = ''
+        if original_value.length > 0 && original_value == d['id']
+          option_html = '<option value="'+d['id']+'" selected="selected">'+d['name']+'</option>'
+        else
+          option_html = '<option value="'+d['id']+'">'+d['name']+'</option>'
+        element.append(option_html)
+      element.show()
+      element.chosen
+        search_contains: true,
+        no_results_text: 'Aucun résultat correspondant à'
+      $('.removable-feedback').remove()
+      if $('input[type=submit]').length > 0
+        $('input[type=submit]').removeAttr('disabled')
+
+check_input_number = ->
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').focus()
+
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').keypress (e) ->
+    e.preventDefault()
+
+update_form = ->
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked')
+    lock_package()
+    $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').removeAttr('disabled')
+    $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+
+  $('#personalize_subscription_package_form input.radio-button-on-click').on 'click', ->
+    class_list = $(this).attr('class').split(/\s+/)
+    lock_package()
+    $.each class_list, (index, item) ->
+      if item == 'idox-check-radio'
+        $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').attr('checked', 'checked')
+        $('#personalize_subscription_package_form .form_check_idox_package input#user_jefacture_account_id').removeAttr('disabled')
+      if item == 'micro-check-radio'
+        $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').attr('checked', 'checked')
+        $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+        $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_mail_package_active').removeAttr('disabled')
+      if item == 'mini-check-radio'
+        $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').attr('checked', 'checked')
+        $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_mail_package_active').removeAttr('disabled')
+        $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+      if item == 'basic-check-radio'
+        $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').attr('checked', 'checked')
+        $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').removeAttr('disabled')
+        $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+
+lock_package = ->
+  $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_idox_package input#user_jefacture_account_id').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
+  $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
+
+show_ibiza_customer = ->
+  $('#create_customer input.ibiza-customer-select').change ->
+    if @checked
+      $('#create_customer .softwares-section').css('visibility', 'visible')
+    else
+      $('#create_customer .softwares-section').css('visibility', 'hidden')
+
+  if $('#create_customer .softwares-section .ibiza-customers-list').length > 0
+    get_ibiza_customers_list($('#create_customer .softwares-section .ibiza-customers-list'))
+    $('#create_customer .softwares-section').css('visibility', 'hidden')
+
 jQuery ->
   load_account_book_type_function()
   load_vat_function('vat_account', 'vats_accounts')
@@ -155,27 +231,7 @@ jQuery ->
       $('#user_authd_prev_period').val(1)
 
   if $('#customer.edit.ibiza').length > 0
-    $('#user_ibiza_id').after('<div class="feedback"></div>')
-    $.ajax
-      url: $('#user_ibiza_id').data('users-list-url'),
-      data: '',
-      dataType: 'json',
-      type: 'GET',
-      success: (data) ->
-        original_value = $('#user_ibiza_id').data('original-value') || ''
-        for d in data
-          option_html = ''
-          if original_value.length > 0 && original_value == d['id']
-            option_html = '<option value="'+d['id']+'" selected="selected">'+d['name']+'</option>'
-          else
-            option_html = '<option value="'+d['id']+'">'+d['name']+'</option>'
-          $('#user_ibiza_id').append(option_html)
-        $('#user_ibiza_id').show()
-        $('#user_ibiza_id').chosen
-          search_contains: true,
-          no_results_text: 'Aucun résultat correspondant à'
-        $('.feedback').remove()
-        $('input[type=submit]').removeAttr('disabled')
+    get_ibiza_customers_list($('#user_ibiza_id'))
 
   if $('#customer.edit.mcf').length > 0
     $('#user_mcf_storage').after('<div class="feedback"><img src="/assets/application/bar_loading.gif" alt="chargement..." ></div>')
@@ -216,3 +272,8 @@ jQuery ->
         $('#user_softwares_attributes_is_exact_online_used').removeAttr('checked')
       else if($(this).attr('id') == 'user_softwares_attributes_is_exact_online_used' && $(this).is(':checked'))
         $('#user_softwares_attributes_is_ibiza_used').removeAttr('checked')
+
+  update_form()
+  check_input_number()
+  show_ibiza_customer()
+    

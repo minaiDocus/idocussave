@@ -1,0 +1,76 @@
+.box.bg-light.height_groups.groups_1.clearfix.small-shadow
+  %h4
+    %center Abonnement
+  %hr
+  #personalize_subscription_package_form
+    .row
+      .col-md-4
+        .form-check.form-check-inline
+          = radio_button_tag 'subscription[subscription_option]', 'is_idox_package_active', false, class: 'form-check-input idox-check-radio radio-button-on-click'
+          = label_tag 'subscription[subscription_option]', 'iDo X', class: 'form-check-label'
+      .col-md-8.form_check_idox_package
+        .form-inline
+          = label_tag 'user[jefacture_account_id]', "Identifiant JEFACTURE", class: 'col-form-label'
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          = text_field_tag 'user[jefacture_account_id]', nil, class: 'form-control'
+    .row
+      .col-md-4
+        .form-check.form-check-inline
+          = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', false, class: 'form-check-input micro-check-radio radio-button-on-click'
+          = label_tag 'subscription[subscription_option]', 'iDo Micro', class: 'form-check-label'
+      .col-md-8.form_check_micro_package
+        .form-check.form-check-inline
+          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
+          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+    .row
+      .col-md-4
+        .form-check.form-check-inline
+          = radio_button_tag 'subscription[subscription_option]', 'is_mini_package_active', false, class: 'form-check-input mini-check-radio radio-button-on-click'
+          = label_tag 'subscription[subscription_option]', 'iDo Mini', class: 'form-check-label'
+      .col-md-8.form_check_mini_package
+        .form-check.form-check-inline
+          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
+          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'      
+        .form-check.form-check-inline
+          = check_box_tag 'subscription[is_retriever_package_active]', true, false, class: 'form-check-input'
+          = label_tag 'subscription[is_retriever_package_active]', "Avec option Automates", class: 'form-check-label'
+    .row
+      .col-md-4
+        .form-check.form-check-inline
+          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', true, class: 'form-check-input basic-check-radio radio-button-on-click'
+          = label_tag 'subscription[subscription_option]', 'iDo Classique', class: 'form-check-label'
+      .col-md-8.form_check_basic_package
+        .form-check.form-check-inline
+          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
+          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'      
+        .form-check.form-check-inline
+          = check_box_tag 'subscription[is_retriever_package_active]', 'automates', false, class: 'form-check-input'
+          = label_tag 'subscription[is_retriever_package_active]', "Avec option Automates", class: 'form-check-label'
+    .row
+      .col-md-4
+        = label_tag 'subscription[number_of_journals]', "Nombre de journaux:", class: 'control-label'
+      .col-md-4
+        .subscription_number_of_journals
+          = number_field_tag 'subscription[number_of_journals]', nil, class: 'form-control col-md-3 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: '5'
+
+    %br
+    .form-group.clearfix.radio_buttons
+      .label-section
+        = label_tag 'subscription[is_to_apply_now]', "Appliquer tout de suite les options à la baisse ?"
+      .control-section
+        %span.radio
+          %label
+            = radio_button_tag 'subscription[is_to_apply_now]', true
+            Oui
+        %span.radio
+          %label
+            = radio_button_tag 'subscription[is_to_apply_now]', false, true
+            Non
+
+    %br
+    %br
+    %hr
+    .aligncenter
+      %h4 Prix du forfait avec les options sélectionnées :
+      %b.total_price{ style: 'font-size:20px' } 11 €
+      /TODO ... Handle jS for total price

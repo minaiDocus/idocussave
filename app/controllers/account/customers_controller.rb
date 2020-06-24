@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Account::CustomersController < Account::OrganizationController
-  before_action :load_customer, except: %w[index info new create search]
+  before_action :load_customer, except: %w[index info form_with_first_step new create search]
   before_action :verify_rights, except: 'index'
   before_action :verify_if_customer_is_active, only: %w[edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options]
   before_action :redirect_to_current_step
@@ -53,10 +53,12 @@ class Account::CustomersController < Account::OrganizationController
   def refresh_book_type
     render partial: 'book_type'
   end
-
-  def refresh_accounting_plan
-
-    render partial: 'accounting_plan'
+  
+  # GET /account/organizations/:organization_id/customers/form_with_first_step
+  def form_with_first_step
+    @customer = User.new(code: "#{@organization.code}%")
+    @customer.build_options
+    @customer.build_softwares
   end
 
   # GET /account/organizations/:organization_id/customers/new
@@ -70,10 +72,14 @@ class Account::CustomersController < Account::OrganizationController
   def create
     @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
 
+     modif_params = params[:subscription][:subscription_option]
+     params[:subscription][modif_params] = true
+
     if @customer.persisted?
-      next_configuration_step
+      SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
+      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
     else
-      render :new
+      render :form_with_first_step
     end
   end
 
