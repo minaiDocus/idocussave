@@ -55,8 +55,8 @@ class Account::AccountingPlansController < Account::OrganizationController
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
-    if (params[:new_create_book_type].present?
-      redirect_to (@organization, @customer)
+    if params[:new_create_book_type].present?
+      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
     else
       redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     end
@@ -84,7 +84,11 @@ class Account::AccountingPlansController < Account::OrganizationController
       flash[:error] = 'Aucun fichier choisi.'
     end
 
-    render :show
+    if params[:new_create_book_type].present?
+      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+    else
+      render :show
+    end
   end
 
   def import_fec_processing
@@ -94,7 +98,11 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
 
-    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if params[:new_create_book_type].present?
+      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+    else
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    end
   end
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_providers
