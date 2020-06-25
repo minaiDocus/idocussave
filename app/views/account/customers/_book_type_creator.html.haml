@@ -1,6 +1,7 @@
 = simple_form_for @journal, url: '', html: { class: 'form-horizontal label-50', id: "account_book_type"} do |f|  
   .row
     %input#new_create_book_type{ type: :hidden, value: "1", name: "new_create_book_type"}
+    %input#customer_id{ type: :hidden, value: "#{@customer.id}", name: "customer_id"}
     .col-md-6
       .box.small-shadow          
         = f.input :name, label: 'Attribuez un nom de code journal iDocus', hint: 'Ce code doit si possible être similaire à celui utilisé dans votre outil comptable. La modification de ce code journal n’est possible que pendant 24 heures.'
@@ -19,17 +20,18 @@
             %h4 Knowings
             %hr
             = f.input :domain, label: 'A quel domaine Knowings souhaitez-vous rattacher le journal comptable iDocus ?', collection: journal_domain_for_select, include_blank: false
+        - if @journal.persisted? && (!@customer || @customer.options.is_preassignment_authorized)
+          = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'persisted' }
         - if !@customer || @customer.subscription.is_mail_package_active
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
     .col-md-6
       - is_disabled = @customer.present? && @customer.options.is_preassignment_authorized
-      .box.small-shadow
+      .box.small-shadow#pre-saisie{ class: "#{ (@journal.persisted? && @journal.entry_type.in?([0,1]) )? 'hide' : '' }"}
         .header_box.text-left.mb-5.border_bottom Pré-saisie comptable
         - if !@journal.persisted?
-          = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false
-        - to_hide = @journal.persisted? && @journal.entry_type.in?([0,1])        
-        #pre-assignment-attributes{ class: "#{to_hide ? 'hide' : '' }"}
+          = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'not_persisted' }
+        #pre-assignment-attributes{ class: "#{!@journal.persisted? && @journal.entry_type.in?([0,1]) ? 'hide' : '' }"}
           = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
           = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
           .form-group.clearfix

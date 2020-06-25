@@ -50,6 +50,15 @@ class Account::CustomersController < Account::OrganizationController
     render partial: 'book_type_creator'
   end
 
+  def refresh_book_type
+    render partial: 'book_type'
+  end
+
+  def refresh_accounting_plan
+
+    render partial: 'accounting_plan'
+  end
+
   # GET /account/organizations/:organization_id/customers/new
   def new
     @customer = User.new(code: "#{@organization.code}%")

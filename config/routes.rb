@@ -191,6 +191,8 @@ Rails.application.routes.draw do
         member do
           get   'new_customer_step_two'
           get   'book_type_creator(/:journal_id)', action: 'book_type_creator'
+          get   'refresh_book_type'
+          get   'refresh_accounting_plan'
           get   'edit_ibiza'
           patch 'update_ibiza'
           get   'edit_exact_online'

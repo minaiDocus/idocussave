@@ -55,8 +55,11 @@ class Account::AccountingPlansController < Account::OrganizationController
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
-
-    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if (params[:new_create_book_type].present?
+      redirect_to (@organization, @customer)
+    else
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    end
   end
 
   def import_fec

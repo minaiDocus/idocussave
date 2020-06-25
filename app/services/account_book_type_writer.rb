@@ -14,6 +14,7 @@ class AccountBookTypeWriter
     @owner.account_book_types << @journal
 
     if @journal.save
+
       if @owner.class == User
         UpdateJournalRelationService.new(@journal).execute
 

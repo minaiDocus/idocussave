@@ -86,7 +86,6 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
-    debugger 
     if AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
       
       text = 'Modifié avec succès.'
@@ -248,7 +247,6 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def load_customer
-    debugger
     if params[:customer_id].present?
       @customer = customers.find params[:customer_id]
     end

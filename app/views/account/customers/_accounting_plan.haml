@@ -6,6 +6,7 @@
       .col-md-12.text-center              
         = form_tag import_fec_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
           .form-group.clearfix.mt-5
+            %input{ type: :hidden, name: "new_create_book_type", value: "1"}
             .control-section{ style: "float:none !important;" }
               = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%"
               %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
@@ -22,6 +23,7 @@
           .file_import.text-right.col-md-8
             = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
               .form-group.clearfix{ style: "margin-bottom: 0 !important" }
+                %input{ type: :hidden, name: "new_create_book_type", value: "1"}
                 .control-section{ style: "float:none !important;" }
                   = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
                   %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
@@ -34,10 +36,17 @@
           %table.table.table-striped.table-bordered-inner.table-condensed#table_vatp_account
             %thead
               %tr.bg-brown.text-white
+                %th Nom du tiers
+                %th Compte de tiers
+                %th Compte de contrepartie
                 %th Code TVA
-                %th Nature
-                %th Numéro de compte
             %tbody
+            - @customer.accounting_plan.providers.each do |provider|
+              %tr
+                %td= provider.third_party_name
+                %td= provider.third_party_account
+                %td= provider.conterpart_account
+                %th= provider.code
 
           .box_footer.text-right
             %button.btn.btn-info.small-shadow.text-bold#add_vatp_account
@@ -45,7 +54,6 @@
                 = glyphicon('plus')  
               %span
                 Ajouter un compte
-                  
 
       .col-md-6
         .row
@@ -53,9 +61,10 @@
           .file_import.text-right.col-md-8
             = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form-horizontal clearfix label-auto' do
               .form-group.clearfix{ style: "margin-bottom: 0 !important" }
+                %input{ type: :hidden, name: "new_create_book_type", value: "1"}
                 .control-section{ style: "float:none !important;" }
                   = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
-                  %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+                  %button.btn.btn-primary.small-shadow.text-bold#import_vatc_account
                     %span.mrc-5
                       = glyphicon('data-transfer-download')  
                     %span
@@ -64,10 +73,17 @@
           %table.table.table-striped.table-bordered-inner.table-condensed#table_vatc_account
             %thead
               %tr.bg-brown.text-white
+                %th Nom du tiers
+                %th Compte de tiers
+                %th Compte de contrepartie
                 %th Code TVA
-                %th Nature
-                %th Numéro de compte
-            %tbody                  
+            %tbody
+            - @customer.accounting_plan.customers.each do |customer|
+              %tr
+                %td= customer.third_party_name
+                %td= customer.third_party_account
+                %td= customer.conterpart_account
+                %td= customer.code               
           .box_footer.text-right
             %button.btn.btn-info.small-shadow.text-bold#add_vatc_account
               %span.mrc-5

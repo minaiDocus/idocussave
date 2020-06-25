@@ -1,4 +1,5 @@
 load_account_book_type_function= () ->
+  $('.add_book_type').unbind 'click'
   $('.add_book_type').on 'click', (e) ->
     $('#for_step_two .modal-header h3').text('Ajouter un journal')
     $('#for_step_two .modal-body').html('')
@@ -30,17 +31,25 @@ load_account_book_type_function= () ->
         load_modal_function(id)
 
 load_modal_function= (id) ->
+  $('#valider').unbind 'change'
   $('#account_book_type_entry_type').on 'change', (e) ->
     if ( $(this).val() == '2' || $(this).val() == '3')
-      $('#pre-assignment-attributes').removeClass('hide')
+      if ($(this).hasClass('not_persisted'))
+        $('#pre-assignment-attributes').show('')
+      else if ($(this).hasClass('persisted'))
+        $('#pre-saisie').show('')
     else
-      $('#pre-assignment-attributes').addClass('hide')
+      if ($(this).hasClass('persisted'))
+        $('#pre-saisie').hide('')
+      else if ($(this).hasClass('not_persisted'))
+        $('#pre-assignment-attributes').hide('')
 
   $('#valider').unbind 'click'
   $('#valider').on 'click', (e) ->
     e.stopPropagation()    
     data            = $(".modal form#account_book_type").serialize()
     organization_id = $('#organization_id').val()
+    customer_id     = $('#customer_id').val()
     self = $(this)
     self.attr('disabled', true)
     $('.modal#for_step_two #informations').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">')
@@ -56,7 +65,15 @@ load_modal_function= (id) ->
       success: (data) -> 
         if data.response.indexOf('avec succ') > 0
           $('.modal#for_step_two #informations').html('<div class="alert alert-success margin0" role="alert">'+data.response+'</div>')
+          $.ajax
+            url: "/account/organizations/#{organization_id}/customers/#{customer_id}/refresh_book_type",            
+            success: (data) ->
+              $('#book_type').html(data)
+              load_account_book_type_function()
+
           setTimeout(()->
+            $('.modal#for_step_two #informations').html('');
+            self.attr('disabled', false);
             $('.modal#for_step_two').modal('hide');
           , 4000)
         else
