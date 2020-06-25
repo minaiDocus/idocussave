@@ -144,6 +144,9 @@ jQuery ->
   load_vat_function('vatc_account', 'accounting_plans')
   load_vat_function('vatp_account', 'accounting_plans')
 
+  if ($('.import_dialog').length > 0)
+    $('#import_dialog').modal('show')
+
   if $('#customer.edit_period_options').length > 0
     $('#user_authd_prev_period').on 'change', ->
       $('#user_auth_prev_period_until_day').val(0)

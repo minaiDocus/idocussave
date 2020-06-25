@@ -9,9 +9,13 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
   def show
-    if params[:format].present?
-      FileUtils.rm params[:format], force: true
-      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if params[:dir].present?
+      FileUtils.rm params[:dir], force: true
+      if params[:new_create_book_type].present?
+        redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      else
+        redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+      end
     end
   end
 
@@ -85,7 +89,8 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
 
     if params[:new_create_book_type].present?
-      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      @params_fec = @params_fec.merge(new_create_book_type: params[:new_create_book_type])
+      render '/account/customers/new_customer_step_two'
     else
       render :show
     end

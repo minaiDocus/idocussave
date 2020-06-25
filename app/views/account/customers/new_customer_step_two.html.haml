@@ -1,3 +1,12 @@
+- if @params_fec.present?
+  .modal.fade.import_dialog{ :id=>"for_step_two" }
+    .modal-dialog
+      .modal-content
+        .modal-header.clearfix
+          %h3{style: "display: inline-block; float: left"}
+            Paramétrage import FEC
+        = render :partial => "/account/accounting_plans/dialog_box"
+
 .card
   .card-header
     %h3 Création du dossier : Etape 2 - Paramètrage comptable
@@ -6,18 +15,17 @@
     %input#organization_id{ type: :hidden, value: "#{@organization.id}"}
     %input#customer_id{ type: :hidden, value: "#{@customer.id}"}
       #book_type
-        = render partial: 'book_type'             
+        = render partial: '/account/customers/book_type'
     %br
     - if ( 1 == 1)
       #vat_account
-        = render partial: 'vat_account'
+        = render partial: '/account/customers/vat_account'
       %br
       #accounting_plan
-        = render partial: 'accounting_plan'
+        = render partial: '/account/customers/accounting_plan'
       
   .card-footer.text-center
-    %button.btn.btn-success.text-bold.small-shadow
-      Terminer
+    = link_to "Terminer", account_organization_customer_path(@organization, @customer), class: 'btn btn-success small-shadow text-bold'
 
 .modal.fade{ :id=>"for_step_two" }
   .modal-dialog
@@ -30,4 +38,4 @@
       .modal-body
       .modal-footer
         #informations.mrc-5
-        %button.small-shadow.text-bold#valider{ :class=>"btn btn-primary" } Valider
+        %button.small-shadow.text-bold#valider{ :class=>"btn btn-primary" }

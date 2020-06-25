@@ -101,4 +101,9 @@
                       %td= customer.code
 
 - if @params_fec.present?
-  = render :partial => "/account/accounting_plans/dialog_box"
+  #import_dialog.modal.fade{data: { backdrop: "static" } }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h3 Paramétrage import FEC
+        = render :partial => "/account/accounting_plans/dialog_box"
