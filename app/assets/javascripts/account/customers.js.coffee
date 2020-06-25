@@ -81,6 +81,11 @@ load_modal_function= (id) ->
           self.attr('disabled', false)
 
 load_vat_function= (id, controlleur) ->
+  if(controlleur == 'vats_accounts')
+    parent_box = '#vat_account'
+  else
+    parent_box = '#accounting_plan'
+
   add   = '#add_'+ id
   table = "#table_"+ id
   table_div = table + " td div"
@@ -89,9 +94,9 @@ load_vat_function= (id, controlleur) ->
   $(table_div).on 'click', (e) ->
     e.stopPropagation()
     clas = $(this).attr('class')   
-    input_edit  = $(this).parent('td').find('.edit_' + clas).removeClass('hide')
+    input_edit  = $(this).parent('td').find('.input_edition').removeClass('hide')
     input_edit.attr('placeholder', $(this).text().trim() )
-    content     = $(this).hide()
+    content = $(this).hide()
     input_edit.unbind('focusout')
     input_edit.select()
 
@@ -121,42 +126,70 @@ load_vat_function= (id, controlleur) ->
 
   $(add).unbind 'click'
   $(add).on 'click', (e) ->
-    line = $('#vat table.hidden_insertion_table tbody').html()
-    $(table).find('tbody:first').append(line)
+    next_tbody = $(parent_box + ' table.hidden_insertion_table tbody')
+
+    if(id == 'vatc_account')
+      next_tbody.find('tr:first').addClass('customer')
+    else if(id == 'vatp_account')
+      next_tbody.find('tr:first').addClass('provider')
+
+    line = next_tbody.html()
+
+    $(table).find('tbody:last').append(line)
     load_vat_function(id, controlleur)
 
-verify_before_validate= (link) ->
+verify_before_validate= (link, controlleur) ->
   tr = link.closest('tr')
   if(tr.hasClass('verify'))
     value_counter = 0
     tr.removeClass('verify')
+    inputs = tr.find('td .input_edition')
 
-    tr.find('td .edit_vat_code').each (e)->
+    inputs.each (e)->
       if($(this).val() != null && $(this).val() != 'undefined' && $(this).val() != '')
         value_counter = value_counter + 1
 
-    if(value_counter == 3 || value_counter == 0)
+    if(value_counter == inputs.length || value_counter == 0)
       organization_id = $('#organization_id').val()
       customer_id     = $('#customer_id').val()
-      vat_id_input  = tr.find('input.vat_id:first')
+      entry_id_input  = tr.find('input.entry_id:first')
+      entry_type      = null
       data            = null
+
+      if(tr.hasClass('customer'))
+        entry_type = 'customer'
+      else if(tr.hasClass('provider'))
+        entry_type = 'provider'
+
+      if(controlleur == 'vats_accounts')
+        url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/vat_accounts/update_multiple.json"
+      else
+        url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan.json"
 
       if(value_counter == 0)
         tr.remove()
-        if(vat_id_input.val() > 0)
-          data = { customer_id: customer_id, vat_id: vat_id_input.val(), destroy: 'destroy' }
+        if(entry_id_input.val() > 0)
+          data = { id: entry_id_input.val(), destroy: 'destroy', type: entry_type }
       else
-        data = { customer_id: customer_id, accounting_plan: { vat_accounts_attributes: { id: vat_id_input.val(), code: tr.find('.edit_vat_code.code:first').val(), nature: tr.find('.edit_vat_code.nature:first').val(), account_number: tr.find('.edit_vat_code.number:first').val() } } }
+        if(controlleur == 'vats_accounts')
+          data = { accounting_plan: { vat_accounts_attributes: { id: entry_id_input.val(), code: tr.find('.input_edition.code:first').val(), nature: tr.find('.input_edition.nature:first').val(), account_number: tr.find('.input_edition.number:first').val() } } }
+        else
+          attributes = { id: entry_id_input.val(), third_party_account: tr.find('.input_edition.tp_account:first').val(), third_party_name: tr.find('.input_edition.tp_name:first').val(), conterpart_account: tr.find('.input_edition.conterpart:first').val(), code: tr.find('.input_edition.vat_code').val() }
+
+          if(entry_type == 'provider')
+            data = { type: entry_type, accounting_plan: { providers_attributes: attributes } }
+          else
+            data = { type: entry_type, accounting_plan: { customers_attributes: attributes } }
 
       if(data)
         $.ajax
-          url: "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/vat_accounts/update_multiple.json",
+          url: url,
           data: data,
           dataType: 'json',
           type: 'PATCH',
           success: (result) ->
             if(result)
-              vat_id_input.val(result['vat_account']['id'])
+              entry_id_input.val(result['account']['id'])
 
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')

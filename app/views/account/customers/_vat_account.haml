@@ -1,4 +1,4 @@
-#vat.box.text-center.small-shadow
+.box.text-center.small-shadow
   .header_box.mb-5.border_bottom
     Compte de TVA
   .body_box
@@ -13,16 +13,16 @@
         - @customer.accounting_plan.vat_accounts.each do |vat_account|
           %tr
             %td.id.hide
-              = text_field_tag 'edit_vat_id', vat_account.id, { placeholder: '', class: 'vat_id hide' }
+              = text_field_tag 'edit_vat_id', vat_account.id, { placeholder: '', class: 'entry_id hide' }
             %td
               %div.vat_code= vat_account.code.to_s
-              = text_field_tag 'edit_vat_code', vat_account.code, { placeholder: '', class: 'edit_vat_code code hide' }
+              = text_field_tag 'edit_vat_code', vat_account.code, { placeholder: '', class: 'input_edition code hide' }
             %td
               %div.vat_code= vat_account.nature.to_s
-              = text_field_tag 'edit_vat_nature', vat_account.nature, { placeholder: '', class: 'edit_vat_code nature hide' }
+              = text_field_tag 'edit_vat_nature', vat_account.nature, { placeholder: '', class: 'input_edition nature hide' }
             %td
               %div.vat_code= vat_account.account_number.to_s
-              = text_field_tag 'edit_vat_number', vat_account.account_number, { placeholder: '', class: 'edit_vat_code number hide' }
+              = text_field_tag 'edit_vat_number', vat_account.account_number, { placeholder: '', class: 'input_edition number hide' }
 
   .box_footer.text-right
     %button.btn.btn-info.small-shadow.text-bold#add_vat_account
@@ -35,13 +35,13 @@
     %tbody
       %tr
         %td.id.hide
-          = text_field_tag 'edit_vat_id', nil, { placeholder: '', class: 'vat_id hide' }
+          = text_field_tag 'edit_vat_id', nil, { placeholder: '', class: 'entry_id hide' }
         %td
           %div.vat_code Cliquez ici pour modifier
-          = text_field_tag 'edit_vat_code', nil, { placeholder: '', class: 'edit_vat_code code hide' }
+          = text_field_tag 'input_edition', nil, { placeholder: '', class: 'input_edition code hide' }
         %td
           %div.vat_code Cliquez ici pour modifier
-          = text_field_tag 'edit_vat_nature', nil, { placeholder: '', class: 'edit_vat_code nature hide' }
+          = text_field_tag 'edit_vat_nature', nil, { placeholder: '', class: 'input_edition nature hide' }
         %td
           %div.vat_code Cliquez ici pour modifier
-          = text_field_tag 'edit_vat_number', nil, { placeholder: '', class: 'edit_vat_code number hide' }
+          = text_field_tag 'edit_vat_number', nil, { placeholder: '', class: 'input_edition number hide' }

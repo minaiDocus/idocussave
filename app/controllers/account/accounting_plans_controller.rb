@@ -24,12 +24,33 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/:id
   def update
-    if @accounting_plan.update(accounting_plan_params)
-      flash[:success] = 'Modifié avec succès.'
+    modified = @accounting_plan.update(accounting_plan_params)
 
-      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
-    else
-      render :edit
+    respond_to do |format|
+      format.html {
+        if modified
+          flash[:success] = 'Modifié avec succès.'
+          redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+        else
+          render :edit
+        end
+      }
+      format.json {
+        if params[:destroy].present? && params[:id].present? && params[:type].present?
+          @accounting_plan.providers.find(params[:id]).destroy if params[:type] == 'provider'
+          @accounting_plan.customers.find(params[:id]).destroy if params[:type] == 'customer'
+
+          account = nil
+        elsif params[:accounting_plan].try(:[], :providers_attributes).try(:[], :id).present?
+          account = @accounting_plan.providers.find(params[:accounting_plan][:providers_attributes][:id])
+        elsif params[:accounting_plan].try(:[], :customers_attributes).try(:[], :id).present?
+          account = @accounting_plan.customers.find(params[:accounting_plan][:customers_attributes][:id])
+        else
+          account = AccountingPlanItem.unscoped.where(accounting_plan_itemable_id: @accounting_plan.id, kind: params[:type]).order(id: :desc).first
+        end
+
+        render json: { account: account  }, status: 200
+      }
     end
   end
 

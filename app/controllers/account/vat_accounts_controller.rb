@@ -29,8 +29,8 @@ class Account::VatAccountsController < Account::OrganizationController
         end
       }
       format.json {
-        if params[:destroy].present? && params[:vat_id].present?
-          @accounting_plan.vat_accounts.find(params[:vat_id]).destroy
+        if params[:destroy].present? && params[:id].present?
+          @accounting_plan.vat_accounts.find(params[:id]).destroy
           vat_account = nil
         elsif params[:accounting_plan][:vat_accounts_attributes][:id].present?
           vat_account = @accounting_plan.vat_accounts.find(params[:accounting_plan][:vat_accounts_attributes][:id])
@@ -38,7 +38,7 @@ class Account::VatAccountsController < Account::OrganizationController
           vat_account = AccountingPlanVatAccount.unscoped.where(accounting_plan_id: @accounting_plan.id).order(id: :desc).first
         end
 
-        render json: { vat_account: vat_account  }, status: 200
+        render json: { account: vat_account  }, status: 200
       }
     end
   end

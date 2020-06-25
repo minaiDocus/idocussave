@@ -17,9 +17,10 @@
       #book_type
         = render partial: '/account/customers/book_type'
     %br
-    - if (1 == 1) #TODO : if !@customer.uses_ibiza?
-      #vat_account
-        = render partial: '/account/customers/vat_account'
+    - if !@customer.uses_ibiza?
+      - if @cusomer.options.is_taxable
+        #vat_account
+          = render partial: 'vat_account'
       %br
       #accounting_plan
         = render partial: '/account/customers/accounting_plan'
@@ -38,4 +39,4 @@
       .modal-body
       .modal-footer
         #informations.mrc-5
-        %button.small-shadow.text-bold#valider{ :class=>"btn btn-primary" }
+        %button.small-shadow.text-bold#valider{ :class=>"btn btn-primary" } Valider

@@ -42,11 +42,21 @@
                 %th Code TVA
             %tbody
             - @customer.accounting_plan.providers.each do |provider|
-              %tr
-                %td= provider.third_party_name
-                %td= provider.third_party_account
-                %td= provider.conterpart_account
-                %th= provider.code
+              %tr.provider
+                %td.id.hide
+                  = text_field_tag 'edit_account_id', provider.id, { placeholder: '', class: 'entry_id hide' }
+                %td
+                  %div.vat_code= provider.third_party_name
+                  = text_field_tag 'edit_account_third_party_name', provider.third_party_name, { placeholder: '', class: 'input_edition tp_name hide' }
+                %td
+                  %div.vat_code= provider.third_party_account
+                  = text_field_tag 'edit_account_third_party_account', provider.third_party_account, { placeholder: '', class: 'input_edition tp_account hide' }
+                %td
+                  %div.vat_code= provider.conterpart_account
+                  = text_field_tag 'edit_account_conterpart', provider.conterpart_account, { placeholder: '', class: 'input_edition conterpart hide' }
+                %td
+                  %div.vat_code= provider.code
+                  = text_field_tag 'edit_account_vat_code', provider.code, { placeholder: '', class: 'input_edition vat_code hide' }
 
           .box_footer.text-right
             %button.btn.btn-info.small-shadow.text-bold#add_vatp_account
@@ -79,14 +89,43 @@
                 %th Code TVA
             %tbody
             - @customer.accounting_plan.customers.each do |customer|
-              %tr
-                %td= customer.third_party_name
-                %td= customer.third_party_account
-                %td= customer.conterpart_account
-                %td= customer.code               
+              %tr.customer
+                %td.id.hide
+                  = text_field_tag 'edit_account_id', customer.id, { placeholder: '', class: 'entry_id hide' }
+                %td
+                  %div.vat_code= customer.third_party_name
+                  = text_field_tag 'edit_account_third_party_name', customer.third_party_name, { placeholder: '', class: 'input_edition tp_name hide' }
+                %td
+                  %div.vat_code= customer.third_party_account
+                  = text_field_tag 'edit_account_third_party_account', customer.third_party_account, { placeholder: '', class: 'input_edition tp_account hide' }
+                %td
+                  %div.vat_code= customer.conterpart_account
+                  = text_field_tag 'edit_account_conterpart', customer.conterpart_account, { placeholder: '', class: 'input_edition conterpart hide' }
+                %td
+                  %div.vat_code= customer.code
+                  = text_field_tag 'edit_account_vat_code', customer.code, { placeholder: '', class: 'input_edition vat_code hide' }
+
           .box_footer.text-right
             %button.btn.btn-info.small-shadow.text-bold#add_vatc_account
               %span.mrc-5
                 = glyphicon('plus')  
               %span
                 Ajouter un compte
+
+    %table.hidden_insertion_table.hide
+      %tbody
+        %tr
+          %td.id.hide
+            = text_field_tag 'edit_account_id', nil, { placeholder: '', class: 'entry_id hide' }
+          %td
+            %div.vat_code Cliquez ici pour modifier
+            = text_field_tag 'edit_account_third_party_name', nil, { placeholder: '', class: 'input_edition tp_name hide' }
+          %td
+            %div.vat_code Cliquez ici pour modifier
+            = text_field_tag 'edit_account_third_party_account', nil, { placeholder: '', class: 'input_edition tp_account hide' }
+          %td
+            %div.vat_code Cliquez ici pour modifier
+            = text_field_tag 'edit_account_conterpart', nil, { placeholder: '', class: 'input_edition conterpart hide' }
+          %td
+            %div.vat_code Cliquez ici pour modifier
+            = text_field_tag 'edit_account_vat_code', nil, { placeholder: '', class: 'input_edition vat_code hide' }
