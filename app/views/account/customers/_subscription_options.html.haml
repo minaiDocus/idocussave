@@ -10,7 +10,7 @@
           = label_tag 'subscription[subscription_option]', 'iDo X', class: 'form-check-label'
       .col-md-8.form_check_idox_package
         .form-inline
-          = label_tag 'user[jefacture_account_id]', "Identifiant JEFACTURE", class: 'col-form-label'
+          = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
           &nbsp;&nbsp;&nbsp;&nbsp;
           = text_field_tag 'user[jefacture_account_id]', nil, class: 'form-control'
     .row
@@ -51,21 +51,22 @@
         = label_tag 'subscription[number_of_journals]', "Nombre de journaux:", class: 'control-label'
       .col-md-4
         .subscription_number_of_journals
-          = number_field_tag 'subscription[number_of_journals]', nil, class: 'form-control col-md-3 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: '5'
+          = number_field_tag 'subscription[number_of_journals]', 5, class: 'form-control col-md-4 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: '5'
 
-    %br
-    .form-group.clearfix.radio_buttons
-      .label-section
-        = label_tag 'subscription[is_to_apply_now]', "Appliquer tout de suite les options à la baisse ?"
-      .control-section
-        %span.radio
-          %label
-            = radio_button_tag 'subscription[is_to_apply_now]', true
-            Oui
-        %span.radio
-          %label
-            = radio_button_tag 'subscription[is_to_apply_now]', false, true
-            Non
+    - if current_user.is_admin
+      %br
+      .form-group.clearfix.radio_buttons
+        .label-section
+          = label_tag 'subscription[is_to_apply_now]', "Appliquer tout de suite les options à la baisse ?"
+        .control-section
+          %span.radio
+            %label
+              = radio_button_tag 'subscription[is_to_apply_now]', true
+              Oui
+          %span.radio
+            %label
+              = radio_button_tag 'subscription[is_to_apply_now]', false, true
+              Non
 
     %br
     %br

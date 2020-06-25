@@ -159,7 +159,7 @@ fr:
         expense_category:
           name: Nom
           description: Description
-        instructions: Instructions pour vos clients iDo'Courrier
+        instructions: Instructions pour vos clients avec option courrier
         position: Position
         is_default: Par défaut ?
         clients: Clients

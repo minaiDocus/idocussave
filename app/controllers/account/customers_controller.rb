@@ -79,6 +79,8 @@ class Account::CustomersController < Account::OrganizationController
       SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
       redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
     else
+      flash[:error] = @customer.errors.messages.to_s
+
       render :form_with_first_step
     end
   end
@@ -391,11 +393,15 @@ class Account::CustomersController < Account::OrganizationController
       :manager_id,
       :jefacture_account_id,
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
-      { softwares_attributes: [] }
+      { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
     ]
 
     if @user.is_admin
       attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format
+    end
+
+    if params[:user].try(:[], :softwares_attributes).try(:[], :is_ibiza_used)
+      attributes << :ibiza_id
     end
 
     attributes << :code if action_name == 'create'

@@ -18,7 +18,7 @@
         = render partial: '/account/customers/book_type'
     %br
     - if !@customer.uses_ibiza?
-      - if @cusomer.options.is_taxable
+      - if @customer.options.is_taxable
         #vat_account
           = render partial: 'vat_account'
       %br
