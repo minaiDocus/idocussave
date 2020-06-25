@@ -61,7 +61,7 @@ class DiscountBillingService
 
   def unit_amount(option)
     amount = get_amount_policy option
-    amount[:retriever] = 0.0 if @organization.subscription.retriever_price_option.to_s == 'reduced_retriever'
+    amount[:retriever] = 0.0 if @organization.subscription.try(:retriever_price_option).to_s == 'reduced_retriever'
     amount[option]
   end
 

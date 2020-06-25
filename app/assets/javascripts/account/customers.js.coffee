@@ -94,20 +94,22 @@ load_vat_function= (id, controlleur) ->
     content     = $(this).hide()
     input_edit.unbind('focusout')
     input_edit.select()
-    input_edit.closest('tr').removeClass('verify')
+
     input_edit.blur().focus().focusout((e) ->
       e.stopPropagation()
       new_value = $(this).val()      
-      if (new_value == $(this).attr('placeholder') || new_value == "")
+      if (new_value == $(this).attr('placeholder'))
         content.show()
-        input_edit.addClass('hide')        
-      else 
-        content.html(new_value).show()
         input_edit.addClass('hide')
-        input_edit.parent('td').addClass('verify')        
+      else
+        input_edit.closest('tr').addClass('verify')
+        content.html(new_value || 'Cliquez ici pour modifier').show()
+        input_edit.addClass('hide')       
         verify_before_validate(input_edit, controlleur)
       ).on 'keypress',(e) ->
-        if(e.which == 13)                
+        input_edit.closest('tr').addClass('verify')
+
+        if(e.which == 13)
           new_value = $(this).val()
           if (new_value == $(this).attr('placeholder') || new_value == "")
             content.show()
@@ -115,28 +117,46 @@ load_vat_function= (id, controlleur) ->
           else 
             content.html(new_value).show()
             input_edit.addClass('hide')
-            input_edit.parent('td').addClass('verify')
             verify_before_validate(input_edit, controlleur)
 
   $(add).unbind 'click'
   $(add).on 'click', (e) ->
-    line = '<tr><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td><td><div class="vat_code">Cliquez ici pour modifier</div><input class="edit_vat_code hide" type="text" value="" placeholder=""></td></tr>'
-    $(table).append(line)
+    line = $('#vat table.hidden_insertion_table tbody').html()
+    $(table).find('tbody:first').append(line)
     load_vat_function(id, controlleur)
 
 verify_before_validate= (link) ->
-  tr     = link.closest('tr')
-  verify = tr.find('.verify')
-  if (tr.find('.verify').length == 3 && !tr.hasClass('verify'))
-    tr.addClass('verify')
-    alert("ok")
-    # $.ajax
-    #   url: '',
-    #   data: '',
-    #   dataType: 'json',
-    #   type: 'POST',
-    #   success: (data) ->
-    #     
+  tr = link.closest('tr')
+  if(tr.hasClass('verify'))
+    value_counter = 0
+    tr.removeClass('verify')
+
+    tr.find('td .edit_vat_code').each (e)->
+      if($(this).val() != null && $(this).val() != 'undefined' && $(this).val() != '')
+        value_counter = value_counter + 1
+
+    if(value_counter == 3 || value_counter == 0)
+      organization_id = $('#organization_id').val()
+      customer_id     = $('#customer_id').val()
+      vat_id_input  = tr.find('input.vat_id:first')
+      data            = null
+
+      if(value_counter == 0)
+        tr.remove()
+        if(vat_id_input.val() > 0)
+          data = { customer_id: customer_id, vat_id: vat_id_input.val(), destroy: 'destroy' }
+      else
+        data = { customer_id: customer_id, accounting_plan: { vat_accounts_attributes: { id: vat_id_input.val(), code: tr.find('.edit_vat_code.code:first').val(), nature: tr.find('.edit_vat_code.nature:first').val(), account_number: tr.find('.edit_vat_code.number:first').val() } } }
+
+      if(data)
+        $.ajax
+          url: "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/vat_accounts/update_multiple.json",
+          data: data,
+          dataType: 'json',
+          type: 'PATCH',
+          success: (result) ->
+            if(result)
+              vat_id_input.val(result['vat_account']['id'])
 
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')
