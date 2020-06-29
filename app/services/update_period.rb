@@ -90,8 +90,6 @@ class UpdatePeriod
       @subscription.get_active_options.each do |option|
         option_infos = SubscriptionPackage.infos_of(option)
 
-        reduced = ['ADV'].include?(@subscription.organization.try(:code) || @subscription.user.organization.code)
-
         option = ProductOptionOrder.new
 
         option.title    = option_infos[:label]
@@ -99,7 +97,7 @@ class UpdatePeriod
         option.duration = 0
         option.quantity = 1
         option.group_title = option_infos[:group]
-        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(option, reduced) * 100.0
+        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(option, @subscription.reduced_retriever_price?) * 100.0
 
         selected_options << option
       end

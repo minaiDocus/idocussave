@@ -144,6 +144,11 @@ class Subscription < ApplicationRecord
     result
   end
 
+  def retriever_price_option
+    organization_code = organization.try(:code) || user.organization.code
+    %w(ADV).include?(organization_code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
+  end
+
   def set_start_date_and_end_date
     commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
     commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active

@@ -214,6 +214,7 @@ get_ibiza_customers_list = (element)->
       $('.removable-feedback').remove()
       if $('input[type=submit]').length > 0
         $('input[type=submit]').removeAttr('disabled')
+      $('#create_customer .softwares-section').css('display', 'none')
 
 check_input_number = ->
   $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').focus()
@@ -259,13 +260,12 @@ lock_package = ->
 show_ibiza_customer = ->
   $('#create_customer input.ibiza-customer-select').change ->
     if @checked
-      $('#create_customer .softwares-section').css('visibility', 'visible')
+      $('#create_customer .softwares-section').css('display', 'block')
     else
-      $('#create_customer .softwares-section').css('visibility', 'hidden')
+      $('#create_customer .softwares-section').css('display', 'none')
 
   if $('#create_customer .softwares-section .ibiza-customers-list').length > 0
     get_ibiza_customers_list($('#create_customer .softwares-section .ibiza-customers-list'))
-    $('#create_customer .softwares-section').css('visibility', 'hidden')
 
 jQuery ->
   load_account_book_type_function()
