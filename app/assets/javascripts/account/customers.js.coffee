@@ -37,15 +37,9 @@ load_modal_function= (id) ->
   $('#valider').unbind 'change'
   $('#account_book_type_entry_type').on 'change', (e) ->
     if ( $(this).val() == '2' || $(this).val() == '3')
-      if ($(this).hasClass('not_persisted'))
-        $('#pre-assignment-attributes').show('')
-      else if ($(this).hasClass('persisted'))
-        $('#pre-saisie').show('')
+      $('#pre-assignment-attributes').show('')
     else
-      if ($(this).hasClass('persisted'))
-        $('#pre-saisie').hide('')
-      else if ($(this).hasClass('not_persisted'))
-        $('#pre-assignment-attributes').hide('')
+      $('#pre-assignment-attributes').hide('')
 
   $("#toogle_external_journal_list").on 'click', (e)->
     e.preventDefault()
