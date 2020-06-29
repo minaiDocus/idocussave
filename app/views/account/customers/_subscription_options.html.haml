@@ -44,17 +44,24 @@
           = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
           = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'      
         .form-check.form-check-inline
-          = check_box_tag 'subscription[is_retriever_package_active]', 'automates', false, class: 'form-check-input'
+          = check_box_tag 'subscription[is_retriever_package_active]', true, false, class: 'form-check-input'
           = label_tag 'subscription[is_retriever_package_active]', "Avec option Automates", class: 'form-check-label'
     .row
+      .col-md-12
+        .form-check.form-check-inline
+          = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', false, class: 'form-check-input retriever-check-radio radio-button-on-click'
+          = label_tag 'subscription[subscription_option]', 'Automates uniquement', class: 'form-check-label'
+    .row.mt-4
       .col-md-4
         = label_tag 'subscription[number_of_journals]', "Nombre de journaux:", class: 'control-label'
       .col-md-4
         .subscription_number_of_journals
           = number_field_tag 'subscription[number_of_journals]', 5, class: 'form-control col-md-4 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: '5'
 
+    %br
+    %br
+    %br
     - if current_user.is_admin
-      %br
       .form-group.clearfix.radio_buttons
         .label-section
           = label_tag 'subscription[is_to_apply_now]', "Appliquer tout de suite les options à la baisse ?"
@@ -67,11 +74,8 @@
             %label
               = radio_button_tag 'subscription[is_to_apply_now]', false, true
               Non
-
-    %br
-    %br
     %hr
     .aligncenter
-      %h4 Prix du forfait avec les options sélectionnées :
+      %h4 Prix du forfait avec les options sélectionnées
       %b.total_price{ style: 'font-size:20px' } 11 €
       /TODO ... Handle jS for total price
