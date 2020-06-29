@@ -8,8 +8,8 @@
           .form-group.clearfix.mt-5
             %input{ type: :hidden, name: "new_create_book_type", value: "1"}
             .control-section{ style: "float:none !important;" }
-              = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%"
-              %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+              = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5 import_accounting', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%"
+              %button.btn.btn-primary.small-shadow.text-bold.import_accounting#import_fec_account
                 %span.mrc-5
                   = glyphicon('data-transfer-download')  
                 %span
@@ -17,6 +17,9 @@
               %span.badge.badge-info.fs-origin .txt
 
     .row.mb-10
+      .col-md-12.text-center#information_import
+
+    .row.mb-5
       .col-md-6
         .row
           .header_box.text-left.col-md-4{ style: "padding-left: 34px; padding-top: 10px"} Fournisseurs
@@ -25,45 +28,12 @@
               .form-group.clearfix{ style: "margin-bottom: 0 !important" }
                 %input{ type: :hidden, name: "new_create_book_type", value: "1"}
                 .control-section{ style: "float:none !important;" }
-                  = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
-                  %button.btn.btn-primary.small-shadow.text-bold#import_vatp_account
+                  = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5 import_accounting', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  %button.btn.btn-primary.small-shadow.text-bold.import_accounting#import_providers_account
                     %span.mrc-5
                       = glyphicon('data-transfer-download')  
                     %span
                       Importer
-
-        .box
-          %table.table.table-striped.table-bordered-inner.table-condensed#table_vatp_account
-            %thead
-              %tr.bg-brown.text-white
-                %th Nom du tiers
-                %th Compte de tiers
-                %th Compte de contrepartie
-                %th Code TVA
-            %tbody
-            - @customer.accounting_plan.providers.each do |provider|
-              %tr.provider
-                %td.id.hide
-                  = text_field_tag 'edit_account_id', provider.id, { placeholder: '', class: 'entry_id hide' }
-                %td
-                  %div.vat_code= provider.third_party_name
-                  = text_field_tag 'edit_account_third_party_name', provider.third_party_name, { placeholder: '', class: 'input_edition tp_name hide' }
-                %td
-                  %div.vat_code= provider.third_party_account
-                  = text_field_tag 'edit_account_third_party_account', provider.third_party_account, { placeholder: '', class: 'input_edition tp_account hide' }
-                %td
-                  %div.vat_code= provider.conterpart_account
-                  = text_field_tag 'edit_account_conterpart', provider.conterpart_account, { placeholder: '', class: 'input_edition conterpart hide' }
-                %td
-                  %div.vat_code= provider.code
-                  = text_field_tag 'edit_account_vat_code', provider.code, { placeholder: '', class: 'input_edition vat_code hide' }
-
-          .box_footer.text-right
-            %button.btn.btn-info.small-shadow.text-bold#add_vatp_account
-              %span.mrc-5
-                = glyphicon('plus')  
-              %span
-                Ajouter un compte
 
       .col-md-6
         .row
@@ -73,44 +43,14 @@
               .form-group.clearfix{ style: "margin-bottom: 0 !important" }
                 %input{ type: :hidden, name: "new_create_book_type", value: "1"}
                 .control-section{ style: "float:none !important;" }
-                  = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
-                  %button.btn.btn-primary.small-shadow.text-bold#import_vatc_account
+                  = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5 import_accounting', input: true, buttonText: glyphicon('file') + ' CSV' }, style: "width:10%"
+                  %button.btn.btn-primary.small-shadow.text-bold.import_accounting#import_customers_account
                     %span.mrc-5
                       = glyphicon('data-transfer-download')  
                     %span
                       Importer
-        .box
-          %table.table.table-striped.table-bordered-inner.table-condensed#table_vatc_account
-            %thead
-              %tr.bg-brown.text-white
-                %th Nom du tiers
-                %th Compte de tiers
-                %th Compte de contrepartie
-                %th Code TVA
-            %tbody
-            - @customer.accounting_plan.customers.each do |customer|
-              %tr.customer
-                %td.id.hide
-                  = text_field_tag 'edit_account_id', customer.id, { placeholder: '', class: 'entry_id hide' }
-                %td
-                  %div.vat_code= customer.third_party_name
-                  = text_field_tag 'edit_account_third_party_name', customer.third_party_name, { placeholder: '', class: 'input_edition tp_name hide' }
-                %td
-                  %div.vat_code= customer.third_party_account
-                  = text_field_tag 'edit_account_third_party_account', customer.third_party_account, { placeholder: '', class: 'input_edition tp_account hide' }
-                %td
-                  %div.vat_code= customer.conterpart_account
-                  = text_field_tag 'edit_account_conterpart', customer.conterpart_account, { placeholder: '', class: 'input_edition conterpart hide' }
-                %td
-                  %div.vat_code= customer.code
-                  = text_field_tag 'edit_account_vat_code', customer.code, { placeholder: '', class: 'input_edition vat_code hide' }
-
-          .box_footer.text-right
-            %button.btn.btn-info.small-shadow.text-bold#add_vatc_account
-              %span.mrc-5
-                = glyphicon('plus')  
-              %span
-                Ajouter un compte
+    .row.mb-10#partial_table
+      = render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }
 
     %table.hidden_insertion_table.hide
       %tbody

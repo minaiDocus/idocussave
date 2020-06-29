@@ -1,6 +1,7 @@
 load_account_book_type_function= () ->
   $('.add_book_type').unbind 'click'
   $('.add_book_type').on 'click', (e) ->
+    $('.modal#for_step_two #informations').html('')
     $('#for_step_two .modal-header h3').text('Ajouter un journal')
     $('#for_step_two .modal-body').html('')
     organization_id = $('#organization_id').val()
@@ -15,6 +16,7 @@ load_account_book_type_function= () ->
 
   $('.edit_book_type').unbind 'click'
   $('.edit_book_type').on 'click', (e) ->
+    $('.modal#for_step_two #informations').html('')
     e.stopPropagation()
     id = $(this).attr('id')
     organization_id = $('#organization_id').val()
@@ -43,6 +45,18 @@ load_modal_function= (id) ->
         $('#pre-saisie').hide('')
       else if ($(this).hasClass('not_persisted'))
         $('#pre-assignment-attributes').hide('')
+
+  $("#toogle_external_journal_list").on 'click', (e)->
+    e.preventDefault()
+    is_selection_visible = $(".block_selection_journals").is(":visible")
+    if is_selection_visible
+      $(".block_selection_journals").slideUp('fast')
+    else
+      $(".block_selection_journals").slideDown('fast')
+
+  $("#select_external_journal").on 'change', (e)->
+    selected = $(this).val()
+    $("#account_book_type_pseudonym").val(selected)
 
   $('#valider').unbind 'click'
   $('#valider').on 'click', (e) ->
@@ -191,6 +205,66 @@ verify_before_validate= (link, controlleur) ->
             if(result)
               entry_id_input.val(result['account']['id'])
 
+load_accounting_plan_function= (id) ->
+  button = '#import_'+ id + '_account'
+
+  organization_id = $('#organization_id').val()
+  customer_id     = $('#customer_id').val()
+
+  $(button).unbind 'click'
+  $(button).on 'click', (e) ->
+    e.preventDefault()
+    data = new FormData()
+    files = $('#'+id+'_file')[0].files[0]
+    data.append(id + '_file',files)
+    data.append('new_create_book_type','1')
+    $('.import_accounting').attr('disabled', true)
+    $('#information_import').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">  Importation en cours . . .')
+
+    url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import"
+    if (id == 'fec')
+      url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec"
+
+    $.ajax
+      url: url,
+      data: data,
+      type: 'PATCH',
+      contentType: false,
+      processData: false,
+      success: (data) ->
+        if (id != 'fec')
+          $('#partial_table').html(data)
+          $('#information_import').html('')
+          $('.import_accounting').attr('disabled', false)
+          load_vat_function('vatc_account', 'accounting_plans')
+          load_vat_function('vatp_account', 'accounting_plans')
+        else
+          $('#for_step_two .modal-header h3').text('Paramétrage import FEC')
+          $('#for_step_two .close').remove()
+          $('#for_step_two .modal-footer').remove()
+          $('#for_step_two').find('.modal-body:first').remove()
+          $('#for_step_two .modal-dialog_box').append(data)
+          $('#for_step_two').modal('show')
+
+          $('#for_step_two input#import_button').unbind 'click'
+          $('#for_step_two input#import_button').on 'click', (e) ->
+            e.preventDefault()
+            $(this).attr('disabled', true)
+            $('#informations').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">')
+
+            $.ajax
+              url: "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec_processing",
+              data: $('form#importFecAfterConfiguration').serialize(),
+              contentType: false,
+              processData: false,
+              success: (data) ->
+                $('#partial_table').html(data)
+                $('#information_import').html('')
+                $('.import_accounting').attr('disabled', false)
+                load_vat_function('vatc_account', 'accounting_plans')
+                load_vat_function('vatp_account', 'accounting_plans')
+                $('#for_step_two').modal('hide')
+
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')
   $.ajax
@@ -268,11 +342,6 @@ show_ibiza_customer = ->
     get_ibiza_customers_list($('#create_customer .softwares-section .ibiza-customers-list'))
 
 jQuery ->
-  load_account_book_type_function()
-  load_vat_function('vat_account', 'vats_accounts')
-  load_vat_function('vatc_account', 'accounting_plans')
-  load_vat_function('vatp_account', 'accounting_plans')
-
   if ($('.import_dialog').length > 0)
     $('#import_dialog').modal('show')
 
@@ -326,6 +395,13 @@ jQuery ->
       else if($(this).attr('id') == 'user_softwares_attributes_is_exact_online_used' && $(this).is(':checked'))
         $('#user_softwares_attributes_is_ibiza_used').removeAttr('checked')
 
+  load_account_book_type_function()
+  load_vat_function('vat_account', 'vats_accounts')
+  load_vat_function('vatc_account', 'accounting_plans')
+  load_vat_function('vatp_account', 'accounting_plans')
+  load_accounting_plan_function('fec')
+  load_accounting_plan_function('providers')
+  load_accounting_plan_function('customers')
   update_form()
   check_input_number()
   show_ibiza_customer()

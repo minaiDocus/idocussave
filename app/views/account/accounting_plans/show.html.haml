@@ -106,4 +106,4 @@
       .modal-content
         .modal-header
           %h3 Paramétrage import FEC
-        = render :partial => "/account/accounting_plans/dialog_box"
+        = render :partial => "/account/accounting_plans/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }

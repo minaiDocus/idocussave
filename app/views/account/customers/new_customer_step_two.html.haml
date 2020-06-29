@@ -1,12 +1,3 @@
-- if @params_fec.present?
-  .modal.fade.import_dialog{ :id=>"for_step_two" }
-    .modal-dialog
-      .modal-content
-        .modal-header.clearfix
-          %h3{style: "display: inline-block; float: left"}
-            Paramétrage import FEC
-        = render :partial => "/account/accounting_plans/dialog_box"
-
 .card
   .card-header
     %h3
@@ -21,7 +12,7 @@
     - if !@customer.uses_ibiza?
       - if @customer.options.is_taxable
         #vat_account
-          = render partial: 'vat_account'
+          = render partial: '/account/customers/vat_account'
       %br
       #accounting_plan
         = render partial: '/account/customers/accounting_plan'
@@ -37,6 +28,7 @@
           Ajouter
         %button.close{ data: { dismiss: "modal", aria: { label: "close" }}}
           %span{ aria: { hidden: "true" } } &times;
+      .modal-dialog_box
       .modal-body
       .modal-footer
         #informations.mrc-5

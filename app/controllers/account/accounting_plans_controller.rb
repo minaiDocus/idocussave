@@ -81,7 +81,7 @@ class Account::AccountingPlansController < Account::OrganizationController
       flash[:error] = 'Aucun fichier choisi.'
     end
     if params[:new_create_book_type].present?
-      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }
     else
       redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     end
@@ -111,7 +111,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     if params[:new_create_book_type].present?
       @params_fec = @params_fec.merge(new_create_book_type: params[:new_create_book_type])
-      render '/account/customers/new_customer_step_two'
+      render :partial => "/account/accounting_plans/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }
     else
       render :show
     end
@@ -125,7 +125,7 @@ class Account::AccountingPlansController < Account::OrganizationController
     FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
 
     if params[:new_create_book_type].present?
-      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }
     else
       redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     end
