@@ -60,7 +60,8 @@ class Subscription < ApplicationRecord
     is_scan_box_package_active  ||
     is_retriever_package_active ||
     is_annual_package_active    ||
-    is_mini_package_active
+    is_mini_package_active      ||
+    is_idox_package_active
   end
 
 
@@ -71,6 +72,7 @@ class Subscription < ApplicationRecord
     is_mail_package_active      && !is_mail_package_to_be_disabled      ||
     is_scan_box_package_active  && !is_scan_box_package_to_be_disabled  ||
     is_retriever_package_active && !is_retriever_package_to_be_disabled ||
+    is_idox_package_active      && !is_idox_package_to_be_disabled      ||
     is_annual_package_active
   end
 
@@ -83,6 +85,7 @@ class Subscription < ApplicationRecord
     self.is_pre_assignment_active    = false if is_pre_assignment_to_be_disabled
     self.is_scan_box_package_active  = false if is_scan_box_package_to_be_disabled
     self.is_retriever_package_active = false if is_retriever_package_to_be_disabled
+    slef.is_idox_package_active      = false if is_idox_package_to_be_disabled
   end
 
 
@@ -155,6 +158,10 @@ class Subscription < ApplicationRecord
     result
   end
 
+  def is_retriever_only?
+    get_active_packages.empty? && get_active_options.include?(:retriever_option)
+  end
+
   def retriever_price_option
     organization_code = organization.try(:code) || user.organization.code
     %w(ADV).include?(organization_code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
@@ -221,7 +228,7 @@ class Subscription < ApplicationRecord
     commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
     commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
 
-    return true if commitment_period <= 0 || (!check_micro_package && self.is_micro_package_active)
+    return true if commitment_period.to_i <= 0 || (!check_micro_package && self.is_micro_package_active)
 
     self.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
   end

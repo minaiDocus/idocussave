@@ -3,66 +3,76 @@
     Abonnement
   %hr
   #personalize_subscription_package_form
+    .center{ style: "text-align: center" }
+      .notify-warning.badge.badge-warning.fs-origin.mb-3.hide
+        Disparaîtra le mois prochain
     .row
-      .col-md-4
+      .col-md-6
         .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_idox_package_active', false, class: 'form-check-input idox-check-radio radio-button-on-click'
-          = label_tag 'subscription[subscription_option]', 'iDo X', class: 'form-check-label'
-      .col-md-8.form_check_idox_package
-        .form-inline
-          = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          = text_field_tag 'user[jefacture_account_id]', nil, class: 'form-control'
+          = radio_button_tag 'subscription[subscription_option]', 'is_idox_package_active', (@subscription.is_idox_package_active && !@subscription.is_idox_package_to_be_disabled), class: 'form-check-input idox-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_idox_package_active || @subscription.is_idox_package_to_be_disabled) ? 1 : 0) }
+          = label_tag 'subscription[subscription_option]', "iDo'X", class: 'form-check-label'
+      .col-md-6.form_check_idox_package
+        .float-right
+          .form-inline
+            = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control subscription-package-form-change idox_option option_checkbox'
+    - if current_user.is_admin || @organization.code.in?(['DPA','ADV','CRE','GMBA','AEC','EXTE','ACC','FBC','FIDA','FIDC','EG', '2AP', 'ACDA'])
+      .row
+        .col-md-6
+          .form-check.form-check-inline
+            = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
+            = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
+        .col-md-6.form_check_micro_package
+          .float-right{ style: 'padding-right: 17em' }
+            .form-check.form-check-inline
+              = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
+              = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+    - if current_user.is_admin || @organization.code.in?(['GAP'])
+      .row
+        .col-md-6
+          .form-check.form-check-inline
+            = radio_button_tag 'subscription[subscription_option]', 'is_mini_package_active', (@subscription.is_mini_package_active && !@subscription.is_mini_package_to_be_disabled), class: "form-check-input mini-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_mini_package_active || @subscription.is_mini_package_to_be_disabled) ? 1 : 0) }
+            = label_tag 'subscription[subscription_option]', "iDo'Mini", class: 'form-check-label'
+        .col-md-6.form_check_mini_package
+          .float-right{style: 'padding-right: 4.5em'}
+            .form-check.form-check-inline
+              = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox mini_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
+              = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+            .form-check.form-check-inline
+              = check_box_tag 'subscription[is_retriever_package_active]', true, (@subscription.is_retriever_package_active && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox mini_option', data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
+              = label_tag 'subscription[is_retriever_package_active]', "Avec option automate", class: 'form-check-label'
     .row
-      .col-md-4
+      .col-md-6
         .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', false, class: 'form-check-input micro-check-radio radio-button-on-click'
-          = label_tag 'subscription[subscription_option]', 'iDo Micro', class: 'form-check-label'
-      .col-md-8.form_check_micro_package
-        .form-check.form-check-inline
-          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
-          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
-    .row
-      .col-md-4
-        .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_mini_package_active', false, class: 'form-check-input mini-check-radio radio-button-on-click'
-          = label_tag 'subscription[subscription_option]', 'iDo Mini', class: 'form-check-label'
-      .col-md-8.form_check_mini_package
-        .form-check.form-check-inline
-          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
-          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'      
-        .form-check.form-check-inline
-          = check_box_tag 'subscription[is_retriever_package_active]', true, false, class: 'form-check-input'
-          = label_tag 'subscription[is_retriever_package_active]', "Avec option Automates", class: 'form-check-label'
-    .row
-      .col-md-4
-        .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', true, class: 'form-check-input basic-check-radio radio-button-on-click'
-          = label_tag 'subscription[subscription_option]', 'iDo Classique', class: 'form-check-label'
-      .col-md-8.form_check_basic_package
-        .form-check.form-check-inline
-          = check_box_tag 'subscription[is_mail_package_active]', true, false, class: 'form-check-input'
-          = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'      
-        .form-check.form-check-inline
-          = check_box_tag 'subscription[is_retriever_package_active]', true, false, class: 'form-check-input'
-          = label_tag 'subscription[is_retriever_package_active]', "Avec option Automates", class: 'form-check-label'
+          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', (@subscription.is_basic_package_active && !@subscription.is_basic_package_to_be_disabled), class: 'form-check-input basic-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
+          = label_tag 'subscription[subscription_option]', "iDo'Classique", class: 'form-check-label'
+      .col-md-6.form_check_basic_package
+        .float-right{ style: 'padding-right: 4.5em' }
+          .form-check.form-check-inline
+            = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox basic_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
+            = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+          .form-check.form-check-inline
+            = check_box_tag 'subscription[is_retriever_package_active]', true, (@subscription.is_retriever_package_active && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox basic_option', data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
+            = label_tag 'subscription[is_retriever_package_active]', "Avec option automate", class: 'form-check-label'
     .row
       .col-md-12
         .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', false, class: 'form-check-input retriever-check-radio radio-button-on-click'
-          = label_tag 'subscription[subscription_option]', 'Automates uniquement', class: 'form-check-label'
+          = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', (@subscription.is_retriever_only? && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input retriever-uniquess-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_retriever_only? && @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
+          = label_tag 'subscription[subscription_option]', "Automate uniquement", class: 'form-check-label'
     .row.mt-4
-      .col-md-4
+      .col-md-3
+      .col-md-2
         = label_tag 'subscription[number_of_journals]', "Nombre de journaux:", class: 'control-label'
       .col-md-4
         .subscription_number_of_journals
-          = number_field_tag 'subscription[number_of_journals]', 5, class: 'form-control col-md-4 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/', placeholder: '5'
+          = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-4 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
 
     %br
     %br
     %br
     - if current_user.is_admin
-      .form-group.clearfix.radio_buttons
+      .form-group.clearfix.radio_buttons.label-50
         .label-section
           = label_tag 'subscription[is_to_apply_now]', "Appliquer tout de suite les options à la baisse ?"
         .control-section
@@ -76,6 +86,5 @@
               Non
     %hr
     .aligncenter
-      %h4 Prix du forfait avec les options sélectionnées
-      %b.total_price{ style: 'font-size:20px' } 11 €
-      /TODO ... Handle jS for total price
+      %h4 Prix du forfait avec les options sélectionnées :
+      %b.total_price{ style: 'font-size:20px' }

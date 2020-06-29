@@ -14,8 +14,15 @@ class Account::SubscriptionsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/organization_subscription
   def update
+    modif_params = params[:subscription][:subscription_option]
+    params[:subscription][modif_params] = true
+
     if SubscriptionForm.new(@subscription, @user, request).submit(params[:subscription])
       if @customer.configured?
+        if params[:user][:jefacture_account_id].present?
+          @customer.update(jefacture_account_id: params[:user][:jefacture_account_id])
+        end
+
         flash[:success] = 'Modifié avec succès.'
 
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')

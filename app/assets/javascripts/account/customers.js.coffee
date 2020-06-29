@@ -295,43 +295,53 @@ get_ibiza_customers_list = (element)->
 check_input_number = ->
   $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').focus()
 
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').click (e) -> update_price()
+
   $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').keypress (e) ->
     e.preventDefault()
 
 update_form = ->
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked')
-    lock_package()
-    $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').removeAttr('disabled')
-    $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+  lock_package()
 
-  $('#personalize_subscription_package_form input.radio-button-on-click').on 'click', ->
-    class_list = $(this).attr('class').split(/\s+/)
-    lock_package()
-    $.each class_list, (index, item) ->
-      if item == 'idox-check-radio'
-        $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').attr('checked', 'checked')
-        $('#personalize_subscription_package_form .form_check_idox_package input#user_jefacture_account_id').removeAttr('disabled')
-      if item == 'micro-check-radio'
-        $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').attr('checked', 'checked')
-        $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_retriever_package_active').removeAttr('disabled')
-        $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_mail_package_active').removeAttr('disabled')
-      if item == 'mini-check-radio'
-        $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').attr('checked', 'checked')
-        $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_mail_package_active').removeAttr('disabled')
-        $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_retriever_package_active').removeAttr('disabled')
-      if item == 'basic-check-radio'
-        $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').attr('checked', 'checked')
-        $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').removeAttr('disabled')
-        $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').removeAttr('disabled')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked')
+    active_option_of('basic')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').is(':checked')
+    active_option_of('idox')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').is(':checked')
+    active_option_of('micro')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked')
+    active_option_of('mini')
+
+  uncheck_all_options()
+  update_price()
+
+uncheck_all_options = ->
+  $('#personalize_subscription_package_form .option_checkbox').each (e) ->
+    if !$(this).hasClass('checkbox_active')
+      $(this).removeAttr('checked')
+
+active_option_of = (group) ->
+  $("#personalize_subscription_package_form .#{group}_option").removeAttr('disabled')
+  $("#personalize_subscription_package_form .active").removeClass('active')
+  $("#personalize_subscription_package_form .active_options").removeClass('active_options')
+  $("#personalize_subscription_package_form .checkbox_active").removeClass('checkbox_active')
+
+  $("#personalize_subscription_package_form #subscription_subscription_option_is_#{group}_package_active").addClass('active')
+  $("#personalize_subscription_package_form .form_check_#{group}_package").addClass('active_options')
+  $("#personalize_subscription_package_form .active_options input[type='checkbox']").addClass('checkbox_active')
+
+get_data_original_value_of = (group, option) ->
+  return parseInt($("#personalize_subscription_package_form .#{group} input#{option}").data('original-value'))
 
 lock_package = ->
-  $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_mini_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_micro_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_idox_package input#user_jefacture_account_id').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_mail_package_active').attr('disabled', 'disabled')
-  $('#personalize_subscription_package_form .form_check_basic_package input#subscription_is_retriever_package_active').attr('disabled', 'disabled')
+  $("#personalize_subscription_package_form .option_checkbox").attr('disabled', 'disabled')
+
+check_commitment = ->
+  if $('#personalize_subscription_package_form .commitment_pending').length > 0
+    $('#personalize_subscription_package_form .radio-button').attr('disabled', 'disabled')
+    $('#personalize_subscription_package_form .commitment_pending').each (e) ->
+      if $(this).is(':checked')
+        $(this).removeAttr('disabled')
 
 show_ibiza_customer = ->
   $('#create_customer input.ibiza-customer-select').change ->
@@ -342,6 +352,53 @@ show_ibiza_customer = ->
 
   if $('#create_customer .softwares-section .ibiza-customers-list').length > 0
     get_ibiza_customers_list($('#create_customer .softwares-section .ibiza-customers-list'))
+
+update_price = ->
+  price_list = {
+    #standard prices
+    'subscription':        10,
+    'idox':                5,
+    'pre_assignment':      9,
+    'return_paper':        10,
+    'retriever':           5,
+    'reduced_retriever':   3,
+     #special prices
+    'subscription_plus':   1,
+  }
+
+  selected_options = []
+  price = 0
+  options = []
+
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_idox_package_active') == 1
+    options.push 'idox'
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_basic_package_active') == 1
+    options.push 'subscription', 'subscription_plus', 'pre_assignment'
+  if $('#personalize_subscription_package_form .active_options input#subscription_is_mail_package_active').is(':checked') || get_data_original_value_of('active_options', '#subscription_is_mail_package_active') == 1
+    options.push 'return_paper'
+  if $('#personalize_subscription_package_form .active_options input#subscription_is_retriever_package_active').is(':checked') || get_data_original_value_of('active_options', '#subscription_is_retriever_package_active') == 1
+    options.push $('#personalize_subscription_package_form input#subscription_is_retriever_package_active').data('retriever-price-option')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_retriever_package_active') == 1
+    options.push $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').data('retriever-price-option')
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_micro_package_active') == 1
+    options.push 'subscription'
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_mini_package_active') == 1
+    options.push 'subscription', 'subscription_plus', 'pre_assignment'
+  options = _.uniq(options)
+
+
+  selected_options = options
+
+  if options.length > 0
+    number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]').val())
+    if number_of_journals > 5
+      price += number_of_journals - 5
+
+  for option in selected_options
+    price += price_list[option]
+
+  $('.total_price').html(price+",00€ HT")
+
 
 jQuery ->
   if ($('.import_dialog').length > 0)
@@ -404,7 +461,35 @@ jQuery ->
   load_accounting_plan_function('fec')
   load_accounting_plan_function('providers')
   load_accounting_plan_function('customers')
-  update_form()
+  
+  $('#personalize_subscription_package_form input[type="checkbox"].option_checkbox').click (e) -> update_price()
+
+  $('#personalize_subscription_package_form input[type="radio"].radio-button').on 'click', (e) ->
+    if !$("##{e.currentTarget.id}").hasClass('active')
+      class_list = $(this).attr('class').split(/\s+/)
+      lock_package()
+
+      $.each class_list, (index, item) ->
+        if item == 'idox-check-radio'
+          $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').attr('checked', 'checked')
+          active_option_of('idox')
+        if item == 'micro-check-radio'
+          $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').attr('checked', 'checked')
+          active_option_of('micro')
+        if item == 'mini-check-radio'
+          $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').attr('checked', 'checked')
+          active_option_of('mini')
+        if item == 'basic-check-radio'
+          $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').attr('checked', 'checked')
+          active_option_of('basic')
+        if item == 'retriever-uniquess-check-radio'
+          $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').attr('checked', 'checked')
+
+      uncheck_all_options()
+      update_price()
+
   check_input_number()
   show_ibiza_customer()
+  check_commitment()
+  update_form()
     

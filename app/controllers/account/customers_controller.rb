@@ -55,7 +55,10 @@ class Account::CustomersController < Account::OrganizationController
   end
   
   # GET /account/organizations/:organization_id/customers/form_with_first_step
-  def form_with_first_step; end
+  def form_with_first_step
+    @customer = User.new(code: "#{@organization.code}%")
+    fake_subscription
+  end
 
   # GET /account/organizations/:organization_id/customers/new
   def new; end
@@ -73,6 +76,7 @@ class Account::CustomersController < Account::OrganizationController
     else
       flash[:error] = @customer.errors.messages.to_s
 
+      fake_subscription
       render :form_with_first_step
     end
   end
@@ -443,6 +447,22 @@ class Account::CustomersController < Account::OrganizationController
     params.require(:user).permit(:mcf_storage)
   end
 
+  def fake_subscription
+    @subscription = OpenStruct.new(
+      {
+        is_idox_package_active: false,
+        is_idox_package_to_be_disabled: false,
+        is_micro_package_active: false,
+        is_mini_package_active: false,
+        is_basic_package_active: true,
+        is_mail_package_active: false,
+        is_retriever_package_active: false,
+        number_of_journals: 5,
+        is_to_apply_now: true,
+        retriever_price_option: 'retriever',
+        is_mail_package_to_be_disabled: true,
+      })
+  end
   def load_customer
     @customer = customers.find(params[:id])
   end
