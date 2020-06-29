@@ -71,7 +71,9 @@ class EmailedDocument
 
     unless email
       mail_to = mail.to.try(:grep, /@fw.idocus.com/i).try(:first)
-      mail_to = mail.cc.grep(/@fw.idocus.com/i).first unless mail_to.present?
+      mail_to = mail.cc.try(:grep, /@fw.idocus.com/i).try(:first) unless mail_to.present?
+
+      return false unless mail_to.present?
 
       email                       = Email.new
       email.message_id            = mail.message_id
