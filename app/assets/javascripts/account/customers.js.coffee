@@ -5,9 +5,10 @@ load_account_book_type_function= () ->
     $('#for_step_two .modal-header h3').text('Ajouter un journal')
     $('#for_step_two .modal-body').html('')
     organization_id = $('#organization_id').val()
+    customer_id = $('#customer_id').val()
 
     $.ajax
-      url: "/account/organizations/#{organization_id}/customers/2164/book_type_creator/",      
+      url: "/account/organizations/#{organization_id}/customers/#{customer_id}/book_type_creator/",
       type: 'GET',
       success: (data) ->
         $('#for_step_two .modal-body').html(data)
@@ -25,7 +26,7 @@ load_account_book_type_function= () ->
     $('#for_step_two .modal-body').html('')
 
     $.ajax
-      url: "/account/organizations/#{organization_id}/customers/#{customer_id}/book_type_creator/#{id}",      
+      url: "/account/organizations/#{organization_id}/customers/#{customer_id}/book_type_creator/#{id}",
       type: 'GET',
       success: (data) ->
         $('#for_step_two .modal-body').html(data)

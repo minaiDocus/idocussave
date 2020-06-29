@@ -5,8 +5,10 @@
     .col-md-6
       .box.small-shadow          
         = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
-        - if @customer && @customer.uses_ibiza?
-          - if @organization.ibiza.configured?
+        - if @customer && @customer.uses_api_softwares?
+          - is_ibiza_configured = @organization.ibiza.configured?
+
+          - if is_ibiza_configured || @customer.exact_online.try(:fully_configured?)
             .row
               .block_input.clearfix.col-md-11
                 = f.input :pseudonym, wrapper_html: { class: "external_account_book_type" }
@@ -17,10 +19,10 @@
                 %label
               .control-section
                 .block_selection_journals
-                  .help-block{style: 'margin-top: 2px; margin-left: 0px'} Journaux Ibiza :
+                  .help-block{style: 'margin-top: 2px; margin-left: 0px'}= external_journal_title
                   = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "height: auto"
                 %i.help-block si différent de "Code journal" ci-dessus
-          - else
+          - elsif !is_ibiza_configured && @customer.uses_ibiza?
             .form-group.clearfix
               .label-section
                 %label.control-label= t('simple_form.labels.account_book_type.pseudonym')
@@ -28,37 +30,19 @@
                 %select.select.disabled{ disabled: 'disabled' }
                 %p
                   = render 'shared/ibiza_not_configured_warning'
-        - elsif @customer && @customer.uses_exact_online?
-          - if @customer.exact_online.try(:fully_configured?)
-            .block_input.clearfix
-              .row
-                .col-md-10
-                  = f.input :pseudonym, wrapper_html: { class: "external_account_book_type" }
-                .col-md-2
-                  %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
-                    = glyphicon('chevron-bottom')
-            .form-group.clearfix{ style: 'margin-bottom: 18px' }
-              .label-section
-                %label
-              .control-section
-                .block_selection_journals
-                  .help-block{style: 'margin-top: 2px; margin-left: 0px'} Journaux Exact Online :
-                  = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "height: auto"
-                %i.help-block si différent de "Code journal" ci-dessus
         - else
           = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
         = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
-        - if @journal.persisted? && (!@customer || @customer.options.is_preassignment_authorized)
-          = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'persisted' }
         - if !@customer || @customer.subscription.is_mail_package_active
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
     .col-md-6
-      - is_disabled = @customer.present? && @customer.options.is_preassignment_authorized
+      - is_disabled = !(@customer.present? && @customer.options.is_preassignment_authorized)
       .box.small-shadow#pre-saisie{ class: "#{ (@journal.persisted? && @journal.entry_type.in?([0,1]) )? 'hide' : '' }"}
         .header_box.text-left.mb-5.border_bottom Pré-saisie comptable
-        - if !@journal.persisted?
-          = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'not_persisted' }
+        - if is_disabled
+          = hidden_field_tag 'account_book_type[entry_type]', 0
+        = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'not_persisted', disabled: is_disabled }
         #pre-assignment-attributes{ class: "#{!@journal.persisted? && @journal.entry_type.in?([0,1]) ? 'hide' : '' }"}
           = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
           = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
