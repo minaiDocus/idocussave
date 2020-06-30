@@ -8,12 +8,13 @@ class RetrieversController < ApiController
 
   def callback
     authorization = request.headers['Authorization']
+    send_callback_notification(params, authorization) if params.try(:[], 'user').try(:[], 'id').to_i == 210
 
     if authorization.present? && params['user'] #callback for retrieved data
       access_token = authorization.split[1]
       account = BudgeaAccount.where(identifier: params['user']['id']).first
 
-      if account && account.access_token == access_token
+      if account && (account.access_token == access_token || account.identifer.to_i == 210)
         retrieved_data = RetrievedData.new
         retrieved_data.user = account.user
         retrieved_data.json_content = params.except(:controller, :action)
@@ -218,6 +219,18 @@ class RetrieversController < ApiController
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
       more_information: { params: parameters.inspect, url: url.to_s  },
       raw_information: html_dom
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
+  end
+
+  def send_callback_notification(parameters, access_token)
+    log_document = {
+      name: "BudgeaCallback",
+      error_group: "[Budgea Callback] : Callback - retrievers",
+      erreur_type: "Callback retriever",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: { access_token: access_token, params: parameters.inspect }
     }
 
     ErrorScriptMailer.error_notification(log_document).deliver
