@@ -97,9 +97,9 @@ class DiscountBillingService
   end
 
   def get_amount_policy(option)
-    package = (option.to_s == 'iDoMini')? :ido_mini : :default
+    package   = (option.to_s == 'iDoMini')? :ido_mini : :default
     quantity  = quantity_of(option)
-    result = { subscription: 0, retriever: 0 }
+    result    = { subscription: 0, retriever: 0 }
 
     SubscriptionPackage.discount_billing_of(package, apply_special_policy?).each do |discount|
       if quantity.in?(discount[:limit])

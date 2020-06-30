@@ -135,6 +135,17 @@ class Subscription < ApplicationRecord
     end
   end
 
+  def is_to_be_disabled_option?(option)
+    case option
+      when :mail_option
+        self.is_mail_package_active && self.is_mail_package_to_be_disabled
+      when :retriever_option
+        self.is_retriever_package_active && self.is_retriever_package_to_be_disabled
+      else
+        false
+    end
+  end
+
   def get_active_options
     result = []
 

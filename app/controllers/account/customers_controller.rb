@@ -55,18 +55,10 @@ class Account::CustomersController < Account::OrganizationController
   end
   
   # GET /account/organizations/:organization_id/customers/form_with_first_step
-  def form_with_first_step
-    @customer = User.new(code: "#{@organization.code}%")
-    @customer.build_options
-    @customer.build_softwares
-  end
+  def form_with_first_step; end
 
   # GET /account/organizations/:organization_id/customers/new
-  def new
-    @customer = User.new(code: "#{@organization.code}%")
-    @customer.build_options
-    @customer.build_softwares
-  end
+  def new; end
 
   # POST /account/organizations/:organization_id/customers
   def create
@@ -389,9 +381,9 @@ class Account::CustomersController < Account::OrganizationController
       :email,
       :is_pre_assignement_displayed,
       :phone_number,
-      { group_ids: [] },
       :manager_id,
       :jefacture_account_id,
+      { group_ids: [] },
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
       { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
     ]

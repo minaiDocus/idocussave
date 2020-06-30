@@ -87,17 +87,20 @@ class UpdatePeriod
         selected_options << mini_remaining_months_option  if package == :ido_micro && mini_remaining_months_option.present?
       end
 
-      @subscription.get_active_options.each do |option|
-        option_infos = SubscriptionPackage.infos_of(option)
+      @subscription.get_active_options.each do |_p_option|
+        option_infos = SubscriptionPackage.infos_of(_p_option)
 
         option = ProductOptionOrder.new
+
+        reduced = (@subscription.retriever_price_option == :retriever)? false : true
 
         option.title    = option_infos[:label]
         option.name     = option_infos[:name]
         option.duration = 0
         option.quantity = 1
         option.group_title = option_infos[:group]
-        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(option, @subscription.reduced_retriever_price?) * 100.0
+        option.is_to_be_disabled = @subscription.is_to_be_disabled_package?(_p_option)
+        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(_p_option, reduced) * 100.0
 
         selected_options << option
       end

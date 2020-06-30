@@ -1,5 +1,6 @@
 class SubscriptionPackage
-  LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_x].freeze
+  PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_x].freeze
+  OPTIONS_LIST  = [:mail_option, :retriever_option].freeze
 
   class << self
     def price_of(package_or_option, reduced=false)
@@ -12,7 +13,7 @@ class SubscriptionPackage
         when :ido_classique
           10 + signing_piece_price + pre_assignment_price
         when :ido_x
-          5 + signing_piece_price + pre_assignment_price
+          5
         when :ido_mini
           10 + signing_piece_price + pre_assignment_price
         when :ido_micro
@@ -55,9 +56,9 @@ class SubscriptionPackage
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro" }
         #options
         when :mail_option
-          { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "iDo'Courrier" }
+          { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier" }
         when :retriever_option
-          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "iDo'FacBanque" }
+          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates" }
         else
           { label: '', name: '', group: "" }
       end
@@ -93,8 +94,8 @@ class SubscriptionPackage
           }
         when :ido_mini
           { 
-            pieces:         { limit: 0, price: 0, per: :month },
-            preassignments: { limit: 0, price: 0, per: :month }
+            pieces:         { limit: 100, price: 25, per: :quarter },
+            preassignments: { limit: 100, price: 25, per: :quarter }
           }
         when :ido_micro
           { 
@@ -103,8 +104,8 @@ class SubscriptionPackage
           }
         else
           { 
-            pieces:         { limit: 0, price: 0, per: :month },
-            preassignments: { limit: 0, price: 0, per: :month }
+            pieces:         { limit: 100, price: 25, per: :month },
+            preassignments: { limit: 100, price: 25, per: :month }
           }
       end
     end
