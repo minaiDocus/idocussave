@@ -42,6 +42,8 @@
 
   .modal-footer
     #informations.mrc-5
-    .btn.close_modal_fec{ style: "margin: 0 15px 0 0; padding: 0;cursor: context-menu" }
-      = link_to 'Fermer', account_organization_customer_accounting_plan_path(organization, customer, {dir: params_fec[:dir], new_create_book_type: "#{params_fec[:new_create_book_type]}"} ), :class=>"modal-close"
-    %input#import_button.btn.btn-primary{ :type => "submit", :value => "Valider" }
+    .row
+      .col-md-5.btn.close_modal_fec{ style: "cursor: context-menu" }
+        = link_to 'Fermer', account_organization_customer_accounting_plan_path(organization, customer, {dir: params_fec[:dir], new_create_book_type: "#{params_fec[:new_create_book_type]}"} ), :class=>"modal-close"
+      .col-md-7
+        %input#import_button.btn.btn-primary.small-shadow.text-bold{ :type => "submit", :value => "Valider" }

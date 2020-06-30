@@ -10,7 +10,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
   def show
     if params[:dir].present?
-      FileUtils.rm params[:dir], force: true
+      FileUtils.rm_rf params[:dir] if params[:dir]
       if params[:new_create_book_type].present?
         redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
       else

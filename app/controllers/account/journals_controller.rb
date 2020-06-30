@@ -234,7 +234,6 @@ class Account::JournalsController < Account::OrganizationController
     end
 
     attrs << :is_expense_categories_editable if current_user.is_admin
-
     attributes = params.require(:account_book_type).permit(*attrs)
 
     if @journal&.is_expense_categories_editable || current_user.is_admin
@@ -243,6 +242,7 @@ class Account::JournalsController < Account::OrganizationController
       end
     end
 
+    attributes[:jefacture_enabled] = attributes[:jefacture_enabled].to_s.gsub('1', 'true').gsub('0', 'false') if is_preassignment_authorized?
     attributes
   end
 

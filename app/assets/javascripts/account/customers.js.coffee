@@ -1,9 +1,12 @@
+clean_dialog_box= () ->
+  $('#for_step_two .modal-body').html('')
+
 load_account_book_type_function= () ->
   $('.add_book_type').unbind 'click'
   $('.add_book_type').on 'click', (e) ->
+    clean_dialog_box()
     $('.modal#for_step_two #informations').html('')
     $('#for_step_two .modal-header h3').text('Ajouter un journal')
-    $('#for_step_two .modal-body').html('')
     organization_id = $('#organization_id').val()
     customer_id = $('#customer_id').val()
 
@@ -17,8 +20,8 @@ load_account_book_type_function= () ->
 
   $('.edit_book_type').unbind 'click'
   $('.edit_book_type').on 'click', (e) ->
-    $('.modal#for_step_two #informations').html('')
     e.stopPropagation()
+    clean_dialog_box()
     id = $(this).attr('id')
     organization_id = $('#organization_id').val()
     customer_id = $('#customer_id').val()
@@ -34,7 +37,7 @@ load_account_book_type_function= () ->
         load_modal_function(id)
 
 load_modal_function= (id) ->
-  $('#valider').unbind 'change'
+  $('#account_book_type_entry_type').unbind 'change'
   $('#account_book_type_entry_type').on 'change', (e) ->
     if ( $(this).val() == '2' || $(this).val() == '3')
       $('#pre-assignment-attributes').show('')
@@ -235,9 +238,9 @@ load_accounting_plan_function= (id) ->
           load_vat_function('vatp_account', 'accounting_plans')
         else
           $('#for_step_two .modal-header h3').text('Paramétrage import FEC')
-          $('#for_step_two .close').remove()
-          $('#for_step_two .modal-footer').remove()
-          $('#for_step_two').find('.modal-body:first').remove()
+          $('#for_step_two .close').hide()
+          $('#for_step_two .modal-footer').hide()
+          $('#for_step_two').find('.modal-body:first').hide()
           $('#for_step_two .modal-dialog_box').append(data)
           $('#for_step_two').modal('show')
 
@@ -258,6 +261,10 @@ load_accounting_plan_function= (id) ->
                 $('.import_accounting').attr('disabled', false)
                 load_vat_function('vatc_account', 'accounting_plans')
                 load_vat_function('vatp_account', 'accounting_plans')
+                $('#for_step_two .modal-dialog_box').html('')
+                $('#for_step_two .close').show()
+                $('#for_step_two .modal-footer').show()
+                $('#for_step_two').find('.modal-body:first').show()
                 $('#for_step_two').modal('hide')
 
 get_ibiza_customers_list = (element)->
