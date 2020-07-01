@@ -9,7 +9,7 @@
       #book_type
         = render partial: '/account/customers/book_type'
     %br
-    - if !@customer.uses_ibiza?
+    - if !@customer.uses_api_softwares?
       - if @customer.options.is_taxable
         #vat_account
           = render partial: '/account/customers/vat_account'

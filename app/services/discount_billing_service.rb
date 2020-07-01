@@ -102,7 +102,7 @@ class DiscountBillingService
     result    = { subscription: 0, retriever: 0 }
 
     SubscriptionPackage.discount_billing_of(package, apply_special_policy?).each do |discount|
-      if quantity.in?(discount[:limit])
+      if discount[:limit].include?(quantity.to_i)
         result = { subscription: discount[:subscription_price], retriever: discount[:retriever_price] }
         break
       end

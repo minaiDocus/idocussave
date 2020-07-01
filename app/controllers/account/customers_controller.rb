@@ -463,6 +463,7 @@ class Account::CustomersController < Account::OrganizationController
         is_mail_package_to_be_disabled: true,
       })
   end
+
   def load_customer
     @customer = customers.find(params[:id])
   end

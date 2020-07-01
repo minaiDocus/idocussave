@@ -99,8 +99,7 @@ class UpdatePeriod
         option.duration = 0
         option.quantity = 1
         option.group_title = option_infos[:group]
-        
-        option.is_to_be_disabled = @subscription.is_to_be_disabled_package?(_p_option)
+        option.is_to_be_disabled = @subscription.is_to_be_disabled_option?(_p_option)
         option.price_in_cents_wo_vat = SubscriptionPackage.price_of(_p_option, reduced) * 100.0
 
         selected_options << option

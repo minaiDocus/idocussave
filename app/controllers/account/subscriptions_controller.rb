@@ -19,7 +19,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 
     if SubscriptionForm.new(@subscription, @user, request).submit(params[:subscription])
       if @customer.configured?
-        if params[:user][:jefacture_account_id].present?
+        if params.try(:[], :user).try(:[], :jefacture_account_id).present?
           @customer.update(jefacture_account_id: params[:user][:jefacture_account_id])
         end
 
