@@ -74,7 +74,12 @@ class Account::CustomersController < Account::OrganizationController
       SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
       redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
     else
-      flash[:error] = @customer.errors.messages.to_s
+      _error_messages = @customer.errors.messages
+      html_ul_content = "<ul>"
+      _error_messages.each {|key, value| html_ul_content += "<li>#{key} : #{value.join(', ')}</li>"}
+      html_ul_content += "</ul>"
+
+      flash[:error] = html_ul_content.html_safe
 
       fake_subscription
       render :form_with_first_step
@@ -459,8 +464,7 @@ class Account::CustomersController < Account::OrganizationController
         is_retriever_package_active: false,
         number_of_journals: 5,
         is_to_apply_now: true,
-        retriever_price_option: 'retriever',
-        is_mail_package_to_be_disabled: true,
+        retriever_price_option: 'retriever'
       })
   end
 

@@ -12,14 +12,14 @@
               %hr
               .form-group.clearfix
                 .label-section
-                  = label_tag 'user[company]', "Nom de la société"
+                  = label_tag 'user[company]', "Nom de la société", class: 'required'
                 .control-section  
-                  = text_field_tag 'user[company]', nil, class: 'form-control'
+                  = text_field_tag 'user[company]', nil, class: 'form-control', :required => true
               .form-group.clearfix
                 .label-section
-                  = label_tag 'user[code]', "Code du dossier"
+                  = label_tag 'user[code]', "Code du dossier", class: 'required'
                 .control-section  
-                  = text_field_tag 'user[code]', @organization.code.to_s + '%', class: 'form-control'
+                  = text_field_tag 'user[code]', @organization.code.to_s + '%', class: 'form-control', :required => true
                   %i.help-block
                     Doit impérativement commencer par : 
                     =@organization.code.to_s + '%'
@@ -41,7 +41,7 @@
                   = text_field_tag 'user[phone_number]', nil, class: 'form-control'
               .form-group.clearfix
                 .label-section
-                  = label_tag 'user[email]', "Courriel"
+                  = label_tag 'user[email]', "Courriel", class: 'required'
                 .control-section  
                   = text_field_tag 'user[email]', nil, class: 'form-control', :required => true
                   %i.help-block Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus
@@ -55,7 +55,7 @@
               %hr
               .form-group.clearfix.radio_buttons
                 .label-section
-                  = label_tag 'user[is_pre_assignement_displayed]', "Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte"
+                  = label_tag 'user[is_pre_assignement_displayed]', "Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte", class: 'control-label required'
                 .control-section
                   %span.radio
                     %label
@@ -67,7 +67,7 @@
                       Non
               .form-group.clearfix.check_boxes
                 .label-section
-                  = label_tag 'user[group_ids][]', "A quel groupe, le dossier doit-il être attribué ?", class: 'control-label'
+                  = label_tag 'user[group_ids][]', "A quel groupe, le dossier doit-il être attribué ?", class: 'control-label required'
                 .control-section
                   - @user.groups.order(name: :asc).each do |group_id|
                     %span.checkbox
@@ -76,9 +76,9 @@
                         = group_id.name
               .form-group.clearfix
                 .label-section
-                  = label_tag 'user[manager_id]', "Quel est le collaborateur en charge du dossier?", class: 'control-label'
+                  = label_tag 'user[manager_id]', "Quel est le collaborateur en charge du dossier?", class: 'control-label required'
                 .control-section  
-                  = select_tag 'user[manager_id]', options_for_select(managers_options_for_select), class: 'form-control select optional'
+                  = select_tag 'user[manager_id]', options_for_select(managers_options_for_select), class: 'form-control select optional', include_blank: false
                   %i.help-block IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.
               .form-group.clearfix.radio_buttons
                 .label-section
@@ -141,4 +141,5 @@
           .for_submit
             .submit
               %center
-                = submit_tag 'Créer et paramètrer la comptabilité', class: 'btn btn-primary small-shadow'
+                = submit_tag 'Créer et paramètrer la comptabilité', class: 'btn btn-primary small-shadow text-bold'
+                %span.text-bold= glyphicon('chevron-right', { color: '#007bff' })

@@ -63,10 +63,10 @@
     .row.mt-4
       .col-md-3
       .col-md-2
-        = label_tag 'subscription[number_of_journals]', "Nombre de journaux:", class: 'control-label'
+        = label_tag 'subscription[number_of_journals]', "Nombre de journaux", class: 'control-label required'
       .col-md-4
         .subscription_number_of_journals
-          = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-4 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
+          = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-3 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
 
     %br
     %br
