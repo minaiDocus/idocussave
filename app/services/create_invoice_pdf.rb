@@ -3,22 +3,6 @@ class CreateInvoicePdf
 
   class << self
     def for_all
-      time = 1.month.ago.beginning_of_month + 15.days
-
-      # NOTE update all period before generating invoices
-      Period.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).each do |period|
-        UpdatePeriodDataService.new(period).execute
-        UpdatePeriodPriceService.new(period).execute
-        print '.'
-      end; nil
-
-
-      # Organization.billed.each do |organization|
-      #   organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', '2020-02-02', '2020-02-02').first
-
-      #   UpdateOrganizationPeriod.new(organization_period).fetch_all
-      # end
-
       #FIDC must not be treated here
       Organization.where.not(code: 'FIDC').billed.order(created_at: :asc).each do |organization|
         generate_invoice_of organization
@@ -32,34 +16,61 @@ class CreateInvoicePdf
       archive_invoice
     end
 
-    def generate_invoice_of(organization)
-      time = 1.month.ago.beginning_of_month + 15.days
-      organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
-      periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+    def for(organization_id, invoice_number=nil, _time=nil)
+      organization = Organization.where(id: organization_id).billed.first
+      return false unless organization
 
-      return false if organization_period.nil?
-      return false if organization_period.invoices.present?
-      return false if periods.empty? && organization_period.price_in_cents_wo_vat == 0
+      generate_invoice_of organization, invoice_number, _time
+    end
+
+    def generate_invoice_of(organization, invoice_number=nil, _time=nil)
+      begin
+        time = _time.to_date.beginning_of_month + 15.days
+      rescue
+        time = 1.month.ago.beginning_of_month + 15.days
+      end
+
+      organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+
       return false if organization.addresses.select{ |a| a.is_for_billing }.empty?
+      return false if organization_period.nil?
+      return false if organization_period.invoices.present? && invoice_number.nil?
+
+      invoice = if invoice_number.present?
+                  Invoice.find_by_number(invoice_number) || Invoice.new(organization_id: organization.id, number: invoice_number)
+                else
+                  Invoice.new(organization_id: organization.id)
+                end
+
+      return false if invoice.try(:organization_id) != organization.id
+
+      customers_periods = Period.where(user_id: organization.customers.active_at(time.to_date).map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+
+      # NOTE update all period before generating invoices
+      customers_periods.each do |period|
+        UpdatePeriodDataService.new(period).execute
+        UpdatePeriod.new(period).execute
+        print '.'
+      end
 
       UpdateOrganizationPeriod.new(organization_period).fetch_all
       #Update discount only for organization and when generating invoice
       DiscountBillingService.update_period(organization_period)
 
+      return false if customers_periods.empty? && organization_period.price_in_cents_wo_vat == 0
+
       #Merge invoice of extentis group to FIDC
-      merge_extentis_invoice if organization.code == 'FIDC'
+      merge_extentis_invoice(time) if organization.code == 'FIDC'
 
       #We dont generate EG, FIDC , FBC's invoices
       return false if extentis_group.include? organization.code
 
       puts "Generating invoice for organization : #{organization.name}"
-      invoice = Invoice.new
-      invoice.organization = organization
       invoice.period       = organization_period
       invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
       invoice.save
       print "-> Invoice #{invoice.number}..."
-      CreateInvoicePdf.new(invoice).execute
+      CreateInvoicePdf.new(invoice, time).execute
       print "done\n"
 
       #organization.admins.each do |admin|
@@ -75,8 +86,7 @@ class CreateInvoicePdf
       # InvoiceMailer.delay(queue: :high).notify(invoice)
     end
 
-    def merge_extentis_invoice
-      time = 1.month.ago.beginning_of_month + 15.days
+    def merge_extentis_invoice(time)
       fidec = Organization.find_by_code 'FIDC'
       fidec_period = fidec.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
       orders = fidec_period.product_option_orders
@@ -104,7 +114,6 @@ class CreateInvoicePdf
         orders << create_fidc_order_of(organization, total_amount)
       end
 
-      orders << create_discount_april_fidec(fidec) #TEMP : Forgotten FIDEC discount billing (april)
       fidec_period.product_option_orders = orders.compact if fidec_period
     end
 
@@ -123,24 +132,10 @@ class CreateInvoicePdf
       option
     end
 
-    # TEMP : Forgotten FIDEC discount billing (april)
-    def create_discount_april_fidec(organization)
-      return nil if !organization.present? || Time.now.month != 6
-
-      option = ProductOptionOrder.new
-
-      option.title       = "Remise sur CA Avril"
-      option.name        = 'discount_option'
-      option.duration    = 1
-      option.group_title = 'Autres'
-      option.is_an_extra = true
-      option.price_in_cents_wo_vat = -126 * 100.0
-
-      option
-    end
-
     def archive_invoice(time = Time.now)
       invoices   = Invoice.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month)
+      return false unless invoices.present?
+
       invoices_files_path = invoices.map { |e| e.cloud_content_object.path }
 
       archive_name = "invoices_#{(time - 1.month).strftime('%Y%m')}.zip"
@@ -160,8 +155,9 @@ class CreateInvoicePdf
     end
   end
 
-  def initialize(invoice)
+  def initialize(invoice, time=nil)
     @invoice = invoice
+    @time    = time
   end
 
   def execute
@@ -176,7 +172,7 @@ class CreateInvoicePdf
   end
 
   def initialize_data_utilities
-    time = @invoice.created_at - 1.month
+    time = @time || @invoice.created_at - 1.month
     @data    = []
     @total   = 0
     @months  = I18n.t('date.month_names').map { |e| e.capitalize if e }
