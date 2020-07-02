@@ -251,24 +251,25 @@ class Pack < ApplicationRecord
 
 
   def archive_name
-    name.gsub(/\s/, '_') + '.zip'
+    name.gsub(/\s/, '_') + '_' + pieces.size.to_s + '.zip'
   end
 
 
   def archive_file_path
-    dir = "#{Rails.root}/tmp/archives/#{self.id}"
+    dir      = "#{Rails.root}/tmp/archives/#{self.id}"
     zip_path = File.join(dir, archive_name)
 
     unless File.exist?(zip_path)
       FileUtils.makedirs(dir)
       FileUtils.chmod(0755, dir)
 
+      files_paths = []
       pieces.each do |piece|
         piece_file_path = piece.cloud_content_object.path.to_s
-        FileUtils.copy piece_file_path, File.join(dir, File.basename(piece_file_path)) if File.exist?(piece_file_path)
+        files_paths << piece_file_path if File.exist?(piece_file_path)
       end
 
-      POSIX::Spawn::system "zip #{zip_path} #{dir}/*"
+      DocumentTools.archive(zip_path, files_paths) if files_paths.present?
       FileUtils.delay_for(5.minutes, queue: :low).remove_dir(dir, true)
     end
 
