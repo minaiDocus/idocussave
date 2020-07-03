@@ -360,7 +360,10 @@ class Account::DocumentsController < Account::AccountController
     pack = nil unless pack.owner.in?(accounts)
 
     begin
-      pack.save_archive_to_storage if pack.archive_name.gsub('%', '_') != pack.cloud_archive_object.filename #May takes several times
+      if !pack.cloud_archive.attached? || pack.archive_name.gsub('%', '_') != pack.try(:cloud_archive_object).try(:filename)
+        pack.save_archive_to_storage #May takes several times
+      end
+
       zip_path = pack.cloud_archive_object.reload.path.presence || pack.archive_file_path
 
       ok = pack && File.exist?(zip_path)
