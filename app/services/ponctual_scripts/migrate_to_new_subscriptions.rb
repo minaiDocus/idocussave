@@ -14,7 +14,7 @@ class PonctualScripts::MigrateToNewSubscriptions < PonctualScripts::PonctualScri
 
     Subscription.where('user_id > 0').each do |subscription|
       @subscription = subscription
-      next unless @subscription.user && @subscription.user.still_active?
+      next unless @subscription.configured? && @subscription.user && @subscription.user.still_active?
 
       prepare_params
 

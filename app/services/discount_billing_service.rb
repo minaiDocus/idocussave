@@ -62,6 +62,7 @@ class DiscountBillingService
   def unit_amount(option)
     amount = get_amount_policy option
     amount[:retriever] = 0.0 if @organization.subscription.try(:retriever_price_option).to_s == 'reduced_retriever'
+    return amount[:subscription] if option.to_s == 'iDoMini'
     amount[option]
   end
 
@@ -96,9 +97,9 @@ class DiscountBillingService
     @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
   end
 
-  def get_amount_policy(option)
-    package   = (option.to_s == 'iDoMini')? :ido_mini : :default
-    quantity  = quantity_of(option)
+  def get_amount_policy(package_sym)
+    package   = (package_sym.to_s == 'iDoMini')? :ido_mini : :default
+    quantity  = quantity_of(package_sym)
     result    = { subscription: 0, retriever: 0 }
 
     SubscriptionPackage.discount_billing_of(package, apply_special_policy?).each do |discount|

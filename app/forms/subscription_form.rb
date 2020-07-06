@@ -9,13 +9,13 @@ class SubscriptionForm
 
   def submit(params)
     @params = params
+    is_new = !@subscription.configured?
+
     @to_apply_now = @subscription.user.recently_created? || (@requester.is_admin && get_param(:is_to_apply_now).to_i == 1)
 
     @subscription.is_annual_package_active           = value_of(:is_annual_package_active)   || false
     @subscription.is_scan_box_package_active         = value_of(:is_scan_box_package_active) || false
     @subscription.is_scan_box_package_to_be_disabled = false
-
-    is_new = !@subscription.configured?
 
     @subscription.is_basic_package_to_be_disabled = (!@to_apply_now && @subscription.is_basic_package_active && get_param(:is_basic_package_active).to_i == 0)
     @subscription.is_idox_package_to_be_disabled  = (!@to_apply_now && @subscription.is_idox_package_active  && get_param(:is_idox_package_active).to_i == 0)
