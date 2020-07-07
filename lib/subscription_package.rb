@@ -112,7 +112,10 @@ class SubscriptionPackage
 
     def discount_billing_of(package, special = false)
       if package == :ido_mini
-        [{ limit: (50..Float::INFINITY), subscription_price: -4, retriever_price: 0 }]
+        [
+          { limit: (0..49), subscription_price: 0, retriever_price: 0 },
+          { limit: (50..Float::INFINITY), subscription_price: -4, retriever_price: 0 }
+        ]
       else
         if special
           [
