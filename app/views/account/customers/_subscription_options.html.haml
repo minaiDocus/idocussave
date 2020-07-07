@@ -45,7 +45,7 @@
     .row
       .col-md-6
         .form-check.form-check-inline
-          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', (@subscription.is_basic_package_active && !@subscription.is_basic_package_to_be_disabled), class: 'form-check-input basic-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
+          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', (!@subscription.configured? || (@subscription.is_basic_package_active && !@subscription.is_basic_package_to_be_disabled)), class: 'form-check-input basic-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
           = label_tag 'subscription[subscription_option]', "iDo'Classique", class: 'form-check-label'
       .col-md-6.form_check_basic_package
         .float-right{ style: 'padding-right: 4.5em' }

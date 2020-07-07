@@ -459,12 +459,13 @@ class Account::CustomersController < Account::OrganizationController
         is_idox_package_to_be_disabled: false,
         is_micro_package_active: false,
         is_mini_package_active: false,
-        is_basic_package_active: true,
+        is_basic_package_active: false,
         is_mail_package_active: false,
         is_retriever_package_active: false,
         number_of_journals: 5,
         is_to_apply_now: true,
-        retriever_price_option: 'retriever'
+        retriever_price_option: 'retriever',
+        configured?: false
       })
   end
 
