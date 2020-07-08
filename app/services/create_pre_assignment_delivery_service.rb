@@ -9,6 +9,7 @@ class CreatePreAssignmentDeliveryService
     @report      = @preseizures.first.try(:report)
     @is_auto     = options[:is_auto] || false
     @verify      = options[:verify]  || false
+    @force_send  = options[:force]   || false
     @deliveries  = []
   end
 
@@ -75,6 +76,7 @@ class CreatePreAssignmentDeliveryService
         delivery.grouped_date = date
         delivery.total_item   = preseizures.size
         delivery.preseizures  = preseizures
+        delivery.error_message = 'force sending' if @force_send
         if delivery.save
           preseizures.first.save if preseizures.size == 1
 
