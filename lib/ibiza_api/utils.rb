@@ -49,7 +49,7 @@ class IbizaAPI::Utils
   end
 
 
-  def self.to_import_xml(exercise, preseizures, ibiza=nil)
+  def self.to_import_xml(exercise, preseizures, ibiza=nil, force=false)
     fields                      = ibiza.try(:description).presence || {}
     separator                   = ibiza.try(:description_separator).presence || ' - '
     piece_name_format           = ibiza.try(:piece_name_format).presence || {}
@@ -62,7 +62,7 @@ class IbizaAPI::Utils
         xml.importDate exercise.end_date
         xml.wsImportEntry do
           preseizures.each do |preseizure|
-            if preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(preseizure)
+            if !force && (preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaPreseizureFinder.is_delivered?(preseizure))
               preseizure.delivered_to('ibiza')
               preseizure.set_delivery_message_for('ibiza', 'already sent')
               preseizure.save

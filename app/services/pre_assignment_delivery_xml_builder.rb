@@ -29,7 +29,7 @@ class PreAssignmentDeliveryXmlBuilder
     @delivery.building_data
 
     if ibiza_exercise
-      response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software)
+      response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software, (@delivery.error_message == 'force sending'))
 
       if response[:data_count] > 0
         save_data_to_storage response[:data_built]
@@ -86,10 +86,9 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
   def building_success(data_count)
-    if data_count != @preseizures.size
-      @delivery.error_message = "#{@preseizures.size - data_count} preseizure(s) already sent"
-      @delivery.save
-    end
+    @delivery.error_message = ''
+    @delivery.error_message = "#{@preseizures.size - data_count} preseizure(s) already sent" if data_count != @preseizures.size
+    @delivery.save
 
     @delivery.data_built
   end
