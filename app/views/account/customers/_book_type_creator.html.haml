@@ -4,7 +4,7 @@
     %input#customer_id{ type: :hidden, value: "#{@customer.id}", name: "customer_id"}
     .col-md-6
       .box.small-shadow          
-        = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
+        = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled, class: "can_be_required" }
         - if @customer && @customer.uses_api_softwares?
           - is_ibiza_configured = @organization.ibiza.configured?
 
@@ -32,7 +32,7 @@
                   = render 'shared/ibiza_not_configured_warning'
         - else
           = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
-        = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
+        = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.', input_html: { class: "can_be_required" }
         - if !@customer || @customer.subscription.is_mail_package_active
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 

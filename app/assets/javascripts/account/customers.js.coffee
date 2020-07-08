@@ -58,14 +58,24 @@ load_modal_function= (id) ->
 
   $('#valider').unbind 'click'
   $('#valider').on 'click', (e) ->
-    e.stopPropagation()    
+    e.stopPropagation()
     data            = $(".modal form#account_book_type").serialize()
     organization_id = $('#organization_id').val()
     customer_id     = $('#customer_id').val()
     self = $(this)
-    self.attr('disabled', true)
-    $('.modal#for_step_two #informations').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">')
+    $('.modal#for_step_two #informations').html('')
+    $('.modal#for_step_two #informations').html($('.alert_content_image').clone().removeClass('hide'))
 
+    if ($('#account_book_type_name').val() == "")
+      $('.modal#for_step_two #informations').html($('.alert_danger_content').clone().html('Code journal iDocus vide').removeClass('hide'))
+      $('#account_book_type_name').focus()
+      return false
+    else if ($('#account_book_type_description').val() == "")
+      $('.modal#for_step_two #informations').html($('.alert_danger_content').clone().html('Nom du journal comptable iDocus vide').removeClass('hide'))
+      $('#account_book_type_description').focus()
+      return false
+
+    self.attr('disabled', true)
     url = "/account/organizations/#{organization_id}/journals"
     if (id != '')
       url = "/account/organizations/#{organization_id}/journals/#{id}"
@@ -76,20 +86,20 @@ load_modal_function= (id) ->
       type: 'POST',
       success: (data) -> 
         if data.response.indexOf('avec succ') > 0
-          $('.modal#for_step_two #informations').html('<div class="alert alert-success margin0" role="alert">'+data.response+'</div>')
+          $('.modal#for_step_two #informations').html($('.alert_success_content').clone().html(data.response).removeClass('hide'))
           $.ajax
             url: "/account/organizations/#{organization_id}/customers/#{customer_id}/refresh_book_type",            
             success: (data) ->
               $('#book_type').html(data)
               load_account_book_type_function()
 
-          setTimeout(()->
+          setTimeout( ()->
             $('.modal#for_step_two #informations').html('');
             self.attr('disabled', false);
             $('.modal#for_step_two').modal('hide');
           , 4000)
         else
-          $('.modal#for_step_two #informations').html('<div class="alert alert-warning margin0" role="alert">'+data.response+'</div>')
+          $('.modal#for_step_two #informations').html($('.alert_warning_content').clone().html(data.response).removeClass('hide'))
           self.attr('disabled', false)
 
 load_vat_function= (id, controlleur) ->
@@ -138,20 +148,25 @@ load_vat_function= (id, controlleur) ->
 
   $(add).unbind 'click'
   $(add).on 'click', (e) ->
-    next_tbody = $(parent_box + ' table.hidden_insertion_table tbody')
 
-    if(id == 'vatc_account')
-      next_tbody.find('tr:first').addClass('customer')
-    else if(id == 'vatp_account')
-      next_tbody.find('tr:first').addClass('provider')
+    if !$(table).hasClass('blocked')
+      $(table).addClass('blocked')
 
-    line = next_tbody.html()
+      next_tbody = $(parent_box + ' table.hidden_insertion_table tbody')
+      if(id == 'vatc_account')
+        next_tbody.find('tr:first').addClass('customer')
+      else if(id == 'vatp_account')
+        next_tbody.find('tr:first').addClass('provider')
 
-    $(table).find('tbody:last').append(line)
-    load_vat_function(id, controlleur)
+      line = next_tbody.html()
+
+      $(table).find('tbody:last').append(line)
+      load_vat_function(id, controlleur)
 
 verify_before_validate= (link, controlleur) ->
-  tr = link.closest('tr')
+  tr    = link.closest('tr')
+  table = tr.closest('table')
+
   if(tr.hasClass('verify'))
     value_counter = 0
     tr.removeClass('verify')
@@ -180,6 +195,7 @@ verify_before_validate= (link, controlleur) ->
 
       if(value_counter == 0)
         tr.remove()
+        $(table).removeClass('blocked')
         if(entry_id_input.val() > 0)
           data = { id: entry_id_input.val(), destroy: 'destroy', type: entry_type }
       else
@@ -200,6 +216,8 @@ verify_before_validate= (link, controlleur) ->
           dataType: 'json',
           type: 'PATCH',
           success: (result) ->
+            $(table).removeClass('blocked')
+
             if(result)
               entry_id_input.val(result['account']['id'])
 
@@ -214,14 +232,26 @@ load_accounting_plan_function= (id) ->
     e.preventDefault()
     data = new FormData()
     files = $('#'+id+'_file')[0].files[0]
+
+    text_alert = "Merci de séléctionner un fichier avant d'importer"
+    url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import"
+
+    if (id == 'fec')
+      text_alert = "Merci de séléctionner un fichier avant de charger un FEC"
+      url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec"
+
+    if (files == undefined)
+      $('#information_import').html('')
+      $('#information_import').html($(".alert_danger_content").clone().html(text_alert).removeClass('hide')).show('')
+      return false
+
+    $('#information_import').html('')
+
     data.append(id + '_file',files)
     data.append('new_create_book_type','1')
     $('.import_accounting').attr('disabled', true)
-    $('#information_import').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">  Importation en cours . . .')
-
-    url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import"
-    if (id == 'fec')
-      url = "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec"
+    $('#informations').html('')
+    $('#information_import').html($('.alert_content_image').clone().removeClass('hide')).show('')
 
     $.ajax
       url: url,
@@ -237,35 +267,45 @@ load_accounting_plan_function= (id) ->
           load_vat_function('vatc_account', 'accounting_plans')
           load_vat_function('vatp_account', 'accounting_plans')
         else
-          $('#for_step_two .modal-header h3').text('Paramétrage import FEC')
-          $('#for_step_two .close').hide()
-          $('#for_step_two .modal-footer').hide()
-          $('#for_step_two').find('.modal-body:first').hide()
-          $('#for_step_two .modal-dialog_box').append(data)
-          $('#for_step_two').modal('show')
+          if (data != undefined)
+            $('#for_step_two .modal-header h3').text('Paramétrage import FEC')
+            $('#for_step_two .close').hide()
+            $('#for_step_two .modal-footer').hide()
+            $('#for_step_two').find('.modal-body:first').hide()
+            $('#for_step_two .modal-dialog_box').append(data)
+            $('#for_step_two').modal('show')
 
-          $('#for_step_two input#import_button').unbind 'click'
-          $('#for_step_two input#import_button').on 'click', (e) ->
-            e.preventDefault()
-            $(this).attr('disabled', true)
-            $('#informations').html('<img src="/assets/application/bar_loading.gif" alt="chargement...">')
+            $('#for_step_two input#import_button').unbind 'click'
+            $('#for_step_two input#import_button').on 'click', (e) ->
+              e.preventDefault()
+              $(this).attr('disabled', true)
+              $('#informations').html('')
+              $('#informations').html($('.alert_content_image').clone().first().removeClass('hide'))
 
-            $.ajax
-              url: "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec_processing",
-              data: $('form#importFecAfterConfiguration').serialize(),
-              contentType: false,
-              processData: false,
-              success: (data) ->
-                $('#partial_table').html(data)
-                $('#information_import').html('')
-                $('.import_accounting').attr('disabled', false)
-                load_vat_function('vatc_account', 'accounting_plans')
-                load_vat_function('vatp_account', 'accounting_plans')
-                $('#for_step_two .modal-dialog_box').html('')
-                $('#for_step_two .close').show()
-                $('#for_step_two .modal-footer').show()
-                $('#for_step_two').find('.modal-body:first').show()
-                $('#for_step_two').modal('hide')
+              $.ajax
+                url: "/account/organizations/#{organization_id}/customers/#{customer_id}/accounting_plan/import_fec_processing",
+                data: $('form#importFecAfterConfiguration').serialize(),
+                contentType: false,
+                processData: false,
+                success: (data) ->
+                  $('#partial_table').html(data)
+                  $('#information_import').html('')
+                  $('.import_accounting').attr('disabled', false)
+                  load_vat_function('vatc_account', 'accounting_plans')
+                  load_vat_function('vatp_account', 'accounting_plans')
+                  $('#for_step_two .modal-dialog_box').html('')
+                  $('#for_step_two .close').show()
+                  $('#for_step_two .modal-footer').show()
+                  $('#for_step_two').find('.modal-body:first').show()
+                  $('#for_step_two').modal('hide')
+          else
+            $('#information_import').html($('.alert_warning_content').clone().html('Type de fichier non reconnu').removeClass('hide'))
+            setTimeout(()->
+                $('#information_import').hide('');
+              , 3000)
+            $('.import_accounting').attr('disabled', false)
+
+
 
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')

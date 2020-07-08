@@ -20,9 +20,11 @@ class Account::JournalsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/journals
   def create
-    if AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
-      
-      text = 'Créer avec succès.'
+    journal = AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
+
+    if !journal.errors.messages.present?
+      text = "Nouveau journal #{ journal.name } créé avec succès"
+
       if params[:new_create_book_type].present?
         render json: { success: true, response: text }, status: 200
       else
@@ -32,10 +34,12 @@ class Account::JournalsController < Account::OrganizationController
         else
           redirect_to account_organization_journals_path(@organization)
         end
-      end      
+      end
     else
       if params[:new_create_book_type].present?
-        render json: { success: true, response: 'Erreur lors de création du journal' }, status: 200
+        text = "Le journal #{journal.name} #{journal.errors.messages[:name].join(', ')}"
+
+        render json: { success: true, response: text }, status: 200
       else
         render :new
       end
@@ -86,9 +90,11 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
-    if AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
-      
-      text = 'Modifié avec succès.'
+    journal = AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
+
+    if !journal.errors.messages.present?
+      text = "Le journal #{journal.name} est modifié avec succès."
+
       if params[:new_create_book_type].present?
         render json: { success: true, response: text }, status: 200
       else
@@ -100,8 +106,10 @@ class Account::JournalsController < Account::OrganizationController
         end
       end
     else
+      text = "Le journal #{journal.name} #{journal.errors.messages[:name].join(', ')}"
+
       if params[:new_create_book_type].present?
-        render json: { success: true, response: 'Erreur lors de création du journal' }, status: 200
+        render json: { success: true, response: text }, status: 200
       else        
         render :edit
       end

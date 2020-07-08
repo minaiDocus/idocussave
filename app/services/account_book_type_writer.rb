@@ -13,22 +13,19 @@ class AccountBookTypeWriter
     @journal = AccountBookType.new @params
     @owner.account_book_types << @journal
 
-    if @journal.save
+    @journal.save
 
-      if @owner.class == User
-        UpdateJournalRelationService.new(@journal).execute
+    if @owner.class == User
+      UpdateJournalRelationService.new(@journal).execute
 
-        EventCreateService.add_journal(@journal, @owner, @current_user, path: @request.path, ip_address: @request.remote_ip)
+      EventCreateService.add_journal(@journal, @owner, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
-        @owner.dematbox.subscribe if @owner.dematbox.try(:is_configured)
+      @owner.dematbox.subscribe if @owner.dematbox.try(:is_configured)
 
-        DropboxImport.changed(@owner)
-      end
-
-      true
-    else
-      false
+      DropboxImport.changed(@owner)
     end
+
+    @journal
   end
 
   def update
@@ -36,23 +33,21 @@ class AccountBookTypeWriter
     changes  = @journal.changes.dup
     customer = @journal.user 
 
-    if @journal.save
-      if customer
-        UpdateJournalRelationService.new(@journal).execute
+    @journal.save
 
-        EventCreateService.journal_update(@journal, customer, changes, @current_user, path: @request.path, ip_address: @request.remote_ip)
+    if customer
+      UpdateJournalRelationService.new(@journal).execute
 
-        if changes['name'].present? && @journal.user.dematbox.try(:is_configured)
-          customer.dematbox.subscribe
-        end
+      EventCreateService.journal_update(@journal, customer, changes, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
-        DropboxImport.changed(customer)
+      if changes['name'].present? && @journal.user.dematbox.try(:is_configured)
+        customer.dematbox.subscribe
       end
 
-      true
-    else
-      false
+      DropboxImport.changed(customer)
     end
+
+    @journal
   end
 
   def destroy

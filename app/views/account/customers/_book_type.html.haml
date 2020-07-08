@@ -36,9 +36,10 @@
                   %span                
                     Modifier
 
-    .box_footer.text-right
-      %button.btn.btn-info.small-shadow.text-bold.add_book_type
-        %span.mrc-5
-          = glyphicon('plus')  
-        %span
-          Ajouter un journal
+    - if @customer.account_book_types.count < @customer.options.max_number_of_journals
+      .box_footer.text-right
+        %button.btn.btn-info.small-shadow.text-bold.add_book_type
+          %span.mrc-5
+            = glyphicon('plus')
+          %span
+            Ajouter un journal

@@ -8,7 +8,7 @@
           .form-group.clearfix.mt-5
             %input{ type: :hidden, name: "new_create_book_type", value: "1"}
             .control-section{ style: "float:none !important;" }
-              = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5 import_accounting', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%"
+              = file_field_tag :fec_file, class: 'filestyle', data: { classButton: 'btn btn-warning text-bold small-shadow mt-5 import_accounting', input: true, buttonText: glyphicon('file') + '' }, style: "width:10%", accept: "text/plain"
               %button.btn.btn-primary.small-shadow.text-bold.import_accounting#import_fec_account
                 %span.mrc-5
                   = glyphicon('data-transfer-download')  
@@ -17,7 +17,7 @@
               %span.badge.badge-info.fs-origin .txt
 
     .row.mb-10
-      .col-md-12.text-center#information_import
+      .col-md-12.text-center.hide#information_import
 
     .row.mb-5
       .col-md-6
