@@ -77,7 +77,7 @@
               .form-group.clearfix
                 .label-section
                   = label_tag 'user[manager_id]', "Quel est le collaborateur en charge du dossier?", class: 'control-label required'
-                .control-section  
+                .control-section
                   = select_tag 'user[manager_id]', options_for_select(managers_options_for_select), class: 'form-control select optional', include_blank: false
                   %i.help-block IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.
               .form-group.clearfix.radio_buttons
@@ -91,7 +91,8 @@
                   %span.radio
                     %label
                       = radio_button_tag 'user[options_attributes][is_taxable]', false, true
-                      Non (aucune TVA ne sera reportée en pré-saisie)
+                      Non
+                    %i.help-block Non (aucune TVA ne sera reportée en pré-saisie).
 
           .col-md-6
             .box.bg-light.height_groups.groups_1.clearfix.small-shadow

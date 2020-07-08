@@ -24,11 +24,10 @@
             = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
             = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
         .col-md-6.form_check_micro_package
-          .float-right{ style: 'padding-right: 17em' }
+          .float-right.micro-package-option
             .form-check.form-check-inline
               = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
               = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
-    - if current_user.is_admin || @organization.code.in?(['GAP'])
       .row
         .col-md-6
           .form-check.form-check-inline
@@ -61,12 +60,13 @@
           = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', (@subscription.is_retriever_only? && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input retriever-uniquess-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_retriever_only? && @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
           = label_tag 'subscription[subscription_option]', "Automate uniquement", class: 'form-check-label'
     .row.mt-4
-      .col-md-3
-      .col-md-2
-        = label_tag 'subscription[number_of_journals]', "Nombre de journaux", class: 'control-label required'
-      .col-md-4
-        .subscription_number_of_journals
-          = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-3 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
+      .col-md-6
+        .form-inline.form-check.form-check-inline
+          .label-section
+            = label_tag 'subscription[number_of_journals]', "Nombre de journaux", class: 'control-label required'
+          .control-section
+            .subscription_number_of_journals
+              = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-3 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold;margin-left: 20px', required: true, autofocus: true, pattern: '/^[0-9]+$/'
 
     %br
     %br

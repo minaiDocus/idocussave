@@ -504,6 +504,10 @@ jQuery ->
   
   $('#personalize_subscription_package_form input[type="checkbox"].option_checkbox').click (e) -> update_price()
 
+  $('#personalize_subscription_package_form .subscription_number_of_journals input[type="number"].special_input').bind 'keyup keydown change', (e) ->
+    e.preventDefault()
+    update_price()
+
   $('#personalize_subscription_package_form input[type="radio"].radio-button').on 'click', (e) ->
     if !$("##{e.currentTarget.id}").hasClass('active')
       class_list = $(this).attr('class').split(/\s+/)
