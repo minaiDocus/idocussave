@@ -93,7 +93,7 @@ class Account::JournalsController < Account::OrganizationController
     journal = AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
 
     if !journal.errors.messages.present?
-      text = "Le journal #{journal.name} est modifié avec succès."
+      text = "Le journal #{journal.name} a été modifié avec succès."
 
       if params[:new_create_book_type].present?
         render json: { success: true, response: text }, status: 200

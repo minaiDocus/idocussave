@@ -243,6 +243,9 @@ load_accounting_plan_function= (id) ->
     if (files == undefined)
       $('#information_import').html('')
       $('#information_import').html($(".alert_danger_content").clone().html(text_alert).removeClass('hide')).show('')
+      setTimeout(()->
+        $('#information_import').hide('');
+      , 4000)
       return false
 
     $('#information_import').html('')
