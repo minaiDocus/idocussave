@@ -24,7 +24,7 @@
             = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
             = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
         .col-md-6.form_check_micro_package
-          .float-right.micro-package-option
+          .float-right{ style: 'padding-right: 17em' }
             .form-check.form-check-inline
               = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
               = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
