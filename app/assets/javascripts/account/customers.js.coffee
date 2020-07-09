@@ -154,8 +154,10 @@ load_vat_function= (id, controlleur) ->
 
       next_tbody = $(parent_box + ' table.hidden_insertion_table tbody')
       if(id == 'vatc_account')
+        next_tbody.find('tr:first').removeClass('provider')
         next_tbody.find('tr:first').addClass('customer')
       else if(id == 'vatp_account')
+        next_tbody.find('tr:first').removeClass('customer')
         next_tbody.find('tr:first').addClass('provider')
 
       line = next_tbody.html()
