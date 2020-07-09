@@ -68,6 +68,8 @@ class ImportFecService
     book_accepted   = []
 
     txt_file.each_line do |line|
+      break if @params[:journal].nil?
+
       column      = line.split(/\t/)
 
       next if !@params[:journal].select{|j| j[column[0]].present? }.present?

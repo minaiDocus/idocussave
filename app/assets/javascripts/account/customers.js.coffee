@@ -1,11 +1,11 @@
 clean_dialog_box= () ->
   $('#for_step_two .modal-body').html('')
+  $('.modal#for_step_two #informations').html('')
 
 load_account_book_type_function= () ->
   $('.add_book_type').unbind 'click'
   $('.add_book_type').on 'click', (e) ->
     clean_dialog_box()
-    $('.modal#for_step_two #informations').html('')
     $('#for_step_two .modal-header h3').text('Ajouter un journal')
     organization_id = $('#organization_id').val()
     customer_id = $('#customer_id').val()
@@ -66,15 +66,6 @@ load_modal_function= (id) ->
     $('.modal#for_step_two #informations').html('')
     $('.modal#for_step_two #informations').html($('.alert_content_image').clone().removeClass('hide'))
 
-    if ($('#account_book_type_name').val() == "")
-      $('.modal#for_step_two #informations').html($('.alert_danger_content').clone().html('Code journal iDocus vide').removeClass('hide'))
-      $('#account_book_type_name').focus()
-      return false
-    else if ($('#account_book_type_description').val() == "")
-      $('.modal#for_step_two #informations').html($('.alert_danger_content').clone().html('Nom du journal comptable iDocus vide').removeClass('hide'))
-      $('#account_book_type_description').focus()
-      return false
-
     self.attr('disabled', true)
     url = "/account/organizations/#{organization_id}/journals"
     if (id != '')
@@ -84,23 +75,39 @@ load_modal_function= (id) ->
       url: url,
       data: data,
       type: 'POST',
-      success: (data) -> 
-        if data.response.indexOf('avec succ') > 0
-          $('.modal#for_step_two #informations').html($('.alert_success_content').clone().html(data.response).removeClass('hide'))
-          $.ajax
-            url: "/account/organizations/#{organization_id}/customers/#{customer_id}/refresh_book_type",            
-            success: (data) ->
-              $('#book_type').html(data)
-              load_account_book_type_function()
+      success: (data) ->
+        $('div.label-section label').each((e) ->
+            reinit_label = $(this).text().split(':')[0]
+            $(this).text(reinit_label)
+            $(this).removeClass('blur')
+          )
+        $('input').removeClass('input-blur')
+        $.each data.response, (champ, messages) ->
+          if messages.indexOf('avec suc') > 0
+            $('.modal#for_step_two #informations').html($('.alert_success_content').clone().html(messages).removeClass('hide'))
+            $.ajax
+              url: "/account/organizations/#{organization_id}/customers/#{customer_id}/refresh_book_type",
+              success: (data) ->
+                $('#book_type').html(data)
+                load_account_book_type_function()
 
-          setTimeout( ()->
-            $('.modal#for_step_two #informations').html('');
-            self.attr('disabled', false);
-            $('.modal#for_step_two').modal('hide');
-          , 4000)
-        else
-          $('.modal#for_step_two #informations').html($('.alert_warning_content').clone().html(data.response).removeClass('hide'))
-          self.attr('disabled', false)
+            setTimeout( ()->
+              $('.modal#for_step_two #informations').html('');
+              self.attr('disabled', false);
+              $('.modal#for_step_two').modal('hide');
+            , 4000)
+          else
+            label     = $(".account_book_type_" + champ).find('div.label-section label')
+            if label.length > 0
+              new_label = label.text().toString() + " : "+ messages.join(', ')
+              label.text(new_label)
+              label.addClass('blur')
+              $("#account_book_type_" + champ).addClass('input-blur')
+              $('.modal#for_step_two #informations').html('')
+            else
+              $('.modal#for_step_two #informations').html($('.alert_danger_content').clone().html('Le journal '+ messages).removeClass('hide'))
+
+        self.attr('disabled', false)
 
 load_vat_function= (id, controlleur) ->
   if(controlleur == 'vats_accounts')

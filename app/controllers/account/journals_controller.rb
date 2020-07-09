@@ -26,7 +26,7 @@ class Account::JournalsController < Account::OrganizationController
       text = "Nouveau journal #{ journal.name } créé avec succès"
 
       if params[:new_create_book_type].present?
-        render json: { success: true, response: text }, status: 200
+        render json: { success: true, response: { text: text } }, status: 200
       else
         flash[:success] = text
         if @customer
@@ -37,9 +37,7 @@ class Account::JournalsController < Account::OrganizationController
       end
     else
       if params[:new_create_book_type].present?
-        text = "Le journal #{journal.name} #{journal.errors.messages[:name].join(', ')}"
-
-        render json: { success: true, response: text }, status: 200
+        render json: { success: true, response: journal.errors.messages }, status: 200
       else
         render :new
       end
@@ -96,7 +94,7 @@ class Account::JournalsController < Account::OrganizationController
       text = "Le journal #{journal.name} a été modifié avec succès."
 
       if params[:new_create_book_type].present?
-        render json: { success: true, response: text }, status: 200
+        render json: { success: true, response: { text: text } }, status: 200
       else
         flash[:success] = text
         if @customer
@@ -106,11 +104,9 @@ class Account::JournalsController < Account::OrganizationController
         end
       end
     else
-      text = "Le journal #{journal.name} #{journal.errors.messages[:name].join(', ')}"
-
       if params[:new_create_book_type].present?
-        render json: { success: true, response: text }, status: 200
-      else        
+        render json: { success: true, response: journal.errors.messages }, status: 200
+      else
         render :edit
       end
     end

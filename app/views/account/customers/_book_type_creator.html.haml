@@ -36,6 +36,8 @@
         - if !@customer || @customer.subscription.is_mail_package_active
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
+        #error_reports.hide
+
     .col-md-6
       - is_disabled = !(@customer.present? && @customer.options.is_preassignment_authorized)
       .box.small-shadow
