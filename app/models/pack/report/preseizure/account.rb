@@ -48,17 +48,17 @@ class Pack::Report::Preseizure::Account < ApplicationRecord
           accounts_name << journal.meta_account_number
 
           if fetch_customer
-            accounts_name << accounting_plan.customers.collect(&:third_party_account)
+            accounts_name << accounting_plan.active_customers.collect(&:third_party_account)
           else
-            accounts_name << accounting_plan.providers.collect(&:third_party_account)
+            accounts_name << accounting_plan.active_providers.collect(&:third_party_account)
           end
         else
           accounts_name << journal.meta_charge_account
 
           if entry.type == Pack::Report::Preseizure::Entry::DEBIT && compta_type == 'AC'
-            accounts_name << accounting_plan.providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+            accounts_name << accounting_plan.active_providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
           elsif entry.type == Pack::Report::Preseizure::Entry::CREDIT && compta_type == 'VT'
-            accounts_name << accounting_plan.customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+            accounts_name << accounting_plan.active_customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
           end
         end
 
@@ -86,9 +86,9 @@ class Pack::Report::Preseizure::Account < ApplicationRecord
       accounts_name << match_rules
 
       if operation.credit?
-        accounts_name << accounting_plan.providers.collect(&:third_party_account)
+        accounts_name << accounting_plan.active_providers.collect(&:third_party_account)
       else #debit
-        accounts_name << accounting_plan.customers.collect(&:third_party_account)
+        accounts_name << accounting_plan.active_customers.collect(&:third_party_account)
       end
     end
 
