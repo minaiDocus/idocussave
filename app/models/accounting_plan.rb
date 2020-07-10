@@ -72,7 +72,7 @@ class AccountingPlan < ApplicationRecord
         end
 
         accounting_plans do
-          customers.each do |customer|
+          active_customers.each do |customer|
             wsAccounts do
               category 1
               associate customer.conterpart_account
@@ -82,7 +82,7 @@ class AccountingPlan < ApplicationRecord
             end
           end
 
-          providers.each do |provider|
+          active_providers.each do |provider|
             wsAccounts do
               category 2
               associate provider.conterpart_account
@@ -105,7 +105,7 @@ class AccountingPlan < ApplicationRecord
              []
            end
 
-    [[1, customers], [2, providers]].each do |category, accounts|
+    [[1, active_customers], [2, active_providers]].each do |category, accounts|
       accounts.each do |account|
         data << [
           category,
@@ -129,5 +129,13 @@ class AccountingPlan < ApplicationRecord
   def need_update?
     return true unless last_checked_at
     last_checked_at < 4.hours.ago && !is_updating
+  end
+
+  def active_customers
+    customers.where(is_updated: true)
+  end
+
+  def active_providers
+    providers.where(is_updated: true)
   end
 end
