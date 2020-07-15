@@ -2,7 +2,7 @@
 
 class BudgeaRetrieverAdminToXlsService
   def execute(export_csv=false)
-    accounts              = BudgeaAccount.where.not(encrypted_access_token: nil).last(10)
+    accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
     list_retriever_budgea = []
     body_csv_normal       = []
     body_csv_failed       = []
@@ -43,7 +43,6 @@ class BudgeaRetrieverAdminToXlsService
       end
 
     end
-
     list_retriever_budgea.uniq! if list_retriever_budgea.any?
 
     body_csv_bug = verify_retriever_idocus_and_not_at_budgea_with list_retriever_budgea if list_retriever_budgea.any?
@@ -55,7 +54,92 @@ class BudgeaRetrieverAdminToXlsService
     end
   end
 
+  def for_users
+    users_list_for_deleting     = []
+    retriever_list_for_deleting = []
+    budgea_id_list              = []
+
+    all_ = Budgea::Client.new.get_all_users
+
+    all_['users'].each do |user|
+      account = BudgeaAccount.where(user_id: user['id']).first
+
+      if account
+        list_connections_budgea = get_list_connections_budgea_by account.access_token if account.access_token
+
+        if list_connections_budgea.present?
+          list_retrievers = Retriever.where(budgea_id: list_connections_budgea).collect(&:id)
+
+          verif_retrievers = list_connections_budgea.reject { |budgea| list_retrievers.include?(budgea.id) }
+
+          if verif_retrievers.count > 0
+            users_list_for_deleting << user
+            retriever_list_for_deleting << { list_retrievers: verif_retrievers }
+          end
+        end
+      else
+        if need_to_renew_token_of(user['id'])
+          response = Budgea::Client.new.renew_access_token(user['id'])
+
+          # response = []
+          # response = { "jwt_token" => "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E" }
+
+          list_retrievers = get_list_connections_budgea_by(response['jwt_token'])
+          users_list_for_deleting << user.merge({ "access_token" => response['jwt_token']})
+        else
+          list_retrievers = get_list_retriever_of user
+        end
+
+        retriever_list_for_deleting << { list_retrievers: list_retrievers}
+      end
+    end
+
+    add_to_user_budgea_not_present_idocus(users_list_for_deleting)
+    add_to_retriever_budgea_not_present_idocus(retriever_list_for_deleting)
+
+    user_export(users_list_for_deleting, retriever_list_for_deleting)
+  end
+
   private
+
+  def get_list_connections_budgea_by(token)
+    list_connections_budgea = []
+    response = Budgea::Client.new(token).get_all_connections
+
+    if response['total'].present? && response['total'] > 0
+      json_content = JSON.parse(response.body)
+      json_content['connections'].each { |connection| list_connections_budgea << connection }
+    end
+
+    list_connections_budgea
+  end
+
+  def add_to_retriever_budgea_not_present_idocus(list_retrievers)
+    list_retrievers.each do  |retriever|
+      backup_retriever = RetrieversBudgeaNotPresentIdocus.new
+      backup_retriever.assign_attributes(retriever)
+    end
+  end
+
+  def add_to_user_budgea_not_present_idocus(users)
+    users.each do |user|
+      new_user = UsersBudgeaNotPresentIdocus.new
+      new_user.assign_attributes(user)
+    end
+  end
+
+  def need_to_renew_token_of(user_id)
+    UsersBudgeaNotPresentIdocus.has_token.find(user_id).count == 0
+  end
+
+  def get_list_retriever_of(user_id)
+    list_retrievers = []
+
+    list_retrievers << Retriever.where(user_id: user_id)
+    list_retrievers << RetrieversBudgeaNotPresentIdocus.where(id_user: user_id)
+
+    list_retrievers
+  end
 
   def for_export(body_csv_normal, body_csv_failed, body_csv_bug)
     book = Spreadsheet::Workbook.new
@@ -70,6 +154,27 @@ class BudgeaRetrieverAdminToXlsService
     insert_book(headers, sheet1, body_csv_normal)
     insert_book(headers, sheet2, body_csv_failed)
     insert_book(headers, sheet3, body_csv_bug)
+
+    io = StringIO.new('')
+    book.write(io)
+    io.string
+  end
+
+  def user_export(users, retrievers)
+    book = Spreadsheet::Workbook.new
+
+    sheet1 = book.create_worksheet name: 'Utilisateurs non idocus'
+    sheet2 = book.create_worksheet name: 'Retrievers'
+
+    headers_users = []
+    headers_users += ['ID', 'Date', 'platform', 'Access Token']
+
+    insert_book(headers_users, sheet1, users)
+
+    headers_retrievers = []
+    headers_retrievers += []
+
+    insert_book(headers_retrievers, sheet2, retrievers)
 
     io = StringIO.new('')
     book.write(io)

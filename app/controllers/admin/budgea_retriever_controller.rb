@@ -18,4 +18,11 @@ class Admin::BudgeaRetrieverController < Admin::AdminController
 
     render partial: 'admin/budgea_retriever/body'
   end
+
+  def get_all_users
+    filename = "Utilisateurs_budgea_retriever.xls"
+    results  = BudgeaRetrieverAdminToXlsService.new.for_users
+
+    send_data results, type: 'application/vnd.ms-excel', filename: filename
+  end
 end
