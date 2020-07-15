@@ -61,8 +61,7 @@ class Budgea
       @response = connection.get do |request|
         request.url '/2.0/categories'
         request.headers['Accept'] = 'application/json'
-        request.params = authentification_params
-        request.body = '{ application: "sharedAccess" }'
+        request.body = authentification_params.to_query
       end
 
       run_and_parse_response 'categories'
@@ -152,6 +151,20 @@ class Budgea
         request.headers = headers
       end
 
+      run_and_parse_response
+    end
+
+    def get_all_users(search=nil)
+      # Token for listing all users
+      _last_token = @access_token
+      @access_token = 'Qrr0hxNj9RTYiMfapDLOneijaFazK2xwfLm77zwniYjp0dK8DhNdy7mlov0ZVlzuj2gU_8eqd6yrZfOOGW34EKAm6dY5h5yGW7d5UMjZ0bndWQRuxapH1wue47herUNP'
+
+      @response = connection.get do |request|
+        request.url "/2.0/users"
+        request.headers = headers
+      end
+
+      @access_token = _last_token
       run_and_parse_response
     end
 
