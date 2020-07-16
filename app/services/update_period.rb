@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 # Updates period with last subscription informations
 class UpdatePeriod
-  def initialize(period)
+  def initialize(period, options={})
     @period          = period
     @subscription    = period.subscription
+    @options         = options
   end
 
   def execute
@@ -16,6 +17,8 @@ class UpdatePeriod
         copyable_keys.each do |key|
           @period[key] = @subscription[key]
         end
+
+        @period.set_current_packages(@options.try(:[], :renew_packages))
       end
 
       @period.product_option_orders.destroy_all
@@ -68,7 +71,7 @@ class UpdatePeriod
 
       # is_base_package_priced = false
 
-      @subscription.get_active_packages.each do |package|
+      @period.get_active_packages.each do |package|
         package_infos = SubscriptionPackage.infos_of(package)
 
         option = ProductOptionOrder.new
@@ -87,7 +90,7 @@ class UpdatePeriod
         selected_options << mini_remaining_months_option  if package == :ido_micro && mini_remaining_months_option.present?
       end
 
-      @subscription.get_active_options.each do |_p_option|
+      @period.get_active_options.each do |_p_option|
         option_infos = SubscriptionPackage.infos_of(_p_option)
 
         option = ProductOptionOrder.new

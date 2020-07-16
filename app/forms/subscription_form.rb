@@ -45,7 +45,7 @@ class SubscriptionForm
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
       EvaluateSubscription.new(@subscription, @requester, @request).execute
       PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
-      UpdatePeriod.new(@subscription.current_period).execute
+      UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
       destroy_pending_orders_if_needed
       true
     else

@@ -102,25 +102,19 @@ class Subscription < ApplicationRecord
   end
 
   def get_active_packages
-    result = []
+    period = self.current_period
+    period.set_current_packages
+    period.get_active_packages
+  end
 
-    result << :ido_classique if self.is_basic_package_active
-    result << :ido_mini      if self.is_mini_package_active
-    result << :ido_micro     if self.is_micro_package_active
-    result << :ido_x         if self.is_idox_package_active
-
-    result
+  def get_active_options
+    period = self.current_period
+    period.set_current_packages
+    period.get_active_options
   end
 
   def current_active_package
-    current_package = get_active_packages.first
-
-    current_package = :ido_classique if self.is_basic_package_active && self.is_basic_package_to_be_disabled
-    current_package = :ido_mini      if self.is_mini_package_active  && self.is_mini_package_to_be_disabled
-    current_package = :ido_micro     if self.is_micro_package_active && self.is_micro_package_to_be_disabled
-    current_package = :ido_x         if self.is_idox_package_active  && self.is_idox_package_to_be_disabled
-
-    current_package
+    get_active_packages.try(:first) || :ido_classique
   end
 
   def is_to_be_disabled_package?(package)
@@ -147,15 +141,6 @@ class Subscription < ApplicationRecord
       else
         false
     end
-  end
-
-  def get_active_options
-    result = []
-
-    result << :mail_option      if self.is_mail_package_active
-    result << :retriever_option if self.is_retriever_package_active
-
-    result
   end
 
   def is_retriever_only?

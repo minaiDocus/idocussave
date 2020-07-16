@@ -85,4 +85,22 @@ describe CreateInvoicePdf do
     expect(invoice_1.amount_in_cents_w_vat).to eq 4800
     expect(invoice_2.amount_in_cents_w_vat).to eq 3000
   end
+
+  it 'generates correct packages/options price from period', :test_package do
+    user         = User.last
+    subscription = user.subscription
+    period       = subscription.periods.order(created_at: :asc).first
+    period.set_current_packages
+
+    subscription.udpate({ is_basic_package_to_be_disabled: true, is_micro_package_active: true })
+
+    CreateInvoicePdf.for_all
+
+    invoice = Invoice.last
+
+    expect(period.reload.get_active_packages).to eq [:ido_classique]
+    expect(period.period_option_orders.size).to be 1
+    expect(period.period_otpion_orders.first.name).to be 'basic_package_subscription'
+    expect(invoice.amount_in_cents_w_vat).to eq 3000
+  end
 end
