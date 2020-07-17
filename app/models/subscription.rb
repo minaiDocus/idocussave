@@ -85,7 +85,7 @@ class Subscription < ApplicationRecord
     self.is_pre_assignment_active    = false if is_pre_assignment_to_be_disabled
     self.is_scan_box_package_active  = false if is_scan_box_package_to_be_disabled
     self.is_retriever_package_active = false if is_retriever_package_to_be_disabled
-    slef.is_idox_package_active      = false if is_idox_package_to_be_disabled
+    self.is_idox_package_active      = false if is_idox_package_to_be_disabled
   end
 
 
@@ -99,6 +99,24 @@ class Subscription < ApplicationRecord
 
   def owner
     user || organization
+  end
+
+  def get_enabled_packages_and_options
+    result = []
+
+    result << :ido_classique if self.is_basic_package_active
+    result << :ido_mini      if self.is_mini_package_active
+    result << :ido_micro     if self.is_micro_package_active
+    result << :ido_x         if self.is_idox_package_active
+
+    result << :mail_option      if self.is_mail_package_active
+    result << :retriever_option if self.is_retriever_package_active
+
+    result
+  end
+
+  def get_active_packages_and_options
+    get_active_packages + get_active_options
   end
 
   def get_active_packages

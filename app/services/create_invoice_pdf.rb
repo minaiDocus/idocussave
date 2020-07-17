@@ -186,6 +186,7 @@ class CreateInvoicePdf
 
     mail_package_count      = 0
     basic_package_count     = 0
+    idox_package_count      = 0
     micro_package_count     = 0
     mini_package_count      = 0
     annual_package_count    = 0
@@ -238,7 +239,7 @@ class CreateInvoicePdf
     end
 
     if idox_package_count > 0
-      @data << ["- #{idox_package_count} forfait#{'s' if basic_package_count > 1} iDo'X", '']
+      @data << ["- #{idox_package_count} forfait#{'s' if idox_package_count > 1} iDo'X", '']
     end
 
     if mail_package_count > 0

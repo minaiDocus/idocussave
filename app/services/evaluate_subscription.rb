@@ -8,6 +8,7 @@ class EvaluateSubscription
   end
 
   def execute
+    period = @subscription.current_period
     update_max_number_of_journals
 
     if @subscription.is_annual_package_active
@@ -18,13 +19,13 @@ class EvaluateSubscription
     else
       authorize_dematbox
 
-      if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+      if period.is_active?(:ido_classique) || period.is_active?(:ido_micro) || period.is_active?(:ido_mini)
         authorize_upload
       else
         unauthorize_upload
       end
 
-      if @subscription.is_retriever_package_active || @subscription.is_micro_package_active
+      if period.is_active?(:retriever_option) || period.is_active?(:ido_micro)
         authorize_retriever
       else
         unauthorize_retriever

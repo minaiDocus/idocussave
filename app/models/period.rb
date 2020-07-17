@@ -97,6 +97,11 @@ class Period < ApplicationRecord
     self.update({ current_packages: packages.presence })
   end
 
+  def is_active?(package)
+    packages_and_options = get_active_packages + get_active_options
+    packages_and_options.include? package.to_sym
+  end
+
   def is_valid_for_quota_organization
     !self.organization && self.duration == 1 && !self.subscription.is_micro_package_active && !self.subscription.is_mini_package_active
   end
