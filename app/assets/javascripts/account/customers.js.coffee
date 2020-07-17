@@ -521,6 +521,8 @@ jQuery ->
     update_price()
 
   $('#personalize_subscription_package_form input[type="radio"].radio-button').on 'click', (e) ->
+    $("#personalize_subscription_package_form .form-check input").data('original-value', 0)
+
     if !$("##{e.currentTarget.id}").hasClass('active')
       class_list = $(this).attr('class').split(/\s+/)
       lock_package()

@@ -54,12 +54,8 @@ jQuery ->
       else
         $('#subscriptions .admin_options').fadeIn('fast')
 
-    $('.package input').on 'change', ->
-      update_form()
-
     $('input, select').on 'change', ->
       update_warning()
-      update_price()
 
     $('#subscription_package_form').on 'submit', ->
       check_disabled_options()
