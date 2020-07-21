@@ -158,6 +158,7 @@ class Budgea
       # Token for listing all users
       _last_token = @access_token
       @access_token = 'Qrr0hxNj9RTYiMfapDLOneijaFazK2xwfLm77zwniYjp0dK8DhNdy7mlov0ZVlzuj2gU_8eqd6yrZfOOGW34EKAm6dY5h5yGW7d5UMjZ0bndWQRuxapH1wue47herUNP'
+      # @access_token = 'r/Vv4sV_v9owkm/3x_CzWiUotQSsA0sTGgYDSN7jSP98opHNshtMBEa94MivgKtqYz6qe5MAX4Pk0jhr4PBsN7Oxh0BwAVrUPX77aEV5VdXZ0HwzbODX14Pub_A8cdYf'
 
       @response = connection.get do |request|
         request.url "/2.0/users"
@@ -165,6 +166,32 @@ class Budgea
       end
 
       @access_token = _last_token
+      run_and_parse_response
+    end
+
+    def get_connections_log(id, min_date=nil, max_date=nil, limit=nil, offset=nil,  state=nil, period=nil, id_user=nil, id_source=nil)
+      request_filters =  "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? && max_date.present?
+      request_filters += "&limit=#{limit}"          if limit.present?
+      request_filters += "&offset=#{offset}"        if offset.present?
+      request_filters += "&state=#{state}"          if state.present?
+      request_filters += "&period=#{period}"        if period.present?
+      request_filters += "&id_user=#{id_user}"      if id_user.present?
+      request_filters += "&id_source=#{id_source}"  if id_source.present?
+
+      @response = connection.get do |request|
+        request.url "/2.0/users/me/connections/#{id}/logs#{request_filters}"
+        request.headers = headers
+      end
+
+      run_and_parse_response
+    end
+
+    def delete_connection(id)
+      @response = connection.delete do |request|
+        request.url "/2.0/users/me/connections/#{id}"
+        request.headers = headers
+      end
+
       run_and_parse_response
     end
 

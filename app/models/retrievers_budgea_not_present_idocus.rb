@@ -1,4 +1,4 @@
 # -*- encoding : UTF-8 -*-
-class RetrieversBudgeaNotPresentIdocus < ApplicationRecord
+class RetrieverBudgeaNotPresentIdocus < ApplicationRecord
   has_many :user, class_name: 'UsersBudgeaNotPresentIdocus'
 end

@@ -3,7 +3,7 @@ class CreateUsersBudgeaNotPresentIdocus < ActiveRecord::Migration[5.2]
     create_table :users_budgea_not_present_idocus do |t|
       t.date :signin
       t.string :platform
-      t.string :access_token
+      t.text :access_token
     end
   end
 end
