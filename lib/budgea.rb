@@ -12,6 +12,7 @@ class Budgea
       config.domain         = new_config['domain']          if new_config['domain']
       config.client_id      = new_config['client_id']       if new_config['client_id']
       config.client_secret  = new_config['client_secret']   if new_config['client_secret']
+      config.user_token     = new_config['user_token']      if new_config['user_token']
       config.redirect_uri   = new_config['redirect_uri']    if new_config['redirect_uri']
       config.encryption_key = new_config['encryption_key']  if new_config['encryption_key']
       config.proxy          = new_config['proxy']           if new_config['proxy']
@@ -19,7 +20,7 @@ class Budgea
   end
 
   class Configuration
-    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy, :encryption_key
+    attr_accessor :domain, :client_id, :client_secret, :user_token, :redirect_uri, :proxy, :encryption_key
   end
 
   class Client
@@ -33,6 +34,7 @@ class Budgea
         base_url:      "https://#{Budgea.config.domain}",
         client_id:     Budgea.config.client_id,
         client_secret: Budgea.config.client_secret,
+        user_token:    Budgea.config.user_token,
         proxy:         Budgea.config.proxy
       }
       # NOTE access_token is used only for limiting the scope of a request to the user only, because we could use the couple client_id/client_secret or manage_token to do all the request since it's all server side
@@ -78,6 +80,8 @@ class Budgea
     end
 
     def renew_access_token(user_id)
+      return { 'jwt_token' => nil } if Rails.env != 'production' && @settings['base_url'].match(/idocus[.]biapi[.]pro/) #IMPORTANT: secure jwt token execution for non production environment
+
       @response = connection.post do |request|
         request.url "/2.0/auth/jwt"
         request.headers['Accept'] = 'application/json'
@@ -155,10 +159,8 @@ class Budgea
     end
 
     def get_all_users(search=nil)
-      # Token for listing all users
       _last_token = @access_token
-      @access_token = 'Qrr0hxNj9RTYiMfapDLOneijaFazK2xwfLm77zwniYjp0dK8DhNdy7mlov0ZVlzuj2gU_8eqd6yrZfOOGW34EKAm6dY5h5yGW7d5UMjZ0bndWQRuxapH1wue47herUNP'
-      # @access_token = 'r/Vv4sV_v9owkm/3x_CzWiUotQSsA0sTGgYDSN7jSP98opHNshtMBEa94MivgKtqYz6qe5MAX4Pk0jhr4PBsN7Oxh0BwAVrUPX77aEV5VdXZ0HwzbODX14Pub_A8cdYf'
+      @access_token = @settings[:user_token] # Token for listing all users
 
       @response = connection.get do |request|
         request.url "/2.0/users"

@@ -15,6 +15,6 @@ class PonctualScripts::BudgeaDeleteConnections < PonctualScripts::PonctualScript
   end
 
   def delete_users_budgea
-    users = UsersBudgeaNotPresentIdocus.all
+    users = Archive::BudgeaUser.all
   end
 end
