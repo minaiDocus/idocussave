@@ -61,41 +61,41 @@ class BudgeaRetrieverAdminToXlsService
 
     all_ = Budgea::Client.new.get_all_users
 
-    all_['users'].each do |user|
+    all_['users'].last(5).each do |user|
       account = BudgeaAccount.where(user_id: user['id']).first
 
       if account
         list_connections_budgea = get_list_connections_budgea_by account.access_token if account.access_token
 
         if list_connections_budgea.present?
-          list_retrievers = Retriever.where(budgea_id: list_connections_budgea).collect(&:id)
+          list_connections_budgea_ids = list_connections_budgea['connections'].map { |connections_budgea| connections_budgea['id'] }
 
-          verif_retrievers = list_connections_budgea.reject { |budgea| list_retrievers.include?(budgea.id) }
+          list_retrievers = Retriever.where(budgea_id: list_connections_budgea_ids).collect(&:budgea_id)
+
+          verif_retrievers = list_connections_budgea['connections'].reject { |budgea| list_retrievers.include?(budgea['id']) }
 
           if verif_retrievers.count > 0
             users_list_for_deleting << user
-            retriever_list_for_deleting << { list_retrievers: verif_retrievers }
-          end
-        end
-      else
-        if need_to_renew_token_of(user['id'])
-          response = Budgea::Client.new.renew_access_token(user['id'])
-
-          # response = []
-          # response = { "jwt_token" => "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E" }
-
-          list_retrievers = get_list_connections_budgea_by(response['jwt_token'])
-          users_list_for_deleting << user.merge({ "access_token" => response['jwt_token']})
+            retriever_list_for_deleting << verif_retrievers
+          end        
         else
-          list_retrievers = get_list_retriever_of user
-        end
+          
+          if need_to_renew_token_of(user['id'])
+            response = Budgea::Client.new.renew_access_token(user['id'])
 
-        retriever_list_for_deleting << { list_retrievers: list_retrievers}
+            list_retrievers = get_list_connections_budgea_by(response['jwt_token'])
+            users_list_for_deleting << user.merge({ "access_token" => response['jwt_token']})
+          else
+            list_retrievers = get_list_retriever_of user['id']
+          end
+
+          retriever_list_for_deleting << list_retrievers
+        end
       end
     end
 
-    add_to_user_budgea_not_present_idocus(users_list_for_deleting)
-    add_to_retriever_budgea_not_present_idocus(retriever_list_for_deleting)
+    add_to_user_budgea_not_present_idocus(users_list_for_deleting.flatten)
+    add_to_retriever_budgea_not_present_idocus(retriever_list_for_deleting.flatten)
 
     user_export(users_list_for_deleting, retriever_list_for_deleting)
   end
@@ -104,39 +104,41 @@ class BudgeaRetrieverAdminToXlsService
 
   def get_list_connections_budgea_by(token)
     list_connections_budgea = []
+
     response = Budgea::Client.new(token).get_all_connections
 
-    if response['total'].present? && response['total'] > 0
-      json_content = JSON.parse(response.body)
-      json_content['connections'].each { |connection| list_connections_budgea << connection }
-    end
+    response['connections'].each { |connection| list_connections_budgea << connection } if response['total'].present? && response['total'] > 0
 
-    list_connections_budgea
+    list_connections_budgea.flatten
   end
 
   def add_to_retriever_budgea_not_present_idocus(list_retrievers)
     list_retrievers.each do  |retriever|
-      backup_retriever = RetrieversBudgeaNotPresentIdocus.new
-      backup_retriever.assign_attributes(retriever)
+      next if retriever.nil?
+
+      backup_retriever = RetrieverBudgeaNotPresentIdocus.new
+      backup_retriever.assign_attributes(budgea_retriever)
+      backup_retriever.save
     end
   end
 
   def add_to_user_budgea_not_present_idocus(users)
-    users.each do |user|
+    users.each do |budgea_user|
       new_user = UsersBudgeaNotPresentIdocus.new
-      new_user.assign_attributes(user)
+      new_user.assign_attributes(budgea_user)
+      new_user.save
     end
   end
 
   def need_to_renew_token_of(user_id)
-    UsersBudgeaNotPresentIdocus.has_token.find(user_id).count == 0
+    UsersBudgeaNotPresentIdocus.has_token.where(id: user_id).count == 0
   end
 
   def get_list_retriever_of(user_id)
     list_retrievers = []
 
-    list_retrievers << Retriever.where(user_id: user_id)
-    list_retrievers << RetrieversBudgeaNotPresentIdocus.where(id_user: user_id)
+    list_retrievers << Retriever.where(user_id: user_id).collect(&:id)
+    list_retrievers << RetrieverBudgeaNotPresentIdocus.where(id_user: user_id).collect(&:id)
 
     list_retrievers
   end
@@ -165,6 +167,8 @@ class BudgeaRetrieverAdminToXlsService
 
     sheet1 = book.create_worksheet name: 'Utilisateurs non idocus'
     sheet2 = book.create_worksheet name: 'Retrievers'
+
+    debugger
 
     headers_users = []
     headers_users += ['ID', 'Date', 'platform', 'Access Token']
