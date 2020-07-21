@@ -1,5 +1,4 @@
 # -*- encoding : UTF-8 -*-
-
 class BudgeaRetrieverAdminToXlsService
   def execute(export_csv=false)
     accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
@@ -116,7 +115,7 @@ class BudgeaRetrieverAdminToXlsService
     list_retrievers.each do  |retriever|
       next if retriever.nil?
 
-      backup_retriever = RetrieverBudgeaNotPresentIdocus.new
+      backup_retriever = Archive::Retriever.new
       backup_retriever.assign_attributes(budgea_retriever)
       backup_retriever.save
     end
@@ -124,21 +123,21 @@ class BudgeaRetrieverAdminToXlsService
 
   def add_to_user_budgea_not_present_idocus(users)
     users.each do |budgea_user|
-      new_user = UsersBudgeaNotPresentIdocus.new
+      new_user = Archive::BudgeaUser.new
       new_user.assign_attributes(budgea_user)
       new_user.save
     end
   end
 
   def need_to_renew_token_of(user_id)
-    UsersBudgeaNotPresentIdocus.has_token.where(id: user_id).count == 0
+    Archive::BudgeaUser.has_token.where(id: user_id).count == 0
   end
 
   def get_list_retriever_of(user_id)
     list_retrievers = []
 
     list_retrievers << Retriever.where(user_id: user_id).collect(&:id)
-    list_retrievers << RetrieverBudgeaNotPresentIdocus.where(id_user: user_id).collect(&:id)
+    list_retrievers << Archive::Retriever.where(id_user: user_id).collect(&:id)
 
     list_retrievers
   end
