@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"jean"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"type":"REQUEST_END","startedAt":1595930203530,"endedAt":1595930203935,"activeRules":[],"activeDataCollectionRules":[{"params":{"typeName":"EnvironmentSettings"},"signature":"TODO"},{"filterHash":null,"params":{"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":"i9X/2PTCsLGIk7m2a3U1JwxWPgk=","params":{"buid":"315152fb571c6de11273229d6ef14504","typeName":"ApiRule"},"signature":"TODO"},{"filterHash":"ZEc4hsXXLltEzIIvylDC8re6V08=","params":{"buid":"3576471c3391360b977279baddfba4f4","typeName":"ApiRule"},"signature":"TODO"}],"instrumentation":{"requestBenchmark":405.0,"responseContentLength":277,"processingBeforeThreadBenchmark":-1.0,"adapterBenchmark":0.001158306000434095},"stageType":"BodiesStage","logLevel":"ALL","protocol":"https","hostname":"uploadservice.mycompanyfiles.fr","port":443,"requestHeaders":{"accept":"json","accept-encoding":"gzip;q=1.0,deflate;q=0.6,identity;q=0.3","user-agent":"Ruby","host":"uploadservice.mycompanyfiles.fr","content-length":"45","content-type":"application/x-www-form-urlencoded"},"method":"POST","path":"/api/idocus/TakeAnotherToken","url":"https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken","responseHeaders":{"cache-control":"no-cache,
+        no-store","pragma":"no-cache","content-type":"application/json; charset=utf-8","expires":"-1","server":"Microsoft-IIS/8.0","access-control-allow-origin":"*","x-aspnet-version":"4.0.30319","x-powered-by":"ASP.NET","date":"Tue,
+        28 Jul 2020 09:56:42 GMT","content-length":"277"},"statusCode":200,"requestBody":"RefreshToken=d16c23253f54437db6cab93255ab1933","responseBody":"{\"AccessToken\":\"[FILTERED]\",\"Status\":600,\"Message\":\"Success\",\"UserId\":24415,\"ProviderId\":967,\"ProviderName\":\"iDocus\",\"DisplayName\":\"LAI
+        KAM Lola\",\"QuotasTotal\":3221225472,\"QuotasUsed\":-681668,\"QuotaShared\":0,\"ExpirationDate\":1627473403748}"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 28 Jul 2020 09:56:45 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '18'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Tue, 28 Jul 2020 09:56:45 GMT
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAllStorages
+    body:
+      encoding: UTF-8
+      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&AttributeName=Storage
+    headers:
+      Accept:
+      - json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Tue, 28 Jul 2020 09:56:44 GMT
+      Content-Length:
+      - '89'
+    body:
+      encoding: UTF-8
+      string: '{"Status":150,"Message":"The access Token doesn''t exist on Database","ListStorageDto":[]}'
+    http_version: null
+  recorded_at: Tue, 28 Jul 2020 09:56:45 GMT
+recorded_with: VCR 5.1.0

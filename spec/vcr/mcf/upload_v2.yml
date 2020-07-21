@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        LS0tLS0tLS0tLS0tLVJ1YnlNdWx0aXBhcnRQb3N0LWU0OGMxMzM2NWQ1MWQ2Y2I4ZTQ5NjBiYzcwZjFlMDkzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImFjY2Vzc1Rva2VuIg0KDQo2NGIwMWJkYTU3MWY0N2FlYTg4MTRjYjdhMjlhN2RjMzU2MzEwNzU1Y2UwMTQwNGYNCi0tLS0tLS0tLS0tLS1SdWJ5TXVsdGlwYXJ0UG9zdC1lNDhjMTMzNjVkNTFkNmNiOGU0OTYwYmM3MGYxZTA5Mw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRyaWJ1dGVOYW1lIg0KDQpTdG9yYWdlDQotLS0tLS0tLS0tLS0tUnVieU11bHRpcGFydFBvc3QtZTQ4YzEzMzY1ZDUxZDZjYjhlNDk2MGJjNzBmMWUwOTMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iYXR0cmlidXRlVmFsdWUiDQoNCkpvaG4gRG9lDQotLS0tLS0tLS0tLS0tUnVieU11bHRpcGFydFBvc3QtZTQ4YzEzMzY1ZDUxZDZjYjhlNDk2MGJjNzBmMWUwOTMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic2VuZE1haWwiDQoNCmZhbHNlDQotLS0tLS0tLS0tLS0tUnVieU11bHRpcGFydFBvc3QtZTQ4YzEzMzY1ZDUxZDZjYjhlNDk2MGJjNzBmMWUwOTMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZm9yY2UiDQoNCnRydWUNCi0tLS0tLS0tLS0tLS1SdWJ5TXVsdGlwYXJ0UG9zdC1lNDhjMTMzNjVkNTFkNmNiOGU0OTYwYmM3MGYxZTA5Mw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJwYXRoRmlsZSINCg0KVEVTVC8ycGFnZXMucGRmDQotLS0tLS0tLS0tLS0tUnVieU11bHRpcGFydFBvc3QtZTQ4YzEzMzY1ZDUxZDZjYjhlNDk2MGJjNzBmMWUwOTMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZmlsZSI7IGZpbGVuYW1lPSIycGFnZXMucGRmIg0KQ29udGVudC1MZW5ndGg6IDExNjUNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vcGRmDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCg0KJVBERi0xLjMKJf////8KMSAwIG9iago8PCAvQ3JlYXRvciA8ZmVmZjAwNTAwMDcyMDA2MTAwNzcwMDZlPgovUHJvZHVjZXIgPGZlZmYwMDUwMDA3MjAwNjEwMDc3MDA2ZT4KPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8IC9UeXBlIC9QYWdlcwovQ291bnQgMgovS2lkcyBbNSAwIFIgOCAwIFJdCj4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQgVGQKL0YxLjAgMTIgVGYKWzw1MD4gNDAgPDYxNjc2NTIwMzEyZjMyPl0gVEoKRVQKClEKCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQovQ29udGVudHMgNCAwIFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAgNiAwIFIKPj4KPj4KPj4KZW5kb2JqCjYgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKL1N1YnR5cGUgL1R5cGUxCi9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCj4+CmVuZG9iago3IDAgb2JqCjw8IC9MZW5ndGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQgVGQKL0YxLjAgMTIgVGYKWzw1MD4gNDAgPDYxNjc2NTIwMzIyZjMyPl0gVEoKRVQKClEKCmVuZHN0cmVhbQplbmRvYmoKOCAwIG9iago8PCAvVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQovQ29udGVudHMgNyAwIFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAgNiAwIFIKPj4KPj4KPj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMTA5IDAwMDAwIG4gCjAwMDAwMDAxNTggMDAwMDAgbiAKMDAwMDAwMDIyMSAwMDAwMCBuIAowMDAwMDAwMzM5IDAwMDAwIG4gCjAwMDAwMDA1MTcgMDAwMDAgbiAKMDAwMDAwMDYxNCAwMDAwMCBuIAowMDAwMDAwNzMyIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOQovUm9vdCAyIDAgUgovSW5mbyAxIDAgUgo+PgpzdGFydHhyZWYKOTEwCiUlRU9GCg0KLS0tLS0tLS0tLS0tLVJ1YnlNdWx0aXBhcnRQb3N0LWU0OGMxMzM2NWQ1MWQ2Y2I4ZTQ5NjBiYzcwZjFlMDkzLS0NCg==
+    headers:
+      Accept:
+      - json
+      Content-Type:
+      - multipart/form-data; boundary=-----------RubyMultipartPost-e48c13365d51d6cb8e4960bc70f1e093
+      User-Agent:
+      - Faraday v1.0.0
+      Content-Length:
+      - '2263'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Thu, 06 Aug 2020 07:32:06 GMT
+      Content-Length:
+      - '132'
+    body:
+      encoding: UTF-8
+      string: '{"Status":150,"ProviderId":0,"ProviderName":null,"Message":"The access
+        Token doesn''t exist on Database","StorageLimitReached":false}'
+    http_version: null
+  recorded_at: Thu, 06 Aug 2020 07:32:06 GMT
+recorded_with: VCR 5.1.0

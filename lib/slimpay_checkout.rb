@@ -43,14 +43,14 @@ class SlimpayCheckout
     end
 
     def get_base_links
-      @request = Typhoeus::Request.new(
-        @settings[:base_uri],
-        method:  :get,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}"
-                  }
-      )
+      _headers = {
+        'Authorization' => "Bearer #{@auth_token['access_token']}",
+        'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"'
+      }
+
+      @response = connection(@settings[:base_uri]).get do |request|
+        request.headers = _headers
+      end
 
       @links = run_and_parse_response '_links'
     end
@@ -60,47 +60,47 @@ class SlimpayCheckout
 
       link_target = 'https://api.slimpay.net/alps#create-orders'
 
-      @request = Typhoeus::Request.new(
-        @links[link_target]['href'],
-        method:  :post,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  },
-        body: {
-                'started' => true,
-                'locale'  => nil,
-                'paymentScheme' => 'SEPA.DIRECT_DEBIT.CORE',
-                'creditor' => { 'reference' =>  @settings[:app_creditor] },
-                'subscriber' => { 'reference' => debit_mandate.clientReference },
-                'items' => [
-                  {
-                    'type' => 'signMandate',
-                    'action' => 'sign',
-                    'mandate' => {
-                      'reference' => nil,
-                      'signatory' => {
-                        'honorificPrefix' => debit_mandate.title.capitalize,
-                        'givenName' => debit_mandate.firstName,
-                        'familyName' => debit_mandate.lastName,
-                        'email' => debit_mandate.email,
-                        'telephone' => nil,
-                        'companyName' => debit_mandate.companyName,
-                        'organizationName' => nil,
-                        'billingAddress' => {
-                            'street1' => debit_mandate.invoiceLine1,
-                            'street2' => debit_mandate.invoiceLine2,
-                            'city' => debit_mandate.invoiceCity,
-                            'postalCode' => debit_mandate.invoicePostalCode,
-                            'country' => debit_mandate.invoiceCountry
-                        }
-                      }
-                    }
-                  }
-                ]
-              }.to_json
-      )
+      data = {
+        "started" => true,
+        "locale" => nil,
+        "paymentScheme" => "SEPA.DIRECT_DEBIT.CORE",
+        "creditor" => {
+          "reference" => @settings[:app_creditor]
+        },
+        "subscriber" => {
+          "reference" => debit_mandate.clientReference
+        },
+        "items" => [
+          {
+            "type" => "signMandate",
+            "action" => "sign",
+            "mandate" => {
+              "reference" => nil,
+              "signatory" => {
+                "honorificPrefix" => debit_mandate.title.capitalize,
+                "givenName" => debit_mandate.firstName,
+                "familyName" => debit_mandate.lastName,
+                "email" => debit_mandate.email,
+                "telephone" => nil,
+                "companyName" => debit_mandate.companyName,
+                "organizationName" => nil,
+                "billingAddress" => {
+                    "street1" => debit_mandate.invoiceLine1,
+                    "street2" => debit_mandate.invoiceLine2,
+                    "city" => debit_mandate.invoiceCity,
+                    "postalCode" => debit_mandate.invoicePostalCode,
+                    "country" => debit_mandate.invoiceCountry
+                }
+              }
+            }
+          }
+        ]
+      }
+
+      @response = connection(@links[link_target]['href']).post do |request|
+        request.headers = headers
+        request.body = URI.encode_www_form(data)
+      end
 
       @order_reference = run_and_parse_response
     end
@@ -143,23 +143,27 @@ class SlimpayCheckout
 
       link_target = 'https://api.slimpay.net/alps#create-orders'
 
-      @request = Typhoeus::Request.new(
-        @links[link_target]['href'],
-        method:  :post,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  },
-        body: {
-                'started' => true,
-                'locale'  => nil,
-                'paymentScheme' => 'CARD',
-                'creditor' => { 'reference' =>  @settings[:app_creditor] },
-                'subscriber' => { 'reference' => client_reference },
-                'items' => [ { 'type' => 'cardAlias' } ]
-              }.to_json
-      )
+      data = {
+        "started" => true,
+        "locale" => nil,
+        "paymentScheme" => "CARD",
+        "creditor" => {
+          "reference" =>  @settings[:app_creditor]
+        },
+        "subscriber" => {
+          "reference" => client_reference
+        },
+        "items" => [
+          {
+            "type" => "cardAlias"
+          }
+        ]
+      }
+
+      @response = connection(@links[link_target]['href']).post do |request|
+        request.headers = headers
+        request.body = URI.encode_www_form(data)
+      end
 
       @order_reference = run_and_parse_response
     end
@@ -172,16 +176,11 @@ class SlimpayCheckout
       link_target = 'https://api.slimpay.net/alps#extended-user-approval'
 
       url = @order_reference['_links'][link_target]['href'].gsub('{?mode}', '')
+      url += '?mode=iframeembedded'
 
-      @request = Typhoeus::Request.new(
-        url+'?mode=iframeembedded',
-        method:  :get,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  }
-      )
+      @response = connection(url).get do |request|
+        request.headers = headers
+      end
 
       content_64 = run_and_parse_response 'content'
 
@@ -205,16 +204,11 @@ class SlimpayCheckout
       link_target = 'https://api.slimpay.net/alps#get-orders'
 
       url = @links[link_target]['href'].gsub('{?creditorReference,reference}', '')
+      url += '?creditorReference='+@settings[:app_creditor]+'&reference='+debit_mandate.reference
 
-      @request = Typhoeus::Request.new(
-        url+'?creditorReference='+@settings[:app_creditor]+'&reference='+debit_mandate.reference,
-        method:  :get,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  }
-      )
+      @response = connection(url).get do |request|
+        request.headers = headers
+      end
 
       @order_reference = run_and_parse_response
     end
@@ -226,15 +220,9 @@ class SlimpayCheckout
 
       link_target = 'https://api.slimpay.net/alps#get-mandate'
 
-      @request = Typhoeus::Request.new(
-        @order_reference['_links'][link_target]['href'],
-        method:  :get,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  }
-      )
+      @response = connection(@order_reference['_links'][link_target]['href']).get do |request|
+        request.headers = headers
+      end
 
       @mandate = run_and_parse_response
     end
@@ -246,15 +234,9 @@ class SlimpayCheckout
 
       link_target = 'https://api.slimpay.net/alps#revoke-mandate'
 
-      @request = Typhoeus::Request.new(
-        @mandate['_links'][link_target]['href'],
-        method:  :post,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  }
-      )
+      @response = connection(@mandate['_links'][link_target]['href']).post do |request|
+        request.headers = headers
+      end
 
       @mandate = run_and_parse_response
     end
@@ -266,20 +248,31 @@ class SlimpayCheckout
 
       link_target = 'https://api.slimpay.net/alps#get-bank-account'
 
-      @request = Typhoeus::Request.new(
-        @mandate['_links'][link_target]['href'],
-        method:  :get,
-        headers:  {
-                    'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
-                    'Authorization' => "Bearer #{@auth_token['access_token']}",
-                    'Content-Type' => "application/json"
-                  }
-      )
+      @response = connection(@mandate['_links'][link_target]['href']).get do |request|
+        request.headers = headers
+      end
 
       @bank_account = run_and_parse_response
     end
 
   private
+
+    def connection(base_url)
+      Faraday.new(url: base_url) do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.request :url_encoded
+        f.adapter Faraday.default_adapter
+      end
+    end
+
+    def headers
+      {
+        'Authorization' => "Bearer #{@auth_token['access_token']}",
+        'Accept' => 'application/hal+json; profile="https://api.slimpay.net/alps/v1"',
+        'Content-Type' => 'application/json'
+      }
+    end
 
     def check_auth_token
       ##TODO: find a better way to check token expired time
@@ -287,35 +280,38 @@ class SlimpayCheckout
 
       auth_hash = Base64.strict_encode64("#{@settings[:app_id]}:#{@settings[:app_secret]}").strip
 
-      @request = Typhoeus::Request.new(
-        @settings[:base_uri] + '/oauth/token',
-        method:  :post,
-        headers:  {
-                    'Accept' => 'application/json',
-                    'Authorization' => "Basic #{auth_hash}",
-                    'Content-Type' => "application/x-www-form-urlencoded"
-                  },
-        body:  { grant_type: 'client_credentials', scope: 'api' }
-      )
+      _headers = {
+        'Authorization' => "Basic #{auth_hash}",
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/x-www-form-urlencoded'
+      }
 
-      @response = @request.run
+      data = {
+        "grant_type" => "client_credentials",
+        "scope" => "api"
+      }
 
-      if @response.code == 200
-        @auth_token = JSON.parse(@response.body)
+      response = connection(@settings[:base_uri]).post do |request|
+        request.url '/oauth/token'
+        request.headers = _headers
+        request.body = URI.encode_www_form(data)
+      end
+
+      if response.status.to_i == 200
+        @auth_token = JSON.parse(response.body)
 
         get_base_links
       else
-        raise Errors::ServiceUnavailable.new JSON.parse(@response.body)['message']
+        raise Errors::ServiceUnavailable.new JSON.parse(response.body)['message']
       end
     end
 
     def run_and_parse_response(collection_name=nil)
       @error_message = nil
 
-      @response = @request.run
       result = JSON.parse(@response.body) if @response.body.present?
 
-      if @response.code.in? [200, 201]
+      if @response.status.in? [200, 201]
         (collection_name && result[collection_name]) || result
       else
         @error_message = result.try(:[], 'message') || 'An error occured'

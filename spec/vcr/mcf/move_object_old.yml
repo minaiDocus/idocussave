@@ -2,10 +2,10 @@
 http_interactions:
 - request:
     method: post
-    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/moveobject
     body:
       encoding: UTF-8
-      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&AttributeName=Storage&AttributeValue=John+Doe&ListPath%5B%5D=202008%2FAC%2F2pages.pdf
+      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f
     headers:
       Accept:
       - json
@@ -35,13 +35,13 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Thu, 06 Aug 2020 08:06:23 GMT
+      - Tue, 28 Jul 2020 09:56:39 GMT
       Content-Length:
-      - '90'
+      - '124'
     body:
       encoding: UTF-8
-      string: '[{"Path":"","Md5":"","Status":150,"Message":"The access Token doesn''t
-        exist on Database"}]'
+      string: '{"Status":909,"Message":"The efUsersPushDoc is NULL ; input.AccessToken
+        = 64b01bda571f47aea8814cb7a29a7dc356310755ce01404f"}'
     http_version: null
-  recorded_at: Thu, 06 Aug 2020 08:06:23 GMT
+  recorded_at: Tue, 28 Jul 2020 09:56:39 GMT
 recorded_with: VCR 5.1.0

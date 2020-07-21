@@ -37,15 +37,23 @@ class McfApi
       remote_storage = remote_path.split("/")[0]
       remote_path.slice!("#{remote_storage}/")
 
-      #IMPORTANT-WORKAROUND : Mcf upload doesn't support faraday request
-      @response = send_typhoeus_request('https://uploadservice.mycompanyfiles.fr/api/idocus/Upload', {  accessToken: @access_token,
-                                                                                                        attributeName:  "Storage",
-                                                                                                        attributeValue: remote_storage,
-                                                                                                        sendMail:    'false',
-                                                                                                        force:       force.to_s,
-                                                                                                        pathFile:    remote_path,
-                                                                                                        file:        File.open(file_path, 'r')
-                                                                                                      })
+      data = { 
+        :accessToken => @access_token,
+        :attributeName => "Storage",
+        :attributeValue => remote_storage,
+        :sendMail => 'false',
+        :force => force.to_s,
+        :pathFile => remote_path,
+        :file => Faraday::FilePart.new(File.open(file_path), 'application/pdf', File.basename(file_path))
+      }
+
+      url = 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload'
+
+      @response = upload_connection(url).post do |request|
+        request.options.timeout = 20
+        request.body = data
+      end
+
       data_response = handle_response
     end
 
@@ -107,23 +115,28 @@ class McfApi
       end
     end
 
-    def send_request(uri, params)
-      @response = connection(uri).post do |request|
+    def send_request(uri, data)
+      connection(uri).post do |request|
         request.headers = { accept: 'json' }
         request.options.timeout = 20
-        request.body = params.to_query #params.to_json not supported
+        request.body = data.to_query #params.to_json not supported
       end
     end
 
-    def send_typhoeus_request(uri, params)
-      @request = Typhoeus::Request.new(
-        uri,
-        method:  :post,
-        headers: { accept: :json },
-        timeout: 20,
-        body: params
-      )
-      @request.run
+    def upload_connection(url)
+      Faraday.new(url: url) do |faraday|
+        faraday.response :logger
+        faraday.request :multipart
+        faraday.adapter :net_http
+        faraday.headers = headers
+      end
+    end
+
+    def headers
+      {
+        accept: 'json',
+        content_type: 'multipart/form-data'
+      }
     end
 
   end

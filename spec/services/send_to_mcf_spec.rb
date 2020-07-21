@@ -28,7 +28,7 @@ describe SendToMcf do
     @pack = Pack.new
     @pack.owner = @user
     @pack.organization = @organization
-    @pack.name = 'IDO%0001 AC 201804 all'
+    @pack.name = 'IDO%0001 AC 202008 all'
     @pack.save
 
     @document = Document.new
@@ -46,13 +46,65 @@ describe SendToMcf do
     @remote_file.save
   end
 
+  #WebMock.disable_net_connect(allow: ['https://uploadservice.mycompanyfiles.fr/api/idocus/Upload'])
+
   it 'sends a file successfully', :send_files do
+    WebMock.allow_net_connect!
+
     result = VCR.use_cassette('mcf/upload_file') do
       DeliverFile.to "mcf"
     end
 
-    expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
+    file_path = Rails.root.join('spec/support/files/2pages.pdf')
+    remote_path = 'John Doe/TEST/2pages.pdf'
+
+    force = true
+
+    remote_storage = remote_path.split("/")[0]
+    remote_path.slice!("#{remote_storage}/")
+
+      data = {
+        :accessToken => @access_token,
+        :attributeName => "Storage",
+        :attributeValue => remote_storage,
+        :sendMail => 'false',
+        :force => force.to_s,
+        :pathFile => remote_path,
+        :file => Faraday::FilePart.new(File.open(file_path), 'application/pdf', File.basename(file_path))
+      }
+
+    #request = stub_request(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
+
+    client = McfApi::Client.new('64b01bda571f47aea8814cb7a29a7dc356310755ce01404f')
+
+    upload_result = VCR.use_cassette('mcf/upload') do
+      client.upload(file_path, 'John Doe/TEST/2pages.pdf')
+    end
+
+    #expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
+
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
+
+    #WebMock::Config.instance.query_values_notation = :flat_array
+
+    # a_request(:post, "https://uploadservice.mycompanyfiles.fr/api/idocus/Upload").should have_been_made.times(1)
+    #expect(WebMock).to have_requested(:post, "https://uploadservice.mycompanyfiles.fr/api/idocus/Upload").with(body: data.to_query, headers: header)
+
+
+    #expect(WebMock).to have_requested(:post, "https://uploadservice.mycompanyfiles.fr/api/idocus/Upload").with(body: data)
+    # expect(WebMock).to(have_requested(
+    #   :post,
+    #   "https://uploadservice.mycompanyfiles.fr/api/idocus/Upload"
+    # ).with(body: data, headers: {'Accept' => 'application/json', 'Content-Type' => 'application/json'})) do |request|
+    #   raise "FAIL!"
+    # end
+
+    # expect(a_request(:post, "https://uploadservice.mycompanyfiles.fr/api/idocus/Upload").
+    # with(body: data,
+    #   headers: {'Accept' => 'application/json', 'Content-Type' => 'application/json'})).to have_been_made
+
+    #expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
+
 
     expect(@remote_file.reload.state).to eq 'synced'
   end
