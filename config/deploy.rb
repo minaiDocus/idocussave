@@ -17,6 +17,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
 
 set :linked_files, fetch(:linked_files, []).push(
   'config/bearer.yml',
+  'config/jefacture.yml',
   'config/database.yml',
   'config/secrets.yml',
   'config/dematbox.yml',
