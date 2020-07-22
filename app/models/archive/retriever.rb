@@ -6,6 +6,7 @@ class Archive::Retriever < ApplicationRecord
 
   belongs_to :owner, class_name: 'Archive::BudgeaUser', inverse_of: :archive_retrievers
 
+  scope :updated,   -> { where(is_updated: true) }
   scope :exist,     -> { where(exist: true) }
   scope :not_exist, -> { where(exist: false) }
   scope :active,    -> { where(active: true) }

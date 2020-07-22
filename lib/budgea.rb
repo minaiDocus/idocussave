@@ -80,7 +80,7 @@ class Budgea
     end
 
     def renew_access_token(user_id)
-      return { 'jwt_token' => nil } if Rails.env != 'production' && @settings['base_url'].match(/idocus[.]biapi[.]pro/) #IMPORTANT: secure jwt token execution for non production environment
+      return { 'jwt_token' => nil } if Rails.env != 'production' && @settings[:base_url].match(/idocus[.]biapi[.]pro/) #IMPORTANT: secure jwt token execution for non production environment
 
       @response = connection.post do |request|
         request.url "/2.0/auth/jwt"
@@ -172,7 +172,8 @@ class Budgea
     end
 
     def get_connections_log(id, min_date=nil, max_date=nil, limit=nil, offset=nil,  state=nil, period=nil, id_user=nil, id_source=nil)
-      request_filters =  "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? && max_date.present?
+      request_filters = ''
+      request_filters +=  "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? && max_date.present?
       request_filters += "&limit=#{limit}"          if limit.present?
       request_filters += "&offset=#{offset}"        if offset.present?
       request_filters += "&state=#{state}"          if state.present?
@@ -196,25 +197,6 @@ class Budgea
 
       run_and_parse_response
     end
-
-    # def scaRequired_refresh(id_connection)
-    #   @response = connection.post do |request|
-    #     request.url "/2.0/users/me/connections/#{id_connection}"
-    #     request.headers = headers
-    #   end
-
-    #   run_and_parse_response
-    # end
-
-    # def decoupled_refresh(id_connection)
-    #   @response = connection.post do |request|
-    #     request.url "/2.0/users/me/connections/#{id_connection}"
-    #     request.body = { resume: true }.to_query
-    #     request.headers = headers
-    #   end
-
-    #   run_and_parse_response
-    # end
 
   private
     def connection
