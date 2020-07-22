@@ -10,6 +10,7 @@ class Archive::BudgeaUser < ApplicationRecord
   has_many :archive_retrievers, foreign_key: :owner_id, class_name: 'Archive::Retriever'
 
   scope :has_token, -> { where.not(encrypted_access_token: nil) }
+  scope :updated,   -> { where(is_updated: true) }
   scope :exist,     -> { where(exist: true) }
   scope :not_exist, -> { where(exist: false) }
 
