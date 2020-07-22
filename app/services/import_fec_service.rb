@@ -70,7 +70,7 @@ class ImportFecService
     txt_file.each_line do |line|
       break if @params[:journal].nil?
 
-      column      = line.split(/\t/)
+      column      =  make_column_with line
 
       next if !@params[:journal].select{|j| j[column[0]].present? }.present?
 
@@ -92,6 +92,23 @@ class ImportFecService
     @third_parties = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
 
     import_processing
+  end
+
+  def make_column_with(line)
+    column = line.split(/\t/)
+
+    compaux_is_empty        = column[6].empty? && column[7].empty?
+    is_provider_or_customer = %w(401 411).include?(column[4].to_s[0..2])
+    is_general_account      = column[4].in?([40100000, 41100000])
+
+    if compaux_is_empty && is_provider_or_customer && !is_general_account
+      column[6] = column[4]
+      column[7] = column[5]
+      column[4] = %w(401).include?(column[4].to_s[0..2]) ? '40100000' : '41100000'
+      column[5] = %w(401).include?(column[4].to_s[0..2]) ? 'FOURNISSEUR' : 'CLIENT'
+    end
+
+    column
   end
 
   def import_processing
