@@ -15,3 +15,8 @@
     %span.action.float-left
       = link_to glyphicon('x', { size: '12px' }), '#', id: '', class: 'remove_field'
     %span.separator ;
+    %label.switch
+      %input#field-separator-state{:type => "checkbox", checked: true, value: '|separator', class: ' remove-field-separator'}
+      .slider.round
+        %span.on{ title: 'Désactiver le « Séparateur » point-virgule (;)', data: { toggle: 'tooltip', placement: 'right' }} Oui
+        %span.off{style: 'text-decoration: line-throug', title: 'Activer le « Séparateur » point-virgule (;)', data: { toggle: 'tooltip', placement: 'right' }} Non

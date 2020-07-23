@@ -62,6 +62,8 @@ activate_csv_field_action = ->
     @parentNode.querySelector('input[type=number]').stepDown(1)
     false
 
+  field_separator_state()
+
 activate_csv_global_action = ->
   $('#csv_descriptors.edit .add_field').click ->
     $('#csv_descriptors.edit .template li.field').clone().appendTo('#csv_descriptors.edit .list')
@@ -96,6 +98,13 @@ activate_csv_global_action = ->
           activate_csv_field_action()
           update_directive_input(element.value, fields)
 
+field_separator_state = ->
+  $('input[type="checkbox"]#field-separator-state').unbind('click')
+  $('input[type="checkbox"]#field-separator-state').on 'click', ->
+    $this = $(this)
+    $this.parent().prev().toggle()
+    if $this.val() == '|separator' then $this.val('') else $this.val('|separator')
+
 jQuery ->
   if $('#csv_descriptors.edit').length > 0
     $('#csv_descriptors.edit .list').sortable()
@@ -116,6 +125,13 @@ jQuery ->
           part = field + '-' + li.find('#text_format').val()
         else
           part = field
+
+        part += li.find('input[type="checkbox"]#field-separator-state').val()
         directive.push(part)
-      $('#csv_descriptor_directive').val(directive.join('|separator|'))
+
+      last_element = directive.slice(-1)[0]
+      last_element = last_element.split("\|separator")[0]
+      directive.splice(-1, 1, last_element)
+
+      $('#csv_descriptor_directive').val(directive.join('|'))
       true
