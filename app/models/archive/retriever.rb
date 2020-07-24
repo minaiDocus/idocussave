@@ -10,6 +10,7 @@ class Archive::Retriever < ApplicationRecord
   scope :exist,     -> { where(exist: true) }
   scope :not_exist, -> { where(exist: false) }
   scope :active,    -> { where(active: true) }
+  scope :not_deleted,    -> { where(is_deleted: false) }
 
   def stored_retriever
     Retriever.where(budgea_id: self.budgea_id).first
