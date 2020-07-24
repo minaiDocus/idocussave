@@ -129,7 +129,7 @@ jQuery ->
         directive.push(part)
 
       last_element = directive.slice(-1)[0]
-      last_element = last_element.split("\|separator")[0]
+      last_element = last_element.split("|")[0]
       directive.splice(-1, 1, last_element)
 
       $('#csv_descriptor_directive').val(directive.join('|'))
