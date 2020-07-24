@@ -195,7 +195,12 @@ class Budgea
         request.headers = headers
       end
 
-      run_and_parse_response
+      if @response.status.to_i == 200
+        @access_token = nil
+        true
+      else
+        false
+      end
     end
 
   private

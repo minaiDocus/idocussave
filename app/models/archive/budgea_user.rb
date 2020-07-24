@@ -13,6 +13,7 @@ class Archive::BudgeaUser < ApplicationRecord
   scope :updated,   -> { where(is_updated: true) }
   scope :exist,     -> { where(exist: true) }
   scope :not_exist, -> { where(exist: false) }
+  scope :not_deleted, -> { where(is_deleted: false) }
 
   def stored_account
     BudgeaAccount.where(identifier: self.identifier).first
