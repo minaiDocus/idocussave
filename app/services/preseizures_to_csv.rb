@@ -213,6 +213,8 @@ class PreseizuresToCsv
           part[1].nil? ? '' : part[1]
         when /\Aseparator\z/
           ';'
+        when /\Aspace\z/
+          ' '
         else ''
       end
 

@@ -102,8 +102,7 @@ field_separator_state = ->
   $('input[type="checkbox"]#field-separator-state').unbind('click')
   $('input[type="checkbox"]#field-separator-state').on 'click', ->
     $this = $(this)
-    $this.parent().prev().toggle()
-    if $this.val() == '|separator' then $this.val('') else $this.val('|separator')
+    if $this.val() == '|separator' then $this.val('|space') else $this.val('|separator')
 
 jQuery ->
   if $('#csv_descriptors.edit').length > 0
