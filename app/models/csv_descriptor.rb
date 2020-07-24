@@ -9,6 +9,18 @@ class CsvDescriptor < ApplicationRecord
     end
   end
 
+  def directive_to_h
+    directives_a = []
+
+    _directive = directive.gsub('|separator', '&sep').gsub('|space', '&spa')
+
+    (_directive || '').split('|').each do |e|
+      scaner = e.scan(/(\w+)-?([^&]+)?[&]?(.+)?/).flatten
+      directives_a << { name: scaner.first, separator: (scaner.third != 'spa'), format: scaner.second.to_s }
+    end
+
+    directives_a
+  end
 
   def separator
     comma_as_number_separator ? ',' : '.'
