@@ -13,8 +13,11 @@ class PonctualScripts::BudgeaDeleteConnections < PonctualScripts::PonctualScript
     @users      = []
     @retrievers = []
 
+    delete_retrievers_budgea #IMPORTANT : deletion of retrievers must be done before deletion of users
+
+    sleep(10) #Wait 10 second before processing user deletion (just in case)
+
     delete_users_budgea
-    delete_retrievers_budgea
 
     send_notification
   end
