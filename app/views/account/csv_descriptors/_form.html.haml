@@ -7,16 +7,12 @@
         .row-fluid
           .col-md-12
             Ajouter les champs souhaités.
-            %b
-              Un « Séparateur » est ajouté automatiquement après chacun des champs sélectionnés.
+            %b Un « Séparateur » est ajouté automatiquement après chacun des champs sélectionnés.
             %br
-            Pour le
-            %b « Supprimer/Ajouter »
-            , il suffit de cliquer sur le bouton
-            %b « Oui/Non »
-            %br
-              Le « Séparateur » est constitué d’un point-virgule 
-              %span.separator ;
+            Le « Séparateur » est constitué d’un point-virgule
+            %span.separator ;
+            , cliquez dessus pour en
+            %b Ajouter ou Supprimer
             .row
               .col-md-6.padding1top
                 = link_to 'Ajouter un champ', '#', class: 'btn btn-primary add_field'
@@ -33,7 +29,7 @@
             .fields
               %ul.list.clearfix
                 - @csv_descriptor.directive_to_a.each do |part|
-                  - unless part[0].to_s == 'separator'
+                  - unless part[0].to_s == 'separator' || part[0].to_s == 'space'
                     = render partial: 'account/csv_descriptors/field', locals: { part: part }
 
         .template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }
