@@ -1,24 +1,20 @@
-- part ||= [':date','']
-- field = part[0]
-- format = part[1]
-- directives = []
-- @csv_descriptor.directive_to_a.map{|k, v| directives << k }
-- field_separator  = Hash[directives.each_slice(2).to_a]
+- part ||= { name: ':date', separator: true, format: '' }
+
 %li.field.float-left
   .input-prepend.input-append.clearfix
     %span.action.float-left
       = link_to glyphicon('move', { size: '16px' }), '#'
-    = select_tag :directive, options_for_select(csv_descriptor_directive_options,field), id: 'select_directive', class: 'float-left'
-    = text_field_tag :format, format, id: 'text_format', class: 'float-left'
+    = select_tag :directive, options_for_select(csv_descriptor_directive_options, part[:name]), id: 'select_directive', class: 'float-left'
+    = text_field_tag :format, part[:format], id: 'text_format', class: 'float-left'
     .number-input.float-left
       %button.step-down.minus#step-button{type: 'button'}
-      = number_field_tag :format, format, id: 'number-input', class: 'tooltips number-input-field', min: '0', step: '1',  title: 'Nombre de caratères max. (Vide ou 0 = sans limite)', data: { toggle: 'tooltip', placement: 'right' }
+      = number_field_tag :format, part[:format], id: 'number-input', class: 'tooltips number-input-field', min: '0', step: '1',  title: 'Nombre de caratères max. (Vide ou 0 = sans limite)', data: { toggle: 'tooltip', placement: 'right' }
       %button.step-up.plus#step-button{type: 'button'}
-    = select_tag :format, options_for_select(csv_descriptor_format_options,format), id: 'select_format', class: 'float-left'
+    = select_tag :format, options_for_select(csv_descriptor_format_options, part[:format]), id: 'select_format', class: 'float-left'
     %span.action.float-left{ style: 'margin-left: 2px; margin-top: -2px' }
       = link_to glyphicon('x', { size: '12px' }), '#', id: '', class: 'remove_field'
     %label.switch
-      %input#field-separator-state{:type => "checkbox", checked: (field_separator[field].to_s == 'separator') ? true : false, value: field_separator[field].present? ? "|#{field_separator[field]}" : "|space", class: 'remove-field-separator'}
+      %input#field-separator-state{:type => "checkbox", checked: part[:separator], value: part[:separator] ? "|separator" : "|space", class: 'remove-field-separator'}
       .slider.round
         %span.separator.on{ title: 'Désactiver le « Séparateur » point-virgule (;)', data: { toggle: 'tooltip', placement: 'right' }} ;
         %span.separator.off{ title: 'Activer le « Séparateur » point-virgule (;)', data: { toggle: 'tooltip', placement: 'right' }} ;

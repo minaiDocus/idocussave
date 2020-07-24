@@ -28,9 +28,8 @@
           .col-md-12.clearfix.border.box.bg-light
             .fields
               %ul.list.clearfix
-                - @csv_descriptor.directive_to_a.each do |part|
-                  - unless part[0].to_s == 'separator' || part[0].to_s == 'space'
-                    = render partial: 'account/csv_descriptors/field', locals: { part: part }
+                - @csv_descriptor.directive_to_h.each do |part|
+                  = render partial: 'account/csv_descriptors/field', locals: { part: part }
 
         .template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }
       .col-md-6
