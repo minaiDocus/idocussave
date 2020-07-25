@@ -11,26 +11,24 @@
           %thead
             %tr.bg-brown.text-white
               %th
-              %th iDo'Basique
-              %th iDo'Courrier
-              %th iDo'Box
-              %th iDo'Mini
-              %th iDo'Micro
+              %th iDo Classique
+              %th iDo Mini
+              %th iDo Micro
               %th Pack Annuel
               %th Total
-              %th iDo'FacBanque
+              %th Forfait Courrier
+              %th Forfait Automates
               %th Pré-saisie
           %tbody
             %tr
               %th Abonnés
-              %td= link_to @basic_package_count, "#", class: 'do-showAccounts', title: "iDo'Basique", type: "basic_package"
-              %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "iDo'Courrier", type: "mail_package"
-              %td= link_to @scan_box_package_count, "#", class: 'do-showAccounts', title: "iDo'Box", type: "scan_box_package"
-              %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo'Mini", type: "mini_package"
-              %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo'Micro", type: "micro_package"
+              %td= link_to @basic_package_count, "#", class: 'do-showAccounts', title: "iDo Classique", type: "basic_package"
+              %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo Mini", type: "mini_package"
+              %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo Micro", type: "micro_package"
               %td= link_to @annual_package_count, "#", class: 'do-showAccounts', title: "Pack Annuel", type: "annual_package"
-              %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count + @mini_package_count + @micro_package_count
-              %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "iDo'FacBanque", type: "retriever_package"
+              %td= @basic_package_count + @annual_package_count + @mini_package_count + @micro_package_count
+              %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package"
+              %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package"
               %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
   .row.retractable.with-filter
     .col-md-12.retractable-content
@@ -51,7 +49,6 @@
               %th= sortable 'organization_code', 'code'
               %th= sortable 'options.basic_package', 'basique'
               %th= sortable 'options.mail_package', 'courrier'
-              %th= sortable 'options.scan_box_package', 'box'
               %th= sortable 'options.retriever_package', 'automate'
               %th= sortable 'options.mini_package', 'mini'
               %th= sortable 'options.micro_package', 'micro'
@@ -75,9 +72,6 @@
                 %td
                   %span= statistic.options[:mail_package]
                   = subscription_diff_content_for(statistic.options[:mail_package_diff])
-                %td
-                  %span= statistic.options[:scan_box_package]
-                  = subscription_diff_content_for(statistic.options[:scan_box_package_diff])
                 %td
                   %span= statistic.options[:retriever_package]
                   = subscription_diff_content_for(statistic.options[:retriever_package_diff])
@@ -109,9 +103,6 @@
               %td.total_footer
                 %span= @statistics_total[:mail_package]
                 = subscription_diff_content_for(@statistics_total[:mail_package_diff])
-              %td.total_footer
-                %span= @statistics_total[:scan_box_package]
-                = subscription_diff_content_for(@statistics_total[:scan_box_package_diff])
               %td.total_footer
                 %span= @statistics_total[:retriever_package]
                 = subscription_diff_content_for(@statistics_total[:retriever_package_diff])

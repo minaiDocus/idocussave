@@ -389,7 +389,7 @@ fr:
           last_name: Nom
           email: Email
           phone_number: N° de téléphone
-          is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Docments' pour ce compte
+          is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
           inactive_at: Dossier clôturé au
           is_inactive: Dossier clôturé ?
           is_admin: Est administrateur ?

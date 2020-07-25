@@ -8,6 +8,8 @@ class EvaluateSubscription
   end
 
   def execute
+    @subscription.set_start_date_and_end_date
+
     period = @subscription.current_period
     update_max_number_of_journals
 
@@ -32,8 +34,6 @@ class EvaluateSubscription
       end
 
       @subscription.is_pre_assignment_active ? authorize_pre_assignment : unauthorize_pre_assignment
-
-      @subscription.set_start_date_and_end_date
     end
 
     AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester

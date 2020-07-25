@@ -59,6 +59,8 @@ class Period < ApplicationRecord
   end
 
   def get_active_packages
+    self.set_current_packages unless self.current_packages 
+
     result = []
 
     result << :ido_classique if self.current_packages.include?('ido_classique')

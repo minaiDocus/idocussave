@@ -274,7 +274,7 @@ class UpdatePeriod
     return @micro_remaining_months_option unless @micro_remaining_months_option.nil?
 
     @micro_remaining_months_option = ''
-    months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
+    months_remaining = difference_in_months(@period.end_date, @subscription.end_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0
       option = ProductOptionOrder.new
@@ -296,7 +296,7 @@ class UpdatePeriod
     return @mini_remaining_months_option unless @mini_remaining_months_option.nil?
 
     @mini_remaining_months_option = ''
-    months_remaining = difference_in_months(@period.end_date.to_date, @subscription.end_date.to_date) - 1
+    months_remaining = difference_in_months(@period.end_date, @subscription.end_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0 && ['GAP%STAYHOME'].include?(@subscription.user.code)
       option = ProductOptionOrder.new
