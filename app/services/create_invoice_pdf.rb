@@ -186,6 +186,7 @@ class CreateInvoicePdf
 
     mail_package_count      = 0
     basic_package_count     = 0
+    idox_package_count      = 0
     micro_package_count     = 0
     mini_package_count      = 0
     annual_package_count    = 0
@@ -197,6 +198,8 @@ class CreateInvoicePdf
         case option.name
         when 'basic_package_subscription'
           basic_package_count += 1
+        when 'idox_package_subscription'
+          idox_package_count += 1
         when 'mail_package_subscription'
           mail_package_count += 1
         when 'dematbox_package_subscription'
@@ -232,11 +235,15 @@ class CreateInvoicePdf
     end
 
     if basic_package_count > 0
-      @data << ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Basique", '']
+      @data << ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Classique", '']
+    end
+
+    if idox_package_count > 0
+      @data << ["- #{idox_package_count} forfait#{'s' if idox_package_count > 1} iDo'X", '']
     end
 
     if mail_package_count > 0
-      @data << ["- #{mail_package_count} forfait#{'s' if mail_package_count > 1} iDo’Courrier", '']
+      @data << ["- #{mail_package_count} option#{'s' if mail_package_count > 1} Courrier", '']
     end
 
     if scan_box_package_count > 0
@@ -244,7 +251,7 @@ class CreateInvoicePdf
     end
 
     if retriever_package_count > 0
-      @data << ["- #{retriever_package_count} forfait#{'s' if retriever_package_count > 1} iDo'FacBanque", '']
+      @data << ["- #{retriever_package_count} option#{'s' if retriever_package_count > 1} Automates", '']
     end
 
     if annual_package_count > 0

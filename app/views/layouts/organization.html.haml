@@ -115,7 +115,7 @@
     = javascript_include_tag 'account/software_users' if controller_name == 'organizations' && action_name == 'edit_software_users'
     = javascript_include_tag 'account/compta_analytics' if controller_name == 'journals' && action_name == 'edit_analytics'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
-      = javascript_include_tag 'account/subscriptions', 'account/organization_subscriptions'
+      = javascript_include_tag 'account/customers', 'account/subscriptions', 'account/organization_subscriptions'
     - elsif controller_name.in?(%w(csv_descriptors organization_csv_descriptors))
       = javascript_include_tag 'account/csv_descriptors'
     - elsif controller_name.in?(%w(bank_accounts retrieved_documents))

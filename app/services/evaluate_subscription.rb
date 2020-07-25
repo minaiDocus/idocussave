@@ -8,29 +8,34 @@ class EvaluateSubscription
   end
 
   def execute
+    @subscription.set_start_date_and_end_date
+
+    period = @subscription.current_period
     update_max_number_of_journals
+
     if @subscription.is_annual_package_active
       unauthorize_dematbox
       authorize_retriever
       authorize_pre_assignment
       authorize_upload
     else
-      if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mini_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+      authorize_dematbox
+
+      if period.is_active?(:ido_classique) || period.is_active?(:ido_micro) || period.is_active?(:ido_mini)
         authorize_upload
       else
         unauthorize_upload
       end
 
-      if @subscription.is_retriever_package_active || @subscription.is_micro_package_active
+      if period.is_active?(:retriever_option) || period.is_active?(:ido_micro)
         authorize_retriever
       else
         unauthorize_retriever
       end
 
-      @subscription.set_start_date_and_end_date
-      @subscription.is_scan_box_package_active  ? authorize_dematbox       : unauthorize_dematbox
-      @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
+      @subscription.is_pre_assignment_active ? authorize_pre_assignment : unauthorize_pre_assignment
     end
+
     AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
   end
 
@@ -79,20 +84,14 @@ private
   end
 
   def authorize_upload
-    unless @customer.options.is_upload_authorized
-      @customer.options.update_attribute(:is_upload_authorized, true)
-    end
+    @customer.options.update_attribute(:is_upload_authorized, true) unless @customer.options.is_upload_authorized
   end
 
   def unauthorize_upload
-    if @customer.options.is_upload_authorized
-      @customer.options.update_attribute(:is_upload_authorized, false)
-    end
+    @customer.options.update_attribute(:is_upload_authorized, false) if @customer.options.is_upload_authorized
   end
 
   def update_max_number_of_journals
-    unless @customer.options.max_number_of_journals == @subscription.number_of_journals
-      @customer.options.update_attribute(:max_number_of_journals, @subscription.number_of_journals)
-    end
+    @customer.options.update_attribute(:max_number_of_journals, @subscription.number_of_journals) unless @customer.options.max_number_of_journals == @subscription.number_of_journals
   end
 end

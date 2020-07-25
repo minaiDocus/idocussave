@@ -14,30 +14,15 @@ class Account::SubscriptionsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/organization_subscription
   def update
-    subscription_form = SubscriptionForm.new(@subscription, @user, request)
+    modif_params = params[:subscription][:subscription_option]
+    params[:subscription][modif_params] = true
 
-    if subscription_form.submit(params[:subscription])
-      unless @subscription.is_mail_package_active
-        paper_set_orders = @customer.orders.paper_sets.pending
-
-        if paper_set_orders.any?
-          paper_set_orders.each do |order|
-            DestroyOrder.new(order).execute
-          end
-        end
-      end
-
-      unless @subscription.is_scan_box_package_active
-        dematbox_orders = @customer.orders.dematboxes.pending
-
-        if dematbox_orders.any?
-          dematbox_orders.each do |order|
-            DestroyOrder.new(order).execute
-          end
-        end
-      end
-
+    if SubscriptionForm.new(@subscription, @user, request).submit(params[:subscription])
       if @customer.configured?
+        if params.try(:[], :user).try(:[], :jefacture_account_id).present?
+          @customer.update(jefacture_account_id: params[:user][:jefacture_account_id])
+        end
+
         flash[:success] = 'Modifié avec succès.'
 
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')

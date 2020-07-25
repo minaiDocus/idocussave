@@ -1,0 +1,38 @@
+- 2.times do |i|
+  - class_name = (i == 0)? 'provider' : 'customer'
+  - dom_id   = (i == 0)? 'vatp_account' : 'vatc_account'
+  - items      = (i == 0)? providers : customers
+
+  .col-md-6
+    .box
+      %table.table.table-striped.table-bordered-inner.table-condense{ id: "table_#{dom_id}" }
+        %thead
+          %tr.bg-brown.text-white
+            %th Nom du tiers
+            %th Compte de tiers
+            %th Compte de contrepartie
+            %th Code TVA
+        %tbody
+        - items.each do |item|
+          %tr{ class: class_name }
+            %td.id.hide
+              = text_field_tag 'edit_account_id', item.id, { placeholder: '', class: 'entry_id hide' }
+            %td
+              %div.vat_code= item.third_party_name
+              = text_field_tag 'edit_account_third_party_name', item.third_party_name, { placeholder: '', class: 'input_edition tp_name hide' }
+            %td
+              %div.vat_code= item.third_party_account
+              = text_field_tag 'edit_account_third_party_account', item.third_party_account, { placeholder: '', class: 'input_edition tp_account hide' }
+            %td
+              %div.vat_code= item.conterpart_account
+              = text_field_tag 'edit_account_conterpart', item.conterpart_account, { placeholder: '', class: 'input_edition conterpart hide' }
+            %td
+              %div.vat_code= item.code
+              = text_field_tag 'edit_account_vat_code', item.code, { placeholder: '', class: 'input_edition vat_code hide' }
+
+      .box_footer.text-right
+        %button.btn.btn-info.small-shadow.text-bold{ id: "add_#{dom_id}" }
+          %span.mrc-5
+            = glyphicon('plus')
+          %span
+            Ajouter un compte

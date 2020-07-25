@@ -1,0 +1,45 @@
+.box.text-center.small-shadow
+  .header_box.mb-5.border_bottom
+    Journaux
+  .body_box
+    %table.table.table-striped.table-bordered-inner.table-condensed
+      %thead
+        %tr.bg-brown.text-white
+          %th{ rowspan: "2", style: "vertical-align:middle"} Code journal iDocus
+          %th{ rowspan: "2", style: "vertical-align:middle"} Nom journal comptable
+          %th.aligncenter{ colspan: "4" } Pré-saisie comptable
+          %th{ rowspan: "2", style: "vertical-align:middle"} Nombre d’automates
+          - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+            %th{ rowspan: "2", style: "vertical-align:middle"} Actions
+        %tr.bg-brown-light.text-white
+          %th Type de pré-saisie
+          %th Type de compte
+          %th Compte tiers
+          %th Compte de charge/produit
+      %tbody
+        - @customer.account_book_types.each do |journal|
+          %tr
+            %td= journal.name
+            %td= journal.description
+            %td= t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")                
+            %td
+              - if journal.is_pre_assignment_processable?
+                = journal.default_account? ? 'compte par défaut' : "compte d'attente"
+            %td= journal.meta_account_number
+            %td= journal.meta_charge_account
+            %td= journal.retrievers.count
+            - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+              %td
+                %button.btn.btn-light.edit_book_type{ id: "#{journal.id}"}
+                  %span.mrc-5
+                    = glyphicon('pencil')  
+                  %span                
+                    Modifier
+
+    - if @customer.account_book_types.count < @customer.options.max_number_of_journals
+      .box_footer.text-right
+        %button.btn.btn-info.small-shadow.text-bold.add_book_type
+          %span.mrc-5
+            = glyphicon('plus')
+          %span
+            Ajouter un journal

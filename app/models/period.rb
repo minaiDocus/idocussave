@@ -54,6 +54,56 @@ class Period < ApplicationRecord
     !is_not_locked?
   end
 
+  def is_configured?
+    self.current_packages.present? && (get_active_packages.any? || get_active_options.any?)
+  end
+
+  def get_active_packages
+    self.set_current_packages unless self.current_packages 
+
+    result = []
+
+    result << :ido_classique if self.current_packages.include?('ido_classique')
+    result << :ido_mini      if self.current_packages.include?('ido_mini')
+    result << :ido_micro     if self.current_packages.include?('ido_micro')
+    result << :ido_x         if self.current_packages.include?('ido_x')
+
+    result
+  end
+
+  def get_active_options
+    result = []
+
+    result << :mail_option      if self.current_packages.include?('mail_option')
+    result << :retriever_option if self.current_packages.include?('retriever_option')
+
+    result
+  end
+
+  def set_current_packages(force=false)
+    return false if self.organization.present?
+    return false unless force || !is_configured?
+
+    packages = []
+
+    #packages
+    packages << 'ido_classique' if self.subscription.is_basic_package_active
+    packages << 'ido_mini' if self.subscription.is_mini_package_active
+    packages << 'ido_micro' if self.subscription.is_micro_package_active
+    packages << 'ido_x' if self.subscription.is_idox_package_active
+
+    #options
+    packages << 'mail_option' if self.subscription.is_mail_package_active
+    packages << 'retriever_option' if self.subscription.is_retriever_package_active
+
+    self.update({ current_packages: packages.presence })
+  end
+
+  def is_active?(package)
+    packages_and_options = get_active_packages + get_active_options
+    packages_and_options.include? package.to_sym
+  end
+
   def is_valid_for_quota_organization
     !self.organization && self.duration == 1 && !self.subscription.is_micro_package_active && !self.subscription.is_mini_package_active
   end
@@ -270,7 +320,7 @@ private
     return 0 if is_valid_for_quota_organization
 
     max_value ||= "max_#{value.to_s}_authorized"
-    return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
+    return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym) && self.send(max_value.to_sym) > 0
 
     if excess_duration == 1
       excess = self.send(value.to_sym) - self.send(max_value.to_sym)

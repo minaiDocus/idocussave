@@ -109,6 +109,10 @@ module JournalHelper
     end
   end
 
+  def external_journal_title
+    @customer.uses_exact_online? ? 'Journaux Exact Online :' : 'Journaux Ibiza :'
+  end
+
 
   def journal_domain_for_select
     AccountBookType::DOMAINS.map do |e|

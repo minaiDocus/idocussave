@@ -1,0 +1,47 @@
+.box.text-center.small-shadow
+  .header_box.mb-5.border_bottom
+    Comptes de TVA
+  .body_box
+    %table.table.table-striped.table-bordered-inner.table-condensed#table_vat_account
+      %thead
+        %tr.bg-brown.text-white
+          %th.hide id
+          %th Code TVA
+          %th Nature
+          %th Numéro de compte
+      %tbody
+        - @customer.accounting_plan.vat_accounts.each do |vat_account|
+          %tr
+            %td.id.hide
+              = text_field_tag 'edit_vat_id', vat_account.id, { placeholder: '', class: 'entry_id hide' }
+            %td
+              %div.vat_code= vat_account.code.to_s
+              = text_field_tag 'edit_vat_code', vat_account.code, { placeholder: '', class: 'input_edition code hide' }
+            %td
+              %div.vat_code= vat_account.nature.to_s
+              = text_field_tag 'edit_vat_nature', vat_account.nature, { placeholder: '', class: 'input_edition nature hide' }
+            %td
+              %div.vat_code= vat_account.account_number.to_s
+              = text_field_tag 'edit_vat_number', vat_account.account_number, { placeholder: '', class: 'input_edition number hide' }
+
+  .box_footer.text-right
+    %button.btn.btn-info.small-shadow.text-bold#add_vat_account
+      %span.mrc-5
+        = glyphicon('plus')  
+      %span
+        Ajouter un compte
+
+  %table.hidden_insertion_table.hide
+    %tbody
+      %tr
+        %td.id.hide
+          = text_field_tag 'edit_vat_id', nil, { placeholder: '', class: 'entry_id hide' }
+        %td
+          %div.vat_code Cliquez ici pour modifier
+          = text_field_tag 'input_edition', nil, { placeholder: '', class: 'input_edition code hide' }
+        %td
+          %div.vat_code Cliquez ici pour modifier
+          = text_field_tag 'edit_vat_nature', nil, { placeholder: '', class: 'input_edition nature hide' }
+        %td
+          %div.vat_code Cliquez ici pour modifier
+          = text_field_tag 'edit_vat_number', nil, { placeholder: '', class: 'input_edition number hide' }

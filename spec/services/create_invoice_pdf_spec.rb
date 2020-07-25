@@ -40,7 +40,7 @@ describe CreateInvoicePdf do
     Invoice.destroy_all
   end
 
-  it 'generates pdf invoices - successfully' do
+  it 'generates pdf invoices - successfully', :generate do
     CreateInvoicePdf.for_all
 
     invoices = Invoice.all
@@ -48,6 +48,7 @@ describe CreateInvoicePdf do
     expect(invoices.size).to eq 2
     expect(File.exist?(invoices.first.cloud_content_object.reload.path)).to be true
     expect(invoices.collect(&:organization_id)).to eq Organization.all.collect(&:id)
+    expect(invoices.first.amount_in_cents_w_vat).to eq 4800
   end
 
   it 'creates a single invoice (for a specific organization)' do
@@ -58,6 +59,7 @@ describe CreateInvoicePdf do
     expect(invoices.size).to eq 1
     expect(invoices.first.organization).to eq Organization.first
     expect(File.exist?(invoices.first.cloud_content_object.reload.path)).to be true
+    expect(invoices.first.amount_in_cents_w_vat).to eq 4800
   end
 
   it 'updates an existing invoice', :update_invoice do
@@ -68,10 +70,9 @@ describe CreateInvoicePdf do
 
     org = Organization.first
     customer = org.customers.first
-    subscription = customer.subscription
-    subscription.is_basic_package_active = false
-    subscription.is_retriever_package_active = true
-    subscription.save
+    period = customer.subscription.periods.order(created_at: :asc).first
+    period.current_packages = ['retriever_option']
+    period.save
 
     CreateInvoicePdf.for org, invoice_1.number
 
@@ -84,5 +85,23 @@ describe CreateInvoicePdf do
     expect(md5_1 != md5_2).to be true
     expect(invoice_1.amount_in_cents_w_vat).to eq 4800
     expect(invoice_2.amount_in_cents_w_vat).to eq 3000
+  end
+
+  it 'generates correct packages/options price from period', :test_package do
+    user         = User.last
+    subscription = user.subscription
+    period       = subscription.periods.order(created_at: :asc).first
+    period.set_current_packages
+
+    subscription.update({ is_basic_package_to_be_disabled: true, is_micro_package_active: true })
+
+    CreateInvoicePdf.for_all
+
+    invoice = Invoice.last
+
+    expect(period.reload.get_active_packages).to eq [:ido_classique]
+    expect(period.product_option_orders.size).to be 1
+    expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
+    expect(invoice.amount_in_cents_w_vat).to eq 4800
   end
 end

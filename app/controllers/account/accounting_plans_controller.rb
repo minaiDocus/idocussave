@@ -9,9 +9,13 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan
   def show
-    if params[:format].present?
-      FileUtils.rm params[:format], force: true
-      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if params[:dir].present?
+      FileUtils.rm_rf params[:dir] if params[:dir]
+      if params[:new_create_book_type].present?
+        redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      else
+        redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+      end
     end
   end
 
@@ -20,12 +24,33 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/accounting_plan/:id
   def update
-    if @accounting_plan.update(accounting_plan_params)
-      flash[:success] = 'Modifié avec succès.'
+    modified = @accounting_plan.update(accounting_plan_params)
 
-      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
-    else
-      render :edit
+    respond_to do |format|
+      format.html {
+        if modified
+          flash[:success] = 'Modifié avec succès.'
+          redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+        else
+          render :edit
+        end
+      }
+      format.json {
+        if params[:destroy].present? && params[:id].present? && params[:type].present?
+          @accounting_plan.providers.find(params[:id]).destroy if params[:type] == 'provider'
+          @accounting_plan.customers.find(params[:id]).destroy if params[:type] == 'customer'
+
+          account = nil
+        elsif params[:accounting_plan].try(:[], :providers_attributes).try(:[], :id).present?
+          account = @accounting_plan.providers.find(params[:accounting_plan][:providers_attributes][:id])
+        elsif params[:accounting_plan].try(:[], :customers_attributes).try(:[], :id).present?
+          account = @accounting_plan.customers.find(params[:accounting_plan][:customers_attributes][:id])
+        else
+          account = AccountingPlanItem.unscoped.where(accounting_plan_itemable_id: @accounting_plan.id, kind: params[:type]).order(id: :desc).first
+        end
+
+        render json: { account: account  }, status: 200
+      }
     end
   end
 
@@ -55,8 +80,11 @@ class Account::AccountingPlansController < Account::OrganizationController
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
-
-    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if params[:new_create_book_type].present?
+      render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }
+    else
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    end
   end
 
   def import_fec
@@ -81,7 +109,12 @@ class Account::AccountingPlansController < Account::OrganizationController
       flash[:error] = 'Aucun fichier choisi.'
     end
 
-    render :show
+    if params[:new_create_book_type].present?
+      @params_fec = @params_fec.merge(new_create_book_type: params[:new_create_book_type])
+      render :partial => "/account/accounting_plans/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }
+    else
+      render :show
+    end
   end
 
   def import_fec_processing
@@ -91,7 +124,11 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
 
-    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    if params[:new_create_book_type].present?
+      render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }
+    else
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
+    end
   end
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/accounting_plan/destroy_providers

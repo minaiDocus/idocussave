@@ -1,51 +1,49 @@
-#import_dialog.modal.fade{data: { backdrop: "static" } }
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %h3 Paramétrage import FEC
-      %form#importFecAfterConfiguration{ action: import_fec_processing_account_organization_customer_accounting_plan_path(@organization, @customer), method: "GET" }
-        %input.file{ type: :hidden, value: "#{@params_fec[:file]}", name: "file_path"}
-        %input.file{ type: :hidden, value: "#{@params_fec[:journal_ido]}", name: "journal_ido"}
-        %input.file{ type: :hidden, value: "#{@params_fec[:file]}", name: "file_path"}
-        %input.file{ type: :hidden, value: "#{@params_fec[:dir]}", name: "dir_tmp"}
-        %input.count_books{ type: :hidden, value: "#{@params_fec[:journal_on_fec].size}"}
-        .modal-body
-          .row
-            .col-md-6
-              .journal_fec.row{ style: "margin:0 !important" }
-                .select_section.col-md-8{ style: "padding:0 !important" }
-                  Veuillez choisir les journaux à injecter :
-                .checked_section.col-md-4.text-right{ style: "padding:0 !important" }
-                  /%input#for_all{ type: :checkbox, name: 'book_for_all'}
-                %br
-                %table.table.table-striped.table.hovered.table-bordered
-                  %thead.thead-light.text-center
-                    %th Journal
-                    %th Injecter
-                  %tbody.text-center
-                    - @params_fec[:journal_on_fec].each do |journal|
-                      %tr
-                        %td= journal
-                        %td
-                          %input{ class: "check_journal #{journal}", checked: (@params_fec[:journal_ido].include?(journal)), type: :checkbox, name: "journal[#{journal}]" }
-              .journal_idocus
-                %span Journaux idocus disponibles:
-                %span.list_on_grey{ style: "padding: 8px" }
-                  - if @params_fec.present?
-                    - @params_fec[:journal_ido].each do |journal|
-                      %span.badge.fs-origin.badge-secondary= journal
-            .col-md-6
-              .piece_reference_choise
-                %span Sélectionner la colonne pour la référence des pièces
-                .select_piece
-                  %select.piece{name: "piece_ref"}
-                    %option{ value: '' } -----------------
-                    - indexation = 0
-                    - @params_fec[:head_list_fec].each do |head|
-                      %option{ value: "#{indexation}", selected: ('selected' if indexation == 8)}= head
-                      - indexation += 1
+%form#importFecAfterConfiguration{ action: import_fec_processing_account_organization_customer_accounting_plan_path(organization, customer), method: "GET" }
+  %input.file{ type: :hidden, value: "#{params_fec[:file]}", name: "file_path"}
+  %input.file{ type: :hidden, value: "#{params_fec[:journal_ido]}", name: "journal_ido"}
+  %input.file{ type: :hidden, value: "#{params_fec[:file]}", name: "file_path"}
+  %input.file{ type: :hidden, value: "#{params_fec[:dir]}", name: "dir_tmp"}
+  %input.count_books{ type: :hidden, value: "#{params_fec[:journal_on_fec].size}"}
+  %input.new_create_book_type{ type: :hidden, value: "#{params_fec[:new_create_book_type]}", name: "new_create_book_type"}
+  .modal-body
+    .row
+      .col-md-6
+        .journal_fec.row{ style: "margin:0 !important" }
+          .select_section.col-md-8{ style: "padding:0 !important" }
+            Veuillez choisir les journaux à injecter :
+          .checked_section.col-md-4.text-right{ style: "padding:0 !important" }
+          %br
+          %table.table.table-striped.table.hovered.table-bordered
+            %thead.thead-light.text-center
+              %th Journal
+              %th Injecter
+            %tbody.text-center
+              - params_fec[:journal_on_fec].each do |journal|
+                %tr
+                  %td= journal
+                  %td
+                    %input{ class: "check_journal #{journal}", checked: (params_fec[:journal_ido].include?(journal)), type: :checkbox, name: "journal[#{journal}]" }
+        .journal_idocus
+          %span Journaux idocus disponibles:
+          %span.list_on_grey{ style: "padding: 8px" }
+            - if params_fec.present?
+              - params_fec[:journal_ido].each do |journal|
+                %span.badge.fs-origin.badge-secondary= journal
+      .col-md-6
+        .piece_reference_choise
+          %span Sélectionner la colonne pour la référence des pièces
+          .select_piece
+            %select.piece{name: "piece_ref"}
+              %option{ value: '' } -----------------
+              - indexation = 0
+              - params_fec[:head_list_fec].each do |head|
+                %option{ value: "#{indexation}", selected: ('selected' if indexation == 8)}= head
+                - indexation += 1
 
-        .modal-footer
-          .btn.close_modal_fec{ style: "margin: 0 15px 0 0; padding: 0;cursor: context-menu" }
-            = link_to 'Fermer', account_organization_customer_accounting_plan_path(@organization, @customer, @params_fec[:dir]), :class=>"modal-close"
-          %input#import_button.btn.btn-primary{ :type => "submit", :value => "Valider" }
+  .modal-footer
+    #informations.mrc-5
+    .row
+      .col-md-5.btn.close_modal_fec{ style: "cursor: context-menu" }
+        = link_to 'Fermer', account_organization_customer_accounting_plan_path(organization, customer, {dir: params_fec[:dir], new_create_book_type: "#{params_fec[:new_create_book_type]}"} ), :class=>"modal-close"
+      .col-md-7
+        %input#import_button.btn.btn-primary.small-shadow.text-bold{ :type => "submit", :value => "Valider" }

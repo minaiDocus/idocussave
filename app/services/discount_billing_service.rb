@@ -60,13 +60,10 @@ class DiscountBillingService
   end
 
   def unit_amount(option)
-    if option.to_s == 'iDoMini'
-      quantity_of(option) > 50 ? -4 : 0
-    else
-      amount = get_amount_policy option
-      amount[:retriever] = 0.0 if @organization.subscription.retriever_price_option.to_s == 'reduced_retriever'
-      amount[option]
-    end
+    amount = get_amount_policy option
+    amount[:retriever] = 0.0 if @organization.subscription.try(:retriever_price_option).to_s == 'reduced_retriever'
+    return amount[:subscription].to_i if option.to_s == 'iDoMini'
+    amount[option]
   end
 
   def apply_special_policy?
@@ -100,40 +97,19 @@ class DiscountBillingService
     @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
   end
 
-  def get_amount_policy(option)
-    if apply_special_policy?
-      case quantity_of(option)
-        when (0..50)
-          {subscription: -1, retriever: 0}
-        when (51..150)
-          {subscription: -1.5, retriever: -0.5}
-        when (151..200)
-          {subscription: -2, retriever: -0.75}
-        when (201..250)
-          {subscription: -2.5, retriever: -1}
-        when (251..350)
-          {subscription: -3, retriever: -1.25}
-        when (351..500)
-          {subscription: -4, retriever: -1.50}
-        when (501..Float::INFINITY)
-          {subscription: -5, retriever: -2}
-      end
-    else
-      case quantity_of(option)
-        when (0..75)
-          {subscription: 0, retriever: 0}
-        when (76..150)
-          {subscription: -1, retriever: 0}
-        when (151..250)
-          {subscription: -1.5, retriever: -0.5}
-        when (251..350)
-          {subscription: -2, retriever: -0.75}
-        when (351..500)
-          {subscription: -3, retriever: -1}
-        when (501..Float::INFINITY)
-          {subscription: -4, retriever: -1.25}
+  def get_amount_policy(package_sym)
+    package   = (package_sym.to_s == 'iDoMini')? :ido_mini : :default
+    quantity  = quantity_of(package_sym)
+    result    = { subscription: 0, retriever: 0 }
+
+    SubscriptionPackage.discount_billing_of(package, apply_special_policy?).each do |discount|
+      if discount[:limit].include?(quantity.to_i)
+        result = { subscription: discount[:subscription_price], retriever: discount[:retriever_price] }
+        break
       end
     end
+
+    result
   end
 
 

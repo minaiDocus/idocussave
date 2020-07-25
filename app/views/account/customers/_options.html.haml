@@ -6,21 +6,41 @@
       %th.price Prix HT
       %th.price Prix TTC
   %tbody.retractable.slidedown
-    - period = @subscription.current_period
-    - if period
-      - period.product_option_orders.by_position.each do |option|
+    - period           = @subscription.current_period
+    - enabled_packages = @subscription.get_enabled_packages_and_options
+    - active_packages  = @subscription.get_active_packages_and_options
+    - found_pending    = false
+
+    - enabled_packages.each do |package|
+      - unless active_packages.include? package
+        - found_pending = true
+        - package_infos = SubscriptionPackage.infos_of(package)
         %tr
-          %td= option.group_title
+          %td= package_infos[:group]
           %td
-            = option.title
-            - if option.is_to_be_disabled
-              %b
-                - if period.duration == 1
-                  (disparaîtra le mois prochain)
-                - else
-                  (disparaîtra le trimestre prochain)
-          %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
-          %td.price= format_price_00(option.price_in_cents_wo_vat * period.tva_ratio) + ' €'
+            = package_infos[:label]
+            %b (Applicable le mois prochain)
+          %td.price
+            %i= '(' + format_price_00(SubscriptionPackage.price_of(package).to_i * 100) + ' €)' rescue '0,00 €'
+          %td.price
+            %i= '(' + format_price_00(SubscriptionPackage.price_of(package).to_i * 100 * period.tva_ratio) + ' €)' rescue '0,00 €'
+
+    - if found_pending
+      %tr
+        %td{colspan: 4}
+          %hr
+
+    - period.product_option_orders.each do |order|
+      %tr
+        %td= order.group_title
+        %td
+          = order.title
+          - if order.is_to_be_disabled
+            %b (disparaîtra le mois prochain)
+        %td.price
+          = format_price_00(order.price_in_cents_wo_vat) + ' €'
+        %td.price
+          = format_price_00(order.price_in_cents_wo_vat * period.tva_ratio) + ' €'
     %tr
       %td
       %th Total

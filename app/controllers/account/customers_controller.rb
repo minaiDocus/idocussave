@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Account::CustomersController < Account::OrganizationController
-  before_action :load_customer, except: %w[index info new create search]
+  before_action :load_customer, except: %w[index info form_with_first_step new create search]
   before_action :verify_rights, except: 'index'
   before_action :verify_if_customer_is_active, only: %w[edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options]
   before_action :redirect_to_current_step
@@ -40,21 +40,49 @@ class Account::CustomersController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/info
   def info; end
 
-  # GET /account/organizations/:organization_id/customers/new
-  def new
-    @customer = User.new(code: "#{@organization.code}%")
-    @customer.build_options
-    @customer.build_softwares
+  # GET /account/organizations/:organization_id/customers/:id/new_customer_step_two
+  def new_customer_step_two;  end
+
+  # GET /account/organizations/:organization_id/customers/:id/book_type_creator/:journal_id
+  def book_type_creator
+    @journal = AccountBookType.where(id: params[:journal_id]).first.presence || AccountBookType.new
+
+    render partial: 'book_type_creator'
   end
+
+  def refresh_book_type
+    render partial: 'book_type'
+  end
+  
+  # GET /account/organizations/:organization_id/customers/form_with_first_step
+  def form_with_first_step
+    @customer = User.new(code: "#{@organization.code}%")
+    fake_subscription
+  end
+
+  # GET /account/organizations/:organization_id/customers/new
+  def new; end
 
   # POST /account/organizations/:organization_id/customers
   def create
     @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
 
+     modif_params = params[:subscription][:subscription_option]
+     params[:subscription][modif_params] = true
+
     if @customer.persisted?
-      next_configuration_step
+      SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
+      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
     else
-      render :new
+      _error_messages = @customer.errors.messages
+      html_ul_content = "<ul>"
+      _error_messages.each {|key, value| html_ul_content += "<li>#{key} : #{value.join(', ')}</li>"}
+      html_ul_content += "</ul>"
+
+      flash[:error] = html_ul_content.html_safe
+
+      fake_subscription
+      render :form_with_first_step
     end
   end
 
@@ -362,15 +390,19 @@ class Account::CustomersController < Account::OrganizationController
       :email,
       :is_pre_assignement_displayed,
       :phone_number,
-      { group_ids: [] },
       :manager_id,
       :jefacture_account_id,
+      { group_ids: [] },
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
-      { softwares_attributes: [] }
+      { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
     ]
 
     if @user.is_admin
       attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format
+    end
+
+    if params[:user].try(:[], :softwares_attributes).try(:[], :is_ibiza_used)
+      attributes << :ibiza_id
     end
 
     attributes << :code if action_name == 'create'
@@ -418,6 +450,23 @@ class Account::CustomersController < Account::OrganizationController
 
   def mcf_params
     params.require(:user).permit(:mcf_storage)
+  end
+
+  def fake_subscription
+    @subscription = OpenStruct.new(
+      {
+        is_idox_package_active: false,
+        is_idox_package_to_be_disabled: false,
+        is_micro_package_active: false,
+        is_mini_package_active: false,
+        is_basic_package_active: false,
+        is_mail_package_active: false,
+        is_retriever_package_active: false,
+        number_of_journals: 5,
+        is_to_apply_now: true,
+        retriever_price_option: 'retriever',
+        configured?: false
+      })
   end
 
   def load_customer

@@ -20,28 +20,27 @@ class Account::JournalsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/journals
   def create
-    @journal = AccountBookType.new journal_params
+    journal = AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
 
-    (@customer || @organization).account_book_types << @journal
+    if !journal.errors.messages.present?
+      text = "Nouveau journal #{ journal.name } créé avec succès"
 
-    if @journal.save
-      flash[:success] = 'Créé avec succès.'
-
-      if @customer
-        UpdateJournalRelationService.new(@journal).execute
-
-        EventCreateService.add_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
-
-        @customer.dematbox.subscribe if @customer.dematbox.try(:is_configured)
-
-        DropboxImport.changed(@customer)
-
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: { text: text } }, status: 200
       else
-        redirect_to account_organization_journals_path(@organization)
+        flash[:success] = text
+        if @customer
+          redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+        else
+          redirect_to account_organization_journals_path(@organization)
+        end
       end
     else
-      render :new
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: journal.errors.messages }, status: 200
+      else
+        render :new
+      end
     end
   end
 
@@ -89,44 +88,37 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
-    @journal.assign_attributes(journal_params)
-    changes = @journal.changes.dup
-    if @journal.save
-      flash[:success] = 'Modifié avec succès.'
-      if @customer
-        UpdateJournalRelationService.new(@journal).execute
+    journal = AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
 
-        EventCreateService.journal_update(@journal, @customer, changes, current_user, path: request.path, ip_address: request.remote_ip)
+    if !journal.errors.messages.present?
+      text = "Le journal #{journal.name} a été modifié avec succès."
 
-        if changes['name'].present? && @customer.dematbox.try(:is_configured)
-          @customer.dematbox.subscribe
-        end
-
-        DropboxImport.changed(@customer)
-
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: { text: text } }, status: 200
       else
-        redirect_to account_organization_journals_path(@organization)
+        flash[:success] = text
+        if @customer
+          redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+        else
+          redirect_to account_organization_journals_path(@organization)
+        end
       end
     else
-      render :edit
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: journal.errors.messages }, status: 200
+      else
+        render :edit
+      end
     end
   end
 
   # DELETE /account/organizations/:organization_id/journals/:journal_id
   def destroy
     if @user.is_admin || Settings.first.is_journals_modification_authorized || !@customer || @journal.is_open_for_modification?
-      @journal.destroy
+      AccountBookTypeWriter.new({journal: @journal, current_user: current_user, request: request}).destroy
+
       flash[:success] = 'Supprimé avec succès.'
       if @customer
-        UpdateJournalRelationService.new(@journal).execute
-
-        EventCreateService.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
-
-        @customer.dematbox.subscribe if @customer.dematbox.try(:is_configured)
-
-        DropboxImport.changed(@customer)
-
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -246,7 +238,6 @@ class Account::JournalsController < Account::OrganizationController
     end
 
     attrs << :is_expense_categories_editable if current_user.is_admin
-
     attributes = params.require(:account_book_type).permit(*attrs)
 
     if @journal&.is_expense_categories_editable || current_user.is_admin
@@ -255,6 +246,7 @@ class Account::JournalsController < Account::OrganizationController
       end
     end
 
+    attributes[:jefacture_enabled] = attributes[:jefacture_enabled].to_s.gsub('1', 'true').gsub('0', 'false') if is_preassignment_authorized?
     attributes
   end
 
@@ -280,8 +272,13 @@ class Account::JournalsController < Account::OrganizationController
 
   def verify_max_number
     if @customer && is_max_number_reached?
-      flash[:error] = "Nombre maximum de journaux comptables atteint : #{@customer.account_book_types.count}/#{@customer.options.max_number_of_journals}."
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      text = "Nombre maximum de journaux comptables atteint : #{@customer.account_book_types.count}/#{@customer.options.max_number_of_journals}."
+      if params[:new_create_book_type].present?
+        render json: { success: true, response: text }, status: 200
+      else
+        flash[:error] = text
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      end
     end
   end
 end

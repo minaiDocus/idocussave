@@ -12,7 +12,6 @@ class CreateCustomerService
     @customer.organization = @organization
     @customer.set_random_password
     @customer.is_group_required = @requester.not_leader?
-    @customer.build_softwares if @customer.softwares.nil?
 
     if @customer.save
       token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
@@ -20,9 +19,10 @@ class CreateCustomerService
       @customer.reset_password_token   = encrypted_token
       @customer.reset_password_sent_at = Time.now
 
-      @customer.options = UserOptions.new(user: @customer)
+      @customer.build_softwares if @customer.softwares.nil?
+      @customer.build_options   if @customer.options.nil?
       @customer.create_notify
-      @customer.current_configuration_step = 'account'
+      @customer.current_configuration_step = nil
 
       @customer.save
 

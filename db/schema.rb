@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_17_091257) do
+ActiveRecord::Schema.define(version: 2020_07_24_121117) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -183,10 +183,47 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.string "a3_axis3"
   end
 
+  create_table "archive_budgea_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.integer "identifier"
+    t.date "signin"
+    t.string "platform"
+    t.text "encrypted_access_token"
+    t.boolean "exist"
+    t.boolean "is_updated", default: false
+    t.boolean "is_deleted", default: false
+    t.datetime "deleted_date"
+    t.index ["exist"], name: "index_archive_budgea_users_on_exist"
+    t.index ["is_updated"], name: "index_archive_budgea_users_on_is_updated"
+  end
+
   create_table "archive_invoices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "archive_retrievers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.integer "owner_id"
+    t.integer "budgea_id"
+    t.integer "id_connector"
+    t.string "state"
+    t.text "error"
+    t.text "error_message"
+    t.datetime "last_update"
+    t.datetime "created"
+    t.boolean "active"
+    t.datetime "last_push"
+    t.datetime "next_try"
+    t.datetime "expire"
+    t.text "log"
+    t.boolean "exist"
+    t.boolean "is_updated", default: false
+    t.boolean "is_deleted", default: false
+    t.datetime "deleted_date"
+    t.index ["active"], name: "index_archive_retrievers_on_active"
+    t.index ["exist"], name: "index_archive_retrievers_on_exist"
+    t.index ["is_updated"], name: "index_archive_retrievers_on_is_updated"
+    t.index ["state"], name: "index_archive_retrievers_on_state"
   end
 
   create_table "audits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -252,7 +289,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
-    t.string "encrypted_access_token"
+    t.text "encrypted_access_token"
     t.index ["user_id"], name: "fk_rails_bc19f24997"
   end
 
@@ -1407,6 +1444,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.date "start_date"
     t.date "end_date"
     t.integer "duration", default: 1, null: false
+    t.text "current_packages"
     t.boolean "is_centralized", default: true, null: false
     t.integer "price_in_cents_wo_vat", default: 0, null: false
     t.integer "products_price_in_cents_wo_vat", default: 0, null: false
@@ -1786,6 +1824,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.boolean "is_micro_package_active", default: false, null: false
     t.boolean "is_mini_package_active", default: false, null: false
     t.boolean "is_basic_package_active", default: false, null: false
+    t.boolean "is_idox_package_active", default: false
     t.boolean "is_mail_package_active", default: false, null: false
     t.boolean "is_scan_box_package_active", default: false, null: false
     t.boolean "is_retriever_package_active", default: false, null: false
@@ -1795,6 +1834,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.boolean "is_micro_package_to_be_disabled"
     t.boolean "is_mini_package_to_be_disabled"
     t.boolean "is_basic_package_to_be_disabled"
+    t.boolean "is_idox_package_to_be_disabled", default: false
     t.boolean "is_mail_package_to_be_disabled"
     t.boolean "is_scan_box_package_to_be_disabled"
     t.boolean "is_retriever_package_to_be_disabled"
@@ -1817,6 +1857,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_091257) do
     t.integer "unit_price_of_excess_oversized", default: 100, null: false
     t.integer "user_id"
     t.integer "organization_id"
+    t.index ["is_idox_package_active"], name: "index_subscriptions_on_is_idox_package_active"
     t.index ["organization_id"], name: "organization_id"
     t.index ["user_id"], name: "user_id"
   end

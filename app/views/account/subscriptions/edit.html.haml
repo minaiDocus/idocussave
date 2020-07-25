@@ -3,177 +3,22 @@
     .box
       = render 'account/customers/steps'
   .card
-    .card-header
-      - if @customer.configured?
-        %h3
-          Edition de l'abonnement du client : 
-          = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'fs-origin'
-      - else
-        .float-left
+    = form_tag account_organization_customer_subscription_path(@organization, @customer), method: :patch, class: 'simple_form form form-horizontal margin0', :data => {:"is_recently_created" => @customer.recently_created? } do
+      .card-header
+        - if @customer.configured?
           %h3
-            Sélection forfait(s)/option(s) pour le dossier : 
-            %span.text-info.fs-origin= @customer
+            Edition de l'abonnement du client :
+            = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'fs-origin'
+        - else
+          .float-left
+            %h3
+              Sélection forfait(s)/option(s) pour le dossier :
+              %span.text-info.fs-origin= @customer
 
-    = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { id: 'subscription_package_form', class: 'form-horizontal' }, data: { is_recently_created: @customer.recently_created? } do |f|
       .card-body
-        - lock = ''
-        - if @subscription.configured?
-          - lock = @subscription.light_package? ? 'annual_package_locked' : 'ligth_package_locked'
-        %table.table.table-subscriptions
-          %tbody
-            %tr.package{ class: "#{lock} #{'locked' if lock.present?}" }
-              %td.question.bg-light.border-right-0
-                Quel(s) forfait(s) choisissez-vous pour le dossier ?
-                %br
-                %br
-                %b
-                  Pour consulter nos produits et leurs tarifs, rendez-vous dans le menu «
-                  = link_to 'Produits et tarifs', docs_download_path(name: 'Guide&tarifs_2017_iDocus.pdf'), target: '_blank'
-                  ». iDo'Basique est compris dans iDo'Courrier et iDo'Box.
-              %td.bg-light.border-left-0
-                .package_choice
-                  %label
-                    = f.check_box :is_basic_package_active, class: 'light_package', disabled: @subscription.heavy_package?, data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
-                    %b iDo’Basique
-                    %i (Téléchargement + Pré-saisie comptable)
-                .package_choice
-                  %label
-                    = f.check_box :is_mail_package_active, class: 'light_package', disabled: @subscription.heavy_package?, data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-                    %b iDo’Courrier
-                    %i (Téléchargement + Envoi par courrier A/R + Pré-saisie comptable)
-                .package_choice
-                  %label
-                    = f.check_box :is_scan_box_package_active, class: 'light_package', disabled: @subscription.heavy_package?, data: { original_value: ((@subscription.is_scan_box_package_active || @subscription.is_scan_box_package_to_be_disabled) ? 1 : 0) }
-                    %b iDo’Box
-                    %i (Téléchargement + Scan par iDocus'Box + Pré-saisie comptable)
-                .package_choice
-                  %label
-                    = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
-                    %b iDo’FacBanque
-                    %i (Récupération banque + Factures sur Internet)
-                - if @user.is_admin || @organization.code.in?(['GAP'])
-                  .package_choice
-                    %label
-                      = f.check_box :is_mini_package_active, class: "light_package #{'commitment_pending' if !@customer.subscription.commitment_end?}", disabled: !lock || (@subscription.heavy_package? && !@customer.subscription.commitment_end?), data: { original_value: ((@subscription.is_mini_package_active || @subscription.is_mini_package_to_be_disabled) ? 1 : 0) }
-                      %b iDo’Mini
-                      %i (Téléchargement + Pré-saisie comptable + Engagement 12 mois)
-                - if @user.is_admin || @organization.code.in?(['DPA','ADV','CRE','GMBA','AEC','EXTE','ACC','FBC','FIDA','FIDC','EG', '2AP', 'ACDA'])
-                  .package_choice
-                    %label
-                      = f.check_box :is_micro_package_active, class: "light_package #{'commitment_pending' if !@customer.subscription.commitment_end?}", disabled: !lock || (@subscription.heavy_package? && !@customer.subscription.commitment_end?), data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
-                      %b iDo’Micro
-                      %i (Téléchargement + Pré-saisie comptable + iDo’FacBanque + Engagement 12 mois)
-                .package_choice
-                  %label
-                    = f.check_box :is_annual_package_active, disabled: @subscription.is_annual_package_active
-                    %b Pack Annuel
-                    %i (Envoi par courrier A/R + Téléchargement + iDo'FacBanque + Pré-saisie comptable)
-                .retriever_package_warning{ style: 'display:none' }
-                  %i Rappel: iDo’FacBanque sélectionné seul n’aura que la pré-saisie des écritures bancaires. Vous pourrez retrouver les factures récupérées par les automates dans « mes documents ».
-                  %br
-                  %i Les factures seront pré-saisies si iDo’FacBanque est sélectionné en plus d’un autre forfait.
-                .micro_package_warning{ style: 'display:none' }
-                  %i Rappel: Avec iDo’Micro, les options pré-affectation comptable et ido'FacBanque sont offertes mais vous avez un engagement de 12 mois au cours desquels vous ne pourriez pas changer de forfait, en cas de clôture du dossier avant les 12 mois vous serez facturé à 10 € X mois restant.
-            %tr.number_of_journals{ style: 'display:none' }
-              %td.question Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
-              %td.subscription_number_of_journals
-                = f.number_field :number_of_journals, class: 'form-control col-md-1 special_input', min: 5, max: 30, style: 'font-weight:bold', required: true, autofocus: true, pattern: '/^[0-9]+$/'
-                &nbsp;
-                %span{id: 'err-msg-input-number'}
-                - if @customer.account_book_types.count > 5
-                  %div{ style: "clear:both;" }
-                    %i Supprimez un journal comptable avant de baisser cette option.
-            %tr.pre_assignment{ style: 'display:none' }
-              %td.question Souhaitez-vous la pré-affectation comptable ?
-              = hidden_field_tag 'is_pre_assignment_active_hidden', ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0)
-              %td
-                .choice
-                  %label{ for: 'subscription_is_pre_assignment_active_true' }
-                    = f.radio_button :is_pre_assignment_active, true, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }
-                    Oui
-                .choice
-                  %label{ for: 'subscription_is_pre_assignment_active_false' }
-                    = f.radio_button :is_pre_assignment_active, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }
-                    Non
+        = render 'account/customers/subscription_options'
 
-        - if @user.is_admin
-          .row
-            .col-md-12
-              %a{ id: 'admin_options_button', href: '#', class: 'btn btn-secondary'} Afficher / Cacher les options
-          .box.bg-light.admin_options.hide
-            .row
-              .col-md-8
-                %h4.aligncenter Quelle(s) option(s) appliquer à ce dossier ?
-                - sub_size     = SubscriptionOption.by_position.size
-                - count        = (sub_size / 2).ceil
-                - first_group  = SubscriptionOption.by_position[0...count]
-                - second_group = SubscriptionOption.by_position[count..sub_size]
-                .row
-                  .col-md-6
-                    %table.table.table-condensed.table-striped.margin1top.extra_options.margin0bottom
-                      %tbody
-                        - first_group.each do |option|
-                          %tr
-                            %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
-                            %td= label_tag "subscription_option_ids_#{option.id}", option.name
-                            %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
-                  .col-md-6
-                    %table.table.table-condensed.table-striped.margin1top.extra_options.margin0bottom
-                      %tbody
-                        - second_group.each do |option|
-                          %tr
-                            %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
-                            %td= label_tag "subscription_option_ids_#{option.id}", option.name
-                            %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
-
-              .col-md-4
-                %h4.aligncenter Quotas
-                %hr
-                %h4.aligncenter Feuilles
-                %br
-                = f.input :max_sheets_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_sheet, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Pages téléversées
-                %br
-                = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Pages iDocus'Box
-                %br
-                = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Pièces presaisies
-                %br
-                = f.input :max_preseizure_pieces_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_preseizure, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Pièces notes de frais
-                %br
-                = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Attaches
-                %br
-                = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-                %hr
-                %h4.aligncenter Hors format
-                %br
-                = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
-                = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
-          .row
-            .col-md-12
-              = f.input :is_to_apply_now, as: :boolean, label: 'Appliquer tout de suite les options à la baisse ?'
-        %hr
-        .aligncenter
-          %h4 Prix du forfait avec les options sélectionnées :
-          %b.total_price{ style: 'font-size:20px' }
       .card-footer
         .form-actions
-          - if @customer.configured?
-            = f.submit 'Valider', class: 'btn btn-primary'
-            = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn btn-light'
-          - else
-            = f.submit t('actions.next_step'), class: 'btn btn-primary'
+          = submit_tag "Valider", class: 'btn btn-primary small-shadow'
+          = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn btn-light'

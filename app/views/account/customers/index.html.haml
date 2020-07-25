@@ -8,7 +8,7 @@
             %span.badge.badge-info= @customers.total_count
         .float-right
           - if (@user.leader? || @user.manage_customers) && @organization.is_active
-            = link_to t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
+            = link_to t('actions.new'), form_with_first_step_account_organization_customers_path(@organization), class: 'btn btn-primary'
   .row.retractable.with-filter
     .col-md-12.retractable-content
       .box
