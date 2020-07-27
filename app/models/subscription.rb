@@ -111,7 +111,7 @@ class Subscription < ApplicationRecord
 
     result << :mail_option      if self.is_mail_package_active
     result << :retriever_option if self.is_retriever_package_active
-    result << :pre_assignment_option if self.is_pre_assignment_active
+    result << :pre_assignment_option if self.is_pre_assignment_really_active
 
     result
   end
@@ -166,6 +166,10 @@ class Subscription < ApplicationRecord
 
   def is_retriever_only?
     get_active_packages.empty? && get_active_options.include?(:retriever_option)
+  end
+
+  def is_pre_assignment_really_active
+    self.is_pre_assignment_active && (self.is_basic_package_active || self.is_mini_package_active)
   end
 
   def retriever_price_option

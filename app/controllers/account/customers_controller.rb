@@ -463,7 +463,7 @@ class Account::CustomersController < Account::OrganizationController
         is_mail_package_active: false,
         is_retriever_package_active: false,
         number_of_journals: 5,
-        is_pre_assignment_active: false,
+        is_pre_assignment_active: true,
         is_to_apply_now: true,
         retriever_price_option: 'retriever',
         configured?: false

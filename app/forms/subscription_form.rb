@@ -40,12 +40,15 @@ class SubscriptionForm
     @subscription.number_of_journals = get_param(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count    
 
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
-      set_prices_and_limits
-      set_special_excess_values
+      @subscription.set_start_date_and_end_date
 
       UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
       EvaluateSubscription.new(@subscription, @requester, @request).execute
       PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
+
+      set_prices_and_limits
+      set_special_excess_values
+
       destroy_pending_orders_if_needed
       true
     else

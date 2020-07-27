@@ -24,7 +24,7 @@ class SubscriptionPackage
         when :retriever_option
           reduced ? 3 : 5
         when :pre_assignment_option
-          5
+          9
         else
           0
       end
@@ -62,7 +62,7 @@ class SubscriptionPackage
         when :retriever_option
           { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates" }
         when :pre_assignment_option
-          { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-saisie"}
+          { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation"}
         else
           { label: '', name: '', group: '' }
       end
