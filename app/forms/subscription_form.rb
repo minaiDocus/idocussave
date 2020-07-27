@@ -24,6 +24,7 @@ class SubscriptionForm
 
     @subscription.is_mail_package_to_be_disabled  = (!@to_apply_now && @subscription.is_mail_package_active  && get_param(:is_mail_package_active).to_i == 0)
     @subscription.is_retriever_package_to_be_disabled  = (!@to_apply_now && @subscription.is_retriever_package_active && get_param(:is_retriever_package_active).to_i == 0)
+    @subscription.is_pre_assignment_to_be_disabled  = (!@to_apply_now && @subscription.is_pre_assignment_active && get_param(:is_pre_assignment_active).to_i == 0)
 
     @subscription.is_basic_package_active = value_of(:is_basic_package_active) unless value_of(:is_basic_package_active).nil?
     @subscription.is_idox_package_active  = value_of(:is_idox_package_active)  unless value_of(:is_idox_package_active).nil?
@@ -32,18 +33,19 @@ class SubscriptionForm
 
     @subscription.is_mail_package_active      = value_of(:is_mail_package_active) unless value_of(:is_mail_package_active).nil?
     @subscription.is_retriever_package_active = value_of(:is_retriever_package_active) unless value_of(:is_retriever_package_active).nil?
+    @subscription.is_pre_assignment_active    = value_of(:is_pre_assignment_active) unless value_of(:is_pre_assignment_active).nil?
 
     @subscription.period_duration = 1
-    @subscription.is_pre_assignment_active = true
 
     @subscription.number_of_journals = get_param(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count    
 
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
-      EvaluateSubscription.new(@subscription, @requester, @request).execute
-      UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
-      PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
       set_prices_and_limits
       set_special_excess_values
+
+      UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
+      EvaluateSubscription.new(@subscription, @requester, @request).execute
+      PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
       destroy_pending_orders_if_needed
       true
     else

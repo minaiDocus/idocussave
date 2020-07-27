@@ -72,10 +72,13 @@ class Period < ApplicationRecord
   end
 
   def get_active_options
+    return [] unless self.current_packages
+
     result = []
 
     result << :mail_option      if self.current_packages.include?('mail_option')
     result << :retriever_option if self.current_packages.include?('retriever_option')
+    result << :pre_assignment_option if self.current_packages.include?('pre_assignment_option')
 
     result
   end
@@ -95,6 +98,7 @@ class Period < ApplicationRecord
     #options
     packages << 'mail_option' if self.subscription.is_mail_package_active
     packages << 'retriever_option' if self.subscription.is_retriever_package_active
+    packages << 'pre_assignment_option' if self.subscription.is_pre_assignment_active
 
     self.update({ current_packages: packages.presence })
   end

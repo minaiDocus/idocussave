@@ -1,6 +1,6 @@
 class SubscriptionPackage
   PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_x].freeze
-  OPTIONS_LIST  = [:mail_option, :retriever_option].freeze
+  OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option].freeze
 
   class << self
     def price_of(package_or_option, reduced=false)
@@ -11,11 +11,11 @@ class SubscriptionPackage
       case package_or_option
         #packages
         when :ido_classique
-          10 + signing_piece_price + pre_assignment_price
+          10 + signing_piece_price
         when :ido_x
           5
         when :ido_mini
-          10 + signing_piece_price + pre_assignment_price
+          10 + signing_piece_price
         when :ido_micro
           10
         #options
@@ -23,6 +23,8 @@ class SubscriptionPackage
           10
         when :retriever_option
           reduced ? 3 : 5
+        when :pre_assignment_option
+          5
         else
           0
       end
@@ -59,8 +61,10 @@ class SubscriptionPackage
           { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier" }
         when :retriever_option
           { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates" }
+        when :pre_assignment_option
+          { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-saisie"}
         else
-          { label: '', name: '', group: "" }
+          { label: '', name: '', group: '' }
       end
     end
 

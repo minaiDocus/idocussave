@@ -111,6 +111,7 @@ class Subscription < ApplicationRecord
 
     result << :mail_option      if self.is_mail_package_active
     result << :retriever_option if self.is_retriever_package_active
+    result << :pre_assignment_option if self.is_pre_assignment_active
 
     result
   end
@@ -156,6 +157,8 @@ class Subscription < ApplicationRecord
         self.is_mail_package_active && self.is_mail_package_to_be_disabled
       when :retriever_option
         self.is_retriever_package_active && self.is_retriever_package_to_be_disabled
+      when :pre_assignment_option
+        self.is_pre_assignment_active && self.is_pre_assignment_to_be_disabled
       else
         false
     end

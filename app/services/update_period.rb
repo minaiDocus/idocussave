@@ -68,10 +68,11 @@ class UpdatePeriod
       # type = @subscription.period_duration == 1 ? 0 : 1
 
       selected_options = []
+      active_packages = @period.get_active_packages
 
       # is_base_package_priced = false
 
-      @period.get_active_packages.each do |package|
+      active_packages.each do |package|
         package_infos = SubscriptionPackage.infos_of(package)
 
         option = ProductOptionOrder.new
@@ -91,6 +92,10 @@ class UpdatePeriod
       end
 
       @period.get_active_options.each do |_p_option|
+        if _p_option.to_s == 'pre_assignment_option'
+          next unless (active_packages.include? :ido_classique || active_packages.include? :ido_mini)
+        end
+
         option_infos = SubscriptionPackage.infos_of(_p_option)
 
         option = ProductOptionOrder.new
