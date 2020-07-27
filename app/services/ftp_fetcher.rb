@@ -4,6 +4,58 @@ require 'net/ftp'
 class FtpFetcher
   # FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
   FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
+  TAB71=[ '0','1','2','3','4','5','6','7','8','9',
+          'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+          'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+          '-','/','=','*',':','.',';','!','?', '.', '²', '&', '~', '#', '{', '}', '(', ')', '[', ']', '|', '`', '^',
+          'ç', '\\', '_', '@', 'à', 'ø', 'µ', '€', '$', '£', '°', '%', 'ù', 'é', 'è']
+
+  def self.to_100(_number)
+    result = 1
+    number = _number
+    new_base = ''
+
+    while result > 0
+      result = number.to_i / 71
+      rest   = number.to_i % 71
+      new_base += TAB71[rest]
+
+      number = result
+    end
+
+    new_base.reverse
+  end
+
+  def self.to_bin(_number)
+    result = 1
+    number = _number
+    new_base = ''
+    octect = 0
+
+    while result > 0
+      octect += 1
+      result = number.to_i / 2
+      rest   = number.to_i % 2
+      new_base += rest.to_s
+
+      new_base += ' ' if (octect%8) == 0
+
+      number = result
+    end
+
+    new_base.reverse
+  end
+
+  def self.to_dec(_number)
+    number = _number.to_s.reverse
+    numbers = number.split('')
+    result = 0
+    numbers.each_with_index do |binaire, puissance|
+      result = result.to_i + (binaire.to_i * (2**puissance.to_i))
+    end
+
+    result
+  end
 
   def self.fetch(url, username, password, dir = '/', provider = '')
     begin
