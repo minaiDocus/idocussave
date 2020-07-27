@@ -59,7 +59,7 @@
         .form-check.form-check-inline
           = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', (@subscription.is_retriever_only? && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input retriever-uniquess-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_retriever_only? && @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
           = label_tag 'subscription[subscription_option]', "Automate uniquement", class: 'form-check-label'
-    .row.mt-4
+    .row.mt-4.number_of_journals
       .col-md-6
         .form-inline.form-check.form-check-inline
           .label-section
@@ -67,9 +67,26 @@
           .control-section
             .subscription_number_of_journals
               = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-3 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold;margin-left: 20px', required: true, autofocus: true, pattern: '/^[0-9]+$/'
+              &nbsp;
+              %span{id: 'err-msg-input-number'}
+              - if @customer.account_book_types.count > 5
+                %div{ style: "clear:both;" }
+                  %i Supprimez un journal comptable avant de baisser cette option.
 
     %br
-    %br
+    .form-group.clearfix.radio_buttons.label-50.pre_assignment
+      .label-section{style: 'width: 256px;'}
+        = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-affectation comptable ?", class: 'subscription_is_pre_assignment_active_label'
+        = hidden_field_tag 'is_pre_assignment_active_hidden', ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0)
+      .control-section
+        %span.radio
+          %label{ for: 'subscription_is_pre_assignment_active_true' }
+            = radio_button_tag 'subscription[is_pre_assignment_active]', true, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }
+            Oui
+        %span.radio
+          %label{ for: 'subscription_is_pre_assignment_active_false' }
+            = radio_button_tag 'subscription[is_pre_assignment_active]', false, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }
+            Non
     %br
     - if current_user.is_admin
       .form-group.clearfix.radio_buttons.label-50

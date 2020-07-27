@@ -93,7 +93,7 @@ class UpdatePeriod
 
       @period.get_active_options.each do |_p_option|
         if _p_option.to_s == 'pre_assignment_option'
-          next unless (active_packages.include? :ido_classique || active_packages.include? :ido_mini)
+          next unless ((active_packages.include? :ido_classique) || (active_packages.include? :ido_mini))
         end
 
         option_infos = SubscriptionPackage.infos_of(_p_option)

@@ -17,6 +17,8 @@ update_warning = ->
 
   if $('#subscription_subscription_option_is_retriever_package_active').is(':checked') && $('#subscription_subscription_option_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
     $('#subscription_subscription_option_is_retriever_package_active').parent('.form-check-inline').addClass('to_disable_later')
+  if !$('#subscription_is_pre_assignment_active_true').is(':checked') && $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
+    $('.subscription_is_pre_assignment_active_label').addClass('to_disable_later')
 
   $('.active_options').each (e) ->
     $(this).find('.option_checkbox').each (e) ->

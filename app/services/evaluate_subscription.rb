@@ -33,9 +33,9 @@ class EvaluateSubscription
         unauthorize_retriever
       end
 
-      if @period.is_active?(:pre_assignment_option) && ( @period.is_active?(:ido_classique) || @period.is_active?(:ido_mini) )
+      if period.is_active?(:pre_assignment_option) && ( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) )
         authorize_pre_assignment
-      elsif @period.is_active?(:ido_micro) || ( @period.is_active?(:retriever_option) && !( @period.is_active?(:ido_classique) || @period.is_active?(:ido_mini) ))
+      elsif period.is_active?(:ido_micro) || ( period.is_active?(:retriever_option) && !( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) ))
         authorize_pre_assignment
       else
         unauthorize_pre_assignment

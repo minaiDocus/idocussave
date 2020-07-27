@@ -354,15 +354,30 @@ check_input_number = ->
 
 update_form = ->
   lock_package()
+  options = ['number_of_journals', 'pre_assignment']
+  selected_options = []
 
   if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked')
     active_option_of('basic')
+    selected_options.push 'number_of_journals', 'pre_assignment'
   if $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').is(':checked')
     active_option_of('idox')
+    selected_options.push 'number_of_journals'
   if $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').is(':checked')
     active_option_of('micro')
+    selected_options.push 'number_of_journals'
   if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked')
     active_option_of('mini')
+    selected_options.push 'number_of_journals', 'pre_assignment'
+
+  for option in options
+    if selected_options.indexOf(option) != -1
+      $('.'+option).show()
+      if (option == 'pre_assignment')
+        if $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val() > 0
+          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').prop('checked', true)
+    else
+      $('.'+option).hide()
 
   uncheck_all_options()
   update_price()
@@ -438,8 +453,12 @@ update_price = ->
     options.push 'subscription', 'subscription_plus', 'pre_assignment'
   options = _.uniq(options)
 
-
-  selected_options = options
+  for option in options
+    if option == 'pre_assignment'
+      if $('#subscription_is_pre_assignment_active_true').is(':checked')
+        selected_options.push 'pre_assignment'
+    else
+      selected_options.push option
 
   if options.length > 0
     number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]').val())
@@ -543,6 +562,7 @@ jQuery ->
         if item == 'retriever-uniquess-check-radio'
           $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').attr('checked', 'checked')
 
+      update_form()
       uncheck_all_options()
       update_price()
 
