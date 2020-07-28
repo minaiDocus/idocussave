@@ -59,7 +59,8 @@ class Period < ApplicationRecord
   end
 
   def get_active_packages
-    self.set_current_packages unless self.current_packages 
+    self.set_current_packages unless self.current_packages
+    return [] unless self.current_packages
 
     result = []
 

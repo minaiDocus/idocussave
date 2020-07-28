@@ -17,13 +17,15 @@ class PonctualScripts::UpdateStepCustomersConfiguration < PonctualScripts::Ponct
 
     updated_lists = []
 
-    User.where.not('current_configuration_step = "subscription" AND last_configuration_step = "subscription"').each do |user|
+    User.where('current_configuration_step IS NOT NULL OR last_configuration_step IS NOT NULL').each do |user|
+      next if user.current_configuration_step == 'subscription'
+
       @user = user
 
       logger_infos "[UpdateStepCustomersConfiguration] - user ID : #{user.id.to_s}"
       save_udpate_to_file
+      updated_lists << { user: @user, current_configuration_step: user.current_configuration_step, last_configuration_step: user.last_configuration_step }
       update_step_configuration
-      updated_lists << @user
     end
 
     if updated_lists.present?
@@ -32,13 +34,21 @@ class PonctualScripts::UpdateStepCustomersConfiguration < PonctualScripts::Ponct
 
       raw_table += "<th>ID</th>"
       raw_table += "<th>Code</th>"
+      raw_table += "<th>current_configuration_step</th>"
+      raw_table += "<th>last_configuration_step</th>"
 
       raw_table += "</tr><tbody>"
 
-      updated_lists.each do |user|
+      updated_lists.each do |hassh|
+        user  = hassh[:user]
+        cstep = hassh[:current_configuration_step]
+        lstep = hassh[:last_configuration_step]
+
         raw_table += "<tr>"
         raw_table += "<td>#{user.id.to_s}<td>"
         raw_table += "<td>#{user.code.to_s}<td>"
+        raw_table += "<td>#{cstep.to_s}<td>"
+        raw_table += "<td>#{lstep.to_s}<td>"
         raw_table += "</tr>"
       end
 
