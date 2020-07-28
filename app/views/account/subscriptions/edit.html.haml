@@ -1,7 +1,4 @@
 ﻿#subscriptions.edit
-  - unless @customer.configured?
-    .box
-      = render 'account/customers/steps'
   .card
     = form_tag account_organization_customer_subscription_path(@organization, @customer), method: :patch, class: 'simple_form form form-horizontal margin0', :data => {:"is_recently_created" => @customer.recently_created? } do
       .card-header
@@ -10,10 +7,9 @@
             Edition de l'abonnement du client :
             = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'fs-origin'
         - else
-          .float-left
-            %h3
-              Sélection forfait(s)/option(s) pour le dossier :
-              %span.text-info.fs-origin= @customer
+          %h3
+            Sélection forfait(s)/option(s) pour le dossier :
+            %span.text-info.fs-origin= @customer
 
       .card-body
         = render 'account/customers/subscription_options'

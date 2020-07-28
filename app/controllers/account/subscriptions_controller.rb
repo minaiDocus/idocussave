@@ -18,17 +18,15 @@ class Account::SubscriptionsController < Account::OrganizationController
     params[:subscription][modif_params] = true
 
     if SubscriptionForm.new(@subscription, @user, request).submit(params[:subscription])
-      if @customer.configured?
-        if params.try(:[], :user).try(:[], :jefacture_account_id).present?
-          @customer.update(jefacture_account_id: params[:user][:jefacture_account_id])
-        end
+      @customer.update(current_configuration_step: nil) unless @customer.configured?
 
-        flash[:success] = 'Modifié avec succès.'
-
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
-      else
-        next_configuration_step
+      if params.try(:[], :user).try(:[], :jefacture_account_id).present?
+        @customer.update(jefacture_account_id: params[:user][:jefacture_account_id])
       end
+
+      flash[:success] = 'Modifié avec succès.'
+
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
     else
       flash[:error] = 'Vous devez sélectionner un forfait.'
 
