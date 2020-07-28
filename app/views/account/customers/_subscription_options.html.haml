@@ -81,11 +81,11 @@
       .control-section
         %span.radio
           %label{ for: 'subscription_is_pre_assignment_active_true' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', true, @subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }
+            = radio_button_tag 'subscription[is_pre_assignment_active]', true, @subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }, class: 'is_pre_assignment_active_true is_pre_assignment_applied radio-button'
             Oui
         %span.radio
           %label{ for: 'subscription_is_pre_assignment_active_false' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', false, !@subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }
+            = radio_button_tag 'subscription[is_pre_assignment_active]', false, !@subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }, class: 'is_pre_assignment_active_false is_pre_assignment_applied radio-button'
             Non
     %br
     - if current_user.is_admin

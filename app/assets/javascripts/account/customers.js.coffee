@@ -369,6 +369,13 @@ update_form = ->
   if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked')
     active_option_of('mini')
     selected_options.push 'number_of_journals', 'pre_assignment'
+  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').is(':checked')
+    remove_active_class()
+    selected_options.push 'number_of_journals'
+  if $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').is(':checked')
+    selected_options.push 'number_of_journals'
+  if $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').is(':checked')
+    selected_options.push 'number_of_journals'
 
   for option in options
     if selected_options.indexOf(option) != -1
@@ -396,6 +403,9 @@ active_option_of = (group) ->
   $("#personalize_subscription_package_form #subscription_subscription_option_is_#{group}_package_active").addClass('active')
   $("#personalize_subscription_package_form .form_check_#{group}_package").addClass('active_options')
   $("#personalize_subscription_package_form .active_options input[type='checkbox']").addClass('checkbox_active')
+
+remove_active_class = ->
+  $("#personalize_subscription_package_form .active").removeClass('active')
 
 get_data_original_value_of = (group, option) ->
   return parseInt($("#personalize_subscription_package_form .#{group} input#{option}").data('original-value'))
@@ -561,6 +571,15 @@ jQuery ->
           active_option_of('basic')
         if item == 'retriever-uniquess-check-radio'
           $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').attr('checked', 'checked')
+          remove_active_class()
+        if item == 'is_pre_assignment_active_true'
+          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').attr('checked', 'checked')
+          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').removeAttr('checked')
+          $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val(1)
+        if item == 'is_pre_assignment_active_false'
+          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').attr('checked', 'checked')
+          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').removeAttr('checked')
+          $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val(0)
 
       update_form()
       uncheck_all_options()
