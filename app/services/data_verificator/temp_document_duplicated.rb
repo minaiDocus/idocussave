@@ -16,7 +16,7 @@ class DataVerificator::TempDocumentDuplicated < DataVerificator::DataVerificator
         if temp_document[0].present? && temp_document[2].size > 1
           temp_document[2].each{|tmp_doc_el| tmp_doc_elements << tmp_doc_el.join(' => ')}
           count += 1
-          messages << "user_code: #{raw_temp_documents.first.user.code}, original_file_name: #{temp_document[0]}, count: #{temp_document[2].size}, pages_number: #{temp_document[1]}, details: #{tmp_doc_elements.join('<br/>')}"
+          messages << "user_code: #{raw_temp_documents.first.user.code}, original_file_name: #{temp_document[0].gsub(/,/,' - ')}, count: #{temp_document[2].size}, pages_number: #{temp_document[1]}, details: #{tmp_doc_elements.join('<br/>')}"
         end
       end
     end
