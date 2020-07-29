@@ -406,6 +406,8 @@ active_option_of = (group) ->
 
 remove_active_class = ->
   $("#personalize_subscription_package_form .active").removeClass('active')
+  $("#personalize_subscription_package_form .active_options").removeClass('active_options')
+  $("#personalize_subscription_package_form .checkbox_active").removeClass('checkbox_active')
 
 get_data_original_value_of = (group, option) ->
   return parseInt($("#personalize_subscription_package_form .#{group} input#{option}").data('original-value'))
