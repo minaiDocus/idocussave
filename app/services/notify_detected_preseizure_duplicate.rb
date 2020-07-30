@@ -6,7 +6,7 @@ class NotifyDetectedPreseizureDuplicate
 
   def execute
     @preseizure.user.prescribers.each do |collaborator|
-      next unless collaborator.notify.detected_preseizure_duplication
+      next unless collaborator.notify.try(:detected_preseizure_duplication)
       Notify.update_counters collaborator.notify.id, detected_preseizure_duplication_count: 1
       NotifyDetectedPreseizureDuplicateWorker.perform_in(@time_delay, collaborator.id)
     end
@@ -15,7 +15,7 @@ class NotifyDetectedPreseizureDuplicate
 
   def self.execute(user_id)
     user = User.find user_id
-    count = user.notify.detected_preseizure_duplication_count
+    count = user.notify.try(:detected_preseizure_duplication_count)
 
     return if count == 0
 
