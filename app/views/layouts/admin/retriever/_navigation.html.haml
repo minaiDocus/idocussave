@@ -7,3 +7,6 @@
   &nbsp;
   %li{ class: ('active' if controller_name == 'retriever_services') }
     = link_to 'Services', admin_retriever_services_path, class: 'btn btn-secondary'
+  &nbsp;
+  %li{ class: ('active' if controller_name == 'budgea_users') }
+    = link_to 'Archives', budgea_users_admin_archives_path(tab: 'budgea_users'), class: 'btn btn-secondary'

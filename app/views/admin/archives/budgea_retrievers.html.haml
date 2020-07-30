@@ -1,0 +1,133 @@
+#archive_budgea_retrievers
+  = render partial: 'tab_menu'
+
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box.clearfix
+        = render partial: 'shared/list_options', locals: { collection: @budgea_retrievers }
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+              %thead
+                %tr.bg-brown.text-white
+                  %th= sortable :created, 'Date de création'
+                  %th= sortable :deleted_date, 'Date de suppression'
+                  %th= sortable :state,  'Etat'
+                  %th= sortable :active, 'Est actif ?'
+                  %th= sortable :owner_id, 'Id utilisateur'
+                  %th= sortable :budgea_id,  'Id budgea'
+                  %th= sortable :id_connector, 'Id connecteur'
+                  %th= sortable :error, 'Erreur'
+                  %th= sortable :error_message, 'Message d\'erreur'
+                  %th= sortable :exist, 'Est existe ?'
+                  %th= sortable :is_updated, 'Est mis à jour ?'
+                  %th= sortable :is_deleted, 'Est supprimé ?'
+              %tbody.retractable.slidedown
+                - @budgea_retrievers.each do |budgea_retriever|
+                  %tr
+                    %td= l(budgea_retriever.created, format: '%d %b %Y %H:%M')
+                    %td= l(budgea_retriever.deleted_date, format: '%d %b %Y %H:%M')
+                    %td= budgea_retriever.state
+                    %td= budgea_retriever.active ? t('yes_value') : t('no_value')
+                    %td= budgea_retriever.owner_id
+                    %td= budgea_retriever.budgea_id
+                    %td= budgea_retriever.id_connector
+                    %td= budgea_retriever.error
+                    %td= budgea_retriever.error_message
+                    %td= budgea_retriever.exist ? t('yes_value') : t('no_value')
+                    %td= budgea_retriever.is_updated ? t('yes_value') : t('no_value')
+                    %td= budgea_retriever.is_deleted ? t('yes_value') : t('no_value')
+
+        = render partial: 'shared/list_options', locals: { collection: @budgea_retrievers }
+
+    = form_tag budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers'), method: :get, class: 'form-filter' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+      = hidden_field_tag :tab, 'budgea_retrievers'
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[created][>=]', 'Date de création'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'archive_budgea_retrievers_contains[created][>=]', (params[:archive_budgea_retrievers_contains][:created]['>='] rescue ''), class: 'form-control date datepicker'
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text <=
+                  = text_field_tag 'archive_budgea_retrievers_contains[created][<=]', (params[:archive_budgea_retrievers_contains][:created]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[deleted_date][>=]', 'Date de suppression'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'archive_budgea_retrievers_contains[deleted_date][>=]', (params[:archive_budgea_retrievers_contains][:deleted_date]['>='] rescue ''), class: 'form-control date datepicker'
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text <=
+                    = text_field_tag 'archive_budgea_retrievers_contains[deleted_date][<=]', (params[:archive_budgea_retrievers_contains][:deleted_date]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[active]', 'Est actif ?'
+              .control-section
+                = select_tag 'archive_budgea_retrievers_contains[active]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:active] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[state]', 'Etat'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[state]', (params[:archive_budgea_retrievers_contains][:state] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[owner_id]', 'Id utilisateur'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[owner_id]', (params[:archive_budgea_retrievers_contains][:owner_id] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[budgea_id]', 'Id budgea'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[budgea_id]', (params[:archive_budgea_retrievers_contains][:budgea_id] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[id_connector]', 'Id connecteur'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[id_connector]', (params[:archive_budgea_retrievers_contains][:id_connector] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[error]', 'Erreur'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[error]', (params[:archive_budgea_retrievers_contains][:error] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[error_message]', 'Message d\'erreur'
+              .control-section
+                = text_field_tag 'archive_budgea_retrievers_contains[error_message]', (params[:archive_budgea_retrievers_contains][:error_message] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[exist]', 'Est existe ?'
+              .control-section
+                = select_tag 'archive_budgea_retrievers_contains[exist]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:exist] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[is_updated]', 'Est mis à jour ?'
+              .control-section
+                = select_tag 'archive_budgea_retrievers_contains[is_updated]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:is_updated] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_retrievers_contains[is_deleted]', 'Est supprimé ?'
+              .control-section
+                = select_tag 'archive_budgea_retrievers_contains[is_deleted]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:is_deleted] rescue '')), include_blank: true, class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers'), class: 'btn btn-light', title: t('filters.reset')

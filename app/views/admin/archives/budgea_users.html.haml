@@ -1,0 +1,100 @@
+#archive_budgea_users
+  = render partial: 'tab_menu'
+
+  .row.retractable.with-filter
+    .col-md-12.retractable-content
+      .box.clearfix
+        = render partial: 'shared/list_options', locals: { collection: @budgea_users }
+        .row
+          .col-md-12
+            %table.table.table-condensed.table-striped.margin1top.margin0bottom.table-detachable-head.table-bordered-inner
+              %thead
+                %tr.bg-brown.text-white
+                  %th= sortable :signin, 'Date de connexion'
+                  %th= sortable :deleted_date, 'Date de suppression'
+                  %th= sortable :identifier,  'Identifiant'
+                  %th= sortable :platform, 'Plateforme'
+                  %th Code d'accès
+                  %th= sortable :exist, 'Est existe ?'
+                  %th= sortable :is_updated, 'Est mis à jour ?'
+                  %th= sortable :is_deleted, 'Est supprimé ?'
+              %tbody.retractable.slidedown.archive_budgea_users_content
+                - @budgea_users.each do |budgea_user|
+                  %tr{id: "row-#{budgea_user.id}", class: 'row-budgea-users'}
+                    %td= l(budgea_user.signin, format: '%d %b %Y')
+                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M')
+                    %td= link_to budgea_user.identifier, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
+                    %td= link_to budgea_user.platform, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
+                    %td= budgea_user.encrypted_access_token
+                    %td= budgea_user.exist ? t('yes_value') : t('no_value')
+                    %td= budgea_user.is_updated ? t('yes_value') : t('no_value')
+                    %td= budgea_user.is_deleted ? t('yes_value') : t('no_value')
+
+        = render partial: 'shared/list_options', locals: { collection: @budgea_users }
+
+    = form_tag budgea_users_admin_archives_path(tab: 'budgea_users'), method: :get, class: 'form-filter' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+      = hidden_field_tag :tab, 'budgea_users'
+      .card.retractable-filter
+        .card-header.clearfix
+          .float-left
+            %h3 Filtres
+          .float-right.margin1left
+            %a.locker{ href: "#", title: "Cacher le Filtre" }= glyphicon('layers')
+        .retractable-filter-content
+          .card-body
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[signin][>=]', 'Date de connexion'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'archive_budgea_users_contains[signin][>=]', (params[:archive_budgea_users_contains][:signin]['>='] rescue ''), class: 'form-control date datepicker'
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text <=
+                  = text_field_tag 'archive_budgea_users_contains[signin][<=]', (params[:archive_budgea_users_contains][:signin]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[deleted_date][>=]', 'Date de suppression'
+              .control-section
+                .input-group
+                  .input-group-prepend
+                    %span.input-group-text >=
+                  = text_field_tag 'archive_budgea_users_contains[deleted_date][>=]', (params[:archive_budgea_users_contains][:deleted_date]['>='] rescue ''), class: 'form-control date datepicker'
+                  .input-group
+                    .input-group-prepend
+                      %span.input-group-text <=
+                    = text_field_tag 'archive_budgea_users_contains[deleted_date][<=]', (params[:archive_budgea_users_contains][:deleted_date]['<='] rescue ''), class: 'form-control date datepicker'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[identifier]', 'Identifiant'
+              .control-section
+                = text_field_tag 'archive_budgea_users_contains[identifier]', (params[:archive_budgea_users_contains][:identifier] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[platform]', 'Plateforme'
+              .control-section
+                = text_field_tag 'archive_budgea_users_contains[platform]', (params[:archive_budgea_users_contains][:platform] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[exist]', 'Est existe ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[exist]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:exist] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[is_updated]', 'Est mis à jour ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[is_updated]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_updated] rescue '')), include_blank: true, class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'archive_budgea_users_contains[is_deleted]', 'Est supprimé ?'
+              .control-section
+                = select_tag 'archive_budgea_users_contains[is_deleted]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_deleted] rescue '')), include_blank: true, class: 'input-small'
+          .card-footer
+            .form-actions
+              = submit_tag t('filters.action'), class: 'btn btn-primary'
+              = link_to glyphicon('x'), budgea_users_admin_archives_path(tab: 'budgea_users'), class: 'btn btn-light', title: t('filters.reset')

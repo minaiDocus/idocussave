@@ -1,0 +1,15 @@
+.row
+  .col-12
+    .box.small-shadow.clearfix
+      = render 'layouts/admin/retriever/navigation'
+
+.row
+  .col-md-12
+    .box.clearfix
+      .float-left
+        %h3 Archives Budgea:&nbsp;
+      %ul.nav.nav-tabs
+        %li.nav-item
+          = link_to 'Utilisateurs', budgea_users_admin_archives_path(tab: 'budgea_users'), class: "nav-link #{('active' if params[:tab] == 'budgea_users' || params[:tab].blank? )}"
+        %li.nav-item
+          = link_to 'Automates', budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers'), class: "nav-link #{('active' if params[:tab] == 'budgea_retrievers' )}"
