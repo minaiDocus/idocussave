@@ -20,8 +20,6 @@ class PonctualScripts::UpdateSubscricptionCustomers < PonctualScripts::PonctualS
     list_customers.each do |customer|
       @subscription = customer.subscription
 
-      next unless @subscription.is_mail_package_active
-
       logger_infos "[UpdateSubscricptionCustomers] - subscription ID : #{@subscription.   id.to_s}"
       save_udpate_to_file
 
@@ -85,11 +83,11 @@ class PonctualScripts::UpdateSubscricptionCustomers < PonctualScripts::PonctualS
     @params_update[:is_to_apply_now]                     = true
 
     @params_update[:is_basic_package_active]             = false
-    @params_update[:is_mail_package_active]              = true
+    @params_update[:is_mail_package_active]              = @subscription.is_mail_package_active
     @params_update[:is_scan_box_package_active]          = false
     @params_update[:is_retriever_package_active]         = false
     @params_update[:is_mini_package_active]              = false
-    @params_update[:is_annual_package_active]            = @subscription.is_annual_package_active
+    @params_update[:is_annual_package_active]            = false
     @params_update[:is_micro_package_active]             = true
 
     @params_update[:unit_price_of_excess_sheet]          = @subscription.unit_price_of_excess_sheet.to_s
@@ -107,15 +105,15 @@ class PonctualScripts::UpdateSubscricptionCustomers < PonctualScripts::PonctualS
     @params_update[:unit_price_of_excess_expense]        = @subscription.unit_price_of_excess_expense.to_s
     @params_update[:unit_price_of_excess_paperclips]     = @subscription.unit_price_of_excess_paperclips.to_s
 
-    @params_update[:is_pre_assignment_active]            = @subscription.is_pre_assignment_active
+    @params_update[:is_pre_assignment_active]            = true
   end
 
   def list_customers
-    customers      = []
-    file           = File.join(ponctual_dir, "subscriptions_acda.txt")
-    list_customers = File.read(file).split(';')
+    customers       = []
+    file            = File.join(ponctual_dir, "subscriptions_acda.txt")
+    _list_customers = File.read(file).split(';')
 
-    list_customers.each { |customer_code| customers << User.find_by_code(customer_code) }  
+    _list_customers.each { |customer_code| customers << User.find_by_code(customer_code) }
     
     customers
   end
