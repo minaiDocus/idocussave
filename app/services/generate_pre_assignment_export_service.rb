@@ -103,6 +103,10 @@ class GeneratePreAssignmentExportService
       create_pre_assignment_export_for('cegid')
 
       generate_cegid_export(false)
+    when 'tra_cegid'
+      create_pre_assignment_export_for('cegid')
+
+      generate_cegid_tra_export(false)
     end
 
     @export
@@ -150,6 +154,16 @@ private
     rescue => e
       @export.got_error e
     end
+  end
+
+  def generate_cegid_tra_export(with_file = true)
+      file_zip = CegidTraService.new(@preseizures).execute
+
+      final_file_name = "#{file_real_name}.zip"
+
+      FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
+
+      @export.got_success "#{file_real_name}.zip"
   end
 
   def generate_fec_agiris_export(with_file = true)
@@ -235,6 +249,8 @@ private
       File.rename("#{file_path}/#{file_previous_name}.txt", "#{file_path}/#{file_real_name}.txt")
     elsif software == 'coala'
       File.rename("#{file_path}/#{file_previous_name}.xls", "#{file_path}/#{file_real_name}.xls")
+    elsif software == 'cegid_tra'
+      File.rename("#{file_path}/#{file_previous_name}.zip", "#{file_path}/#{file_real_name}.zip")
     else
       File.rename("#{file_path}/#{file_previous_name}.csv", "#{file_path}/#{file_real_name}.csv")
     end

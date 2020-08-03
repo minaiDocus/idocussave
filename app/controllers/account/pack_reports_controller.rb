@@ -97,6 +97,13 @@ class Account::PackReportsController < Account::OrganizationController
       else
         render :select_to_download
       end
+    when 'tra_cegid'
+      if @report.user.uses_cegid?
+        file_path = CegidTraService.new(preseizures).execute
+        send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
+      else
+        render :select_to_download
+      end
     when 'zip_coala'
       if @report.user.uses_coala?
         file_path = CoalaZipService.new(@report.user, preseizures, to_xls: true).execute

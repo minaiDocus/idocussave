@@ -303,11 +303,12 @@ class Account::DocumentsController < Account::AccountController
     if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
       options << ['XML (Ibiza)', 'xml_ibiza']
     end
-    options << ['ZIP (Quadratus)', 'zip_quadratus']      if user.uses_quadratus?
-    options << ['ZIP (Coala)', 'zip_coala']              if user.uses_coala?
-    options << ['XLS (Coala)', 'xls_coala']              if user.uses_coala?
-    options << ['CSV (Cegid)', 'csv_cegid']              if user.uses_cegid?
-    options << ['TXT (Fec Agiris)', 'txt_fec_agiris']    if user.uses_fec_agiris?
+    options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses_quadratus?
+    options << ['ZIP (Coala)', 'zip_coala']                  if user.uses_coala?
+    options << ['XLS (Coala)', 'xls_coala']                  if user.uses_coala?
+    options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses_cegid?
+    options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses_cegid?
+    options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses_fec_agiris?
 
     render json: { options: options }, status: 200
   end
@@ -330,23 +331,15 @@ class Account::DocumentsController < Account::AccountController
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
-    supported_format = %w[csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid]
+    supported_format = %w[csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid tra_cegid]
 
     if preseizures.any? && export_format.in?(supported_format)
       preseizures = preseizures.by_position
 
       retries = 0
-      begin
         export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
         send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
-      rescue => e
-        if (retries += 1) <= 3
-          sleep(retries)
-          retry
-        else
-          render plain: "Traitement impossible : #{e.to_s}"
-        end
-      end
+
     elsif !export_format.in?(supported_format)
       render plain: 'Traitement impossible : le format est incorrect.'
     else

@@ -9,6 +9,8 @@ class PreseizureToTxtService
   def execute(type_of_export="zip_quadratus")
     if type_of_export == "zip_quadratus"
       export_zip_quadratus
+    elsif type_of_export == "cegid_tra"
+      export_cegid_tra
     else
       export_fec_agiris
     end
@@ -62,6 +64,116 @@ class PreseizureToTxtService
 
         data << line
 
+      end
+    end
+
+    data.join("\n")
+  end
+
+  def export_cegid_tra
+    data = []
+    @preseizures.each do |preseizure|
+      if preseizure.operation
+        label = preseizure.operation_label[0..29]
+      else
+        label = [preseizure.third_party.presence, preseizure.piece_number.presence].compact.join(' - ')[0..29]
+      end
+
+      if preseizure.piece
+        journal = preseizure.report.pack.journal
+        nature = case journal.compta_type
+                 when 'AC'
+                  if preseizure.entries.where(type: 2).count > 1
+                    'AF'
+                  else
+                    'FF'
+                  end
+                 when 'VT'
+                  if preseizure.entries.where(type: 1).count > 1
+                    'FC'
+                  else
+                    'AC'
+                  end
+                 when 'NDF'
+                  'OD'
+                 end
+
+        file_name = preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf'
+
+        line = ' ' * 222
+
+        line[0] = preseizure.journal_name[0..2]
+        line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+        line[13] = case journal.compta_type
+                   when 'AC'
+                    '401000'
+                   when 'VT'
+                    '411000'
+                   when 'NDF'
+                    '471000'
+                   end
+
+        line[30] = 'G'
+        line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
+        line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
+        line[83] = file_name
+
+        data << line
+
+
+        preseizure.entries.each do |entry|
+          account = case nature
+                    when 'AF'
+                      if entry.account.type == Pack::Report::Preseizure::Account::TTC
+                        '401000'
+                      else
+                        entry.account.try(:number)
+                      end
+                    when 'FF'
+                      if entry.account.type == Pack::Report::Preseizure::Account::TTC
+                        '401000'
+                      else
+                        entry.account.try(:number)
+                      end
+                    when 'AC'
+                      if entry.account.type == Pack::Report::Preseizure::Account::TTC
+                        '411000'
+                      else
+                        entry.account.try(:number)
+                      end
+                    when 'FC'
+                      if entry.account.type == Pack::Report::Preseizure::Account::TTC
+                        '411000'
+                      else
+                        entry.account.try(:number)
+                      end
+                    end
+
+
+            label = ' ' unless label.present?
+            line = ' ' * 222
+            line[0] = preseizure.journal_name[0..2]
+            line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+            line[13] = account
+
+            line[30] = 'X'
+
+            account_number = entry.account.try(:number) || ''
+            line[31] = account_number if entry.account.type == Pack::Report::Preseizure::Account::TTC
+
+            line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
+
+            line[83] = label
+
+            line[129] = entry.type == 1 ? 'D' : 'C'
+
+            line[145] = entry.amount.to_f.to_s
+
+            line[172] = 'E--'
+
+            data << line
+
+        end
       end
     end
 
