@@ -396,9 +396,7 @@ uncheck_all_options = ->
 
 active_option_of = (group) ->
   $("#personalize_subscription_package_form .#{group}_option").removeAttr('disabled')
-  $("#personalize_subscription_package_form .active").removeClass('active')
-  $("#personalize_subscription_package_form .active_options").removeClass('active_options')
-  $("#personalize_subscription_package_form .checkbox_active").removeClass('checkbox_active')
+  remove_active_class()
 
   $("#personalize_subscription_package_form #subscription_subscription_option_is_#{group}_package_active").addClass('active')
   $("#personalize_subscription_package_form .form_check_#{group}_package").addClass('active_options')
@@ -545,7 +543,7 @@ jQuery ->
   load_accounting_plan_function('providers')
   load_accounting_plan_function('customers')
 
-  $('#personalize_subscription_package_form .form-check.form-check-inline, #personalize_subscription_package_form .pre_assignment').tooltip()
+  $('#personalize_subscription_package_form .form-check.form-check-inline, #personalize_subscription_package_form span.radio.pre-assignment-state').tooltip()
   
   $('#personalize_subscription_package_form input[type="checkbox"].option_checkbox').click (e) -> update_price()
 

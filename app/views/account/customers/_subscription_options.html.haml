@@ -74,16 +74,16 @@
                   %i Supprimez un journal comptable avant de baisser cette option.
 
     %br
-    .form-group.clearfix.radio_buttons.label-50.pre_assignment{title: SubscriptionPackage.infos_of(:pre_assignment_option)[:label], data: { toggle: 'tooltip', placement: 'bottom' }}
+    .form-group.clearfix.radio_buttons.label-50.pre_assignment
       .label-section{style: 'width: 256px;'}
         = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-saisie comptable ?", class: 'subscription_is_pre_assignment_active_label'
         = hidden_field_tag 'is_pre_assignment_active_hidden', ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0)
       .control-section
-        %span.radio
+        %span.radio.pre-assignment-state{title: 'Pré-saisie comptable activée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_true' }
             = radio_button_tag 'subscription[is_pre_assignment_active]', true, @subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }, class: 'is_pre_assignment_active_true is_pre_assignment_applied radio-button'
             Oui
-        %span.radio
+        %span.radio.pre-assignment-state{title: 'Pré-saisie comptable désactivée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_false' }
             = radio_button_tag 'subscription[is_pre_assignment_active]', false, !@subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }, class: 'is_pre_assignment_active_false is_pre_assignment_applied radio-button'
             Non
