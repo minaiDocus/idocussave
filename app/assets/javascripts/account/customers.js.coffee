@@ -544,6 +544,8 @@ jQuery ->
   load_accounting_plan_function('fec')
   load_accounting_plan_function('providers')
   load_accounting_plan_function('customers')
+
+  $('#personalize_subscription_package_form .form-check.form-check-inline, #personalize_subscription_package_form .pre_assignment').tooltip()
   
   $('#personalize_subscription_package_form input[type="checkbox"].option_checkbox').click (e) -> update_price()
 
