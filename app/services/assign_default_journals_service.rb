@@ -43,14 +43,10 @@ class AssignDefaultJournalsService
     result = @organization.account_book_types.default
     result = result.where.not(name: current_journal_names) if current_journal_names.present?
 
-    if is_preassignment_authorized?
-      js = result.where("entry_type > ?", 0).order(entry_type: :asc, name: :asc)
-      js += result.where(entry_type: 0).order(name: :asc)
+    js = result.where("entry_type > ?", 0).order(entry_type: :asc, name: :asc)
+    js += result.where(entry_type: 0).order(name: :asc)
 
-      js.take available_slot
-    else
-      result.not_compta_processable.order(name: :asc).limit(available_slot)
-    end
+    js.take available_slot
   end
 
   def available_slot
