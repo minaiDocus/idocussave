@@ -67,19 +67,23 @@ class AddTempDocumentToTempPack
 
         if temp_document.save
           if temp_document.retrieved?
-            options[:wait_selection] ? temp_document.wait_selection : temp_document.ocr_needed
+            if options[:wait_selection]
+              temp_document.wait_selection
+            else
+              DocumentTools.gs_verificator_for(temp_document.temp_document.cloud_content_object.path) ? temp_document.ready : temp_document.ocr_needed
+            end
           else
             if temp_document.from_ibizabox? && options[:wait_selection]
               temp_document.wait_selection
             # elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
             #   temp_document.ocr_needed
             #   NotifyDocumentBeingProcessed.new(temp_document).execute
-            # elsif temp_document.is_bundle_needed?
-            #   temp_document.bundle_needed
-            #   NotifyDocumentBeingProcessed.new(temp_document).execute
+            elsif temp_document.is_bundle_needed?
+              temp_document.bundle_needed
+              # NotifyDocumentBeingProcessed.new(temp_document).execute
             else
               #Temp modification : replace ready state to ocr_needed
-              if temp_document.api_name == 'jefacture'
+              if temp_document.api_name == 'jefacture' || DocumentTools.gs_verificator_for(temp_document.cloud_content_object.path)
                 temp_document.ready
               else
                 temp_document.ocr_needed

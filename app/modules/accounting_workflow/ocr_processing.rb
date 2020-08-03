@@ -34,11 +34,7 @@ module AccountingWorkflow::OcrProcessing
       return false unless temp_document.ocr_needed?
 
       temp_document.with_lock do
-        if temp_document.is_bundle_needed?
-          temp_document.bundle_needed
-        else
-          temp_document.ready
-        end
+        temp_document.ready
       end
 
       log_document = {

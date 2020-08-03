@@ -195,6 +195,14 @@ class DocumentTools
     !completed? file_path
   end
 
+  def self.gs_verificator_for(file_path)
+    dir          = Dir.mktmpdir
+    verification = `gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="/#{dir}/verif_gs_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf" #{file_path}`
+
+    FileUtils.remove_entry dir if dir
+    verification.match(/Error:/)
+  end
+
 
   def self.printable?(file_path)
     begin
