@@ -149,7 +149,7 @@ class Account::JournalsController < Account::OrganizationController
 
       journal = AccountBookType.find id
 
-      next unless !journal.compta_processable? || is_preassignment_authorized?
+      #next unless !journal.compta_processable? || is_preassignment_authorized?
 
       copy              = journal.dup
       copy.user         = @customer
