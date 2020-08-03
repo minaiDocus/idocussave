@@ -132,10 +132,6 @@ class Account::JournalsController < Account::OrganizationController
   # GET /account/organizations/:organization_id/journals/:journal_id/select
   def select
     @journals = @organization.account_book_types.order(is_default: :desc).order(name: :asc)
-
-    unless @customer.options.is_preassignment_authorized
-      @journals = @journals.not_compta_processable
-    end
   end
 
   # GET /account/organizations/:organization_id/journals/:journal_id/copy
