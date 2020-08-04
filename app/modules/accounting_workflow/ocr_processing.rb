@@ -34,7 +34,11 @@ module AccountingWorkflow::OcrProcessing
       return false unless temp_document.ocr_needed?
 
       temp_document.with_lock do
-        temp_document.ready
+        if temp_document.is_bundle_needed?
+          temp_document.bundle_needed
+        else
+          temp_document.ready
+        end
       end
 
       log_document = {
@@ -70,12 +74,12 @@ module AccountingWorkflow::OcrProcessing
             temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if temp_document.save
             temp_document.cloud_content_object.attach(File.open(temp_document_file_path), File.basename(temp_document_file_path))
 
-
             if temp_document.is_bundle_needed?
               temp_document.bundle_needed
             else
               temp_document.ready
             end
+
             clean_tmp dir
             move_to_archive file_path
           end
