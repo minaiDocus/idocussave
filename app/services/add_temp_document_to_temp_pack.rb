@@ -70,7 +70,7 @@ class AddTempDocumentToTempPack
             if options[:wait_selection]
               temp_document.wait_selection
             else
-              DocumentTools.gs_error_found?(temp_document.temp_document.cloud_content_object.path) ? temp_document.ready : temp_document.ocr_needed
+              DocumentTools.gs_error_found?(temp_document.cloud_content_object.path) ? temp_document.ready : temp_document.ocr_needed
             end
           else
             if temp_document.from_ibizabox? && options[:wait_selection]
