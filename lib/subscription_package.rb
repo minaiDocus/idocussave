@@ -49,22 +49,22 @@ class SubscriptionPackage
       case package_or_option
         #packages
         when :ido_classique
-          { label: 'Téléchargement + Pré-saisie comptable', name: 'basic_package_subscription', group: "iDo'Classique" }
+          { label: 'Téléchargement + Pré-saisie comptable', name: 'basic_package_subscription', group: "iDo'Classique", tooltip: "iDo Classique (20€ / mois)  : vous permet de transférer jusqu'à 100 pièces/mois, mutualisation des quotas au niveau du cabinet. Au-delà du quota cabinet cumulé, calcul du dépassement simplifié : 0,25€ ht/facture" }
         when :ido_x
-          { label: 'Factur-X + Pré-saisie comptable', name: 'idox_package_subscription', group: "iDo'X" }
+          { label: 'Factur-X + Pré-saisie comptable', name: 'idox_package_subscription', group: "iDo'X", tooltip: "iDo X (10€ / mois, offre de lancement à 5€ / mois) : vous permet de convertir les pièces venues de jefacture.com (Factur-X) en écritures comptables ! Attention, les autres modes d’import de documents (email, upload, appli mobile…) ne sont pas disponibles, seuls les fichiers venant de jefacture.com sont autorisés." }
         when :ido_mini
-          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'mini_package_subscription', group: "iDo'Mini" }
+          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'mini_package_subscription', group: "iDo'Mini", tooltip: "iDo Mini (10€ / mois)  : vous permet de transférer jusqu'à 300 pièces/trimèstre, mutualisation des quotas au niveau du cabinet. Au-delà du quota cabinet cumulé, calcul du dépassement simplifié : 0,25€ ht/facture" }
         when :ido_micro
-          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro" }
+          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro", tooltip: "iDo Micro (10€ / mois). vous permet de transférer jusqu'à 100 pièces/an et de bénéficier des automates de récupérations bancaires et documentaires pour un engagement de 12 mois. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
         #options
         when :mail_option
-          { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier" }
+          { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier", tooltip: "Courrier (10€ / mois) : vous permet d’adresser vos pièces par courrier à notre centre de numérisation. Disponible pour les forfaits iDo Mini et iDo Classique" }
         when :retriever_option
-          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates" }
+          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates", tooltip: "Automates (5€ / mois) : vous permet de bénéficier des automates de récupération bancaires et documentaires" }
         when :pre_assignment_option
-          { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation"}
+          { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation", tooltip: "Etat de pré-saisie comptable"}
         else
-          { label: '', name: '', group: '' }
+          { label: '', name: '', group: '', tooltip: ''}
       end
     end
 
