@@ -23,8 +23,7 @@ class KitsController < PaperProcessesController
   def create
     _params = paper_process_params
 
-    #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-    _params[:customer_code] = _params[:customer_code].gsub('AC0162', 'MVN%GRHCONSULT') if _params[:customer_code].match(/^AC0162/)
+    _params[:customer_code] = CustomUtils.replace_code_of(_params[:customer_code])
 
     @paper_process = PaperProcess.where(type: 'kit', tracking_number: _params[:tracking_number]).first
 

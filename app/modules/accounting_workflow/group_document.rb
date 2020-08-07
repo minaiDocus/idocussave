@@ -88,11 +88,7 @@ class AccountingWorkflow::GroupDocument
 
 
   def find_temp_pack(name)
-    #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-    _name = name
-    _name = name.gsub('AC0162', 'MVN%GRHCONSULT') if name.match(/^AC0162/)
-
-    TempPack.where(name: _name.tr('_', ' ') + ' all').first
+    TempPack.where(name: CustomUtils.replace_code_of(name).tr('_', ' ') + ' all').first
   end
 
   def valid_result_data?
@@ -147,8 +143,7 @@ class AccountingWorkflow::GroupDocument
       position = self.class.position(file_name)
       basename = self.class.basename(file_name)
 
-      #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-      basename = basename.gsub('AC0162', 'MVN%GRHCONSULT') if basename.match(/^AC0162/)
+      basename = CustomUtils.replace_code_of(basename)
 
       is_basename_match = temp_pack.name.match(/\A#{basename}/)
 

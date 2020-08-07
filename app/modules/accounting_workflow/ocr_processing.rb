@@ -112,8 +112,7 @@ module AccountingWorkflow::OcrProcessing
       errors           = []
       valid_files      = []
       grouped_files_path.each do |temp_pack_name, files_path|
-        #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-        temp_pack_name = temp_pack_name.gsub('AC0162', 'MVN%GRHCONSULT') if temp_pack_name.match(/^AC0162/)
+        temp_pack_name = CustomUtils.replace_code_of(temp_pack_name)
 
         temp_pack     = TempPack.find_by_name(temp_pack_name + ' all')
         if temp_pack

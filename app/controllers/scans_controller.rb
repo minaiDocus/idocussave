@@ -21,8 +21,7 @@ class ScansController < PaperProcessesController
   def create
     _params = period_document_params
 
-    #WORKAROUND: handle 'MVN%GRHCONSULT' ancient code 'AC0162'
-    _params[:name] = _params[:name].gsub('AC0162', 'MVN%GRHCONSULT') if _params[:name].match(/^AC0162/)
+    _params[:name] = CustomUtils.replace_code_of(_params[:name])
 
     if _params && _params[:name] && _params[:paperclips] && _params[:oversized]
       _params[:name].tr!('_', ' ')
