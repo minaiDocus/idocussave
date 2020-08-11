@@ -26,6 +26,26 @@ class VerifyFtpSettings
       true
     rescue => e
       @ftp.got_error e.to_s
+
+      log_infos = {
+        name: "VerifyFtpSettings",
+        error_group: "[verify-ftp-settings] execute",
+        erreur_type: "VerifyFtpSettings - execute",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          runner: runner,
+          ftp_domain: @ftp.domain,
+          ftp_port: @ftp.port,
+          user: @ftp.login,
+          error_type: e.class,
+          error_message: e.message,
+          backtrace_error: e.backtrace.inspect,
+          method: "execute"
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_infos).deliver
+
       LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}")
       false
     ensure

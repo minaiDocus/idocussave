@@ -10,7 +10,22 @@ class FTPClient
       tester.close
 
       @client = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
-    rescue
+    rescue => e
+      log_infos = {
+        name: "FTPClient",
+        error_group: "[ftp-client] verify auth ssl / tls support",
+        erreur_type: "FTPClient - Verify auth ssl / tls support",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          error_type: e.class,
+          error_message: e.message,
+          backtrace_error: e.backtrace.inspect,
+          ftp_id: @ftp.id
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_infos).deliver
+
       @client = Net::FTP.new(nil)
     end
   end
@@ -34,6 +49,25 @@ class FTPClient
         retry
       end
       @ftp.got_error e.to_s
+
+      log_infos = {
+        name: "FTPClient",
+        error_group: "[ftp-client] method missing",
+        erreur_type: "FTPClient - method missing",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          method_missing_name: name,
+          arguments: args.join(', '),
+          retries_number: retries,
+          error_message: e.message,
+          backtrace_error: e.backtrace.inspect,
+          ftp_id: @ftp.id,
+          method: "method_missing"
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_infos).deliver
+
       raise
     end
   end

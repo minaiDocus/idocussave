@@ -61,13 +61,41 @@ class FTPImport
   def test_connection
     client.nlst
     true
-  rescue Errno::ETIMEDOUT
+  rescue Errno::ETIMEDOUT => e
+    log_infos = {
+      name: "FTPImport",
+      error_group: "[ftp-import] Errno::ETIMEDOUT test connection",
+      erreur_type: "FTPImport - Errno::ETIMEDOUT test connection",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        error_message: e.message,
+        backtrace_error: e.backtrace.inspect,
+        method: "test_connection"
+      }
+    }
+
+    ErrorScriptMailer.error_notification(log_infos).deliver
+
     false
   rescue Errno::ECONNREFUSED, Net::FTPPermError => e
     if e.message.match(/Login incorrect/)
       FTPErrorNotifier.new(@ftp).auth_failure
       @ftp.update is_configured: false
     end
+    log_infos = {
+      name: "FTPImport",
+      error_group: "[ftp-import] ECONNREFUSED / FTPPermError test connection",
+      erreur_type: "FTPImport - FTPTempError / FTPPermError test connection",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        error_message: e.message,
+        backtrace_error: e.backtrace.inspect,
+        method: "test_connection"
+      }
+    }
+
+    ErrorScriptMailer.error_notification(log_infos).deliver
+
     false
   end
 
@@ -161,6 +189,21 @@ class FTPImport
         if e.message.match(/(No such file or directory)|(Directory not found)/)
           []
         else
+          log_infos = {
+            name: "FTPImport",
+            error_group: "[ftp-import] FTPTempError / FTPPermError validate item",
+            erreur_type: "FTPImport - FTPTempError / FTPPermError validate item",
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+            more_information: {
+              item: item,
+              error_message: e.message,
+              backtrace_error: e.backtrace.inspect,
+              method: "validate_item"
+            }
+          }
+
+          ErrorScriptMailer.error_notification(log_infos).deliver
+
           raise
         end
       end
@@ -187,7 +230,23 @@ class FTPImport
     if item.to_be_created?
       begin
         client.mkdir item.path
-      rescue
+      rescue => e
+        log_infos = {
+          name: "FTPImport",
+          error_group: "[ftp-import] synchronize folder",
+          erreur_type: "FTPImport - synchronize folder",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            item: item,
+            error_type: e.class,
+            error_message: e.message,
+            backtrace_error: e.backtrace.inspect,
+            method: "sync_folder"
+          }
+        }
+
+        ErrorScriptMailer.error_notification(log_infos).deliver
+
         false
       end
       item.created
@@ -211,6 +270,21 @@ class FTPImport
       if e.message.match(/(No such file or directory)|(Directory not found)/)
         []
       else
+        log_infos = {
+          name: "FTPImport",
+          error_group: "[ftp-import] FTPTempError / FTPPermError remove item",
+          erreur_type: "FTPImport - FTPTempError / FTPPermError remove item",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            item: item,
+            error_message: e.message,
+            backtrace_error: e.backtrace.inspect,
+            method: "remove_item"
+          }
+        }
+
+        ErrorScriptMailer.error_notification(log_infos).deliver
+
         raise
       end
     end
@@ -247,6 +321,21 @@ class FTPImport
         if e.message.match(/No files found/)
           []
         else
+          log_infos = {
+            name: "FTPImport",
+            error_group: "[ftp-import] FTPTempError / FTPPermError process",
+            erreur_type: "FTPImport - FTPTempError / FTPPermError process",
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+            more_information: {
+              item: item,
+              error_message: e.message,
+              backtrace_error: e.backtrace.inspect,
+              method: "process"
+            }
+          }
+
+          ErrorScriptMailer.error_notification(log_infos).deliver
+
           raise
         end
       end
