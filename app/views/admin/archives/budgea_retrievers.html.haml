@@ -22,7 +22,7 @@
                   %th= sortable :exist, 'Est existe ?'
                   %th= sortable :is_updated, 'Est mis à jour ?'
                   %th= sortable :is_deleted, 'Est supprimé ?'
-              %tbody.retractable.slidedown
+              %tbody.retractable.slidedown.archive_budgea_retrievers_content
                 - @budgea_retrievers.each do |budgea_retriever|
                   %tr
                     %td= l(budgea_retriever.created, format: '%d %b %Y %H:%M', default: '-')
@@ -32,8 +32,8 @@
                     %td= budgea_retriever.owner_id
                     %td= budgea_retriever.budgea_id
                     %td= budgea_retriever.id_connector
-                    %td= budgea_retriever.error
-                    %td= budgea_retriever.error_message
+                    %td.show_tooltip{title: budgea_retriever.error, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_retriever.error.try(:[], 0..50)))
+                    %td.show_tooltip{title: budgea_retriever.error_message, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_retriever.error_message.try(:[], 0..50)))
                     %td= budgea_retriever.exist ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.is_updated ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.is_deleted ? t('yes_value') : t('no_value')

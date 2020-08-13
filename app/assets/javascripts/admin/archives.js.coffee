@@ -14,3 +14,4 @@ budgea_users = () ->
 
 jQuery ->
   #budgea_users()
+  $('#archive_budgea_users td.show_tooltip, #archive_budgea_retrievers td.show_tooltip').tooltip()
