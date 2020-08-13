@@ -21,8 +21,8 @@
               %tbody.retractable.slidedown.archive_budgea_users_content
                 - @budgea_users.each do |budgea_user|
                   %tr{id: "row-#{budgea_user.id}", class: 'row-budgea-users'}
-                    %td= l(budgea_user.signin, format: '%d %b %Y')
-                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M')
+                    %td= l(budgea_user.signin, format: '%d %b %Y', default: '-')
+                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M', default: '-')
                     %td= link_to budgea_user.identifier, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
                     %td= link_to budgea_user.platform, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
                     %td= budgea_user.encrypted_access_token

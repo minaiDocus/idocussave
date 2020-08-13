@@ -25,8 +25,8 @@
               %tbody.retractable.slidedown
                 - @budgea_retrievers.each do |budgea_retriever|
                   %tr
-                    %td= l(budgea_retriever.created, format: '%d %b %Y %H:%M')
-                    %td= l(budgea_retriever.deleted_date, format: '%d %b %Y %H:%M')
+                    %td= l(budgea_retriever.created, format: '%d %b %Y %H:%M', default: '-')
+                    %td= l(budgea_retriever.deleted_date, format: '%d %b %Y %H:%M', default: '-')
                     %td= budgea_retriever.state
                     %td= budgea_retriever.active ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.owner_id
