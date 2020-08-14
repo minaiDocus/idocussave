@@ -11,32 +11,32 @@
               %thead
                 %tr.bg-brown.text-white
                   %th= sortable :created, 'Date de création'
-                  %th= sortable :deleted_date, 'Date de suppression'
+                  %th= sortable :budgea_id,  'Id budgea'
                   %th= sortable :state,  'Etat'
                   %th= sortable :active, 'Est actif ?'
                   %th= sortable :owner_id, 'Id utilisateur'
-                  %th= sortable :budgea_id,  'Id budgea'
                   %th= sortable :id_connector, 'Id connecteur'
-                  %th= sortable :error, 'Erreur'
+                  %th= sortable :error, 'Code erreur'
                   %th= sortable :error_message, 'Message d\'erreur'
-                  %th= sortable :exist, 'Est existe ?'
-                  %th= sortable :is_updated, 'Est mis à jour ?'
-                  %th= sortable :is_deleted, 'Est supprimé ?'
+                  %th= sortable :exist, 'Existe ?'
+                  %th= sortable :is_updated, 'Mis à jour ?'
+                  %th= sortable :is_deleted, 'Supprimé ?'
+                  %th= sortable :deleted_date, 'Date de suppression'
               %tbody.retractable.slidedown.archive_budgea_retrievers_content
                 - @budgea_retrievers.each do |budgea_retriever|
                   %tr
                     %td= l(budgea_retriever.created, format: '%d %b %Y %H:%M', default: '-')
-                    %td= l(budgea_retriever.deleted_date, format: '%d %b %Y %H:%M', default: '-')
+                    %td= budgea_retriever.budgea_id
                     %td= budgea_retriever.state
                     %td= budgea_retriever.active ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.owner_id
-                    %td= budgea_retriever.budgea_id
                     %td= budgea_retriever.id_connector
                     %td.show_tooltip{title: budgea_retriever.error, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_retriever.error.try(:[], 0..50)))
                     %td.show_tooltip{title: budgea_retriever.error_message, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_retriever.error_message.try(:[], 0..50)))
                     %td= budgea_retriever.exist ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.is_updated ? t('yes_value') : t('no_value')
                     %td= budgea_retriever.is_deleted ? t('yes_value') : t('no_value')
+                    %td= l(budgea_retriever.deleted_date, format: '%d %b %Y %H:%M', default: '-')
 
         = render partial: 'shared/list_options', locals: { collection: @budgea_retrievers }
 
@@ -104,7 +104,7 @@
                 = text_field_tag 'archive_budgea_retrievers_contains[id_connector]', (params[:archive_budgea_retrievers_contains][:id_connector] rescue ''), class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_retrievers_contains[error]', 'Erreur'
+                = label_tag 'archive_budgea_retrievers_contains[error]', 'Code erreur'
               .control-section
                 = text_field_tag 'archive_budgea_retrievers_contains[error]', (params[:archive_budgea_retrievers_contains][:error] rescue ''), class: 'input-small'
             .form-group
@@ -114,17 +114,17 @@
                 = text_field_tag 'archive_budgea_retrievers_contains[error_message]', (params[:archive_budgea_retrievers_contains][:error_message] rescue ''), class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_retrievers_contains[exist]', 'Est existe ?'
+                = label_tag 'archive_budgea_retrievers_contains[exist]', 'Existe ?'
               .control-section
                 = select_tag 'archive_budgea_retrievers_contains[exist]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:exist] rescue '')), include_blank: true, class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_retrievers_contains[is_updated]', 'Est mis à jour ?'
+                = label_tag 'archive_budgea_retrievers_contains[is_updated]', 'Mis à jour ?'
               .control-section
                 = select_tag 'archive_budgea_retrievers_contains[is_updated]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:is_updated] rescue '')), include_blank: true, class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_retrievers_contains[is_deleted]', 'Est supprimé ?'
+                = label_tag 'archive_budgea_retrievers_contains[is_deleted]', 'Supprimé ?'
               .control-section
                 = select_tag 'archive_budgea_retrievers_contains[is_deleted]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_retrievers_contains][:is_deleted] rescue '')), include_blank: true, class: 'input-small'
           .card-footer

@@ -11,24 +11,22 @@
               %thead
                 %tr.bg-brown.text-white
                   %th= sortable :signin, 'Date de connexion'
-                  %th= sortable :deleted_date, 'Date de suppression'
                   %th= sortable :identifier,  'Identifiant'
-                  %th= sortable :platform, 'Plateforme'
                   %th Token d'accès
-                  %th= sortable :exist, 'Est existe ?'
-                  %th= sortable :is_updated, 'Est mis à jour ?'
-                  %th= sortable :is_deleted, 'Est supprimé ?'
+                  %th= sortable :exist, 'Existe ?'
+                  %th= sortable :is_updated, 'Mis à jour ?'
+                  %th= sortable :is_deleted, 'Supprimé ?'
+                  %th= sortable :deleted_date, 'Date de suppression'
               %tbody.retractable.slidedown.archive_budgea_users_content
                 - @budgea_users.each do |budgea_user|
                   %tr{id: "row-#{budgea_user.id}", class: 'row-budgea-users'}
                     %td= l(budgea_user.signin, format: '%d %b %Y', default: '-')
-                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M', default: '-')
                     %td= link_to budgea_user.identifier, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
-                    %td= link_to budgea_user.platform, budgea_retrievers_admin_archives_path(tab: 'budgea_retrievers', archive_budgea_retrievers_contains: { owner_id: budgea_user.id }), target: "_blank"
                     %td.show_tooltip{title: budgea_user.access_token, data: { toggle: 'tooltip', placement: 'right' }}= truncate(sanitize(budgea_user.access_token[0..50]))
                     %td= budgea_user.exist ? t('yes_value') : t('no_value')
                     %td= budgea_user.is_updated ? t('yes_value') : t('no_value')
                     %td= budgea_user.is_deleted ? t('yes_value') : t('no_value')
+                    %td= l(budgea_user.deleted_date, format: '%d %b %Y %H:%M', default: '-')
 
         = render partial: 'shared/list_options', locals: { collection: @budgea_users }
 
@@ -76,22 +74,17 @@
                 = text_field_tag 'archive_budgea_users_contains[identifier]', (params[:archive_budgea_users_contains][:identifier] rescue ''), class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_users_contains[platform]', 'Plateforme'
-              .control-section
-                = text_field_tag 'archive_budgea_users_contains[platform]', (params[:archive_budgea_users_contains][:platform] rescue ''), class: 'input-small'
-            .form-group
-              .label-section
-                = label_tag 'archive_budgea_users_contains[exist]', 'Est existe ?'
+                = label_tag 'archive_budgea_users_contains[exist]', 'Existe ?'
               .control-section
                 = select_tag 'archive_budgea_users_contains[exist]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:exist] rescue '')), include_blank: true, class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_users_contains[is_updated]', 'Est mis à jour ?'
+                = label_tag 'archive_budgea_users_contains[is_updated]', 'Mis à jour ?'
               .control-section
                 = select_tag 'archive_budgea_users_contains[is_updated]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_updated] rescue '')), include_blank: true, class: 'input-small'
             .form-group
               .label-section
-                = label_tag 'archive_budgea_users_contains[is_deleted]', 'Est supprimé ?'
+                = label_tag 'archive_budgea_users_contains[is_deleted]', 'Supprimé ?'
               .control-section
                 = select_tag 'archive_budgea_users_contains[is_deleted]', options_for_select([['Oui', true], ['Non', false]], (params[:archive_budgea_users_contains][:is_deleted] rescue '')), include_blank: true, class: 'input-small'
           .card-footer
