@@ -6,7 +6,7 @@ class DocumentNotifier
 
       packs.each do |pack|
         ([pack.owner] + pack.owner.group_prescribers + pack.owner.collaborators).each do |user|
-          if user.notify.published_docs_delayed?
+          if user.notify.try(:published_docs_delayed?)
             to_be_notified[user] ||= []
             to_be_notified[user] << pack
           end
