@@ -19,7 +19,7 @@ class EvaluateSubscription
       authorize_pre_assignment
       authorize_upload
     else
-      authorize_dematbox
+      period.is_active?(:ido_x) ? unauthorize_dematbox : authorize_dematbox
 
       if period.is_active?(:ido_classique) || period.is_active?(:ido_micro) || period.is_active?(:ido_mini)
         authorize_upload
@@ -90,11 +90,19 @@ private
   end
 
   def authorize_upload
-    @customer.options.update_attribute(:is_upload_authorized, true) unless @customer.options.is_upload_authorized
+    unless @customer.options.is_upload_authorized
+      @customer.options.update_attribute(:is_upload_authorized, true)
+      @customer.external_file_storage.ftp.update_attribute(:is_configured, true)
+      @customer.ibizabox_folders.each(&:ready)
+    end
   end
 
   def unauthorize_upload
-    @customer.options.update_attribute(:is_upload_authorized, false) if @customer.options.is_upload_authorized
+    if @customer.options.is_upload_authorized
+      @customer.options.update_attribute(:is_upload_authorized, false)
+      @customer.external_file_storage.ftp.update_attribute(:is_configured, false)
+      @customer.ibizabox_folders.each(&:inactive)
+    end
   end
 
   def update_max_number_of_journals
