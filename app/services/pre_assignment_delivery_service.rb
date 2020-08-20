@@ -36,16 +36,26 @@ class PreAssignmentDeliveryService
         @@notified_at = Time.now
       end
     end
+
+    def retry_to_deliver(id_delivery, count_day)
+      delivery = PreAssignmentDelivery.find id_delivery
+      if count_day <= 2
+        PreAssignmentDeliveryService.new(delivery, count_day).execute
+      else
+        delivery.update(state: 'error')
+      end
+    end
   end
 
   attr_accessor :delivery, :software, :preseizures, :report, :user
 
-  def initialize(delivery)
+  def initialize(delivery, count_day=0)
     @delivery    = delivery
     @software    = @delivery.deliver_to == 'ibiza' ? @delivery.organization.ibiza : @delivery.user.exact_online
     @preseizures = @delivery.preseizures
     @report      = @delivery.report
     @user        = @delivery.user
+    @count_day   = count_day
   end
 
 
@@ -113,7 +123,9 @@ class PreAssignmentDeliveryService
       }
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      @delivery.update(state: 'data_built')
+      PreAssignmentDeliveryService.delay_for(24.hours).retry_to_deliver(@delivery.id, (@count_day+1)) if @count_day <= 2      
+
+      # @delivery.update(state: 'pending')
     end
 
     @delivery.sent?
