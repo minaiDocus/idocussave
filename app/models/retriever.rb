@@ -237,7 +237,10 @@ class Retriever < ApplicationRecord
   end
 
   def update_state_with(connection={})
-    return false if connection.try(:[], 'id').present? && connection.try(:[], 'id').to_i != self.budgea_id.to_i
+    is_retrieve_data_condition       = (connection.try(:[], 'id').to_i != self.budgea_id.to_i && connection[:source] == 'retrieve_data')
+    is_retriever_controller_condition = (connection.try(:[], 'id').to_i != self.id.to_i && connection[:source] == 'retrievers')
+
+    return false if connection.try(:[], 'id').present? && ( is_retrieve_data_condition || is_retriever_controller_condition)
 
     error_connection            = connection['error'].presence || connection['code']
     connection_error_message    = connection['error_message'].presence || connection['message']
@@ -271,7 +274,7 @@ class Retriever < ApplicationRecord
 
       RetrieverNotification.new(self).notify_website_unavailable
     else
-      if error_connection.present?
+      if error_connection.present? || (connection['success'] == "false" && connection[:source] == 'retrievers')
         error_message = connection_error_message || error_connection
 
         error_message = 'Service indisponible.'                         if error_connection == 'bug'

@@ -167,8 +167,6 @@ class BudgeaRetrieverAdminToXlsService
     sheet1 = book.create_worksheet name: 'Utilisateurs non idocus'
     sheet2 = book.create_worksheet name: 'Retrievers'
 
-    debugger
-
     headers_users = []
     headers_users += ['ID', 'Date', 'platform', 'Access Token']
 

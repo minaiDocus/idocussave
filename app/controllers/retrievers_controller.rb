@@ -179,7 +179,8 @@ class RetrieversController < ApiController
   def update_budgea_error_message
     initial_state = @retriever.to_json
 
-    @retriever.update_state_with params[:connections] if params[:connections]
+    params.merge!("source"=>"retrievers")
+    @retriever.update_state_with params
 
     sleep(5)
 
