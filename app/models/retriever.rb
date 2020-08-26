@@ -285,8 +285,11 @@ class Retriever < ApplicationRecord
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug
-      elsif connection.try(:[], 'id').to_i == self.budgea_id.to_i
-        self.success_budgea_connection
+      else
+        is_id_retrieve_data = connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection[:source] == 'retrieve_data'
+        is_id_controller    = connection.try(:[], 'id').to_i == self.id.to_i && connection[:source] == 'retrievers'
+
+        self.success_budgea_connection if is_id_retrieve_data || (is_id_controller && connection['success'] == "true")
       end
     end
   end
