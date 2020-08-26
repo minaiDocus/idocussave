@@ -3,7 +3,7 @@ class PreAssignmentDeliveryXmlBuilder
 
   def self.execute
     PreAssignmentDelivery.pending.order(id: :asc).each do |delivery|
-      PreAssignmentDeliveryXmlBuilder.new(delivery).execute
+      PreAssignmentDeliveryXmlBuilder.new(delivery).execute unless delivery.error_message.match(/limit pending reached/)
     end
   end
 

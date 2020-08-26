@@ -36,15 +36,6 @@ class PreAssignmentDeliveryService
         @@notified_at = Time.now
       end
     end
-
-    def retry_to_deliver(id_delivery, count_day)
-      delivery = PreAssignmentDelivery.find id_delivery
-      if count_day <= 2
-        PreAssignmentDeliveryService.new(delivery, count_day).execute
-      else
-        delivery.update(state: 'error')
-      end
-    end
   end
 
   attr_accessor :delivery, :software, :preseizures, :report, :user
@@ -123,9 +114,7 @@ class PreAssignmentDeliveryService
       }
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      PreAssignmentDeliveryService.delay_for(24.hours).retry_to_deliver(@delivery.id, (@count_day+1)) if @count_day <= 2      
-
-      # @delivery.update(state: 'pending')
+      @delivery.update(state: 'pending', error_message: pending_message )
     end
 
     @delivery.sent?
@@ -225,6 +214,24 @@ class PreAssignmentDeliveryService
     if notify? || (notify_error? && @delivery.error?)
       @delivery.update(is_to_notify: true)
     end
+  end
+
+  def pending_message
+    error_message = @delivery.error_message
+
+    if error_message.match(/_#_/)
+      limit_attempt = error_message.split("_#_").last[0].to_i
+
+      if limit_attempt < 3
+        error_message = {"error" => "limit_pending_#_#{limit_attempt += 1}"}
+      else
+        error_message = {"error" => "limit pending reached"}
+      end
+    elsif error_message.match(/limit pending reached/).nil?
+      error_message = {"error" => "limit_pending_#_1"}
+    end
+
+    error_message
   end
 end
 
