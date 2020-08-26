@@ -229,7 +229,7 @@ class PreAssignmentDeliveryService
 
     @pending_message = @delivery.error_message
 
-    if @pending_message.match(/_#_/)
+    if @pending_message.to_s.match(/_#_/)
       limit_attempt = @pending_message.split("_#_").last.to_i
 
       if limit_attempt < 3
@@ -237,7 +237,7 @@ class PreAssignmentDeliveryService
       else
         @pending_message = "limit pending reached"
       end
-    elsif !@pending_message.match(/limit pending reached/)
+    elsif !@pending_message.to_s.match(/limit pending reached/)
       @pending_message = "limit_pending_#_1"
     end
 
