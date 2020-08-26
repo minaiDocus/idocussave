@@ -49,7 +49,8 @@ class IbizaboxImport
   end
 
   def execute
-    return false unless valid?
+    return false if @user.subscription.current_period.is_active?(:ido_x) || !valid?
+
     @folder.process
     @folder.update_attribute(:last_checked_at, Time.now)
     accessible_ibiza_periods.each do |period|

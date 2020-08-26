@@ -90,19 +90,11 @@ private
   end
 
   def authorize_upload
-    unless @customer.options.is_upload_authorized
-      @customer.options.update_attribute(:is_upload_authorized, true)
-      @customer.external_file_storage.ftp.update_attribute(:is_configured, true)
-      @customer.ibizabox_folders.each(&:ready)
-    end
+    @customer.options.update_attribute(:is_upload_authorized, true) unless @customer.options.is_upload_authorized
   end
 
   def unauthorize_upload
-    if @customer.options.is_upload_authorized
-      @customer.options.update_attribute(:is_upload_authorized, false)
-      @customer.external_file_storage.ftp.update_attribute(:is_configured, false)
-      @customer.ibizabox_folders.each(&:inactive)
-    end
+    @customer.options.update_attribute(:is_upload_authorized, false) if @customer.options.is_upload_authorized
   end
 
   def update_max_number_of_journals
