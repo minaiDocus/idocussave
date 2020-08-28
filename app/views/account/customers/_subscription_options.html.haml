@@ -17,17 +17,16 @@
             = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
             &nbsp;&nbsp;&nbsp;&nbsp;
             = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control subscription-package-form-change idox_option option_checkbox'
-    - if @user.is_admin || @organization.code.in?(['DPA','ADV','CRE','GMBA','AEC','EXTE','ACC','FBC','FIDA','FIDC','EG', '2AP', 'ACDA'])
-      .row
-        .col-md-6
-          .form-check.form-check-inline{title: SubscriptionPackage.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
-            = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
-        .col-md-6.form_check_micro_package
-          .float-right{ style: 'padding-right: 17em' }
-            .form-check.form-check-inline{title: SubscriptionPackage.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-              = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-              = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+    .row
+      .col-md-6
+        .form-check.form-check-inline{title: SubscriptionPackage.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
+          = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
+      .col-md-6.form_check_micro_package
+        .float-right{ style: 'padding-right: 17em' }
+          .form-check.form-check-inline{title: SubscriptionPackage.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
+            = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
     - if @user.is_admin || @organization.code.in?(['GAP'])
       .row
         .col-md-6
