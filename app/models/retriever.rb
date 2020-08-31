@@ -236,11 +236,9 @@ class Retriever < ApplicationRecord
     budgea_id.present?
   end
 
-  def update_state_with(params={})
-    connection = params[:connections][:state].presence ? params[:connections] : params
-
-    is_retrieve_data_condition        = (connection.try(:[], 'id').to_i != self.budgea_id.to_i && params[:source] == 'retrieve_data')
-    is_retriever_controller_condition = (params.try(:[], 'id').to_i != self.id.to_i && params[:source] == 'retrievers')
+  def update_state_with(connection={})
+    is_retrieve_data_condition        = (connection.try(:[], 'id').to_i != self.budgea_id.to_i && connection[:source] == 'retrieve_data')
+    is_retriever_controller_condition = (connection.try(:[], 'id').to_i != self.id.to_i && connection[:source] == 'retrievers')
 
     return false if is_retrieve_data_condition || is_retriever_controller_condition
 
@@ -276,7 +274,7 @@ class Retriever < ApplicationRecord
 
       RetrieverNotification.new(self).notify_website_unavailable
     else
-      if error_connection.present? || (params['success'] == "false" && params[:source] == 'retrievers')
+      if error_connection.present? || (connection['success'] == "false" && connection[:source] == 'retrievers')
         error_message = connection_error_message || error_connection
 
         error_message = 'Service indisponible.'                         if error_connection == 'bug'
@@ -288,10 +286,10 @@ class Retriever < ApplicationRecord
 
         RetrieverNotification.new(self).notify_bug
       else
-        is_id_retrieve_data = connection.try(:[], 'id').to_i == self.budgea_id.to_i && params[:source] == 'retrieve_data'
-        is_id_controller    = connection.try(:[], 'id').to_i == self.id.to_i && params[:source] == 'retrievers'
+        is_id_retrieve_data = connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection[:source] == 'retrieve_data'
+        is_id_controller    = connection.try(:[], 'id').to_i == self.id.to_i && connection[:source] == 'retrievers'
 
-        self.success_budgea_connection if is_id_retrieve_data || (is_id_controller && params['success'] == "true")
+        self.success_budgea_connection if is_id_retrieve_data || (is_id_controller && connection['success'] == "true")
       end
     end
   end

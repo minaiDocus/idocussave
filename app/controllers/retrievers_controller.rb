@@ -179,8 +179,7 @@ class RetrieversController < ApiController
   def update_budgea_error_message
     initial_state = @retriever.to_json
 
-    params.merge!("source"=>"retrievers")
-    @retriever.update_state_with params
+    @retriever.update_state_with params_connection
 
     sleep(5)
 
@@ -193,6 +192,22 @@ class RetrieversController < ApiController
 
   def load_retriever
     @retriever = Retriever.find params[:id]
+  end
+
+  def params_connection
+    _params_tmp = params
+
+    if params[:connections].present? && params[:connections].try(:[], 'id').present?
+      params[:connections].each do |k,v|
+        _params_tmp.merge!(k=>v) if k != 'id'
+      end
+
+      _params_tmp.merge!("connections"=>params[:connections][:id])
+    end
+
+    _params_tmp.merge!("source"=>"retrievers")
+
+    _params_tmp
   end
 
   def send_notification(retriever, initial_state, connection)
