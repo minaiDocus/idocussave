@@ -205,7 +205,7 @@ class RetrieversController < ApiController
       _params_tmp.merge!("connections"=>params[:connections][:id])
     end
 
-    _params_tmp.merge!("source"=>"retrievers")
+    _params_tmp.merge!("source"=>"RetrieversController")
 
     _params_tmp
   end
