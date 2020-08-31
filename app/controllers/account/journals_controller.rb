@@ -215,7 +215,7 @@ class Account::JournalsController < Account::OrganizationController
       attrs << :name
     end
 
-    if is_preassignment_authorized?
+    if is_preassignment_authorized? || @customer.subscription.is_idox_package_active
       attrs += %i[
         domain
         entry_type
