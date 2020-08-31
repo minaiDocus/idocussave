@@ -75,9 +75,8 @@
                     .float-left Format d’export (.csv)
                     - if @customer.uses_csv_descriptor?
                       = glyphicon('check', { class: 'float-right' })
-          - unless @customer.uses_api_softwares?
-            %li.nav-item
-              %a.nav-link{ class: ('active' if params[:tab] == 'accounting_plan'), href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
+          %li.nav-item
+            %a.nav-link{ class: ('active' if params[:tab] == 'accounting_plan'), href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
           - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'mcf'), href: '#mcf', data: { toggle: 'tab' } } My Company Files
