@@ -95,7 +95,7 @@ class ProcessRetrievedData
       @is_connection_ok = true
       @connection_id    = connection['id']
 
-      connection.merge!("source"=>"retrieve_data")
+      connection.merge!("source"=>"ProcessRetrievedData")
       process connection if retriever
 
       if @is_connection_ok

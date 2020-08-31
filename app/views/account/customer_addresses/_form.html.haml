@@ -12,11 +12,11 @@
       .col-md-6
         = f.input :is_for_paper_return,       as: :boolean
         = f.input :is_for_paper_set_shipping, as: :boolean
-        - if @address.is_for_dematbox_shipping || @customer.subscription.is_scan_box_package_active
+        - if @address.is_for_dematbox_shipping || @customer.is_dematbox_authorized
           = f.input :is_for_dematbox_shipping,  as: :boolean
     .row
       .col-md-12
-        - if @address.is_for_dematbox_shipping || @customer.subscription.is_scan_box_package_active
+        - if @address.is_for_dematbox_shipping || @customer.is_dematbox_authorized
           .dematbox_only{ style: 'display:none;' }
             .box.bg-light
               %h4 Pour la livraison de l'iDocus Box uniquement

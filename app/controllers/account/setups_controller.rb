@@ -97,7 +97,7 @@ class Account::SetupsController < Account::OrganizationController
       elsif step == 'order_paper_set'
         if @customer.subscription.is_mail_package_active && (@customer.orders.paper_sets.empty? || @customer.orders.paper_sets.pending.first)
           result = 'order_paper_set'
-        elsif @customer.subscription.is_scan_box_package_active && (@customer.orders.dematboxes.empty? || @customer.orders.dematboxes.pending.first)
+        elsif @customer.is_dematbox_authorized && (@customer.orders.dematboxes.empty? || @customer.orders.dematboxes.pending.first)
           result = 'order_dematbox'
         elsif @customer.subscription.is_retriever_package_active
           result = 'retrievers'
@@ -105,7 +105,7 @@ class Account::SetupsController < Account::OrganizationController
           result = 'ged'
         end
       elsif step == 'order_dematbox'
-        if @customer.subscription.is_scan_box_package_active && (@customer.orders.dematboxes.empty? || @customer.orders.dematboxes.pending.first)
+        if @customer.is_dematbox_authorized && (@customer.orders.dematboxes.empty? || @customer.orders.dematboxes.pending.first)
           result = 'order_dematbox'
         elsif @customer.subscription.is_retriever_package_active
           result = 'retrievers'

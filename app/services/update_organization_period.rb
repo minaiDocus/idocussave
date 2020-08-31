@@ -47,7 +47,7 @@ class UpdateOrganizationPeriod
 
         @period.max_sheets_authorized               += c_period.max_sheets_authorized.to_i               if subscription.is_mail_package_active
         @period.max_upload_pages_authorized         += c_period.max_upload_pages_authorized.to_i         if subscription.is_basic_package_active || subscription.is_mail_package_active || subscription.is_scan_box_package_active
-        @period.max_dematbox_scan_pages_authorized  += c_period.max_dematbox_scan_pages_authorized.to_i  if subscription.is_scan_box_package_active
+        @period.max_dematbox_scan_pages_authorized  += c_period.max_dematbox_scan_pages_authorized.to_i  if c_period.user.is_dematbox_authorized
         @period.max_preseizure_pieces_authorized    += c_period.max_preseizure_pieces_authorized.to_i    if option.is_preassignment_authorized
         @period.max_expense_pieces_authorized       += c_period.max_expense_pieces_authorized.to_i       if option.is_preassignment_authorized
         @period.max_paperclips_authorized           += c_period.max_paperclips_authorized.to_i           if subscription.is_mail_package_active

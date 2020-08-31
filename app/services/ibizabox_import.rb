@@ -18,7 +18,7 @@ class IbizaboxImport
 
     def init
       IbizaboxFolder.ready.includes(:user).map(&:user).uniq.each do |user|
-        next unless user.organization.ibiza.try(:first_configured?) && user.uses_ibiza?
+        next unless user.organization.ibiza.try(:first_configured?) && user.uses_ibiza? && user.still_active?
         ImportFromIbizaboxWorker.perform_async user.id
       end
     end
