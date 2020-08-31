@@ -372,7 +372,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def multi_pack_download
-    _tmp_archive = Tempfile.new(['archive', '.zip'])
+    _tmp_archive = Tempfile.new(['archive', '.zip'], '/nfs/tmp/')
     _tmp_archive_path = _tmp_archive.path
     _tmp_archive.close
     _tmp_archive.unlink

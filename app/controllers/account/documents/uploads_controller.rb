@@ -10,7 +10,7 @@ class Account::Documents::UploadsController < Account::AccountController
                end
 
     if customer.try(:options).try(:is_upload_authorized) && params[:files].present?
-      dir = "#{Rails.root}/files/temp_pack_processor/uploaded_document/"
+      dir = "/nfs/temp_pack_processor/uploaded_document/"
 
       FileUtils.makedirs(dir)
       FileUtils.chmod(0755, dir)
