@@ -273,15 +273,34 @@ class Retriever < ApplicationRecord
       self.fail_budgea_connection
 
       RetrieverNotification.new(self).notify_website_unavailable
+    when 'SCARequired'
+      if connection['fields'].present?
+        self.update({error_message: connection['fields']["0"]["description"], budgea_error_message: nil})
+
+        self.pause_budgea_connection
+
+        RetrieverNotification.new(self).notify_info_needed
+      else
+        self.update({error_message: "Authentification forte requise (SCARequired).", budgea_error_message: error_connection})
+
+        self.fail_budgea_connection
+
+        RetrieverNotification.new(self).notify_bug
+      end
     else
-      if error_connection.present? || (connection['success'] == "false" && connection[:source] == 'RetrieversController')
+      if error_connection.present?
         error_message = connection_error_message || error_connection
 
-        error_message = 'Service indisponible.'                         if error_connection == 'bug'
-        error_message = 'Authentification forte requise (SCARequired).' if error_connection == 'SCARequired'
-        error_message = 'Authentification Web requise.'                 if error_connection == 'webauthRequired'
+        error_message = 'Service indisponible.'         if error_connection == 'bug'
+        error_message = 'Authentification Web requise.' if error_connection == 'webauthRequired'
 
         self.update({error_message: error_message, budgea_error_message: error_connection})
+        self.fail_budgea_connection
+
+        RetrieverNotification.new(self).notify_bug
+      elsif (connection['success'] == "false" && connection[:source] == 'RetrieversController')
+        self.update({error_message: connection_error_message, budgea_error_message: 'decoupled'})
+
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug
