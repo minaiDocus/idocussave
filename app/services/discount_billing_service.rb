@@ -76,7 +76,7 @@ class DiscountBillingService
   def classic_quantity_of(option)
     case option.to_s
       when 'subscription'
-        concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
+        concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true).size
       when 'retriever'
         concerned_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
       when 'iDoMini'
@@ -125,7 +125,7 @@ class DiscountBillingService
   def special_extentis_quantity_of(option)
     case option.to_s
       when 'subscription'
-        extentis_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_scan_box_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true, true).size
+        extentis_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true).size
       when 'retriever'
         extentis_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
       when 'iDoMini'
