@@ -132,7 +132,7 @@ class Account::OrdersController < Account::OrganizationController
     authorized = true
     authorized = false unless @user.leader? || @user.manage_customers
     authorized = false unless @customer.active?
-    unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
+    unless subscription.is_mail_package_active || @customer.is_dematbox_authorized || subscription.is_annual_package_active
       authorized = false
     end
 
@@ -140,7 +140,7 @@ class Account::OrdersController < Account::OrganizationController
       if !params[:order].present?
         authorized = false
       else
-        if params[:order][:type].in?(['dematbox', nil]) && !subscription.is_scan_box_package_active
+        if params[:order][:type].in?(['dematbox', nil]) && !@customer.is_dematbox_authorized
           authorized = false
         end
 

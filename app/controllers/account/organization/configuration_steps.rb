@@ -80,13 +80,13 @@ module Account::Organization::ConfigurationSteps
                                                  flash[:error] = 'Vous devez configurer au moins un journal comptable.'
                                                  'journals'
                                                end
-                                             elsif @customer.subscription.is_scan_box_package_active
+                                             elsif @customer.is_dematbox_authorized
                                                'order_dematbox'
                                              elsif @organization.knowings.try(:configured?)
                                                'ged'
                                              end
                                            when 'order_paper_set'
-                                             if @customer.subscription.is_scan_box_package_active
+                                             if @customer.is_dematbox_authorized
                                                'order_dematbox'
                                              elsif @organization.knowings.try(:configured?)
                                                'ged'
@@ -111,7 +111,7 @@ module Account::Organization::ConfigurationSteps
   def previous_configuration_step
     @customer.current_configuration_step = case @customer.current_configuration_step
                                            when 'ged'
-                                             if @customer.subscription.is_scan_box_package_active
+                                             if @customer.is_dematbox_authorized
                                                'order_dematbox'
                                              elsif @customer.subscription.is_mail_package_active
                                                'order_paper_set'
@@ -228,10 +228,10 @@ module Account::Organization::ConfigurationSteps
     case @customer.current_configuration_step
     when 'journals'
       !@customer.subscription.is_mail_package_active &&
-        !@customer.subscription.is_scan_box_package_active &&
+        !@customer.is_dematbox_authorized &&
         !@organization.knowings.try(:configured?)
     when 'order_paper_set'
-      !@customer.subscription.is_scan_box_package_active &&
+      !@customer.is_dematbox_authorized &&
         !@organization.knowings.try(:configured?)
     when 'order_dematbox'
       !@organization.knowings.try(:configured?)
