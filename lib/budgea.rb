@@ -243,6 +243,24 @@ class Budgea
       end
     end
 
+    def resume_connexion(retriever)
+      if retriever.budgea_id.present?
+
+        @response = connection.post do |request|
+          request.url "/2.0/users/me/connections/#{retriever.budgea_id}"
+          request.body = { resume: true }.to_query
+          request.headers = headers
+        end
+
+        connections = JSON.parse(@response.body)
+        connections.merge!("source": "ProcessRetrievedData")
+
+        retriever.update_state_with connections.with_indifferent_access
+
+        @response.body
+      end
+    end
+
     def headers
       {
         'Accept' => 'application/json',

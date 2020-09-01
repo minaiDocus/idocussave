@@ -303,12 +303,15 @@ class Idocus.BudgeaApi
           self.remote_fetch({
             url: "/users/me/connections/#{budgea_id}"
             type: remote_method
-            onSuccess: (data)-> local_request({id: id, success: true, data_remote: data})
-            onError: (error)->
-              if error.match(/Erreur: 404/) && remote_method == 'DELETE'
-                local_request({id: id, success: true, data_remote: {}})
-              else
-                local_request({id: id, success: false, error_message: error})
+            success_only: true
+            onSuccess: (data)->
+              connections = data['collection']
+              message     = data['message']
+
+              if message.match(/Erreur: 404/) && remote_method == 'DELETE'
+                connections = {}
+
+              local_request({id: id, success: true, data_remote: connections})
           })
         else
           local_request({ id: id, success: true, data_remote: {} })
@@ -347,15 +350,12 @@ class Idocus.BudgeaApi
             url: "/users/me/connections/#{budgea_id}"
             type: 'POST'
             data: data_refresh
-            onSuccess: (connections)-> local_request({id: id, success: true, connections: connections})
-            onError: (error)->
-              if error.match(/Erreur: 404/) && remote_method == 'DELETE'
-                local_request({id: id, success: true, connections: {}})
-              else
-                local_request({id: id, success: false, error_message: error})
+            success_only: true
+            onSuccess: (data)->
+              local_request({id: id, success: true, connections: data['collection']})
           })
         else
-          local_request({ id: id, success: false, connections: {} })
+          local_request({ id: id, success: true, connections: {} })
 
       self.local_fetch({
         url: "/retriever/get_retriever_infos"
@@ -448,6 +448,7 @@ class Idocus.BudgeaApi
     onSuccess = options.onSuccess || ()->{}
     onError = options.onError || ()->{}
     collection = options.collection || ''
+    success_only = options.success_only || false
 
     xhr = new XMLHttpRequest()
     xhr.open(method, "#{@api_base_url}#{url}")
@@ -491,10 +492,13 @@ class Idocus.BudgeaApi
           success = if error_message.length > 0 then false else true
           data_collect = if collection.length > 0 then response[collection] else response
 
-          if success
-            onSuccess(data_collect)
+          if success_only
+            onSuccess({collection: data_collect, message: error_message })
           else
-            onError(error_message)
+            if success
+              onSuccess(data_collect)
+            else
+              onError(error_message)
         catch: (e)->
           parse_error(xhr.status)
       else

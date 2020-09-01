@@ -110,14 +110,9 @@ class RetrieversController < ApiController
   end
 
   def destroy
-    if params[:success] == 'true' && @retriever.destroy_connection
-      success = DestroyBudgeaConnection.execute(@retriever)
-    else
-      success = false
-      @retriever.update(budgea_error_message: params[:error_message])
-      @retriever.fail_budgea_connection
-    end
-    render json: { success: success }, status: 200
+    DestroyBudgeaConnection.execute(@retriever) if params[:success] == 'true' && @retriever.destroy_connection
+
+    render json: { success: true }, status: 200
   end
 
   def trigger
@@ -130,16 +125,10 @@ class RetrieversController < ApiController
       end
       @retriever.save
 
-      if params[:data_remote][:additionnal_fields].present?
-        @retriever.pause_budgea_connection
-      else
-        @retriever.success_budgea_connection
-      end
+      @retriever.update_state_with params_connection
 
       render json: { success: true }, status: 200
     else
-      @retriever.update(budgea_error_message: params[:error_message])
-      @retriever.fail_budgea_connection
       render json: { success: false }, status: 200
     end
   end
