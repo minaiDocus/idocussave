@@ -3,6 +3,8 @@ class ProductOptionOrder < ApplicationRecord
   belongs_to :product_optionable, polymorphic: true
 
   scope :by_position, -> { order(group_position: :asc, position: :asc) }
+  scope :is_not_freeze,  -> { where(freeze: false) }
+  scope :is_freeze,      -> { where(freeze: true) }
 
 
   def ==(product_option_order)
