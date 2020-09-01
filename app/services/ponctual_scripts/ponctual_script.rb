@@ -27,6 +27,14 @@ class PonctualScripts::PonctualScript
 
   private
 
+  def ponctual_dir
+    dir = "#{Rails.root}/spec/support/files/ponctual_scripts"
+
+    FileUtils.makedirs(dir)
+    FileUtils.chmod(0777, dir)
+    dir
+  end
+
   # Define execute method on the child class (without params, use initializer options if you need params)
   def execute; end
 
