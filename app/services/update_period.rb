@@ -21,7 +21,7 @@ class UpdatePeriod
         @period.set_current_packages(@options.try(:[], :renew_packages))
       end
 
-      freezed_options = @period.product_option_orders.is_freeze.to_a
+      freezed_options = @period.product_option_orders.is_frozen.to_a
       @period.product_option_orders.destroy_all
       @period.product_option_orders = options + freezed_options
 

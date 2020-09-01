@@ -8,7 +8,7 @@ class DiscountBillingService
     discount = new(period.organization)
 
     period.with_lock do
-      period.product_option_orders.is_not_freeze.where(name: 'discount_option').destroy_all
+      period.product_option_orders.is_not_frozen.where(name: 'discount_option').destroy_all
       option = period.product_option_orders.new
       option.title       = discount.title
       option.name        = 'discount_option'
