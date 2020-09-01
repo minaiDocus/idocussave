@@ -245,6 +245,8 @@ class Retriever < ApplicationRecord
     error_connection            = connection['error'].presence || connection['code']
     connection_error_message    = connection['error_message'].presence || connection['message']
 
+    return false if error_connection.to_s.match(/Can[']t force synchronization/i) || connection_error_message.to_s.match(/Can[']t force synchronization/i)
+
     case error_connection
     when 'wrongpass'
       error_message = connection_error_message.presence || 'Mot de passe incorrect.'
