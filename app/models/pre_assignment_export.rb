@@ -30,7 +30,7 @@ class PreAssignmentExport < ApplicationRecord
   end
 
   def base_path
-    File.join('nfs', 'export', self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
+    File.join('nfs', 'export', 'pre_assignment', self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
   end
 
   def path
