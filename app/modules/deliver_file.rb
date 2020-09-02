@@ -69,6 +69,7 @@ module DeliverFile
     def execute
       if receivers.any?
         receivers.each do |receiver|
+          debugger
           @receiver       = receiver
           @storage        = nil
           @remote_files   = nil

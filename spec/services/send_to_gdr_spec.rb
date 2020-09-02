@@ -1,0 +1,69 @@
+require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
+
+describe "SendToGdr" do
+  # Disable transactionnal database clean, needed for multi-thread
+  before(:all) { DatabaseCleaner.clean }
+  after(:all)  { DatabaseCleaner.start }
+  # And clean with truncation instead
+  after(:each) { DatabaseCleaner.clean_with(:truncation) }
+
+  before(:each) do
+    allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
+    allow(FileUtils).to receive(:delay_for).and_return(FileUtils)
+    allow(FileUtils).to receive(:remove_dir).and_return(true)
+
+    @leader = FactoryBot.create :user, code: 'IDO%LEAD'
+    @organization = create :organization, code: 'IDO'
+    @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
+    @organization.admin_members << @leader.memberships.first
+    @leader.update(organization: @organization)
+    @user = FactoryBot.create :user, code: 'IDO%0001'
+
+    @external_file_storage = ExternalFileStorage.new
+    @external_file_storage.path = "iDocus/:code/:year:month/:account_book/"
+    @external_file_storage.used = 4
+    @external_file_storage.authorized = 30
+    @external_file_storage.user = @user
+    @external_file_storage.save
+
+
+    @storage = @external_file_storage.google_doc
+    @storage.path = "iDocus/:code/:year:month/:account_book/"
+    @storage.access_token = "ya29.a0AfH6SMAFcJz7hw5_Y95DYe72UnDXi66YijOa9sSwEyD3HCanbvSbrUebB1Dz-Y00gMiVqYw_5cGMYAAU7RWLze_FxTq7JQeH_aFp7RbnrRCvqAcbAWzuYW-42lU9ubnkCSWuG0VAJDVOG0NCn0Y9Ktv9w1j_2JQeFPg"
+    @storage.access_token_expires_at = "Wed, 02 Sep 2020 10:52:41 +0300".to_datetime
+    @storage.is_configured = true
+    @storage.save
+
+    @pack = Pack.new
+    @pack.owner = @user
+    @pack.organization = @organization
+    @pack.name = 'IDO%0001 AC 201804 all'
+    @pack.save
+
+    @document = Pack::Piece.new
+    @document.pack   = @pack
+    @document.user   = @user
+    @document.organization = @organization
+    @document.name   = "IDO%0001 AC 201804 001"
+    @document.origin     = 'upload'
+    @document.is_a_cover = false
+    @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
+
+    @remote_file              = RemoteFile.new
+    @remote_file.receiver     = @user
+    @remote_file.pack         = @pack
+    @remote_file.service_name = RemoteFile::GOOGLE_DRIVE
+    @remote_file.remotable    = @document
+    @remote_file.save
+  end
+
+  it 'sends a file successfully', :send_files do
+    # result = VCR.use_cassette('mcf/upload_file') do
+    #   DeliverFile.to "mcf"
+    # end
+    DeliverFile.to "gdr"
+
+    expect(@remote_file.reload.state).to eq 'synced'
+  end
+end
