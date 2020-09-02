@@ -20,7 +20,9 @@ class PonctualScripts::BudgeaRefreshScarequired < PonctualScripts::PonctualScrip
 
     count = 0
     retrievers.each do |retriever|
-      next unless retriever.user.still_active?
+      access_token = retriever.user.try(:budgea_account).try(:access_token)
+
+      next unless retriever.user.still_active? && access_token.present? && retriever.budgea_id.present?
 
       if count == 5
         sleep(5)
@@ -29,7 +31,7 @@ class PonctualScripts::BudgeaRefreshScarequired < PonctualScripts::PonctualScrip
 
       initial_state = retriever.to_json
 
-      client   = Budgea::Client.new(retriever.user.budgea_account.access_token)
+      client   = Budgea::Client.new(access_token)
       response = client.send(:resume_connexion, retriever)
 
       sleep(1)

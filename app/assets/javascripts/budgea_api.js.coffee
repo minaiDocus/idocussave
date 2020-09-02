@@ -307,14 +307,18 @@ class Idocus.BudgeaApi
             onSuccess: (data)->
               connections = data['collection']
               message     = data['message']
+              _success = false
+
+              if message == ''
+                _success = true
 
               if message.match(/Erreur: 404/) && remote_method == 'DELETE'
                 connections = {}
 
-              local_request({id: id, success: true, data_remote: connections})
+              local_request({id: id, success: _success, data_remote: connections})
           })
         else
-          local_request({ id: id, success: true, data_remote: {} })
+          local_request({ id: id, success: false, data_remote: {} })
 
       self.local_fetch({
         url: "/retriever/get_retriever_infos"
@@ -352,10 +356,13 @@ class Idocus.BudgeaApi
             data: data_refresh
             success_only: true
             onSuccess: (data)->
-              local_request({id: id, success: true, connections: data['collection']})
+              _success = false
+              if data['message'] == ''
+                _success = true
+              local_request({id: id, success: _success, connections: data['collection']})
           })
         else
-          local_request({ id: id, success: true, connections: {} })
+          local_request({ id: id, success: false, connections: {} })
 
       self.local_fetch({
         url: "/retriever/get_retriever_infos"

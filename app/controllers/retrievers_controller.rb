@@ -119,7 +119,7 @@ class RetrieversController < ApiController
     @current_user = @retriever.user
     @retriever.run
 
-    if @retriever.budgea_id && params[:success] == 'true'
+    if @retriever.budgea_id
       if params[:data_remote][:last_update].present?
         @retriever.sync_at = Time.parse params[:data_remote][:last_update]
       end
