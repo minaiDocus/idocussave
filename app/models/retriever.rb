@@ -276,8 +276,14 @@ class Retriever < ApplicationRecord
 
       RetrieverNotification.new(self).notify_website_unavailable
     when 'SCARequired'
-      if connection['fields'].present?
-        self.update({error_message: connection['fields']["0"]["description"], budgea_error_message: nil})
+      begin
+        description = connection.try(:[], 'fields').try(:[], "0").try(:[], "description")
+      rescue
+        description = connection.try(:[], 'fields').try(:[], 0).try(:[], "description")
+      end
+
+      if connection['fields'].present? && description.present?
+        self.update({error_message: description, budgea_error_message: nil})
 
         self.pause_budgea_connection
 
