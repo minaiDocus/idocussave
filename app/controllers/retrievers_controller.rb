@@ -117,7 +117,6 @@ class RetrieversController < ApiController
 
   def trigger
     @current_user = @retriever.user
-    @retriever.run
 
     if @retriever.budgea_id
       if params[:data_remote][:last_update].present?
