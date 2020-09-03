@@ -235,7 +235,8 @@ private
   end
 
   def file_real_name
-    "#{file_previous_name}_#{Time.now.strftime('%d%m%y_%H%M%S')}"
+    return @real_name if @real_name.present?
+    @real_name = "#{file_previous_name}_#{Time.now.strftime('%d%m%y_%H%M%S')}"
   end
 
   def file_path

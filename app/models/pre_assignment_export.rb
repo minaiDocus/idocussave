@@ -30,7 +30,7 @@ class PreAssignmentExport < ApplicationRecord
   end
 
   def base_path
-    Rails.root.join('files', 'exports', self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
+    Pathname.new('/nfs/export/pre_assignment').join(self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
   end
 
   def path

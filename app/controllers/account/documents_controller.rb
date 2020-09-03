@@ -339,7 +339,9 @@ class Account::DocumentsController < Account::AccountController
       retries = 0
         export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
         if export.file_name.present? && export.file_path.present?
-          send_file(export.file_path.to_s, filename: File.basename(export.file_name.to_s), x_sendfile: true)
+          contents = File.read(export.file_path.to_s)
+
+          send_data(contents, filename: File.basename(export.file_name.to_s), disposition: 'attachment')
         else
           render plain: 'Aucun résultat'
         end
