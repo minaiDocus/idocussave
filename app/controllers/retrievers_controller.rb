@@ -172,7 +172,7 @@ class RetrieversController < ApiController
 
     sleep(5)
 
-    send_notification(@retriever.reload, initial_state, params)
+    send_notification(@retriever.reload, initial_state, params_connection)
 
     render json: { success: true }, status: 200
   end
@@ -184,14 +184,14 @@ class RetrieversController < ApiController
   end
 
   def params_connection
-    _params_tmp = params
+    _params_tmp = params.dup
 
-    if params[:connections].present? && params[:connections].try(:[], 'id').present?
+    if params[:connections].present?
       params[:connections].each do |k,v|
         _params_tmp.merge!(k=>v) if k != 'id'
       end
 
-      _params_tmp.merge!("connections"=>params[:connections][:id])
+      _params_tmp.merge!("connections" => '')
     end
 
     _params_tmp.merge!("source"=>"RetrieversController")
@@ -205,11 +205,11 @@ class RetrieversController < ApiController
       error_group: "[Budgea Error Handler] : SCARequired/decoupled - retrievers",
       erreur_type: "SCARequired/decoupled retrievers",
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: { real_params: params.to_json.to_s, decoup_params: connection.to_json.to_s },
       raw_information: "<table style='border: 1px solid #CCC;font-family: \"Open Sans\", sans-serif; font-size:12px;'><tbody>
-                          <tr><td colspan='2' style='text-align:center; background-color: #BBD8E6;'> #{retriever.id} </td></tr>
+                          <tr><td colspan='2' style='text-align:center; background-color: #BBD8E6;'> #{retriever.id} -- #{connection.try(:[], :id)} </td></tr>
                           <tr><td style='border: 1px solid #CCC;text-align:center;'>Initial</td><td style='border: 1px solid #CCC;'> #{initial_state} </td></tr>
                           <tr style='background-color: #F5F5F5;'><td style='border: 1px solid #CCC;text-align:center;'>Final</td><td style='border: 1px solid #CCC;'> #{retriever.to_json.to_s} </td></tr>
-                          <tr><td style='border: 1px solid #CCC;text-align:center;'>Connection</td><td style='border: 1px solid #CCC;'> #{connection.inspect} </td></tr>
                         </tbody></table>"
     }
 

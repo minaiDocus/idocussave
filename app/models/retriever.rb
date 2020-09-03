@@ -242,8 +242,8 @@ class Retriever < ApplicationRecord
 
     return false if id_from_retrieved_data == 0 && id_from_retriever_controller == 0
 
-    error_connection            = connection['error'].presence || connection['code']
-    connection_error_message    = connection['error_message'].presence || connection['message']
+    error_connection            = connection['error'].presence || connection['code'].presence
+    connection_error_message    = connection['error_message'].presence || connection['message'].presence || connection['description']
 
     return false if error_connection.to_s.match(/Can[']t force synchronization/i) || connection_error_message.to_s.match(/Can[']t force synchronization/i)
 
@@ -298,17 +298,17 @@ class Retriever < ApplicationRecord
     else
       if error_connection.present?
         error_message = connection_error_message || error_connection
+        error_type    = 'decoupled'
 
-        error_message = 'Service indisponible.'         if error_connection == 'bug'
-        error_message = 'Authentification Web requise.' if error_connection == 'webauthRequired'
+        if error_connection == 'bug'
+          error_message = 'Service indisponible.'
+          error_type    = 'bug'
+        elsif error_connection == 'webauthRequired'
+          error_message = 'Authentification Web requise.'
+          error_type    = 'webauthRequired'
+        end
 
-        self.update({error_message: error_message, budgea_error_message: error_connection})
-        self.fail_budgea_connection
-
-        RetrieverNotification.new(self).notify_bug
-      elsif (connection['success'] == "false" && connection[:source] == 'RetrieversController')
-        self.update({error_message: connection_error_message, budgea_error_message: 'decoupled'})
-
+        self.update({error_message: error_message, budgea_error_message: error_type})
         self.fail_budgea_connection
 
         RetrieverNotification.new(self).notify_bug

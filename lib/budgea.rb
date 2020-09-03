@@ -254,6 +254,9 @@ class Budgea
 
         if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
           connections = JSON.parse(@response.body)
+
+          connections = connections['connections'] if connections['connections'].present?
+
           connections.merge!({"source": "ProcessRetrievedData", "id": retriever.budgea_id})
 
           retriever.update_state_with connections.with_indifferent_access
