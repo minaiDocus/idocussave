@@ -338,8 +338,11 @@ class Account::DocumentsController < Account::AccountController
 
       retries = 0
         export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
-        send_file(export.file_path, filename: File.basename(export.file_name), x_sendfile: true)
-
+        if export.file_name.present? && export.file_path.present?
+          send_file(export.file_path.to_s, filename: File.basename(export.file_name.to_s), x_sendfile: true)
+        else
+          render plain: 'Aucun résultat'
+        end
     elsif !export_format.in?(supported_format)
       render plain: 'Traitement impossible : le format est incorrect.'
     else

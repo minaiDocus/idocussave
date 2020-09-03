@@ -220,8 +220,8 @@ private
       exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute
       if exercise
         data = IbizaAPI::Utils.to_import_xml(exercise, @preseizures, ibiza)
-        File.open("#{file_path}/#{file_real_name}.xml", 'w') { |file| file.write(data) }
-        @export.got_success "#{file_path}.xml"
+        File.open("#{file_path}/#{file_real_name}.xml", 'w') { |file| file.write(data[:data_built]) }
+        @export.got_success "#{file_real_name}.xml"
       else
         @export.got_error "Exercise ibiza not found", false
       end
