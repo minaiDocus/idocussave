@@ -289,7 +289,7 @@ class Retriever < ApplicationRecord
 
         RetrieverNotification.new(self).notify_info_needed
       else
-        self.update({error_message: "Authentification forte requise (SCARequired).", budgea_error_message: error_connection})
+        self.update({error_message: "Authentification forte requise (SCARequired).\n #{connection_error_message}", budgea_error_message: error_connection})
 
         self.fail_budgea_connection
 
