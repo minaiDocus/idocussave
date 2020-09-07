@@ -12,14 +12,9 @@ class CreateBudgeaConnection
     retriever.assign_attributes parse_parameters
 
     if retriever.save
-      retriever.configure_budgea_connection
-
-      if @budgea_response[:error].present? && @budgea_response[:error] == "additionalInformationNeeded"
-        retriever.pause_budgea_connection
-      else
-        retriever.synchronize_budgea_connection
-        retriever.success_budgea_connection
-      end
+      sleep 2
+      client = Budgea::Client.new @user.budgea_account.access_token
+      client.send(:resume_connexion, retriever.reload)
     end
   end
 

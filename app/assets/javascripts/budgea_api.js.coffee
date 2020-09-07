@@ -313,12 +313,13 @@ class Idocus.BudgeaApi
                 _success = true
 
               if message.match(/Erreur: 404/) && remote_method == 'DELETE'
+                _success = true
                 connections = {}
 
               local_request({id: id, success: _success, data_remote: connections})
           })
         else
-          local_request({ id: id, success: false, data_remote: {} })
+          local_request({ id: id, success: true, data_remote: {} })
 
       self.local_fetch({
         url: "/retriever/get_retriever_infos"
@@ -474,7 +475,10 @@ class Idocus.BudgeaApi
       else if status == 401
         message = "Authorisation requise (Erreur: #{status})"
 
-      onError(message)
+      if success_only
+        onSuccess({ collection: {}, message: message })
+      else
+        onError(message)
 
     xhr.onload = ()->
       if [200, 202, 204, 400, 403, 500, 503].includes(xhr.status)
@@ -500,7 +504,7 @@ class Idocus.BudgeaApi
           data_collect = if collection.length > 0 then response[collection] else response
 
           if success_only
-            onSuccess({collection: data_collect, message: error_message })
+            onSuccess({ collection: data_collect, message: error_message })
           else
             if success
               onSuccess(data_collect)
