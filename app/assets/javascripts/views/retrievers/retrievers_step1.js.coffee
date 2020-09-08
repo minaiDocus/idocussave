@@ -7,6 +7,7 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
     'click #retriever_commit': 'create_connector'
 
   initialize: (options) ->
+    @id_connection = $('#retriever_budgea_id').val() || 0
     @common = new Idocus.Models.Common()
     this
 
@@ -16,8 +17,16 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
     this
 
   render: ()->
-    @$el.html(@template( connector: @connector, budgea_id: $('#retriever_budgea_id').val() ))
+    @$el.html(@template( connector: @connector, budgea_id: @id_connection ))
+    if @id_connection > 0 && $('#retriever_skip_step1').val() > 0
+      @remove_required_field()
+      @$el.find('.form-group').addClass('hide')
+      @create_connector() #Simulate the validation click to go to the next step
     this
+
+  remove_required_field: ()->
+    @$el.find('.form-group').removeClass('required')
+    @$el.find('.form-group .control-section .field ').removeClass('required')
 
   check_field_website: (e)->
     value = $(e.target).val()
@@ -35,12 +44,11 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
   create_connector: ()->
     self = this
     if @common.valid_fields(@$el)
-      id_connection = $('#retriever_budgea_id').val() || 0
       oauth_presence = @$el.find('.oauth').val()
 
       if oauth_presence
-        if id_connection > 0
-          Idocus.budgeaApi.webauth(id_connection, false)
+        if @id_connection > 0
+          Idocus.budgeaApi.webauth(@id_connection, false)
         else
           Idocus.budgeaApi.webauth(@connector.get('id'), true)
       else
@@ -54,14 +62,14 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
         if @contact_fields
           data_contact =  {
                             first_name:   data_remote.contact_field_first_name,
-                            name:         data_remote.contact_field_name
+                            name:         data_remote.contact_field_name,
                             society:      data_remote.contact_field_society,
                           }
         delete data_remote.contact_fields_first_name
         delete data_remote.contact_field_name
         delete data_remote.contact_field_society
 
-        if id_connection == 0
+        if @id_connection == 0
           capabilities = @$el.find('#field_ido_capabilities').val().split('_')
           if capabilities.includes('document')
             Object.assign(data_remote, data_remote, { id_provider: @$el.find('#ido_connector_id').val() })
@@ -74,7 +82,7 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
         Object.assign(data_local, data_local, { ido_journal: @$el.find('#field_ido_journal').val(), ido_custom_name: @$el.find('#field_ido_custom_name').val() })
 
         fetch_connection = ()->
-          Idocus.budgeaApi.create_or_update_connection(id_connection, data_remote, data_local).then(
+          Idocus.budgeaApi.create_or_update_connection(self.id_connection, data_remote, data_local).then(
             (data)->
               self.common.action_loading(self.$el, false)
 
@@ -87,6 +95,7 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
                 self.common.go_to_step3( data.remote_response )
             (error)->
               self.common.action_loading(self.$el, false)
+              self.$el.find('.form-group').removeClass('hide')
               self.$el.find('#information').html("<div class='alert alert-danger'>#{error}</div>")
           )
 
@@ -95,6 +104,7 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
             (data) -> fetch_connection()
             (error)->
               self.common.action_loading(self.$el, false)
+              self.$el.find('.form-group').removeClass('hide')
               self.$el.find('#information').html("<div class='alert alert-danger'>#{error}</div>")
           )
         else

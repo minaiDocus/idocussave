@@ -7,6 +7,7 @@
 = hidden_field_tag :retriever_custom_name, @retriever.try(:name) || nil
 = hidden_field_tag :retriever_journal_id, @retriever.try(:journal_id) || nil
 = hidden_field_tag :retriever_budgea_id, @retriever.try(:budgea_id) || nil
+= hidden_field_tag :retriever_skip_step1, @retriever.try(:waiting_additionnal_info?) ? 1 : 0
 
 = hidden_field_tag :contact_company, @contact_company || nil
 = hidden_field_tag :contact_name, @contact_name || nil
