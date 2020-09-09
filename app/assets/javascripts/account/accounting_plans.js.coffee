@@ -1,3 +1,18 @@
+launch_request = (_url, _data, customer_id, organization_id) ->
+  $.ajax(
+    type: 'POST',
+    url: '/account/organizations/' + organization_id + '/customers/' + customer_id + '/accounting_plan/' + _url,
+    contentType: 'application/json',
+    data: _data).success (response) ->
+    alert_element = ''
+
+    if response['message'].match(/activé/g) || response['message'].match(/désactivé/g)
+      alert_element = '<div class="alert alert-success col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-success">' + response['message'] + '</div></div>'
+    else if response['message'] == "Impossible d\'activer le mis à jour automatique du plan comptable chez iBiza"
+      alert_element = '<div class="alert alert-danger col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-danger">' + response['message'] + '</div></div>'
+
+    $('.alerts').html('<div class="row-fluid">' + alert_element + '</div>')
+
 jQuery ->
   if ($('#import_dialog').length > 0)
     $('#import_dialog').modal('show')
@@ -14,6 +29,21 @@ jQuery ->
       return false
     else
       $('#import_dialog #importFecAfterConfiguration').submit()
+
+  $('#user_softwares_attributes_is_ibiza_auto_updating_accounting_plan_true, #user_softwares_attributes_is_ibiza_auto_updating_accounting_plan_false').click (e) ->
+    e.preventDefault()
+    is_ibiza_auto_updating_accounting_plan = 0
+    _element = $(this).attr('info')
+    element = _element.split('-')
+
+    if $(this).val() == 'true'
+      is_ibiza_auto_updating_accounting_plan = 1
+
+    _url = 'ibiza_auto_update'
+
+    _data = JSON.stringify(is_ibiza_auto_updating_accounting_plan: is_ibiza_auto_updating_accounting_plan)
+
+    launch_request(_url, _data, element[1], element[0])
 
   $('.close_modal_fec').click (e) ->
     $(this).attr('disabled', true)

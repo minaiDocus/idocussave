@@ -18,7 +18,7 @@ class UpdateAccountingPlan
   end
 
   def execute
-    if @user.ibiza_id.present? && @user.uses_ibiza? && @accounting_plan.need_update?
+    if @user.ibiza_id.present? && @user.uses_ibiza? && @accounting_plan.need_update? && @user.softwares.ibiza_auto_update_accounting_plan?
       if get_ibiza_accounting_plan
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 

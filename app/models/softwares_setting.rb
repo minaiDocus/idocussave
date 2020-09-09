@@ -3,6 +3,7 @@ class SoftwaresSetting < ApplicationRecord
   belongs_to :user
 
   validates_inclusion_of :is_ibiza_auto_deliver,                 in: [-1, 0, 1]
+  validates_inclusion_of :is_ibiza_auto_updating_accounting_plan, in: [0, 1]
   validates_inclusion_of :is_ibiza_compta_analysis_activated,    in: [-1, 0, 1]
   validates_inclusion_of :is_coala_auto_deliver,                 in: [-1, 0, 1]
   validates_inclusion_of :is_quadratus_auto_deliver,             in: [-1, 0, 1]
@@ -18,6 +19,12 @@ class SoftwaresSetting < ApplicationRecord
     else
       is_ibiza_auto_deliver == 1
     end
+  end
+
+  # 0 means manuel updating accounting plan
+  # 1 means auto updating accounting plan
+  def ibiza_auto_update_accounting_plan?
+    is_ibiza_auto_updating_accounting_plan == 1
   end
 
   def ibiza_compta_analysis_activated?

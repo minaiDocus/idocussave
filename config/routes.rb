@@ -232,6 +232,8 @@ Rails.application.routes.draw do
         resource :accounting_plan, except: %w(new create destroy) do
           member do
             patch  :import
+            post   :ibiza_auto_update
+            post   :ibiza_synchronize
             patch  :import_fec
             get    :import_model
             get    :import_fec_processing

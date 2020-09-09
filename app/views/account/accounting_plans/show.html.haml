@@ -36,6 +36,32 @@
   .row
     .col-md-12
       .box
+        -if @organization.ibiza.try(:used?) && @customer.ibiza_id.present? && @customer.uses_ibiza?
+          .row
+            .col-md-6
+              .box.bg-light.ibiza_auto_updating_accounting_plan_bg
+                .float-left{style: 'margin-left: -49px;'}
+                  = form_tag "#", class: 'form-horizontal clearfix label-auto', id: 'ibiza_auto_update_accounting_plan' do
+                    = hidden_field_tag 'user[ibiza_id]', @customer.ibiza_id
+                    .float-left
+                      .form-group.clearfix.radio_buttons
+                        .label-section
+                          = label_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', "Activer le mis à jour automatique du plan comptable", class: 'control-label'
+                        .control-section
+                          %span.radio
+                            %label.label_radio
+                              = radio_button_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', true, @customer.softwares.ibiza_auto_update_accounting_plan?, info: "#{@organization.id}-#{@customer.id}"
+                              Oui
+                          %span.radio
+                            %label.label_radio
+                              = radio_button_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', false, !@customer.softwares.ibiza_auto_update_accounting_plan?, info: "#{@organization.id}-#{@customer.id}"
+                              Non
+
+            / TODO ... REMOVE COMMENT IF WE WILL ABLE TO SEND ACCOUNTING PLAN CUSTOMER TO IBIZA
+            / .col-md-6
+            /   .float-right{style: 'margin-right: 35px;'}
+            /     .form-actions.float-left.margin1left.row
+            /       = link_to 'Synchronizer le plan comptable avec Ibiza', ibiza_synchronize_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary'
         .row
           .col-md-6
             .box.bg-light.height_groups.groups_1

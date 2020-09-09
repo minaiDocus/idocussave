@@ -54,6 +54,27 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
+  # POST /account/organizations/:organization_id/customers/:customer_id/accounting_plan/ibiza_auto_update
+  def ibiza_auto_update
+    @customer.softwares.update(is_ibiza_auto_updating_accounting_plan: params[:is_ibiza_auto_updating_accounting_plan])
+
+    if @customer.save
+      if @customer.softwares.ibiza_auto_update_accounting_plan?
+        render json: { message: 'Mis à jour automatique du plan comptable chez iBiza est activé' }, status: 200
+      else
+
+        render json: { message: 'Mis à jour automatique du plan comptable chez iBiza est désactivé' }, status: 200
+      end
+    else
+      render json: { message: 'Impossible d\'activer le mis à jour automatique du plan comptable chez iBiza' }, status: 200
+    end
+  end
+
+  # POST /account/organizations/:organization_id/customers/:customer_id/accounting_plan/ibiza_synchronize
+  def ibiza_synchronize
+    # TODO ... Import accounting plan into iBiza inverse of upadte accounting plan service
+  end
+
   # GET /account/organizations/:organization_id/customers/:customer_id/accounting_plan/import_model
   def import_model
     data = "NOM_TIERS;COMPTE_TIERS;COMPTE_CONTREPARTIE;CODE_TVA\n"
