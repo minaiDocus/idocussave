@@ -3,7 +3,7 @@ class PreAssignmentDeliveryXmlBuilder
 
   def self.execute
     PreAssignmentDelivery.pending.order(id: :asc).each do |delivery|
-      PreAssignmentDeliveryXmlBuilder.new(delivery).execute unless delivery.error_message.to_s.match(/limit pending reached/)
+      PreAssignmentDeliveryXmlBuilder.new(delivery).execute unless delivery.error_message.to_s.match(/limit_pending_reached/)
     end
   end
 
@@ -86,7 +86,7 @@ class PreAssignmentDeliveryXmlBuilder
   end
 
   def building_success(data_count)
-    @delivery.error_message = ''
+    @delivery.error_message = '' unless @delivery.error_message.to_s.match(/limit_pending/)
     @delivery.error_message = "#{@preseizures.size - data_count} preseizure(s) already sent" if data_count != @preseizures.size
     @delivery.save
 

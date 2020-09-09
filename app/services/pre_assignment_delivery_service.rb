@@ -114,7 +114,7 @@ class PreAssignmentDeliveryService
       }
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      if pending_message == 'limit pending reached'
+      if pending_message == 'limit_pending_reached'
         handle_delivery_error pending_message
       else
         @delivery.update(state: 'pending', error_message: pending_message )
@@ -148,7 +148,7 @@ class PreAssignmentDeliveryService
       }
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      if pending_message == 'limit pending reached'
+      if pending_message == 'limit_pending_reached'
         handle_delivery_error pending_message
       else
         @delivery.update(state: 'pending', error_message: pending_message )
@@ -235,13 +235,12 @@ class PreAssignmentDeliveryService
       if limit_attempt < 3
         @pending_message = "limit_pending_#_#{limit_attempt + 1}"
       else
-        @pending_message = "limit pending reached"
+        @pending_message = "limit_pending_reached"
       end
-    elsif !@pending_message.to_s.match(/limit pending reached/)
+    elsif !@pending_message.to_s.match(/limit_pending_reached/)
       @pending_message = "limit_pending_#_1"
     end
 
     @pending_message
   end
 end
-
