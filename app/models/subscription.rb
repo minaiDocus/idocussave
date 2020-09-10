@@ -186,13 +186,20 @@ class Subscription < ApplicationRecord
       if self.end_date.present? && self.end_date < Date.today
         self.start_date = self.period_duration == 1 ? (self.end_date + 1.day) : (self.end_date + 1.day).beginning_of_quarter
         self.end_date   = self.start_date + commitment_period.months - 1.day
-      end
-      # When unset
-      self.start_date ||= self.period_duration == 1 ? Date.today.beginning_of_month : Date.today.beginning_of_quarter
-      self.end_date   ||= self.start_date + commitment_period.months - 1.day
 
-      save
+        self.commitment_counter = self.commitment_counter + 1
+      else
+        self.start_date = self.start_date.presence || (self.period_duration == 1 ? Date.today.beginning_of_month : Date.today.beginning_of_quarter)
+        self.end_date   = self.end_date.presence || (self.start_date + commitment_period.months - 1.day)
+        self.commitment_counter = self.commitment_counter.presence || 1
+      end
+    else
+      self.start_date = nil
+      self.end_date   = nil
+      self.commitment_counter = 1
     end
+
+    save
   end
 
   def current_preceeding_periods(period, excess_duration=12)
@@ -240,6 +247,17 @@ class Subscription < ApplicationRecord
 
     return true if commitment_period.to_i <= 0 || (!check_micro_package && self.is_micro_package_active)
 
-    self.end_date.strftime('%Y%m') == Time.now.strftime('%Y%m')
+    return true if self.is_micro_package_active && self.commitment_counter > 1
+
+    if self.is_mini_package_active && self.commitment_counter > 1
+      quarter1_end = (self.start_date + 3.months).strftime("%Y%m")
+      quarter2_end = (self.start_date + 6.months).strftime("%Y%m")
+      quarter3_end = (self.start_date + 9.months).strftime("%Y%m")
+      quarter4_end = (self.start_date + 12.months).strftime("%Y%m")
+
+      return true if [quarter1_end, quarter2_end, quarter3_end, quarter4_end].include?(Time.now.strftime("%Y%m"))
+    end
+
+    return false
   end
 end
