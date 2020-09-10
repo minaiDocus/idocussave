@@ -610,6 +610,12 @@ Rails.application.routes.draw do
           get 'temp_document_bundle_needed', on: :collection
           post 'handle_piece_bundled', on: :collection
         end
+
+        resources :mapping_generator do
+          get 'get_xml', on: :collection, defaults: {format: 'xml'}
+          get 'get_csv', on: :collection, defaults: {format: 'text'}
+          get 'get_csv_users_list', on: :collection, defaults: {format: 'text'}
+        end
       end
     end
   end
