@@ -14,7 +14,7 @@ class Account::FtpsController < Account::AccountController
       flash[:success] = 'Votre compte FTP a été configuré avec succès.'
       redirect_to account_profile_path(anchor: 'ftp', panel: 'efs_management')
     else
-      flash[:error] = 'Vos paramètres FTP ne sont pas valides.'
+      flash[:error] = @ftp.reload.error_message
       render :edit
     end
   end

@@ -35,7 +35,7 @@ class Account::Organization::FtpsController < Account::OrganizationController
       flash[:success] = 'Vos paramètres FTP ont été modifiés avec succès.'
       redirect_to account_organization_path(@organization, tab: 'ftp')
     else
-      flash[:error] = 'Vos paramètres FTP ne sont pas valides.'
+      flash[:error] = @ftp.reload.error_message
       render :edit
     end
   end
