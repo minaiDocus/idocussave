@@ -46,7 +46,7 @@
                     .float-left
                       .form-group.clearfix.radio_buttons
                         .label-section
-                          = label_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', "Activer le mis à jour automatique du plan comptable", class: 'control-label'
+                          = label_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', "Activer le mis à jour automatique du plan comptable avec celui de iBiza", class: 'control-label'
                         .control-section
                           %span.radio
                             %label.label_radio
@@ -56,6 +56,7 @@
                             %label.label_radio
                               = radio_button_tag 'user[softwares_attributes][is_ibiza_auto_updating_accounting_plan]', false, !@customer.softwares.ibiza_auto_update_accounting_plan?, info: "#{@organization.id}-#{@customer.id}"
                               Non
+                          %i.help-block Attention: si cette option est activée, les modifications manuelles du plan comptable seront écrasées automatiquement par la mise à jour auto.
 
             / TODO ... REMOVE COMMENT IF WE WILL ABLE TO SEND ACCOUNTING PLAN CUSTOMER TO IBIZA
             / .col-md-6

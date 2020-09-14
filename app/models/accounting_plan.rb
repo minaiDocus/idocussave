@@ -127,6 +127,8 @@ class AccountingPlan < ApplicationRecord
   end
 
   def need_update?
+    return false if user.uses_ibiza? && !user.softwares.ibiza_auto_update_accounting_plan?
+
     return true unless last_checked_at
     last_checked_at < 4.hours.ago && !is_updating
   end

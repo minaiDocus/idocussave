@@ -6,9 +6,9 @@ launch_request = (_url, _data, customer_id, organization_id) ->
     data: _data).success (response) ->
     alert_element = ''
 
-    if response['message'].match(/activé/g) || response['message'].match(/désactivé/g)
+    if response['success'] == true
       alert_element = '<div class="alert alert-success col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-success">' + response['message'] + '</div></div>'
-    else if response['message'] == "Impossible d\'activer le mis à jour automatique du plan comptable chez iBiza"
+    else
       alert_element = '<div class="alert alert-danger col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-danger">' + response['message'] + '</div></div>'
 
     $('.alerts').html('<div class="row-fluid">' + alert_element + '</div>')
