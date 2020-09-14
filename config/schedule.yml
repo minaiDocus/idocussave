@@ -48,6 +48,11 @@ ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
+## resume budgea retriever connector state
+ResumeBudgeaRetrieverWorker:
+  queue: default
+  cron: '* * */6 * * *'
+
 # TO DO : Remove
 # RemoveOldestRetrievedDataWorker:
 #   queue: default
