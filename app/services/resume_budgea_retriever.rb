@@ -34,9 +34,7 @@ class ResumeBudgeaRetriever
     end
 
     send_notification
-    
   end
-
 
   private
 
@@ -44,7 +42,7 @@ class ResumeBudgeaRetriever
     {
       retriever_id: retriever.id,
       budgea_id: retriever.budgea_id,
-      user_code: retriever.user.code, 
+      user_code: retriever.user.code,
       state: retriever.state,
       budgea_state: retriever.budgea_state,
       initial_message: initial_message,
@@ -102,5 +100,5 @@ class ResumeBudgeaRetriever
 
     ErrorScriptMailer.error_notification(log_info).deliver
   end
-  
+
 end
