@@ -42,7 +42,12 @@ class AccountNumberFinderService
     if accounts.present?
       accounts
     elsif @user.accounting_plan.last_checked_at.nil? || @user.accounting_plan.last_checked_at <= 5.minutes.ago
-      UpdateAccountingPlan.new(@user).execute
+
+      if @user.organization.ibiza.try(:configured?)
+        AccountingPlan::IbizaUpdate.new(@user).run
+      elsif @user.organization.is_exact_online_used
+        AccountingPlan::ExactOnlineUpdate.new(@user).run
+      end
 
       if @operation.credit?
         @user.accounting_plan.reload.providers

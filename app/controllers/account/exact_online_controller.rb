@@ -22,7 +22,7 @@ class Account::ExactOnlineController < Account::AccountController
 
       if success = SetupExactOnline.new(@exact_online.id.to_s, params[:code], subscribe_account_exact_online_url).execute
         if @customer.exact_online.fully_configured?
-          UpdateAccountingPlan.new(@customer).delay.execute
+          AccountingPlan::ExactOnlineUpdate.new(@customer).delay.run
         end
       end
     end

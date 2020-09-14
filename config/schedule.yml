@@ -18,9 +18,6 @@ RetrieverNotificationWorker:
 ScansNotDeliveredNotificationWorker:
   queue: high
   cron: '0 1 * * *'
-UpdateAccountingPlanWorker:
-  queue: default
-  cron: '0 4 * * *'
 RemindToOrderNewKitWorker:
   queue: default
   cron: '15 3 1 12 *'
@@ -36,6 +33,17 @@ NotifyPreAssignmentDeliveryFailureDailyWorker:
 NotifyPreAssignmentExportWorker:
   queue: default
   cron: '0 8 * * *'
+
+## Accounting Plan worker
+
+AccountingPlan::IbizaUpdateWorker:
+  queue: default
+  cron: '0 4 * * *'
+
+AccountingPlan::ExactOnlineUpdateWorker:
+  queue: default
+  cron: '0 4 * * *'
+
 
 #TO DO : Remove
 # ClearCurrencyRateWorker:
@@ -116,13 +124,23 @@ RetrievePreAssignmentsWorker:
   queue: high
   cron: '*/10 * * * * *'
 
-PreAssignmentDeliveryXmlBuilderWorker:
-  queue: default
-  cron: '*/10 * * * * *'
+## Pre assignment builder & delivery
 
-DeliverPreAssignmentsWorker:
-  queue: default
-  cron: '*/10 * * * * *'
+PreAssignment::Builder::IbizaWorker:
+   queue: default
+   cron: '*/10 * * * * *'
+
+PreAssignment::Builder::ExactOnlineWorker:
+   queue: default
+   cron: '*/10 * * * * *'
+
+PreAssignment::Delivery::IbizaWorker:
+   queue: default
+   cron: '*/10 * * * * *'
+
+PreAssignment::Delivery::ExactOnlineWorker:
+   queue: default
+   cron: '*/10 * * * * *'
 
 McfProcessorWorker:
   queue: default

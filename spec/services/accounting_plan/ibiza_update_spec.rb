@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe UpdateAccountingPlan do
+describe AccountingPlan::IbizaUpdate do
   before(:each) do
     DatabaseCleaner.start
 
@@ -25,7 +25,7 @@ describe UpdateAccountingPlan do
  
   it "update user's accounting plan", :update do
     VCR.use_cassette('update_accounting_plan/accounting_plan') do
-      UpdateAccountingPlan.new(@user).execute
+      AccountingPlan::IbizaUpdate.execute(@user)
       expect(@user.accounting_plan.customers.size).to eq 3
       expect(@user.accounting_plan.providers.size).to eq 16
     end
@@ -33,14 +33,14 @@ describe UpdateAccountingPlan do
 
   it 'update existing items or removes old accounting plan items', :remove do
     VCR.use_cassette('update_accounting_plan/accounting_plan') do
-      UpdateAccountingPlan.new(@user.reload).execute
+      AccountingPlan::IbizaUpdate.execute @user.reload
     end
 
     sleep(5)
     @user.reload.accounting_plan.last_checked_at = nil
     @user.accounting_plan.save
     VCR.use_cassette('update_accounting_plan/accounting_plan') do
-      UpdateAccountingPlan.new(@user.reload).execute
+      AccountingPlan::IbizaUpdate.execute @user.reload
     end
 
     expect(@user.accounting_plan.customers.size).to eq 3
@@ -53,9 +53,9 @@ describe UpdateAccountingPlan do
   it 'has error' do
     VCR.use_cassette('update_accounting_plan/error') do
       @user.ibiza_id = '{INVALID}'
-      updater = UpdateAccountingPlan.new(@user)
-      expect(updater.execute).to be_falsy
-      expect(updater.ibiza_error_message).to eq({"error" => {"details"=>"Invalid length for a Base-64 char array or string."}})
+      updater = AccountingPlan::IbizaUpdate.execute @user
+
+      expect(updater).to be_falsy
     end
   end
 end

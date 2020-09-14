@@ -185,7 +185,7 @@ class Account::CustomersController < Account::OrganizationController
     if @customer.save
       if @customer.configured?
         if is_ibiza_id_changed && @user.ibiza_id.present?
-          UpdateAccountingPlan.new(@user).execute
+          AccountingPlan::IbizaUpdate.new(@user).run
         end
 
         flash[:success] = 'Modifié avec succès'

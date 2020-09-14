@@ -8,7 +8,6 @@ class IbizaExerciseFinder
     @ibiza = ibiza
   end
 
-
   def execute
     if @ibiza
       if @ibiza.configured?
