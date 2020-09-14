@@ -320,6 +320,14 @@ class Retriever < ApplicationRecord
 
 private
 
+  def resume_me
+    token = self.user.budgea_account.access_token
+    return "Can't be resume - token is nil" unless token
+
+    client = Budgea::Client.new token
+    client.send(:resume_connexion, self)
+  end
+
   def presence_of_journal
     if check_journal && (provider? || provider_and_bank?)
       errors.add(:journal, :blank) unless journal_id

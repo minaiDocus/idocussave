@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class BudgeaRetrieverAdminToXlsService
-  def execute(export_csv=false)
+  def execute(export_type='data')
     accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
     list_retriever_budgea = []
     body_csv_normal       = []
@@ -12,8 +12,7 @@ class BudgeaRetrieverAdminToXlsService
       account_active = account.user.active?
 
       response       = Budgea::Client.new(access_token).get_all_connections
-
-      json_content   = JSON.parse(response.body)
+      json_content   = response.with_indifferent_access
 
       next if json_content['connections'].nil?
 
@@ -34,10 +33,10 @@ class BudgeaRetrieverAdminToXlsService
           retriever_state   = retriever.first.budgea_state
           retriever_message = retriever.first.budgea_error_message
 
-          body_csv_normal << [account.user.code, account_active, retriever.first.name, retriever.first.journal_name, account.identifier, access_token, state, retriever_message, retriever.first.service_name, retriever_state, budgea_state, id_connector_budgea, error_message_budgea, response.status, id_connection, id_user]
+          body_csv_normal << [account.user.code, account_active, retriever.first.name, retriever.first.journal_name, account.identifier, access_token, state, retriever_message, retriever.first.service_name, retriever_state, budgea_state, id_connector_budgea, error_message_budgea, 'response.status', id_connection, id_user]
 
         else
-          body_csv_failed << [account.user.code, account_active, '', '', account.identifier, access_token, '', '', '', '', budgea_state, id_connector_budgea, error_message_budgea, response.status, id_connection, id_user]
+          body_csv_failed << [account.user.code, account_active, '', '', account.identifier, access_token, '', '', '', '', budgea_state, id_connector_budgea, error_message_budgea, 'response.status', id_connection, id_user]
         end
       end
 
@@ -46,8 +45,12 @@ class BudgeaRetrieverAdminToXlsService
 
     body_csv_bug = verify_retriever_idocus_and_not_at_budgea_with list_retriever_budgea if list_retriever_budgea.any?
 
-    if export_csv
+    if export_type == 'data'
       for_export(body_csv_normal, body_csv_failed, body_csv_bug)
+    elsif export_type == 'file'
+      file = File.open(Rails.root.join('files', 'retrievers_export.xls'), 'w')
+      file.write for_export(body_csv_normal, body_csv_failed, body_csv_bug).to_s.force_encoding('UTF-8')
+      file.close
     else
       { normal: body_csv_normal, failed: body_csv_failed, bug: body_csv_bug }
     end
@@ -104,7 +107,7 @@ class BudgeaRetrieverAdminToXlsService
   def get_list_connections_budgea_by(token)
     list_connections_budgea = []
 
-    response = Budgea::Client.new(token).get_all_connections
+    response = Budgea::Client.new(token).get_all_connections.try(:with_indifferent_access)
 
     response['connections'].each { |connection| list_connections_budgea << connection } if response['total'].present? && response['total'] > 0
 

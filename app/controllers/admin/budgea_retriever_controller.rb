@@ -5,12 +5,12 @@ class Admin::BudgeaRetrieverController < Admin::AdminController
 
   def export_xls
     filename = "suivi_budgea_retriever.xls"
-    data     = BudgeaRetrieverAdminToXlsService.new().execute(true)
+    data     = BudgeaRetrieverAdminToXlsService.new().execute('data')
     send_data data, type: 'application/vnd.ms-excel', filename: filename
   end
 
   def export_connector_list
-    body = BudgeaRetrieverAdminToXlsService.new().execute
+    body = BudgeaRetrieverAdminToXlsService.new().execute('table')
 
     @body_normal = body[:normal]
     @body_failed = body[:failed]
