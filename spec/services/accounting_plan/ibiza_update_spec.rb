@@ -7,6 +7,7 @@ describe AccountingPlan::IbizaUpdate do
 
     organization = create(:organization)
     @user = create(:user, ibiza_id: "{IDENTIFIER}")
+    @user.build_softwares
     organization.customers << @user
     ibiza = Ibiza.new(access_token: "xxxtokenxxx")
     ibiza.organization = organization

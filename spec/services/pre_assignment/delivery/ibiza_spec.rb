@@ -93,7 +93,9 @@ describe PreAssignment::Delivery::Ibiza do
         allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
-        PreAssignment::Builder::Ibiza.new(delivery).run
+        VCR.use_cassette('pre_assignment/ibiza_builder') do
+          PreAssignment::Builder::Ibiza.new(delivery).run
+        end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery') do
           PreAssignment::Delivery::Ibiza.new(delivery.reload).run
@@ -117,7 +119,9 @@ describe PreAssignment::Delivery::Ibiza do
         allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
-        PreAssignment::Builder::Ibiza.new(delivery).run
+        VCR.use_cassette('pre_assignment/ibiza_builder') do
+          PreAssignment::Builder::Ibiza.new(delivery).run
+        end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery_with_error') do
           PreAssignment::Delivery::Ibiza.new(delivery.reload).run
@@ -140,7 +144,9 @@ describe PreAssignment::Delivery::Ibiza do
         allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
-        PreAssignment::Builder::Ibiza.new(delivery).run
+        VCR.use_cassette('pre_assignment/ibiza_builder') do
+          PreAssignment::Builder::Ibiza.new(delivery).run
+        end
 
         result = VCR.use_cassette('pre_assignment/ibiza_send_delivery') do
           PreAssignment::Delivery::Ibiza.new(delivery.reload).run

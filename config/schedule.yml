@@ -34,6 +34,8 @@ NotifyPreAssignmentExportWorker:
   queue: default
   cron: '0 8 * * *'
 
+
+
 ## Accounting Plan worker
 
 AccountingPlan::IbizaUpdateWorker:
@@ -43,6 +45,7 @@ AccountingPlan::IbizaUpdateWorker:
 AccountingPlan::ExactOnlineUpdateWorker:
   queue: default
   cron: '0 4 * * *'
+
 
 
 #TO DO : Remove
@@ -124,23 +127,28 @@ RetrievePreAssignmentsWorker:
   queue: high
   cron: '*/10 * * * * *'
 
+
+
 ## Pre assignment builder & delivery
 
 PreAssignment::Builder::IbizaWorker:
-   queue: default
-   cron: '*/10 * * * * *'
+  queue: high
+  cron: '*/10 * * * * *'
 
 PreAssignment::Builder::ExactOnlineWorker:
-   queue: default
-   cron: '*/10 * * * * *'
+  queue: high
+  cron: '*/10 * * * * *'
 
 PreAssignment::Delivery::IbizaWorker:
-   queue: default
-   cron: '*/10 * * * * *'
+  queue: high
+  cron: '*/10 * * * * *'
 
 PreAssignment::Delivery::ExactOnlineWorker:
-   queue: default
-   cron: '*/10 * * * * *'
+  queue: high
+  cron: '*/10 * * * * *'
+
+
+
 
 McfProcessorWorker:
   queue: default
