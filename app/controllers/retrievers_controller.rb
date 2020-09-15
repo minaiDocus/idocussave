@@ -134,8 +134,8 @@ class RetrieversController < ApiController
 
   def add_infos
     retriever = @current_user.retrievers.where(budgea_id: params[:data_local][:budgea_id]).first
-    retriever.synchronize_budgea_connection
-    retriever.success_budgea_connection
+    sleep 2
+    retriever.send(:resume_me)
 
     render json: { success: true }, status: 200
   end

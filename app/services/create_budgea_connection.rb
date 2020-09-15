@@ -13,8 +13,7 @@ class CreateBudgeaConnection
 
     if retriever.save
       sleep 2
-      client = Budgea::Client.new @user.budgea_account.access_token
-      client.send(:resume_connexion, retriever.reload)
+      retriever.reload.send(:resume_me)
     end
   end
 

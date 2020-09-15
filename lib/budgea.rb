@@ -213,36 +213,6 @@ class Budgea
       end
     end
 
-    #Fix retriever freez running state
-    def trigger_connexion(retriever)
-      if retriever.state == 'running' && retriever.budgea_id.present?
-        @error_message = nil
-
-        @response = connection.put do |request|
-          request.url "/2.0/users/me/connections/#{retriever.budgea_id}"
-          request.headers = headers
-        end
-
-        result = run_and_parse_response(nil)
-
-        if !@error_message.present?
-          if result['last_update'].present?
-            retriever.sync_at = Time.parse result['last_update']
-            retriever.save
-          end
-
-          if result['additionnal_fields'].present?
-            retriever.pause_budgea_connection
-          else
-            retriever.success_budgea_connection
-          end
-        else
-          retriever.update(budgea_error_message: @error_message)
-          retriever.fail_budgea_connection
-        end
-      end
-    end
-
     def resume_connexion(retriever)
       if retriever.budgea_id.present?
 

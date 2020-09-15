@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ResumeBudgeaRetriever
   def execute
-    retrievers = Retriever.where("updated_at < ?", 1.days.ago)
+    retrievers = Retriever.where("updated_at < ?", 6.hours.ago)
 
     @infos = []
     counter = 0

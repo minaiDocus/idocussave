@@ -237,6 +237,9 @@ class Retriever < ApplicationRecord
   end
 
   def update_state_with(connection={}, notify=true)
+    prev_state   = self.state
+    prev_message = self.error_message
+
     id_from_retrieved_data       = (connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection[:source] == 'ProcessRetrievedData') ? self.budgea_id.to_i : 0
     id_from_retriever_controller = (connection.try(:[], 'id').to_i == self.id.to_i && connection[:source] == 'RetrieversController') ? self.id.to_i : 0
 
@@ -316,6 +319,26 @@ class Retriever < ApplicationRecord
         self.success_budgea_connection if id_from_retrieved_data > 0 || (id_from_retriever_controller > 0 && connection['success'] == "true")
       end
     end
+
+    self.reload
+    log_info = {
+      name: "UpdateRetrieverState",
+      error_group: "[update-retriever-state] state after update",
+      erreur_type: "update retriever state - state after update",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        retriever_id: self.id,
+        retriever_name: self.service_name,
+        user_code: self.user.code,
+        state: self.state,
+        error_message: self.error_message,
+        previous_state: prev_state,
+        previous_mess: prev_message,
+        connection: connection.to_json
+      }
+    }
+
+    ErrorScriptMailer.error_notification(log_info).deliver if connection[:source] == 'ProcessRetrievedData' && self.state != prev_state
   end
 
 private
