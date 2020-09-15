@@ -56,12 +56,12 @@ class ResumeBudgeaRetriever
 
 
   def send_notification
-    raw_retriever = "Retriever : <br/><table style='border: 1px solid #CCC;font-family: \"Open Sans\", sans-serif; font-size:12px;'>"
+    raw_retriever = "<br/><table border='1px' style='border-collapse: collapse;border: 1px solid #CCC;font-family: \"Open Sans\", sans-serif; font-size:12px;'>"
       raw_retriever += "<tr>"
       raw_retriever += "<th>id</th>"
       raw_retriever += "<th>budgea_id</th>"
       raw_retriever += "<th>user_code</th>"
-      raw_retriever += "<td>state</th>"
+      raw_retriever += "<th>state</th>"
       raw_retriever += "<th>budgea_state</th>"
       raw_retriever += "<th>initial_message</th>"
       raw_retriever += "<th>final_message</th>"
