@@ -19,13 +19,13 @@ class ResumeBudgeaRetriever
       initial_message = retriever.error_message
 
       begin
-        retriever.send(:resume_me)
+        result = retriever.send(:resume_me)
 
         sleep(1)
 
         final_message = retriever.reload.error_message
 
-        @infos << info(retriever, initial_message, final_message) if final_message != initial_message
+        @infos << info(retriever, initial_message, final_message, result.try(:[], :from)) if final_message != initial_message
       rescue => e
         @infos << info(retriever, initial_message, e.to_s)
       end
@@ -38,7 +38,7 @@ class ResumeBudgeaRetriever
 
   private
 
-  def info(retriever, initial_message, final_message)
+  def info(retriever, initial_message, final_message, updated_by)
     {
       retriever_id: retriever.id,
       budgea_id: retriever.budgea_id,
@@ -49,6 +49,7 @@ class ResumeBudgeaRetriever
       final_message: final_message,
       budgea_error_message: retriever.budgea_error_message,
       service_name: retriever.service_name,
+      updated_by: updated_by,
       created_at: retriever.created_at,
       updated_at: retriever.updated_at
     }
@@ -67,6 +68,7 @@ class ResumeBudgeaRetriever
       raw_retriever += "<th>final_message</th>"
       raw_retriever += "<th>budgea_error_message</th>"
       raw_retriever += "<th>service_name</th>"
+      raw_retriever += "<th>updated_by</th>"
       raw_retriever += "<th>created_at</th>"
       raw_retriever += "<th>updated_at</th>"
       raw_retriever += "</tr><tbody>"
@@ -77,11 +79,13 @@ class ResumeBudgeaRetriever
         raw_retriever += "<td>#{_info[:retriever_id]}</td>"
         raw_retriever += "<td>#{_info[:budgea_id]}</td>"
         raw_retriever += "<td>#{_info[:user_code]}</td>"
+        raw_retriever += "<td>#{_info[:state]}</td>"
         raw_retriever += "<td>#{_info[:budgea_state]}</td>"
         raw_retriever += "<td>#{_info[:initial_message]}</td>"
         raw_retriever += "<td>#{_info[:final_message]}</td>"
         raw_retriever += "<td>#{_info[:budgea_error_message]}</td>"
         raw_retriever += "<td>#{_info[:service_name]}</td>"
+        raw_retriever += "<td>#{_info[:updated_by]}</td>"
         raw_retriever += "<td>#{_info[:created_at]}</td>"
         raw_retriever += "<td>#{_info[:updated_at]}</td>"
 

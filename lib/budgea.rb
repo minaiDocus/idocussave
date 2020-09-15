@@ -246,23 +246,32 @@ class Budgea
     def resume_connexion(retriever)
       if retriever.budgea_id.present?
 
-        @response = connection.post do |request|
-          request.url "/2.0/users/me/connections/#{retriever.budgea_id}"
-          request.body = { resume: true }.to_query
-          request.headers = headers
+        last_log = get_connections_log(retriever.budgea_id).try(:[], 'connectionlogs').try(:first)
+
+        if last_log.present?
+          last_log.merge!({"source"=> "ProcessRetrievedData", "id"=> retriever.budgea_id})
+          retriever.update_state_with(last_log.with_indifferent_access, false)
+
+          { from: 'last_log', response: last_log }
+        else
+          @response = connection.post do |request|
+            request.url "/2.0/users/me/connections/#{retriever.budgea_id}"
+            request.body = { resume: true }.to_query
+            request.headers = headers
+          end
+
+          if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
+            connections = JSON.parse(@response.body)
+
+            connections = connections['connections'] if connections['connections'].present?
+
+            connections.merge!({"source"=> "ProcessRetrievedData", "id"=> retriever.budgea_id})
+
+            retriever.update_state_with(connections.with_indifferent_access, false)
+          end
+
+          { from: 'resume', response: @response.body }
         end
-
-        if @response.status.in? [200, 202, 204, 400, 403, 500, 503]
-          connections = JSON.parse(@response.body)
-
-          connections = connections['connections'] if connections['connections'].present?
-
-          connections.merge!({"source": "ProcessRetrievedData", "id": retriever.budgea_id})
-
-          retriever.update_state_with connections.with_indifferent_access
-        end
-
-        @response.body
       end
     end
 

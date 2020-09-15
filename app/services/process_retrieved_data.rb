@@ -103,7 +103,7 @@ class ProcessRetrievedData
         @retrieved_data.save
       end
 
-      break if @run_until && @run_until < Time.now
+      # break if @run_until && @run_until < Time.now
     end
   end
 
@@ -125,8 +125,9 @@ class ProcessRetrievedData
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
 
+    retriever.update_state_with connection
+
     notify connection
-    retriever.reload
 
     retriever.update(sync_at: Time.now)
 
@@ -224,8 +225,6 @@ class ProcessRetrievedData
   end
 
   def notify(connection)
-    retriever.update_state_with connection
-
     if retriever.reload.budgea_connection_successful?
       RetrieverNotification.new(retriever).notify_new_documents(@new_documents_count) if @new_documents_count > 0
       RetrieverNotification.new(retriever).notify_new_operations(@new_operations_count) if @new_operations_count > 0

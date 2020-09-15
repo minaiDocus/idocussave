@@ -236,7 +236,7 @@ class Retriever < ApplicationRecord
     budgea_id.present?
   end
 
-  def update_state_with(connection={})
+  def update_state_with(connection={}, notify=true)
     id_from_retrieved_data       = (connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection[:source] == 'ProcessRetrievedData') ? self.budgea_id.to_i : 0
     id_from_retriever_controller = (connection.try(:[], 'id').to_i == self.id.to_i && connection[:source] == 'RetrieversController') ? self.id.to_i : 0
 
@@ -253,14 +253,14 @@ class Retriever < ApplicationRecord
       self.update(is_new_password_needed: true, error_message: error_message, budgea_error_message: error_connection)
       self.fail_budgea_connection
 
-      RetrieverNotification.new(self).notify_wrong_pass
+      RetrieverNotification.new(self).notify_wrong_pass if notify
     when 'additionalInformationNeeded'
       self.update({error_message: connection_error_message, budgea_error_message: nil})
 
       if connection['fields'].present?
         self.pause_budgea_connection
 
-        RetrieverNotification.new(self).notify_info_needed
+        RetrieverNotification.new(self).notify_info_needed if notify
       elsif self.budgea_connection_failed?
         self.success_budgea_connection
       end
@@ -269,12 +269,12 @@ class Retriever < ApplicationRecord
       self.update({error_message: error_message, budgea_error_message: error_connection})
       self.fail_budgea_connection
 
-      RetrieverNotification.new(self).notify_action_needed
+      RetrieverNotification.new(self).notify_action_needed if notify
     when 'websiteUnavailable'
       self.update({error_message: 'Site web indisponible.', budgea_error_message: error_connection})
       self.fail_budgea_connection
 
-      RetrieverNotification.new(self).notify_website_unavailable
+      RetrieverNotification.new(self).notify_website_unavailable if notify
     when 'SCARequired'
       begin
         description = connection.try(:[], 'fields').try(:[], "0").try(:[], "description")
@@ -287,13 +287,13 @@ class Retriever < ApplicationRecord
 
         self.pause_budgea_connection
 
-        RetrieverNotification.new(self).notify_info_needed
+        RetrieverNotification.new(self).notify_info_needed if notify
       else
         self.update({error_message: "Authentification forte requise (SCARequired).\n #{connection_error_message}", budgea_error_message: error_connection})
 
         self.fail_budgea_connection
 
-        RetrieverNotification.new(self).notify_bug
+        RetrieverNotification.new(self).notify_bug if notify
       end
     else
       if error_connection.present?
@@ -311,7 +311,7 @@ class Retriever < ApplicationRecord
         self.update({error_message: error_message, budgea_error_message: error_type})
         self.fail_budgea_connection
 
-        RetrieverNotification.new(self).notify_bug
+        RetrieverNotification.new(self).notify_bug if notify
       else
         self.success_budgea_connection if id_from_retrieved_data > 0 || (id_from_retriever_controller > 0 && connection['success'] == "true")
       end
