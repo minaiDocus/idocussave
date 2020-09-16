@@ -4,7 +4,7 @@ class AccountingPlan::IbizaUpdateWorker
   def perform(user_id=nil)
     if user_id.present?
       customer = User.find user_id
-      AccountingPlan::IbizaUpdateWorker.delay.update_ibiza_for(customer.id)
+      AccountingPlan::IbizaUpdateWorker::Launcher.delay.update_ibiza_for(customer.id)
     else
       UniqueJobs.for "AccountingPlanIbizaUpdateOrganization", 1.day do
         Organization.all.each do |organization|

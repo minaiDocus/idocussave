@@ -4,7 +4,7 @@ class AccountingPlan::ExactOnlineUpdateWorker
   def perform(user_id=nil)
     if user_id.present?
       customer = User.find user_id
-      AccountingPlan::ExactOnlineUpdateWorker.delay.update_exact_online_for customer
+      AccountingPlan::ExactOnlineUpdateWorker::Launcher.delay.update_exact_online_for customer
     else
       UniqueJobs.for "AccountinpPlanExactOnlineUpdateOrganization", 1.day do
         Organization.all.each do |organization|

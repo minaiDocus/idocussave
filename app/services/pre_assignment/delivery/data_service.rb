@@ -3,7 +3,7 @@ class PreAssignment::Delivery::DataService
   @@notified_at ||= Time.now
 
   class << self
-    def notify
+    def notify_deliveries
       UniqueJobs.for 'PreAssignmentDeliveryNotifier' do
         deliveries = PreAssignmentDelivery.not_notified.order(id: :asc)
         if deliveries.size > 0
@@ -36,9 +36,9 @@ class PreAssignment::Delivery::DataService
 
   def run
     result = execute
+    notify
 
-    notify if @@notified_at <= 10.minutes.ago
-
+    PreAssignment::Delivery::DataService.delay.notify_deliveries if @@notified_at <= 10.minutes.ago
     result
   end
 
@@ -99,17 +99,13 @@ class PreAssignment::Delivery::DataService
     Settings.first.notify_on_ibiza_delivery == 'yes'
   end
 
-
   def notify_error?
     ##TODO Settings : notify_on_ibiza_delivery to global
     Settings.first.notify_on_ibiza_delivery == 'error'
   end
 
-
   def notify
-    if notify? || (notify_error? && @delivery.error?)
-      @delivery.update(is_to_notify: true)
-    end
+    @delivery.update(is_to_notify: true) if notify? || (notify_error? && @delivery.error?)
   end
 
   def pending_message

@@ -56,8 +56,6 @@ class PreAssignment::Builder::DataService
     @report.save
     @report.set_delivery_message_for(@delivery.deliver_to, error_message)
 
-    PreAssignment::Delivery::DataService.notify
-
     false
   end
 end
