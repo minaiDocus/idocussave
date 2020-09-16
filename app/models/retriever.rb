@@ -240,8 +240,8 @@ class Retriever < ApplicationRecord
     prev_state   = self.state
     prev_message = self.error_message
 
-    id_from_retrieved_data       = (connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection[:source] == 'ProcessRetrievedData') ? self.budgea_id.to_i : 0
-    id_from_retriever_controller = (connection.try(:[], 'id').to_i == self.id.to_i && connection[:source] == 'RetrieversController') ? self.id.to_i : 0
+    id_from_retrieved_data       = (connection.try(:[], 'id').to_i == self.budgea_id.to_i && connection['source'] == 'ProcessRetrievedData') ? self.budgea_id.to_i : 0
+    id_from_retriever_controller = (connection.try(:[], 'id').to_i == self.id.to_i && connection['source'] == 'RetrieversController') ? self.id.to_i : 0
 
     return false if id_from_retrieved_data == 0 && id_from_retriever_controller == 0
 
@@ -334,11 +334,12 @@ class Retriever < ApplicationRecord
         error_message: self.error_message,
         previous_state: prev_state,
         previous_mess: prev_message,
+        source: connection['source'],
         connection: connection.to_json
       }
     }
 
-    ErrorScriptMailer.error_notification(log_info).deliver if connection[:source] == 'ProcessRetrievedData' && self.state != prev_state
+    ErrorScriptMailer.error_notification(log_info).deliver if connection['source'] == 'ProcessRetrievedData' && self.state != prev_state
   end
 
 private
