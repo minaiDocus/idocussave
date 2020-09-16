@@ -1,6 +1,9 @@
 class PonctualScripts::MigrateCustomers < PonctualScripts::PonctualScript
   def self.execute
-    #IMPORTANT : re-save organizations groups after customers migration (from plateforme website)
+    #------------------- VERY IMPORTANT : ------------------
+    # re-save previous organizations groups after customers migration (from plateform website)
+    # update collaborator of the customer after migration (from platteform website)
+    # update customer code after migration if needed
     new().run
   end
 
@@ -11,8 +14,8 @@ class PonctualScripts::MigrateCustomers < PonctualScripts::PonctualScript
   private
 
   def execute
-    organization = Organization.find_by_code 'MVN'
-    customers    = User.where(code: ['AC0162', 'CAS%001'])
+    organization = Organization.find_by_code 'ACC'
+    customers    = User.where(code: ['MFA%ADAPTO'])
 
     customers.each do |user|
       logger_infos "[MigrationCustomer] - user_code: #{user.try(:my_code) || 'no_user'} - organization_id: #{user.organization_id} - Start"
@@ -28,7 +31,7 @@ class PonctualScripts::MigrateCustomers < PonctualScripts::PonctualScript
         logger_infos mod.to_s + " => " + datas.size.to_s + " new organization : " + organization.id.to_s
 
         datas.each do |data|
-          data.update(organization_id: organization_id) if data.organization_id.present?
+          data.update(organization_id: organization.id) if data.organization_id.present?
         end
       end
 
@@ -40,8 +43,8 @@ class PonctualScripts::MigrateCustomers < PonctualScripts::PonctualScript
   end
 
   def backup
-    organization = { 'AC0162' => 1, 'CAS%001' =>  63 }
-    customers    = User.where(code: ['AC0162', 'CAS%001'])
+    organization = { 'ACC%ADAPTO' => 126 }
+    customers    = User.where(code: ['ACC%ADAPTO'])
 
     customers.each do |user|
       organization_id = organization[user.code.to_s]
