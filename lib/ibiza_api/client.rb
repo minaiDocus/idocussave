@@ -92,8 +92,6 @@ class IbizaAPI::Client
         partnerID: @client.partner_id
       }
 
-      p url
-
       connection = Faraday.new(:url => url, request: { timeout: 180 }) do |f|
         f.response :logger
         f.request :oauth2, 'token', token_type: :bearer

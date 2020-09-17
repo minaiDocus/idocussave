@@ -61,7 +61,7 @@ class Account::VatAccountsController < Account::OrganizationController
   end
 
   def verify_rights
-    unless (@user.leader? || @user.manage_customers) && !@customer.uses_api_softwares?
+    unless (@user.leader? || @user.manage_customers)
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

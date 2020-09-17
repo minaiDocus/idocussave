@@ -59,9 +59,9 @@ class IbizaPreseizureFinder
     voucher_ref_target = ibiza.try(:voucher_ref_target).presence || 'piece_number'
     case voucher_ref_target
       when 'piece_name'
-        client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_A}='#{search_term}' and number='#{third_party}' and #{entry_type}='#{amount}'")
+        client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_A}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}'")
       else
-        client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_B}='#{search_term}' and number='#{third_party}' and #{entry_type}='#{amount}'")
+        client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_B}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}'")
     end
 
     if client.response.success?
