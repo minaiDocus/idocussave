@@ -2,14 +2,14 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box.clearfix
         .float-left
           %h3
             Liste des livraisons de pré-affectation en erreurs 
             %span.badge.badge-info.fs-origin= @errors.count
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         %table.table.table-striped.table-condensed.margin1top.margin1bottom.table-bordered-inner.table-detachable-head

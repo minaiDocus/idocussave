@@ -1,11 +1,11 @@
 #paper_processes.container-fluid
-  .row
+  .row.derivationRight
     .col-md-12
       .box.small-shadow
         %h3
           Suivi 
           %span.badge.badge-info.fs-origin= @paper_processes.total_count
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = render 'shared/list_options', collection: @paper_processes

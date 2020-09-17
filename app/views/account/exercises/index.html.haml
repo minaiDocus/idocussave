@@ -1,6 +1,6 @@
 #exercises
   - if @customer.configured?
-    .row-fluid
+    .row-fluid.derivationRight
       .span12.box
         .row-fluid
           .span12
@@ -10,7 +10,7 @@
               = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'
   - else
     = render 'account/customers/steps'
-    .row-fluid
+    .row-fluid.derivationRight
       .span12.box
         .pull-left
           %h3 Exercices comptables pour le dossier : #{@customer}
@@ -19,7 +19,7 @@
           = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
           = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
-  .row-fluid
+  .row-fluid.derivationLeft
     .span12.box
       %table.table.table-striped.table-condensed.margin0bottom
         %tr

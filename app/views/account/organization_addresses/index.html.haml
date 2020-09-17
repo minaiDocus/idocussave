@@ -1,5 +1,5 @@
 #addresses
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -8,7 +8,7 @@
           = link_to t('actions.return'), account_organization_path(@organization, tab: 'addresses'), class: 'btn btn-light'
           = link_to 'Nouvelle adresse', new_account_organization_address_path(@organization), class: 'btn btn-primary'
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box
         - grouped_addresses = @addresses.in_groups_of(3)

@@ -1,5 +1,5 @@
 #paper_set_orders
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -9,7 +9,7 @@
         .float-right
           = link_to 'Nouvelles Commandes ', select_for_orders_account_organization_paper_set_orders_path, class: 'btn btn-primary'
 
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = render partial: 'shared/list_options', locals: { collection: @orders }

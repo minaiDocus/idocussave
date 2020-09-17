@@ -2,14 +2,14 @@
   .alerts
     = render partial: 'shared/messages'
 
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
           %h3
             Liste des doublons de pré-affectation
             %span.badge.badge-info.fs-origin= @duplicates.total_count
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = render partial: 'shared/list_options', locals: { collection: @duplicates }

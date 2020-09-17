@@ -1,12 +1,12 @@
 #bank_accounts.select
-  .box
+  .box.derivationRight
     .row
       .col-md-12
         %h3
           Paramétrage des automates bancaires
           %span.badge.badge-info.fs-origin= @bank_accounts.select{|ba| ba.is_used}.try(:size).to_i
 
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = form_tag account_bank_accounts_path, method: :get, class: 'form form-selection form-horizontal' do

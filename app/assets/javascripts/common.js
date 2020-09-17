@@ -175,6 +175,8 @@ function adjustIconColor(elem) {
 }
 
 jQuery(function () {
+  setTimeout(function(){ $('html').css('overflow', 'initial') }, 1200)
+
   //For serializing Form to object
   $.fn.serializeObject = function() {
       var o = {};

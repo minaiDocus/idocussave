@@ -1,6 +1,6 @@
 - flash.each do |name, msg|
   - if msg.present?
-    .row-fluid
+    .row-fluid.derivationLeft
       .col-sm-12{ class: "alert #{twitterized_type(name)}" }
         %a.close{ "data-dismiss" => "alert" } &#215;
         - if msg.is_a?(String)

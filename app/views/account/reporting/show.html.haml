@@ -1,7 +1,7 @@
 - months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
 
 #reporting.container-fluid
-  .row
+  .row.derivationRight
     .col-md-12
       .box.actionbar.small-shadow.clearfix{ style: 'margin-bottom: 20px' }
         .float-left
@@ -32,7 +32,7 @@
   - 12.times do
     - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
 
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .card
         .card-header.py-md-3

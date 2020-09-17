@@ -1,7 +1,7 @@
 #group_organizations.container-fluid
   .alerts
     = render partial: 'shared/messages'
-  .row
+  .row.derivationLeft
     .col-md-12
       .box.small-shadow.clearfix
         .float-left
@@ -11,7 +11,7 @@
         .float-right
           = link_to t('actions.new'), new_account_group_organization_path, class: 'btn btn-primary'
 
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @organization_groups }

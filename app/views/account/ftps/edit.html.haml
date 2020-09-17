@@ -1,7 +1,7 @@
 #ftp.edit.container-fluid
-  .alerts
+  .alerts.derivationLeft
     = render partial: 'shared/messages'
-  .row
+  .row.derivationRight
     .col-md-12.box
       %h2.padding16left.margin1bottom Edition de la configuration FTP
       = simple_form_for [:account, @ftp], html: { class: 'form form-horizontal margin0' } do |f|

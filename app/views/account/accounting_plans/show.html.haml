@@ -2,7 +2,7 @@
   - unless @customer.configured?
     .box
       = render 'account/customers/steps'
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         .row
@@ -33,7 +33,7 @@
               = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
               = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box
         -if @organization.ibiza.try(:used?) && @customer.ibiza_id.present? && @customer.uses_ibiza?

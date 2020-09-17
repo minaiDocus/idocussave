@@ -1,11 +1,11 @@
 #organizations.container-fluid
   .new
-    .row
+    .row.derivationRight
       .col-md-12
         .box.small-shadow
           %h3 Création d'une nouvelle organisation
 
-    .row
+    .row.derivationLeft
       .col-md-12
         = simple_nested_form_for [:account, @organization] do |f|
           .card

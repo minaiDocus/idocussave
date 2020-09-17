@@ -1,5 +1,5 @@
 #collaborators
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -10,7 +10,7 @@
           -if @organization.is_active
             = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @members }

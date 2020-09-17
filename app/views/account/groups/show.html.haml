@@ -1,5 +1,5 @@
 #group
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -8,7 +8,7 @@
           - if (@user.leader? || @user.manage_groups) && @organization.is_active
             = link_to t('actions.edit'), edit_account_organization_group_path(@organization, @group), class: 'btn btn-primary'
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box
         .row

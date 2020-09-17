@@ -1,5 +1,5 @@
 #account_number_rules.select_to_download
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -9,7 +9,7 @@
         .float-right
           = link_to 'Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
           = link_to 'Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = form_tag(export_or_destroy_account_organization_account_number_rules_path(@organization), method: :post) do

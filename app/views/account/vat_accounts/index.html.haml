@@ -1,6 +1,6 @@
 #vat_accounts
   - if @customer.configured?
-    .row
+    .row.derivationRight
       .col-md-12
         .box.clearfix
           .float-left
@@ -10,7 +10,7 @@
           .float-right
             = link_to t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
   - else
-    .box
+    .box.derivationRight
       = render 'account/customers/steps'
     .row
       .col-md-12
@@ -24,7 +24,7 @@
             = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
             = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box
         %table.table.table-striped.table-condensed.margin0bottom.table.bordered-inner.table-detachable-head

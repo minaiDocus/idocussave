@@ -14,6 +14,71 @@
   to { opacity: 1; }
 }
 
+@mozkeyframes derivationLeft {
+  from { left: -40px; }
+  to { left: 0; }
+}
+@webkitkeyframes derivationLeft {
+  from { left: -40px; }
+  to { left: 0; }
+}
+@keyframes derivationLeft {
+  from { left: -40px; }
+  to { left: 0; }
+}
+
+@mozkeyframes derivationRight {
+  from { left: 40px; }
+  to { left: 0; }
+}
+@webkitkeyframes derivationRight {
+  from { left: 40px; }
+  to { left: 0; }
+}
+@keyframes derivationRight {
+  from { left: 40px; }
+  to { left: 0; }
+}
+
+@mozkeyframes showMenu {
+  from { top: -15px; }
+  to { top: 0; }
+}
+@webkitkeyframes showMenu {
+  from { top: -15px; }
+  to { top: 0; }
+}
+@keyframes showMenu {
+  from { top: -15px; }
+  to { top: 0; }
+}
+
+@mozkeyframes showFooter {
+  from { top: 15px; }
+  to { top: 0; }
+}
+@webkitkeyframes showFooter {
+  from { top: 15px; }
+  to { top: 0; }
+}
+@keyframes showFooter {
+  from { top: 15px; }
+  to { top: 0; }
+}
+
+@mozkeyframes showSideMenu {
+  from { left: -40px; }
+  to { left: 0; }
+}
+@webkitkeyframes showSideMenu {
+  from { left: -40px; }
+  to { left: 0; }
+}
+@keyframes showSideMenu {
+  from { left: -40px; }
+  to { left: 0; }
+}
+
 // CSS ANIMATED
 .retractable.slidedown {
   opacity: 0;
@@ -33,6 +98,36 @@ tbody.retractable.slidedown tr {
   opacity: 1;
   animation-name: fadeIn;
   animation-duration: 0.8s;
+}
+
+.derivationLeft {
+  animation-name: derivationLeft;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.derivationRight {
+  animation-name: derivationRight;
+  animation-duration: 0.8s;
+  position: relative;
+}
+
+.showMenu{
+  animation-name: showMenu;
+  animation-duration: 0.3s;
+  position: relative;
+}
+
+.showFooter{
+  animation-name: showFooter;
+  animation-duration: 0.3s;
+  position: relative;
+}
+
+.side-menu{
+  animation-name: showSideMenu;
+  animation-duration: 0.3s;
+  position: relative;
 }
 
 // CSS NORMAL

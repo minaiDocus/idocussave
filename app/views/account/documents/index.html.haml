@@ -1,8 +1,8 @@
 #documents.container-fluid
-  .alerts
+  .alerts.derivationLeft
     = render partial: 'shared/messages'
 
-  .row
+  .row.derivationRight
     .col-md-12
       #documents_actions
         .actionbar.box.medium-shadow.clearfix{style: 'padding: 14px 10px 5px 10px'}
@@ -21,7 +21,7 @@
                 %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
                   = glyphicon('data-transfer-upload', { class: 'mr-sm-1', color: '#fff' })
                   Ajouter des documents
-  .row
+  .row.derivationLeft
     .col-md-3
       #documentslist.box.bg-light.qtip-target
         .header.clearfix
@@ -74,12 +74,12 @@
               = paginate @reports
 
     .col-md-9
-      #pageslist.box
+      #pageslist.box.derivationRight
         %input.href_download{type: :hidden, value: ""}
         %input.href_download_zip{type: :hidden, value: ""}
         %input.is_collaborator{type: :hidden, value: "#{@user.collaborator? ? 1 : 0}"}
         = render partial: '/account/documents/pieces/index'
-      #preseizuresList
+      #preseizuresList.derivationRight
         = render partial: '/account/documents/preseizures/index'
       .scroll_on_top.hide
         %span

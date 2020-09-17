@@ -1,6 +1,6 @@
 = hidden_field_tag :retriever_budgea_config, @bi_config
 
-.box
+.box.derivationRight
   .row
     .col-md-12
       %h3
@@ -11,7 +11,7 @@
       / = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
       / = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }
 
-.row.retractable.with-filter
+.row.retractable.with-filter.derivationLeft
   .col-md-12.retractable-content
     .retrievers_list.box
   .card.retractable-filter

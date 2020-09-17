@@ -1,5 +1,5 @@
 #member.user
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -11,7 +11,7 @@
           - if (@user.leader? || @user.manage_collaborators) && @organization.is_active
             = link_to icon_destroy + ' Supprimer le compte', account_organization_collaborator_path(@organization, @member), class: 'btn btn-danger btn-primary', data: { method: :delete, confirm: t('actions.confirm') }
 
-  .row
+  .row.derivationLeft
     .col-md-12
       .box
         %ul.nav.nav-tabs

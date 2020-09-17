@@ -1,12 +1,12 @@
 #ibizabox_documents
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         %h3
           Historique des documents récupérés depuis la box iBiza du client 
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza_box'), class: 'fs-origin'
           %span.badge.badge-info.fs-origin= @documents_count
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12
       .box
         = render partial: 'shared/list_options', locals: { collection: @documents }

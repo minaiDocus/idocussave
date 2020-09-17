@@ -1,12 +1,12 @@
 #retrieved_documents
-.box
+.box.derivationRight
   .row
     .col-md-12
       %h3
         Documents
         %span.badge.badge-info.fs-origin= @documents.total_count
 
-.row.retractable.with-filter
+.row.retractable.with-filter.derivationLeft
   .col-md-12.retractable-content
     .box
       = render partial: 'shared/list_options', locals: { collection: @documents }

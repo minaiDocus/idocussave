@@ -1,12 +1,12 @@
 #ibizabox_documents.select
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         %h3
           Sélection de documents ibiza box restant à intégrer du client 
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza_box'), class: 'fs-origin'
           %span.badge.badge-info.fs-origin= @documents.size
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12
       .box
         = form_tag validate_account_organization_customer_ibizabox_documents_path, method: 'patch', class: 'form form-horizontal' do

@@ -1,11 +1,11 @@
 #retrieved_documents.select
-  .box
+  .box.derivationRight
     .row
       .col-md-12
         %h3
           Sélection de documents restant à récupérer 
           %span.badge.badge-info.fs-origin= @documents.total_count
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = form_tag validate_account_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do

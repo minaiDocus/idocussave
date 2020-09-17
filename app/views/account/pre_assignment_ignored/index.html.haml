@@ -1,15 +1,15 @@
 #pre_assignment_ignored.container-fluid
-  .alerts
+  .alerts.derivationLeft
     = render partial: 'shared/messages'
 
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
           %h3
             Liste des pièces ignorées à la pré-affectation
             %span.badge.badge-info.fs-origin= @ignored_list.total_count
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = render partial: 'shared/list_options', locals: { collection: @ignored_list }

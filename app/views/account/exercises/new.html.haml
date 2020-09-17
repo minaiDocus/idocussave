@@ -1,14 +1,14 @@
 #exercise.new
   - if @customer.configured?
-    .row-fluid
+    .row-fluid.derivationRight
       .span12.box
         %h3 Nouvel exercice comptable pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan')}
   - else
     = render 'account/customers/steps'
-    .row-fluid
+    .row-fluid.derivationRight
       .span12.box
         %h3 Exercices comptables
 
-  .row-fluid
+  .row-fluid.derivationLeft
     .span12.box
       = render 'form'

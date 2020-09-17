@@ -16,7 +16,7 @@
         = f.submit t('actions.submit'), class: 'btn btn-primary'
         = link_to t('actions.cancel'), account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-light'
 
-#accounting_plan.edit
+#accounting_plan.edit.derivationRight
   - if @customer.configured?
     .card
       .card-header

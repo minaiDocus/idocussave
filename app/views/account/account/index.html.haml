@@ -4,7 +4,7 @@
 
   .row
     .col-md-6
-      .box.small-shadow.bg-light
+      .box.small-shadow.bg-light.derivationLeft
         .row
           .col-md-12
             %h2 Bienvenue sur votre espace client iDocus !
@@ -36,7 +36,7 @@
               .ie-message.mt-sm-5
                 Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
 
-      .box.mt-sm-5.small-shadow.bg-light
+      .box.mt-sm-5.small-shadow.bg-light.derivationLeft
         %ul.nav.nav-tabs
           - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
             - active = @dashboard_summary == 'last_uploads' ? 'active' : ''
@@ -68,7 +68,7 @@
                   .loading-data
 
     .col-md-6
-      .row
+      .row.derivationRight
         .col-md-12
           .card
             .card-header
@@ -88,7 +88,7 @@
               .float-right
                 = link_to 'Tous les documents', account_documents_path
       - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
-        .row.mt-sm-5
+        .row.mt-sm-5.derivationRight
           .col-md-12
             .card
               .card-header
@@ -111,7 +111,7 @@
                   = link_to 'Tous les documents', account_documents_path
 
       - if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
-        .row.mt-sm-5
+        .row.mt-sm-5.derivationRight
           .col-md-12
             .card
               .card-header

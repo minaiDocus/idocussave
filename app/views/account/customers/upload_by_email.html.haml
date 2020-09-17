@@ -1,12 +1,12 @@
 #emailed_documents
-  .row
+  .row.derivationRight
     .col-md-12
       .box
         %h3
           Adresse email d'envoi de documents : 
           = link_to @customer, account_organization_customer_path(@organization, @customer), class: 'fs-origin'
 
-  .row
+  .row.derivationLeft
     - period_service = PeriodService.new user: @customer, current_time: Time.now.beginning_of_month
     .col-md-12
       .box

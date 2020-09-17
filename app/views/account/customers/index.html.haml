@@ -1,5 +1,5 @@
 #customers
-  .row
+  .row.derivationRight
     .col-md-12
       .box.clearfix
         .float-left
@@ -9,7 +9,7 @@
         .float-right
           - if (@user.leader? || @user.manage_customers) && @organization.is_active
             = link_to t('actions.new'), form_with_first_step_account_organization_customers_path(@organization), class: 'btn btn-primary'
-  .row.retractable.with-filter
+  .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
       .box
         = render partial: 'list_options'
