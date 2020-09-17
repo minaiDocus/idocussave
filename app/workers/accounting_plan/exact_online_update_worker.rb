@@ -22,7 +22,7 @@ class AccountingPlan::ExactOnlineUpdateWorker
 
   class Launcher
     def self.update_exact_online_for(customer_id)
-      UniqueJobs.for "AccountinpPlanExactOnlineUpdate-#{customer.id}", 1.day do
+      UniqueJobs.for "AccountinpPlanExactOnlineUpdate-#{customer_id}", 1.day do
         customer = User.find(customer_id)
 
         AccountingPlan::ExactOnlineUpdate.new(customer).run
