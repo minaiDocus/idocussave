@@ -53,7 +53,7 @@ describe AccountSharingRequest do
       request.user = @contact
       request.code_or_email = 'TS%0001'
 
-      expect(NotifyWorker).to receive(:perform_async)
+      expect(Notifications::Notifier).to receive(:notify)
 
       request.save
 
@@ -69,7 +69,7 @@ describe AccountSharingRequest do
       request.user = @contact
       request.code_or_email = 'TS%0001'
 
-      expect(NotifyWorker).to receive(:perform_async)
+      expect(Notifications::Notifier).to receive(:notify)
 
       request.save
 

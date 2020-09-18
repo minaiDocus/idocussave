@@ -16,7 +16,7 @@ class UnblockPreseizures
       GeneratePreAssignmentExportService.new(pres).execute
       FileDelivery.prepare(report)
       FileDelivery.prepare(report.pack)
-      NotifyUnblockedPreseizure.new(pres.first.user, pres.size, @unblocker, 5.minutes).execute
+      Notifications::PreAssignments.new({owner: pres.first.user, total: pres.size, unblocker: @unblocker}).notify_unblocked_preseizure
     end
 
     count

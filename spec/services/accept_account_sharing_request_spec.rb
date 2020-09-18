@@ -32,7 +32,7 @@ describe AcceptAccountSharingRequest do
       end
 
       it "accepts the sharing of customer's account to contact" do
-        expect(NotifyWorker).to receive(:perform_async).twice
+        expect(Notifications::Notifier).to receive(:notify).twice
         expect(DropboxImport).to receive(:changed)
         expect(@contact.accounts).to be_empty
 

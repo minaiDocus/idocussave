@@ -34,15 +34,13 @@ class IbizaClientCallback
     @ibiza.organization.admins.each do |admin|
       next if notified?(admin)
 
-      notification = Notification.new
-      notification.user        = admin
-      notification.notice_type = 'ibiza_invalid_access_token'
-      notification.title       = 'Compte iBiza déconnecté'
-      notification.message     = "Votre compte iBiza n'est plus connectée, merci de le reconfigurer, s'il vous plaît."
-      notification.url         = Rails.application.routes.url_helpers.account_organization_url(
-                                   @ibiza.organization, { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options))
-      notification.save
-      NotifyWorker.perform_async(notification.id)
+      Notifications::Notifier.new.send_notification(
+        Rails.application.routes.url_helpers.account_organization_url(@ibiza.organization, { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options)),
+        admin,
+        'ibiza_invalid_access_token',
+        'Compte iBiza déconnecté',
+        "Votre compte iBiza n'est plus connectée, merci de le reconfigurer, s'il vous plaît."
+      )
     end
   end
 end

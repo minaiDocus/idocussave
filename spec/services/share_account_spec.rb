@@ -37,7 +37,7 @@ describe ShareAccount do
       it "shares the customer's account to the contact" do
         params = { collaborator_id: @contact.id, account_id: @customer.id }
 
-        expect(NotifyWorker).to receive(:perform_async).twice
+        expect(Notifications::Notifier).to receive(:notify).twice
         expect(DropboxImport).to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
@@ -56,7 +56,7 @@ describe ShareAccount do
 
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
-        expect(NotifyWorker).to receive(:perform_async).twice
+        expect(Notifications::Notifier).to receive(:notify).twice
         expect(DropboxImport).to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
@@ -72,7 +72,7 @@ describe ShareAccount do
         contact2 = create :guest
         params = { collaborator_id: contact2.id, account_id: @customer.id }
 
-        expect(NotifyWorker).not_to receive(:perform_async)
+        expect(Notifications::Notifier).not_to receive(:notify)
         expect(DropboxImport).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
@@ -88,7 +88,7 @@ describe ShareAccount do
 
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
-        expect(NotifyWorker).not_to receive(:perform_async)
+        expect(Notifications::Notifier).not_to receive(:notify)
         expect(DropboxImport).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
@@ -103,7 +103,7 @@ describe ShareAccount do
       it "fails to share the customer's account" do
         params = { collaborator_id: @contact.id, account_id: @customer.id }
 
-        expect(NotifyWorker).not_to receive(:perform_async)
+        expect(Notifications::Notifier).not_to receive(:notify)
         expect(DropboxImport).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute

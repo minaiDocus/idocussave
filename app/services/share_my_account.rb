@@ -16,13 +16,13 @@ class ShareMyAccount
       if @account_sharing.save
         DropboxImport.changed([@account_sharing.collaborator])
 
-        notification = Notification.new
-        notification.user        = @account_sharing.collaborator
-        notification.notice_type = 'share_account'
-        notification.title       = 'Accès à un compte'
-        notification.message     = "Vous avez maintenant accès au compte #{@account_sharing.account.info}."
-        notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
-        NotifyWorker.perform_async(notification.id) if notification.save
+        Notifications::Notifier.new.send_notification(
+          Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options)),
+          @account_sharing.collaborator,
+          'share_account',
+          'Accès à un compte',
+          "Vous avez maintenant accès au compte #{@account_sharing.account.info}."
+        )
       end
     end
     [collaborator, @account_sharing]

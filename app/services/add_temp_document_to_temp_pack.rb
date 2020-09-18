@@ -73,14 +73,15 @@ class AddTempDocumentToTempPack
               DocumentTools.gs_error_found?(temp_document.cloud_content_object.path) ? temp_document.ready : temp_document.ocr_needed
             end
           else
+            #   temp_document_params = {temp_document: temp_document, sender: User.find_by_code(temp_document.delivered_by), user: temp_document.user}
             if temp_document.from_ibizabox? && options[:wait_selection]
               temp_document.wait_selection
             # elsif DocumentTools.need_ocr?(temp_document.cloud_content_object.path)
             #   temp_document.ocr_needed
-            #   NotifyDocumentBeingProcessed.new(temp_document).execute
+            #   Notifications::Documents.new(temp_document_params).notify_document_being_processed
             # elsif temp_document.is_bundle_needed?
             #  temp_document.bundle_needed
-            # NotifyDocumentBeingProcessed.new(temp_document).execute
+            # Notifications::Documents.new(temp_document_params).notify_document_being_processed
             else
               #Temp modification : replace ready state to ocr_needed
               if temp_document.api_name == 'jefacture'

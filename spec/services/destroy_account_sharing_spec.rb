@@ -33,7 +33,7 @@ describe DestroyAccountSharing do
       end
 
       it "unshares customer's account from contact" do
-        expect(NotifyWorker).to receive(:perform_async)
+        expect(Notifications::Notifier).to receive(:notify)
         expect(DropboxImport).to receive(:changed)
 
         DestroyAccountSharing.new(@account_sharing).execute
@@ -57,7 +57,7 @@ describe DestroyAccountSharing do
       end
 
       it 'denies the request' do
-        expect(NotifyWorker).to receive(:perform_async)
+        expect(Notifications::Notifier).to receive(:notify)
         expect(DropboxImport).to receive(:changed)
 
         DestroyAccountSharing.new(@account_sharing).execute
@@ -71,7 +71,7 @@ describe DestroyAccountSharing do
       it 'cancels the request and notify the collaborator in charge of the account' do
         @customer.update(manager: @member)
 
-        expect(NotifyWorker).to receive(:perform_async)
+        expect(Notifications::Notifier).to receive(:notify)
         expect(DropboxImport).to receive(:changed)
 
         DestroyAccountSharing.new(@account_sharing, @contact).execute
@@ -86,7 +86,7 @@ describe DestroyAccountSharing do
         leader = create :prescriber
         Member.create(user: leader, organization: @organization, code: 'TS%LEAD', role: Member::ADMIN)
 
-        expect(NotifyWorker).to receive(:perform_async)
+        expect(Notifications::Notifier).to receive(:notify)
         expect(DropboxImport).to receive(:changed)
 
         DestroyAccountSharing.new(@account_sharing, @contact).execute
@@ -98,7 +98,7 @@ describe DestroyAccountSharing do
       end
 
       it 'cancels the request and does not send a notification' do
-        expect(NotifyWorker).not_to receive(:perform_async)
+        expect(Notifications::Notifier).not_to receive(:notify)
         expect(DropboxImport).to receive(:changed)
 
         DestroyAccountSharing.new(@account_sharing, @contact).execute

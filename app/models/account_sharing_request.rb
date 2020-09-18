@@ -23,16 +23,18 @@ class AccountSharingRequest
         end
 
         collaborators.each do |collaborator|
-          notification = Notification.new
-          notification.user        = collaborator
-          notification.notice_type = 'account_sharing_request'
-          notification.title       = "Demande d'accès à un dossier"
-          notification.message     = "#{user.info} souhaite accéder au dossier #{account.info}."
-          notification.url         = Rails.application.routes.url_helpers.account_organization_account_sharings_url(
-                                       account.organization,
-                                       ActionMailer::Base.default_url_options
-                                     )
-          NotifyWorker.perform_async(notification.id) if notification.save
+          url = Rails.application.routes.url_helpers.account_organization_account_sharings_url(
+           account.organization,
+           ActionMailer::Base.default_url_options
+          )
+
+          Notifications::Notifier.new.send_notification(
+            url,
+            collaborator,
+            'account_sharing_request',
+            "Demande d'accès à un dossier",
+            "#{user.info} souhaite accéder au dossier #{account.info}."
+          )
         end
         true
       end

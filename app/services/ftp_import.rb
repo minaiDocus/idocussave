@@ -79,7 +79,12 @@ class FTPImport
     false
   rescue Errno::ECONNREFUSED, Net::FTPPermError => e
     if e.message.match(/Login incorrect/)
-      FTPErrorNotifier.new(@ftp).auth_failure
+      Notifications::Ftp.new({
+        ftp: @ftp,
+        users: @ftp.organization&.admins.presence || [@ftp.user],
+        notice_type: @ftp.organization ? 'org_ftp_auth_failure' : 'ftp_auth_failure'
+      }).notify_ftp_auth_failure
+
       @ftp.update is_configured: false
     end
     log_infos = {
