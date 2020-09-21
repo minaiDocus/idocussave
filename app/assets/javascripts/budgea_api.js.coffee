@@ -5,6 +5,7 @@ class Idocus.BudgeaApi
     @encryptor = null
     @user_profiles = {}
     @local_host = "#{location.protocol}//#{location.host}"
+    @request_source = ''
     config = ''
     if $('#retriever_budgea_config').length > 0
       config = JSON.parse( atob($('#retriever_budgea_config').val()) )
@@ -216,14 +217,19 @@ class Idocus.BudgeaApi
   create_or_update_connection: (id, remote_params, local_params)->
     self = this
     id_params = if id > 0 then "/#{id}" else ""
+    @request_source = 'create_or_update'
 
     promise = new Promise((resolve, reject)->
       self.encrypt_params(remote_params, ["id_provider", "id_bank", "openapiwebsite", "directaccesswebsite"]).then( (remote_params_encrypted)->
         self.double_fetch({
           remote: { url: "/users/me/connections#{id_params}", data: remote_params_encrypted, type: 'POST' }
           local: { url: "/retriever/create", data: local_params }
-          onError: (error)-> reject(error)
-          onSuccess: (remote_response, local_response)-> resolve({remote_response, local_response})
+          onError: (error)->
+            self.request_source = ''
+            reject(error)
+          onSuccess: (remote_response, local_response)->
+            self.request_source = ''
+            resolve({remote_response, local_response})
         })
       )
     )
@@ -448,6 +454,7 @@ class Idocus.BudgeaApi
         onError("Service interne non disponible")
 
   remote_fetch: (options)->
+    self = this
     method = options.type || 'GET'
     url = options.url || ''
     body = @dataCompact(options.data) || {}
@@ -488,17 +495,20 @@ class Idocus.BudgeaApi
           if message != ''
             message = "(#{message})"
 
-          switch response.code
-            when 'wrongpass' then error_message = "Mot de passe incorrecte. #{message}"
-            when 'websiteUnavailable' then error_message = "Site web indisponible. #{message}"
-            when 'bug' then error_message = "Service indisponible. #{message}"
-            when 'config' then error_message = response.description
-            when 'actionNeeded' then error_message = "Veuillez confirmer les nouveaux termes et conditions. #{message}"
-            when 'missingParameter' then error_message = "Erreur de paramètre #{message}"
-            when 'invalidValue' then error_message = "Erreur de paramètre #{message}"
-            when 'keymanager' then error_message = "Erreur de cryptage interne #{message}"
-            when 'internalServerError' then error_message = "Erreur du service externe #{message}"
-            else error_message = "#{message}"
+          if self.request_source == 'create_or_update' && message.match(/You need to give the resume parameter/i)
+            error_message = '' #we consider that there is no error when body response is in decoupled state only on update or creation
+          else
+            switch response.code
+              when 'wrongpass' then error_message = "Mot de passe incorrecte. #{message}"
+              when 'websiteUnavailable' then error_message = "Site web indisponible. #{message}"
+              when 'bug' then error_message = "Service indisponible. #{message}"
+              when 'config' then error_message = response.description
+              when 'actionNeeded' then error_message = "Veuillez confirmer les nouveaux termes et conditions. #{message}"
+              when 'missingParameter' then error_message = "Erreur de paramètre #{message}"
+              when 'invalidValue' then error_message = "Erreur de paramètre #{message}"
+              when 'keymanager' then error_message = "Erreur de cryptage interne #{message}"
+              when 'internalServerError' then error_message = "Erreur du service externe #{message}"
+              else error_message = "#{message}"
 
           success = if error_message.length > 0 then false else true
           data_collect = if collection.length > 0 then response[collection] else response

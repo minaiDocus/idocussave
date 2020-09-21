@@ -13,7 +13,30 @@ class CreateBudgeaConnection
 
     if retriever.save
       sleep 2
-      retriever.reload.send(:resume_me)
+      force = false
+
+      state   = @budgea_response[:error] || @budgea_response[:status]
+      message = @budgea_response[:error_message] || @budgea_response[:message] || @budgea_response[:description]
+
+      if  state == 'decoupled' || message.to_s.match(/You need to give the resume parameter/i)
+        force = true
+        log_info = {
+          name: "DecoupledRetriever",
+          error_group: "[decoupled-retriever] decoupled on creation",
+          erreur_type: "decoupled-retriever - decoupled on creation",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            retriever_id: retriever.id,
+            retriever_name: retriever.service_name,
+            user_code: retriever.user.code,
+            connection: @budgea_response.to_json
+          }
+        }
+
+        ErrorScriptMailer.error_notification(log_info).deliver
+      end
+
+      retriever.reload.send(:resume_me, force)
     end
   end
 
