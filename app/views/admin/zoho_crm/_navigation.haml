@@ -1,9 +1,0 @@
-.navbar
-  .navbar-inner
-    %ul.nav
-      %li{ class: ('active' if action_name == 'synchronize') }
-        = link_to('Synchronisation Zoho', synchronize_admin_zoho_crm_index_path, {data: {confirm: "Lancer la synchronisation Zoho / iDocus?"}})
-      %li{ class: ('active' if action_name == 'duplicate_organizations') }
-        = link_to('Doublon organization', dpl_org_admin_zoho_crm_index_path)
-      %li{ class: ('active' if action_name == 'duplicate_users') }
-        = link_to('Doublon users', dpl_usr_admin_zoho_crm_index_path)

@@ -677,17 +677,6 @@ Rails.application.routes.draw do
     resources :news do
       post :publish, on: :member
     end
-
-    resources :zoho_crm, only: %w(index) do
-      get 'dpl_org', action: 'duplicate_organizations', on: :collection
-      get 'dpl_usr', action: 'duplicate_users', on: :collection
-      get 'synchronize', action: 'synchronize', on: :collection
-    end
-
-    resources :archives, only: :index do
-      get 'budgea_users',      controller: 'archives', action: 'budgea_users',      on: :collection
-      get 'budgea_retrievers', controller: 'archives', action: 'budgea_retrievers', on: :collection
-    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
