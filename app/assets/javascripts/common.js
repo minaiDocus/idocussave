@@ -115,6 +115,37 @@ function _require(script) {
     return src;
 }
 
+function slideElement(elem_actor, elem_target, with_outer_div){
+  //use mouseup action instead of click to avoid conflit
+  $(elem_actor).bind('mouseup.slider', function(e){
+    e.preventDefault();
+
+    $(elem_actor).unbind('mouseup.slider'); //remove binder and reset it each time the function is triggered
+
+    if(document.querySelector(elem_target).offsetHeight > 0)
+    {
+      $(elem_target).slideUp('fast');
+      if(with_outer_div && $('#box_slide_element_outer')){
+        $("#box_slide_element_outer").unbind('click.outerslider');
+        $("#box_slide_element_outer").remove();
+      }
+    }
+    else
+    {
+      $(elem_target).slideDown('fast');
+      if(with_outer_div)
+        $('body').append('<div id="box_slide_element_outer" style="top:0; left: 0; width: 100%; height: 100%; position: absolute; z-index: 10" />')
+        $("#box_slide_element_outer").bind('click.outerslider', function(e){
+          $("#box_slide_element_outer").unbind('click.outerslider');
+          $(elem_target).slideUp('fast');
+          $("#box_slide_element_outer").remove();
+        });
+    }
+
+    slideElement(elem_actor, elem_target, with_outer_div); //remove binder and reset it each time the function is triggered
+  });
+}
+
 function adjustIconColor(elem) {
   //add envents
   originalClick = $.fn.click
@@ -223,16 +254,6 @@ jQuery(function () {
 
   $('input[type="checkbox"]').shiftSelectable();
 
-  $('#as_user_view').click(function(e){
-    e.preventDefault();
-
-    var as_user_view_box = $('#as_user_view_box')
-    if(as_user_view_box.is(':visible'))
-      as_user_view_box.slideUp('fast');
-    else
-      as_user_view_box.slideDown('fast');
-  });
-
   $('#notifications.unread_all_onclick').click(function(e){
     $.ajax({
         url: "/account/notifications/unread_all_notifications",
@@ -244,6 +265,10 @@ jQuery(function () {
         }
     });
   });
+
+  //animations
+  slideElement('#as_user_view', '#as_user_view_box', false);
+  slideElement('#notifications a.dropdown-itm', '#notifications .dropdown-menu', true);
 
   //adjust icons color
   adjustIconColor();

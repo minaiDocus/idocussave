@@ -14,6 +14,19 @@
   to { opacity: 1; }
 }
 
+@mozkeyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+@webkitkeyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+@keyframes slideDown {
+  from  { max-height: 0px; }
+  to { max-height: 500px; }
+}
+
 @mozkeyframes derivationLeft {
   from { left: -40px; }
   to { left: 0; }
@@ -128,6 +141,13 @@ tbody.retractable.slidedown tr {
   animation-name: showSideMenu;
   animation-duration: 0.3s;
   position: relative;
+}
+
+.bg-menu .dropdown-menu.show{
+  overflow: hidden;
+  animation-name: slideDown;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
 }
 
 // CSS NORMAL

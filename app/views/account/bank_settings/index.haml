@@ -2,10 +2,9 @@
   .box.derivationRight
     .row
       .col-md-12
-        .box.clearfix
-          .float-left
-            %h3.float-left
-              = @account.info
+        .float-left
+          %h3.float-left
+            = @account.info
 
   .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
@@ -29,7 +28,7 @@
                 %td= bank_account.journal
                 %td= bank_account.accounting_number
                 %td= bank_account.start_date
-                %td= link_to t('actions.edit'), edit_account_bank_setting_path(bank_account), class: 'btn btn-light'
+                %td.text-center= link_to t('actions.edit'), edit_account_bank_setting_path(bank_account), class: 'btn btn-light'
 
     .card.retractable-filter
       = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do
