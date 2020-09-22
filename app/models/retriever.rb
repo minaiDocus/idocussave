@@ -138,7 +138,7 @@ class Retriever < ApplicationRecord
     end
 
     event :success do
-      transition [:synchronizing, :failed] => :successful
+      transition [:synchronizing, :failed, :paused] => :successful
     end
 
     event :pause do
