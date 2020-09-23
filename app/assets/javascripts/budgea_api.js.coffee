@@ -495,7 +495,8 @@ class Idocus.BudgeaApi
           if message != ''
             message = "(#{message})"
 
-          if self.request_source == 'create_or_update' && message.match(/You need to give the resume parameter/i)
+          #TEMP: disable this test now (we will use it later)
+          if 1 == 2 && self.request_source == 'create_or_update' && message.match(/You need to give the resume parameter/i)
             error_message = '' #we consider that there is no error when body response is in decoupled state only on update or creation
           else
             switch response.code
