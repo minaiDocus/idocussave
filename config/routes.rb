@@ -677,6 +677,11 @@ Rails.application.routes.draw do
     resources :news do
       post :publish, on: :member
     end
+
+    resources :archives, only: :index do
+      get 'budgea_users',      controller: 'archives', action: 'budgea_users',      on: :collection
+      get 'budgea_retrievers', controller: 'archives', action: 'budgea_retrievers', on: :collection
+    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
