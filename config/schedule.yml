@@ -62,7 +62,7 @@ ProcessOperationsWorker:
 ## resume budgea retriever connector state
 ResumeBudgeaRetrieverWorker:
   queue: default
-  cron: '0 0 */3 * * *'
+  cron: '0 */15 * * * *'
 
 # TO DO : Remove
 # RemoveOldestRetrievedDataWorker:
