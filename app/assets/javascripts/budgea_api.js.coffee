@@ -216,8 +216,13 @@ class Idocus.BudgeaApi
 
   create_or_update_connection: (id, remote_params, local_params)->
     self = this
-    id_params = if id > 0 then "/#{id}" else ""
-    @request_source = 'create_or_update'
+
+    id_params       = ""
+    @request_source = 'create'
+
+    if id > 0
+      id_params = "/#{id}"
+      @request_source = 'update'
 
     promise = new Promise((resolve, reject)->
       self.encrypt_params(remote_params, ["id_provider", "id_bank", "openapiwebsite", "directaccesswebsite"]).then( (remote_params_encrypted)->
@@ -495,9 +500,10 @@ class Idocus.BudgeaApi
           if message != ''
             message = "(#{message})"
 
-          #TEMP: disable this test now (we will use it later)
-          if 1 == 2 && self.request_source == 'create_or_update' && message.match(/You need to give the resume parameter/i)
-            error_message = '' #we consider that there is no error when body response is in decoupled state only on update or creation
+          if self.request_source == 'create' && response.id != 'undefined' && response.id != null && parseInt(response.id) > 0
+            console.log('----jump-creation---')
+            console.error(response)
+            error_message = '' #we consider that there is no error when an id_connection is present only on creation
           else
             switch response.code
               when 'wrongpass' then error_message = "Mot de passe incorrecte. #{message}"

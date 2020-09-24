@@ -36,7 +36,7 @@ class PonctualScripts::BudgeaRefreshScarequired < PonctualScripts::PonctualScrip
 
       client   = Budgea::Client.new(access_token)
       begin
-        response = client.send(:resume_connexion, retriever)
+        response = client.resume_connexion(retriever)
 
         p "=====#{retriever.id}=======>>\n#{response.to_json}\n\n"
         sleep(1)

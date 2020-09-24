@@ -125,7 +125,7 @@ class ProcessRetrievedData
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
 
-    retriever.update_state_with connection
+    retriever.resume_me
 
     notify connection
 

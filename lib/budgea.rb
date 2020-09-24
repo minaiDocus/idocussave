@@ -203,16 +203,6 @@ class Budgea
       end
     end
 
-  private
-    def connection
-      Faraday.new(:url => @settings[:base_url]) do |f|
-        f.response :logger
-        f.request :oauth2, 'token', token_type: :bearer
-        f.adapter Faraday.default_adapter
-        f.proxy = @settings[:proxy]
-      end
-    end
-
     def resume_connexion(retriever, force_resume = false)
       if retriever.budgea_id.present?
 
@@ -242,6 +232,16 @@ class Budgea
 
           { from: 'resume', response: @response.body }
         end
+      end
+    end
+
+  private
+    def connection
+      Faraday.new(:url => @settings[:base_url]) do |f|
+        f.response :logger
+        f.request :oauth2, 'token', token_type: :bearer
+        f.adapter Faraday.default_adapter
+        f.proxy = @settings[:proxy]
       end
     end
 

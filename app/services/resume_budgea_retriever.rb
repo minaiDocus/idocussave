@@ -19,7 +19,7 @@ class ResumeBudgeaRetriever
       initial_message = retriever.error_message
 
       begin
-        result = retriever.send(:resume_me)
+        result = retriever.resume_me
 
         sleep(1)
 
