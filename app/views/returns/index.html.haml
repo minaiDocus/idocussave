@@ -1,4 +1,4 @@
-#returns.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
+#returns.margin2bottom{ data: { codes: (CustomUtils.manual_scans_codes + User.customers.map(&:code).map(&:presence).compact.sort).to_json } }
   .box
     .row
       .col-md-1

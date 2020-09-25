@@ -36,7 +36,7 @@ function show_hide_overflow(){
 }
 
 jQuery(function () {
-  show_hide_overflow();
+  if($('.auto-scroll-div').length > 0){ show_hide_overflow(); }
 
   $( window ).resize(function() {
     show_hide_overflow();

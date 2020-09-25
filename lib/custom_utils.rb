@@ -10,5 +10,9 @@ class CustomUtils
         code
       end
     end
+
+    def manual_scans_codes
+      ['AC0162', 'MFA%ADAPTO']
+    end
   end
 end
