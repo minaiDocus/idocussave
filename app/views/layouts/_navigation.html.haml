@@ -1,72 +1,82 @@
-%ul.nav.navbar-nav.bg-menu
-  - unless organizations_suspended? && @user.active?
-    %li.nav-item{ class: (controller_name == 'account' ? 'active' : '') }
-      = link_to 'Accueil', root_path, class: 'nav-link'
-    %li.nav-item{ class: ('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
-      = link_to 'Mon compte', account_profile_path, class: 'nav-link'
-    - if @user.admin?
-      %li.nav-item{ class: ((controller_name == 'organizations' && action_name.in?(%w(index new create)) || controller_name == 'group_organizations') ? 'active' : '') }
-        = link_to 'Organisations', account_organizations_path, class: 'nav-link'
-  - if @user.collaborator?
-    - if @user.has_one_organization?
-      - if @user.inactive? || @user.organizations_not_suspended? || @user.can_unsuspend?
-        - path = (organizations_suspended? && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
-        %li.nav-item{ class: (inside_organization? ? 'active' : '') }
-          = link_to 'Mon organisation', path, class: 'nav-link'
-    - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
-      %li.nav-item.dropdown{ class: (inside_organization? ? 'active' : '') }
-        %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-          Mon organisation
-          %b.caret
-        %ul.dropdown-menu
-          - @user.organizations.each do |organization|
-            %li.nav-item{ class: ((inside_organization? && organization == @organization) ? 'active' : '') }
-              - if organization.is_suspended
-                = link_to account_organization_path(organization, tab: 'payments'), class: 'dropdown-item dropdown-link' do
-                  = organization.name
-                  %i (Suspendu)
-              - else
-                = link_to organization.name, account_organization_path(organization), class: 'dropdown-item dropdown-link'
-  - unless organizations_suspended? && @user.active?
-    %li.nav-item.dropdown{ class: ('active' if ['documents', 'pre_assignment_ignored', 'pre_assignment_blocked_duplicates', 'pre_assignment_delivery_errors'].include? controller_name) }
-      %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-        Mes documents
-        %b.caret
-      %ul.dropdown-menu
-        %li.nav-item{ class: ('active' if controller_name == 'documents') }
-          = link_to 'Pièces / Ecritures comptables', account_documents_path, class: 'dropdown-link dropdown-item'
-        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_ignored') }
-          = link_to 'Pièces ignorées à la pré-affectation', account_pre_assignment_ignored_path, class: 'dropdown-link dropdown-item'
-        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_blocked_duplicates') }
-          = link_to 'Ecritures comptables en doublon', account_pre_assignment_blocked_duplicates_path, class: 'dropdown-link dropdown-item'
-        %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_delivery_errors') }
-          = link_to "Erreur livraison d'écritures comptables", account_pre_assignment_delivery_errors_path, class: 'dropdown-link dropdown-item'
-    - if @user.active? && @user.organization.is_active
-      - if @user.collaborator? && !@user.has_one_organization?
-        %li.nav-item.dropdown{ class: ('active' if controller_name == 'reporting') }
+%button.navbar-toggler{"aria-controls" => "navbarSupportedContent", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbarSupportedContent", "data-toggle" => "collapse", :type => "button"}
+  = glyphicon('menu', { color: '#FFF' } )
+.collapse.navbar-collapse#navbarSupportedContent
+  %span.auto-scroll-span-left.hide.ml-1.mr-1
+    %button.btn
+      = glyphicon('arrow-left', { color: 'white' })
+  .main-menu-content.auto-scroll-div
+    %ul.nav.navbar-nav.bg-menu
+      - unless organizations_suspended? && @user.active?
+        %li.nav-item{ class: (controller_name == 'account' ? 'active' : '') }
+          = link_to 'Accueil', root_path, class: 'nav-link'
+        %li.nav-item{ class: ('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
+          = link_to 'Mon compte', account_profile_path, class: 'nav-link'
+        - if @user.admin?
+          %li.nav-item{ class: ((controller_name == 'organizations' && action_name.in?(%w(index new create)) || controller_name == 'group_organizations') ? 'active' : '') }
+            = link_to 'Organisations', account_organizations_path, class: 'nav-link'
+      - if @user.collaborator?
+        - if @user.has_one_organization?
+          - if @user.inactive? || @user.organizations_not_suspended? || @user.can_unsuspend?
+            - path = (organizations_suspended? && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
+            %li.nav-item{ class: (inside_organization? ? 'active' : '') }
+              = link_to 'Mon organisation', path, class: 'nav-link'
+        - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
+          %li.nav-item.dropdown{ class: (inside_organization? ? 'active' : '') }
+            %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+              Mon organisation
+              %b.caret
+            %ul.dropdown-menu
+              - @user.organizations.each do |organization|
+                %li.nav-item{ class: ((inside_organization? && organization == @organization) ? 'active' : '') }
+                  - if organization.is_suspended
+                    = link_to account_organization_path(organization, tab: 'payments'), class: 'dropdown-item dropdown-link' do
+                      = organization.name
+                      %i (Suspendu)
+                  - else
+                    = link_to organization.name, account_organization_path(organization), class: 'dropdown-item dropdown-link'
+      - unless organizations_suspended? && @user.active?
+        %li.nav-item.dropdown{ class: ('active' if ['documents', 'pre_assignment_ignored', 'pre_assignment_blocked_duplicates', 'pre_assignment_delivery_errors'].include? controller_name) }
           %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-            Mon reporting
+            Mes documents
             %b.caret
           %ul.dropdown-menu
-            - @user.organizations.each do |organization|
-              %li.nav-item{ class: ('active' if controller_name == 'reporting' && organization.id.to_s == params[:organization_id]) }
-                = link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id), class: 'dropdown-item dropdown-link'
-      - else
-        %li.nav-item{ class: ('active' if controller_name == 'reporting') }
-          = link_to 'Mon reporting', account_reporting_path, class: 'nav-link'
-      - if accounts.detect { |e| e.options.is_retriever_authorized }
-        %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents bank_settings)) && params[:organization_id].nil?) }
-          = link_to 'Mes automates', account_retrievers_path, class: 'nav-link'
-      - if accounts.detect { |e| e.options.is_upload_authorized }
-        %li.nav-item{ class: ('active' if controller_name == 'paper_processes') }
-          = link_to 'Suivi', account_paper_processes_path, class: 'nav-link'
-    %li.nav-item.dropdown
-      %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-        Base de connaissances
-        %b.caret
-      %ul.dropdown-menu
-        %li= link_to 'Communications', '#news', 'data-toggle' => 'modal', class: 'dropdown-item'
-        %li= link_to 'Centre d\'aide', 'https://idocus.zendesk.com/hc/fr', target: '_blank', class: 'dropdown-item'
-        - if @user.collaborator?
-          %li= link_to "Produits et tarifs #{Time.now.strftime('%Y')}", docs_download_path(name: 'produits_et_tarifs_2018.pdf'), target: '_blank', class: 'dropdown-item'
-          %li= link_to "CGU #{Time.now.strftime('%Y')}", docs_download_path(name: 'CGU_iDocus_201805.pdf'), target: '_blank', class: 'dropdown-item'
+            %li.nav-item{ class: ('active' if controller_name == 'documents') }
+              = link_to 'Pièces / Ecritures comptables', account_documents_path, class: 'dropdown-link dropdown-item'
+            %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_ignored') }
+              = link_to 'Pièces ignorées à la pré-affectation', account_pre_assignment_ignored_path, class: 'dropdown-link dropdown-item'
+            %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_blocked_duplicates') }
+              = link_to 'Ecritures comptables en doublon', account_pre_assignment_blocked_duplicates_path, class: 'dropdown-link dropdown-item'
+            %li.nav-item{ class: ('active' if controller_name == 'pre_assignment_delivery_errors') }
+              = link_to "Erreur livraison d'écritures comptables", account_pre_assignment_delivery_errors_path, class: 'dropdown-link dropdown-item'
+        - if @user.active? && @user.organization.is_active
+          - if @user.collaborator? && !@user.has_one_organization?
+            %li.nav-item.dropdown{ class: ('active' if controller_name == 'reporting') }
+              %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+                Mon reporting
+                %b.caret
+              %ul.dropdown-menu
+                - @user.organizations.each do |organization|
+                  %li.nav-item{ class: ('active' if controller_name == 'reporting' && organization.id.to_s == params[:organization_id]) }
+                    = link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id), class: 'dropdown-item dropdown-link'
+          - else
+            %li.nav-item{ class: ('active' if controller_name == 'reporting') }
+              = link_to 'Mon reporting', account_reporting_path, class: 'nav-link'
+          - if accounts.detect { |e| e.options.is_retriever_authorized }
+            %li.nav-item{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents bank_settings)) && params[:organization_id].nil?) }
+              = link_to 'Mes automates', account_retrievers_path, class: 'nav-link'
+          - if accounts.detect { |e| e.options.is_upload_authorized }
+            %li.nav-item{ class: ('active' if controller_name == 'paper_processes') }
+              = link_to 'Suivi', account_paper_processes_path, class: 'nav-link'
+        %li.nav-item.dropdown
+          %a.nav-link.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+            Base de connaissances
+            %b.caret
+          %ul.dropdown-menu
+            %li= link_to 'Communications', '#news', 'data-toggle' => 'modal', class: 'dropdown-item'
+            %li= link_to 'Centre d\'aide', 'https://idocus.zendesk.com/hc/fr', target: '_blank', class: 'dropdown-item'
+            - if @user.collaborator?
+              %li= link_to "Produits et tarifs #{Time.now.strftime('%Y')}", docs_download_path(name: 'produits_et_tarifs_2018.pdf'), target: '_blank', class: 'dropdown-item'
+              %li= link_to "CGU #{Time.now.strftime('%Y')}", docs_download_path(name: 'CGU_iDocus_201805.pdf'), target: '_blank', class: 'dropdown-item'
+  %span.auto-scroll-span-right.hide.mr-auto.ml-1
+    %button.btn
+      = glyphicon('arrow-right', { color: 'white' })

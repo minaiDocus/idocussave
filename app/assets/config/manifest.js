@@ -2,6 +2,7 @@
 //= link application.css
 //= link application.js
 //= link logo/tiny_logo.png
+//= link logo/logo.png
 //= link application/ftp_logo.png
 //= link application/box_logo.png
 //= link application/icon-xls.png

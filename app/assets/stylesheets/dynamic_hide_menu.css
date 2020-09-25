@@ -1,9 +1,12 @@
-.auto-scroll-div{  
-	max-width: 75%;
+#navbarSupportedContent{
+  overflow: hidden;
+}
+
+.auto-scroll-div{
   overflow: hidden; 
 }
 
-.auto-scroll-div ul{
+.auto-scroll-div ul.nav{
   width: 991px;
 }
 

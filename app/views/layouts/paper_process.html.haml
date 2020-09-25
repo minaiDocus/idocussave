@@ -8,7 +8,7 @@
   %body
     #wrap
       %nav.navbar.navbar-expand-md.navbar-static-top.medium-shadow
-        = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo navbar-brand'
+        = link_to image_tag('logo/logo.png', alt: 'logo'), root_path, class: 'logo navbar-brand'
         %ul.nav.navbar-nav.bg-menu
           %li.nav-item{ class: ('active' if controller_name == 'paper_set_orders') }
             = link_to 'Commandes', paper_set_orders_path, class: 'nav-link'
