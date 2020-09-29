@@ -72,6 +72,7 @@ class ImportFecService
 
       next if !@params[:journal].select{|j| j[column[0]].present? }.present?
 
+      journal     = column[0]
       compauxnum  = column[6]
       compauxlib  = column[7]
       comptenum   = column[4]
@@ -80,11 +81,11 @@ class ImportFecService
       credit      = column[12]
       pieceref    = column[@params[:piece_ref].to_i]
 
-      @third_parties  << { account_number: compauxnum, account_name: compauxlib, general_account: comptenum }
+      @third_parties  << { account_number: compauxnum, account_name: compauxlib, general_account: comptenum, journal: journal }
 
-      @for_num_pieces << { pieceref: pieceref, compauxnum: compauxnum }
+      @for_num_pieces << { pieceref: pieceref, compauxnum: compauxnum, journal: journal }
 
-      @for_pieces     << { compauxnum: compauxnum, pieceref: pieceref, comptenum: comptenum, debit: debit, credit: credit }
+      @for_pieces     << { compauxnum: compauxnum, pieceref: pieceref, comptenum: comptenum, debit: debit, credit: credit, journal: journal }
     end
 
     @third_parties = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
@@ -167,7 +168,7 @@ class ImportFecService
     result = []
 
     @for_pieces.each do |for_piece|
-      result << { ref: for_piece[:pieceref], account: for_piece[:comptenum], amount_debit: for_piece[:debit].to_f, amount_credit: for_piece[:credit].to_f } if @num_pieces.include?(for_piece[:pieceref])
+      result << { journal: for_piece[:journal], ref: for_piece[:pieceref], account: for_piece[:comptenum], amount_debit: for_piece[:debit].to_f, amount_credit: for_piece[:credit].to_f } if @num_pieces.include?(for_piece[:pieceref])
     end
 
     @pieces = result.uniq
@@ -180,9 +181,9 @@ class ImportFecService
     @vat_accounts = {}
 
     @pieces.each do |piece|
-      @counterpart_accounts[piece[:account]] = @counterpart_accounts[piece[:account]].to_i + 1 if %w(6 7).include?(piece[:account].to_s[0])
+      @counterpart_accounts[piece[:account]] = @counterpart_accounts[piece[:account]].to_i + 1 if %w(6 7).include?(piece[:account].to_s[0]) && piece[:journal] == @third_partie[:journal]
 
-      if %w(445).include?(piece[:account].to_s[0..2])
+      if %w(445).include?(piece[:account].to_s[0..2]) && piece[:journal] == @third_partie[:journal]
         amount = piece[:amount_debit] > 0 ? piece[:amount_debit] : piece[:amount_credit]
         @vat_accounts[piece[:account]] = @vat_accounts[piece[:account]].to_f + amount
       end
