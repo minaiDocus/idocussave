@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class GoogleDriveSyncService
+class FileDelivery::GoogleDriveSyncService
   attr_reader :client, :session
 
   def initialize(google_doc)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe SendToMcf do
+describe FileDelivery::SendToMcf do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -13,6 +13,7 @@ describe SendToMcf do
     allow(FileUtils).to receive(:delay_for).and_return(FileUtils)
     allow(FileUtils).to receive(:remove_dir).and_return(true)
 
+    customer = FactoryBot.create :user, code: 'IDO%DOC1'
     @leader = FactoryBot.create :user, code: 'IDO%LEAD'
     @organization = create :organization, code: 'IDO'
     @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
@@ -31,11 +32,7 @@ describe SendToMcf do
     @pack.name = 'IDO%0001 AC 201804 all'
     @pack.save
 
-    @document = Document.new
-    @document.pack       = @pack
-    @document.position   = 1
-    @document.origin     = 'upload'
-    @document.is_a_cover = false
+    @document = FactoryBot.create :piece, name: 'IDO%0001 AC 201804 001', position: 1, pack: @pack, organization: @organization, user: customer
     @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
 
     @remote_file              = RemoteFile.new
@@ -48,7 +45,7 @@ describe SendToMcf do
 
   it 'sends a file successfully', :send_files do
     result = VCR.use_cassette('mcf/upload_file') do
-      DeliverFile.to "mcf"
+      FileDelivery::DeliverFile.to "mcf"
     end
 
     expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
@@ -61,18 +58,18 @@ describe SendToMcf do
     @user.update(mcf_storage: "")
 
     result = VCR.use_cassette('mcf/upload_file') do
-      DeliverFile.to "mcf"
+      FileDelivery::DeliverFile.to "mcf"
     end
 
     expect(@remote_file.reload.state).to eq 'cancelled'
   end
 
   context 'a file has already been uploaded', :upload_existing_file do
-    it 'does not update an existing file' do
+    it 'does not update an existing file', :test do
       allow_any_instance_of(Storage::Metafile).to receive(:fingerprint).and_return('97f90eac0d07fe5ade8f60a0fa54cdfc')
 
       result = VCR.use_cassette('mcf/does_not_update_an_existing_file') do
-        DeliverFile.to "mcf"
+        FileDelivery::DeliverFile.to "mcf"
       end
 
       expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
@@ -90,7 +87,7 @@ describe SendToMcf do
         @document.save
 
         result = VCR.use_cassette('mcf/update_a_file') do
-          DeliverFile.to "mcf"
+          FileDelivery::DeliverFile.to "mcf"
         end
 
         expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
@@ -103,12 +100,12 @@ describe SendToMcf do
 
   it 'manages insufficient space error', :handling_space_error do
     message = "{\"CodeError\":507,\"Success\":false,\"StorageLimitReached\":true}"
-    allow_any_instance_of(SendToMcf).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::SendToMcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unknown.new(message))
 
     expect(@mcf.is_delivery_activated).to eq true
 
-    result = SendToMcf.new(@mcf, [@remote_file]).execute
+    result = FileDelivery::SendToMcf.new(@mcf, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@mcf.is_delivery_activated).to eq false
@@ -116,12 +113,12 @@ describe SendToMcf do
   end
 
   it 'manages invalid token error', :handling_invalid_token do
-    allow_any_instance_of(SendToMcf).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::SendToMcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unauthorized)
 
     expect(@mcf).to be_configured
 
-    result = SendToMcf.new(@mcf, [@remote_file], max_retries: 1).execute
+    result = FileDelivery::SendToMcf.new(@mcf, [@remote_file], max_retries: 1).execute
 
     expect(result).to eq false
     expect(@mcf).to_not be_configured
@@ -131,7 +128,7 @@ describe SendToMcf do
   # TEMP: Not used for now
   # it 'cancels the remote sending if no receiver' do
   #   @remote_file.update(organization_id: nil, user_id: nil, group_id: nil)
-  #   DeliverFile.to "mcf"
+  #   FileDelivery::DeliverFile.to "mcf"
 
   #   expect(@remote_file.reload.state).to eq 'cancelled'
   # end

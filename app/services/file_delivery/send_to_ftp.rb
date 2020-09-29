@@ -1,6 +1,6 @@
 require 'net/ftp'
 
-class SendToFTP < SendToStorage
+class FileDelivery::SendToFTP < FileDelivery::SendToStorage
   def execute
     run do
       prepare_dir

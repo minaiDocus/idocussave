@@ -185,7 +185,7 @@ ZohoCrmSynchronizerWorker:
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults
-  class: DeliverFileWorker
+  class: FileDelivery::DeliverFileWorker
   queue: file_delivery
   cron: '*/10 * * * * *'
   args: dbb

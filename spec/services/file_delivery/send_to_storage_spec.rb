@@ -119,14 +119,14 @@ describe SendToStorage do
           metafile.begin
           unless @is_error_raised
             @is_error_raised = true
-            raise SendToStorage::TestError
+            raise FileDelivery::SendToStorage::TestError
           end
           metafile.success
         end
       end
 
       def retryable_failure?(error)
-        error.class == SendToStorage::TestError
+        error.class == FileDelivery::SendToStorage::TestError
       end
     end
 
@@ -151,7 +151,7 @@ describe SendToStorage do
     class SendToOnlineStorage
       def execute
         run do
-          raise SendToStorage::TestError
+          raise FileDelivery::SendToStorage::TestError
         end
       end
 
@@ -160,7 +160,7 @@ describe SendToStorage do
       end
 
       def manageable_failure?(error)
-        error.class == SendToStorage::TestError
+        error.class == FileDelivery::SendToStorage::TestError
       end
 
       def manage_failure(error)
@@ -187,7 +187,7 @@ describe SendToStorage do
     class SendToOnlineStorage
       def execute
         run do
-          raise SendToStorage::TestError
+          raise FileDelivery::SendToStorage::TestError
         end
       end
 
@@ -202,6 +202,6 @@ describe SendToStorage do
 
     expect do
       SendToOnlineStorage.new(DropboxBasic.new, [remote_file]).execute
-    end.to raise_error(SendToStorage::TestError)
+    end.to raise_error(FileDelivery::SendToStorage::TestError)
   end
 end

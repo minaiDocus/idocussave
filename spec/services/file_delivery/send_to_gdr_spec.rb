@@ -62,7 +62,7 @@ describe "SendToGdr" do
     # result = VCR.use_cassette('mcf/upload_file') do
     #   DeliverFile.to "mcf"
     # end
-    DeliverFile.to "gdr"
+    FileDelivery::DeliverFile.to "gdr"
 
     expect(@remote_file.reload.state).to eq 'synced'
   end

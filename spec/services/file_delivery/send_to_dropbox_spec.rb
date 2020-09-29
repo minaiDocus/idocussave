@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SendToDropbox do
+describe FileDelivery::SendToDropbox do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -13,6 +13,8 @@ describe SendToDropbox do
     @user.create_notify
     @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
 
+    organization = create :organization, code: 'IDO'
+
     @dropbox = @user.external_file_storage.dropbox_basic
     @dropbox.access_token = 'K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO'
     @dropbox.save
@@ -23,13 +25,8 @@ describe SendToDropbox do
     pack.name = 'IDO%0001 AC 201701 all'
     pack.save
 
-    @document = Document.new
-    @document.pack           = pack
-    @document.position       = 1
-    @document.content        = File.open Rails.root.join('spec/support/files/2pages.pdf')
-    @document.origin         = 'upload'
-    @document.is_a_cover     = false
-    @document.save
+    @document = FactoryBot.create :piece, pack: pack, organization: organization, user: @user
+    @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
 
     @remote_file              = RemoteFile.new
     @remote_file.receiver     = @user
@@ -41,7 +38,7 @@ describe SendToDropbox do
 
   it 'delivers 1 file successfully' do
     result = VCR.use_cassette('dropbox/upload_file', preserve_exact_body_bytes: true) do
-      SendToDropbox.new(@dropbox, [@remote_file]).execute
+      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
     end
 
     expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -53,11 +50,11 @@ describe SendToDropbox do
   end
 
   it 'uploads a file by chunk' do
-    @document.content = File.open Rails.root.join('spec/support/files/3pages.pdf')
+    @document.clout_content_object.attach(File.open(Rails.root.join('spec/support/files/3pages.pdf'), '3pages.pdf')
     @document.save
 
     result = VCR.use_cassette('dropbox/upload_file_by_chunk', preserve_exact_body_bytes: true) do
-      SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
+      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
     end
 
     expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -79,7 +76,7 @@ describe SendToDropbox do
 
   # NOTE: needs a better implementation of error
   it 'uploads a file by chunk and retry on error' do
-    @document.content = File.open Rails.root.join('spec/support/files/3pages.pdf')
+    @document.clout_content_object.attach(File.open(Rails.root.join('spec/support/files/3pages.pdf'), '3pages.pdf')
     @document.save
 
     is_error_raised = false
@@ -92,10 +89,10 @@ describe SendToDropbox do
       end
     end
 
-    expect_any_instance_of(SendToDropbox).to receive(:up_to_date?).and_return(false, false)
+    expect_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false, false)
 
     result = VCR.use_cassette('dropbox/upload_file_by_chunk_and_retry_on_error', preserve_exact_body_bytes: true) do
-      SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
+      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
     end
 
     expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/start')
@@ -115,7 +112,7 @@ describe SendToDropbox do
   context 'a file has already been uploaded' do
     it 'does not update an existing file' do
       result = VCR.use_cassette('dropbox/does_not_update_an_existing_file', preserve_exact_body_bytes: true) do
-        SendToDropbox.new(@dropbox, [@remote_file]).execute
+        FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
       end
 
       expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -129,11 +126,11 @@ describe SendToDropbox do
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
 
-        @document.content = File.open file_path
+        @document.clout_content_object.attach(File.open(file_path), '3pages.pdf')
         @document.save
 
         result = VCR.use_cassette('dropbox/update_a_file', preserve_exact_body_bytes: true) do
-          SendToDropbox.new(@dropbox, [@remote_file]).execute
+          FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
         end
 
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -147,12 +144,12 @@ describe SendToDropbox do
   end
 
   it 'manages insufficient space error' do
-    allow_any_instance_of(SendToDropbox).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(DropboxApi::Client).to receive(:upload).and_raise(DropboxApi::Errors::UploadWriteFailedError.new('path/insufficient_space', nil))
 
     expect(@dropbox).to be_used
 
-    result = SendToDropbox.new(@dropbox, [@remote_file]).execute
+    result = FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@dropbox).to_not be_used
@@ -160,12 +157,12 @@ describe SendToDropbox do
   end
 
   it 'manages invalid token error' do
-    allow_any_instance_of(SendToDropbox).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(DropboxApi::Client).to receive(:upload).and_raise(DropboxApi::Errors::HttpError.new("HTTP 401: {\"error_summary\": \"invalid_access_token/..\", \"error\": {\".tag\": \"invalid_access_token\"}}"))
 
     expect(@dropbox).to be_configured
 
-    result = SendToDropbox.new(@dropbox, [@remote_file]).execute
+    result = FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@dropbox).to_not be_configured

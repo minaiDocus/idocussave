@@ -69,7 +69,7 @@ module FileDelivery::RemoteFile
     mcf_passed = (service_name == 'My Company Files' && user.mcf_storage.nil?) ? false : true
 
     if remote_file.nil? && mcf_passed
-      remote_file              = ::RemoteFile.new
+      remote_file              = RemoteFile.new
       remote_file.receiver     = object
       remote_file.pack         = self.is_a?(Pack) ? self : pack #remote file can be document or pack itself
       remote_file.service_name = service_name

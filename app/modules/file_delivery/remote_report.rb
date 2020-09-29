@@ -4,7 +4,7 @@ module FileDelivery::RemoteReport
       not_delivered = not_delivered_preseizures(receiver, service_name, force)
 
       if not_delivered.present?
-        remote_file = ::RemoteFile.new
+        remote_file = RemoteFile.new
 
         remote_file.receiver     = receiver
         remote_file.remotable    = self

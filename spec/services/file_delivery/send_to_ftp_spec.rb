@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'ftpd'
 
-describe SendToFTP do
+describe 'SendToFTP' do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -34,9 +34,16 @@ describe SendToFTP do
       Timecop.return
     end
 
-    describe 'given 3 remote files to deliver for a user' do
+    describe 'given 3 remote files to deliver for a user', :first_test do
       before(:each) do
+        allow(Settings).to receive(:first).and_return(FakeObject.new)
+        allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
+        allow_any_instance_of(FakeObject).to receive(:notify_errors_to).and_return('mina@idocus.com')
+
+        organization = FactoryBot.create :organization, code: 'IDO'
+
         @user = FactoryBot.create :user, code: 'IDO%0001'
+        @user.organization = organization
         @user.create_options
         @user.create_notify
         @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
@@ -48,18 +55,20 @@ describe SendToFTP do
         @ftp.enable
 
         @pack = Pack.new
+        @pack.organization = organization
         @pack.owner = @user
-        @pack.name = 'IDO%0001 AC 201701 all'
+        @pack.name  = 'IDO%0001 AC 201701 all'
         @pack.save
 
         @remote_files = ['2pages.pdf', '3pages.pdf', '5pages.pdf'].map do |file_name|
-          document = Document.new
+          document            = Pack::Piece.new
+          document.name       = "IDO%0001 AC 201701 001"
           document.pack       = @pack
+          document.user       = @user
           document.position   = 1
-          document.content    = File.open Rails.root.join('spec/support/files/' + file_name)
           document.origin     = 'upload'
           document.is_a_cover = false
-          document.save
+          document.cloud_content_object.attach(File.open(Rails.root.join("spec/support/files/#{file_name}")), file_name) if document.save
 
           remote_file              = RemoteFile.new
           remote_file.receiver     = @user
@@ -78,7 +87,7 @@ describe SendToFTP do
           server.start
           @ftp.update port: server.bound_port
 
-          SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
           expect(@ftp.configured?).to eq false
           expect(@user.notifications.size).to eq 1
@@ -95,7 +104,7 @@ describe SendToFTP do
           server.start
           @ftp.update port: server.bound_port
 
-          SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
           files = Dir.glob("#{temp_dir}/files/iDocus/IDO%0001/201701/AC/*.pdf").sort.map do |path|
             File.basename path
@@ -110,6 +119,11 @@ describe SendToFTP do
 
     describe 'given 3 remote files to deliver for an organization' do
       before(:each) do
+        allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
+
+        @root_path = '/path/to/folder'
+        @ftp.update root_path: @root_path
+
         @organization = FactoryBot.create :organization, code: 'IDO'
         @user = FactoryBot.create :user, code: 'IDO%0001'
         @user.organization = @organization
@@ -123,17 +137,20 @@ describe SendToFTP do
 
         @pack = Pack.new
         @pack.owner = @user
+        @pack.organization = @organization
         @pack.name = 'IDO%0001 AC 201701 all'
         @pack.save
 
         @remote_files = ['2pages.pdf', '3pages.pdf', '5pages.pdf'].map do |file_name|
-          document = Document.new
+          document            = Pack::Piece.new
+          document.name       = "IDO%0001 AC 201701 001"
           document.pack       = @pack
+          document.user       = @user
           document.position   = 1
-          document.content    = File.open Rails.root.join('spec/support/files/' + file_name)
           document.origin     = 'upload'
           document.is_a_cover = false
-          document.save
+          document.cloud_content_object.attach(File.open(Rails.root.join("spec/support/files/#{file_name}")), file_name) if document.save
+
 
           remote_file              = RemoteFile.new
           remote_file.receiver     = @organization
@@ -145,29 +162,22 @@ describe SendToFTP do
         end
       end
 
-      describe 'given "/path/to/folder" as root path' do
-        before(:each) do
-          @root_path = '/path/to/folder'
-          @ftp.update root_path: @root_path
-        end
+      it 'sends 3 files successfully' do
+        Dir.mktmpdir do |temp_dir|
+          driver = Driver.new temp_dir
+          server = Ftpd::FtpServer.new driver
+          server.start
+          @ftp.update port: server.bound_port
 
-        it 'sends 3 files successfully' do
-          Dir.mktmpdir do |temp_dir|
-            driver = Driver.new temp_dir
-            server = Ftpd::FtpServer.new driver
-            server.start
-            @ftp.update port: server.bound_port
+          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-            SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
-
-            files = Dir.glob(File.join(temp_dir, @root_path, "OUTPUT/IDO%0001/201701/AC/*.pdf")).sort.map do |path|
-              File.basename path
-            end
-
-            expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
-
-            server.stop
+          files = Dir.glob(File.join(temp_dir, @root_path, "OUTPUT/IDO%0001/201701/AC/*.pdf")).sort.map do |path|
+            File.basename path
           end
+
+          expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
+
+          server.stop
         end
       end
     end

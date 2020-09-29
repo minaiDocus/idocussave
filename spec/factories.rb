@@ -115,10 +115,6 @@ FactoryBot.define do
       origin { "upload" }
       sequence(:position) {|n| n + 1 }
       content_file_name { "test.pdf" }
-      content_content_type { "application/pdf" }
-      content_file_size { 33928 }
-      content_updated_at { Time.now }
-      content_fingerprint { "0ac66f058d5eaddbe233670cf214780b" }
       user_id { 1 }
       pack_id { 1 }
       organization_id { 1 }

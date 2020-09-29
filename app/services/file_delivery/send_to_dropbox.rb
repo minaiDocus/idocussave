@@ -1,5 +1,5 @@
 # Used to send multiple files from a pack to Dropbox, for basic and extended, using Dropbox API v2
-class SendToDropbox < SendToStorage
+class FileDelivery::SendToDropbox < FileDelivery::SendToStorage
   def execute
     run do
       if metafile.size < @options[:chunk_size]
