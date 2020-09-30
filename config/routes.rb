@@ -611,6 +611,12 @@ Rails.application.routes.draw do
           post 'bundled', on: :collection
         end
 
+        resources :send_piece_to_preassignment do
+          get 'get_lists', on: :collection
+          get 'download_piece', on: :collection
+          post 'post_data', on: :collection
+        end
+
         resources :mapping_generator do
           get 'get_xml', on: :collection, defaults: {format: 'xml'}
           get 'get_csv', on: :collection, defaults: {format: 'text'}

@@ -1,22 +1,36 @@
 # frozen_string_literal: true
 
 class Api::Sgi::V1::SendPieceToPreassignmentController < SgiApiController
-  @lists_pieces = []
-
   def get_lists
+    @lists_pieces = []
+
     Pack::Piece.need_preassignment.each do |piece|
       temp_pack = TempPack.find_by_name piece.pack.name
 
-      add_to_list_and_update_state_of piece if temp_pack.is_pre_assignment_needed? && !piece.is_a_cover 
+      add_to_list_and_update_state_of piece if temp_pack.is_pre_assignment_needed? && !piece.is_a_cover
     end
 
-    render json: { list_url: @lists_pieces.to_json }, status: 200
+    render json: { success: true, list_url: @lists_pieces }, status: 200
   end
 
-  def post_data(preassignments)
+  def download_piece
+    if params[:piece_id].present?
+      piece = Pack::Piece.find params[:piece_id]
+
+      render json: { success: true, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url) }, status: 200
+    else
+      render json: { success: true, message: 'Id pièce absent' }, status: 200
+    end
+  end
+
+  def post_data
     #TODO: Sidekiq
-    preassignments.each do |preassignment|
-      SgiApiServices::RetrievePreAsignmentService.new(preassignment).execute
+    if params[:data_preassignments].present?
+      list_ids_piece_update = SgiApiServices::RetrievePreAsignmentService.new(params[:data_preassignments]).execute
+
+      render json: { success: true, list_ids_piece_update: list_ids_piece_update  }, status: 200
+    else
+      render json: { success: true, message: 'Data absent' }, status: 200
     end
   end
 
