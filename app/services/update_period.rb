@@ -21,7 +21,7 @@ class UpdatePeriod
         @period.set_current_packages(@options.try(:[], :renew_packages))
       end
 
-      freezed_options = @period.product_option_orders.is_frozen.to_a
+      freezed_options = @period.product_option_orders.is_frozen.map{|opt| opt.dup}
       @period.product_option_orders.destroy_all
       @period.product_option_orders = options + freezed_options
 
@@ -87,7 +87,7 @@ class UpdatePeriod
         selected_options << option
 
         selected_options << micro_remaining_months_option if package == :ido_micro && micro_remaining_months_option.present?
-        selected_options << mini_remaining_months_option  if package == :ido_mini && mini_remaining_months_option.present?
+        #selected_options << mini_remaining_months_option  if package == :ido_mini && mini_remaining_months_option.present?
       end
 
       @period.get_active_options.each do |_p_option|
