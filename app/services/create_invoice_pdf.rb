@@ -59,12 +59,6 @@ class CreateInvoicePdf
 
       return false if customers_periods.empty? && organization_period.price_in_cents_wo_vat == 0
 
-      #Merge invoice of extentis group to FIDC
-      merge_extentis_invoice(time) if organization.code == 'FIDC'
-
-      #We dont generate EG, FIDC , FBC's invoices
-      return false if extentis_group.include? organization.code
-
       puts "Generating invoice for organization : #{organization.name}"
       invoice.period       = organization_period
       invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
@@ -83,53 +77,7 @@ class CreateInvoicePdf
       #  notification.save
       #end
 
-      # InvoiceMailer.delay(queue: :high).notify(invoice)
-    end
-
-    def merge_extentis_invoice(time)
-      fidec = Organization.find_by_code 'FIDC'
-      fidec_period = fidec.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
-      orders = fidec_period.product_option_orders
-
-      extentis_group.each do |code|
-        organization = Organization.find_by_code code
-        customer_ids = organization.customers.active_at(time.to_date).map(&:id)
-        periods = Period.where(user_id: customer_ids).where("start_date <= ? AND end_date >= ?", time.to_date, time.to_date)
-
-        total_amount = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
-
-        options = begin
-                    organization.subscription.periods.select { |period| period.start_date <= time && period.end_date >= time }
-                                .first
-                                .product_option_orders
-                                .by_position
-                  rescue
-                    []
-                  end
-
-        options.each do |option|
-          total_amount += option.price_in_cents_wo_vat
-        end
-
-        orders << create_fidc_order_of(organization, total_amount)
-      end
-
-      fidec_period.product_option_orders = orders.compact if fidec_period
-    end
-
-    def create_fidc_order_of(organization, price)
-      return nil unless organization.present?
-
-      option = ProductOptionOrder.new
-
-      option.title       = "#{organization.name}"
-      option.name        = 'extra_option'
-      option.duration    = 1
-      option.group_title = 'Autres'
-      option.is_an_extra = true
-      option.price_in_cents_wo_vat = price
-
-      option
+      InvoiceMailer.delay(queue: :high).notify(invoice)
     end
 
     def archive_invoice(time = Time.now)
@@ -149,10 +97,6 @@ class CreateInvoicePdf
         _archive_invoice.cloud_content_object.attach(File.open(archive_path), archive_name) if _archive_invoice.save
       end
     end
-
-    def extentis_group
-      ['FBC', 'FIDA', 'EG']
-    end
   end
 
   def initialize(invoice, time=nil)
@@ -168,7 +112,7 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    # auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
+    auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
   def initialize_data_utilities
@@ -276,24 +220,20 @@ class CreateInvoicePdf
               end
 
     options.each do |option|
-      #Exclude EG, FBC, FIDA extra options of fidec from data
-      normal_fidec_orders = @invoice.organization.code == 'FIDC' && !option.title.match(/FB CONSEIL/i) && !option.title.match(/FIDALEX/i) && !option.title.match(/EGIDE/)
       @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"] if @invoice.organization.code != 'FIDC' || normal_fidec_orders
 
-      @total += option.price_in_cents_wo_vat unless CreateInvoicePdf.extentis_group.include? @invoice.organization.code
+      @total += option.price_in_cents_wo_vat
     end
 
     @address = @invoice.organization.addresses.for_billing.first
 
-    @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round unless CreateInvoicePdf.extentis_group.include? @invoice.organization.code
+    @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round
   end
 
-  # TEMP : TO PUT BACK A PRIVATE METHOD
+  private
+
   def auto_upload_last_invoice
     begin
-      #We dont send extentis group invoices to ACC%IDO except FIDC, cause FIDC is a merge of the 4 invoices
-      return false if CreateInvoicePdf.extentis_group.include? @invoice.organization.code
-
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
 
       file = File.new @invoice.cloud_content_object.path
@@ -309,18 +249,15 @@ class CreateInvoicePdf
     end
   end
 
-  private
-
   def make_invoice_pdf
     @pdf.destroy if @pdf
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{@invoice.number}.pdf" do |pdf|
       @pdf = pdf
-      with_extentis = @invoice.organization.code == 'FIDC'
 
       make_header
 
-      make_body(@invoice.organization.name, with_extentis)
+      make_body(@invoice.organization.name)
 
       make_footer
 
@@ -379,10 +316,9 @@ class CreateInvoicePdf
     @pdf.text "<b>Période concernée :</b> " + @previous_month + ' ' + @year.to_s, align: :left, inline_format: true
   end
 
-  def make_body(organization_name, with_extentis=false)
+  def make_body(organization_name)
     @pdf.move_down 30
     data = [['<b>Forfaits & Prestations</b>', '<b>Prix HT</b>']]
-    data += [["<b><i>#{organization_name}</i></b>", '']] if with_extentis
     data +=  @data
     data += [['', '']]
 
@@ -393,8 +329,6 @@ class CreateInvoicePdf
       style(columns(2), align: :right)
       style(columns(1), align: :right)
     end
-
-    append_extentis_additionnal_details if with_extentis
   end
 
   def make_footer
@@ -446,33 +380,6 @@ class CreateInvoicePdf
 
     @pdf.move_down 7
     @pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
-  end
-
-  def append_extentis_additionnal_details
-    time = 1.month.ago.beginning_of_month + 15.days
-
-    CreateInvoicePdf.extentis_group.each do |code|
-      organization        = Organization.find_by_code code
-      organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
-
-      invoice              = FakeObject.new
-      invoice.created_at   = Time.now
-      invoice.organization = organization
-      invoice.period       = organization_period
-      invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
-
-      data_extentis  = CreateInvoicePdf.new(invoice)
-      data_extentis.initialize_data_utilities
-
-      data = [["<b><i>#{organization.name}</i></b>", '']] + data_extentis.data + [['', '']]
-
-      @pdf.table(data, width: 540, cell_style: { inline_format: true }) do
-        style(row(0..-1), borders: [], text_color: '49442A')
-        style(row(-1), borders: [:bottom])
-        style(columns(2), align: :right)
-        style(columns(1), align: :right)
-      end
-    end
   end
 
   def auto_upload_invoice_setting(file, content_file_name)
