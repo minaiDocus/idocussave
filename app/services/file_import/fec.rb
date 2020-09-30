@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ImportFecService
+class FileImport::Fec
   def initialize(file_path)
     @file_path = file_path
   end

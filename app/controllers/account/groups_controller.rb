@@ -25,7 +25,7 @@ class Account::GroupsController < Account::OrganizationController
     @group = @organization.groups.new safe_group_params
 
     if @group.save
-      DropboxImport.changed(@group.collaborators)
+      FileImport::Dropbox.changed(@group.collaborators)
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_groups_path(@organization)
     else
@@ -42,7 +42,7 @@ class Account::GroupsController < Account::OrganizationController
 
     if @group.update(safe_group_params)
       collaborators = (@group.collaborators + previous_collaborators).uniq
-      DropboxImport.changed(collaborators)
+      FileImport::Dropbox.changed(collaborators)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_groups_path(@organization)
     else
@@ -53,7 +53,7 @@ class Account::GroupsController < Account::OrganizationController
   # DELETE /account/organizations/:organization_id/groups/:id
   def destroy
     @group.destroy
-    DropboxImport.changed(@group.collaborators)
+    FileImport::Dropbox.changed(@group.collaborators)
     flash[:success] = 'Supprimé avec succès.'
     redirect_to account_organization_groups_path(@organization)
   end

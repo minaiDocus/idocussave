@@ -1,4 +1,4 @@
-class ImportFromIbizaboxWorker
+class FileImport::IbizaboxWorker
   include Sidekiq::Worker
   sidekiq_options queue: :file_import, retry: false
 
@@ -6,7 +6,7 @@ class ImportFromIbizaboxWorker
     user = User.find user_id
     UniqueJobs.for("ImportFromIbizabox-#{user.id}") do
       user.ibizabox_folders.ready.each do |folder|
-        IbizaboxImport.execute(folder)
+        FileImport::Ibizabox.execute(folder)
       end
     end
   end

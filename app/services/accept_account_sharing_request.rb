@@ -7,7 +7,7 @@ class AcceptAccountSharingRequest
     @account_sharing.is_approved = true
     @account_sharing.save
 
-    DropboxImport.changed([@account_sharing.collaborator])
+    FileImport::Dropbox.changed([@account_sharing.collaborator])
 
     url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
 

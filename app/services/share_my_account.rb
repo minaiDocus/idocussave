@@ -14,7 +14,7 @@ class ShareMyAccount
       @account_sharing.authorized_by = @authorized_by
       @account_sharing.is_approved   = true
       if @account_sharing.save
-        DropboxImport.changed([@account_sharing.collaborator])
+        FileImport::Dropbox.changed([@account_sharing.collaborator])
 
         Notifications::Notifier.new.create_notification({
           url: Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options)),

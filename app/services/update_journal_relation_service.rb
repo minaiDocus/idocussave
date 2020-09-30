@@ -5,7 +5,7 @@ class UpdateJournalRelationService
   end
 
   def execute
-    IbizaboxImport.update_folders(@journal.user)
+    FileImport::Ibizabox::Import.update_folders(@journal.user)
     if @journal.destroyed?
       @journal.retrievers.update_all(journal_id: nil)
     else

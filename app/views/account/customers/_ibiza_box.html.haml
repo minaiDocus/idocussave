@@ -15,7 +15,7 @@
       %th Statut
       %th Actions
   %tbody.retractable.slidedown
-    - ibiza_journals = IbizaboxImport.get_accessible_journals(@customer)
+    - ibiza_journals = FileImport::Ibizabox::Import.get_accessible_journals(@customer)
     - @customer.ibizabox_folders.includes(:journal).each do |folder|
       - journal = folder.journal
       %tr
@@ -25,7 +25,7 @@
             %i
               %strong (Journal inexistant ou inaccessible depuis la ged ibiza)
         %td= journal.use_pseudonym_for_import ? journal.pseudonym : journal.name
-        %td= IbizaboxImport.new(folder).accessible_ibiza_periods.join(" - ")
+        %td= FileImport::Ibizabox::Import.new(folder).accessible_ibiza_periods.join(" - ")
         %td= ibizabox_folder_state(folder)
         %td
           - if ibiza_journal_accessible?(folder, ibiza_journals)

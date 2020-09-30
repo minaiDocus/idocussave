@@ -14,7 +14,7 @@ class ShareAccount
     authorized = false unless @account_sharing.collaborator && (@account_sharing.collaborator.is_guest || @account_sharing.collaborator.in?(@requester.customers))
     authorized = false unless @account_sharing.account && @account_sharing.account.in?(@requester.customers)
     if authorized && @account_sharing.save
-      DropboxImport.changed([@account_sharing.collaborator])
+      FileImport::Dropbox::Import.changed([@account_sharing.collaborator])
 
       url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
 

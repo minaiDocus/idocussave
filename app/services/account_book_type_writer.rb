@@ -22,7 +22,7 @@ class AccountBookTypeWriter
 
       @owner.dematbox.subscribe if @owner.dematbox.try(:is_configured)
 
-      DropboxImport.changed(@owner)
+      FileImport::Dropbox.changed(@owner)
     end
 
     @journal
@@ -44,7 +44,7 @@ class AccountBookTypeWriter
         customer.dematbox.subscribe
       end
 
-      DropboxImport.changed(customer)
+      FileImport::Dropbox.changed(customer)
     end
 
     @journal
@@ -61,7 +61,7 @@ class AccountBookTypeWriter
 
       customer.dematbox.subscribe if customer.dematbox.try(:is_configured)
 
-      DropboxImport.changed(customer)
+      FileImport::Dropbox.changed(customer)
     end
   end
 end

@@ -24,12 +24,12 @@ class UpdateCustomerService
       end
 
       # Regenerate dropbox mapping to keep link with other users
-      DropboxImport.changed(@customer) if @customer.company_changed?
+      FileImport::Dropbox.changed(@customer) if @customer.company_changed?
 
       # Regenerate dropbox mapping to keep link with other users in case of group change
       if previous_group_ids.sort != @customer.group_ids.sort
         groups = Group.find (previous_group_ids + @customer.group_ids)
-        DropboxImport.changed(groups.flat_map(&:collaborators))
+        FileImport::Dropbox.changed(groups.flat_map(&:collaborators))
       end
     end
 

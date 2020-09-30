@@ -71,7 +71,7 @@ private
     unless @customer.options.is_preassignment_authorized
       @customer.options.update_attribute(:is_preassignment_authorized, true)
       AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
-      DropboxImport.changed(@customer)
+      FileImport::Dropbox.changed(@customer)
     end
   end
 

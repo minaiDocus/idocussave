@@ -5,12 +5,12 @@ http_interactions:
     uri: https://api.dropboxapi.com/2/files/list_folder/continue
     body:
       encoding: UTF-8
-      string: '{"cursor":"AAHuDBnQ43SLoVF1tHaTZFX-BAP6ehQyXrd7c6fLyz8_zGt2EsGZBHLfEMOWakddGquh1eZLtLF-mgAsWOVLcl3bT_aqRiBTCyWBHMcmWLgvFMHTTn2CIyl8hdOy3PE_x_xhRirH0Y3PsuAOfJhMVJM9iJulqrNR9uC6cBrLUp2pU8r2EO7fXyoYcOFOaz4117I"}'
+      string: '{"cursor":"AAGHorvqbn5732RU2CX9vD2vlIBHo--yqnTrT7aePCT0ioyAMfDOp02vn1FK1f3Duvun8QTCVTKnQ8jkWz674vsRGFWZmjfGL0ibYPHrKvsK8XNV4llsPt230EHl2vODBVk6ybGtcLxlT-fETh_bVF0YnueeM5MNyS54CMlJOxUUGjTMJTgKB9Xm47Vd-5siYlAa7qBIoGijEJyKaWFpfvktECxe5ePceh_JOYw_QSxu3OoEOf7QuS9KrZey1n5QNTE"}'
     headers:
       Authorization:
-      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      - Bearer d_8hw4XA240AAAAAAAAAAbdOcCNXL3qwaOp05judYxFkgJBjoRxIwBlDVCbOW3m2
       User-Agent:
-      - Faraday v0.9.2
+      - Faraday v1.0.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -25,7 +25,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Wed, 10 May 2017 13:56:41 GMT
+      - Mon, 12 Oct 2020 06:15:55 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -40,79 +40,302 @@ http_interactions:
       - no-cache
       X-Content-Type-Options:
       - nosniff
-      X-Dropbox-Http-Protocol:
-      - None
       X-Dropbox-Request-Id:
-      - 2d16f2b446015693e443c7189122f3a2
+      - b15bd8ac16288188250519ee05484333
       X-Frame-Options:
       - SAMEORIGIN
       X-Server-Response-Time:
-      - '169'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"entries": [{".tag": "deleted", "name": "2pages.pdf", "path_lower":
-        "/exportation vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/2pages.pdf",
-        "path_display": "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode
-        actuelle/AC/2pages.pdf"}],
-        "cursor": "AAFMxB16PCTlIIMB7-YQ0lef5ZMPYf5AdL_BuVAEWnaEYxyMl4QOUOMZeo09FmTsnw9N69LW0reEqPCxGDMlvRKkC-3LjZI-FLrInuAL_BmVQ59HKIWSG8HNHd9gpHuodrkT8ocFy1ZrCNKv33gjmQz-6GQ3dZzZKQTwAa_UvgCq1Apd8ilPmuhiWGpU5peXAQg",
-        "has_more": true}'
-    http_version: 
-  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
-- request:
-    method: post
-    uri: https://api.dropboxapi.com/2/files/list_folder/continue
+      - '361'
+      X-Envoy-Upstream-Service-Time:
+      - '366'
     body:
       encoding: UTF-8
-      string: '{"cursor":"AAFMxB16PCTlIIMB7-YQ0lef5ZMPYf5AdL_BuVAEWnaEYxyMl4QOUOMZeo09FmTsnw9N69LW0reEqPCxGDMlvRKkC-3LjZI-FLrInuAL_BmVQ59HKIWSG8HNHd9gpHuodrkT8ocFy1ZrCNKv33gjmQz-6GQ3dZzZKQTwAa_UvgCq1Apd8ilPmuhiWGpU5peXAQg"}'
-    headers:
-      Authorization:
-      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
-      User-Agent:
-      - Faraday v0.9.2
-      Content-Type:
-      - application/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - nginx
-      Date:
-      - Wed, 10 May 2017 19:51:33 GMT
-      Content-Type:
-      - application/json
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - keep-alive
-      Vary:
-      - Accept-Encoding
-      Cache-Control:
-      - no-cache
-      Pragma:
-      - no-cache
-      X-Content-Type-Options:
-      - nosniff
-      X-Dropbox-Http-Protocol:
-      - None
-      X-Dropbox-Request-Id:
-      - 87ff101a732d8a9263b0ec64aacb9442
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Server-Response-Time:
-      - '177'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"entries": [{".tag": "deleted", "name": "3pages.pdf", "path_lower":
-        "/exportation vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/3pages.pdf",
-        "path_display": "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode
-        actuelle/AC/3pages.pdf"}],
-        "cursor": "AAFeVq99ipMnuvVTcNS7_M5vHAmtvDE0RvvT9kPOvQVHOv5VDUaP1evskfuIC9BEO2PBGW-7c5T_3wwgyzKdww0nspvUWz6LI8G-myyUojkVp_TvYb-PJ5LfKf9ioItpz9wMPeQupbowctZAVBrtFsqqFoUZrDXw5SrrDhvpg3g4GzHVlAGVMdl4U7ZACSV3eUM",
+      string: '{"entries": [{".tag": "folder", "name": "IDOC%COL1", "path_lower":
+        "/exportation vers idocus/idoc%col1", "path_display": "/exportation vers iDocus/IDOC%COL1",
+        "id": "id:tG5yQJWo2vAAAAAAAAAM4Q"}, {".tag": "deleted", "name": "test (fichier
+        d\u00e9j\u00e0 import\u00e9 sur iDocus).pdf", "path_lower": "/exportation
+        vers idocus/idoc%001 - test/p\u00e9riode actuelle/ac/test (fichier d\u00e9j\u00e0
+        import\u00e9 sur idocus).pdf", "path_display": "/exportation vers iDocus/IDOC%001
+        - Test/p\u00e9riode actuelle/AC/test (fichier d\u00e9j\u00e0 import\u00e9
+        sur iDocus).pdf"}, {".tag": "deleted", "name": "test.pdf", "path_lower": "/exportation
+        vers idocus/idoc%001 - test/p\u00e9riode actuelle/ac/test.pdf", "path_display":
+        "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/AC/test.pdf"},
+        {".tag": "deleted", "name": "corrupted.pdf", "path_lower": "/exportation vers
+        idocus/idoc%001 - test/p\u00e9riode actuelle/ac/corrupted.pdf", "path_display":
+        "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/AC/corrupted.pdf"},
+        {".tag": "deleted", "name": "corrupted (fichier corrompu ou prot\u00e9g\u00e9
+        par mdp).pdf", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/ac/corrupted (fichier corrompu ou prot\u00e9g\u00e9 par mdp).pdf",
+        "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/AC/corrupted
+        (fichier corrompu ou prot\u00e9g\u00e9 par mdp).pdf"}, {".tag": "deleted",
+        "name": "BQ", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/bq", "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode
+        actuelle/BQ"}, {".tag": "deleted", "name": "BQ", "path_lower": "/exportation
+        vers idocus/idoc%001 - test/p\u00e9riode pr\u00e9c\u00e9dente/bq", "path_display":
+        "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode pr\u00e9c\u00e9dente/BQ"},
+        {".tag": "folder", "name": "BQ1", "path_lower": "/exportation vers idocus/idoc%001
+        - test/p\u00e9riode actuelle/bq1", "path_display": "/exportation vers iDocus/IDOC%001
+        - Test/p\u00e9riode actuelle/BQ1", "id": "id:tG5yQJWo2vAAAAAAAAAM_Q"}, {".tag":
+        "folder", "name": "BQ1", "path_lower": "/exportation vers idocus/idoc%001
+        - test/p\u00e9riode pr\u00e9c\u00e9dente/bq1", "path_display": "/exportation
+        vers iDocus/IDOC%001 - Test/p\u00e9riode pr\u00e9c\u00e9dente/BQ1", "id":
+        "id:tG5yQJWo2vAAAAAAAAAM_g"}, {".tag": "deleted", "name": "2pages.pdf", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode actuelle/ac/2pages.pdf",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode
+        actuelle/AC/2pages.pdf"}, {".tag": "deleted", "name": "corrupted.pdf", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%001 - abc/p\u00e9riode actuelle/ac/corrupted.pdf",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode
+        actuelle/AC/corrupted.pdf"}, {".tag": "deleted", "name": "corrupted (fichier
+        corrompu ou prot\u00e9g\u00e9 par mdp).pdf", "path_lower": "/exportation vers
+        idocus/idoc%col1/idoc%001 - abc/p\u00e9riode actuelle/ac/corrupted (fichier
+        corrompu ou prot\u00e9g\u00e9 par mdp).pdf", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode actuelle/AC/corrupted (fichier
+        corrompu ou prot\u00e9g\u00e9 par mdp).pdf"}, {".tag": "deleted", "name":
+        "AC", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client2 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente/ac", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2
+        - idocus/p\u00e9riode pr\u00e9c\u00e9dente/AC"}, {".tag": "deleted", "name":
+        "NDF", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client2 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente/ndf", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2
+        - idocus/p\u00e9riode pr\u00e9c\u00e9dente/NDF"}, {".tag": "deleted", "name":
+        "p\u00e9riode pr\u00e9c\u00e9dente", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client2
+        - idocus/p\u00e9riode pr\u00e9c\u00e9dente", "path_display": "/exportation
+        vers iDocus/IDOC%JEAN/IDOC%CLIENT2 - idocus/p\u00e9riode pr\u00e9c\u00e9dente"},
+        {".tag": "deleted", "name": "NDF", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client2
+        - idocus/p\u00e9riode actuelle/ndf", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2
+        - idocus/p\u00e9riode actuelle/NDF"}, {".tag": "deleted", "name": "AC", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client2 - idocus/p\u00e9riode actuelle/ac",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2 - idocus/p\u00e9riode
+        actuelle/AC"}, {".tag": "deleted", "name": "p\u00e9riode actuelle", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client2 - idocus/p\u00e9riode actuelle",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2 - idocus/p\u00e9riode
+        actuelle"}, {".tag": "deleted", "name": "IDOC%CLIENT2 - idocus", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client2 - idocus", "path_display":
+        "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT2 - idocus"}, {".tag": "deleted",
+        "name": "AC", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client3
+        - idocus/p\u00e9riode actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3
+        - idocus/p\u00e9riode actuelle/AC"}, {".tag": "deleted", "name": "NDF", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client3 - idocus/p\u00e9riode actuelle/ndf",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3 - idocus/p\u00e9riode
+        actuelle/NDF"}, {".tag": "deleted", "name": "p\u00e9riode actuelle", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client3 - idocus/p\u00e9riode actuelle",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3 - idocus/p\u00e9riode
+        actuelle"}, {".tag": "deleted", "name": "NDF", "path_lower": "/exportation
+        vers idocus/idoc%jean/idoc%client3 - idocus/p\u00e9riode pr\u00e9c\u00e9dente/ndf",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente/NDF"}, {".tag": "deleted", "name": "AC", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client3 - idocus/p\u00e9riode pr\u00e9c\u00e9dente/ac",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente/AC"}, {".tag": "deleted", "name": "p\u00e9riode pr\u00e9c\u00e9dente",
+        "path_lower": "/exportation vers idocus/idoc%jean/idoc%client3 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3
+        - idocus/p\u00e9riode pr\u00e9c\u00e9dente"}, {".tag": "deleted", "name":
+        "IDOC%CLIENT3 - idocus", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client3
+        - idocus", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT3
+        - idocus"}, {".tag": "folder", "name": "IDOC%002 - DDD", "path_lower": "/exportation
+        vers idocus/idoc%col1/idoc%002 - ddd", "path_display": "/exportation vers
+        iDocus/IDOC%COL1/IDOC%002 - DDD", "id": "id:tG5yQJWo2vAAAAAAAAANIw"}, {".tag":
+        "folder", "name": "p\u00e9riode actuelle", "path_lower": "/exportation vers
+        idocus/idoc%col1/idoc%002 - ddd/p\u00e9riode actuelle", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%002 - DDD/p\u00e9riode actuelle", "id": "id:tG5yQJWo2vAAAAAAAAANJA"},
+        {".tag": "folder", "name": "p\u00e9riode pr\u00e9c\u00e9dente", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - ddd/p\u00e9riode pr\u00e9c\u00e9dente",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DDD/p\u00e9riode
+        pr\u00e9c\u00e9dente", "id": "id:tG5yQJWo2vAAAAAAAAANJw"}, {".tag": "folder",
+        "name": "IDOC%CLIENT10 - idocus", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client10
+        - idocus", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10
+        - idocus", "id": "id:tG5yQJWo2vAAAAAAAAANKg"}, {".tag": "folder", "name":
+        "p\u00e9riode actuelle", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client10
+        - idocus/p\u00e9riode actuelle", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10
+        - idocus/p\u00e9riode actuelle", "id": "id:tG5yQJWo2vAAAAAAAAANKw"}, {".tag":
+        "folder", "name": "AC", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client10
+        - idocus/p\u00e9riode actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10
+        - idocus/p\u00e9riode actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAANKQ"}, {".tag":
+        "folder", "name": "NDF", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client10
+        - idocus/p\u00e9riode actuelle/ndf", "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10
+        - idocus/p\u00e9riode actuelle/NDF", "id": "id:tG5yQJWo2vAAAAAAAAANLA"}, {".tag":
+        "folder", "name": "p\u00e9riode pr\u00e9c\u00e9dente", "path_lower": "/exportation
+        vers idocus/idoc%jean/idoc%client10 - idocus/p\u00e9riode pr\u00e9c\u00e9dente",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente", "id": "id:tG5yQJWo2vAAAAAAAAANLg"}, {".tag": "folder",
+        "name": "AC", "path_lower": "/exportation vers idocus/idoc%jean/idoc%client10
+        - idocus/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%JEAN/IDOC%CLIENT10 - idocus/p\u00e9riode pr\u00e9c\u00e9dente/AC",
+        "id": "id:tG5yQJWo2vAAAAAAAAANLQ"}, {".tag": "folder", "name": "NDF", "path_lower":
+        "/exportation vers idocus/idoc%jean/idoc%client10 - idocus/p\u00e9riode pr\u00e9c\u00e9dente/ndf",
+        "path_display": "/exportation vers iDocus/IDOC%JEAN/IDOC%CLIENT10 - idocus/p\u00e9riode
+        pr\u00e9c\u00e9dente/NDF", "id": "id:tG5yQJWo2vAAAAAAAAANLw"}, {".tag": "deleted",
+        "name": "corrupted (fichier corrompu ou prot\u00e9g\u00e9 par mdp) (1).pdf",
+        "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode actuelle/vt/corrupted
+        (fichier corrompu ou prot\u00e9g\u00e9 par mdp) (1).pdf", "path_display":
+        "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/VT/corrupted
+        (fichier corrompu ou prot\u00e9g\u00e9 par mdp) (1).pdf"}, {".tag": "deleted",
+        "name": "corrupted.pdf", "path_lower": "/exportation vers idocus/idoc%001
+        - test/p\u00e9riode actuelle/vt/corrupted.pdf", "path_display": "/exportation
+        vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/VT/corrupted.pdf"}, {".tag":
+        "deleted", "name": "2pages.pdf", "path_lower": "/exportation vers idocus/idoc%001
+        - test/p\u00e9riode actuelle/vt/2pages.pdf", "path_display": "/exportation
+        vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/VT/2pages.pdf"}, {".tag":
+        "folder", "name": "OD", "path_lower": "/exportation vers idocus/idoc%001 -
+        test/p\u00e9riode actuelle/od", "path_display": "/exportation vers iDocus/IDOC%001
+        - Test/p\u00e9riode actuelle/OD", "id": "id:tG5yQJWo2vAAAAAAAAANZA"}, {".tag":
+        "folder", "name": "OD", "path_lower": "/exportation vers idocus/idoc%001 -
+        test/p\u00e9riode pr\u00e9c\u00e9dente/od", "path_display": "/exportation
+        vers iDocus/IDOC%001 - Test/p\u00e9riode pr\u00e9c\u00e9dente/OD", "id": "id:tG5yQJWo2vAAAAAAAAANZQ"},
+        {".tag": "folder", "name": "IDOC%003 - DEF", "path_lower": "/exportation vers
+        idocus/idoc%003 - def", "path_display": "/exportation vers iDocus/IDOC%003
+        - DEF", "id": "id:tG5yQJWo2vAAAAAAAAANag"}, {".tag": "folder", "name": "p\u00e9riode
+        actuelle", "path_lower": "/exportation vers idocus/idoc%003 - def/p\u00e9riode
+        actuelle", "path_display": "/exportation vers iDocus/IDOC%003 - DEF/p\u00e9riode
+        actuelle", "id": "id:tG5yQJWo2vAAAAAAAAANaw"}, {".tag": "folder", "name":
+        "AC", "path_lower": "/exportation vers idocus/idoc%003 - def/p\u00e9riode
+        actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%003 - DEF/p\u00e9riode
+        actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAANaQ"}, {".tag": "folder", "name":
+        "BQ", "path_lower": "/exportation vers idocus/idoc%003 - def/p\u00e9riode
+        actuelle/bq", "path_display": "/exportation vers iDocus/IDOC%003 - DEF/p\u00e9riode
+        actuelle/BQ", "id": "id:tG5yQJWo2vAAAAAAAAANbA"}, {".tag": "folder", "name":
+        "p\u00e9riode pr\u00e9c\u00e9dente", "path_lower": "/exportation vers idocus/idoc%003
+        - def/p\u00e9riode pr\u00e9c\u00e9dente", "path_display": "/exportation vers
+        iDocus/IDOC%003 - DEF/p\u00e9riode pr\u00e9c\u00e9dente", "id": "id:tG5yQJWo2vAAAAAAAAANbg"},
+        {".tag": "folder", "name": "AC", "path_lower": "/exportation vers idocus/idoc%003
+        - def/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%003 - DEF/p\u00e9riode pr\u00e9c\u00e9dente/AC", "id": "id:tG5yQJWo2vAAAAAAAAANbQ"},
+        {".tag": "folder", "name": "BQ", "path_lower": "/exportation vers idocus/idoc%003
+        - def/p\u00e9riode pr\u00e9c\u00e9dente/bq", "path_display": "/exportation
+        vers iDocus/IDOC%003 - DEF/p\u00e9riode pr\u00e9c\u00e9dente/BQ", "id": "id:tG5yQJWo2vAAAAAAAAANbw"},
+        {".tag": "deleted", "name": "corrupted (fichier corrompu ou prot\u00e9g\u00e9
+        par mdp).pdf", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/vt/corrupted (fichier corrompu ou prot\u00e9g\u00e9 par mdp).pdf",
+        "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/VT/corrupted
+        (fichier corrompu ou prot\u00e9g\u00e9 par mdp).pdf"}, {".tag": "deleted",
+        "name": "IDOC%001 - ABC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%col1/idoc%001
+        - abc", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%COL1/IDOC%001
+        - ABC"}, {".tag": "deleted", "name": "IDOC%COL1", "path_lower": "/exportation
+        vers idocus/idoc%col1/idoc%col1", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%COL1"},
+        {".tag": "deleted", "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001
+        - abc/p\u00e9riode p\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode p\u00e9c\u00e9dente/AC"},
+        {".tag": "deleted", "name": "VT", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001
+        - abc/p\u00e9riode p\u00e9c\u00e9dente/vt", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode p\u00e9c\u00e9dente/VT"},
+        {".tag": "deleted", "name": "p\u00e9riode p\u00e9c\u00e9dente", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%001 - abc/p\u00e9riode p\u00e9c\u00e9dente",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode
+        p\u00e9c\u00e9dente"}, {".tag": "folder", "name": "IDOC%001 - ABC", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%001 - abc", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%001 - ABC", "id": "id:tG5yQJWo2vAAAAAAAAANwg"},
+        {".tag": "folder", "name": "p\u00e9riode actuelle", "path_lower": "/exportation
+        vers idocus/idoc%col1/idoc%001 - abc/p\u00e9riode actuelle", "path_display":
+        "/exportation vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode actuelle",
+        "id": "id:tG5yQJWo2vAAAAAAAAANww"}, {".tag": "folder", "name": "p\u00e9riode
+        pr\u00e9c\u00e9dente", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001
+        - abc/p\u00e9riode pr\u00e9c\u00e9dente", "path_display": "/exportation vers
+        iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode pr\u00e9c\u00e9dente", "id":
+        "id:tG5yQJWo2vAAAAAAAAANxg"}, {".tag": "folder", "name": "IDOC%003 - GHI",
+        "path_lower": "/exportation vers idocus/idoc%col1/idoc%003 - ghi", "path_display":
+        "/exportation vers iDocus/IDOC%COL1/IDOC%003 - GHI", "id": "id:tG5yQJWo2vAAAAAAAAANyQ"},
+        {".tag": "folder", "name": "p\u00e9riode actuelle", "path_lower": "/exportation
+        vers idocus/idoc%col1/idoc%003 - ghi/p\u00e9riode actuelle", "path_display":
+        "/exportation vers iDocus/IDOC%COL1/IDOC%003 - GHI/p\u00e9riode actuelle",
+        "id": "id:tG5yQJWo2vAAAAAAAAANyg"}, {".tag": "folder", "name": "p\u00e9riode
+        pr\u00e9c\u00e9dente", "path_lower": "/exportation vers idocus/idoc%col1/idoc%003
+        - ghi/p\u00e9riode pr\u00e9c\u00e9dente", "path_display": "/exportation vers
+        iDocus/IDOC%COL1/IDOC%003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente", "id":
+        "id:tG5yQJWo2vAAAAAAAAANzQ"}, {".tag": "folder", "name": "AC", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%003 - ghi/p\u00e9riode actuelle/ac",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%003 - GHI/p\u00e9riode
+        actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAANzw"}, {".tag": "folder", "name":
+        "BQ", "path_lower": "/exportation vers idocus/idoc%col1/idoc%003 - ghi/p\u00e9riode
+        actuelle/bq", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%003
+        - GHI/p\u00e9riode actuelle/BQ", "id": "id:tG5yQJWo2vAAAAAAAAAN0A"}, {".tag":
+        "folder", "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%003
+        - ghi/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente/AC",
+        "id": "id:tG5yQJWo2vAAAAAAAAAN0Q"}, {".tag": "folder", "name": "BQ", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%003 - ghi/p\u00e9riode pr\u00e9c\u00e9dente/bq",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%003 - GHI/p\u00e9riode
+        pr\u00e9c\u00e9dente/BQ", "id": "id:tG5yQJWo2vAAAAAAAAAN0g"}, {".tag": "deleted",
+        "name": "VT", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 -
+        def/p\u00e9riode pr\u00e9c\u00e9dente/vt", "path_display": "/exportation vers
+        iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode pr\u00e9c\u00e9dente/VT"}, {".tag":
+        "deleted", "name": "VT", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002
+        - def/p\u00e9riode actuelle/vt", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002
+        - DEF/p\u00e9riode actuelle/VT"}, {".tag": "folder", "name": "AC", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - ddd/p\u00e9riode actuelle/ac",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DDD/p\u00e9riode
+        actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN0w"}, {".tag": "folder", "name":
+        "BQ", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 - ddd/p\u00e9riode
+        actuelle/bq", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002
+        - DDD/p\u00e9riode actuelle/BQ", "id": "id:tG5yQJWo2vAAAAAAAAAN1A"}, {".tag":
+        "folder", "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002
+        - ddd/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%002 - DDD/p\u00e9riode pr\u00e9c\u00e9dente/AC",
+        "id": "id:tG5yQJWo2vAAAAAAAAAN1Q"}, {".tag": "folder", "name": "BQ", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - ddd/p\u00e9riode pr\u00e9c\u00e9dente/bq",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DDD/p\u00e9riode
+        pr\u00e9c\u00e9dente/BQ", "id": "id:tG5yQJWo2vAAAAAAAAAN1g"}, {".tag": "folder",
+        "name": "IDOC%002 - DEF", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002
+        - def", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF",
+        "id": "id:tG5yQJWo2vAAAAAAAAAN2A"}, {".tag": "folder", "name": "p\u00e9riode
+        actuelle", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode
+        actuelle", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 -
+        DEF/p\u00e9riode actuelle", "id": "id:tG5yQJWo2vAAAAAAAAAN2Q"}, {".tag": "folder",
+        "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 -
+        def/p\u00e9riode actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002
+        - DEF/p\u00e9riode actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN1w"}, {".tag":
+        "folder", "name": "p\u00e9riode pr\u00e9c\u00e9dente", "path_lower": "/exportation
+        vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode pr\u00e9c\u00e9dente", "path_display":
+        "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode pr\u00e9c\u00e9dente",
+        "id": "id:tG5yQJWo2vAAAAAAAAAN3A"}, {".tag": "folder", "name": "AC", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode pr\u00e9c\u00e9dente/ac",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode
+        pr\u00e9c\u00e9dente/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN2w"}, {".tag": "folder",
+        "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001 -
+        abc/p\u00e9riode actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%001
+        - ABC/p\u00e9riode actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN4A"}, {".tag":
+        "folder", "name": "VT", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001
+        - abc/p\u00e9riode actuelle/vt", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%001
+        - ABC/p\u00e9riode actuelle/VT", "id": "id:tG5yQJWo2vAAAAAAAAAN4Q"}, {".tag":
+        "folder", "name": "AC", "path_lower": "/exportation vers idocus/idoc%col1/idoc%001
+        - abc/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode pr\u00e9c\u00e9dente/AC",
+        "id": "id:tG5yQJWo2vAAAAAAAAAN4g"}, {".tag": "folder", "name": "VT", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%001 - abc/p\u00e9riode pr\u00e9c\u00e9dente/vt",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%001 - ABC/p\u00e9riode
+        pr\u00e9c\u00e9dente/VT", "id": "id:tG5yQJWo2vAAAAAAAAAN4w"}, {".tag": "deleted",
+        "name": "BQ", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 -
+        def/p\u00e9riode actuelle/bq", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002
+        - DEF/p\u00e9riode actuelle/BQ"}, {".tag": "deleted", "name": "BQ", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode pr\u00e9c\u00e9dente/bq",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode
+        pr\u00e9c\u00e9dente/BQ"}, {".tag": "folder", "name": "BQ1", "path_lower":
+        "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode actuelle/bq1",
+        "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002 - DEF/p\u00e9riode
+        actuelle/BQ1", "id": "id:tG5yQJWo2vAAAAAAAAAN5A"}, {".tag": "folder", "name":
+        "BQ1", "path_lower": "/exportation vers idocus/idoc%col1/idoc%002 - def/p\u00e9riode
+        pr\u00e9c\u00e9dente/bq1", "path_display": "/exportation vers iDocus/IDOC%COL1/IDOC%002
+        - DEF/p\u00e9riode pr\u00e9c\u00e9dente/BQ1", "id": "id:tG5yQJWo2vAAAAAAAAAN5Q"},
+        {".tag": "deleted", "name": "2pages.pdf", "path_lower": "/exportation vers
+        idocus/idoc%001 - test/p\u00e9riode actuelle/ac/2pages.pdf", "path_display":
+        "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/AC/2pages.pdf"},
+        {".tag": "deleted", "name": "2pages (fichier d\u00e9j\u00e0 import\u00e9 sur
+        iDocus).pdf", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/ac/2pages (fichier d\u00e9j\u00e0 import\u00e9 sur idocus).pdf",
+        "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode actuelle/AC/2pages
+        (fichier d\u00e9j\u00e0 import\u00e9 sur iDocus).pdf"}, {".tag": "folder",
+        "name": "AC", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/ac", "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode
+        actuelle/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN9A"}, {".tag": "folder", "name":
+        "VT", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        actuelle/vt", "path_display": "/exportation vers iDocus/IDOC%001 - Test/p\u00e9riode
+        actuelle/VT", "id": "id:tG5yQJWo2vAAAAAAAAAN9Q"}, {".tag": "folder", "name":
+        "AC", "path_lower": "/exportation vers idocus/idoc%001 - test/p\u00e9riode
+        pr\u00e9c\u00e9dente/ac", "path_display": "/exportation vers iDocus/IDOC%001
+        - Test/p\u00e9riode pr\u00e9c\u00e9dente/AC", "id": "id:tG5yQJWo2vAAAAAAAAAN9g"},
+        {".tag": "folder", "name": "VT", "path_lower": "/exportation vers idocus/idoc%001
+        - test/p\u00e9riode pr\u00e9c\u00e9dente/vt", "path_display": "/exportation
+        vers iDocus/IDOC%001 - Test/p\u00e9riode pr\u00e9c\u00e9dente/VT", "id": "id:tG5yQJWo2vAAAAAAAAAN9w"}],
+        "cursor": "AAEN1EywPXBK1x57Vcgf98OtP3Ku7RnbXF5eI4T76V_iyUGy4CB8Y-PPiaaz2dqYwBFoY9UK86t1ab0O14QMtFcAjrnaVHfFWKEJR12il_DS_v0YsDw1AG8Rpti-T6TJSmTOvRCvj1Mbmv4F85Q4mKJhMO_7O4HVRLyGd7rbmIup4FI5ldCwW_xO5adomB9iuiGNRNF_h-OV9KPCEKsK_CudOAlsnvW3Yx_cylyijswii5BLI7j1n_ThqH0s3cShR5w",
         "has_more": false}'
-    http_version: 
-  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+    http_version: null
+  recorded_at: Thu, 01 Oct 2020 21:00:00 GMT
+recorded_with: VCR 5.1.0

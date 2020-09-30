@@ -120,7 +120,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
       FileUtils.cp params[:fec_file].path, @file
 
-      @params_fec = ImportFecService.new(@file).parse_metadata
+      @params_fec = FileImport::Fec.new(@file).parse_metadata
 
       @customer.account_book_types.each { |jl| journal << jl.name }
 
@@ -140,7 +140,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   def import_fec_processing
     file_path  = params[:file_path]
 
-    ImportFecService.new(file_path).execute(@customer, params)
+    FileImport::Fec.new(file_path).execute(@customer, params)
 
     FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
 

@@ -1,4 +1,4 @@
-class DropboxImport
+class FileImport::Dropbox
   ROOT_FOLDER = '/exportation vers iDocus'.freeze
   ERROR_LISTS = {
                   already_exist: 'fichier déjà importé sur iDocus',

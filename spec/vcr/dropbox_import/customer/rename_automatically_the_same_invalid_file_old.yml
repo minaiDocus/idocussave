@@ -1,0 +1,221 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
+    body:
+      encoding: UTF-8
+      string: '{"cursor":"AAEoM_ev4xOyiBuzDKXR1l62aBvB_IQw9t__CMFJ8P5zjiZaEYPXY3Lb82-jNHOatUoLebLikcT6t0N6K74bjw2LTQMKNSqRTMi95VX_e0srrbo6pqTiPCSxmXFTtLTheEJzHpIM9M6leMfIH4dqfqmZkgYE_Rl1CUebwY-6xtqU0ruCCX80np4kg3Uj3b4SPQU"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 18 May 2017 13:29:36 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Dropbox-Request-Id:
+      - 5e6bd0a743bfa82a9d72e51928125832
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Server-Response-Time:
+      - '141'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries": [{".tag": "file", "name": "corrupted (erreur fichier non
+        valide pour iDocus).pdf", "path_lower": "/exportation vers idocus/ts%0001
+        - test/p\u00e9riode actuelle/ac/corrupted (erreur fichier non valide pour
+        idocus).pdf", "path_display": "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode
+        actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf", "id":
+        "id:66z1e_OMcPAAAAAAAAAA3Q", "client_modified": "2017-05-18T13:28:05Z", "server_modified":
+        "2017-05-18T13:28:18Z", "rev": "1ce570c1fec", "size": 1117, "content_hash":
+        "2050f28245f4dd42e42785231b9fb2490ce708d092370a436a67faf137c1920e"}, {".tag":
+        "file", "name": "corrupted.pdf", "path_lower": "/exportation vers idocus/ts%0001
+        - test/p\u00e9riode actuelle/ac/corrupted.pdf", "path_display": "/exportation
+        vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/corrupted.pdf", "id":
+        "id:66z1e_OMcPAAAAAAAAAA3g", "client_modified": "2017-05-18T13:28:41Z", "server_modified":
+        "2017-05-18T13:28:41Z", "rev": "1cf570c1fec", "size": 1117, "content_hash":
+        "2050f28245f4dd42e42785231b9fb2490ce708d092370a436a67faf137c1920e"}], "cursor":
+        "AAE0QDwpqc0ElCLMcsmWkBOXeyjVQQJKW1Fg-XwsVEDvXJcE_fMlTVqn0NatI5B7xEk3CfUPIx7U_Inp6ui3bUymU9VIdc0GcprP-B6d6nDA23H9Df-PR1IJyy01nW-Vm8GBxryuNZD3iHBMTmhnxv3NtFn3Io_WZdew_R1OMiplNmqp4bKnO7Civ2ZR0L1zyRY",
+        "has_more": false}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://content.dropboxapi.com/2/files/download
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Dropbox-Api-Arg:
+      - '{"path":"/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf"}'
+      Content-Type:
+      - ''
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 18 May 2017 13:29:38 GMT
+      Content-Type:
+      - application/octet-stream
+      Content-Length:
+      - '1117'
+      Connection:
+      - keep-alive
+      Accept-Ranges:
+      - bytes
+      Etag:
+      - W/"1cf570c1fec"
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache
+      Original-Content-Length:
+      - '1117'
+      Dropbox-Api-Result:
+      - '{"name": "corrupted.pdf", "path_lower": "/exportation vers idocus/ts%0001
+        - test/p\u00e9riode actuelle/ac/corrupted.pdf", "path_display": "/exportation
+        vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/corrupted.pdf", "id":
+        "id:66z1e_OMcPAAAAAAAAAA3g", "client_modified": "2017-05-18T13:28:41Z", "server_modified":
+        "2017-05-18T13:28:41Z", "rev": "1cf570c1fec", "size": 1117, "content_hash":
+        "2050f28245f4dd42e42785231b9fb2490ce708d092370a436a67faf137c1920e"}'
+      X-Server-Response-Time:
+      - '251'
+      X-Dropbox-Request-Id:
+      - 39f5f7bc206edc946f02d3570e0194e7
+      X-Robots-Tag:
+      - noindex, nofollow, noimageindex
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        JVBERi0xLjMKJf////8KMSAwIG9iago8PCAvQ3JlYXRvciA8ZmVmZjAwNTAw
+        MDcyMDA2MTAwNzcwMDZlPgovUHJvZHVjZXIgPGZlZmYwMDUwMDA3MjAwNjEw
+        MDc3MDA2ZT4KPj4KZW5kb3oKMiAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZwov
+        UGFnZXMgMyAwIFIKPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2Vz
+        Ci9Db3VudCAyCi9LaWRzIFs1IDAgUiA4IDAgUl0KPj4KZW5kb2JqCjQgMCBv
+        YmoKPDwgL0xlbmd0aCA2NAo+PgpzdHJlYW0KcQoKQlQKMzYgNzQ3LjM4NCBU
+        ZAovRjEuMCAxMiBUZgpbPDUwPiA0MCA8NjE2NzY1MjAzMT5dIFRKCkVUCgpR
+        CgplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwgL1R5cGUgL1BhZ2UKL1Bh
+        cmVudCAzIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIuMCA3OTIuMF0KL0NvbnRl
+        bnRzIDQgMCBSCi9SZXNvdXJjZXMgPDwgL1Byb2NTZXQgWy9QREYgL1RleHQg
+        L0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUldCi9Gb250IDw8IC9GMS4wIDYgMCBS
+        Cj4+Cj4+Cj4+CmVuZG9iago2IDAgb2JqCjw8IC9UeXBlIC9Gb250Ci9TdWJ0
+        eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dp
+        bkFuc2lFbmNvZGluZwo+PgplbmRvYmoKNyAwIG9iago8PCAvTGVuZ3RoIDY0
+        Cj4+CnN0cmVhbQpxCgpCVAozNiA3NDcuMzg0IFRkCi9GMS4wIDEyIFRmCls8
+        NTA+IDQwIDw2MTY3NjUyMDMyPl0gVEoKRVQKClEKCmVuZHN0cmVhbQplbmRv
+        YmoKOCAwIG9iago8PCAvVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRp
+        YUJveCBbMCAwIDYxMi4wIDc5Mi4wXQovQ29udGVudHMgNyAwIFIKL1Jlc291
+        cmNlcyA8PCAvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMg
+        L0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAgNiAwIFIKPj4KPj4KPj4KZW5kb2Jq
+        CnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAw
+        MCBuIAowMDAwMDAwMTA5IDAwMDAwIG4gCjAwMDAwMDAxNTggMDAwMDAgbiAK
+        MDAwMDAwMDIyMSAwMDAwMCBuIAowMDAwMDAwMzM1IDAwMDAwIG4gCjAwMDAw
+        MDA1MTMgMDAwMDAgbiAKMDAwMDAwMDYxMCAwMDAwMCBuIAovUm9vdCAyIDAg
+        UgovSW5mbyAxIDAgUgo+PgpzdGFydHhyZWYKOTAyCiUlRU9GCg==
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/move
+    body:
+      encoding: UTF-8
+      string: '{"autorename":true,"from_path":"/exportation vers iDocus/TS%0001 -
+        TeSt/période actuelle/AC/corrupted.pdf","to_path":"/exportation vers iDocus/TS%0001
+        - TeSt/période actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 18 May 2017 13:29:42 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Dropbox-Request-Id:
+      - 45ae25fd1c6ca13d72f5e1195df37721
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Server-Response-Time:
+      - '659'
+    body:
+      encoding: ASCII-8BIT
+      string: '{".tag": "file", "name": "corrupted (erreur fichier non valide pour
+        iDocus) (1).pdf", "path_lower": "/exportation vers idocus/ts%0001 - test/p\u00e9riode
+        actuelle/ac/corrupted (erreur fichier non valide pour idocus) (1).pdf", "path_display":
+        "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/corrupted
+        (erreur fichier non valide pour iDocus) (1).pdf", "id": "id:66z1e_OMcPAAAAAAAAAA3g",
+        "client_modified": "2017-05-18T13:28:41Z", "server_modified": "2017-05-18T13:29:41Z",
+        "rev": "1d1570c1fec", "size": 1117, "content_hash": "2050f28245f4dd42e42785231b9fb2490ce708d092370a436a67faf137c1920e"}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+recorded_with: VCR 3.0.3

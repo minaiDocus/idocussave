@@ -1,0 +1,217 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
+    body:
+      encoding: UTF-8
+      string: '{"cursor":"AAGAn2SbSgsDiJEQ7d5xLJOVrJrtdBuq9pXxPFRn2t8MFh3pFpzj6ijub-dywcNHDRoPfp9WPJa_6I9IKJm7faymRQvgjoc8YKXmmJr3KEiU_U01ABnCn4zRxQfix584Sx45KGncYIyw065Z4tqb5lpKjnTVS7US9w7kEYj66q41k1z7iVmtwugJMcIXWhZhVKo"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 24 May 2017 12:52:35 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Dropbox-Request-Id:
+      - d0ca16e5fb39e70bfc29deda7bd29e12
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Server-Response-Time:
+      - '112'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries": [], "cursor": "AAGSDhnq7GyLsG4Ih5WPsC1micuIFP2E4bhfVtHJdV8S_iFlwB_7C_LJV-FjXMBKKL2YO5hFX-Las5lX5A2zjBJJtdnPfrzo1yH0vUuXESDTB-TtmsyTeE3tjb-eGauRWeD8WgBXM0gMPH3bMOGXNUoi9DQmTUismBVcBSw6QivvnE--UH0Y7tcQTVUXa58Et3k",
+        "has_more": false}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/create_folder
+    body:
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 409
+      message: Conflict
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 24 May 2017 12:52:37 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '131'
+      Connection:
+      - keep-alive
+      X-Dropbox-Request-Id:
+      - 626f92f9c00f98c74bef09fa2b329464
+    body:
+      encoding: UTF-8
+      string: '{"error_summary": "path/conflict/folder/", "error": {".tag": "path",
+        "path": {".tag": "conflict", "conflict": {".tag": "folder"}}}}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/create_folder
+    body:
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 409
+      message: Conflict
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 24 May 2017 12:52:40 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '133'
+      Connection:
+      - keep-alive
+      X-Dropbox-Request-Id:
+      - 06db768cf6cd9478b6aa38dbb3212ab8
+    body:
+      encoding: UTF-8
+      string: '{"error_summary": "path/conflict/folder/..", "error": {".tag": "path",
+        "path": {".tag": "conflict", "conflict": {".tag": "folder"}}}}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/create_folder
+    body:
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%0001 - TeSt/période précédente/AC"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 409
+      message: Conflict
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 24 May 2017 12:52:42 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '133'
+      Connection:
+      - keep-alive
+      X-Dropbox-Request-Id:
+      - e03d8d25d8c7ff72469676ee8af202f0
+    body:
+      encoding: UTF-8
+      string: '{"error_summary": "path/conflict/folder/..", "error": {".tag": "path",
+        "path": {".tag": "conflict", "conflict": {".tag": "folder"}}}}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/create_folder
+    body:
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 409
+      message: Conflict
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 24 May 2017 12:52:45 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '131'
+      Connection:
+      - keep-alive
+      X-Dropbox-Request-Id:
+      - df4451b9e43f64b6156e41f5e583820c
+    body:
+      encoding: UTF-8
+      string: '{"error_summary": "path/conflict/folder/", "error": {".tag": "path",
+        "path": {".tag": "conflict", "conflict": {".tag": "folder"}}}}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+recorded_with: VCR 3.0.3

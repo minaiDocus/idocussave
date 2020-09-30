@@ -1,4 +1,4 @@
-class FTPImport
+class FileImport::Ftp
   ERROR_LISTS = {
                   already_exist: 'fichier déjà importé sur iDocus',
                   invalid_period: 'période invalide',
@@ -13,7 +13,7 @@ class FTPImport
   class << self
     def execute
       Ftp.importable.each do |ftp|
-        ImportFromFTPWorker.perform_async ftp.id
+        FileImport::FtpWorker.perform_async ftp.id
       end
       true
     end

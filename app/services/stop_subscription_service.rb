@@ -55,7 +55,7 @@ class StopSubscriptionService
 
     @user.external_file_storage.try(:destroy)
 
-    DropboxImport.changed(@user.reload)
+    FileImport::Dropbox.changed(@user.reload)
 
 
     # Remove composition

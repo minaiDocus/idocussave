@@ -43,7 +43,7 @@ class CreateCustomerService
 
       @customer.save
 
-      DropboxImport.changed(@customer)
+      FileImport::Dropbox.changed(@customer)
       WelcomeMailer.welcome_customer(@customer, token).deliver_later
     end
 

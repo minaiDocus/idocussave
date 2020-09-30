@@ -175,7 +175,7 @@ class Account::JournalsController < Account::OrganizationController
       flash[:notice] = "#{copied_ids.count}/#{ids.count} journal(s) copié(s)."
     end
 
-    DropboxImport.changed(@customer) if copied_ids.count > 0
+    FileImport::Dropbox.changed(@customer) if copied_ids.count > 0
 
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
   end
