@@ -7,6 +7,8 @@ module AccountingWorkflow
       Pathname.new('/ftp/prepa_compta')
     when 'development'
       Pathname.new('/Users/toto/ftp/prepa_compta')
+    when 'test'
+      Pathname.new("#{Rails.root}/files/test/prepa_compta")
     end
   end
 
@@ -22,6 +24,8 @@ module AccountingWorkflow
       Pathname.new('/ftp/ocr_processing')
     when 'development'
       Pathname.new('/Users/toto/ftp/ocr_processing')
+    when 'test'
+      Pathname.new("#{Rails.root}/files/test/ocr_processing")
     end
   end
 

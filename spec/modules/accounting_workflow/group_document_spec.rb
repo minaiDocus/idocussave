@@ -149,8 +149,9 @@ describe AccountingWorkflow::GroupDocument do
       @result_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'output', 'result.xml'
       @errors_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'errors', 'result.txt'
 
-      @user = FactoryBot.create(:user, code: 'TS%0001')
-      FactoryBot.create(:journal_with_preassignment, user_id: @user.id, name: 'AC', description: '( Achat )')
+      @organization = create :organization, code: "TS"
+      @user = FactoryBot.create(:user, code: 'TS%0001', organization: @organization)
+      @user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_account: "445660", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
     end
 
     before(:each) do
@@ -178,6 +179,66 @@ describe AccountingWorkflow::GroupDocument do
       AccountingWorkflow::GroupDocument.execute
 
       expect(File.exist?(@errors_file_path)).to be_falsy
+    end
+
+    it 'send mail when archive path have an error with access denied', :access_denied do
+      allow(AccountingWorkflow::GroupDocument).to receive(:processable_results).and_return([@result_file_path])
+
+      # allow_any_instance_of(AccountingWorkflow::GroupDocument).to receive(:valid_result_data).and_return(true)
+      # allow_any_instance_of(Nokogiri::XML::Schema).to receive(:validate).with(@document).and_return([])
+      # allow_any_instance_of(AccountingWorkflow::GroupDocument).to receive(:verify_data).and_return(true)
+      # allow_any_instance_of(AccountingWorkflow::GroupDocument).to receive(:document).and_return(@document)
+      # allow_any_instance_of(Nokogiri::XML).to receive(:css).and_return([])
+
+      allow_any_instance_of(AccountingWorkflow::GroupDocument).to receive(:archive_path).and_raise(Errno::EACCES)
+
+      2.times do |i|
+        temp_document = TempDocument.new
+        temp_document.temp_pack      = @temp_pack
+        temp_document.user           = @user
+        temp_document.organization   = @organization
+        temp_document.position       = 1+i
+        temp_document.delivered_by   = 'test'
+        temp_document.delivery_type  = 'scan'
+        temp_document.pages_number   = 2
+        temp_document.is_an_original = true
+        temp_document.is_a_cover     = false
+        temp_document.state          = 'bundling'
+        temp_document.save
+      end
+
+      @temp_pack.update(position_counter: 2)
+
+      base_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'scans')
+      FileUtils.cp @file_with_2_pages_path, base_path.join('TS_0001_AC_201501_001.pdf')
+      FileUtils.cp @file_with_2_pages_path, base_path.join('TS_0001_AC_201501_002.pdf')
+
+      data = '<?xml version="1.0" encoding="utf-8"?>
+        <group_documents>
+          <pack name="TS%0001_AC_201501">
+            <piece number="1" origin="scan">
+              <file_name>TS_0001_AC_201501_001.pdf</file_name>
+              <file_name>TS_0001_AC_201501_002.pdf</file_name>
+            </piece>
+          </pack>
+        </group_documents>'
+      File.write(@result_file_path, data)
+      File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
+
+      Settings.create(notify_errors_to: ['jean@idocus.com'])
+
+      AccountingWorkflow::GroupDocument.execute
+
+      archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
+      expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_falsy
+      expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_falsy
+      expect(File.exist?(archive_path.join('result.xml'))).to be_falsy
+
+      mail = ActionMailer::Base.deliveries.last
+
+      expect(mail.to).to eq ['jean@idocus.com']
+      expect(mail.subject).to eq("[MAIL SCRIPT ERREUR] - AccountingWorkflow::GroupDocument - Group document archive rescue")
+      expect(mail.body.encoded).to include "error : Permission non accordée"
     end
 
     context 'with errors' do
@@ -293,6 +354,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document = TempDocument.new
         temp_document.temp_pack      = @temp_pack
         temp_document.user           = @user
+        temp_document.organization   = @organization
         temp_document.position       = 1
         temp_document.pages_number   = 2
         temp_document.is_an_original = true
@@ -303,6 +365,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document = TempDocument.new
         temp_document.temp_pack      = @temp_pack
         temp_document.user           = @user
+        temp_document.organization   = @organization
         temp_document.position       = 2
         temp_document.pages_number   = 2
         temp_document.is_an_original = true
@@ -332,6 +395,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document = TempDocument.new
         temp_document.temp_pack      = @temp_pack
         temp_document.user           = @user
+        temp_document.organization   = @organization
         temp_document.position       = 2
         temp_document.pages_number   = 2
         temp_document.delivered_by   = 'test'
@@ -387,6 +451,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document = TempDocument.new
         temp_document.temp_pack      = @temp_pack
         temp_document.user           = @user
+        temp_document.organization   = @organization
         temp_document.position       = 2
         temp_document.pages_number   = 2
         temp_document.delivered_by   = 'test'
@@ -420,6 +485,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 1+i
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'scan'
@@ -455,7 +521,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 3
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 1
-        expect(DocumentTools.pages_number(new_temp_document.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(new_temp_document.cloud_content_object.path)).to eq 2
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy
@@ -469,6 +535,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 1+index
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'upload'
@@ -535,6 +602,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 1001+index
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'upload'
@@ -581,7 +649,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.ready.count).to eq 3
         expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 2
         expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 4
-        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 2
+        expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 3
         archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_002.pdf'))).to be_truthy
@@ -601,6 +669,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 1+index
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'dematbox_scan'
@@ -666,6 +735,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 1+i
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'scan'
@@ -684,6 +754,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 3+index
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'upload'
@@ -699,6 +770,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
+          temp_document.organization   = @organization
           temp_document.position       = 5+index
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'dematbox_scan'
@@ -757,7 +829,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.count).to eq 10
         expect(@temp_pack.temp_documents.bundled.count).to eq 6
         expect(@temp_pack.temp_documents.ready.count).to eq 4
-        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 4
+        expect(DocumentTools.pages_number(document_1.cloud_content_object.path)).to eq 8
         expect(DocumentTools.pages_number(document_2.cloud_content_object.path)).to eq 4
         expect(DocumentTools.pages_number(document_3.cloud_content_object.path)).to eq 4
         expect(DocumentTools.pages_number(document_4.cloud_content_object.path)).to eq 8

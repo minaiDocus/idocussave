@@ -175,10 +175,24 @@ class AccountingWorkflow::GroupDocument
 
 
   def archive
-    POSIX::Spawn.system "mkdir -p #{archive_path}"
-    POSIX::Spawn.system "mv #{@xml_file_path} #{archive_path}"
-    @processed_file_paths.each do |file_path|
-      POSIX::Spawn.system "mv #{file_path} #{archive_path}"
+    begin
+      FileUtils.mkdir_p archive_path
+      FileUtils.mv @xml_file_path, archive_path
+      @processed_file_paths.each do |file_path|
+        FileUtils.mv file_path, archive_path
+      end
+    rescue => e
+      log_detail = {
+        name: "AccountingWorkflow::GroupDocument",
+        error_group: "[accounting_workflow-group_document] group document archive rescue",
+        erreur_type: "Group document archive rescue",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          method: "archive",
+          error: e.to_s
+        }
+      }
+      ErrorScriptMailer.error_notification(log_detail).deliver
     end
   end
 end
