@@ -58,7 +58,7 @@ class Pack::Piece < ApplicationRecord
 
   #WORKARROUND : Get pieces with suplier_recognition state and detected_third_party_id present
   # scope :need_preassignment,   -> { where(pre_assignment_state: 'waiting') }
-  scope :need_preassignment,     -> { where('pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0)') }
+  scope :need_preassignment,     -> { where('(pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0)) AND is_awaiting_pre_assignment = false') }
 
   scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
