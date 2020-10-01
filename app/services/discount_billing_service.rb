@@ -1,11 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DiscountBillingService
-  def initialize(organization)
-    @organization = organization
-  end
-
-  def self.update_period(period)
-    discount = new(period.organization)
+  def self.update_period(period, _time)
+    discount = new(period.organization, _time)
 
     period.with_lock do
       period.product_option_orders.is_not_frozen.where(name: 'discount_option').destroy_all
@@ -20,6 +16,11 @@ class DiscountBillingService
     end
 
     UpdatePeriodPriceService.new(period).execute
+  end
+
+  def initialize(organization, _time)
+    @organization = organization
+    @time = _time || 1.months.ago
   end
 
   def title
@@ -90,7 +91,7 @@ class DiscountBillingService
   end
 
   def customers
-    @organization.customers.active
+    @organization.customers.active_at(@time)
   end
 
   def concerned_subscriptions
