@@ -1,6 +1,6 @@
 class Notifications::DematboxUploaded < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_dematbox_document_uploaded

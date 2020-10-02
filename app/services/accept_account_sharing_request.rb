@@ -28,7 +28,7 @@ class AcceptAccountSharingRequest
       }
     ]
 
-    notifications.map {|notification| Notifications::Notifier.new.send_notification(notification[:url], notification[:user], notification[:notice_type], notification[:title], notification[:message]) }
+    notifications.map { |notification| Notifications::Notifier.new.create_notification(notification, true) }
 
     true
   end

@@ -1,6 +1,6 @@
 class Notifications::Ftp < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_ftp_auth_failure
@@ -19,30 +19,26 @@ class Notifications::Ftp < Notifications::Notifier
   private
 
   def notify_organization_ftp_auth_failure
-    notification = create_notification({
+    result = create_notification({
       url:         Rails.application.routes.url_helpers.account_organization_url(@arguments[:ftp].organization, { tab: 'ftp' }.merge(ActionMailer::Base.default_url_options)),
       user:        @user,
       notice_type: 'org_ftp_auth_failure',
       title:       'Import/Export FTP - Reconfiguration requise',
       message:     @message
-    })
+    }, true)
 
-    Notifications::Notifier.delay.notify(notification)
-
-    notification
+    result[:notification]
   end
 
   def notify_user_ftp_auth_failure
-    notification = create_notification({
+    result = create_notification({
       url:         Rails.application.routes.url_helpers.account_profile_url({ panel: 'efs_management', anchor: 'ftp' }.merge(ActionMailer::Base.default_url_options)),
       user:        @user,
       notice_type: 'ftp_auth_failure',
       title:       'Livraison FTP - Reconfiguration requise',
       message:     @message
-    })
+    }, true)
 
-    Notifications::Notifier.delay.notify(notification)
-
-    notification
+    result[:notification]
   end
 end

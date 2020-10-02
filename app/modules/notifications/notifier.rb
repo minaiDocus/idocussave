@@ -14,7 +14,7 @@ class Notifications::Notifier
     notification.update is_sent: true
   end
 
-  def create_notification(arguments)
+  def create_notification(arguments, send_notification = false)
     notification             = Notification.new
     notification.user        = arguments[:user]
     notification.notice_type = arguments[:notice_type]
@@ -23,18 +23,8 @@ class Notifications::Notifier
     notification.url         = arguments[:url]
     notification.save
 
-    notification
-  end
+    sent = Notifications::Notifier.delay.notify(notification) if send_notification
 
-  def send_notification(url, user, notice_type, title, message)
-    notification = create_notification({
-      url:         url,
-      user:        user,
-      notice_type: notice_type,
-      title:       title,
-      message:     message
-    })
-
-    Notifications::Notifier.delay.notify(notification)
+    { is_sent: (sent || false), notification: notification }
   end
 end

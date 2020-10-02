@@ -20,7 +20,7 @@ class Notifications::Retrievers < Notifications::Notifier
           notice_type: 'retriever_wrong_pass',
           title:       'Automate - Mot de passe invalide',
           message:     message
-        })
+        }, false)
       end
     end
   end
@@ -39,7 +39,7 @@ class Notifications::Retrievers < Notifications::Notifier
         notice_type: 'retriever_info_needed',
         title:       'Automate - Information supplémentaire nécessaire',
         message:     message
-      })
+      }, false)
     end
   end
 
@@ -58,20 +58,20 @@ class Notifications::Retrievers < Notifications::Notifier
           notice_type: 'retriever_website_unavailable',
           title:       'Automate - Site web indisponible',
           message:     message
-        })
+        }, false)
       end
     end
   end
 
   def notify_action_needed
     if @retriever.user.notify.try(:r_action_needed)
-      send_notification(
-        account_retrievers_url(account_id: @retriever.user.id),
-        @retriever.user,
-        'retriever_action_needed',
-        'Automate - Une action est nécessaire',
-        "Votre fournisseur/banque requiert que vous validiez leurs CGU sur leur site avant de pouvoir poursuivre le processus de récupération de votre automate #{name}."
-      )
+      create_notification({
+        url: account_retrievers_url(account_id: @retriever.user.id),
+        user: @retriever.user,
+        notice_type: 'retriever_action_needed',
+        title: 'Automate - Une action est nécessaire',
+        message: "Votre fournisseur/banque requiert que vous validiez leurs CGU sur leur site avant de pouvoir poursuivre le processus de récupération de votre automate #{name}."
+      }, true)
     end
   end
 
@@ -90,7 +90,7 @@ class Notifications::Retrievers < Notifications::Notifier
           notice_type: 'retriever_bug',
           title:       'Automate - Bug',
           message:     message
-        })
+        }, false)
       end
     end
   end
@@ -111,7 +111,7 @@ class Notifications::Retrievers < Notifications::Notifier
             notice_type: 'retriever_bug',
             title:       'Automate - Erreur',
             message:     message
-          })
+          }, false)
         end
       end
     end
@@ -147,7 +147,7 @@ class Notifications::Retrievers < Notifications::Notifier
       notice_type: 'retriever_new_documents',
       title:       'Automate - ' + subject.capitalize,
       message:     message
-    })
+    }, false)
   end
 
   def notify_new_operations(new_operations_count)
@@ -180,7 +180,7 @@ class Notifications::Retrievers < Notifications::Notifier
       notice_type: 'retriever_new_operations',
       title:       'Automate - ' + subject.capitalize,
       message:     message
-    })
+    }, false)
   end
 
   def notify_no_bank_account_configured
@@ -191,7 +191,7 @@ class Notifications::Retrievers < Notifications::Notifier
         notice_type: 'retriever_no_bank_account_configured',
         title:       'Automate - En attente de configuration',
         message:     "Aucun compte bancaire n'a été configuré pour l'automate #{name} du dossier #{user_info}."
-      })
+      }, false)
     end
   end
 

@@ -1,6 +1,6 @@
 class Notifications::McfDocuments < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_mcf_document_with_process_error
@@ -21,15 +21,13 @@ class Notifications::McfDocuments < Notifications::Notifier
             "- #{mcf_docs_count} documents venant de MCF n'ont pas pu être récupérés pour le dossier : #{customer.code} \n"
           end
 
-          notification = create_notification({
+          create_notification({
             url:         Rails.application.routes.url_helpers.account_organization_customers_url(user_collab.organization, ActionMailer::Base.default_url_options),
             user:        collaborator,
             notice_type: 'mcf_document_errors',
             title:       "documents mcf, non récupérés",
             message:     message
-          })
-
-          Notifications::Notifier.delay.notify(notification) if user.try(:notify).try(:mcf_document_errors)
+          }, user.try(:notify).try(:mcf_document_errors))
         end
       end
     end
@@ -60,11 +58,8 @@ class Notifications::McfDocuments < Notifications::Notifier
       @user = user
       UniqueJobs.for "NotifyMcfDocumentError - #{@user.id}", 5.seconds, 5 do
         if user.notifications.where(notice_type: notice_type).where('created_at > ?', 1.day.ago).first.nil?
-          notification = create_notification({ url: url, user: @user, notice_type: notice_type, title: title, message: message })
-
-          Notifications::Notifier.delay.notify(notification)
-
-          notification
+          result = create_notification({ url: url, user: @user, notice_type: notice_type, title: title, message: message }, true)
+          result[:notification]
         else
           false
         end

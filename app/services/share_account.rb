@@ -35,7 +35,7 @@ class ShareAccount
         }
       ]
 
-      notifications.map {|notification| Notifications::Notifier.new.send_notification(notification[:url], notification[:user], notification[:notice_type], notification[:title], notification[:message]) }
+      notifications.map {|notification| Notifications::Notifier.new.create_notification(notification, true) }
     end
     @account_sharing
   end

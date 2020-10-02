@@ -10,21 +10,21 @@ class DestroyAccountSharing
       url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
       if @account_sharing.is_approved
 
-        Notifications::Notifier.new.send_notification(
-          url,
-          @account_sharing.collaborator,
-          'account_sharing_destroyed',
-          "Accès à un compte révoqué",
-          "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
-        )
+        Notifications::Notifier.new.create_notification({
+          url: url,
+          user: @account_sharing.collaborator,
+          notice_type: 'account_sharing_destroyed',
+          title: "Accès à un compte révoqué",
+          message: "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
+        }, true)
       elsif @requester != @account_sharing.collaborator
-        Notifications::Notifier.new.send_notification(
-          url,
-          @account_sharing.collaborator,
-          'account_sharing_request_denied',
-          "Demande d'accès à un compte annulé",
-          "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
-        )
+        Notifications::Notifier.new.create_notification({
+          url: url,
+          user: @account_sharing.collaborator,
+          notice_type: 'account_sharing_request_denied',
+          title: "Demande d'accès à un compte annulé",
+          message: "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
+        }, true)
       else
         collaborators = if @account_sharing.account.manager&.user
           [@account_sharing.account.manager.user]
@@ -38,13 +38,13 @@ class DestroyAccountSharing
         )
 
         collaborators.each do |collaborator|
-           Notifications::Notifier.new.send_notification(
-            url,
-            collaborator,
-            'account_sharing_request_canceled',
-            "Accès à un compte refusé",
-            "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
-          )
+           Notifications::Notifier.new.create_notification({
+            url: url,
+            user: collaborator,
+            notice_type: 'account_sharing_request_canceled',
+            title: "Accès à un compte refusé",
+            message: "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
+          }, true)
         end
       end
       true

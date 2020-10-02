@@ -1,6 +1,6 @@
 class Notifications::Dropbox < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_dropbox_invalid_access_token
@@ -31,17 +31,15 @@ class Notifications::Dropbox < Notifications::Notifier
 
   def notify_dropbox_error_with(notice_type, title, message)
     if @arguments[:user].notifications.where(notice_type: notice_type).where('created_at > ?', 1.day.ago).first.nil?
-      notification = create_notification({
+      result = create_notification({
         url:         url,
         user:        @arguments[:user],
         notice_type: notice_type,
         title:       title,
         message:     message
-      })
+      }, true)
 
-      Notifications::Notifier.delay.notify(notification)
-
-      notification
+      result[:notification]
     else
       false
     end

@@ -1,6 +1,6 @@
 class Notifications::Documents < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_document_being_processed
@@ -34,13 +34,12 @@ class Notifications::Documents < Notifications::Notifier
         message
       end
 
-      send_notification(
-        Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options),
-        user,
-        'document_being_processed',
-        'Traitement de document',
-        notification_message
-      )
+      create_notification({
+        url: Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options),
+        user: user,
+        notice_type: 'document_being_processed',
+        title: 'Traitement de document',
+        message: notification_message}, true)
 
       list.each(&:delete)
     end
@@ -71,7 +70,7 @@ class Notifications::Documents < Notifications::Notifier
         notice_type: 'new_scanned_documents',
         title:       'Nouveau document papier reçu',
         message:     message
-      })
+      }, false)
     end
   end
 
@@ -143,15 +142,13 @@ class Notifications::Documents < Notifications::Notifier
       end.join("\n")
     end
 
-    notification = create_notification({
+    create_notification({
       url:         Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options),
       user:        user,
       notice_type: 'published_document',
       title:       list.size == 1 ? 'Nouveau document disponible' : 'Nouveaux documents disponibles',
       message:     message
-    })
-
-    Notifications::Notifier.delay.notify(notification) if @arguments[:send_mail]
+    }, @arguments[:send_mail])
 
     list.each(&:delete)
   end

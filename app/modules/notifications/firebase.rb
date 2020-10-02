@@ -1,6 +1,6 @@
 class Notifications::Firebase < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def send_firebase_notification

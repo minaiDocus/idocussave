@@ -52,7 +52,7 @@ describe Notifications::ScanService do
       document.scanned_at   = Time.now
       document.save
 
-      Notifications::ScanService.notify_not_delivered
+      Notifications::ScanService.new.notify_not_delivered
 
       mail = ActionMailer::Base.deliveries.last
 
@@ -85,7 +85,7 @@ describe Notifications::ScanService do
 
       delivery.save
 
-      Notifications::ScanService.notify_uncompleted_delivery([delivery])
+      Notifications::ScanService.new({deliveries: [delivery]}).notify_uncompleted_delivery
 
       mail = ActionMailer::Base.deliveries.last
 

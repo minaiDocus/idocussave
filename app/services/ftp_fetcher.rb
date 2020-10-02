@@ -19,7 +19,7 @@ class FtpFetcher
       dirs = ftp.nlst.sort
 
       if (uncomplete_deliveries = check_uncomplete_delivery(ftp, dirs)).any?
-        Notifications::ScanService.notify_uncompleted_delivery uncomplete_deliveries
+        Notifications::ScanService.new({deliveries: uncomplete_deliveries}).notify_uncompleted_delivery
         ftp.chdir dir
         uncomplete_deliveries.each { |file_path| ftp.delete("#{file_path}.uncomplete") rescue false }
       end

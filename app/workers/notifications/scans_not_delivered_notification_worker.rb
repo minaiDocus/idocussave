@@ -4,7 +4,7 @@ class Notifications::ScansNotDeliveredNotificationWorker
 
   def perform
     UniqueJobs.for 'ScansNotDeliveredNotification' do
-      Notifications::ScanService.notify_not_delivered
+      Notifications::ScanService.new.notify_not_delivered
     end
   end
 end

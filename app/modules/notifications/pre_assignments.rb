@@ -1,6 +1,6 @@
 class Notifications::PreAssignments < Notifications::Notifier
   def initialize(arguments={})
-    @arguments = arguments
+    super
   end
 
   def notify_detected_preseizure_duplication
@@ -20,13 +20,13 @@ class Notifications::PreAssignments < Notifications::Notifier
         organization = collaborator.organizations.first
       end
 
-      send_notification(
-        Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
-        collaborator,
-        'detected_preseizure_duplication',
-        count == 1 ? 'Pré-affectation bloqué' : 'Pré-affectations bloqués',
-        count == 1 ? "1 pré-affectation est susceptible d'être un doublon et a été bloqué." : "#{count} pré-affectations sont susceptibles d'être des doublons et ont été bloqués."
-      )
+      create_notification({
+        url: Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
+        user: collaborator,
+        notice_type: 'detected_preseizure_duplication',
+        title: count == 1 ? 'Pré-affectation bloqué' : 'Pré-affectations bloqués',
+        message: count == 1 ? "1 pré-affectation est susceptible d'être un doublon et a été bloqué." : "#{count} pré-affectations sont susceptibles d'être des doublons et ont été bloqués."
+      }, true)
 
       Notify.update_counters collaborator.notify.id, detected_preseizure_duplication_count: -count
     end
@@ -59,13 +59,13 @@ class Notifications::PreAssignments < Notifications::Notifier
         message
       end
 
-      send_notification(
-        Rails.application.routes.url_helpers.account_documents_path,
-        prescriber,
-        'new_pre_assignment_available',
-        list.size == 1 ? 'Nouvelle pré-affectation disponible' : 'Nouvelles pré-affectations disponibles',
-        notification_message
-      )
+      create_notification({
+        url: Rails.application.routes.url_helpers.account_documents_path,
+        user: prescriber,
+        notice_type: 'new_pre_assignment_available',
+        title: list.size == 1 ? 'Nouvelle pré-affectation disponible' : 'Nouvelles pré-affectations disponibles',
+        message: notification_message
+      }, true)
 
       list.each(&:delete)
     end
@@ -90,13 +90,13 @@ class Notifications::PreAssignments < Notifications::Notifier
             "- #{pre_assignment_export_count} exports d'écritures comptables sont disponibles pour le dossier : #{customer.code} \n"
           end
 
-          send_notification(
-            Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options),
-            collaborator,
-            'pre_assignment_export',
-            "Export d'écritures comptables disponibles",
-            message
-          )
+          create_notification({
+            url: Rails.application.routes.url_helpers.account_documents_url(ActionMailer::Base.default_url_options),
+            user: collaborator,
+            notice_type: 'pre_assignment_export',
+            title: "Export d'écritures comptables disponibles",
+            message: message
+          }, true)
         end
       end
     end
@@ -115,13 +115,13 @@ class Notifications::PreAssignments < Notifications::Notifier
 
       return if count == 0
 
-      send_notification(
-        Rails.application.routes.url_helpers.account_pre_assignment_ignored_path,
-        collaborator,
-        'pre_assignment_ignored_piece',
-        count == 1 ? 'Pièce ignorée à la pré-affectation' : 'Pièces ignorées à la pré-affectation',
-        count == 1 ? "1 pièce a été ignorée à la pré-affectation" : "#{count} pièces ont été ignorées à la pré-affectation"
-      )
+      create_notification({
+        url: Rails.application.routes.url_helpers.account_pre_assignment_ignored_path,
+        user: collaborator,
+        notice_type: 'pre_assignment_ignored_piece',
+        title: count == 1 ? 'Pièce ignorée à la pré-affectation' : 'Pièces ignorées à la pré-affectation',
+        message: count == 1 ? "1 pièce a été ignorée à la pré-affectation" : "#{count} pièces ont été ignorées à la pré-affectation"
+      }, true)
 
       Notify.update_counters collaborator.notify.id, pre_assignment_ignored_piece_count: -count
     end
@@ -141,13 +141,13 @@ class Notifications::PreAssignments < Notifications::Notifier
       return if count == 0
 
       if collaborator.notify.detected_preseizure_duplication
-        send_notification(
-          Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
-          collaborator,
-          'unblocked_preseizure',
-          count == 1 ? 'Pré-affectation débloqué' : 'Pré-affectations débloqués',
-          count == 1 ? "1 pré-affectation a été débloqué." : "#{count} pré-affectations ont été débloqués."
-        )
+        create_notification({
+          url: Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
+          user: collaborator,
+          notice_type: 'unblocked_preseizure',
+          title: count == 1 ? 'Pré-affectation débloqué' : 'Pré-affectations débloqués',
+          message: count == 1 ? "1 pré-affectation a été débloqué." : "#{count} pré-affectations ont été débloqués."
+        }, true)
       end
 
       Notify.update_counters collaborator.notify.id, unblocked_preseizure_count: -count
@@ -201,7 +201,7 @@ class Notifications::PreAssignments < Notifications::Notifier
         notice_type: 'pre_assignment_delivery_failure',
         title:       deliveries.size == 1 ? 'Livraison de pré-affectation échouée' : 'Livraisons de pré-affectation échouées',
         message:     message
-      })
+      }, false)
     end
 
     list.each(&:delete)

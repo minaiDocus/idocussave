@@ -41,6 +41,8 @@ describe Notifications::PaperQuotas do
       expect(notification.last.message).to eq message_2
       expect(notification.first.message).to eq message_1
 
+      expect(@period.reload.is_paper_quota_reached_notified).to be true
+
       mails = ActionMailer::Base.deliveries.last(2)
 
       expect(mails[0].to).to eq [@user.email]

@@ -1,8 +1,38 @@
 # -*- encoding : UTF-8 -*-
 # Generic methods for scanned documents
-module Notifications::ScanService
+class Notifications::ScanService < Notifications::Notifier
+  def initialize(arguments={})
+    super
+  end
+
+  # Send mail to concerned people in settings
+  def notify_not_delivered
+    @not_delivered = not_delivered
+
+    emails = Settings.first.notify_scans_not_delivered_to
+
+    if !@not_delivered.empty? && emails.any?
+      ScanMailer.notify_not_delivered(emails, @not_delivered).deliver_later
+    else
+      false
+    end
+  end
+
+  #Send mail for uncomplete scan delivery
+  def notify_uncompleted_delivery
+    deliveries = @arguments[:deliveries]
+
+    if deliveries.any? && (emails = Settings.first.notify_scans_not_delivered_to).any?
+      ScanMailer.notify_uncompleted_delivery(emails, deliveries).deliver_later
+    else
+      false
+    end
+  end
+
+  private
+
   # List not delivered temp packs
-  def self.not_delivered
+  def not_delivered
     PeriodDocument.scanned.where("scanned_at >= ?", 30.days.ago).select do |scan|
       result = false
 
@@ -19,29 +49,6 @@ module Notifications::ScanService
 
       result
     end.map(&:name)
-  end
-
-
-  # Send mail to concerned people in settings
-  def self.notify_not_delivered
-    @not_delivered = not_delivered
-
-    emails = Settings.first.notify_scans_not_delivered_to
-
-    if !@not_delivered.empty? && emails.any?
-      ScanMailer.notify_not_delivered(emails, @not_delivered).deliver_later
-    else
-      false
-    end
-  end
-
-  #Send mail for uncomplete scan delivery
-  def self.notify_uncompleted_delivery(deliveries=[])
-    if deliveries.any? && (emails = Settings.first.notify_scans_not_delivered_to).any?
-      ScanMailer.notify_uncompleted_delivery(emails, deliveries).deliver_later
-    else
-      false
-    end
   end
 
 end
