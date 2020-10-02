@@ -38,7 +38,7 @@ class Api::Sgi::V1::MappingGeneratorController < SgiApiController
 
     user_ids = AccountBookType.where('user_id IS NOT NULL').compta_processable.pluck(:user_id)
     users = User.where(id: user_ids).active.sort_by(&:code)
-    
+
     users.each do |_user|
       address = _user.paper_return_address
 
