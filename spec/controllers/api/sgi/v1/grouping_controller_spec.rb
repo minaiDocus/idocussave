@@ -55,7 +55,7 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
       AddTempDocumentToTempPack.execute(@temp_pack, open(file_path), options)
     end
 
-    @pieces_bundled_json_content = {
+    @bundled_documents = {
       "packs": [
         {
           "id": 1,
@@ -107,11 +107,11 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
     DatabaseCleaner.clean
   end
 
-  context "GET temp_ocument_bundle_needed" do
+  context "GET bundle_needed documents", :bundle_needed_documents do
     it "valid Authorization header, returns a 200" do
       request.headers["Authorization"] = @token
       request.headers["Content-Type"] = "application/json"
-      get :temp_document_bundle_needed, format: :json, params: {:access_token => @token}
+      get :bundle_needed, format: :json, params: {:access_token => @token}
 
       expect(response).to have_http_status(:ok)
     end
@@ -119,7 +119,7 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
     it "invalid Authorization header, returns a 401" do
       request.headers["Authorization"] = @token
       request.headers["Content-Type"] = "application/json"
-      get :temp_document_bundle_needed, format: :json, params: {:access_token => nil}
+      get :bundle_needed, format: :json, params: {:access_token => nil}
 
       expect(response).to have_http_status(:unauthorized)
     end
@@ -129,24 +129,24 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
 
       @temp_pack.update_attributes(updated_at: 20.minutes.ago)
 
-      get :temp_document_bundle_needed, format: :json, params: {:access_token => @token}
+      get :bundle_needed, format: :json, params: {:access_token => @token}
       json_response = JSON.parse(response.body)
 
-      expect(json_response.keys).to match_array(["success", "temp_documents_bundle_needed"])
+      expect(json_response.keys).to match_array(["success", "bundle_needed_documents"])
       expect(json_response["success"]).to be true
-      JSON.parse(json_response[ "temp_documents_bundle_needed" ]).each do |status|
+      JSON.parse(json_response[ "bundle_needed_documents" ]).each do |status|
         expect(status.keys).to contain_exactly( "base_file_name", "delivery_type", "id", "temp_document_url", "temp_pack_name" )
       end
     end
   end
 
-  context "POST handle_piece_bundled" do
+  context "POST bundled documents", :bundled_documents do
     it "post params, returns a status: 200, success: true and message: nil" do
       allow_any_instance_of(SgiApiServices::GroupDocument).to receive(:execute).and_return(success: true)
 
       request.headers["Authorization"] = @token
       request.headers["Content-Type"] = "application/json"
-      post :handle_piece_bundled, format: :json, params: {:access_token => @token, :pieces_bundled_json_content => @pieces_bundled_json_content}
+      post :bundled, format: :json, params: {:access_token => @token, :bundled_documents => @bundled_documents}
 
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
@@ -161,7 +161,7 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
 
       request.headers["Authorization"] = @token
       request.headers["Content-Type"] = "application/json"
-      post :handle_piece_bundled, format: :json, params: {:access_token => @token, :pieces_bundled_json_content => @pieces_bundled_json_content}
+      post :bundled, format: :json, params: {:access_token => @token, :bundled_documents => @bundled_documents}
 
       expect(response).to have_http_status(601)
       json_response = JSON.parse(response.body)

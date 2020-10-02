@@ -9,7 +9,7 @@ describe SgiApiServices::GroupDocument do
     after(:all) do
       Timecop.return
     end
-  describe '.position' do
+  describe '.position', :position do
     it 'returns 5' do
       result = SgiApiServices::GroupDocument.position('IDO0001_AC_202006_005.pdf')
       expect(result).to eq 5
@@ -41,7 +41,7 @@ describe SgiApiServices::GroupDocument do
     end
   end
 
-  describe '.basename' do
+  describe '.basename', :basename do
     it 'returns IDO0001 AC 2020' do
       result = SgiApiServices::GroupDocument.basename('IDO0001_AC_2020_005.pdf')
       expect(result).to eq 'IDO0001 AC 2020'
@@ -143,7 +143,7 @@ describe SgiApiServices::GroupDocument do
     end
   end
 
-  describe '.execute' do
+  describe '.execute', :execute do
     before(:each) do
       DatabaseCleaner.start
       #Timecop.freeze(Time.local(2020,06,12,0,1,0))
@@ -162,7 +162,7 @@ describe SgiApiServices::GroupDocument do
       DatabaseCleaner.clean
     end
 
-    context 'with errors' do
+    context 'with errors', :with_errors do
       it 'has invalid temp pack name', :has_invalid_temp_pack_name do
         has_invalid_temp_pack_name = {
           "packs": [
@@ -224,6 +224,7 @@ describe SgiApiServices::GroupDocument do
         response = group_document.execute
 
         expect(response['piece_origin_unknown_with_piece_id_1']).to eq 'Piece origin : "fake", unknown.'
+        expect(TempDocument.all.size).to eq 0
       end
 
       it 'does not match origin "scan"', :doesnot_match_origin_scan do
@@ -365,6 +366,8 @@ describe SgiApiServices::GroupDocument do
       end
 
       it 'file not found', :file_not_found do
+        allow_any_instance_of(SgiApiServices::GroupDocument).to receive(:url_exist?).and_return(false)
+
         temp_document = TempDocument.new
         temp_document.temp_pack      = @temp_pack
         temp_document.user           = @user
@@ -484,7 +487,7 @@ describe SgiApiServices::GroupDocument do
       end
     end
 
-    context 'without errors' do
+    context 'without errors', :without_errors do
       it 'successfully group scanned documents', :group_scanned_document do
         2.times do |i|
           temp_document = TempDocument.new

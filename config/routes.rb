@@ -597,8 +597,8 @@ Rails.application.routes.draw do
     namespace :sgi do
       namespace :v1 do
         resources :grouping do
-          get 'temp_document_bundle_needed', on: :collection
-          post 'handle_piece_bundled', on: :collection
+          get 'bundle_needed', on: :collection
+          post 'bundled', on: :collection
         end
 
         resources :mapping_generator do
