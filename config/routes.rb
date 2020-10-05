@@ -611,10 +611,10 @@ Rails.application.routes.draw do
           post 'bundled', on: :collection
         end
 
-        resources :send_piece_to_preassignment do
-          get 'piece_preassignment_needed', on: :collection
+        resources :preassignment do
+          get 'preassignment_needed', on: :collection
           get 'download_piece', on: :collection
-          post 'retrieve_preassignment', on: :collection
+          post 'push_preassignment', on: :collection
         end
 
         resources :mapping_generator do

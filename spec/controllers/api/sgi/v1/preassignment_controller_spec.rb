@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe Api::Sgi::V1::SendPieceToPreassignmentController do
+describe Api::Sgi::V1::PreassignmentController do
   render_views
 
   def temp_document
@@ -36,50 +36,52 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
 
     @period = create :period, { user: @user, organization: @organization }
 
-    @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, is_awaiting_pre_assignment:  false, pre_assignment_state: "waiting" }
-    @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, is_awaiting_pre_assignment:  false, pre_assignment_state: "waiting" }
+    @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
+    @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
+  end
+
+  before(:each) do
+    allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
   end
 
   context "get list pieces", :list_piece do
-    it 'no piece for preassignmlent needed'do
+    it 'no preassignment needed pieces'do
       allow(Pack::Piece).to receive(:need_preassignment).and_return([])
       expect(TempPack).to receive(:find_by_name).with(any_args).exactly(0).times
 
-      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
 
       result = JSON.parse(response.body)
 
-      expect(result["list_url"].size).to eq 0
+      expect(result["pieces"].size).to eq 0
     end
 
     it "get list pieces exactly pieces1 and piece2" do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
-      allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
 
-      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
-      expect(result["list_url"].size).to eq 2
-      expect(result["list_url"].first["piece_name"]).to eq @piece1.name
-      expect(result["list_url"].last["piece_name"]).to eq @piece2.name
+      expect(result["pieces"].size).to eq 2
+      expect(result["pieces"].first["piece_name"]).to eq @piece1.name
+      expect(result["pieces"].last["piece_name"]).to eq @piece2.name
     end
 
     it "send notif error if piece have an error condition" do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(nil)
-      allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
 
-      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
-      expect(result["list_url"].size).to eq 0
+      expect(result["pieces"].size).to eq 0
     end
   end
 
-  context "download piece" do
+  context "download piece", :download_piece do
     it "download piece success with id" do
       url = @piece1.get_access_url
       get :download_piece, format: :json, params: { :access_token => @user.authentication_token, :piece_id => @piece1.id }
@@ -93,35 +95,35 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
     it "download piece failed because id nil" do
       get :download_piece, format: :json, params: { :access_token => @user.authentication_token }
 
-      expect(response).to be_successful
+      expect(response.status).to eq 601
       result = JSON.parse(response.body)
 
       expect(result["message"]).to eq "Id pièce absent"
     end
   end
 
-  context "preassignment process", :pre_assignment do
+  context "process preassignment", :pre_assignment do
     it "try to send with params data" do
-      list_ids_piece_update = [{ id: @piece1.id, name: @piece1.name }, { id: @piece2.id, name: @piece2.name }]
-      allow_any_instance_of(SgiApiServices::RetrievePreAsignmentService).to receive(:execute).and_return(list_ids_piece_update)
+      results = [{ id: @piece1.id, name: @piece1.name }, { id: @piece2.id, name: @piece2.name }]
+      allow_any_instance_of(SgiApiServices::PushPreAsignmentService).to receive(:execute).and_return(results)
 
-      post :retrieve_preassignment, format: :json, params: { :access_token => @user.authentication_token, data_preassignments: data_content }
+      post :push_preassignment, format: :json, params: { :access_token => @user.authentication_token, data_preassignments: data_content }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
 
-      expect(result["list_ids_piece_update"].size).to eq 2
-      expect(result["list_ids_piece_update"].first['id']).to eq @piece1.id
-      expect(result["list_ids_piece_update"].first['name']).to eq @piece1.name
+      expect(result["results"].size).to eq 2
+      expect(result["results"].first['id']).to eq @piece1.id
+      expect(result["results"].first['name']).to eq @piece1.name
     end
 
     it "try to send without params data" do
-      post :retrieve_preassignment, format: :json, params: { :access_token => @user.authentication_token }
+      post :push_preassignment, format: :json, params: { :access_token => @user.authentication_token }
 
-      expect(response).to be_successful
+      expect(response.status).to eq 601
       result = JSON.parse(response.body)
 
-      expect(result["message"]).to eq "Data absent"
+      expect(result["message"]).to eq "Paramètre absent"
     end
   end
 end

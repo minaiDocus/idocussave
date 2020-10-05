@@ -27,7 +27,7 @@ describe AccountingWorkflow::RetrievePreAssignments do
     end
 
     before(:each) do
-      @piece = create :piece, { user: @user, organization: @organization, pack: @pack, is_awaiting_pre_assignment: true }
+      @piece = create :piece, { user: @user, organization: @organization, pack: @pack, pre_assignment_state: 'processing' }
       @piece.processing_pre_assignment
 
       allow(FileUtils).to receive(:mkdir_p).and_return(true)
@@ -51,7 +51,7 @@ describe AccountingWorkflow::RetrievePreAssignments do
       @piece.reload
       expect(@piece.pre_assignment_processed?).to be true
       expect(@piece.is_already_pre_assigned_with?('preseizure')).to be true
-      expect(@piece.is_awaiting_pre_assignment).to be false
+      expect(@piece.is_awaiting_pre_assignment?).to be false
       expect(@piece.pre_assignment_comment).to be nil
     end
 
@@ -62,7 +62,7 @@ describe AccountingWorkflow::RetrievePreAssignments do
 
       @piece.reload
       expect(@piece.pre_assignment_ignored?).to be true
-      expect(@piece.is_awaiting_pre_assignment).to be false
+      expect(@piece.is_awaiting_pre_assignment?).to be false
       expect(@piece.pre_assignment_comment).to_not be nil
     end
 
@@ -77,7 +77,7 @@ describe AccountingWorkflow::RetrievePreAssignments do
 
       @piece.reload
       expect(@piece.pre_assignment_not_processed?).to be true
-      expect(@piece.is_awaiting_pre_assignment).to be false
+      expect(@piece.is_awaiting_pre_assignment?).to be false
     end
   end
 

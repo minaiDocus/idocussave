@@ -40,7 +40,7 @@ module FileDelivery::RemotePack
         is_custom_name_needed = is_custom_name_active && organization.foc_file_naming_policy.pre_assignment_needed?
 
         pieces.each do |piece|
-          next if is_custom_name_needed && (piece.is_awaiting_pre_assignment || piece.preseizures.select(&:is_not_blocked_for_duplication).empty?)
+          next if is_custom_name_needed && (piece.is_awaiting_pre_assignment? || piece.preseizures.select(&:is_not_blocked_for_duplication).empty?)
           piece.extend FileDelivery::RemoteFile
 
           temp_remote_files = piece.get_remote_files(object, service_name)

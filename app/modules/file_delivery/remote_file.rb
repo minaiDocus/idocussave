@@ -93,7 +93,7 @@ module FileDelivery::RemoteFile
     current_remote_files = []
 
     if service_name == 'Knowings'
-      if preseizures.any? || !is_awaiting_pre_assignment
+      if preseizures.any? || !is_awaiting_pre_assignment?
         current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
       end
     else
