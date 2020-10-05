@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::Sgi::V1::SendPieceToPreassignmentController < SgiApiController
-  def get_lists
+  def piece_preassignment_needed
     @lists_pieces = []
 
     Pack::Piece.need_preassignment.each do |piece|
@@ -23,7 +23,7 @@ class Api::Sgi::V1::SendPieceToPreassignmentController < SgiApiController
     end
   end
 
-  def post_data
+  def retrieve_preassignment
     #TODO: Sidekiq
     if params[:data_preassignments].present?
       list_ids_piece_update = SgiApiServices::RetrievePreAsignmentService.new(params[:data_preassignments]).execute
