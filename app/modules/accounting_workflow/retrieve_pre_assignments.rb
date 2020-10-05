@@ -76,13 +76,14 @@ class AccountingWorkflow::RetrievePreAssignments
       errors = []
       errors << "Piece #{xml_piece['name']} unknown or deleted" unless piece
       errors << "Journal not found" unless journal
+      errors << "Piece not awaiting for pre assignment" unless piece.is_awaiting_pre_assignment?
       errors << "Piece #{xml_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
       if errors.empty?
         [piece, xml_piece, file_path]
       else
         if piece
-          piece.update(is_awaiting_pre_assignment: false)
+          # piece.update(is_awaiting_pre_assignment: false)
           piece.not_processed_pre_assignment
         end
         move_and_write_errors(file_path, errors)
@@ -124,7 +125,7 @@ class AccountingWorkflow::RetrievePreAssignments
       delete_input_file_piece piece, report
 
       _ignored ? piece.ignored_pre_assignment : piece.processed_pre_assignment
-      piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: _ignoring_reason)
+      piece.update(pre_assignment_comment: _ignoring_reason)
     end
 
     pre_assignments

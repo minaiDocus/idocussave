@@ -58,7 +58,8 @@ class Pack::Piece < ApplicationRecord
 
   #WORKARROUND : Get pieces with suplier_recognition state and detected_third_party_id present
   # scope :need_preassignment,   -> { where(pre_assignment_state: 'waiting') }
-  scope :need_preassignment,     -> { where('(pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0)) AND is_awaiting_pre_assignment = false') }
+  scope :need_preassignment,     -> { where('(pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0))') }
+  scope :awaiting_preassignment, -> { where('pre_assignment_state = "processing" OR pre_assignment_state = "force_processing"') }
 
   scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
@@ -409,8 +410,11 @@ class Pack::Piece < ApplicationRecord
     return self.pages_number
   end
 
+  def is_awaiting_pre_assignment?
+    self.pre_assignment_processing? || self.pre_assignment_force_processing?
+  end
+
   def is_already_pre_assigned_with?(process='preseizure')
-    return true unless is_awaiting_pre_assignment?
     process == 'preseizure' ? preseizures.any? : expense.present?
   end
 
@@ -421,7 +425,7 @@ class Pack::Piece < ApplicationRecord
     if self.pre_assignment_waiting_analytics?
       text    = 'awaiting_analytics'
       img_url = 'application/compta_analytics.png'
-    elsif self.is_awaiting_pre_assignment
+    elsif self.is_awaiting_pre_assignment?
       text    = 'awaiting_pre_assignment'
       img_url = 'application/preaff_pending.png'
     elsif self.preseizures.delivered.count > 0
