@@ -18,9 +18,9 @@ class DiscountBillingService
     UpdatePeriodPriceService.new(period).execute
   end
 
-  def initialize(organization, _time)
+  def initialize(organization, _time=nil)
     @organization = organization
-    @time = _time || 1.months.ago
+    @time = _time || Time.now
   end
 
   def title
