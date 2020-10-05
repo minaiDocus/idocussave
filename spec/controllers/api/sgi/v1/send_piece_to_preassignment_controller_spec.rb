@@ -45,7 +45,7 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
       allow(Pack::Piece).to receive(:need_preassignment).and_return([])
       expect(TempPack).to receive(:find_by_name).with(any_args).exactly(0).times
 
-      get :get_lists, format: :json, params: { :access_token => @user.authentication_token }
+      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
 
@@ -58,7 +58,7 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
 
-      get :get_lists, format: :json, params: { :access_token => @user.authentication_token }
+      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
@@ -71,7 +71,7 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(nil)
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
 
-      get :get_lists, format: :json, params: { :access_token => @user.authentication_token }
+      get :piece_preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
@@ -105,7 +105,7 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
       list_ids_piece_update = [{ id: @piece1.id, name: @piece1.name }, { id: @piece2.id, name: @piece2.name }]
       allow_any_instance_of(SgiApiServices::RetrievePreAsignmentService).to receive(:execute).and_return(list_ids_piece_update)
 
-      post :post_data, format: :json, params: { :access_token => @user.authentication_token, data_preassignments: data_content }
+      post :retrieve_preassignment, format: :json, params: { :access_token => @user.authentication_token, data_preassignments: data_content }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
@@ -116,7 +116,7 @@ describe Api::Sgi::V1::SendPieceToPreassignmentController do
     end
 
     it "try to send without params data" do
-      post :post_data, format: :json, params: { :access_token => @user.authentication_token}
+      post :retrieve_preassignment, format: :json, params: { :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
