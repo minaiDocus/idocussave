@@ -13,7 +13,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def execute
     begin
-      if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment
+      if @piece.temp_document.nil? || @piece.preseizures.any? || @piece.is_awaiting_pre_assignment?
         @piece.update(pre_assignment_state: 'ready') if @piece.pre_assignment_state == 'waiting'
 
         log_document = {
@@ -26,7 +26,6 @@ class AccountingWorkflow::SendPieceToPreAssignment
             piece_name: @piece.name,
             temp_doc: @piece.temp_document.nil?,
             preseizures: @piece.preseizures.any?,
-            is_awaiting: @piece.is_awaiting_pre_assignment,
             piece:  @piece.inspect
           }
         }
@@ -38,7 +37,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
       copy_to_dir manual_dir
 
-      @piece.update(is_awaiting_pre_assignment: true)
+      # @piece.update(is_awaiting_pre_assignment: true)
 
       @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
     rescue => e

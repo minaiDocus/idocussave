@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SgiApiServices::RetrievePreAsignmentService
+class SgiApiServices::PushPreAsignmentService
   def initialize(data_preassignment)
     @pack_preassignment = data_preassignment["packs"]
   end
@@ -13,7 +13,7 @@ class SgiApiServices::RetrievePreAsignmentService
 
       @process = data_pack["process"]
 
-      period   = pack.owner.subscription.find_or_create_period(Date.today)
+      period   = pack.owner.subscription.current_period
       document = Reporting.find_or_create_period_document(pack, period)
       report   = document.report || create_report(pack, document)
 
@@ -59,8 +59,9 @@ class SgiApiServices::RetrievePreAsignmentService
       journal = piece.user.account_book_types.where(name: piece.pack.name.split[1]).first if piece
 
       errors = []
-      errors << "Piece #{data_piece['name']} unknown or deleted" unless piece
-      errors << "Journal not found" unless journal
+      errors << "Piece #{data_piece['name']} unknown or deleted" if !piece
+      errors << "Journal not found" if !journal
+      errors << "Piece not awaiting for pre assignment" if !piece.is_awaiting_pre_assignment?
       errors << "Piece #{data_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
       if errors.empty?
@@ -85,7 +86,7 @@ class SgiApiServices::RetrievePreAsignmentService
         piece.not_processed_pre_assignment
       end
 
-      piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: _ignoring_reason) if piece
+      piece.update(pre_assignment_comment: _ignoring_reason) if piece
 
       @list_pieces << { id: piece.id, name: piece.name, errors: errors }
     end
@@ -112,24 +113,21 @@ class SgiApiServices::RetrievePreAsignmentService
     preseizure.is_made_by_abbyy = data['is_made_by_abbyy']
     preseizure.save
 
-    data['account'].each do |data_account|
+    data['accounts'].each do |data_account|
       account           = Pack::Report::Preseizure::Account.new
       account.type      = Pack::Report::Preseizure::Account.get_type(data_account['type'])
       account.number    = data_account['number']
       account.lettering = data_account['lettering']
       account.save
-
       preseizure.accounts << account
 
-      data_account['debit,credit'].each do |data_entity|
-        entry = Pack::Report::Preseizure::Entry.new
-        entry.type   = "Pack::Report::Preseizure::Entry::#{data_entity["name"].upcase}".constantize
-        entry.number = data_entity['number'].to_i
-        entry.amount = data_entity["value"].try(:to_f)
-        entry.save
-        account.entries << entry
-        preseizure.entries << entry
-      end
+      entry = Pack::Report::Preseizure::Entry.new
+      entry.type   = "Pack::Report::Preseizure::Entry::#{data_account['amount']['type'].to_s.upcase}".constantize
+      entry.number = data_account['amount']['number'].to_i
+      entry.amount = data_account['amount']["value"].try(:to_f)
+      entry.save
+      account.entries << entry
+      preseizure.entries << entry
     end
 
     preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)

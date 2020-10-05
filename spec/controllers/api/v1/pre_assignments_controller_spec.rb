@@ -14,13 +14,13 @@ describe Api::V1::PreAssignmentsController do
     Timecop.freeze(Time.local(2014,1,1,8,0,0))
 
     @pack = Pack.create(name: 'TS%0001 AC 201401 all', owner_id: @user.id)
-    @piece1 = Pack::Piece.create(name: 'TS%0001 AC 201401 001', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
-    @piece2 = Pack::Piece.create(name: 'TS%0001 AC 201401 002', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
+    @piece1 = Pack::Piece.create(name: 'TS%0001 AC 201401 001', pack_id: @pack.id, origin: 'scan', pre_assignment_state: 'processing')
+    @piece2 = Pack::Piece.create(name: 'TS%0001 AC 201401 002', pack_id: @pack.id, origin: 'scan', pre_assignment_state: 'processing')
 
     Timecop.freeze(Time.local(2014,2,1,8,0,0))
 
     @pack2 = Pack.create(name: 'TS%0001 AC 201402 all', owner_id: @user.id)
-    @piece3 = Pack::Piece.create(name: 'TS%0001 AC 201402 001', pack_id: @pack2.id, origin: 'scan', is_awaiting_pre_assignment: true)
+    @piece3 = Pack::Piece.create(name: 'TS%0001 AC 201402 001', pack_id: @pack2.id, origin: 'scan', pre_assignment_state: 'processing')
 
     Timecop.return
   end

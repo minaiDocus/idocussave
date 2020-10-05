@@ -16,8 +16,8 @@ class PreAssignment::AutoPreAssignedJefacturePieces
   end
 
   def execute
-    if @temp_document.present? && @raw_presezeizure['piece_number'] && @piece.preseizures.empty? && !@piece.is_awaiting_pre_assignment
-      @piece.update(is_awaiting_pre_assignment: true)
+    if @temp_document.present? && @raw_presezeizure['piece_number'] && @piece.preseizures.empty? && !@piece.is_awaiting_pre_assignment?
+      # @piece.update(is_awaiting_pre_assignment: true)
       @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
       preseizure = Pack::Report::Preseizure.new
@@ -57,7 +57,7 @@ class PreAssignment::AutoPreAssignedJefacturePieces
         System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
 
         @piece.processed_pre_assignment
-        @piece.update(is_awaiting_pre_assignment: false)
+        # @piece.update(is_awaiting_pre_assignment: false)
         preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
         unless PreAssignment::DetectDuplicate.new(preseizure).execute
