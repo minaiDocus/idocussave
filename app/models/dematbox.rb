@@ -14,19 +14,19 @@ class Dematbox < ApplicationRecord
 
 
   def build_services
-    all_groups   = DematboxService.groups.order(name: :asc)
-    all_services = DematboxService.services.order(name: :asc)
+    all_groups   = DematboxService.groups.order(name: :asc).to_a
+    all_services = DematboxService.services.order(name: :asc).to_a
 
-    current_group  = all_groups.to_a.shift
-    previous_group = all_groups.to_a.shift
+    current_group  = all_groups.shift
+    previous_group = all_groups.shift
 
     if current_group && previous_group
       current_group_params  = current_group.to_params('Période Actuelle').merge(services: { service: [] })
       previous_group_params = previous_group.to_params('Période Précédente').merge(services: { service: [] })
 
       journal_names.each do |journal_name|
-        current_service  = all_services.to_a.shift
-        previous_service = all_services.to_a.shift
+        current_service  = all_services.shift
+        previous_service = all_services.shift
 
         if current_service && previous_service
           current_group_params[:services][:service] << current_service.to_params(journal_name)
