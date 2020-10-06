@@ -111,7 +111,7 @@ class Notifications::PreAssignments < Notifications::Notifier
 
       collaborator.notify.reload
 
-      count = collaborator.notify.pre_assignment_ignored_piece_count
+      count = collaborator.notify.try(:pre_assignment_ignored_piece_count)
 
       return if count == 0
 
@@ -131,16 +131,16 @@ class Notifications::PreAssignments < Notifications::Notifier
   def notify_unblocked_preseizure
     @arguments[:owner].prescribers.each do |collaborator|
       next if collaborator == @arguments[:unblocker]
-      next unless collaborator.notify.detected_preseizure_duplication
+      next unless collaborator.notify.try(:detected_preseizure_duplication)
       Notify.update_counters collaborator.notify.id, unblocked_preseizure_count: @arguments[:total]
 
       collaborator.notify.reload
 
-      count = collaborator.notify.unblocked_preseizure_count
+      count = collaborator.notify.try(:unblocked_preseizure_count)
 
       return if count == 0
 
-      if collaborator.notify.detected_preseizure_duplication
+      if collaborator.notify.try(:detected_preseizure_duplication)
         create_notification({
           url: Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
           user: collaborator,
