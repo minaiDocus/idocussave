@@ -104,6 +104,7 @@ class PreseizureToTxtService
 
         line[0] = preseizure.journal_name[0..2]
         line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+        line[11] = nature
         line[13] = case journal.compta_type
                    when 'AC'
                     '401000'
