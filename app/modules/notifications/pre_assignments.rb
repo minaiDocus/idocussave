@@ -22,7 +22,7 @@ class Notifications::PreAssignments < Notifications::Notifier
 
       create_notification({
         url: Rails.application.routes.url_helpers.account_pre_assignment_blocked_duplicates_path,
-        user: collaborator,
+        user: collaborator.user,
         notice_type: 'detected_preseizure_duplication',
         title: count == 1 ? 'Pré-affectation bloqué' : 'Pré-affectations bloqués',
         message: count == 1 ? "1 pré-affectation est susceptible d'être un doublon et a été bloqué." : "#{count} pré-affectations sont susceptibles d'être des doublons et ont été bloqués."

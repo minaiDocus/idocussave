@@ -1,4 +1,6 @@
 class Collaborator
+  attr_reader :user
+
   def initialize(user, member: nil, organization: nil)
     @user         = user
     @member       = member
