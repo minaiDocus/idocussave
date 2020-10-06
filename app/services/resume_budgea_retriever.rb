@@ -38,7 +38,7 @@ class ResumeBudgeaRetriever
 
   private
 
-  def info(retriever, initial_message, final_message, updated_by)
+  def info(retriever, initial_message, final_message, updated_by=nil)
     {
       retriever_id: retriever.id,
       budgea_id: retriever.budgea_id,
