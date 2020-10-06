@@ -6,14 +6,14 @@
     .card-header
       - if @customer.configured?
         %h3
-          Edition du 
+          Edition du
           = link_to 'plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'fs-origin'
-          du client : 
+          du client :
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'accounting_plan'), class: 'fs-origin'
       - else
         %h3 Plan comptable
 
-    = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
+    = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@organization, @customer), html: { class: 'form form-horizontal margin0', novalidate: true }, wrapper: false do |f|
       .card-body
         .row
           .col-md-6
