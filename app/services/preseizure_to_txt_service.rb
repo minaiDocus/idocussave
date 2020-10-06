@@ -154,6 +154,7 @@ class PreseizureToTxtService
             line = ' ' * 222
             line[0] = preseizure.journal_name[0..2]
             line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+            line[11] = nature
             line[13] = account
 
             line[30] = 'X'
