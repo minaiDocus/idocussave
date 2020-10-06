@@ -101,7 +101,7 @@ class ProcessOperation
       end
 
       preseizures.each do |preseizure|
-        NotifyNewPreAssignmentAvailable.new(preseizure).execute
+        Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available
       end
 
       preseizures

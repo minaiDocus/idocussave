@@ -21,7 +21,7 @@ describe ShareMyAccount do
       last_name:  'Doe'
     }
 
-    expect(NotifyWorker).to receive(:perform_async)
+    expect(Notifications::Notifier).to receive(:notify)
     expect(DropboxImport).to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
@@ -36,7 +36,7 @@ describe ShareMyAccount do
   it 'fails to share his account' do
     params = { email: 'john.doe@test.com' }
 
-    expect(NotifyWorker).not_to receive(:perform_async)
+    expect(Notifications::Notifier).not_to receive(:notify)
     expect(DropboxImport).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
@@ -53,7 +53,7 @@ describe ShareMyAccount do
     @organization.customers << user2
     params = { email: 'test2@test.com' }
 
-    expect(NotifyWorker).to receive(:perform_async)
+    expect(Notifications::Notifier).to receive(:notify)
     expect(DropboxImport).to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
@@ -70,7 +70,7 @@ describe ShareMyAccount do
     organization.customers << user2
     params = { email: 'test2@test.com' }
 
-    expect(NotifyWorker).not_to receive(:perform_async)
+    expect(Notifications::Notifier).not_to receive(:notify)
     expect(DropboxImport).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
@@ -87,7 +87,7 @@ describe ShareMyAccount do
     Member.create(user: user2, organization: @organization, code: 'TS%COL1')
     params = { email: 'col@test.com' }
 
-    expect(NotifyWorker).not_to receive(:perform_async)
+    expect(Notifications::Notifier).not_to receive(:notify)
     expect(DropboxImport).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
@@ -107,7 +107,7 @@ describe ShareMyAccount do
     it 'shares his account to the existing contact successfully' do
       params = { email: 'john.doe@test.com' }
 
-      expect(NotifyWorker).to receive(:perform_async)
+      expect(Notifications::Notifier).to receive(:notify)
       expect(DropboxImport).to receive(:changed)
 
       collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute

@@ -96,7 +96,7 @@ class AutoPreAssignedInvoicePieces
             CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
             GeneratePreAssignmentExportService.new(preseizure).execute
 
-            NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
+            Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available
           end
         else
           LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")

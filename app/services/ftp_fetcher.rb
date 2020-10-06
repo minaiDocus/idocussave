@@ -19,7 +19,7 @@ class FtpFetcher
       dirs = ftp.nlst.sort
 
       if (uncomplete_deliveries = check_uncomplete_delivery(ftp, dirs)).any?
-        ScanService.notify_uncompleted_delivery uncomplete_deliveries
+        Notifications::ScanService.new({deliveries: uncomplete_deliveries}).notify_uncompleted_delivery
         ftp.chdir dir
         uncomplete_deliveries.each { |file_path| ftp.delete("#{file_path}.uncomplete") rescue false }
       end
@@ -71,7 +71,7 @@ class FtpFetcher
           ftp.rename dir, fetched_dir(dir)
 
           document_delivery.temp_documents.group_by(&:user).each do |user, temp_documents|
-            NotifyNewScannedDocuments.new(user, temp_documents.count).execute
+            Notifications::Documents.new({user: user, new_count: temp_documents.count}).notify_new_scaned_documents
           end
         end
 

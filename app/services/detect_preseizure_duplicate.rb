@@ -11,7 +11,7 @@ class DetectPreseizureDuplicate
     @preseizure.is_blocked_for_duplication = @preseizure.organization.is_duplicate_blocker_activated
     @preseizure.save
 
-    @preseizure.is_blocked_for_duplication ? NotifyDetectedPreseizureDuplicate.new(@preseizure, 5.minutes).execute : false
+    @preseizure.is_blocked_for_duplication ? Notifications::PreAssignments.new({preseizure: @preseizure}).notify_detected_preseizure_duplication : false
   end
 
   private

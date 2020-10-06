@@ -109,7 +109,7 @@ class AccountingWorkflow::RetrievePreAssignments
         if _ignoring_reason.present?
           _ignored = true
 
-          NotifyPreAssignmentIgnoredPiece.new(piece, 5.minutes).execute unless piece.is_deleted?
+          Notifications::PreAssignments.new({piece: piece}).notify_pre_assignment_ignored_piece unless piece.is_deleted?
         else
           xml_piece.css('preseizure').each do |data|
             pre_assignments << create_preseizure(piece, report, data)
@@ -172,7 +172,7 @@ class AccountingWorkflow::RetrievePreAssignments
     preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
     unless DetectPreseizureDuplicate.new(preseizure).execute
-      NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute unless preseizure.has_deleted_piece?
+      Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available unless preseizure.has_deleted_piece?
     end
 
     preseizure

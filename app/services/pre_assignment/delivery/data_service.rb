@@ -64,7 +64,7 @@ class PreAssignment::Delivery::DataService
     @report.save
     @report.set_delivery_message_for(@delivery.deliver_to, error_message.to_s)
 
-    NotifyPreAssignmentDeliveryFailure.new(@delivery).execute
+    Notifications::PreAssignments.new({delivery: @delivery, user: @delivery.user}).notify_pre_assignment_delivery_failure
   end
 
   def handle_delivery_success

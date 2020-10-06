@@ -16,14 +16,19 @@ class CreateInvoicePdf
       archive_invoice
     end
 
-    def for(organization_id, invoice_number=nil, _time=nil)
+    def for(organization_id, invoice_number=nil, _time=nil, _options={})
       organization = Organization.where(id: organization_id).billed.first
       return false unless organization
 
       generate_invoice_of organization, invoice_number, _time
     end
 
-    def generate_invoice_of(organization, invoice_number=nil, _time=nil)
+    #_options : [notify: send notification to admin,
+    #            auto_upload: send invoice to ACC%IDO and invoice_settings]
+    def generate_invoice_of(organization, invoice_number=nil, _time=nil, _options={})
+      options[:notify]      = (_options[:notify] === false)? false : true
+      options[:auto_upload] = (_options[:auto_upload] === false)? false : true
+
       begin
         time = _time.to_date.beginning_of_month + 15.days
       rescue
@@ -55,7 +60,7 @@ class CreateInvoicePdf
 
       UpdateOrganizationPeriod.new(organization_period).fetch_all
       #Update discount only for organization and when generating invoice
-      DiscountBillingService.update_period(organization_period)
+      DiscountBillingService.update_period(organization_period, time)
 
       return false if customers_periods.empty? && organization_period.price_in_cents_wo_vat == 0
 
@@ -64,7 +69,7 @@ class CreateInvoicePdf
       invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
       invoice.save
       print "-> Invoice #{invoice.number}..."
-      CreateInvoicePdf.new(invoice, time).execute
+      CreateInvoicePdf.new(invoice, time, options[:auto_upload]).execute
       print "done\n"
 
       #organization.admins.each do |admin|
@@ -77,7 +82,7 @@ class CreateInvoicePdf
       #  notification.save
       #end
 
-      InvoiceMailer.delay(queue: :high).notify(invoice)
+      InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
     end
 
     def archive_invoice(time = Time.now)
@@ -99,9 +104,10 @@ class CreateInvoicePdf
     end
   end
 
-  def initialize(invoice, time=nil)
+  def initialize(invoice, time=nil, auto_upload=true)
     @invoice = invoice
     @time    = time
+    @auto_upload = auto_upload
   end
 
   def execute
@@ -112,7 +118,7 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    auto_upload_last_invoice if @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
+    auto_upload_last_invoice if @auto_upload && @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
   def initialize_data_utilities
@@ -386,6 +392,8 @@ class CreateInvoicePdf
     invoice_settings = @invoice.organization.invoice_settings || []
 
     invoice_settings.each do |invoice_setting|
+      next unless invoice_setting.user.try(:options).try(:is_upload_authorized)
+
       uploaded_document = UploadedDocument.new( file, content_file_name, invoice_setting.user, invoice_setting.journal_code, 1, nil, 'invoice_setting', nil )
       logger_message_content(uploaded_document)
     end

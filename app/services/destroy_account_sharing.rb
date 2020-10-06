@@ -7,21 +7,24 @@ class DestroyAccountSharing
   def execute
     if @account_sharing.destroy
       DropboxImport.changed([@account_sharing.collaborator])
-
-      notification = Notification.new
-      notification.url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
+      url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
       if @account_sharing.is_approved
-        notification.user        = @account_sharing.collaborator
-        notification.notice_type = 'account_sharing_destroyed'
-        notification.title       = 'Accès à un compte révoqué'
-        notification.message     = "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
-        NotifyWorker.perform_async(notification.id) if notification.save
+
+        Notifications::Notifier.new.create_notification({
+          url: url,
+          user: @account_sharing.collaborator,
+          notice_type: 'account_sharing_destroyed',
+          title: "Accès à un compte révoqué",
+          message: "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
+        }, true)
       elsif @requester != @account_sharing.collaborator
-        notification.user        = @account_sharing.collaborator
-        notification.notice_type = 'account_sharing_request_denied'
-        notification.title       = 'Accès à un compte refusé'
-        notification.message     = "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
-        NotifyWorker.perform_async(notification.id) if notification.save
+        Notifications::Notifier.new.create_notification({
+          url: url,
+          user: @account_sharing.collaborator,
+          notice_type: 'account_sharing_request_denied',
+          title: "Demande d'accès à un compte annulé",
+          message: "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
+        }, true)
       else
         collaborators = if @account_sharing.account.manager&.user
           [@account_sharing.account.manager.user]
@@ -35,14 +38,13 @@ class DestroyAccountSharing
         )
 
         collaborators.each do |collaborator|
-          notif = Notification.new(
-            url:         url,
-            user:        collaborator,
+           Notifications::Notifier.new.create_notification({
+            url: url,
+            user: collaborator,
             notice_type: 'account_sharing_request_canceled',
-            title:       "Demande d'accès à un compte annulé",
-            message:     "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
-          )
-          NotifyWorker.perform_async(notif.id) if notif.save
+            title: "Accès à un compte refusé",
+            message: "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
+          }, true)
         end
       end
       true

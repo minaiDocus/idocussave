@@ -226,8 +226,8 @@ class ProcessRetrievedData
 
   def notify(connection)
     if retriever.reload.budgea_connection_successful?
-      RetrieverNotification.new(retriever).notify_new_documents(@new_documents_count) if @new_documents_count > 0
-      RetrieverNotification.new(retriever).notify_new_operations(@new_operations_count) if @new_operations_count > 0
+      Notifications::Retrievers.new(retriever).notify_new_documents(@new_documents_count) if @new_documents_count > 0
+      Notifications::Retrievers.new(retriever).notify_new_operations(@new_operations_count) if @new_operations_count > 0
     end
   end
 

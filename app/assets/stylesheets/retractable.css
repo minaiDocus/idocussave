@@ -14,6 +14,29 @@
   to { opacity: 1; }
 }
 
+@mozkeyframes showLogin {
+  from { max-height: 0px; max-width: 950px; }
+  to { max-height: 900px; max-width:1140px; }
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@webkitkeyframes showLogin {
+  from { max-height: 0px; max-width: 950px; }
+  to { max-height: 900px; max-width:1140px; }
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@keyframes showLogin {
+  from { max-height: 0px; max-width: 950px; }
+  to { max-height: 900px; max-width:1140px; }
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+
 @mozkeyframes slideDown {
   from  { max-height: 0px; }
   to { max-height: 500px; }
@@ -170,6 +193,12 @@ tbody.retractable.slidedown tr {
   animation-duration: 1.8s;
   animation-fill-mode: forwards;
   animation-delay: 0.7s;
+}
+
+.showLogin{
+  overflow: hidden;
+  animation-name: showLogin;
+  animation-duration: 1.2s;
 }
 
 // CSS NORMAL

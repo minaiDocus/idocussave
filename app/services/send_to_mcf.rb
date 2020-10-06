@@ -60,10 +60,10 @@ class SendToMcf < SendToStorage
   def manage_failure(error)
     if insufficient_space?(error)
       @storage.update(is_delivery_activated: false)
-      NotifyMcfError.new(@storage.organization.admins, 'mcf_insufficient_space').execute
+      Notifications::McfDocuments.new({users: @storage.organization.admins}).notify_mcf_insufficient_space
     elsif error.class == McfApi::Errors::Unauthorized
       @storage.reset_tokens
-      NotifyMcfError.new(@storage.organization.admins, 'mcf_invalid_access_token').execute
+      Notifications::McfDocuments.new({users: @storage.organization.admins}).notify_mcf_invalid_access_token
     end
   end
 

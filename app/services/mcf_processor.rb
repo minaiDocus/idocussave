@@ -97,7 +97,7 @@ class McfProcessor
           else
             @mcf_document.got_error uploaded_document.full_error_messages
             move_file
-            NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
+            Notifications::McfDocumentsWorker.perform_in(20.minutes)
             return
           end
         end
@@ -105,7 +105,7 @@ class McfProcessor
     else
       @mcf_document.got_error 'Téléversement de document non authorisé'
       move_file
-      NotifyMcfDocumentErrorWorker.perform_in(20.minutes)
+      Notifications::McfDocumentsWorker.perform_in(20.minutes)
     end
   end
 

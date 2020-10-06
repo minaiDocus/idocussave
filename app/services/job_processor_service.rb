@@ -13,7 +13,7 @@ class JobProcessorService
   private
 
   def job_processing_release_lock
-    job_pass_unlocked_1h = %w[DocumentNotification RetrieverNotification ScansNotDeliveredNotification NotifyPaperQuotaReachedWorker NotifyPublishedDocumentDaily NotifyPreAssignmentDeliveryFailureDaily NotifyPreAssignmentExport RemoveOldestRetrievedData NotifyProcessedRequests JobProcessorWorker SendToGrouping]
+    job_pass_unlocked_1h = %w[DocumentNotification RetrieverNotification ScansNotDeliveredNotification NotificationsPaperQuotaReachedWorker NotifyPublishedDocumentDaily NotificationsPreAssignmentDeliveryFailureDaily NotifyPreAssignmentExport RemoveOldestRetrievedData NotifyProcessedRequests JobProcessorWorker SendToGrouping]
 
     job_pass_unlocked_2h = %w[PublishDocument McfProcessor]
 

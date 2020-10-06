@@ -89,7 +89,11 @@ class SendToFTP < SendToStorage
   def manage_failure(error)
     if error.class == Net::FTPPermError && error.message.match(/Login incorrect/)
       @storage.update is_configured: false
-      FTPErrorNotifier.new(@storage).auth_failure
+      Notifications::Ftp.new({
+        ftp: @storage,
+        users: @storage.organization&.admins.presence || [@storage.user],
+        notice_type: @storage.organization ? 'org_ftp_auth_failure' : 'ftp_auth_failure'
+      }).notify_ftp_auth_failure
     end
   end
 end
