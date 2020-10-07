@@ -4,24 +4,18 @@ class ResumeBudgeaRetriever
     retrievers = Retriever.where("updated_at < ?", 30.minutes.ago)
 
     @infos = []
-    counter = 0
 
     retrievers.each do |retriever|
       access_token = retriever.user.try(:budgea_account).try(:access_token)
 
       next unless retriever.user.still_active? && access_token.present? && retriever.budgea_id.present?
 
-      if counter == 5
-        sleep(7)
-        counter = 0
-      end
-
       initial_message = retriever.error_message
 
       begin
         result = retriever.resume_me
 
-        sleep(1)
+        sleep(3)
 
         final_message = retriever.reload.error_message
 
@@ -29,8 +23,6 @@ class ResumeBudgeaRetriever
       rescue => e
         @infos << info(retriever, initial_message, e.to_s)
       end
-
-      counter += 1
     end
 
     send_notification

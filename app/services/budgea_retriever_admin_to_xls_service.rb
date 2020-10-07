@@ -12,6 +12,7 @@ class BudgeaRetrieverAdminToXlsService
       account_active = account.user.active?
 
       response       = Budgea::Client.new(access_token).get_all_connections
+      sleep(3)
 
       begin
         json_content = response.with_indifferent_access
@@ -38,10 +39,10 @@ class BudgeaRetrieverAdminToXlsService
           retriever_state   = retriever.first.budgea_state
           retriever_message = retriever.first.budgea_error_message
 
-          body_csv_normal << [account.user.code, account_active, retriever.first.name, retriever.first.journal_name, account.identifier, access_token, state, retriever_message, retriever.first.service_name, retriever_state, budgea_state, id_connector_budgea, error_message_budgea, 'response.status', id_connection, id_user]
+          body_csv_normal << [account.user.code, account_active, retriever.first.name, retriever.first.journal_name, account.identifier, access_token, state, retriever_message, retriever.first.service_name, retriever_state, budgea_state, id_connector_budgea, error_message_budgea, response.try(:status), id_connection, id_user]
 
         else
-          body_csv_failed << [account.user.code, account_active, '', '', account.identifier, access_token, '', '', '', '', budgea_state, id_connector_budgea, error_message_budgea, 'response.status', id_connection, id_user]
+          body_csv_failed << [account.user.code, account_active, '', '', account.identifier, access_token, '', '', '', '', budgea_state, id_connector_budgea, error_message_budgea, response.try(:status), id_connection, id_user]
         end
       end
 
@@ -113,6 +114,7 @@ class BudgeaRetrieverAdminToXlsService
     list_connections_budgea = []
 
     response = Budgea::Client.new(token).get_all_connections.try(:with_indifferent_access)
+    sleep(3)
 
     response['connections'].each { |connection| list_connections_budgea << connection } if response['total'].present? && response['total'] > 0
 
