@@ -29,6 +29,7 @@
           .controls
             - formats = [['CSV', 'csv']]
             - formats << ['XML (Ibiza)', 'xml_ibiza'] if @user.is_admin && @organization.ibiza.try(:configured?) && @report.user.uses_ibiza?
+            - formats << ['TXT (Quadratus)', 'txt_quadratus'] if @report.user.uses_quadratus?
             - formats << ['ZIP (Quadratus)', 'zip_quadratus'] if @report.user.uses_quadratus?
             - formats << ['ZIP (Coala)', 'zip_coala'] if @report.user.uses_coala?
             - formats << ['XLS (Coala)', 'xls_coala'] if @report.user.uses_coala?

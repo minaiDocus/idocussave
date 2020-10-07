@@ -303,6 +303,7 @@ class Account::DocumentsController < Account::AccountController
     if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
       options << ['XML (Ibiza)', 'xml_ibiza']
     end
+    options << ['TXT (Quadratus)', 'txt_quadratus']          if user.uses_quadratus?
     options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses_quadratus?
     options << ['ZIP (Coala)', 'zip_coala']                  if user.uses_coala?
     options << ['XLS (Coala)', 'xls_coala']                  if user.uses_coala?
@@ -331,7 +332,7 @@ class Account::DocumentsController < Account::AccountController
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
-    supported_format = %w[csv xml_ibiza zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid tra_cegid]
+    supported_format = %w[csv xml_ibiza txt_quadratus zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid tra_cegid]
 
     if preseizures.any? && export_format.in?(supported_format)
       preseizures = preseizures.by_position

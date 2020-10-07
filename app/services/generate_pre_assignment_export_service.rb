@@ -59,7 +59,7 @@ class GeneratePreAssignmentExportService
 
       if valid_quadratus?
         create_pre_assignment_export_for('quadratus')
-        generate_quadratus_export
+        generate_quadratus_export(true)
       end
 
       if valid_csv_descriptor?
@@ -83,10 +83,14 @@ class GeneratePreAssignmentExportService
       create_pre_assignment_export_for('ibiza')
 
       generate_ibiza_export
-    when 'zip_quadratus'
+    when 'txt_quadratus'
       create_pre_assignment_export_for('quadratus')
 
       generate_quadratus_export
+    when 'zip_quadratus'
+      create_pre_assignment_export_for('quadratus')
+
+      generate_quadratus_export(true)
     when 'zip_coala'
       create_pre_assignment_export_for('coala')
 
@@ -184,12 +188,18 @@ private
     end
   end
 
-  def generate_quadratus_export
+  def generate_quadratus_export(to_zip=false)
     begin
       file_zip = QuadratusZipService.new(@preseizures).execute
-      POSIX::Spawn.system("unzip -o #{file_zip} -d #{file_path}")
-      rename_export 'quadratus'
-      @export.got_success "#{file_real_name}.txt"
+      if to_zip
+        final_file_name = "#{file_real_name}.zip"
+        FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
+        @export.got_success "#{final_file_name}"
+      else
+        POSIX::Spawn.system("unzip -o #{file_zip} -d #{file_path}")
+        rename_export 'quadratus'
+        @export.got_success "#{file_real_name}.txt"
+      end
     rescue => e
       @export.got_error e
     end
