@@ -1,4 +1,8 @@
 class Notifications::DematboxUploaded < Notifications::Notifier
+  def self.notify_dematbox_document_uploaded(temp_doc_id, remaining_tries=0)
+    new({ temp_document_id: temp_doc_id, remaining_tries: remaining_tries }).notify_dematbox_document_uploaded
+  end
+
   def initialize(arguments={})
     super
   end
@@ -15,9 +19,8 @@ class Notifications::DematboxUploaded < Notifications::Notifier
       rescue Savon::SOAPFault => e
         if e.message.match(/702:DocId already notified/)
           result = true
-        elsif e.message.match(/703:DocId not sent/) && (not Rails.env.test?)
-          result = true if @arguments[:remaining_tries] <= 0
-          Notifications::DematboxUploaded.new({ temp_document_id: @arguments[:temp_document_id], remaining_tries: (@arguments[:remaining_tries] - 1) }).notify_dematbox_document_uploaded if @arguments[:remaining_tries] > 0
+        elsif e.message.match(/703:DocId not sent/) && @arguments[:remaining_tries] > 0 && (not Rails.env.test?)
+          Notifications::DematboxUploaded.delay_for(5.seconds).notify_dematbox_document_uploaded(temp_document.id, (@arguments[:remaining_tries] - 1))
         else
           raise
         end
