@@ -12,7 +12,12 @@ class BudgeaRetrieverAdminToXlsService
       account_active = account.user.active?
 
       response       = Budgea::Client.new(access_token).get_all_connections
-      json_content   = response.with_indifferent_access
+
+      begin
+        json_content = response.with_indifferent_access
+      rescue
+        next
+      end
 
       next if json_content['connections'].nil?
 
