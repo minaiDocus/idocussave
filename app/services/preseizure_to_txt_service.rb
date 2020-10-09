@@ -169,8 +169,9 @@ class PreseizureToTxtService
 
             line[129] = entry.type == 1 ? 'D' : 'C'
 
-            line[145] = entry.amount.to_f.to_s
+            line[130] = entry.amount.to_f.to_s
 
+            line[150] = 'N'
             line[172] = 'E--'
 
             data << line
