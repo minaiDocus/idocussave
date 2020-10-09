@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_24_121117) do
+ActiveRecord::Schema.define(version: 2020_09_30_083713) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -89,6 +89,9 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.datetime "updated_at"
     t.datetime "created_at"
     t.boolean "is_updated", default: true
+    t.boolean "vat_autoliquidation"
+    t.string "vat_autoliquidation_credit_account"
+    t.string "vat_autoliquidation_debit_account"
     t.index ["accounting_plan_itemable_id"], name: "accounting_plan_itemable_id"
     t.index ["accounting_plan_itemable_type"], name: "accounting_plan_itemable_type"
     t.index ["is_updated"], name: "index_accounting_plan_items_on_is_updated"
@@ -183,7 +186,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.string "a3_axis3"
   end
 
-  create_table "archive_budgea_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "archive_budgea_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "identifier"
     t.date "signin"
     t.string "platform"
@@ -196,13 +199,13 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.index ["is_updated"], name: "index_archive_budgea_users_on_is_updated"
   end
 
-  create_table "archive_invoices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "archive_invoices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "archive_retrievers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "archive_retrievers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "owner_id"
     t.integer "budgea_id"
     t.integer "id_connector"
@@ -343,7 +346,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.text "urls"
   end
 
-  create_table "counter_error_script_mailers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "counter_error_script_mailers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "error_type"
     t.integer "counter", default: 0
     t.boolean "is_enable", default: true
@@ -737,7 +740,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.index ["organization_id"], name: "organization_id"
   end
 
-  create_table "invoice_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "invoice_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "organization_id"
     t.bigint "user_id"
     t.string "user_code"
@@ -1119,6 +1122,8 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.boolean "is_fec_agiris_auto_deliver", default: false
     t.string "vat_identifier"
     t.string "jefacture_api_key"
+    t.boolean "is_cegid_tra_used"
+    t.boolean "is_cegid_tra_auto_deliver"
     t.index ["leader_id"], name: "leader_id"
     t.index ["organization_group_id"], name: "index_organizations_on_organization_group_id"
   end
@@ -1554,6 +1559,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.integer "quantity"
     t.boolean "is_an_extra"
     t.boolean "is_to_be_disabled"
+    t.boolean "is_frozen", default: false
     t.integer "product_optionable_id"
     t.string "product_optionable_type"
     t.index ["product_optionable_id"], name: "product_optionable_id"
@@ -1756,6 +1762,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.integer "user_id"
     t.boolean "is_ibiza_used", default: false
     t.integer "is_ibiza_auto_deliver", default: -1, null: false
+    t.integer "is_ibiza_auto_updating_accounting_plan", default: 1
     t.integer "is_ibiza_compta_analysis_activated", default: -1, null: false
     t.integer "is_ibiza_analysis_to_validate", default: -1, null: false
     t.boolean "is_coala_used", default: false
@@ -1841,6 +1848,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_121117) do
     t.boolean "is_pre_assignment_to_be_disabled"
     t.date "start_date"
     t.date "end_date"
+    t.integer "commitment_counter", default: 1
     t.integer "max_sheets_authorized", default: 100, null: false
     t.integer "max_upload_pages_authorized", default: 200, null: false
     t.integer "max_dematbox_scan_pages_authorized", default: 200, null: false

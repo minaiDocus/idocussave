@@ -27,6 +27,9 @@
                   = provider.input :third_party_name, label: t('activerecord.models.accounting_plan_item.attributes.third_party_name')
                   = provider.input :conterpart_account, label: t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
                   = provider.input :code, label: t('activerecord.models.accounting_plan_item.attributes.code')
+                  = provider.input :vat_autoliquidation, label: t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
+                  = provider.input :vat_autoliquidation_debit_account, label: t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
+                  = provider.input :vat_autoliquidation_credit_account, label: t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
               = f.link_to_add 'Ajouter un fournisseur', :providers, class: 'btn btn-secondary'
           .col-md-6
             .box.bg-light
