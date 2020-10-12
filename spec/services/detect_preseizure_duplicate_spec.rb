@@ -1,10 +1,26 @@
 require 'spec_helper'
 
 describe DetectPreseizureDuplicate do
+  def create_preseizure(options={})
+    preseizure = Pack::Report::Preseizure.new
+    preseizure.report        = @report
+    preseizure.user          = options[:user].presence || @user
+    preseizure.organization  = options[:organization].presence || @organization
+    preseizure.cached_amount = options[:amount] || 10.0
+    preseizure.third_party   = options[:third_party] || 'Google'
+    preseizure.piece_number  = options[:piece_number] || 'G001'
+    preseizure.date          = Time.now
+    preseizure.save
+
+    preseizure
+  end
+
   before(:each) do
+    allow_any_instance_of(Notifications::PreAssignments).to receive(:notify_detected_preseizure_duplication).and_return(true)
     DatabaseCleaner.start
     @organization = FactoryBot.create :organization, code: 'IDOC'
     @user = FactoryBot.create :user, code: 'IDOC%001'
+    @report = Pack::Report.create(user: @user, name: 'IDOC%001 AC 202010')
     @user.create_notify
   end
 
@@ -12,90 +28,88 @@ describe DetectPreseizureDuplicate do
     DatabaseCleaner.clean
   end
 
-  context 'given an invalid preseizure' do
-    before(:each) do
-      preseizure = Pack::Report::Preseizure.new
-      preseizure.user          = @user
-      preseizure.organization  = @organization
-      preseizure.cached_amount = 10.0
-      preseizure.third_party   = 'Google'
-      preseizure.piece_number  = 'G001'
-      preseizure.date          = nil
+  context 'given an invalid preseizure', :invalid do
+    it 'ignores an invalid preseizure' do
+      create_preseizure
+      preseizure = create_preseizure
+      preseizure.piece_number = nil
       preseizure.save
+
+      service = DetectPreseizureDuplicate.new(preseizure.reload)
+
+      expect(service).to receive(:get_highest_match).exactly(0).times
+      expect(service).to receive(:get_scored_match).exactly(0).times
+
+      expect(service.execute).to eq false
+      expect(preseizure.is_blocked_for_duplication).to eq false
+      expect(preseizure.duplicate_detected_at).to be_nil
+      expect(preseizure.similar_preseizure).to be_nil
     end
 
-    it 'ignores an invalid preseizure' do
-      preseizure = Pack::Report::Preseizure.new
-      preseizure.user          = @user
-      preseizure.organization  = @organization
-      preseizure.cached_amount = 10.0
-      preseizure.third_party   = 'Google'
-      preseizure.piece_number  = 'G001'
-      preseizure.date          = nil
-      preseizure.save
+    it 'ignores fetching preseizures with undefined third_party or piece_number' do
+      preseizure1 = create_preseizure
+      preseizure1.third_party = ''
+      preseizure1.save
 
-      result = DetectPreseizureDuplicate.new(preseizure).execute
+      preseizure2 = create_preseizure
+      preseizure2.piece_number = nil
+      preseizure2.save
 
-      expect(result).to eq false
+      preseizure  = create_preseizure
+
+      service = DetectPreseizureDuplicate.new(preseizure.reload)
+
+      expect(service).to receive(:get_highest_match).with([]).and_call_original
+      expect(service).to receive(:get_scored_match).with([]).and_call_original
+
+      expect(service.execute).to eq false
       expect(preseizure.is_blocked_for_duplication).to eq false
       expect(preseizure.duplicate_detected_at).to be_nil
       expect(preseizure.similar_preseizure).to be_nil
     end
   end
 
-  context 'given a preseizure' do
+  context 'given a preseizure', :valid do
     before(:each) do
-      @preseizure = Pack::Report::Preseizure.new
-      @preseizure.user          = @user
-      @preseizure.organization  = @organization
-      @preseizure.cached_amount = 10.0
-      @preseizure.third_party   = 'Google'
-      @preseizure.piece_number  = 'G001'
-      @preseizure.date          = Time.local(2017, 12, 15)
-      @preseizure.save
+      @preseizure1 = create_preseizure({ third_party: 'Google', piece_number: 'G001' })
+      @preseizure2 = create_preseizure({ third_party: 'Googletest', piece_number: 'G001-003' })
+      @preseizure3 = create_preseizure({ third_party: 'Google test', piece_number: 'G001 001' })
     end
 
-    it 'detects a duplicate' do
-      preseizure = Pack::Report::Preseizure.new
-      preseizure.user          = @user
-      preseizure.organization  = @organization
-      preseizure.cached_amount = 10.0
-      preseizure.third_party   = 'Google'
-      preseizure.piece_number  = 'G001'
-      preseizure.date          = Time.local(2017, 12, 15)
-      preseizure.save
+    it 'detects a simple duplication - get highest match' do
+      preseizure = create_preseizure({ third_party: 'google', piece_number: 'G001' })
 
-      result = DetectPreseizureDuplicate.new(preseizure).execute
+      service = DetectPreseizureDuplicate.new(preseizure.reload)
+
+      expect(service).to receive(:get_highest_match).exactly(:once).and_call_original
+      expect(service).to receive(:get_scored_match).exactly(0).times.and_call_original
+
+      expect(service.execute).to eq true
+      expect(preseizure.is_blocked_for_duplication).to eq true
+      expect(preseizure.duplicate_detected_at).to be_present
+      expect(preseizure.similar_preseizure).to eq @preseizure1
+    end
+
+    it 'detects a complex duplication - get best scored match from preseizures' do
+      preseizure = create_preseizure({ third_party: 'google TEST', piece_number: 'G001' })
+
+      result = DetectPreseizureDuplicate.new(preseizure.reload).execute
 
       expect(result).to eq true
       expect(preseizure.is_blocked_for_duplication).to eq true
       expect(preseizure.duplicate_detected_at).to be_present
-      expect(preseizure.similar_preseizure).to eq @preseizure
+      expect(preseizure.similar_preseizure).to eq @preseizure3
     end
 
-    context 'given duplicate blocker has been deactivated' do
-      before(:each) do
-        @organization.update(is_duplicate_blocker_activated: false)
-      end
+    it "undetects a complex duplication - similar words in thirds party and piece number don't match completely" do
+      preseizure = create_preseizure({ third_party: 'googletest api test', piece_number: 'G001 145' })
 
-      it 'detects a duplicate but does not block it' do
-        preseizure = Pack::Report::Preseizure.new
-        preseizure.user          = @user
-        preseizure.organization  = @organization
-        preseizure.cached_amount = 10.0
-        preseizure.third_party   = 'Google'
-        preseizure.piece_number  = 'G001'
-        preseizure.date          = nil
-        preseizure.date          = Time.local(2017, 12, 15)
-        preseizure.save
+      result = DetectPreseizureDuplicate.new(preseizure.reload).execute
 
-        result = DetectPreseizureDuplicate.new(preseizure).execute
-
-        expect(result).to eq false
-        expect(preseizure.is_blocked_for_duplication).to eq false
-        expect(preseizure.duplicate_detected_at).to be_present
-        expect(preseizure.similar_preseizure).to eq @preseizure
-      end
+      expect(result).to eq false
+      expect(preseizure.is_blocked_for_duplication).to eq false
+      expect(preseizure.duplicate_detected_at).to be_nil
+      expect(preseizure.similar_preseizure).to be_nil
     end
   end
 end
