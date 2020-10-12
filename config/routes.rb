@@ -618,9 +618,7 @@ Rails.application.routes.draw do
         end
 
         resources :mapping_generator do
-          get 'get_xml', on: :collection, defaults: {format: 'xml'}
-          get 'get_csv', on: :collection, defaults: {format: 'text'}
-          get 'get_csv_users_list', on: :collection, defaults: {format: 'text'}
+          get 'get_json', on: :collection
         end
       end
     end

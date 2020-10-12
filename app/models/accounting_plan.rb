@@ -55,6 +55,26 @@ class AccountingPlan < ApplicationRecord
     end
   end
 
+  def create_json_format
+    _address = user.paper_return_address
+
+    { 'address': {
+        'name':         user.company,
+        'contact':      user.name,
+        'address_1':    _address.try(:address_1),
+        'address_2':    _address.try(:address_2),
+        'zip':          _address.try(:zip),
+        'city':         _address.try(:city),
+        'country':      _address.try(:country),
+        'country_code': 'FR'
+      },
+
+      'accounting_plans': {
+        'ws_accounts': extract_data_of(active_customers, 1) + extract_data_of(active_providers, 2)
+      }
+    }
+  end
+
   def to_xml
     _address = user.paper_return_address
     builder = Nokogiri::XML::Builder.new do
@@ -139,5 +159,24 @@ class AccountingPlan < ApplicationRecord
 
   def active_providers
     providers.where(is_updated: true)
+  end
+
+  private
+
+  def extract_data_of(objects, category)
+    data_content = []
+    objects.each do |object|
+      content = {
+        'category':    category,
+        'associate':   object.conterpart_account,
+        'name':        object.third_party_name,
+        'number':      object.third_party_account,
+        'vat_account': vat_accounts.any? ? (vat_accounts.find_by_code(object.code).try(:account_number)).presence : object.code.presence
+      }
+
+      data_content << content
+
+    end
+    data_content
   end
 end
