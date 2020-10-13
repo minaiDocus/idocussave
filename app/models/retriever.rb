@@ -146,7 +146,7 @@ class Retriever < ApplicationRecord
     end
 
     event :destroy do
-      transition :synchronizing => :destroyed
+      transition any => :destroyed
     end
   end
 
