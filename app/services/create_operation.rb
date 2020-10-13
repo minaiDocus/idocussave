@@ -4,6 +4,23 @@ class CreateOperation
     @bank_account = BankAccount.find(@operation.bank_account_id)
   end
 
+  def self.perform(operations, api_name)
+    result = { created_operation: 0, rejected_operation: 0 }
+
+    operations.each do |o|
+      operation = Operation.new(o)
+      operation.api_name = api_name
+
+      if new(operation).perform.persisted?
+        result[:created_operation] += 1
+      else
+        result[:rejected_operation] += 1
+      end
+    end
+
+    result
+  end
+
   def perform
     if check_duplicates
       append_credit_card_tag if @bank_account.type_name == 'card'

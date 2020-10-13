@@ -3,14 +3,9 @@ class Api::V2::OperationsController < ActionController::Base
   skip_before_action :verify_authenticity_token
 
   def create
-    operation = Operation.new(operation_params)
-    operation.api_name = 'capidocus'
+    result = CreateOperation.perform(operation_params.to_h["_json"], 'capidocus')
 
-    if ::CreateOperation.new(operation).perform && operation.persisted?
-      render json: serializer.new(operation)
-    else
-      render json: operation.errors, status: :unprocessable_entity
-    end
+    render json: result, status: :ok
   end
 
   protected
@@ -24,7 +19,7 @@ class Api::V2::OperationsController < ActionController::Base
   private
 
   def operation_params
-    params.require(:operation).permit(:bank_account_id, :date, :value_date, :temp_currency, :label, :amount)
+    params.permit!
   end
 
   def serializer
