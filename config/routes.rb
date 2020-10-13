@@ -478,11 +478,14 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
     namespace :v2 do
       resources :users, only: %w() do
-        collection do 
+        collection do
           get :jefacture
         end
       end
-      resources :pieces, only: %w(update)
+
+      resources :pieces,         only: %w(update)
+      resources :operations,     only: %w(create)
+      resources :bank_accounts,  only: %w(index)
       resources :temp_documents, only: %w(create)
     end
 

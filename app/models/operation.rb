@@ -2,6 +2,8 @@
 class Operation < ApplicationRecord
   serialize :currency, Hash
 
+  attr_accessor :temp_currency
+
   belongs_to :organization
   belongs_to :user
   belongs_to :bank_account
