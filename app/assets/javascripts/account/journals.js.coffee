@@ -1,5 +1,5 @@
 update_form = ->
-  if parseInt($("#account_book_type_entry_type").val()) > 1
+  if parseInt($("#account_book_type_entry_type").val()) > 1 && parseInt($("#account_book_type_entry_type").val()) != 4
     toggle_required_field('enable')
     $('.pre-assignment-attributes').fadeIn('slow')
   else

@@ -1,9 +1,9 @@
-= simple_form_for @journal, url: '', html: { class: 'form-horizontal label-50', id: "account_book_type"} do |f|  
+= simple_form_for @journal, url: '', html: { class: 'form-horizontal label-50', id: "account_book_type"} do |f|
   .row
     %input#new_create_book_type{ type: :hidden, value: "1", name: "new_create_book_type"}
     %input#customer_id{ type: :hidden, value: "#{@customer.id}", name: "customer_id"}
     .col-md-6
-      .box.small-shadow          
+      .box.small-shadow
         = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled, class: "can_be_required" }
         - if @customer && @customer.uses_api_softwares?
           - is_ibiza_configured = @organization.ibiza.configured?
@@ -44,7 +44,7 @@
         .header_box.text-left.mb-5.border_bottom Pré-saisie comptable
         - if is_disabled
           = hidden_field_tag 'account_book_type[entry_type]', 0
-        = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { class: 'not_persisted', disabled: is_disabled }
+        = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3], [t('simple_form.labels.account_book_type.entry_type_4'),4]], include_blank: false, input_html: { class: 'not_persisted', disabled: is_disabled }
         #pre-assignment-attributes{ class: "#{@journal.entry_type.in?([0,1]) ? 'hide' : '' }"}
           = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
           = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false

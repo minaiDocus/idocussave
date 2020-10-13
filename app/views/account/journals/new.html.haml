@@ -7,7 +7,7 @@
       %h3
         Nouveau journal comptable
         - if @customer && @customer.configured?
-          pour le client : 
+          pour le client :
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'fs-origin'
     = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form-horizontal' } do |f|
       .card-body
@@ -36,7 +36,7 @@
           .box.step.bg-light{ style: 'display:none' }
             %h4 Pré-saisie comptable
             %hr
-            = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
+            = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3] , [t('simple_form.labels.account_book_type.entry_type_4'),4]], include_blank: false, input_html: { disabled: is_disabled }
 
             .pre-assignment-attributes{ style: 'display:none;' }
               = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"

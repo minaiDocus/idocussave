@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class AccountBookType < ApplicationRecord
   DOMAINS    = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais'].freeze
-  ENTRY_TYPE = %w(no expense buying selling).freeze
-  TYPES_NAME = %w(AC VT NDF).freeze
+  ENTRY_TYPE = %w(no expense buying selling bank).freeze
+  TYPES_NAME = %w(AC VT NDF BQ).freeze
 
   audited
 
@@ -46,13 +46,13 @@ class AccountBookType < ApplicationRecord
   validates_presence_of :name
   validates_presence_of :currency
   validates_presence_of :description
-  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
-  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? }
-  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? }
-  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) && j.entry_type != 4 }
+  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4 }
+  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4 }
+  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4}
 
   validates_inclusion_of :domain, in: DOMAINS
-  validates_inclusion_of :entry_type, in: 0..3
+  validates_inclusion_of :entry_type, in: 0..4
 
 
 
@@ -134,6 +134,7 @@ class AccountBookType < ApplicationRecord
     return 'NDF' if entry_type == 1
     return 'AC'  if entry_type == 2
     return 'VT'  if entry_type == 3
+    return 'BQ'  if entry_type == 4
     nil
   end
 
