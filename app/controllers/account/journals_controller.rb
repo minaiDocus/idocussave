@@ -205,6 +205,7 @@ class Account::JournalsController < Account::OrganizationController
   def journal_params
     attrs = %i[
       pseudonym
+      use_pseudonym_for_import
       description
       instructions
       position

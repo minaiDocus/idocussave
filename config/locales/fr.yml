@@ -542,6 +542,7 @@ fr:
           updated_at: Date de modification
           name: Code journal
           pseudonym: Code journal logiciel comptable
+          use_pseudonym_for_import: Utiliser le journal logiciel comptable  pour l'import
           description: Description
           domain: Domaine (Knowings)
           default_account_number: Compte de tiers par défaut

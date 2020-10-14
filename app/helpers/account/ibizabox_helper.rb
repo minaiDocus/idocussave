@@ -16,8 +16,9 @@ module Account::IbizaboxHelper
 
     unless ibiza_journals.nil? || ibiza_journals.at_css('data').children.empty?
       ibiza_journals.css('wsJournals').each do |node|
+        journal = folder.journal
         ref_ibiza = node.at_css('ref').try(:content)
-        ref_folder = folder.journal.pseudonym.presence || folder.journal.name
+        ref_folder = journal.use_pseudonym_for_import ? (journal.pseudonym.presence || journal.name) : journal.name
 
         if ref_folder == ref_ibiza && !ref_folder.nil? && node.at_css('presentInGed').try(:content).to_i == 1
           return @is_accessible = true

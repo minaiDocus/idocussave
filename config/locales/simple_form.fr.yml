@@ -138,6 +138,7 @@ fr:
       account_book_type:
         name: Code journal iDocus
         pseudonym: Code journal comptable
+        use_pseudonym_for_import: Code journal comptable pour l'import
         description: Nom du journal comptable à mettre entre parenthèses ()
         domain: Domaine (Knowings)
         entry_type: Type de saisie (Pré-affectation)
