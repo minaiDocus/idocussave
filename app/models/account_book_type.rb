@@ -126,11 +126,12 @@ class AccountBookType < ApplicationRecord
 
 
   def is_pre_assignment_processable?
-    entry_type > 1
+    true
   end
 
 
   def compta_type
+    return 'BQ' if entry_type == 0
     return 'NDF' if entry_type == 1
     return 'AC'  if entry_type == 2
     return 'VT'  if entry_type == 3
