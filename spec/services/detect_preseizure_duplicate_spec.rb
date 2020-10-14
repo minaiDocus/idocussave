@@ -73,7 +73,7 @@ describe DetectPreseizureDuplicate do
     before(:each) do
       @preseizure1 = create_preseizure({ third_party: 'Google', piece_number: 'G001' })
       @preseizure2 = create_preseizure({ third_party: 'Googletest', piece_number: 'G001-003' })
-      @preseizure3 = create_preseizure({ third_party: 'Google test', piece_number: 'G001 001' })
+      @preseizure3 = create_preseizure({ third_party: 'Google test', piece_number: 'G001 001 19' })
     end
 
     it 'detects a simple duplication - get highest match' do
@@ -102,7 +102,7 @@ describe DetectPreseizureDuplicate do
     end
 
     it "undetects a complex duplication - similar words in thirds party and piece number don't match completely" do
-      preseizure = create_preseizure({ third_party: 'googletest api test', piece_number: 'G001 145' })
+      preseizure = create_preseizure({ third_party: 'googletest api test', piece_number: 'G001 001 20' })
 
       result = DetectPreseizureDuplicate.new(preseizure.reload).execute
 

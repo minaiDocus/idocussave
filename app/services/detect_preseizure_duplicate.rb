@@ -87,7 +87,8 @@ class DetectPreseizureDuplicate
           if clean_txt(preseizure.piece_number).match(/\b#{pn_word.to_s.strip}\b/i)
             pn_score += 1
           else
-            pn_score -= 1
+            pn_score = 0
+            break
           end
         end
 
