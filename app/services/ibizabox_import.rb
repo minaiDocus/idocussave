@@ -44,7 +44,7 @@ class IbizaboxImport
     @folder  = folder
     @user    = folder.user
     @journal = folder.journal
-    @journal_ref = @journal.pseudonym.presence || @journal.name
+    @journal_ref = @journal.use_pseudonym_for_import ? (@journal.pseudonym.presence || @journal.name) : @journal.name
     @initial_documents_count = folder.temp_documents.reload.size
   end
 
