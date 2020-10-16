@@ -68,9 +68,9 @@ class BudgeaRetrieverAdminToXlsService
           retriever_state   = retriever.budgea_state
           retriever_message = retriever.budgea_error_message
 
-          body_csv_normal << [account.user.code, account_active, id_connection, retriever.name, retriever.journal_name, account.identifier, access_token, state, retriever_state, retriever_message, retriever_logs.to_s.strip ]
+          body_csv_normal << [account.user.code, account_active, retriever.id, id_connection, retriever.name, retriever.journal_name, account.identifier, access_token, state, retriever_state, retriever_message, retriever_logs.to_s.strip ]
         else
-          body_csv_failed << [account.user.code, account_active, id_connection, '', '', account.identifier, access_token, '', '', '', retriever_logs.to_s.strip ]
+          body_csv_failed << [account.user.code, account_active, '', id_connection, '', '', account.identifier, access_token, '', '', '', retriever_logs.to_s.strip ]
         end
       end
 
@@ -102,7 +102,7 @@ class BudgeaRetrieverAdminToXlsService
     sheet3 = book.create_worksheet name: 'Bug'
 
     headers = []
-    headers += ['User code', 'User active?', 'ID Connexion', 'Nom retriever', 'Journal retriever', 'User identifier', 'Access token', 'Etat', 'Etat distant', 'Message', 'Logs']
+    headers += ['User code', 'User active?', 'ID', 'ID Connexion', 'Nom retriever', 'Journal retriever', 'User identifier', 'Access token', 'Etat', 'Etat distant', 'Message', 'Logs']
 
     insert_book(headers, sheet1, body_csv_normal)
     insert_book(headers, sheet2, body_csv_failed)
@@ -132,7 +132,7 @@ class BudgeaRetrieverAdminToXlsService
         retriever_message = retriever.budgea_error_message
         user              = retriever.user
 
-        body_csv << [user.code, user.still_active?, retriever.budgea_id, retriever.name, retriever.journal_name, user.budgea_account.try(:identifier), user.budgea_account.try(:access_token), state, retriever_state, retriever_message, '' ]
+        body_csv << [user.code, user.still_active?, retriever.id, retriever.budgea_id, retriever.name, retriever.journal_name, user.budgea_account.try(:identifier), user.budgea_account.try(:access_token), state, retriever_state, retriever_message, '' ]
       end
     end
 
