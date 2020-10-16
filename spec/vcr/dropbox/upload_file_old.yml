@@ -1,0 +1,134 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/list_folder
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJyZWN1cnNpdmUiOmZhbHNlLCJpbmNsdWRlX21lZGlhX2luZm8iOmZhbHNl
+        LCJpbmNsdWRlX2RlbGV0ZWQiOmZhbHNlLCJwYXRoIjoiL0lETyUwMDAxLzIw
+        MTcwMS9BQyJ9
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 409
+      message: Conflict
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 23 May 2017 13:29:39 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '95'
+      Connection:
+      - keep-alive
+      X-Dropbox-Request-Id:
+      - 6ade1a489ff9cc28f85620dc5c82e434
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJlcnJvcl9zdW1tYXJ5IjogInBhdGgvbm90X2ZvdW5kLy4iLCAiZXJyb3Ii
+        OiB7Ii50YWciOiAicGF0aCIsICJwYXRoIjogeyIudGFnIjogIm5vdF9mb3Vu
+        ZCJ9fX0=
+    http_version: 
+  recorded_at: Tue, 23 May 2017 13:29:39 GMT
+- request:
+    method: post
+    uri: https://content.dropboxapi.com/2/files/upload
+    body:
+      encoding: UTF-8
+      base64_string: |
+        JVBERi0xLjMKJf////8KMSAwIG9iago8PCAvQ3JlYXRvciA8ZmVmZjAwNTAw
+        MDcyMDA2MTAwNzcwMDZlPgovUHJvZHVjZXIgPGZlZmYwMDUwMDA3MjAwNjEw
+        MDc3MDA2ZT4KPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cK
+        L1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8IC9UeXBlIC9QYWdl
+        cwovQ291bnQgMgovS2lkcyBbNSAwIFIgOCAwIFJdCj4+CmVuZG9iago0IDAg
+        b2JqCjw8IC9MZW5ndGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQg
+        VGQKL0YxLjAgMTIgVGYKWzw1MD4gNDAgPDYxNjc2NTIwMzEyZjMyPl0gVEoK
+        RVQKClEKCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvUGFn
+        ZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQov
+        Q29udGVudHMgNCAwIFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAv
+        VGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAg
+        NiAwIFIKPj4KPj4KPj4KZW5kb2JqCjYgMCBvYmoKPDwgL1R5cGUgL0ZvbnQK
+        L1N1YnR5cGUgL1R5cGUxCi9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGlu
+        ZyAvV2luQW5zaUVuY29kaW5nCj4+CmVuZG9iago3IDAgb2JqCjw8IC9MZW5n
+        dGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQgVGQKL0YxLjAgMTIg
+        VGYKWzw1MD4gNDAgPDYxNjc2NTIwMzIyZjMyPl0gVEoKRVQKClEKCmVuZHN0
+        cmVhbQplbmRvYmoKOCAwIG9iago8PCAvVHlwZSAvUGFnZQovUGFyZW50IDMg
+        MCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQovQ29udGVudHMgNyAw
+        IFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VC
+        IC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAgNiAwIFIKPj4KPj4K
+        Pj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAw
+        MDAxNSAwMDAwMCBuIAowMDAwMDAwMTA5IDAwMDAwIG4gCjAwMDAwMDAxNTgg
+        MDAwMDAgbiAKMDAwMDAwMDIyMSAwMDAwMCBuIAowMDAwMDAwMzM5IDAwMDAw
+        IG4gCjAwMDAwMDA1MTcgMDAwMDAgbiAKMDAwMDAwMDYxNCAwMDAwMCBuIAow
+        MDAwMDAwNzMyIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOQovUm9vdCAy
+        IDAgUgovSW5mbyAxIDAgUgo+PgpzdGFydHhyZWYKOTEwCiUlRU9GCg==
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Dropbox-Api-Arg:
+      - '{"path":"/IDO%0001/201701/AC/2pages.pdf"}'
+      Content-Type:
+      - application/octet-stream
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 23 May 2017 13:29:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache
+      X-Server-Response-Time:
+      - '866'
+      X-Dropbox-Request-Id:
+      - 0479b3dc4a277ae961bf52833f4f4fc6
+      X-Robots-Tag:
+      - noindex, nofollow, noimageindex
+    body:
+      encoding: ASCII-8BIT
+      base64_string: |
+        eyJuYW1lIjogIjJwYWdlcy5wZGYiLCAicGF0aF9sb3dlciI6ICIvaWRvJTAw
+        MDEvMjAxNzAxL2FjLzJwYWdlcy5wZGYiLCAicGF0aF9kaXNwbGF5IjogIi9J
+        RE8lMDAwMS8yMDE3MDEvQUMvMnBhZ2VzLnBkZiIsICJpZCI6ICJpZDo2Nnox
+        ZV9PTWNQQUFBQUFBQUFBQTVnIiwgImNsaWVudF9tb2RpZmllZCI6ICIyMDE3
+        LTA1LTIzVDEzOjI5OjQxWiIsICJzZXJ2ZXJfbW9kaWZpZWQiOiAiMjAxNy0w
+        NS0yM1QxMzoyOTo0MVoiLCAicmV2IjogIjFkZDU3MGMxZmVjIiwgInNpemUi
+        OiAxMTY1LCAiY29udGVudF9oYXNoIjogIjg1NzM1OWZmYWEzODc0ZTUwYTEy
+        NGY0ZTk2ZTJjZjJkYjc2MGY2MDVhMDBkNDdiOWVkODhjMGI0ZDk3Y2UzZTEi
+        fQ==
+    http_version: 
+  recorded_at: Tue, 23 May 2017 13:29:41 GMT
+recorded_with: VCR 3.0.3

@@ -18,7 +18,7 @@ describe "SendToGdr" do
     @member = Member.create(user: @leader, organization: @organization, role: 'admin', code: 'IDO%LEADX')
     @organization.admin_members << @leader.memberships.first
     @leader.update(organization: @organization)
-    @user = FactoryBot.create :user, code: 'IDO%0001'
+    @user = FactoryBot.create :user, code: 'IDO%001'
 
     @external_file_storage = ExternalFileStorage.new
     @external_file_storage.path = "iDocus/:code/:year:month/:account_book/"
@@ -31,23 +31,23 @@ describe "SendToGdr" do
     @storage = @external_file_storage.google_doc
     @storage.path = "iDocus/:code/:year:month/:account_book/"
     @storage.access_token = "ya29.a0AfH6SMAFcJz7hw5_Y95DYe72UnDXi66YijOa9sSwEyD3HCanbvSbrUebB1Dz-Y00gMiVqYw_5cGMYAAU7RWLze_FxTq7JQeH_aFp7RbnrRCvqAcbAWzuYW-42lU9ubnkCSWuG0VAJDVOG0NCn0Y9Ktv9w1j_2JQeFPg"
-    @storage.access_token_expires_at = "Wed, 02 Sep 2020 10:52:41 +0300".to_datetime
+    @storage.access_token_expires_at = "Fri, 16 Oct 2020 13:44:46 +0300".to_datetime
     @storage.is_configured = true
     @storage.save
 
-    @pack = Pack.new
-    @pack.owner = @user
+    @pack              = Pack.new
+    @pack.owner        = @user
     @pack.organization = @organization
-    @pack.name = 'IDO%0001 AC 201804 all'
+    @pack.name         = 'IDO%001 AC 202010 all'
     @pack.save
 
-    @document = Pack::Piece.new
-    @document.pack   = @pack
-    @document.user   = @user
+    @document              = Pack::Piece.new
+    @document.pack         = @pack
+    @document.user         = @user
     @document.organization = @organization
-    @document.name   = "IDO%0001 AC 201804 001"
-    @document.origin     = 'upload'
-    @document.is_a_cover = false
+    @document.name         = "IDO%001 AC 202010 001"
+    @document.origin       = 'upload'
+    @document.is_a_cover   = false
     @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
 
     @remote_file              = RemoteFile.new

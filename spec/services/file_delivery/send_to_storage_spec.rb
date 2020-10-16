@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-class SendToStorage::TestError < RuntimeError; end
+class FileDelivery::SendToStorage::TestError < RuntimeError; end
 
-describe SendToStorage do
+describe FileDelivery::SendToStorage do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -10,7 +10,7 @@ describe SendToStorage do
   after(:each) { DatabaseCleaner.clean_with(:truncation) }
 
   before(:each) do
-    class SendToOnlineStorage < SendToStorage
+    class SendToOnlineStorage < FileDelivery::SendToStorage
       def execute
         run do
           # it does nothing
@@ -49,7 +49,7 @@ describe SendToStorage do
     @pack.save
   end
 
-  it 'works' do
+  it 'works', :works do
     document = Document.new
     document.pack           = @pack
     document.position       = 1
@@ -72,7 +72,7 @@ describe SendToStorage do
     expect(remote_file.state).to eq 'synced'
   end
 
-  it 'runs concurrently' do
+  it 'runs concurrently', :runs_concurrently do
     allow_any_instance_of(Storage::Metafile).to receive(:path).and_return('/path/to/file.pdf')
 
     remote_files = 5.times.map do |i|
@@ -103,7 +103,7 @@ describe SendToStorage do
     expect(result.real < 1.5).to eq true
   end
 
-  it 'handles error' do
+  it 'handles error', :handles_error do
     remote_file              = RemoteFile.new
     remote_file.receiver     = @user
     remote_file.pack         = @pack
@@ -136,7 +136,7 @@ describe SendToStorage do
     SendToOnlineStorage.new(DropboxBasic.new, [remote_file]).execute
   end
 
-  it 'manages errors' do
+  it 'manages errors', :manages_errors do
     remote_files = 2.times.map do
       remote_file              = RemoteFile.new
       remote_file.receiver     = @user
@@ -174,7 +174,7 @@ describe SendToStorage do
     SendToOnlineStorage.new(DropboxBasic.new, remote_files).execute
   end
 
-  it 'raises an exception' do
+  it 'raises an exception', :raises_an_exceptions do
     remote_file              = RemoteFile.new
     remote_file.receiver     = @user
     remote_file.pack         = @pack

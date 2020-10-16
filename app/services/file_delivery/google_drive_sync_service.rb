@@ -23,6 +23,8 @@ class FileDelivery::GoogleDriveSyncService
         @session = nil
       end
 
+      debugger
+
       @session.files if @session
     rescue Google::Apis::AuthorizationError => e
       @error   = e

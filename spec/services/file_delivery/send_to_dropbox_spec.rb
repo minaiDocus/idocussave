@@ -5,27 +5,35 @@ describe FileDelivery::SendToDropbox do
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
   # And clean with truncation instead
-  after(:each) { DatabaseCleaner.clean_with(:truncation) }
+  after(:each) do
+    Timecop.return
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
   before(:each) do
-    @user = FactoryBot.create :user, code: 'IDO%0001'
-    @user.create_options
-    @user.create_notify
-    @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
+    Timecop.freeze(Time.local(2020,10,1))
 
     organization = create :organization, code: 'IDO'
 
+    @user = FactoryBot.create :user, code: 'IDO%001'
+    @user.organization = organization
+    @user.create_options
+    @user.create_notify
+    @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
+    @user.save
+
     @dropbox = @user.external_file_storage.dropbox_basic
-    @dropbox.access_token = 'K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO'
+    @dropbox.access_token = 'd_8hw4XA240AAAAAAAAAAbdOcCNXL3qwaOp05judYxFkgJBjoRxIwBlDVCbOW3m2'
     @dropbox.save
     @dropbox.enable
 
     pack = Pack.new
     pack.owner = @user
-    pack.name = 'IDO%0001 AC 201701 all'
+    pack.organization = organization
+    pack.name = 'IDO%001 AC 202010 all'
     pack.save
 
-    @document = FactoryBot.create :piece, pack: pack, organization: organization, user: @user
+    @document = FactoryBot.create :piece, pack: pack, organization: organization, user: @user, name: 'IDO%001 AC 202010 001'
     @document.cloud_content_object.attach(File.open(Rails.root.join('spec/support/files/2pages.pdf')), '2pages.pdf') if @document.save
 
     @remote_file              = RemoteFile.new
@@ -42,69 +50,8 @@ describe FileDelivery::SendToDropbox do
     end
 
     expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload').
-      with(headers: { 'Dropbox-Api-Arg' => { mode: { '.tag' => 'overwrite' }, path: "/IDO%0001/201701/AC/2pages.pdf" }.to_json })
-    expect(WebMock).to have_requested(:any, /.*/).times(2)
-
-    expect(result).to eq true
-  end
-
-  it 'uploads a file by chunk' do
-    @document.clout_content_object.attach(File.open(Rails.root.join('spec/support/files/3pages.pdf'), '3pages.pdf')
-    @document.save
-
-    result = VCR.use_cassette('dropbox/upload_file_by_chunk', preserve_exact_body_bytes: true) do
-      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
-    end
-
-    expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/start')
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/append_v2').
-      with(headers: { 'Dropbox-Api-Arg' => { cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 400 } }.to_json })
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/append_v2').
-      with(headers: { 'Dropbox-Api-Arg' => { cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 800 } }.to_json })
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/finish').
-      with(headers: {
-        'Dropbox-Api-Arg' => {
-          cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 1200 },
-          commit: { mode: 'overwrite', path: '/IDO%0001/201701/AC/3pages.pdf' }
-        }.to_json })
-    expect(WebMock).to have_requested(:any, /.*/).times(5)
-
-    expect(result).to eq true
-  end
-
-  # NOTE: needs a better implementation of error
-  it 'uploads a file by chunk and retry on error' do
-    @document.clout_content_object.attach(File.open(Rails.root.join('spec/support/files/3pages.pdf'), '3pages.pdf')
-    @document.save
-
-    is_error_raised = false
-    allow_any_instance_of(DropboxApi::Client).to receive(:upload_session_append_v2).and_wrap_original do |m, *args|
-      if is_error_raised
-        m.call(*args)
-      else
-        is_error_raised = true
-        raise DropboxApi::Errors::RateLimitError.new('rate limit', nil)
-      end
-    end
-
-    expect_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false, false)
-
-    result = VCR.use_cassette('dropbox/upload_file_by_chunk_and_retry_on_error', preserve_exact_body_bytes: true) do
-      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file], chunk_size: 400).execute
-    end
-
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/start')
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/append_v2').
-      with(headers: { 'Dropbox-Api-Arg' => { cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 400 } }.to_json })
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/append_v2').
-      with(headers: { 'Dropbox-Api-Arg' => { cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 800 } }.to_json })
-    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload_session/finish').
-      with(headers: { 'Dropbox-Api-Arg' => { cursor: { session_id: 'AAAAAAAAAJ28INiLaMH3KA', offset: 1200 },
-                                             commit: { mode: 'overwrite', path: '/IDO%0001/201701/AC/3pages.pdf' }
-                                           }.to_json })
-    expect(WebMock).to have_requested(:any, /.*/).times(4)
+    expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload')
+    expect(WebMock).to have_requested(:any, /dropboxapi/).times(2)
 
     expect(result).to eq true
   end
@@ -116,7 +63,7 @@ describe FileDelivery::SendToDropbox do
       end
 
       expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
-      expect(WebMock).to have_requested(:any, /.*/).times(1)
+      expect(WebMock).to have_requested(:any, /dropboxapi/).times(1)
 
       expect(result).to eq true
     end
@@ -126,7 +73,7 @@ describe FileDelivery::SendToDropbox do
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
 
-        @document.clout_content_object.attach(File.open(file_path), '3pages.pdf')
+        @document.cloud_content_object.attach(File.open(file_path), '3pages.pdf')
         @document.save
 
         result = VCR.use_cassette('dropbox/update_a_file', preserve_exact_body_bytes: true) do
@@ -134,9 +81,8 @@ describe FileDelivery::SendToDropbox do
         end
 
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
-        expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload').
-          with(headers: { 'Dropbox-Api-Arg' => { mode: { '.tag' => 'overwrite' }, path: "/IDO%0001/201701/AC/2pages.pdf" }.to_json })
-        expect(WebMock).to have_requested(:any, /.*/).times(2)
+        expect(WebMock).to have_requested(:post, 'https://content.dropboxapi.com/2/files/upload')
+        expect(WebMock).to have_requested(:any, /dropboxapi/).times(2)
 
         expect(result).to eq true
       end

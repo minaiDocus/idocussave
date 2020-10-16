@@ -27,14 +27,14 @@ describe 'SendToFTP' do
 
   describe '#execute' do
     before(:all) do
-      Timecop.freeze(Time.local(2017,1,15))
+      Timecop.freeze(Time.local(2020,10,15))
     end
 
     after(:all) do
       Timecop.return
     end
 
-    describe 'given 3 remote files to deliver for a user', :first_test do
+    describe 'given 3 remote files to deliver for a user', :delivery_to_user do
       before(:each) do
         allow(Settings).to receive(:first).and_return(FakeObject.new)
         allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
@@ -42,7 +42,7 @@ describe 'SendToFTP' do
 
         organization = FactoryBot.create :organization, code: 'IDO'
 
-        @user = FactoryBot.create :user, code: 'IDO%0001'
+        @user = FactoryBot.create :user, code: 'IDO%001'
         @user.organization = organization
         @user.create_options
         @user.create_notify
@@ -54,20 +54,23 @@ describe 'SendToFTP' do
         @ftp.save
         @ftp.enable
 
-        @pack = Pack.new
+        @pack              = Pack.new
         @pack.organization = organization
-        @pack.owner = @user
-        @pack.name  = 'IDO%0001 AC 201701 all'
+        @pack.owner        = @user
+        @pack.name         = 'IDO%001 AC 202010 all'
         @pack.save
 
+        counter = 0
+
         @remote_files = ['2pages.pdf', '3pages.pdf', '5pages.pdf'].map do |file_name|
-          document            = Pack::Piece.new
-          document.name       = "IDO%0001 AC 201701 001"
-          document.pack       = @pack
-          document.user       = @user
-          document.position   = 1
-          document.origin     = 'upload'
-          document.is_a_cover = false
+          document              = Pack::Piece.new
+          document.name         = "IDO%001 AC 202010 00#{counter += 1}"
+          document.pack         = @pack
+          document.user         = @user
+          document.organization = organization
+          document.position     = 1
+          document.origin       = 'upload'
+          document.is_a_cover   = false
           document.cloud_content_object.attach(File.open(Rails.root.join("spec/support/files/#{file_name}")), file_name) if document.save
 
           remote_file              = RemoteFile.new
@@ -106,49 +109,55 @@ describe 'SendToFTP' do
 
           FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-          files = Dir.glob("#{temp_dir}/files/iDocus/IDO%0001/201701/AC/*.pdf").sort.map do |path|
+          files = Dir.glob("#{temp_dir}/files/iDocus/IDO%001/202010/AC/*.pdf").sort.map do |path|
             File.basename path
           end
 
-          expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
+          expect(files).to eq ["IDO%001_AC_202010_001.pdf", "IDO%001_AC_202010_002.pdf", "IDO%001_AC_202010_003.pdf"]
 
           server.stop
         end
       end
     end
 
-    describe 'given 3 remote files to deliver for an organization' do
+    describe 'given 3 remote files to deliver for an organization', :delivery_to_organization do
       before(:each) do
+        allow(Settings).to receive(:first).and_return(FakeObject.new)
         allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
-
-        @root_path = '/path/to/folder'
-        @ftp.update root_path: @root_path
+        allow_any_instance_of(FakeObject).to receive(:notify_errors_to).and_return('mina@idocus.com')
 
         @organization = FactoryBot.create :organization, code: 'IDO'
-        @user = FactoryBot.create :user, code: 'IDO%0001'
+        @user = FactoryBot.create :user, code: 'IDO%001'
         @user.organization = @organization
         @user.save
 
+        @user.create_options
+        @user.create_notify
+
         @ftp = @organization.build_ftp
-        @ftp.host = 'ftp://localhost'
-        @ftp.path = 'OUTPUT/:code/:year:month/:account_book'
+        @ftp.host      = 'ftp://localhost'
+        @ftp.path      = 'OUTPUT/:code/:year:month/:account_book'
+        @ftp.root_path = 'files/iDocus'
         @ftp.save
         @ftp.enable
 
-        @pack = Pack.new
-        @pack.owner = @user
+        @pack              = Pack.new
+        @pack.owner        = @user
         @pack.organization = @organization
-        @pack.name = 'IDO%0001 AC 201701 all'
+        @pack.name         = 'IDO%001 AC 202010 all'
         @pack.save
 
+        counter = 0
+
         @remote_files = ['2pages.pdf', '3pages.pdf', '5pages.pdf'].map do |file_name|
-          document            = Pack::Piece.new
-          document.name       = "IDO%0001 AC 201701 001"
-          document.pack       = @pack
-          document.user       = @user
-          document.position   = 1
-          document.origin     = 'upload'
-          document.is_a_cover = false
+          document              = Pack::Piece.new
+          document.name         = "IDO%001 AC 202010 00#{counter += 1}"
+          document.pack         = @pack
+          document.user         = @user
+          document.organization = @organization
+          document.position     = 1
+          document.origin       = 'upload'
+          document.is_a_cover   = false
           document.cloud_content_object.attach(File.open(Rails.root.join("spec/support/files/#{file_name}")), file_name) if document.save
 
 
@@ -171,11 +180,11 @@ describe 'SendToFTP' do
 
           FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-          files = Dir.glob(File.join(temp_dir, @root_path, "OUTPUT/IDO%0001/201701/AC/*.pdf")).sort.map do |path|
+          files = Dir.glob(File.join(temp_dir, @ftp.root_path, "OUTPUT/IDO%001/202010/AC/*.pdf")).sort.map do |path|
             File.basename path
           end
 
-          expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
+          expect(files).to eq ["IDO%001_AC_202010_001.pdf", "IDO%001_AC_202010_002.pdf", "IDO%001_AC_202010_003.pdf"]
 
           server.stop
         end
