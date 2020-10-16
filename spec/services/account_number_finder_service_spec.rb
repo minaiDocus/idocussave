@@ -41,6 +41,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Slimpay Janvier 2015'
         @operation.amount = -100
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -51,6 +52,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'paiement par carte €20.00'
         @operation.amount = -20
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -61,6 +63,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Caisse-epargne Janvier 2015'
         @operation.amount = -20
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -90,6 +93,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
         @operation.label = 'Prlv Orange Janvier 2015'
         @operation.amount = -200
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -104,6 +108,7 @@ describe AccountNumberFinderService do
 
         @operation.label = 'Prlv Orange Janvier 2015'
         @operation.amount = -200
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -118,6 +123,7 @@ describe AccountNumberFinderService do
 
         @operation.label = 'Prlv Orange Janvier 2015'
         @operation.amount = -200
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -146,6 +152,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv iBiza $150.0'
         @operation.amount = -150
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -160,6 +167,7 @@ describe AccountNumberFinderService do
 
         @operation.label = 'Prlv iBiza $150.0'
         @operation.amount = 150
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -174,6 +182,7 @@ describe AccountNumberFinderService do
 
         @operation.label = 'Prlv iBiza $150.0'
         @operation.amount = 150
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -224,6 +233,7 @@ describe AccountNumberFinderService do
       it 'returns providers only on operation\'s negative amount' do
         @operation.label = 'TEST PROV $10.00'
         @operation.amount = -10
+        allow(@operation).to receive('credit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -233,15 +243,17 @@ describe AccountNumberFinderService do
       it 'returns customers only on operation\'s positive amount' do
         @operation.label = 'TEST CUST $10.00'
         @operation.amount = 10
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0CUST')
       end
 
-      it 'returns temp account if accounting_plan is skiped and rules not found', :test do
+      it 'returns temp account if accounting_plan is skiped and rules not found' do
         @operation.label = 'TEST PROV $10.00'
         @operation.amount = -10
+        allow(@operation).to receive('credit?').and_return(true)
 
         options = UserOptions.new
         options.user = @user
@@ -260,6 +272,7 @@ describe AccountNumberFinderService do
       it 'returns temp_account even providers is found but operation\'s amount is positive' do
         @operation.label = 'TEST PROV $10.00'
         @operation.amount = 10
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -270,6 +283,7 @@ describe AccountNumberFinderService do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Google $10.00'
         @operation.amount = 10
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
@@ -284,10 +298,25 @@ describe AccountNumberFinderService do
 
         @operation.label = 'Prlv Google $10.00'
         @operation.amount = 10
+        allow(@operation).to receive('debit?').and_return(true)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0GOO')
+      end
+
+      it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users' do
+        allow_any_instance_of(User).to receive_message_chain('accounting_plan.customers.where').and_return([])
+        allow_any_instance_of(User).to receive('uses_ibiza?').and_return(true)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+
+        @operation.label = 'Prlv Google $10.00'
+        @operation.amount = 10
+        allow(@operation).to receive('debit?').and_return(true)
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+
+        expect(result).to eq('0TEMP')
       end
     end
   end
