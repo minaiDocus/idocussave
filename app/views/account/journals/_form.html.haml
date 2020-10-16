@@ -52,7 +52,7 @@
         - if @organization.knowings.try(:is_configured?)
           = f.input :domain, collection: journal_domain_for_select, include_blank: false
         - if !@customer || is_preassignment_authorized? || @customer.subscription.is_idox_package_active
-          = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false
+          = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3], [t('simple_form.labels.account_book_type.entry_type_4'),4]], include_blank: false
         - if !@customer || @customer.subscription.is_mail_package_active
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
         = f.input :is_default, as: :boolean unless @customer
