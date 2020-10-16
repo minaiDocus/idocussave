@@ -81,10 +81,11 @@ setAnalytics = (code, pattern, type, isUsed) ->
         $('.analytic_loading').show()
       success: (data) ->
         window.analytics = data['analytics']
+
         if(window.analytics != undefined && window.analytics != null && window.analytics.length > 0)
           analytic_options = '<option selected value>Sélectionnez une analyse</option>'
           for i in [0...window.analytics.length] by 1
-            analytic_options = analytic_options + "<option value=" + window.analytics[i]['name'] + ">" + window.analytics[i]['name'] + "</option>"
+            analytic_options = analytic_options + "<option value='" + window.analytics[i]['name'] + "'>" + window.analytics[i]['name'] + "</option>"
           $('.analytic_name').html(analytic_options)
 
           $('#analytic .fields, .with_compta_analysis, .analytic_resume_box, .help-block').show()
@@ -151,7 +152,7 @@ handleAnalysisChange = () ->
             selected = ''
             if a_axis == sections[s]['code']
               selected = 'selected'
-            axis_options = axis_options + "<option #{selected} value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>"
+            axis_options = axis_options + "<option #{selected} value='" + sections[s]['code'] + "'>" + sections[s]['description'] + "</option>"
 
           axis.html(axis_options)
           label_axis_group.html("Axe: <i style='font-weight: normal'>#{analytic[axis_name]['name']}</i>")
