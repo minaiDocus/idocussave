@@ -46,10 +46,10 @@ class AccountBookType < ApplicationRecord
   validates_presence_of :name
   validates_presence_of :currency
   validates_presence_of :description
-  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) && j.entry_type != 4 }
-  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4 }
-  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4 }
-  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? && j.entry_type != 4}
+  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) && !j.entry_type.in?([0, 4]) }
+  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
+  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
+  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
 
   validates_inclusion_of :domain, in: DOMAINS
   validates_inclusion_of :entry_type, in: 0..4
