@@ -4,7 +4,7 @@ class Api::V2::TempDocumentsController < ActionController::Base
 
   def create
     customer = User.find(temp_document_params[:user_id])
-    #journal  = customer.account_book_types.where(name: params[:accounting_type]).first
+    journal  = customer.account_book_types.where(entry_type: temp_document_params[:accounting_type]).first
 
     dir = "#{Rails.root}/files/temp_pack_processor/uploaded_document/"
 
@@ -17,12 +17,12 @@ class Api::V2::TempDocumentsController < ActionController::Base
       f.write(Base64.decode64(params[:file_base64]))
     end
 
-    uploaded_document = UploadedDocument.new(File.open(filename), 
-                                            temp_document_params[:content_file_name], 
-                                            customer, 
-                                            params[:accounting_type], 
-                                            0, 
-                                            customer, 
+    uploaded_document = UploadedDocument.new(File.open(filename),
+                                            temp_document_params[:content_file_name],
+                                            customer,
+                                            journal.name,
+                                            0,
+                                            customer,
                                             temp_document_params[:api_name],
                                             nil,
                                             temp_document_params[:api_id])
@@ -35,7 +35,7 @@ class Api::V2::TempDocumentsController < ActionController::Base
   end
 
   protected
-  
+
   def authenticate
     unless request.headers['Authorization'].present? && request.headers['Authorization'] == API_KEY
       head :unauthorized
