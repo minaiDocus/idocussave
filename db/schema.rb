@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_30_083713) do
+ActiveRecord::Schema.define(version: 2020_10_13_131742) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "name"
     t.string "pseudonym"
+    t.boolean "use_pseudonym_for_import", default: true
     t.string "description", default: "", null: false
     t.integer "position", default: 0, null: false
     t.integer "entry_type", default: 0, null: false

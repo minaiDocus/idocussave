@@ -121,7 +121,7 @@ class AccountBookType < ApplicationRecord
 
 
   def compta_processable?
-    entry_type > 0
+    true
   end
 
 
