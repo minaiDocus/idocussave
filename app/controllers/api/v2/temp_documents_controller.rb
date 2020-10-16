@@ -4,7 +4,7 @@ class Api::V2::TempDocumentsController < ActionController::Base
 
   def create
     customer = User.find(temp_document_params[:user_id])
-    journal  = customer.account_book_types.where(entry_type: temp_document_params[:accounting_type]).first
+    journal  = customer.account_book_types.where(entry_type: params[:accounting_type]).first
 
     dir = "#{Rails.root}/files/temp_pack_processor/uploaded_document/"
 
