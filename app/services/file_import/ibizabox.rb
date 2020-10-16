@@ -16,13 +16,6 @@ class FileImport::Ibizabox
       new(folder).execute
     end
 
-    def init
-      IbizaboxFolder.ready.includes(:user).map(&:user).uniq.each do |user|
-        next unless user.organization.ibiza.try(:first_configured?) && user.uses_ibiza? && user.still_active?
-        FileImport::IbizaboxWorker.perform_async user.id
-      end
-    end
-
     def get_accessible_journals(user)
       client = user.organization.try(:ibiza).try(:first_client)
 
@@ -44,7 +37,7 @@ class FileImport::Ibizabox
     @folder  = folder
     @user    = folder.user
     @journal = folder.journal
-    @journal_ref = @journal.pseudonym.presence || @journal.name
+    @journal_ref = @journal.use_pseudonym_for_import ? (@journal.pseudonym.presence || @journal.name) : @journal.name
     @initial_documents_count = folder.temp_documents.reload.size
   end
 

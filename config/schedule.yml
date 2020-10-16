@@ -102,7 +102,7 @@ FileImport::FtpFromAllWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
 
-FileImport::IbizaboxInitializeWorker:
+FileImport::IbizaboxWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
 
