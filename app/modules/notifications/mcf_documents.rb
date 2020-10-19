@@ -15,6 +15,8 @@ class Notifications::McfDocuments < Notifications::Notifier
       collaborators = customer.prescribers
       if collaborators.any?
         collaborators.each do |collaborator|
+          collab = Collaborator.new(collaborator)
+
           message = if mcf_docs_count == 1
             "- 1 document venant de MCF n'a pas pu être récupéré pour le dossier : #{customer.code} \n"
           else
@@ -22,7 +24,7 @@ class Notifications::McfDocuments < Notifications::Notifier
           end
 
           create_notification({
-            url:         Rails.application.routes.url_helpers.account_organization_customers_url(collaborator.organization, ActionMailer::Base.default_url_options),
+            url:         Rails.application.routes.url_helpers.account_organization_customers_url(collab.organization, ActionMailer::Base.default_url_options),
             user:        collaborator,
             notice_type: 'mcf_document_errors',
             title:       "documents mcf, non récupérés",
