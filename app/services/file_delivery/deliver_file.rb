@@ -176,7 +176,7 @@ class FileDelivery::DeliverFile
         when :box
           FileDelivery::Storage::Box.new(remote_files).sync
         when :ftp
-          FileDelivery::Storage::FTP.new(storage, remote_files).execute
+          FileDelivery::Storage::Ftp.new(storage, remote_files).execute
         when :google_doc
           FileDelivery::Storage::GoogleDrive.new(storage).sync(remote_files)
         end

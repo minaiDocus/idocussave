@@ -12,7 +12,7 @@ class FileDelivery::Storage::Main
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
 
-    if @storage.class == Ftp && @storage.organization
+    if @storage.class == ::Ftp && @storage.organization
       @options[:path_pattern] = File.join @storage.root_path, @options[:path_pattern]
     end
 
@@ -25,7 +25,7 @@ class FileDelivery::Storage::Main
     @threads   = []
 
     remote_files.each_with_index do |remote_file, index|
-      metafile = Storage::Metafile.new(remote_file, @options[:path_pattern], (index+1), remote_files.size)
+      metafile = ::Storage::Metafile.new(remote_file, @options[:path_pattern], (index+1), remote_files.size)
       @metafiles << metafile
       @queue << metafile
     end

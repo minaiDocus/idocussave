@@ -59,9 +59,6 @@ describe "SendToGdr" do
   end
 
   it 'sends a file successfully', :send_files do
-    # result = VCR.use_cassette('mcf/upload_file') do
-    #   DeliverFile.to "mcf"
-    # end
     FileDelivery::DeliverFile.to "gdr"
 
     expect(@remote_file.reload.state).to eq 'synced'

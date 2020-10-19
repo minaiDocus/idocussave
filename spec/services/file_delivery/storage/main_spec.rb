@@ -119,7 +119,7 @@ describe FileDelivery::Storage::Main do
           metafile.begin
           unless @is_error_raised
             @is_error_raised = true
-            raise ::Storage::Main::TestError
+            raise FileDelivery::Storage::Main::TestError
           end
           metafile.success
         end

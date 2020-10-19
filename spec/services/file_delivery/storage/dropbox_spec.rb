@@ -54,6 +54,7 @@ describe FileDelivery::Storage::Dropbox do
     expect(WebMock).to have_requested(:any, /dropboxapi/).times(2)
 
     expect(result).to eq true
+    expect(@remote_file.reload.state).to eq 'synced'
   end
 
   context 'a file has already been uploaded' do
@@ -66,6 +67,7 @@ describe FileDelivery::Storage::Dropbox do
       expect(WebMock).to have_requested(:any, /dropboxapi/).times(1)
 
       expect(result).to eq true
+      expect(@remote_file.reload.state).to eq 'synced'
     end
 
     it 'updates an existing file' do
@@ -85,6 +87,7 @@ describe FileDelivery::Storage::Dropbox do
         expect(WebMock).to have_requested(:any, /dropboxapi/).times(2)
 
         expect(result).to eq true
+        expect(@remote_file.reload.state).to eq 'synced'
       end
     end
   end
@@ -99,6 +102,7 @@ describe FileDelivery::Storage::Dropbox do
 
     expect(result).to eq false
     expect(@dropbox).to_not be_used
+    expect(@remote_file.reload.state).to eq 'not_synced'
     expect(@user.notifications.size).to eq 1
   end
 
@@ -112,6 +116,7 @@ describe FileDelivery::Storage::Dropbox do
 
     expect(result).to eq false
     expect(@dropbox).to_not be_configured
+    expect(@remote_file.reload.state).to eq 'not_synced'
     expect(@user.notifications.size).to eq 1
   end
 end
