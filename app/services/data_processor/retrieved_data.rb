@@ -1,10 +1,10 @@
 # -*- encoding : UTF-8 -*-
-class ProcessRetrievedData
+class DataProcessor::RetrievedData
 
   def self.process(retrieved_data_id)
     UniqueJobs.for "ProcessRetrievedData-#{retrieved_data_id}" do
       retrieved_data = RetrievedData.find retrieved_data_id
-      ProcessRetrievedData.new(retrieved_data).execute if retrieved_data.not_processed?
+      DataProcessor::RetrievedData.new(retrieved_data).execute if retrieved_data.not_processed?
     end
   end
 
@@ -169,7 +169,7 @@ class ProcessRetrievedData
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
 
-    retriever.resume_me
+    retriever.resume_me(false, true)
 
     notify connection
 

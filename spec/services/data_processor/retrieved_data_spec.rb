@@ -1,9 +1,15 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe ProcessRetrievedData do
+describe DataProcessor::RetrievedData do
   def prepare_user_token
     allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('VNEr6s0xI8ZIho8/zna1uNP81yxHFccb')
+  end
+
+  def allow_faraday_post_connection(code, message=nil)
+    allow_any_instance_of(Faraday::Connection).to receive(:post).and_return(
+      double("response", status: 200, body: { code: code, message: message, source: "ProcessRetrievedData", id: @retriever.budgea_id, fields: {field: 'test'}}.to_json)
+    )
   end
 
   before(:each) do
@@ -51,7 +57,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_bank_account.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.bank_accounts.count).to eq 0
       expect(@user.notifications.count).to eq 0
@@ -63,7 +69,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.bank_accounts.count).to eq 1
       expect(@user.operations.count).to eq 1
@@ -92,7 +98,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.bank_accounts.count).to eq 1
       expect(@user.operations.count).to eq 1
@@ -108,7 +114,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.bank_accounts.count).to eq 2
       expect(@user.operations.count).to eq 3
@@ -122,7 +128,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'deleted_operation_from_the_start.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.operations.count).to eq 0
       expect(@user.notifications.count).to eq 0
@@ -154,7 +160,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'destroy_bank_account.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation.reload
       expect(@user.bank_accounts.count).to eq 0
@@ -174,7 +180,7 @@ describe ProcessRetrievedData do
         retrieved_data.user = @user
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         @bank_account.reload
         expect(@bank_account.retriever).to eq @retriever
@@ -209,7 +215,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'bank_operation_update.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         @operation.reload
         expect(@user.operations.count).to eq 1
@@ -224,7 +230,7 @@ describe ProcessRetrievedData do
 
         expect(Operation.find(@operation.id)).to be_present
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         expect { Operation.find(@operation.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -237,7 +243,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         @operation.reload
 
@@ -252,7 +258,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         expect(@user.operations.count).to eq 1
       end
@@ -265,7 +271,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         @operation.reload
         expect(@user.operations.count).to eq 1
@@ -281,7 +287,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account_updated.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         @operation.reload
         expect(@user.operations.count).to eq 1
@@ -321,7 +327,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.operations.count).to eq 3
 
@@ -396,7 +402,7 @@ describe ProcessRetrievedData do
         retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
         retrieved_data.save
 
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
 
         expect(@user.operations.count).to eq 3
 
@@ -442,7 +448,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '3_operations.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       expect(@user.operations.count).to eq 3
 
@@ -487,7 +493,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'update_1_operation.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation = @user.operations.first
 
@@ -519,7 +525,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'unlock_1_operation.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation = @user.operations.first
 
@@ -538,7 +544,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation = @user.operations.first
 
@@ -560,7 +566,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation = @user.operations.first
 
@@ -582,7 +588,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       operation = @user.operations.first
 
@@ -603,7 +609,9 @@ describe ProcessRetrievedData do
       budgea_account.user = @user
       budgea_account.identifier = 7
       # budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
-      budgea_account.access_token = "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E"
+      # budgea_account.access_token = "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E"
+      budgea_account.access_token = "R5qhEiUsjhg4BfwV0K/NWIcG5WyDdNcC5M58qkCpLYLFhdjCYMevZUa39GTEZ1d7mnIvcXbHTYf4p2PfOUZPjK9rcR2Gk7HuAzJsBzFeWEXcuAgcaOCYpSDAc1RWnfTX"
+      # budgea_account.access_token = "VNEr6s0xI8ZIho8/zna1uNP81yxHFccb"
       budgea_account.save
 
       @retriever.capabilities   = 'document'
@@ -616,7 +624,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_document.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(retrieved_data).to be_processed
@@ -627,14 +635,14 @@ describe ProcessRetrievedData do
       expect(@user.notifications.count).to eq 0
     end
 
-    it 'creates a document' do
+    it 'creates a document', :create_document do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
       retrieved_data.save
 
       VCR.use_cassette('budgea/get_document') do
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
       end
 
       @retriever.reload
@@ -656,7 +664,7 @@ describe ProcessRetrievedData do
     #   retrieved_data.save
 
     #   VCR.use_cassette('budgea/failed_to_fetch_document') do
-    #     ProcessRetrievedData.new(retrieved_data).execute
+    #     DataProcessor::RetrievedData.new(retrieved_data).execute
     #   end
 
     #   debugger
@@ -707,7 +715,7 @@ describe ProcessRetrievedData do
       expect(@user.temp_documents.count).to eq 1
 
       VCR.use_cassette('budgea/get_document') do
-        ProcessRetrievedData.new(retrieved_data).execute
+        DataProcessor::RetrievedData.new(retrieved_data).execute
       end
 
       @retriever.reload
@@ -721,64 +729,82 @@ describe ProcessRetrievedData do
   end
 
   context 'retriever state is ready', :retriever_states do
+    before(:each) do
+      budgea_account = BudgeaAccount.new
+      budgea_account.user = @user
+      budgea_account.identifier = 7
+      # budgea_account.access_token = "rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl"
+      # budgea_account.access_token = "CB43fRxYSTbE+hswS8yxCkWcWj8I/j2E"
+      budgea_account.access_token = "R5qhEiUsjhg4BfwV0K/NWIcG5WyDdNcC5M58qkCpLYLFhdjCYMevZUa39GTEZ1d7mnIvcXbHTYf4p2PfOUZPjK9rcR2Gk7HuAzJsBzFeWEXcuAgcaOCYpSDAc1RWnfTX"
+      # budgea_account.access_token = "VNEr6s0xI8ZIho8/zna1uNP81yxHFccb"
+      budgea_account.save
+    end
+
     it 'changes state to error' do
+      allow_faraday_post_connection('wrongpass')
+
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(@retriever).to be_error
       expect(@retriever.error_message).to eq 'Mot de passe incorrect.'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq 'Mot de passe incorrect.'
+      expect(@retriever.budgea_error_message).to eq 'wrongpass'
       expect(@retriever.is_new_password_needed).to be true
       expect(@user.notifications.count).to eq 1
       expect(@user.notifications.first.title).to eq 'Automate - Mot de passe invalide'
     end
 
     it 'changes error_message' do
+      allow_faraday_post_connection('defaults', 'La date de validité de votre mot de passe est dépassée. Veuillez le modifier.')
+
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password_2.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(@retriever).to be_error
       expect(@retriever.error_message).to eq 'La date de validité de votre mot de passe est dépassée. Veuillez le modifier.'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq 'La date de validité de votre mot de passe est dépassée. Veuillez le modifier.'
-      expect(@retriever.is_new_password_needed).to be true
+      expect(@retriever.budgea_error_message).to eq 'decoupled'
     end
 
     it 'changes state to error because an action is needed on the web site' do
+      allow_faraday_post_connection('actionNeeded', 'Please confirm the new terms and conditions')
+
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'action_needed.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(@retriever).to be_error
       expect(@retriever.error_message).to eq 'Please confirm the new terms and conditions'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq 'Please confirm the new terms and conditions'
+      expect(@retriever.budgea_error_message).to eq 'actionNeeded'
       expect(@user.notifications.count).to eq 1
       expect(@user.notifications.first.title).to eq 'Automate - Une action est nécessaire'
     end
 
     it 'changes state to waiting_additionnal_info' do
+      allow_faraday_post_connection('additionalInformationNeeded')
+
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'waiting_additionnal_info.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(@retriever).to be_waiting_additionnal_info
@@ -804,7 +830,7 @@ describe ProcessRetrievedData do
       retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
-      ProcessRetrievedData.new(retrieved_data).execute
+      DataProcessor::RetrievedData.new(retrieved_data).execute
 
       @retriever.reload
       expect(@retriever).to be_ready
@@ -884,7 +910,7 @@ describe ProcessRetrievedData do
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      ProcessRetrievedData.new(@retrieved_data).execute
+      DataProcessor::RetrievedData.new(@retrieved_data).execute
 
       expect(@user.operations.count).to eq 2
 
@@ -904,7 +930,7 @@ describe ProcessRetrievedData do
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      ProcessRetrievedData.new(@retrieved_data).execute
+      DataProcessor::RetrievedData.new(@retrieved_data).execute
 
       expect(@user.operations.count).to eq 1
 
@@ -924,7 +950,7 @@ describe ProcessRetrievedData do
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      ProcessRetrievedData.new(@retrieved_data).execute
+      DataProcessor::RetrievedData.new(@retrieved_data).execute
 
       amounts = @user.operations.collect(&:amount)
 
@@ -942,7 +968,7 @@ describe ProcessRetrievedData do
   #   end
 
   #   it 'returns log client invalid if user not found' do
-  #     subject = ProcessRetrievedData.new(nil, nil, nil)
+  #     subject = DataProcessor::RetrievedData.new(nil, nil, nil)
   #     response = subject.execute_with('1234', '2018-04-12', '2018-04-13')
 
   #     expect(response).to match /Budgea client invalid!/
@@ -951,7 +977,7 @@ describe ProcessRetrievedData do
 
   #   it 'returns invalid parameters when some parameters is missing' do
   #     prepare_user_token
-  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     subject = DataProcessor::RetrievedData.new(nil, nil, @user_t)
   #     response = subject.execute_with([], '2018-04-12', '2018-04-13')
 
   #     expect(response).to match /Parameters invalid!/
@@ -961,7 +987,7 @@ describe ProcessRetrievedData do
   #   it 'returns unauthorized access when token or budgea webservice is invalid', :unauthorized_token do
   #     allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('FakeToken')
 
-  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     subject = DataProcessor::RetrievedData.new(nil, nil, @user_t)
   #     response = VCR.use_cassette('budgea/unauthorize_access') do
   #       subject.execute_with('1234', '2018-04-12', '2018-04-13')
   #     end
@@ -981,7 +1007,7 @@ describe ProcessRetrievedData do
   #     @retriever.budgea_id = 13036
   #     @retriever.save
 
-  #     subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #     subject = DataProcessor::RetrievedData.new(nil, nil, @user_t)
   #     response = VCR.use_cassette('budgea/transaction_fetcher') do
   #       subject.execute_with('15578', '2020-04-17', '2020-04-30')
   #     end
@@ -1019,7 +1045,7 @@ describe ProcessRetrievedData do
   #       @retriever.capabilities   = 'bank'
   #       @retriever.save
 
-  #       subject = ProcessRetrievedData.new(nil, nil, @user_t)
+  #       subject = DataProcessor::RetrievedData.new(nil, nil, @user_t)
   #       response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
   #         subject.execute_with('15578', '2020-04-17', '2020-04-30')
   #       end

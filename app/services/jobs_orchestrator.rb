@@ -26,7 +26,7 @@ class JobsOrchestrator
     # Process retrieved data
     # RetrievedData.not_processed.each do |retrieved_data|
     #   UniqueJobs.for "ProcessRetrievedDataWorker-#{retrieved_data.id}" do
-    #     ProcessRetrievedDataWorker.perform_async retrieved_data.id
+    #     DataProcessor::RetrievedDataWorker.perform_async retrieved_data.id
     #   end
     # end
   end

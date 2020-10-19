@@ -306,7 +306,7 @@ class TempDocument < ApplicationRecord
     name = File.basename self.cloud_content_object.filename, '.*'
     name.sub!(/_\d+\z/, '') if scanned?
 
-    "#{name}_%0#{AccountingWorkflow::TempPackProcessor::POSITION_SIZE}d" % position
+    "#{name}_%0#{DataProcessor::TempPack::POSITION_SIZE}d" % position
   end
 
 

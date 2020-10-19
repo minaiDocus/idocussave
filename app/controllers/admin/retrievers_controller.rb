@@ -10,7 +10,7 @@ class Admin::RetrieversController < Admin::AdminController
   def fetcher
     if params[:post_action_budgea_fetcher]
       if params_fetcher_valid?
-        @message = ProcessRetrievedData.new(
+        @message = DataProcessor::RetrievedData.new(
           nil,
           nil,
           User.get_by_code(params[:budgea_fetcher_contains][:user_code])

@@ -544,7 +544,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DataProcessor::TempPack::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 2)
@@ -611,7 +611,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", DataProcessor::TempPack::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 1002)
@@ -678,7 +678,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DataProcessor::TempPack::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 2)
@@ -762,7 +762,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
           temp_document.save
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{3+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{3+index}", DataProcessor::TempPack::POSITION_SIZE
         end
 
         base_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'dematbox_scans')
@@ -778,7 +778,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
           temp_document.save
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{5+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{5+index}", DataProcessor::TempPack::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 6)

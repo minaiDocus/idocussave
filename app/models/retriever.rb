@@ -342,12 +342,12 @@ class Retriever < ApplicationRecord
     ErrorScriptMailer.error_notification(log_info).deliver if connection['source'] == 'ProcessRetrievedData' && self.state != prev_state
   end
 
-  def resume_me(force=false)
-    token = self.user.budgea_account.access_token
+  def resume_me(force=false, notify=false)
+    token = self.user.budgea_account.try(:access_token)
     return "Can't be resume - token is nil" unless token
 
     client = Budgea::Client.new token
-    client.resume_connexion(self, force)
+    client.resume_connexion(self, force, notify)
   end
 
 private

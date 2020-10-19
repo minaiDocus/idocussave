@@ -4,7 +4,7 @@ class PublishDocumentWorker
 
   def perform
     TempPack.not_processed.each do |temp_pack|
-      AccountingWorkflow::TempPackProcessor.delay.process(temp_pack.name)
+      DataProcessor::TempPack.delay.process(temp_pack.name)
     end
   end
 end

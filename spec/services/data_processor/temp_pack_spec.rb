@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe AccountingWorkflow::TempPackProcessor do
+describe DataProcessor::TempPack do
   def prepare_temp_pack
     organization  = create :organization, code: 'ACC'
     user          = create :user, code: 'ACC%000', organization: organization
@@ -38,7 +38,9 @@ describe AccountingWorkflow::TempPackProcessor do
   end
 
   it 'Process without errors', :default do
-    AccountingWorkflow::TempPackProcessor.execute(@temp_pack)
+    allow_any_instance_of(DataProcessor::TempPack).to receive(:need_pre_assignment?).and_return(true)
+
+    DataProcessor::TempPack.execute(@temp_pack)
 
     @temp_pack.reload
     pack = Pack.find_by_name @temp_pack.name
@@ -56,7 +58,7 @@ describe AccountingWorkflow::TempPackProcessor do
     expect( pack.pieces.second.position ).to eq 2
     expect( pack.pieces.third.position ).to eq 3
 
-    expect( piece.pre_assignment_state ).to eq 'waiting'
+    expect( piece.pre_assignment_state ).to eq 'supplier_recognition'
 
     expect(divider.pages_number).to eq piece.pages_number
     expect(divider.position).to eq piece.position
@@ -73,7 +75,7 @@ describe AccountingWorkflow::TempPackProcessor do
     td = @temp_pack.temp_documents.first
     td.cloud_content_object.send(:as_attached).purge
 
-    AccountingWorkflow::TempPackProcessor.execute(@temp_pack)
+    DataProcessor::TempPack.execute(@temp_pack)
 
     @temp_pack.reload
     pack = Pack.find_by_name @temp_pack.name
@@ -95,7 +97,7 @@ describe AccountingWorkflow::TempPackProcessor do
     expect(Pack).to receive(:delay_for).exactly(1).and_return(Pack)
     expect(Pack).to receive(:recreate_original_document).exactly(1)
 
-    AccountingWorkflow::TempPackProcessor.execute(@temp_pack)
+    DataProcessor::TempPack.execute(@temp_pack)
 
     pack = Pack.find_by_name @temp_pack.name
     @original_document = pack.cloud_content_object.path

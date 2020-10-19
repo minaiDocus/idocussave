@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountingWorkflow::TempPackProcessor
+class DataProcessor::TempPack
   POSITION_SIZE = 3
 
   def self.process(temp_pack_name)
@@ -149,8 +149,8 @@ class AccountingWorkflow::TempPackProcessor
 
       if !@original_doc_merged || @pack_locked
         log_document = {
-          name: "AccountingWorkflow::TempPackProcessor",
-          error_group: "[accounting-workflow-temp-pack-processor] recreate bundle all document pack id",
+          name: "DataProcessor::TempPack",
+          error_group: "[datap_rocessor-temp_pack] recreate bundle all document pack id",
           erreur_type: "Recreate bundle all document, pack ID : #{pack.id}",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
@@ -220,8 +220,8 @@ class AccountingWorkflow::TempPackProcessor
         true
       rescue => e
         log_document = {
-          name: "AccountingWorkflow::TempPackProcessor",
-          error_group: "[accounting-workflow-temp-pack-processor] piece file not generated",
+          name: "DataProcessor::TempPack",
+          error_group: "[data_processor-temp_pack] piece file not generated",
           erreur_type: "Piece file not generated",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
@@ -238,8 +238,8 @@ class AccountingWorkflow::TempPackProcessor
       end
     else
       log_document = {
-        name: "AccountingWorkflow::TempPackProcessor",
-        error_group: "[accounting-workflow-temp-pack-processor] piece not saved",
+        name: "DataProcessor::TempPack",
+        error_group: "[data_processor-temp_pack] piece not saved",
         erreur_type: "Piece not saved",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: {
@@ -327,7 +327,7 @@ class AccountingWorkflow::TempPackProcessor
     end
   end
 
-  def prepare_piece_for_pre_assignment    
+  def prepare_piece_for_pre_assignment
     if need_pre_assignment?
       if @inserted_piece.temp_document.api_name == 'invoice_auto'
         AutoPreAssignedInvoicePieces.execute([@inserted_piece])

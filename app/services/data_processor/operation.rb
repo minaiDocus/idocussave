@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ProcessOperation
+class DataProcessor::Operation
   def self.execute(banking_operations=nil)
     operations = banking_operations || Operation.processable
 

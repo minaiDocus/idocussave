@@ -63,9 +63,17 @@ AccountingPlan::ExactOnlineUpdateWorker:
 
 ## Budgea retrievers workers
 
-ProcessOperationsWorker:
+DataProcessor::OperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
+
+DataProcessor::RetrievedDataWorker:
+  queue: high
+  cron: '*/2 * * * * *'
+
+DataProcessor::McfWorker:
+  queue: default
+  cron: '0 */5 * * * *'
 
 ## resume budgea retriever connector state
 ResumeBudgeaRetrieverWorker:
@@ -128,10 +136,6 @@ SendPieceToPreAssignmentWorker:
   queue: high
   cron: '*/5 * * * * *'
 
-ProcessRetrievedDataWorker:
-  queue: high
-  cron: '*/2 * * * * *'
-
 RetrievePreAssignmentsWorker:
   queue: high
   cron: '*/10 * * * * *'
@@ -156,12 +160,6 @@ PreAssignment::Delivery::ExactOnlineWorker:
   queue: high
   cron: '*/10 * * * * *'
 
-
-
-
-McfProcessorWorker:
-  queue: default
-  cron: '0 */5 * * * *'
 
 JobProcessorWorker:
   queue: high

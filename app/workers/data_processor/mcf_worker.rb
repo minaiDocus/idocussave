@@ -1,10 +1,10 @@
-class McfProcessorWorker
+class DataProcessor::McfWorker
   include Sidekiq::Worker
   sidekiq_options queue: :default, retry: false
 
   def perform
     UniqueJobs.for 'McfProcessor' do
-      McfProcessor.execute
+      DataProcessor::Mcf.execute
     end
   end
 end

@@ -28,7 +28,7 @@ describe AutoPreAssignedInvoicePieces do
 	end
 
 
-  context 'AccountingWorkflow::TempPackProcessor' do
+  context 'DataProcessor::TempPack' do
     before(:each) do
       TempDocument.destroy_all
       TempPack.destroy_all
@@ -47,7 +47,7 @@ describe AutoPreAssignedInvoicePieces do
     end
 
     it '@temp_pack.document_not_processed_count should 0 and @temp_document.api_name should be invoice_auto' do
-      AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+      DataProcessor::TempPack.process(@temp_pack)
 
       @temp_pack.reload
 
@@ -60,7 +60,7 @@ describe AutoPreAssignedInvoicePieces do
       expect(AccountingWorkflow::SendPieceToPreAssignment).to_not receive(:execute).exactly(0).times
       expect(AutoPreAssignedInvoicePieces).to receive(:execute).exactly(:once)
 
-      AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+      DataProcessor::TempPack.process(@temp_pack)
     end
 
     it 'should not call AutoPreAssignedInvoicePieces.execute(@pieces) method when invoice_piece is empty' do
@@ -71,7 +71,7 @@ describe AutoPreAssignedInvoicePieces do
       expect(AccountingWorkflow::SendPieceToPreAssignment).to_not receive(:execute).exactly(1).times
       expect(AutoPreAssignedInvoicePieces).to receive(:execute).exactly(0).times
 
-      AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+      DataProcessor::TempPack.process(@temp_pack)
     end
   end
 
@@ -89,7 +89,7 @@ describe AutoPreAssignedInvoicePieces do
 
       @temp_pack = @user.temp_packs.last
 
-      AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+      DataProcessor::TempPack.process(@temp_pack)
 
       @pack          = @user.packs.first
       @piece         = @pack.pieces.first

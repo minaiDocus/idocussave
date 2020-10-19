@@ -135,7 +135,7 @@ class RemoteFile < ApplicationRecord
         extension:    extension,
         user_code:    pack.owner.code,
         user_company: pack.owner.company,
-        piece_number: "%0#{AccountingWorkflow::TempPackProcessor::POSITION_SIZE}d" % name_part[3].to_i
+        piece_number: "%0#{DataProcessor::TempPack::POSITION_SIZE}d" % name_part[3].to_i
       }
 
       if (preseizure = remotable.preseizures.first)

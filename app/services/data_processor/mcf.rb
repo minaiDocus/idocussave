@@ -1,4 +1,4 @@
-class McfProcessor
+class DataProcessor::Mcf
   class << self
     def execute
       McfDocument.to_retake.each do |mcf_doc|
