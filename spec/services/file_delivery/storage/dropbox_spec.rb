@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe FileDelivery::SendToDropbox do
+describe FileDelivery::Storage::Dropbox do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -46,7 +46,7 @@ describe FileDelivery::SendToDropbox do
 
   it 'delivers 1 file successfully' do
     result = VCR.use_cassette('dropbox/upload_file', preserve_exact_body_bytes: true) do
-      FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
+      FileDelivery::Storage::Dropbox.new(@dropbox, [@remote_file]).execute
     end
 
     expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -59,7 +59,7 @@ describe FileDelivery::SendToDropbox do
   context 'a file has already been uploaded' do
     it 'does not update an existing file' do
       result = VCR.use_cassette('dropbox/does_not_update_an_existing_file', preserve_exact_body_bytes: true) do
-        FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
+        FileDelivery::Storage::Dropbox.new(@dropbox, [@remote_file]).execute
       end
 
       expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -77,7 +77,7 @@ describe FileDelivery::SendToDropbox do
         @document.save
 
         result = VCR.use_cassette('dropbox/update_a_file', preserve_exact_body_bytes: true) do
-          FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
+          FileDelivery::Storage::Dropbox.new(@dropbox, [@remote_file]).execute
         end
 
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder')
@@ -90,12 +90,12 @@ describe FileDelivery::SendToDropbox do
   end
 
   it 'manages insufficient space error' do
-    allow_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::Storage::Dropbox).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(DropboxApi::Client).to receive(:upload).and_raise(DropboxApi::Errors::UploadWriteFailedError.new('path/insufficient_space', nil))
 
     expect(@dropbox).to be_used
 
-    result = FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
+    result = FileDelivery::Storage::Dropbox.new(@dropbox, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@dropbox).to_not be_used
@@ -103,12 +103,12 @@ describe FileDelivery::SendToDropbox do
   end
 
   it 'manages invalid token error' do
-    allow_any_instance_of(FileDelivery::SendToDropbox).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::Storage::Dropbox).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(DropboxApi::Client).to receive(:upload).and_raise(DropboxApi::Errors::HttpError.new("HTTP 401: {\"error_summary\": \"invalid_access_token/..\", \"error\": {\".tag\": \"invalid_access_token\"}}"))
 
     expect(@dropbox).to be_configured
 
-    result = FileDelivery::SendToDropbox.new(@dropbox, [@remote_file]).execute
+    result = FileDelivery::Storage::Dropbox.new(@dropbox, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@dropbox).to_not be_configured

@@ -1,4 +1,4 @@
-class FileDelivery::KnowingsSyncService
+class FileDelivery::Storage::Knowings
   def initialize(remote_files)
     @remote_files = remote_files
 

@@ -1,4 +1,4 @@
-class FileDelivery::SendToMcf < FileDelivery::SendToStorage
+class FileDelivery::Storage::Mcf < FileDelivery::Storage::Main
   def execute
     run do
       client.upload metafile.local_path, metafile.path

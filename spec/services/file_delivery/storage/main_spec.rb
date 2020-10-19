@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-class FileDelivery::SendToStorage::TestError < RuntimeError; end
+class FileDelivery::Storage::Main::TestError < RuntimeError; end
 
-describe FileDelivery::SendToStorage do
+describe FileDelivery::Storage::Main do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -10,7 +10,7 @@ describe FileDelivery::SendToStorage do
   after(:each) { DatabaseCleaner.clean_with(:truncation) }
 
   before(:each) do
-    class SendToOnlineStorage < FileDelivery::SendToStorage
+    class SendToOnlineStorage < FileDelivery::Storage::Main
       def execute
         run do
           # it does nothing
@@ -119,14 +119,14 @@ describe FileDelivery::SendToStorage do
           metafile.begin
           unless @is_error_raised
             @is_error_raised = true
-            raise FileDelivery::SendToStorage::TestError
+            raise ::Storage::Main::TestError
           end
           metafile.success
         end
       end
 
       def retryable_failure?(error)
-        error.class == FileDelivery::SendToStorage::TestError
+        error.class == FileDelivery::Storage::Main::TestError
       end
     end
 
@@ -151,7 +151,7 @@ describe FileDelivery::SendToStorage do
     class SendToOnlineStorage
       def execute
         run do
-          raise FileDelivery::SendToStorage::TestError
+          raise FileDelivery::Storage::Main::TestError
         end
       end
 
@@ -160,7 +160,7 @@ describe FileDelivery::SendToStorage do
       end
 
       def manageable_failure?(error)
-        error.class == FileDelivery::SendToStorage::TestError
+        error.class == FileDelivery::Storage::Main::TestError
       end
 
       def manage_failure(error)
@@ -187,7 +187,7 @@ describe FileDelivery::SendToStorage do
     class SendToOnlineStorage
       def execute
         run do
-          raise FileDelivery::SendToStorage::TestError
+          raise FileDelivery::Storage::Main::TestError
         end
       end
 
@@ -202,6 +202,6 @@ describe FileDelivery::SendToStorage do
 
     expect do
       SendToOnlineStorage.new(DropboxBasic.new, [remote_file]).execute
-    end.to raise_error(FileDelivery::SendToStorage::TestError)
+    end.to raise_error(FileDelivery::Storage::Main::TestError)
   end
 end

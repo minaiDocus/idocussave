@@ -1,4 +1,4 @@
-class FileDelivery::BoxSyncService
+class FileDelivery::Storage::Box
   def initialize(remote_files)
     @remote_files = remote_files
     @box = remote_files.first.user.external_file_storage.box

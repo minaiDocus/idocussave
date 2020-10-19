@@ -1,7 +1,7 @@
 require 'spec_helper'
 Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe FileDelivery::SendToMcf do
+describe FileDelivery::Storage::Mcf do
   # Disable transactionnal database clean, needed for multi-thread
   before(:all) { DatabaseCleaner.clean }
   after(:all)  { DatabaseCleaner.start }
@@ -100,12 +100,12 @@ describe FileDelivery::SendToMcf do
 
   it 'manages insufficient space error', :handling_space_error do
     message = "{\"CodeError\":507,\"Success\":false,\"StorageLimitReached\":true}"
-    allow_any_instance_of(FileDelivery::SendToMcf).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::Storage::Mcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unknown.new(message))
 
     expect(@mcf.is_delivery_activated).to eq true
 
-    result = FileDelivery::SendToMcf.new(@mcf, [@remote_file]).execute
+    result = FileDelivery::Storage::Mcf.new(@mcf, [@remote_file]).execute
 
     expect(result).to eq false
     expect(@mcf.is_delivery_activated).to eq false
@@ -113,12 +113,12 @@ describe FileDelivery::SendToMcf do
   end
 
   it 'manages invalid token error', :handling_invalid_token do
-    allow_any_instance_of(FileDelivery::SendToMcf).to receive(:up_to_date?).and_return(false)
+    allow_any_instance_of(FileDelivery::Storage::Mcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unauthorized)
 
     expect(@mcf).to be_configured
 
-    result = FileDelivery::SendToMcf.new(@mcf, [@remote_file], max_retries: 1).execute
+    result = FileDelivery::Storage::Mcf.new(@mcf, [@remote_file], max_retries: 1).execute
 
     expect(result).to eq false
     expect(@mcf).to_not be_configured

@@ -153,7 +153,7 @@ class FileDelivery::DeliverFile
       if mcf_storage.present?
         path_pattern = Pathname.new '/' + mcf_storage
         path_pattern = path_pattern.join @receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
-        FileDelivery::SendToMcf.new(@receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, max_retries: 1).execute
+        FileDelivery::Storage::Mcf.new(@receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, max_retries: 1).execute
       else
         remote_files.each(&:cancel!)
       end
@@ -164,21 +164,21 @@ class FileDelivery::DeliverFile
       start_time = Time.now
 
       if @receiver.class.name == Group.name || @service_class == :dropbox_extended
-        FileDelivery::SendToDropbox.new(DropboxExtended, remote_files, path_pattern: @receiver.dropbox_delivery_folder).execute
+        FileDelivery::Storage::Dropbox.new(DropboxExtended, remote_files, path_pattern: @receiver.dropbox_delivery_folder).execute
       else
         case @service_class
         when :knowings
-          FileDelivery::KnowingsSyncService.new(remote_files).execute
+          FileDelivery::Storage::Knowings.new(remote_files).execute
         when :my_company_files
           push_to_mcf
         when :dropbox_basic
-          FileDelivery::SendToDropbox.new(storage, remote_files).execute
+          FileDelivery::Storage::Dropbox.new(storage, remote_files).execute
         when :box
-          FileDelivery::BoxSyncService.new(remote_files).sync
+          FileDelivery::Storage::Box.new(remote_files).sync
         when :ftp
-          FileDelivery::SendToFTP.new(storage, remote_files).execute
+          FileDelivery::Storage::FTP.new(storage, remote_files).execute
         when :google_doc
-          FileDelivery::GoogleDriveSyncService.new(storage).sync(remote_files)
+          FileDelivery::Storage::GoogleDrive.new(storage).sync(remote_files)
         end
       end
 

@@ -1,5 +1,5 @@
 # Template class for sending files to external storage
-class FileDelivery::SendToStorage
+class FileDelivery::Storage::Main
   attr_reader :errors
 
   # remote_files should be a group of files to be sent into the same folder

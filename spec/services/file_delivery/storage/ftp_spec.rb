@@ -90,7 +90,7 @@ describe 'SendToFTP' do
           server.start
           @ftp.update port: server.bound_port
 
-          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+          FileDelivery::Storage::FTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
           expect(@ftp.configured?).to eq false
           expect(@user.notifications.size).to eq 1
@@ -107,7 +107,7 @@ describe 'SendToFTP' do
           server.start
           @ftp.update port: server.bound_port
 
-          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+          FileDelivery::Storage::FTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
           files = Dir.glob("#{temp_dir}/files/iDocus/IDO%001/202010/AC/*.pdf").sort.map do |path|
             File.basename path
@@ -178,7 +178,7 @@ describe 'SendToFTP' do
           server.start
           @ftp.update port: server.bound_port
 
-          FileDelivery::SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+          FileDelivery::Storage::FTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
           files = Dir.glob(File.join(temp_dir, @ftp.root_path, "OUTPUT/IDO%001/202010/AC/*.pdf")).sort.map do |path|
             File.basename path
