@@ -1,4 +1,4 @@
-class FTPImport::Item
+class FileImport::Ftp::Item
   attr_reader :name, :children, :is_present
   attr_accessor :parent, :customer, :journal
 

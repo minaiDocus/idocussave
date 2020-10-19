@@ -11,11 +11,11 @@ class FileImport::Ftp
                 }.freeze
 
   class << self
-    def execute
-      Ftp.importable.each do |ftp|
-        FileImport::FtpWorker.perform_async ftp.id
+    def process(ftp_id)
+      UniqueJobs.for "ImportFtp-#{ftp_id}" do
+        ftp = Ftp.find ftp_id
+        FileImport::Ftp.new(ftp).execute
       end
-      true
     end
   end
 
@@ -113,17 +113,17 @@ class FileImport::Ftp
   def folder_tree
     return @folder_tree if @folder_tree
 
-    @folder_tree = last_item = FTPImport::Item.new ''
+    @folder_tree = last_item = FileImport::Ftp::Item.new ''
 
     if root_path != ''
       root_path.split('/').map(&:presence).compact.each do |folder|
-        item = FTPImport::Item.new folder, true, false
+        item = FileImport::Ftp::Item.new folder, true, false
         last_item.add item
         last_item = item
       end
     end
 
-    input_item = FTPImport::Item.new 'INPUT', true, false
+    input_item = FileImport::Ftp::Item.new 'INPUT', true, false
     last_item.add input_item
 
     current_folder_paths = []
@@ -133,7 +133,7 @@ class FileImport::Ftp
 
       journal_names.each do |journal_name|
         name = "#{customer.code} - #{journal_name} (#{company})"
-        item = FTPImport::Item.new(name, true, false)
+        item = FileImport::Ftp::Item.new(name, true, false)
         item.customer = customer
         item.journal = journal_name
         input_item.add item
@@ -146,7 +146,7 @@ class FileImport::Ftp
       unused_folder_paths = @ftp.previous_import_paths - current_folder_paths
       unused_folder_paths.each do |unused_folder_path|
         name = unused_folder_path.split('/')[2]
-        input_item.add FTPImport::Item.new(name, true, nil)
+        input_item.add FileImport::Ftp::Item.new(name, true, nil)
       end
     end
 

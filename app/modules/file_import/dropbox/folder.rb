@@ -1,4 +1,4 @@
-class DropboxImport::Folder
+class FileImport::Dropbox::Folder
   attr_accessor :path, :is_present
 
   def initialize(path, is_present)

@@ -1,4 +1,4 @@
-class DropboxImport::Client
+class FileImport::Dropbox::Client
   def initialize(client)
     @client = client
   end

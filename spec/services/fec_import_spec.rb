@@ -2,7 +2,7 @@
 require 'spec_helper'
 require 'spec_module'
 
-describe FileImport::Fec do
+describe FecImport do
   before(:all) do
     SpecModule.create_tmp_dir
     @file = SpecModule.new.use_file("#{Rails.root}/spec/support/files/import_fec_file.txt")
@@ -15,7 +15,7 @@ describe FileImport::Fec do
 
   context 'FEC import' do
     it 'parsing metadata' do
-      params_fec = FileImport::Fec.new(@file).parse_metadata
+      params_fec = FecImport.new(@file).parse_metadata
 
       expect(params_fec[:head_list_fec][0]).to eq 'JournalCode'
       expect(params_fec[:journal_on_fec][0]).to eq 'AN'
@@ -28,10 +28,10 @@ describe FileImport::Fec do
 
       allow(customer).to receive_message_chain('accounting_plan.id').and_return(1)
 
-      expect_any_instance_of(FileImport::Fec).to receive(:import_txt).and_call_original
-      expect_any_instance_of(FileImport::Fec).to receive(:import_processing).and_call_original
+      expect_any_instance_of(FecImport).to receive(:import_txt).and_call_original
+      expect_any_instance_of(FecImport).to receive(:import_processing).and_call_original
 
-      FileImport::Fec.new(@file).execute(customer, params)
+      FecImport.new(@file).execute(customer, params)
 
       expect(AccountingPlanItem.first.id).not_to eq nil
       expect(AccountingPlanItem.first.third_party_account).to eq '411AGIRH'

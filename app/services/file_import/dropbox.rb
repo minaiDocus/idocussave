@@ -120,7 +120,7 @@ class FileImport::Dropbox
   end
 
   def client
-    @client ||= DropboxImport::Client.new(DropboxApi::Client.new(@dropbox.access_token))
+    @client ||= FileImport::Dropbox::Client.new(DropboxApi::Client.new(@dropbox.access_token))
   end
 
   def user
@@ -176,13 +176,13 @@ class FileImport::Dropbox
 
       @folders = needed_folders.map do |path|
         if new_paths.include?(path)
-          DropboxImport::Folder.new(path, false)
+          FileImport::Dropbox::Folder.new(path, false)
         else
-          DropboxImport::Folder.new(path, @initial_cursor.present?)
+          FileImport::Dropbox::Folder.new(path, @initial_cursor.present?)
         end
       end
       @folders += unused_paths.map do |path|
-        DropboxImport::Folder.new(path, nil)
+        FileImport::Dropbox::Folder.new(path, nil)
       end
 
       @folders

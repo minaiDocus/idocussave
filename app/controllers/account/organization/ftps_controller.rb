@@ -48,7 +48,7 @@ class Account::Organization::FtpsController < Account::OrganizationController
 
   def fetch_now
     if @ftp.configured?
-      FileImport::FtpWorker.perform_async @ftp.id
+      FileImport::Ftp.delay.process @ftp.id
       flash[:notice] = 'Tentative de récupération des documents depuis votre FTP en cours.'
     else
       flash[:error] = "Votre FTP n'a pas été configuré correctement."

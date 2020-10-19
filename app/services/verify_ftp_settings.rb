@@ -17,7 +17,7 @@ class VerifyFtpSettings
 
       ftp.nlst
 
-      test_item = FTPImport::Item.new 'FOLDER_TEST', true, false
+      test_item = FileImport::Ftp::Item.new 'FOLDER_TEST', true, false
 
       ftp.mkdir test_item.path
       ftp.rmdir test_item.path
