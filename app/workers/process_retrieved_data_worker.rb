@@ -4,9 +4,7 @@ class ProcessRetrievedDataWorker
 
   def perform
     RetrievedData.not_processed.each do |retrieved_data|
-      UniqueJobs.for "ProcessRetrievedData-#{retrieved_data.id}" do
-        ProcessRetrievedData.delay.process(retrieved_data.id)
-      end
+      ProcessRetrievedData.delay.process(retrieved_data.id)
     end
   end
 
