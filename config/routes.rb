@@ -481,12 +481,15 @@ Rails.application.routes.draw do
         collection do
           get :jefacture
         end
+
+        resources :accounting_plans,  only: %w(index)
+        resources :account_book_types, only: %w(index)
       end
 
-      resources :pieces,         only: %w(update)
-      resources :operations,     only: %w(create)
-      resources :bank_accounts,  only: %w(index)
-      resources :temp_documents, only: %w(create)
+      resources :pieces,            only: %w(update)
+      resources :operations,        only: %w(create)
+      resources :bank_accounts,     only: %w(index)
+      resources :temp_documents,    only: %w(create)
     end
 
     namespace :v1 do

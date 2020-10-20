@@ -1,11 +1,11 @@
-class Api::V2::UsersController < ActionController::Base
+class Api::V2::AccountBookTypesController < ActionController::Base
   before_action :authenticate
   skip_before_action :verify_authenticity_token
 
-  def jefacture
-     users = User.active.where.not(jefacture_account_id: nil, jefacture_account_id: '')
+  def index
+     account_book_types = User.find(params[:user_id]).account_book_types
 
-     render json: serializer.new(users)
+     render json: serializer.new(account_book_types)
   end
 
   protected
@@ -19,6 +19,6 @@ class Api::V2::UsersController < ActionController::Base
   private
 
   def serializer
-    UserSerializer
+    AccountBookTypeSerializer
   end
 end
