@@ -41,6 +41,27 @@ class AccountingWorkflow::SendToGrouping
 
   def split
     Pdftk.new.burst @temp_document.cloud_content_object.path, path, basename, AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+
+    splited_pages = `ls '#{path.to_s + '/' + basename.to_s}'* | wc -l`.strip.to_i
+
+    if @temp_document.pages_number != splited_pages
+      log_document = {
+        name: "GroupingDocument - Test",
+        error_group: "[grouping-document] Grouping pages verificator",
+        erreur_type: "Grouping pages verificator",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          temp_document: @temp_document.id,
+          position: @temp_document.position,
+          path: path,
+          base_name: basename,
+          pages_number: @temp_document.pages_number,
+          splited_page: splited_pages
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
+    end
   end
 
 
