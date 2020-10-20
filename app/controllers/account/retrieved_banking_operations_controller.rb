@@ -43,7 +43,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
 
     bank_account_ids = @account.bank_accounts.used.map(&:id)
 
-    operations = @account.operations.retrieved.where(
+    operations = @account.operations.where(
       Operation.arel_table[:bank_account_id].in(bank_account_ids).or(
         Operation.arel_table[:processed_at].not_eq(nil)
       )
