@@ -15,7 +15,8 @@ class Admin::RetrieversController < Admin::AdminController
           nil,
           User.get_by_code(params[:budgea_fetcher_contains][:user_code])
         ).execute_with(
-          params[:budgea_fetcher_contains][:account_ids].split(',').collect { |id| id.delete(' ') },
+          params[:budgea_fetcher_contains][:type],
+          params[:budgea_fetcher_contains][:parser_ids].split(',').collect { |id| id.delete(' ') },
           params[:budgea_fetcher_contains][:min_date],
           params[:budgea_fetcher_contains][:max_date])
       else
@@ -41,7 +42,7 @@ class Admin::RetrieversController < Admin::AdminController
   helper_method :sort_direction
 
   def params_fetcher_valid?
-    %i[user_code account_ids min_date max_date].each_with_object(params[:budgea_fetcher_contains]) do |key, obj|
+    %i[type user_code parser_ids min_date max_date].each_with_object(params[:budgea_fetcher_contains]) do |key, obj|
       return false unless obj[key].present?
     end
     true

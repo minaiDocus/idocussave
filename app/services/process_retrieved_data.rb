@@ -18,12 +18,12 @@ class ProcessRetrievedData
     process_retrieved_data if @retrieved_data
   end
 
-  def execute_with(account_ids = [], min_date=nil, max_date=nil)
-    @account_ids    = account_ids
+  def execute_with(type='operation', parser_ids = [], min_date=nil, max_date=nil)
+    @parser_ids     = parser_ids #parser_ids must be a list of accounts (bank_accounts) ids, or a list of budgea_ids (connections)
     @min_date       = min_date
     @max_date       = max_date
 
-    budgea_transaction_fetcher
+    budgea_transaction_fetcher(type)
   end
 
   private
@@ -39,35 +39,72 @@ class ProcessRetrievedData
     LogService.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec")
   end
 
-  def budgea_transaction_fetcher
+  def budgea_transaction_fetcher(type='operation')
     @new_operations_count     = 0
     @operations_fetched_count = 0
     @deleted_operations_count = 0
 
+    new_documents_count       = 0
+    total_documents           = 0
+    document_errors           = []
 
-    log_message = "------------[#{@user.try(:code)} - #{@account_ids.to_s} - #{@min_date} - #{@max_date}]---------------\n"
+    log_message = "------------[#{type} - #{@user.try(:code)} - #{@parser_ids.to_s} - #{@min_date} - #{@max_date}]---------------\n"
 
     if client && @user
-      if @min_date && @max_date && @account_ids.present?
-        @accounts = client.get_accounts
+      if @min_date && @max_date && @parser_ids.present?
+        #parser_ids and parsed_data must be a list of accounts (bank_accounts) ids, or a list of budgea_ids (connections)
+        if type == 'operation'
+          parsed_data = client.get_accounts
+        else
+          parsed_data = client.get_all_connections.try(:[], 'connections')
+        end
 
-        if @accounts.present? && !(@accounts =~ /unauthorized/)
-          @accounts.each do |account|
-            next unless @account_ids.include? "#{account['id']}"
+        if parsed_data.present? && !(parsed_data =~ /unauthorized/)
+          parsed_data.each do |data|
+            next unless @parser_ids.include? "#{data['id']}"
 
-            @connection_id = account['id_connection']
-            if retriever
-              transactions = client.get_transactions account['id'], @min_date, @max_date
-
-              bank_account = get_bank_account_of account
-
-              make_operation_of(bank_account, transactions) if bank_account && transactions.present?
+            if type == 'operation'
+              @connection_id = data['id_connection']
             else
-              log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No retriever found, for connection id: #{account['id_connection']}\n"
+              @connection_id = data['id']
+            end
+
+            if retriever
+              if type == 'operation'
+                transactions = client.get_transactions data['id'], @min_date, @max_date
+                bank_account = get_bank_account_of data
+
+                make_operation_of(bank_account, transactions) if bank_account && transactions.present?
+              else
+                documents = client.get_documents data['id'], @min_date, @max_date
+                total_documents += documents.try(:size).to_i
+
+                if documents.any?
+                  documents.select do |document|
+                    retriever.service_name.in?(['Nespresso', 'Online.net']) && document['date'].nil? ? false : true
+                  end.sort_by do |document|
+                    document['date'].present? ? Time.parse(document['date']) : Time.local(1970)
+                  end.each do |document|
+                    file_state = RetrievedDocument.process_file(retriever.id, document, 0)
+
+                    if !file_state[:success]
+                      if file_state[:return_object].try(:status).present?
+                        document_errors << "Document '#{document['id']}' cannot be downloaded : [#{file_state[:return_object].try(:status)}] #{file_state[:return_object].try(:body)}"
+                      else
+                        document_errors << "Document '#{document['id']}' cannot be downloaded : #{file_state[:return_object].to_s}"
+                      end
+                    else
+                      new_documents_count += 1
+                    end
+                  end
+                end
+              end
+            else
+              log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No retriever found, for connection id: #{data['id_connection']}\n"
             end
           end
         else
-          log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No bank accounts found! OR Unauthorized => #{@accounts.to_s}"
+          log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No Ids found! OR Unauthorized => #{parsed_data.to_s}"
           LogService.info('budgea_fetch_processing', log_message)
           return log_message
         end
@@ -81,7 +118,14 @@ class ProcessRetrievedData
       LogService.info('budgea_fetch_processing', log_message)
       return log_message
     end
-    log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New operations: #{@new_operations_count} / Deleted operations: #{@deleted_operations_count} / Total operations fetched: #{@operations_fetched_count}"
+
+    if document_errors.any?
+      document_errors.each do |error|
+        log_message += "[BudgeaTransactionFetcher] - #{error.to_s} \n"
+      end
+    end
+
+    log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New documents: #{new_documents_count} / Total documents fetched: #{total_documents} / New operations: #{@new_operations_count} / Deleted operations: #{@deleted_operations_count} / Total operations fetched: #{@operations_fetched_count}"
     LogService.info('budgea_fetch_processing', log_message)
     return log_message
   end

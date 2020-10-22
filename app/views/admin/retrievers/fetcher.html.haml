@@ -15,18 +15,21 @@
         %table.table.table-condensed.margin0bottom
           %thead
             %tr
+              %th.field.text_field= label_tag 'budgea_fetcher_contains[type]', 'Type'
               %th.field.text_field= label_tag 'budgea_fetcher_contains[user_code]', 'Code client'
-              %th.field.text_field= label_tag 'budgea_fetcher_contains[account_ids]', 'Liste compte bancaire (IDs)'
+              %th.field.text_field= label_tag 'budgea_fetcher_contains[parser_ids]', 'Liste compte bancaire (IDs)'
               %th.field.date_field= label_tag 'budgea_fetcher_contains[min_date]', 'Date de début'
               %th.field.date_field= label_tag 'budgea_fetcher_contains[max_date]', 'Date de fin'
               %th
           %tbody
             %tr
               %td.field.text_field
+                = select_tag 'budgea_fetcher_contains[type]', options_for_select([['Opérations', 'operation'], ['Documents', 'documents']], (params[:budgea_fetcher_contains][:type] rescue '')), include_blank: false, class: 'form-control'
+              %td.field.text_field
                 = text_field_tag 'budgea_fetcher_contains[user_code]', (params[:budgea_fetcher_contains][:user_code] rescue ''), class: 'form-control'
               %td.field.text_field
-                = text_field_tag 'budgea_fetcher_contains[account_ids]', (params[:budgea_fetcher_contains][:account_ids] rescue ''), class: 'form-control'
-                %p.help-block ID(s) de compte séparés par virgule (exemple: 123456, 987654)
+                = text_field_tag 'budgea_fetcher_contains[parser_ids]', (params[:budgea_fetcher_contains][:parser_ids] rescue ''), class: 'form-control'
+                %p.help-block ID(s) de compte(Type: opérations) / ID(s) de connections(Type: documents) - séparés par virgule (exemple: 123456, 987654)
               %td.field.date_field
                 .input-group
                   .input-group-prepend

@@ -129,6 +129,18 @@ class Budgea
       run_and_parse_response 'transactions'
     end
 
+
+    def get_documents(connection_id, min_date=nil, max_date=nil) ##used by transaction fetcher
+      request_filters = "?min_date=#{min_date}&max_date=#{max_date}" if min_date.present? and max_date.present?
+
+      @response = connection.get do |request|
+        request.url "/2.0/users/me/connections/#{connection_id}/documents#{request_filters}"
+        request.headers = headers
+      end
+
+      run_and_parse_response 'documents'
+    end
+
     def get_file(document_id)
       @response = connection.get do |request|
         request.url "/2.0/users/me/documents/#{document_id}/file"
