@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class FecAgirisTxtService
+class PreseizureExport::Software::FecAgiris
   def initialize(preseizures)
     @preseizures = preseizures
   end
@@ -12,9 +12,9 @@ class FecAgirisTxtService
     dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
     FileUtils.chmod(0755, dir)
 
-    FecAgirisTxtService.delay_for(6.hours).remove_temp_dir(dir)
+    PreseizureExport::Software::FecAgiris.delay_for(6.hours).remove_temp_dir(dir)
 
-    data = PreseizureToTxtService.new(@preseizures).execute("fec_agiris") # Generate a txt with preseizures
+    data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute("fec_agiris") # Generate a txt with preseizures
 
     File.open("#{dir}/#{base_name}.txt", 'w') do |f|
       f.write(data)

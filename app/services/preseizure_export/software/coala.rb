@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CoalaZipService
+class PreseizureExport::Software::Coala
   def initialize(user, preseizures, options={})
     @preseizures = preseizures
     @user = user
@@ -15,8 +15,8 @@ class CoalaZipService
     dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
     FileUtils.chmod(0755, dir)
 
-    CoalaZipService.delay_for(6.hours).remove_temp_dir(dir)
-    data = PreseizuresToCsv.new(@user, @preseizures, 'coala').execute
+    PreseizureExport::Software::Coala.delay_for(6.hours).remove_temp_dir(dir)
+    data = PreseizureExport::PreseizuresToCsv.new(@user, @preseizures, 'coala').execute
 
     if @options[:to_xls]
       file = OpenStruct.new({path: "#{dir}/#{base_name}.xls", close: nil})

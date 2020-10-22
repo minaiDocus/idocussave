@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Generate a CSV for preseizure collections depending on user csv descriptor
-class PreseizuresToCsv
+class PreseizureExport::PreseizuresToCsv
   def initialize(user, preseizures, export_to='default')
     @user = user
     @descriptor  = descriptor

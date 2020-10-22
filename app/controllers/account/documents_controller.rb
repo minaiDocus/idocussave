@@ -338,7 +338,7 @@ class Account::DocumentsController < Account::AccountController
       preseizures = preseizures.by_position
 
       retries = 0
-        export = GeneratePreAssignmentExportService.new(preseizures, export_format).generate_on_demand
+        export = PreseizureExport::GeneratePreAssignment.new(preseizures, export_format).generate_on_demand
         if export.file_name.present? && export.file_path.present?
           contents = File.read(export.file_path.to_s)
 

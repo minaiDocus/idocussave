@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Generates a ZIP to import in quadratus
-class QuadratusZipService
+class PreseizureExport::Software::Quadratus
   def initialize(preseizures)
     @preseizures = preseizures
   end
@@ -13,9 +13,9 @@ class QuadratusZipService
     dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
     FileUtils.chmod(0755, dir)
 
-    QuadratusZipService.delay_for(6.hours).remove_temp_dir(dir)
+    PreseizureExport::Software::Quadratus.delay_for(6.hours).remove_temp_dir(dir)
 
-    data = PreseizureToTxtService.new(@preseizures).execute # Generate a txt with preseizures
+    data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute # Generate a txt with preseizures
 
     File.open("#{dir}/#{base_name}.txt", 'w') do |f|
       f.write(data)

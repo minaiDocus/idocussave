@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Generates a Quadratus compliant TXT for preseizures
-class PreseizureToTxtService
+class PreseizureExport::PreseizureToTxt
   def initialize(preseizures)
     @preseizures = Array(preseizures)
   end

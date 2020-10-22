@@ -37,7 +37,7 @@ class AccountingWorkflow::RetrievePreAssignments
       not_blocked_pre_assignments = not_blocked_pre_assignments.select{|pres| !pres.has_deleted_piece? }
       if not_blocked_pre_assignments.size > 0
         CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
-        GeneratePreAssignmentExportService.new(not_blocked_pre_assignments).execute
+        PreseizureExport::GeneratePreAssignment.new(not_blocked_pre_assignments).execute
         FileDelivery.prepare(report)
         FileDelivery.prepare(pack)
       end

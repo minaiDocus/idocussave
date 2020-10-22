@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class GeneratePreAssignmentExportService
+class PreseizureExport::GeneratePreAssignment
   def initialize(preseizures, export_type = nil)
     @export_type = export_type
     @all_preseizures = Array(preseizures)
@@ -120,7 +120,7 @@ private
 
   def generate_coala_export(to_zip = false, unzip_result = false)
     begin
-      file = CoalaZipService.new(@report.user, @preseizures, {preseizures_only: !to_zip, to_xls: true}).execute
+      file = PreseizureExport::Software::Coala.new(@report.user, @preseizures, {preseizures_only: !to_zip, to_xls: true}).execute
 
       if to_zip
         if unzip_result
@@ -144,7 +144,7 @@ private
 
   def generate_cegid_export(with_file = true)
     begin
-      file_csv = CegidZipService.new(@report.user, @preseizures).execute
+      file_csv = PreseizureExport::Software::Cegid.new(@preseizures, 'csv_cegid', @report.user).execute
       final_file_name = "#{file_real_name}.csv"
       FileUtils.mv file_csv, "#{file_path}/#{final_file_name}"
 
@@ -161,7 +161,7 @@ private
   end
 
   def generate_cegid_tra_export(with_file = true)
-      file_zip = CegidTraService.new(@preseizures).execute
+      file_zip = PreseizureExport::Software::Cegid.new(@preseizures, 'tra_cegid').execute
 
       final_file_name = "#{file_real_name}.zip"
 
@@ -172,7 +172,7 @@ private
 
   def generate_fec_agiris_export(with_file = true)
     begin
-      file_txt = FecAgirisTxtService.new(@preseizures).execute
+      file_txt = PreseizureExport::Software::FecAgiris.new(@preseizures).execute
       final_file_name = "#{file_real_name}.txt"
       FileUtils.mv file_txt, "#{file_path}/#{final_file_name}"
 
@@ -190,7 +190,7 @@ private
 
   def generate_quadratus_export(to_zip=false)
     begin
-      file_zip = QuadratusZipService.new(@preseizures).execute
+      file_zip = PreseizureExport::Software::Quadratus.new(@preseizures).execute
       if to_zip
         final_file_name = "#{file_real_name}.zip"
         FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
@@ -207,7 +207,7 @@ private
 
   def generate_csv_descriptor_export(with_file = true)
     begin
-      data = PreseizuresToCsv.new(@report.user, @preseizures).execute
+      data = PreseizureExport::PreseizuresToCsv.new(@report.user, @preseizures).execute
       File.open("#{file_path}/#{file_real_name}.csv", 'w') { |file| file.write(data) }
 
       if with_file

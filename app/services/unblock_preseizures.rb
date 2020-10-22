@@ -13,7 +13,7 @@ class UnblockPreseizures
       preseizure.report
     end.each do |report, pres|
       CreatePreAssignmentDeliveryService.new(pres, ['ibiza', 'exact_online'], is_auto: false).execute
-      GeneratePreAssignmentExportService.new(pres).execute
+      PreseizureExport::GeneratePreAssignment.new(pres).execute
       FileDelivery.prepare(report)
       FileDelivery.prepare(report.pack)
       Notifications::PreAssignments.new({owner: pres.first.user, total: pres.size, unblocker: @unblocker}).notify_unblocked_preseizure

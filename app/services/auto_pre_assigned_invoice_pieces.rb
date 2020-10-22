@@ -94,7 +94,7 @@ class AutoPreAssignedInvoicePieces
 
           unless DetectPreseizureDuplicate.new(preseizure).execute
             CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
-            GeneratePreAssignmentExportService.new(preseizure).execute
+            PreseizureExport::GeneratePreAssignment.new(preseizure).execute
 
             Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available
           end
