@@ -102,6 +102,9 @@ describe PreAssignment::Delivery::Ibiza do
         end
 
         delivery.reload
+
+        expect(WebMock).to have_requested(:any, 'https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/entries').times(1)
+
         expect(delivery.state).to eq 'sent'
 
         expect(delivery.data_to_deliver).to be nil

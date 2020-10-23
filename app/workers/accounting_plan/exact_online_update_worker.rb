@@ -11,7 +11,6 @@ class AccountingPlan::ExactOnlineUpdateWorker
           if organization.is_exact_online_used
             organization.customers.order(code: :asc).active.each do |customer|
               AccountingPlan::ExactOnlineUpdateWorker::Launcher.delay.update_exact_online_for(customer.id)
-
               sleep(5)
             end
           end

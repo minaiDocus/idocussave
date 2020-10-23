@@ -11,7 +11,6 @@ class AccountingPlan::IbizaUpdateWorker
           if organization.ibiza.try(:configured?)
             organization.customers.order(code: :asc).active.each do |customer|
               AccountingPlan::IbizaUpdateWorker::Launcher.delay.update_ibiza_for(customer.id)
-
               sleep(5)
             end
           end
