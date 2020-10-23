@@ -9,12 +9,12 @@ class PiecesAnalyticReferences
   def update_analytics
     @errors = []
     if @pieces.any? && @user && @user.try(:uses_ibiza_analytics?)  
-      analytic_validator = IbizaAnalytic::Validator.new(@user, @analytics)
+      analytic_validator = IbizaLib::Analytic::Validator.new(@user, @analytics)
       @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
       @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
 
       if @errors.empty?
-        piece_not_modified_count = IbizaAnalytic.add_analytic_to_pieces(analytic_validator.analytic_params_present? ? @analytics : nil, @pieces)
+        piece_not_modified_count = IbizaLib::Analytic.add_analytic_to_pieces(analytic_validator.analytic_params_present? ? @analytics : nil, @pieces)
         piece_modified_count     = @pieces.size - piece_not_modified_count
 
         not_modified_piece_message  = ''

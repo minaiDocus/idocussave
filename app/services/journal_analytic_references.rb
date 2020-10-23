@@ -8,13 +8,13 @@ class JournalAnalyticReferences
   def add(analytic)
     @errors = []
 
-    analytic_validator = IbizaAnalytic::Validator.new(@user, analytic)
+    analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)
     @errors << ['Paramètre analytiques invalide'] unless analytic_validator.valid_analytic_presence?
     @errors << ['Paramètre ventilation invalide'] unless analytic_validator.valid_analytic_ventilation?
 
     if @errors.empty?
       if analytic_validator.analytic_params_present?
-        IbizaAnalytic.add_analytic_to_journal analytic, @journal
+        IbizaLib::Analytic.add_analytic_to_journal analytic, @journal
       else
         remove
       end

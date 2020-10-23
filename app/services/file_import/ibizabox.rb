@@ -135,7 +135,7 @@ class FileImport::Ibizabox
               file = get_file(document_id, file_path)
 
               if File.exist?(file_path) && File.size(file_path) > 0
-                IbizaboxDocument.new(file, @folder, document_id, prev_period_offset)
+                Ibizabox::Document.new(file, @folder, document_id, prev_period_offset)
               end
             ensure
               file.close if file

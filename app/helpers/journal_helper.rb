@@ -19,7 +19,7 @@ module JournalHelper
   def exact_online_journals
     if @customer.exact_online.try(:fully_configured?) && @customer.uses_exact_online?
       Rails.cache.fetch [:exact_online, :user, @customer.exact_online.id, :journals], expires_in: 5.minutes do
-        journals = ExactOnlineData.new(@customer).journals
+        journals = ExactOnlineLib::Data.new(@customer).journals
         if journals
           journals.map do |j|
             {
@@ -41,7 +41,7 @@ module JournalHelper
   def ibiza_journals
     if @customer.ibiza_id.present? && @customer.uses_ibiza?
       Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/, ''), :journals], expires_in: 5.minutes do
-        service = IbizaJournalsService.new(@customer)
+        service = Ibiza::Journals.new(@customer)
 
         service.execute
 

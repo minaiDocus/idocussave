@@ -65,6 +65,6 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
   end
 
   def ibiza_client
-    @ibiza_client ||= IbizaAPI::Client.new(@delivery.ibiza_access_token, IbizaClientCallback.new(@software, @delivery.ibiza_access_token))
+    @ibiza_client ||= IbizaLib::Api::Client.new(@delivery.ibiza_access_token, IbizaLib::ClientCallback.new(@software, @delivery.ibiza_access_token))
   end
 end

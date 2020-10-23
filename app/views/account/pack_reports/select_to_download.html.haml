@@ -21,7 +21,7 @@
                 %td= label_tag "preseizure_#{preseizure.id}", ("%03d" % preseizure.position)
                 %td= label_tag "preseizure_#{preseizure.id}", I18n.l(preseizure.created_at)
                 - if @organization.ibiza && @report.user.uses_ibiza?
-                  %td= label_tag "preseizure_#{preseizure.id}", IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
+                  %td= label_tag "preseizure_#{preseizure.id}", IbizaLib::Api::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
                 - else
                   %td= label_tag "preseizure_#{preseizure.id}", preseizure.third_party || '-'
         .control-group

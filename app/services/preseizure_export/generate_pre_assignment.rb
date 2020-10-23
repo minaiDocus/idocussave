@@ -227,9 +227,9 @@ private
       ibiza = @report.organization.ibiza
       date = DocumentTools.to_period(@report.name)
 
-      exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute
+      exercise = IbizaLib::ExerciseFinder.new(@report.user, date, ibiza).execute
       if exercise
-        data = IbizaAPI::Utils.to_import_xml(exercise, @preseizures, ibiza)
+        data = IbizaLib::Api::Utils.to_import_xml(exercise, @preseizures, ibiza)
         File.open("#{file_path}/#{file_real_name}.xml", 'w') { |file| file.write(data[:data_built]) }
         @export.got_success "#{file_real_name}.xml"
       else

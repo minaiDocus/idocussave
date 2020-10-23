@@ -429,7 +429,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
       name = preseizure.piece_name
       if ibiza = preseizure.try(:organization).try(:ibiza)
-        name = IbizaAPI::Utils.description(preseizure, ibiza.description, ibiza.description_separator) || preseizure.piece_name
+        name = IbizaLib::Api::Utils.description(preseizure, ibiza.description, ibiza.description_separator) || preseizure.piece_name
       end
 
       {

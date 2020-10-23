@@ -83,7 +83,7 @@ describe PreAssignment::Delivery::ExactOnline do
       it "send pre_assignment successfully" do
         allow(Settings).to receive_message_chain('first.notify_on_ibiza_delivery').and_return('no')
         allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('60')
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_exact_online
 
         PreAssignment::Builder::ExactOnline.new(delivery).run
@@ -105,7 +105,7 @@ describe PreAssignment::Delivery::ExactOnline do
       it "returns error destination sending" do
         allow(Settings).to receive_message_chain('first.notify_on_ibiza_delivery').and_return('no')
         allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('60')
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_exact_online
 
         PreAssignment::Builder::ExactOnline.new(delivery).run

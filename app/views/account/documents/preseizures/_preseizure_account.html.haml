@@ -3,7 +3,7 @@
     %input{class: "check_#{@preseizure.id} ",id: "_#{@preseizure.id}", type: :checkbox}
     %span
       - if @ibiza
-        = IbizaAPI::Utils.description(@preseizure, @ibiza.description, @ibiza.description_separator) || @preseizure.piece_name
+        = IbizaLib::Api::Utils.description(@preseizure, @ibiza.description, @ibiza.description_separator) || @preseizure.piece_name
       - else
         = @preseizure.piece_name
   %span.choose_action_preseizure

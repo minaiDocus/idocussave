@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class IbizaboxDocument
+class Ibizabox::Document
   attr_reader :temp_document
 
   def initialize(file, folder, document_id, prev_period_offset)

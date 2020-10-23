@@ -335,7 +335,7 @@
                           %td{ colspan: 3 }
                             %i
                               ( EXEMPLE:&nbsp;
-                              %strong= IbizaAPI::Utils.piece_name('CAB%DOC AC 201901 001', @organization.ibiza.piece_name_format, @organization.ibiza.piece_name_format_sep)
+                              %strong= IbizaLib::Api::Utils.piece_name('CAB%DOC AC 201901 001', @organization.ibiza.piece_name_format, @organization.ibiza.piece_name_format_sep)
                               &nbsp;)
                 .card.margin1bottom
                   .card-header
@@ -426,7 +426,7 @@
                             - preseizure['observation'] = 'remarque'
                             %i
                               ( EXEMPLE:&nbsp;
-                              %strong= IbizaAPI::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
+                              %strong= IbizaLib::Api::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
                               &nbsp;)
                 .card.margin1bottom
                   .card-header

@@ -2,7 +2,7 @@
 require 'spec_helper'
 require 'spec_module'
 
-describe IbizaboxDocument do
+describe Ibizabox::Document do
   before(:all){ SpecModule.create_tmp_dir }
   after(:all) { SpecModule.remove_tmp_dir }
 
@@ -20,7 +20,7 @@ describe IbizaboxDocument do
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
       allow_any_instance_of(TempPack).to receive(:organization) { organization }
 
-      IbizaboxDocument.new(file, @folder, 125, 0)
+      Ibiza::IbizaboxDocument.new(file, @folder, 125, 0)
 
       expect(TempDocument.last.original_fingerprint).to be_present
       expect(TempDocument.last.user.id).to eq @folder.user.id
@@ -41,8 +41,8 @@ describe IbizaboxDocument do
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
       allow_any_instance_of(TempPack).to receive(:organization) { organization }
 
-      IbizaboxDocument.new(file, @folder, 125, 0)
-      IbizaboxDocument.new(file, @folder, 126, 0)
+      Ibizabox::Document.new(file, @folder, 125, 0)
+      Ibizabox::Document.new(file, @folder, 126, 0)
 
       expect(TempDocument.count).to eq 1
       expect(TempDocument.last.user.id).to eq @folder.user.id

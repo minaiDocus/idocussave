@@ -76,7 +76,7 @@ class ExactOnline < ApplicationRecord
           self.access_token      = session.access_token
           self.token_expires_at  = session.expires_at
           self.save
-        rescue ExactOnlineSdk::AuthError
+        rescue ExactOnlineLib::Api::Sdk::AuthError
           @session = nil
         end
       else
@@ -91,7 +91,7 @@ class ExactOnline < ApplicationRecord
   end
 
   def session
-    @session ||= ExactOnlineSdk::Session.new({
+    @session ||= ExactOnlineLib::Api::Sdk::Session.new({
       refresh_token: self.refresh_token,
       access_token:  self.access_token,
       expires_at:    self.token_expires_at,
@@ -101,7 +101,7 @@ class ExactOnline < ApplicationRecord
   end
 
   def client(division=nil)
-    @client ||= ExactOnlineSdk::Client.new(session, division)
+    @client ||= ExactOnlineLib::Api::Sdk::Client.new(session, division)
   end
 
   def users

@@ -15,7 +15,7 @@ class PreAssignment::Builder::Ibiza < PreAssignment::Builder::DataService
     @delivery.building_data
 
     if ibiza_exercise
-      response = IbizaAPI::Utils.to_import_xml(ibiza_exercise, @preseizures, @software, (@delivery.error_message == 'force sending'))
+      response = IbizaLib::Api::Utils.to_import_xml(ibiza_exercise, @preseizures, @software, (@delivery.error_message == 'force sending'))
 
       if response[:data_count] > 0
         save_data_to_storage(response[:data_built], 'xml')
@@ -50,10 +50,10 @@ class PreAssignment::Builder::Ibiza < PreAssignment::Builder::DataService
   end
 
   def ibiza_exercise
-    @ibiza_exercise ||= IbizaExerciseFinder.new(@user, grouped_date, @software).execute
+    @ibiza_exercise ||= IbizaLib::ExerciseFinder.new(@user, grouped_date, @software).execute
   end
 
   def is_ibiza_exercises_present?
-    Rails.cache.read(IbizaExerciseFinder.ibiza_exercises_cache_name(@user.ibiza_id, @software.updated_at)).present?
+    Rails.cache.read(IbizaLib::ExerciseFinder.ibiza_exercises_cache_name(@user.ibiza_id, @software.updated_at)).present?
   end
 end

@@ -15,7 +15,7 @@ class PreAssignment::Delivery::ExactOnline < PreAssignment::Delivery::DataServic
     @delivery.sending
 
     begin
-      response = @delivery.data_to_deliver.present? ? ExactOnlineData.new(@user).send_pre_assignment(@delivery.data_to_deliver) : ExactOnlineData.new(@user).send_pre_assignment(File.read(@delivery.cloud_content_object.path))
+      response = @delivery.data_to_deliver.present? ? ExactOnlineLib::Data.new(@user).send_pre_assignment(@delivery.data_to_deliver) : ExactOnlineLib::Data.new(@user).send_pre_assignment(File.read(@delivery.cloud_content_object.path))
 
       if response[:error].present?
         handle_delivery_error(response[:error])

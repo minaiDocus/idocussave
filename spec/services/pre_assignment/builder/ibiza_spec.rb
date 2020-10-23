@@ -88,7 +88,7 @@ describe PreAssignment::Builder::Ibiza do
   describe "Build pre assignment data", :data_builder do
     context "Ibiza", :ibiza_builder do
       it "create successfull xml data", :one_test do
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do
@@ -109,8 +109,8 @@ describe PreAssignment::Builder::Ibiza do
       end
 
       it 'Building data error with already sent preseizures', :two_test do
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
-        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::PreseizureFinder).to receive(:is_delivered?).and_return(true)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do
@@ -125,8 +125,8 @@ describe PreAssignment::Builder::Ibiza do
       end
 
       it 'Building data error with only one already sent preseizure', :three_test do
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
-        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::PreseizureFinder).to receive(:is_delivered?).and_return(true, false)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do
@@ -147,7 +147,7 @@ describe PreAssignment::Builder::Ibiza do
       end
 
       it "Building data error with undefined exercices", :four_test do
-        allow_any_instance_of(IbizaExerciseFinder).to receive(:ibiza_exercise).and_return(nil)
+        allow_any_instance_of(IbizaLib::ExerciseFinder).to receive(:ibiza_exercise).and_return(nil)
         allow_any_instance_of(PreAssignment::Builder::Ibiza).to receive(:is_ibiza_exercises_present?).and_return(true)
         delivery = delivery_ibiza
 

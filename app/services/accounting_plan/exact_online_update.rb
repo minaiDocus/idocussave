@@ -48,6 +48,6 @@ class AccountingPlan::ExactOnlineUpdate < AccountingPlan::UpdateService
   end
 
   def exact_online_accounts
-    @exact_online_accounts ||= ExactOnlineData.new(@user).accounting_plans
+    @exact_online_accounts ||= ExactOnlineLib::Data.new(@user).accounting_plans
   end
 end

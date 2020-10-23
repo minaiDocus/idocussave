@@ -90,7 +90,7 @@ describe PreAssignment::Delivery::Ibiza do
     context "Ibiza", :ibiza_delivery do
       it "send pre_assignment successfully" do
         allow(Settings).to receive_message_chain('first.notify_on_ibiza_delivery').and_return('no')
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do
@@ -119,7 +119,7 @@ describe PreAssignment::Delivery::Ibiza do
       it "returns error sending" do
         allow(Settings).to receive_message_chain('first.notify_on_ibiza_delivery').and_return('no')
         allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('NotFound')
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do
@@ -143,8 +143,8 @@ describe PreAssignment::Delivery::Ibiza do
       end
 
       it 'deliver xml even if there is already sent preseizures' do
-        allow(IbizaPreseizureFinder).to receive(:is_delivered?).and_return(true, false)
-        allow(IbizaExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
+        allow(IbizaLib::PreseizureFinder).to receive(:is_delivered?).and_return(true, false)
+        allow(IbizaLib::ExerciseFinder).to receive(:ibiza_exercises).and_return(exercices)
         delivery = delivery_ibiza
 
         VCR.use_cassette('pre_assignment/ibiza_builder') do

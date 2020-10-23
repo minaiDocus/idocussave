@@ -10,7 +10,7 @@ class Account::ExactOnlineController < Account::AccountController
 
   def authenticate
     session[:customer_id] = @customer.id
-    redirect_to ExactOnlineSdk::Session.new(@exact_online.api_keys).get_authorize_url(subscribe_account_exact_online_url, true)
+    redirect_to ExactOnlineLib::Api::Sdk::Session.new(@exact_online.api_keys).get_authorize_url(subscribe_account_exact_online_url, true)
   end
 
   def subscribe
@@ -20,7 +20,7 @@ class Account::ExactOnlineController < Account::AccountController
       @exact_online.reset
       @exact_online.verifying
 
-      if success = SetupExactOnline.new(@exact_online.id.to_s, params[:code], subscribe_account_exact_online_url).execute
+      if success = ExactOnlineLib::Setup.new(@exact_online.id.to_s, params[:code], subscribe_account_exact_online_url).execute
         if @customer.exact_online.fully_configured?
           AccountingPlan::ExactOnlineUpdate.new(@customer).delay.run
         end

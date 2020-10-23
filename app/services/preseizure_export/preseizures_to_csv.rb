@@ -74,7 +74,7 @@ class PreseizureExport::PreseizuresToCsv
       description           = entry.preseizure.organization.ibiza.try(:description).presence || {}
       description_separator = entry.preseizure.organization.ibiza.try(:description_separator).presence || ' - '
 
-      description_name = IbizaAPI::Utils.description(entry.preseizure, description, description_separator)
+      description_name = IbizaLib::Api::Utils.description(entry.preseizure, description, description_separator)
       label = description_name.present? ? description_name : entry.preseizure.third_party
       piece_number = entry.preseizure.piece_number
     else

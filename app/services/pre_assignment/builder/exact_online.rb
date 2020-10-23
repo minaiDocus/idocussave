@@ -13,7 +13,7 @@ class PreAssignment::Builder::ExactOnline < PreAssignment::Builder::DataService
 
   def execute
     @delivery.building_data
-    response = ExactOnlineDataBuilder.new(@delivery).execute
+    response = ExactOnlineLib::DataBuilder.new(@delivery).execute
 
     if response[:data_built]
       save_data_to_storage(response[:data], 'txt')

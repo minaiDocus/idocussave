@@ -75,9 +75,9 @@ class Account::PackReportsController < Account::OrganizationController
           if ibiza.try(:configured?) && @report.user.ibiza_id && @report.user.uses_ibiza?
             date = DocumentTools.to_period(@report.name)
 
-            exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute
+            exercise = IbizaLib::ExerciseFinder.new(@report.user, date, ibiza).execute
             if exercise
-              data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza)
+              data = IbizaLib::Api::Utils.to_import_xml(exercise, preseizures, ibiza)
 
               send_data(data, type: 'application/xml', filename: file_name, x_sendfile: true, disposition: 'inline')
             else

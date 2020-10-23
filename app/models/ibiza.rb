@@ -51,15 +51,15 @@ class Ibiza < ApplicationRecord
   end
 
   def client
-    @client ||= IbizaAPI::Client.new(practical_access_token, IbizaClientCallback.new(self, practical_access_token))
+    @client ||= IbizaLib::Api::Client.new(practical_access_token, IbizaLib::ClientCallback.new(self, practical_access_token))
   end
 
   def first_client
-    @client ||= IbizaAPI::Client.new(access_token, IbizaClientCallback.new(self, access_token))
+    @client ||= IbizaLib::Api::Client.new(access_token, IbizaLib::ClientCallback.new(self, access_token))
   end
 
   def second_client
-    @client ||= IbizaAPI::Client.new(access_token_2, IbizaClientCallback.new(self, access_token_2))
+    @client ||= IbizaLib::Api::Client.new(access_token_2, IbizaLib::ClientCallback.new(self, access_token_2))
   end
 
   # nil : updating cache

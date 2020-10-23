@@ -9,7 +9,7 @@ class VerifyIbizaAccessTokens
     ibiza = Ibiza.find @ibiza_id
 
     if ibiza.state == 'waiting'
-      client = IbizaAPI::Client.new(ibiza.access_token)
+      client = IbizaLib::Api::Client.new(ibiza.access_token)
       client.company?
       if client.response.success?
         ibiza.update(state: 'valid')
@@ -19,7 +19,7 @@ class VerifyIbizaAccessTokens
     end
 
     if ibiza.state_2 == 'waiting'
-      client = IbizaAPI::Client.new(ibiza.access_token_2)
+      client = IbizaLib::Api::Client.new(ibiza.access_token_2)
       client.company?
       if client.response.success?
         ibiza.update(state_2: 'valid')

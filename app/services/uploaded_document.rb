@@ -49,7 +49,7 @@ class UploadedDocument
       @errors << [:already_exist, nil]                                   unless unique?
 
       if @errors.empty?
-        analytic_validator = IbizaAnalytic::Validator.new(@user, analytic)
+        analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)
         @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
         @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
       end

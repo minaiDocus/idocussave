@@ -45,7 +45,7 @@
               - active = nil
               - preseizures.each do |preseizure|
                 - if @ibiza
-                  - preseizure_name = IbizaAPI::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
+                  - preseizure_name = IbizaLib::Api::Utils.description(preseizure, @ibiza.description, @ibiza.description_separator) || preseizure.piece_name
                 - else
                   - preseizure_name = preseizure.piece_name
                 %div.word_wrap{id: "span_#{preseizure.id}", class: "#{(preseizure_size > 1) ? 'tab' : 'hide'} tab_preseizure_id #{(active.nil? && preseizure_size >1) ? 'tab_active' : ''}", title: "#{(preseizure_size > 1) ? preseizure_name : ''}"}

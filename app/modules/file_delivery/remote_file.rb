@@ -19,7 +19,7 @@ module FileDelivery::RemoteFile
                  DocumentTools.to_period(name)
                end
 
-      exercise = IbizaExerciseFinder.new(user, period, user.organization.ibiza).execute
+      exercise = IbizaLib::ExerciseFinder.new(user, period, user.organization.ibiza).execute
 
       domain = user.account_book_types.where(name: journal).first.try(:domain)
       nature = nil

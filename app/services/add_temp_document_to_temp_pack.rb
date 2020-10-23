@@ -45,7 +45,7 @@ class AddTempDocumentToTempPack
 
       if user.uses_ibiza_analytics?
         if options[:analytic].present?
-          IbizaAnalytic.add_analytic_to_temp_document options[:analytic], temp_document
+          IbizaLib::Analytic.add_analytic_to_temp_document options[:analytic], temp_document
         elsif temp_pack.journal && temp_pack.journal.analytic_reference.present?
           temp_document.analytic_reference = temp_pack.journal.analytic_reference
           temp_document.save
