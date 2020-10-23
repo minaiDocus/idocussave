@@ -46,14 +46,13 @@ class AccountBookType < ApplicationRecord
   validates_presence_of :name
   validates_presence_of :currency
   validates_presence_of :description
-  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) && !j.entry_type.in?([0, 4]) }
-  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
-  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
-  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? && !j.entry_type.in?([0, 4]) }
+  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
+  validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? }
 
   validates_inclusion_of :domain, in: DOMAINS
   validates_inclusion_of :entry_type, in: 0..4
-
 
 
   before_destroy do |journal|
@@ -121,17 +120,16 @@ class AccountBookType < ApplicationRecord
 
 
   def compta_processable?
-    true
+    entry_type > 0
   end
 
 
   def is_pre_assignment_processable?
-    true
+    entry_type > 1 && entry_type != 4
   end
 
 
   def compta_type
-    return 'BQ' if entry_type == 0
     return 'NDF' if entry_type == 1
     return 'AC'  if entry_type == 2
     return 'VT'  if entry_type == 3
