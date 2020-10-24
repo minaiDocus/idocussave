@@ -1,11 +1,12 @@
 = simple_form_for @member, url: collaborator_form_url(@organization, @member), html: { class: 'form-horizontal' } do |f|
+  - company_value = @member.persisted? ? @member.user.company : current_user.company
   .card-body
     = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", required: true
     - if @user.leader?
       = f.input :role, collection: organization_role_options, required: true, prompt: ''
     = f.input :group_ids, collection: @organization.groups, as: :check_boxes, label: t('activerecord.models.group.name').pluralize
     = f.simple_fields_for :user do |uf|
-      = uf.input :company
+      = uf.input :company, input_html: { value: company_value }
       = uf.input :first_name
       = uf.input :last_name
       = uf.input :email, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @member.user.admin?
