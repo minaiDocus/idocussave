@@ -65,7 +65,7 @@ class AccountBookType < ApplicationRecord
 
   scope :default,                    -> { where(is_default: true) }
   scope :by_position,                -> { order(position: :asc) }
-  scope :compta_processable,         -> { where(entry_tape: [1,2,3,4]) }
+  scope :compta_processable,         -> { where(entry_type: [1,2,3,4]) }
   scope :not_compta_processable,     -> { where(entry_type: 0) }
   scope :pre_assignment_processable, -> { where(entry_type: [1,2,3,4]) }
 
