@@ -52,7 +52,11 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
 
   def manual_dir
-    list = AccountingWorkflow.pre_assignments_dir.join 'input', journal.compta_type
+    if journal.entry_type == 5
+      list = AccountingWorkflow.pre_assignments_dir.join 'input', journal.compta_type, journal.user.organization.code
+    else
+      list = AccountingWorkflow.pre_assignments_dir.join 'input', journal.compta_type
+    end
   end
 
 

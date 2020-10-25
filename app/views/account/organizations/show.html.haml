@@ -9,62 +9,65 @@
             %li.nav-item
               %a{ class: "nav-link #{(params[:tab] == 'information' || params[:tab].blank?) ? 'active' : ''}", href: '#information', data: { toggle: 'tab' } } Information
             -if @organization.is_active
-              %li.nav-item
-                %a{ class: "nav-link #{(params[:tab] == 'file_naming_policy') ? 'active' : ''}", href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF
+              - unless @organization.specific_mission
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'file_naming_policy') ? 'active' : ''}", href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'addresses') ? 'active' : ''}", href: '#addresses', data: { toggle: 'tab' } } Adresses
-              %li.nav-item
-                %a{ class: "nav-link #{(params[:tab] == 'period_options') ? 'active' : ''}", href: '#period_options', data: { toggle: 'tab' } } Option téléversement
-              %li.nav-item
-                %a{ class: "nav-link #{(params[:tab] == 'reminder_emails') ? 'active' : ''}", href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
+              - unless @organization.specific_mission
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'period_options') ? 'active' : ''}", href: '#period_options', data: { toggle: 'tab' } } Option téléversement
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'reminder_emails') ? 'active' : ''}", href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'knowings') ? 'active' : ''}", href: '#knowings', data: { toggle: 'tab' } } Knowings
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'ftp') ? 'active' : ''}", href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
             %li.nav-item
               %a{ class: "nav-link #{(params[:tab] == 'mcf') ? 'active' : ''}", href: '#mcf', data: { toggle: 'tab' } } My Company Files
-            %li.nav-item.dropdown
-              %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
-              %ul.dropdown-menu{ style: "min-width: 195px" }
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'ibiza') ? 'active' : ''}", href: '#ibiza', data: { toggle: 'tab' } } 
-                    .float-left iBiza
-                    - if @organization.try(:ibiza).try(:used?)
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'exact_online') ? 'active' : ''}", href: '#exact_online', data: { toggle: 'tab' } }
-                    .float-left Exact Online
-                    - if @organization.is_exact_online_used
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'coala') ?  'active' : ''}", href: '#coala', data: { toggle: 'tab' } }
-                    .float-left Coala
-                    - if @organization.is_coala_used
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'quadratus') ? 'active' : ''}", href: '#quadratus', data: { toggle: 'tab' } }
-                    .float-left Quadratus
-                    - if @organization.is_quadratus_used
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'cegid') ? 'active' : ''}", href: '#cegid', data: { toggle: 'tab' } }
-                    .float-left Cegid
-                    - if @organization.is_cegid_used
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'fec_agiris') ? 'active' : ''}", href: '#fec_agiris', data: { toggle: 'tab' } }
-                    .float-left Fec Agiris
-                    - if @organization.is_fec_agiris_used
-                      = glyphicon('check', { class: 'float-right' })
-                %li
-                  %a{ class: "dropdown-item #{(params[:tab] == 'csv_descriptor') ? 'active' : ''}", href: '#csv_descriptor', data: { toggle: 'tab' } }
-                    .float-left Autre (format d'export .csv)
-                    - if @organization.is_csv_descriptor_used
-                      = glyphicon('check', { class: 'float-right' })
-            - if @user.leader?
+            - unless @organization.specific_mission
+              %li.nav-item.dropdown
+                %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+                %ul.dropdown-menu{ style: "min-width: 195px" }
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'ibiza') ? 'active' : ''}", href: '#ibiza', data: { toggle: 'tab' } }
+                      .float-left iBiza
+                      - if @organization.try(:ibiza).try(:used?)
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'exact_online') ? 'active' : ''}", href: '#exact_online', data: { toggle: 'tab' } }
+                      .float-left Exact Online
+                      - if @organization.is_exact_online_used
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'coala') ?  'active' : ''}", href: '#coala', data: { toggle: 'tab' } }
+                      .float-left Coala
+                      - if @organization.is_coala_used
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'quadratus') ? 'active' : ''}", href: '#quadratus', data: { toggle: 'tab' } }
+                      .float-left Quadratus
+                      - if @organization.is_quadratus_used
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'cegid') ? 'active' : ''}", href: '#cegid', data: { toggle: 'tab' } }
+                      .float-left Cegid
+                      - if @organization.is_cegid_used
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'fec_agiris') ? 'active' : ''}", href: '#fec_agiris', data: { toggle: 'tab' } }
+                      .float-left Fec Agiris
+                      - if @organization.is_fec_agiris_used
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'csv_descriptor') ? 'active' : ''}", href: '#csv_descriptor', data: { toggle: 'tab' } }
+                      .float-left Autre (format d'export .csv)
+                      - if @organization.is_csv_descriptor_used
+                        = glyphicon('check', { class: 'float-right' })
+            - if @user.leader? && !@organization.specific_mission
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'payments') ? 'active' : ''}", href: '#payments', data: { toggle: 'tab' } } Mode de paiement
-            - if @user.is_admin
+            - if @user.is_admin && !@organization.specific_mission
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
               %li.nav-item
@@ -87,31 +90,36 @@
                         - @organization.admin_members.each do |admin_member|
                           = link_to admin_member.info, account_organization_collaborator_path(@organization, admin_member)
                           %br
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_detail_authorized')
-                      %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_pre_assignment_date_computed')
-                      %td= @organization.is_pre_assignment_date_computed ? 'Date de la période iDocus' : 'Date d’origine'
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_operation_processing_forced')
-                      %td= @organization.is_operation_processing_forced ? t('yes_value') : t('no_value')
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_operation_value_date_needed')
-                      %td= @organization.is_operation_value_date_needed ? t('yes_value') : t('no_value')
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.preseizure_date_option')
-                      %td= t("activerecord.models.user_options.attributes.#{@organization.get_preseizure_date_option}")
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_duplicate_blocker_activated')
-                      %td= @organization.is_duplicate_blocker_activated ? t('yes_value') : t('no_value')
+                    - unless @organization.specific_mission
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.is_detail_authorized')
+                        %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.is_pre_assignment_date_computed')
+                        %td= @organization.is_pre_assignment_date_computed ? 'Date de la période iDocus' : 'Date d’origine'
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.is_operation_processing_forced')
+                        %td= @organization.is_operation_processing_forced ? t('yes_value') : t('no_value')
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.is_operation_value_date_needed')
+                        %td= @organization.is_operation_value_date_needed ? t('yes_value') : t('no_value')
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.preseizure_date_option')
+                        %td= t("activerecord.models.user_options.attributes.#{@organization.get_preseizure_date_option}")
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.is_duplicate_blocker_activated')
+                        %td= @organization.is_duplicate_blocker_activated ? t('yes_value') : t('no_value')
                     %tr
                       %th= t('activerecord.models.organization.attributes.invoice_mails')
                       %td= @organization.invoice_mails || '-'
-                    - if @user.is_admin
+                    - if @user.is_admin && !@organization.specific_mission
                       %tr
                         %th= t('activerecord.models.organization.attributes.subject_to_vat')
                         %td= @organization.subject_to_vat ? t('yes_value') : t('no_value')
+                    - if @user.is_admin
+                      %tr
+                        %th= t('activerecord.models.organization.attributes.specific_mission')
+                        %td= @organization.specific_mission ? t('yes_value') : t('no_value')
                 .col-md-4
                   %table.table.table-condensed.table-striped
                     %tr

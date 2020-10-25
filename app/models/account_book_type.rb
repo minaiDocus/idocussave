@@ -1,8 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class AccountBookType < ApplicationRecord
-  DOMAINS    = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais'].freeze
-  ENTRY_TYPE = %w(no expense buying selling bank).freeze
-  TYPES_NAME = %w(AC VT NDF BQ).freeze
+  DOMAINS    = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais',
+                'SPEC - Prestsations spécifiques'].freeze
+  ENTRY_TYPE = %w(no expense buying selling bank spec).freeze
+  TYPES_NAME = %w(AC VT NDF BQ SPEC).freeze
 
   audited
 
@@ -40,6 +41,7 @@ class AccountBookType < ApplicationRecord
 
   validate  :format_of_name
   validate  :uniqueness_of_name
+  validate  :only_one_jefacture_enabled_by_type
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
   validates_length_of   :instructions, maximum: 400
@@ -51,8 +53,9 @@ class AccountBookType < ApplicationRecord
   validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? }
 
+
   validates_inclusion_of :domain, in: DOMAINS
-  validates_inclusion_of :entry_type, in: 0..4
+  validates_inclusion_of :entry_type, in: 0..5
 
 
   before_destroy do |journal|
@@ -62,9 +65,9 @@ class AccountBookType < ApplicationRecord
 
   scope :default,                    -> { where(is_default: true) }
   scope :by_position,                -> { order(position: :asc) }
-  scope :compta_processable,         -> { where("entry_type > ?", 0) }
+  scope :compta_processable,         -> { where(entry_tape: [1,2,3,4]) }
   scope :not_compta_processable,     -> { where(entry_type: 0) }
-  scope :pre_assignment_processable, -> { where("entry_type > ?", 1) }
+  scope :pre_assignment_processable, -> { where(entry_type: [1,2,3,4]) }
 
 
 
@@ -125,15 +128,16 @@ class AccountBookType < ApplicationRecord
 
 
   def is_pre_assignment_processable?
-    entry_type > 1 && entry_type != 4
+    entry_type > 1 && entry_type < 4
   end
 
 
   def compta_type
-    return 'NDF' if entry_type == 1
-    return 'AC'  if entry_type == 2
-    return 'VT'  if entry_type == 3
-    return 'BQ'  if entry_type == 4
+    return 'NDF'   if entry_type == 1
+    return 'AC'    if entry_type == 2
+    return 'VT'    if entry_type == 3
+    return 'BQ'    if entry_type == 4
+    return 'SPEC'  if entry_type == 5
     nil
   end
 
@@ -190,6 +194,12 @@ class AccountBookType < ApplicationRecord
       journal = user.account_book_types.where(name: name).first
 
       errors.add(:name, :taken) if journal && journal != self
+    end
+  end
+
+  def only_one_jefacture_enabled_by_type
+    if self.jefacture_enabled && journal = user.account_book_types.find_by_jefacture_enabled_and_entry_type(true, self.entry_type)
+      errors.add(:jefacture_enabled, :taken) unless journal && journal == self
     end
   end
 

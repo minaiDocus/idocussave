@@ -8,75 +8,77 @@
         %ul.nav.nav-tabs
           %li.nav-item
             %a.nav-link{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ), href: '#information', data: { toggle: 'tab' } } Informations
-          - if @customer.active?
+          - if @customer.active? && !@organization.specific_mission
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'subscription'), href: '#subscription', data: { toggle: 'tab' } } Forfaits
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'orders'), href: '#orders', data: { toggle: 'tab' } } Commandes Kits/Scan
           %li.nav-item
             %a.nav-link{ class: ('active' if params[:tab] == 'addresses'), href: '#addresses', data: { toggle: 'tab' } } Adresses
-          - if @customer.active? && @customer.options.is_upload_authorized
+          - if @customer.active? && @customer.options.is_upload_authorized && !@organization.specific_mission
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'period_options'), href: '#period_options', data: { toggle: 'tab' } } Option téléversement
           %li.nav-item
             %a.nav-link{ class: ('active' if params[:tab] == 'journals'), href: '#journals', data: { toggle: 'tab' } } Journaux comptables
-          - if @customer.active? && @customer.options.is_retriever_authorized
+          - if @customer.active? && @customer.options.is_retriever_authorized && !@organization.specific_mission
             %li.nav-item
               = link_to "iDo'FacBanque", account_retrievers_path(account_id: @customer.id), class: 'nav-link'
             %li.nav-item
               = link_to "Paramètres bancaires", account_bank_settings_path({account_id: @customer.id}), class: 'nav-link'
-          %li.nav-item{ class: ('active' if params[:tab] == 'compta') }
-            %a.nav-link{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
-          - if @customer.uses_ibiza?
+          - unless @organization.specific_mission
+            %li.nav-item{ class: ('active' if params[:tab] == 'compta') }
+              %a.nav-link{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
+            - if @customer.uses_ibiza?
+              %li.nav-item
+                %a.nav-link{ class: ('active' if params[:tab] == 'ibiza_box'), href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
+            %li.nav-item.dropdown
+              %a.nav-link.dropdown-toggle{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact-online'].include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+              %ul.dropdown-menu{ style: "min-width: 195px" }
+                -if @organization.try(:ibiza).try(:used?) && !@customer.uses_exact_online?
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'ibiza'), href: '#ibiza', data: { toggle: 'tab' } }
+                      .float-left iBiza
+                      - if @customer.uses_ibiza?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_exact_online_used && !@customer.uses_ibiza?
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'exact_online'), href: '#exact_online', data: { toggle: 'tab' } }
+                      .float-left Exact Online
+                      - if @customer.uses_exact_online?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_coala_used
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'coala'), href: '#coala', data: { toggle: 'tab' } }
+                      .float-left Coala
+                      - if @customer.uses_coala?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_quadratus_used
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'quadratus'), href: '#quadratus', data: { toggle: 'tab' } }
+                      .float-left Quadratus
+                      - if @customer.uses_quadratus?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_cegid_used
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'cegid'), href: '#cegid', data: { toggle: 'tab' } }
+                      .float-left Cegid
+                      - if @customer.uses_cegid?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_fec_agiris_used
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'fec_agiris'), href: '#fec_agiris', data: { toggle: 'tab' } }
+                      .float-left Fec Agiris
+                      - if @customer.uses_fec_agiris?
+                        = glyphicon('check', { class: 'float-right' })
+                -if @organization.is_csv_descriptor_used
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'csv_descriptor'), href: '#csv_descriptor', data: { toggle: 'tab' } }
+                      .float-left Format d’export (.csv)
+                      - if @customer.uses_csv_descriptor?
+                        = glyphicon('check', { class: 'float-right' })
+          - unless @organization.specific_mission
             %li.nav-item
-              %a.nav-link{ class: ('active' if params[:tab] == 'ibiza_box'), href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
-          %li.nav-item.dropdown
-            %a.nav-link.dropdown-toggle{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact-online'].include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
-            %ul.dropdown-menu{ style: "min-width: 195px" }
-              -if @organization.try(:ibiza).try(:used?) && !@customer.uses_exact_online?
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'ibiza'), href: '#ibiza', data: { toggle: 'tab' } }
-                    .float-left iBiza
-                    - if @customer.uses_ibiza?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_exact_online_used && !@customer.uses_ibiza?
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'exact_online'), href: '#exact_online', data: { toggle: 'tab' } }
-                    .float-left Exact Online
-                    - if @customer.uses_exact_online?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_coala_used
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'coala'), href: '#coala', data: { toggle: 'tab' } }
-                    .float-left Coala
-                    - if @customer.uses_coala?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_quadratus_used
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'quadratus'), href: '#quadratus', data: { toggle: 'tab' } }
-                    .float-left Quadratus
-                    - if @customer.uses_quadratus?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_cegid_used
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'cegid'), href: '#cegid', data: { toggle: 'tab' } }
-                    .float-left Cegid
-                    - if @customer.uses_cegid?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_fec_agiris_used
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'fec_agiris'), href: '#fec_agiris', data: { toggle: 'tab' } }
-                    .float-left Fec Agiris
-                    - if @customer.uses_fec_agiris?
-                      = glyphicon('check', { class: 'float-right' })
-              -if @organization.is_csv_descriptor_used
-                %li
-                  %a.dropdown-item{ class: ('active' if params[:tab] == 'csv_descriptor'), href: '#csv_descriptor', data: { toggle: 'tab' } }
-                    .float-left Format d’export (.csv)
-                    - if @customer.uses_csv_descriptor?
-                      = glyphicon('check', { class: 'float-right' })
-          %li.nav-item
-            %a.nav-link{ class: ('active' if params[:tab] == 'accounting_plan'), href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
+              %a.nav-link{ class: ('active' if params[:tab] == 'accounting_plan'), href: '#accounting_plan', data: { toggle: 'tab' } } Plan comptable
           - if @organization.mcf_settings.try(:access_token).present? || @customer.try(:mcf_documents).try(:not_processable).try(:any?)
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'mcf'), href: '#mcf', data: { toggle: 'tab' } } My Company Files

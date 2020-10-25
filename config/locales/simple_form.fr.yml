@@ -119,6 +119,7 @@ fr:
         is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
         is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
         subject_to_vat: Est assujetti à la tva ?
+        specific_mission: Mission spécifique ?
         invoice_mails: Email(s) en copie de la facture iDocus
         preseizure_date_option: Date de l'écriture des opérations bancaires
         is_exact_online_used: Utilise Exact Online?
@@ -147,6 +148,7 @@ fr:
         entry_type_2: Achat
         entry_type_3: Vente
         entry_type_4: Banque
+        entry_type_5: Prestation spécifique
         currency: Devise
         meta_account_number: Compte de tiers
         meta_charge_account: Compte de charge / produit

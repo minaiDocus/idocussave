@@ -20,10 +20,10 @@ class Account::JournalsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/journals
   def create
-    journal = AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
+    @journal = AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
 
-    if !journal.errors.messages.present?
-      text = "Nouveau journal #{ journal.name } créé avec succès"
+    if !@journal.errors.messages.present?
+      text = "Nouveau journal #{ @journal.name } créé avec succès"
 
       if params[:new_create_book_type].present?
         render json: { success: true, response: { text: text } }, status: 200
@@ -37,7 +37,7 @@ class Account::JournalsController < Account::OrganizationController
       end
     else
       if params[:new_create_book_type].present?
-        render json: { success: true, response: journal.errors.messages }, status: 200
+        render json: { success: true, response: @journal.errors.messages }, status: 200
       else
         render :new
       end
@@ -263,7 +263,7 @@ class Account::JournalsController < Account::OrganizationController
   helper_method :is_max_number_reached?
 
   def is_preassignment_authorized?
-    @customer.nil? || @customer.options.is_preassignment_authorized
+    @customer.nil? || @customer.options.is_preassignment_authorized || @organization.specific_mission || @customer.subscription.is_idox_package_active
   end
   helper_method :is_preassignment_authorized?
 

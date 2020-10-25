@@ -260,7 +260,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :invoice_mails,
         :is_exact_online_used,
         :is_exact_online_auto_deliver,
-        :jefacture_api_key
+        :jefacture_api_key,
+        :specific_mission
       )
     else
       params.require(:organization).permit(

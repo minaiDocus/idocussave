@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_13_131742) do
+ActiveRecord::Schema.define(version: 2020_10_25_103510) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -1123,10 +1123,10 @@ ActiveRecord::Schema.define(version: 2020_10_13_131742) do
     t.boolean "is_fec_agiris_auto_deliver", default: false
     t.string "vat_identifier"
     t.string "jefacture_api_key"
-    t.boolean "is_cegid_tra_used"
-    t.boolean "is_cegid_tra_auto_deliver"
+    t.boolean "specific_mission"
     t.index ["leader_id"], name: "leader_id"
     t.index ["organization_group_id"], name: "index_organizations_on_organization_group_id"
+    t.index ["specific_mission"], name: "index_organizations_on_specific_mission"
   end
 
   create_table "pack_dividers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

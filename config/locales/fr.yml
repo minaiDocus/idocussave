@@ -562,6 +562,7 @@ fr:
           entry_type_2: Achat
           entry_type_3: Vente
           entry_type_4: Banque
+          entry_type_5: Prestation spécifique
           user_id: Utilisateur
           clients: Clients
           force_assignment:  Forcer les modifications pour le client
@@ -679,6 +680,7 @@ fr:
           is_fec_agiris_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
           is_fec_agiris_auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
           subject_to_vat: Est assujetti à la tva ?
+          specific_mission: Mission spécifique ?
           invoice_mails: Email(s) en copie de la facture iDocus
           preseizure_date_option: Date de l'écriture des opérations bancaires
           is_exact_online_used: Utilise Exact Online?

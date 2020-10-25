@@ -11,7 +11,6 @@
           = link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'fs-origin'
     = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form-horizontal' } do |f|
       .card-body
-        - is_disabled = !is_preassignment_authorized?
         .box.step.bg-light
           %h4 Codes journaux
           %hr
@@ -33,10 +32,10 @@
             = f.input :domain, label: 'A quel domaine Knowings souhaitez-vous rattacher le journal comptable iDocus ?', collection: journal_domain_for_select, include_blank: false
 
         - if !@customer || is_preassignment_authorized?
-          .box.step.bg-light{ style: 'display:none' }
+          .box.step.bg-light
             %h4 Pré-saisie comptable
             %hr
-            = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3], [t('simple_form.labels.account_book_type.entry_type_4'),4]], include_blank: false, input_html: { disabled: is_disabled }
+            = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: account_book_type_entry_type_for_select(@organization, @customer), include_blank: false
 
             .pre-assignment-attributes{ style: 'display:none;' }
               = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
@@ -56,12 +55,13 @@
 
               - if !@customer || @customer.options.is_taxable
                 - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
-                = f.input :vat_account, label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { class: 'can_be_required', disabled: is_disabled }, hint: hint
+                = f.input :vat_account, label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { class: 'can_be_required'}, hint: hint
                 = f.input :vat_account_10
                 = f.input :vat_account_8_5
                 = f.input :vat_account_5_5
                 = f.input :vat_account_2_1
-              = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie ?', input_html: { class: 'can_be_required', disabled: is_disabled }, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+              = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie ?', input_html: { class: 'can_be_required'}, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+              = f.input :jefacture_enabled
 
         - if !@customer || @customer.subscription.is_mail_package_active
           .box.step.bg-light{ style: 'display:none' }

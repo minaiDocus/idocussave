@@ -31,7 +31,7 @@ class AccountBookTypeWriter
   def update
     @journal.assign_attributes(@params)
     changes  = @journal.changes.dup
-    customer = @journal.user 
+    customer = @journal.user
 
     @journal.save
 

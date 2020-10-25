@@ -65,7 +65,7 @@
                           Collaborateurs
                           = glyphicon('person', { class: 'float-right' })
                     - if @organization.is_active
-                      - if @user.leader? || @user.manage_journals
+                      - if (@user.leader? || @user.manage_journals) && !@organization.specific_mission
                         %li.nav-item{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
                           %a{ href: account_organization_journals_path(@organization), class: 'nav-link' }
                             Journaux comptables partagés
@@ -74,7 +74,7 @@
                       %a{ href: account_organization_customers_path(@organization), class: 'nav-link' }
                         Clients
                         = glyphicon('briefcase', { class: 'float-right' })
-                    - if @organization.is_active
+                    - if @organization.is_active && !@organization.specific_mission
                       %li.nav-item{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
                         %a{ href: account_organization_account_number_rules_path(@organization), class: 'nav-link' }
                           Affectations bancaires
@@ -85,13 +85,14 @@
                     - # %a{ href: account_documents_path, class: 'nav-link' }
                     - # Pré-affectations
                     - # glyphicon('file', { class: 'float-right' })
-                    %li.nav-item{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
-                      %a{ href: account_organization_paper_set_orders_path(@organization), class: 'nav-link' }
-                        Commande Kit Courriers
-                        = glyphicon('envelope-closed', { class: 'float-right' })
-                    %li.nav-item{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
-                      %a{ href: account_organization_account_sharings_path(@organization), class: 'nav-link' }
-                        Accès clients multi-dossiers
+                    - unless @organization.specific_mission
+                      %li.nav-item{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
+                        %a{ href: account_organization_paper_set_orders_path(@organization), class: 'nav-link' }
+                          Commande Kit Courriers
+                          = glyphicon('envelope-closed', { class: 'float-right' })
+                      %li.nav-item{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
+                        %a{ href: account_organization_account_sharings_path(@organization), class: 'nav-link' }
+                          Accès clients multi-dossiers
                         = glyphicon('folder', { class: 'float-right' })
                     - if @user.leader? && !@organization.try(:is_suspended?)
                       %li.nav-item{ class: (controller_name.in?(%w(invoices)) ? 'active' : '') }

@@ -54,6 +54,6 @@ class AssignDefaultJournalsService
   end
 
   def is_preassignment_authorized?
-    @user.options.is_preassignment_authorized
+    @user.options.is_preassignment_authorized || @user.subscription.is_idox_package_active
   end
 end

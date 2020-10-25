@@ -53,7 +53,7 @@ class Account::CustomersController < Account::OrganizationController
   def refresh_book_type
     render partial: 'book_type'
   end
-  
+
   # GET /account/organizations/:organization_id/customers/form_with_first_step
   def form_with_first_step
     @customer = User.new(code: "#{@organization.code}%")
@@ -67,12 +67,19 @@ class Account::CustomersController < Account::OrganizationController
   def create
     @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
 
-     modif_params = params[:subscription][:subscription_option]
-     params[:subscription][modif_params] = true
+    unless @organization.specific_mission
+      modif_params = params[:subscription][:subscription_option]
+      params[:subscription][modif_params] = true
+    end
 
     if @customer.persisted?
-      SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
-      redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      if @organization.specific_mission
+        redirect_to account_organization_customer_path(@organization, @customer)
+      else
+        SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
+
+        redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
+      end
     else
       _error_messages = @customer.errors.messages
       html_ul_content = "<ul>"

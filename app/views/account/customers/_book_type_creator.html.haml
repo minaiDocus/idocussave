@@ -41,12 +41,9 @@
         #error_reports.hide
 
     .col-md-6
-      - is_disabled = !(@customer.present? && @customer.options.is_preassignment_authorized)
       .box.small-shadow
         .header_box.text-left.mb-5.border_bottom Pré-saisie comptable
-        - if is_disabled
-          = hidden_field_tag 'account_book_type[entry_type]', 0
-        = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3], [t('simple_form.labels.account_book_type.entry_type_4'),4]], include_blank: false, input_html: { class: 'not_persisted', disabled: is_disabled }
+        = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: account_book_type_entry_type_for_select(@organization, @customer), include_blank: false, input_html: { class: 'not_persisted' }
         #pre-assignment-attributes{ class: "#{@journal.entry_type.in?([0,1]) ? 'hide' : '' }"}
           = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
           = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
