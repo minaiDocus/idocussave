@@ -93,7 +93,7 @@
                       %li.nav-item{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
                         %a{ href: account_organization_account_sharings_path(@organization), class: 'nav-link' }
                           Accès clients multi-dossiers
-                        = glyphicon('folder', { class: 'float-right' })
+                          = glyphicon('folder', { class: 'float-right' })
                     - if @user.leader? && !@organization.try(:is_suspended?)
                       %li.nav-item{ class: (controller_name.in?(%w(invoices)) ? 'active' : '') }
                         %a{ href: account_organization_invoices_path(@organization), class: 'nav-link' }

@@ -2,10 +2,10 @@ class AccountNumberFinderService
   class << self
     def get_the_highest_match(label, names)
       scores = names.map do |name|
-        [name, 0]
+        [clean_txt(name), 0]
       end
 
-      words = label.split(/\s+/)
+      words = clean_txt(label).split(/\s+/)
 
       words.each do |word|
         scores.each_with_index do |(name, _), index|
@@ -25,15 +25,16 @@ class AccountNumberFinderService
       match_rules = rules.select { |rule| rule.rule_target == 'both' || rule.rule_target == target }
       match_rules = match_rules.select { |rule| rule.rule_type == 'match' }
       match_rules = match_rules.select do |rule|
-        patterns = rule.content.strip.split('*')
+        search_pattern = clean_txt(rule.content)
+        patterns = search_pattern.split('*')
         patterns << '' if rule.content.match(/.*[*]$/) #add a last empty string if there is a * at the end of the content
         pattern  = '\\b' + patterns.map{|pt| Regexp.quote(pt.strip) }.join('.*') + '\\b'
-        label.match /#{pattern}/i
+        clean_txt(label).match /#{pattern}/i
       end
 
       name = get_the_highest_match(label, match_rules.map(&:content))
 
-      result = match_rules.select { |match| match.content == name }.first
+      result = match_rules.select { |match| clean_txt(match.content) == clean_txt(name) }.first
 
       number = result.third_party_account if result
       number
@@ -47,21 +48,28 @@ class AccountNumberFinderService
 
       matches = truncate_rules.flat_map do |rule|
         accounting_plan.select do |account|
-          clean_name = account[0].gsub(/ ?#{Regexp.quote(rule.content)}/i, '')
-          label.match /#{Regexp.quote(clean_name)}/i
+          clean_name = clean_txt(account[0]).gsub(/ ?#{Regexp.quote(clean_txt(rule.content))}/i, '')
+          clean_txt(label).match /#{'\\b'+Regexp.quote(clean_name)+'\\b'}/i
         end
       end
 
-      matches += accounting_plan.select { |account| label.match /#{'\\b'+Regexp.quote(account[0])+'\\b'}/i }
+      matches += accounting_plan.select { |account| clean_txt(label).match /#{'\\b'+Regexp.quote(clean_txt(account[0]))+'\\b'}/i }
 
       matches.uniq!
 
       name = get_the_highest_match(label, matches.map(&:first))
 
-      result = matches.select { |match| match[0] == name }.first
+      result = matches.select { |match| clean_txt(match[0]) == clean_txt(name) }.first
 
       number = result[1] if result
       number
+    end
+
+    def clean_txt(string=nil)
+      string = string.to_s.strip.gsub(/[,:='"&#|;_)}\-\]\/\\]/, ' ')
+      string = string.gsub(/[!?%€$£({\[]/, '')
+      string = string.gsub(/( )+/, ' ')
+      string.strip
     end
   end
 

@@ -79,7 +79,7 @@ describe AccountNumberFinderService do
         @rule.affect = 'organization'
         @rule.rule_type = 'match'
         @rule.rule_target = 'both'
-        @rule.content = 'ORANGE'
+        @rule.content = '"ORANGE"'
         @rule.priority = 0
         @rule.third_party_account = '0ORA'
         @rule.save
