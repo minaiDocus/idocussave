@@ -18,7 +18,7 @@ class CreateOperation
       end
     end
 
-    if operations.first.api_name =='capidocus' && operations.first.api_id
+    if api_name == 'capidocus' && operations.first.api_id
       piece = Pack::Piece.find_by_name(operations.first.api_id.gsub("_", ''))
 
       piece.update(is_awaiting_pre_assignment: false)
