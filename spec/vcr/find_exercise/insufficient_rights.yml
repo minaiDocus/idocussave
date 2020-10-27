@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B123456%7D/exercices
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B123456%7D/exercices
     body:
       encoding: UTF-8
       string: ''
