@@ -818,6 +818,11 @@ describe DataProcessor::RetrievedData do
 
   context 'retriever state is error', :retriever_states_2 do
     before(:each) do
+      allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('FakeToken')
+      allow_any_instance_of(Budgea::Client).to receive(:get_connections_log).and_return({
+        'connectionlogs' => [{'id' => @retriever.budgea_id, 'error' => '', 'state' => ''}]
+      })
+
       @retriever.fail_budgea_connection
       @retriever.update(error_message: 'something', budgea_error_message: 'something')
     end
