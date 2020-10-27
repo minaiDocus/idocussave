@@ -31,7 +31,7 @@ class Account::DocumentsController < Account::AccountController
     # @composition      = Document.where(id: @last_composition.document_ids) if @last_composition
     ######################
 
-    @period_service = PeriodService.new user: @user
+    @period_service = Billing::Period.new user: @user
   end
 
   # GET /account/documents/:id

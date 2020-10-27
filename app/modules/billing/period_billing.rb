@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodBillingService
+class Billing::PeriodBilling
   def initialize(period)
     @period = period
   end
@@ -27,7 +27,7 @@ class PeriodBillingService
     if @period.duration == 1
       @period.price_in_cents_wo_vat
     elsif @period.duration == 3
-      quarter_order = PeriodBillingService.quarter_order_of(order)
+      quarter_order = Billing::PeriodBilling.quarter_order_of(order)
       if @period.billings.any?
         billing = @period.billings.where(order: quarter_order).first
         if billing
@@ -75,7 +75,7 @@ class PeriodBillingService
     when 1
       _order = 1
     when 3
-      _order = PeriodBillingService.quarter_order_of(order)
+      _order = Billing::PeriodBilling.quarter_order_of(order)
     when 12
       _order = order
     end

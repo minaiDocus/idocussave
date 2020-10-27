@@ -56,8 +56,8 @@ class ScansController < PaperProcessesController
           create_paper_process(@document)
 
           if @document.period
-            UpdatePeriodDataService.new(@document.period).execute
-            UpdatePeriodPriceService.new(@document.period).execute
+            Billing::UpdatePeriodData.new(@document.period).execute
+            Billing::UpdatePeriodPrice.new(@document.period).execute
           end
 
           flash[:success] = 'Créé avec succès.'
@@ -91,8 +91,8 @@ class ScansController < PaperProcessesController
     create_paper_process(document)
 
     if document.period
-      UpdatePeriodDataService.new(document.period).execute
-      UpdatePeriodPriceService.new(document.period).execute
+      Billing::UpdatePeriodData.new(document.period).execute
+      Billing::UpdatePeriodPrice.new(document.period).execute
     end
 
     reset_waiting_document
@@ -115,8 +115,8 @@ class ScansController < PaperProcessesController
     create_paper_process(document)
 
     if document.period
-      UpdatePeriodDataService.new(document.period).execute
-      UpdatePeriodPriceService.new(document.period).execute
+      Billing::UpdatePeriodData.new(document.period).execute
+      Billing::UpdatePeriodPrice.new(document.period).execute
     end
 
     reset_waiting_document

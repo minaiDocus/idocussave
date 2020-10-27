@@ -24,7 +24,7 @@ class OrganizationMonthlyReport
 
 
   def price_in_cents_wo_vat
-    @price_in_cents_wo_vat ||= PeriodBillingService.amount_in_cents_wo_vat(@time.month, periods)
+    @price_in_cents_wo_vat ||= Billing::PeriodBilling.amount_in_cents_wo_vat(@time.month, periods)
   end
 
 

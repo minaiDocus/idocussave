@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Gives total due amount for organization for specific period
-class OrganizationBillingAmountService
+class Billing::OrganizationBillingAmount
   def initialize(organization, time = Time.now)
     @time         = time
     @organization = organization
@@ -8,7 +8,7 @@ class OrganizationBillingAmountService
 
 
   def execute
-    PeriodBillingService.amount_in_cents_wo_vat(@time.month, customer_periods) + (period.try(:price_in_cents_wo_vat) || 0)
+    Billing::PeriodBilling.amount_in_cents_wo_vat(@time.month, customer_periods) + (period.try(:price_in_cents_wo_vat) || 0)
   end
 
 

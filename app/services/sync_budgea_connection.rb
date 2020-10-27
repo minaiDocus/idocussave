@@ -43,7 +43,7 @@ class SyncBudgeaConnection
                                                       service_name: @retriever.service_name,
                                                       capabilities: @retriever.capabilities
                                                     })
-              UpdatePeriod.new(@retriever.user.subscription.current_period).execute
+              Billing::UpdatePeriod.new(@retriever.user.subscription.current_period).execute
             end
           elsif client.response.status == 202
             @retriever.update(budgea_additionnal_fields: data['fields']) if data['fields'].present?

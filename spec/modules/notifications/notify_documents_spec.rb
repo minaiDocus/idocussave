@@ -105,8 +105,8 @@ describe Notifications::Documents do
       notify.save
 
       subscription = Subscription.create(user: @user, organization: @organization, period_duration: 1)
-      UpdatePeriod.new(subscription.current_period).execute
-      PeriodService.new user: @user, current_time: Time.local(2020,9,21)
+      Billing::UpdatePeriod.new(subscription.current_period).execute
+      Billing::Period.new user: @user, current_time: Time.local(2020,9,21)
       Period.create(subscription: subscription, duration: 1, start_date: Date.parse("2020-09-01"), user: @user)
 
       Notifications::Documents.new({ user: @user, new_count: [@temp_document].count }).notify_new_scaned_documents

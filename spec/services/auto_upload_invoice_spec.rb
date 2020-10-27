@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe CreateInvoicePdf do
+describe Billing::CreateInvoicePdf do
   context 'auto_upload_last_invoice' do
     before(:all) do
       DatabaseCleaner.start
@@ -56,7 +56,7 @@ describe CreateInvoicePdf do
 	    end
 
 	    it 'invoice setting returns a valid temp document', :invoice_setting do
-        create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+        create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
         create_invoice_pdf.send(:auto_upload_last_invoice)
 
         temp_document = TempDocument.last
@@ -81,7 +81,7 @@ describe CreateInvoicePdf do
       end
 
 	    it 'archive invoice', :archive_invoice do
-		  	CreateInvoicePdf.archive_invoice
+		  	Billing::CreateInvoicePdf.archive_invoice
 
 		  	archive_invoice = ArchiveInvoice.last
 
@@ -93,7 +93,7 @@ describe CreateInvoicePdf do
 	  	end
 
     	it 'returns a valid temp document', :temp_doc_created do
-		  	create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+		  	create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
 		  	create_invoice_pdf.send(:auto_upload_last_invoice)
 
 		  	temp_document = TempDocument.first
@@ -117,7 +117,7 @@ describe CreateInvoicePdf do
 		  	it 'returns a log state "upladed"', :log_success do
 		  		allow_any_instance_of(UploadedDocument).to receive(:valid?).and_return(true)
 		  		
-		  		create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+		  		create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
 		  		create_invoice_pdf.send(:auto_upload_last_invoice)
 
 		  		log_content = File.read(@log_file)
@@ -130,7 +130,7 @@ describe CreateInvoicePdf do
 		  		allow_any_instance_of(UploadedDocument).to receive(:valid?).and_return(false)
 		  		allow_any_instance_of(UploadedDocument).to receive(:full_error_messages).and_return('journal error')
 
-		  		create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+		  		create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
 		  		create_invoice_pdf.send(:auto_upload_last_invoice)
 
 					log_content = File.read(@log_file)
@@ -140,7 +140,7 @@ describe CreateInvoicePdf do
 		  	end
 
 		  	it 'returns a log state "already exist"', :log_error_v2 do
-		  		create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+		  		create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
 		  		create_invoice_pdf.send(:auto_upload_last_invoice)
 		  		create_invoice_pdf.send(:auto_upload_last_invoice)
 				

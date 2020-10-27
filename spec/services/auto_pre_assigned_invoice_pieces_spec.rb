@@ -34,7 +34,7 @@ describe AutoPreAssignedInvoicePieces do
       TempPack.destroy_all
       Pack::Piece.destroy_all
 
-      create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+      create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
       create_invoice_pdf.auto_upload_last_invoice
 
       @temp_pack = @user.temp_packs.last
@@ -84,7 +84,7 @@ describe AutoPreAssignedInvoicePieces do
       Pack::Report::Preseizure::Account.destroy_all
       Pack::Report::Preseizure::Entry.destroy_all
 
-      create_invoice_pdf = CreateInvoicePdf.new(@invoice)
+      create_invoice_pdf = Billing::CreateInvoicePdf.new(@invoice)
       create_invoice_pdf.auto_upload_last_invoice
 
       @temp_pack = @user.temp_packs.last

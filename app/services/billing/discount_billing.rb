@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DiscountBillingService
+class Billing::DiscountBilling
   def self.update_period(period, _time)
     discount = new(period.organization, _time)
 
@@ -15,7 +15,7 @@ class DiscountBillingService
       period.save
     end
 
-    UpdatePeriodPriceService.new(period).execute
+    Billing::UpdatePeriodPrice.new(period).execute
   end
 
   def initialize(organization, _time=nil)

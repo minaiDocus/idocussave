@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Updates period with last subscription informations
-class UpdateOrganizationPeriod
+class Billing::UpdateOrganizationPeriod
   def initialize(period)
     @period          = period
     @organization    = period.organization
@@ -19,14 +19,14 @@ class UpdateOrganizationPeriod
 
     @customers_periods.each do |c_period|
       if c_period.is_valid_for_quota_organization
-        UpdatePeriodDataService.new(c_period).execute unless soft_process
+        Billing::UpdatePeriodData.new(c_period).execute unless soft_process
         fill_datas_with c_period.reload
       end
     end
 
     @period.update_attribute :locked_at, nil
     @period.save
-    UpdatePeriodPriceService.new(@period).execute
+    Billing::UpdatePeriodPrice.new(@period).execute
   end
 
   private

@@ -40,10 +40,10 @@ class Subscription < ApplicationRecord
 
     period.save
 
-    UpdatePeriod.new(period).execute
+    Billing::UpdatePeriod.new(period).execute
 
     if organization
-      UpdateOrganizationPeriod.new(period).fetch_all(true)
+      Billing::UpdateOrganizationPeriod.new(period).fetch_all(true)
     end
 
     period

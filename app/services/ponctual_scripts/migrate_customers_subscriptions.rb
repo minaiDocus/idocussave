@@ -90,7 +90,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
       if subscription.save
         EvaluateSubscription.new(subscription, requester).execute
 
-        UpdatePeriod.new(subscription.current_period).execute
+        Billing::UpdatePeriod.new(subscription.current_period).execute
       else
          logger_infos "[MigrateCustomersSubscriptions] - customer: #{customer.to_s} - subscription ID : #{subscription.id.to_s} - rollback failed"
       end

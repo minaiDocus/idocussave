@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DebitMandateResponseService
+class Billing::DebitMandateResponse
   attr_accessor :errors
 
   def initialize(debit_mandate=nil)

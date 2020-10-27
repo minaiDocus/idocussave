@@ -10,7 +10,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   # PUT /account/organizations/:organization_id/organization_subscription
   def update
     if @subscription.update(subscription_params)
-      UpdatePeriod.new(@subscription.current_period).execute
+      Billing::UpdatePeriod.new(@subscription.current_period).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'subscription')
     else
@@ -43,7 +43,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
         periods.each do |period|
           period.update(_params)
-          UpdatePeriodPriceService.new(period).execute
+          Billing::UpdatePeriodPrice.new(period).execute
         end
 
         flash[:success] = 'Propagé avec succès.'

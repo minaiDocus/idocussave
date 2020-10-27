@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Updates period with last subscription informations
-class UpdatePeriod
+class Billing::UpdatePeriod
   def initialize(period, options={})
     @period          = period
     @subscription    = period.subscription
@@ -25,7 +25,7 @@ class UpdatePeriod
       @period.product_option_orders.destroy_all
       @period.product_option_orders = options + freezed_options
 
-      UpdatePeriodPriceService.new(@period).execute if @period.save # updates period pricing if sucess
+      Billing::UpdatePeriodPrice.new(@period).execute if @period.save # updates period pricing if sucess
     end
   end
 
@@ -355,7 +355,7 @@ class UpdatePeriod
   end
 
   def discount_options
-    discount = DiscountBillingService.new(@subscription.organization)
+    discount = Billing::DiscountBilling.new(@subscription.organization)
 
     option = ProductOptionOrder.new
 

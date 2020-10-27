@@ -22,7 +22,7 @@ class InitializePeriodsWorker
             if subscription.period_duration != 1
               time = 1.month.ago
               period = subscription.find_period time.to_date
-              PeriodBillingService.new(period).save(time.month) if period
+              Billing::PeriodBilling.new(period).save(time.month) if period
             end
             print '.'
           rescue

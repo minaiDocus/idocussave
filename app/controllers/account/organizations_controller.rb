@@ -101,7 +101,7 @@ class Account::OrganizationsController < Account::OrganizationController
 
     @subscription         = @organization.find_or_create_subscription
     @subscription_options = @subscription.options.sort_by(&:position)
-    @total                = OrganizationBillingAmountService.new(@organization).execute
+    @total                = Billing::OrganizationBillingAmount.new(@organization).execute
   end
 
   # GET /account/organizations/:id/edit
@@ -169,7 +169,7 @@ class Account::OrganizationsController < Account::OrganizationController
     end
 
     if debit_mandate.save
-      mandate = DebitMandateResponseService.new debit_mandate
+      mandate = Billing::DebitMandateResponse.new debit_mandate
       mandate.prepare_order
 
       if mandate.errors
@@ -187,7 +187,7 @@ class Account::OrganizationsController < Account::OrganizationController
   def confirm_payment
     debit_mandate = @organization.debit_mandate
     if debit_mandate.started?
-      DebitMandateResponseService.new(debit_mandate).confirm_payment
+      Billing::DebitMandateResponse.new(debit_mandate).confirm_payment
     end
 
     render json: { success: true, debit_mandate: @organization.debit_mandate.reload }, status: 200
@@ -195,7 +195,7 @@ class Account::OrganizationsController < Account::OrganizationController
 
   def revoke_payment
     if @user.is_admin && params[:revoke_confirm] == 'true'
-      result = DebitMandateResponseService.new(@organization.debit_mandate).send(:revoke_payment)
+      result = Billing::DebitMandateResponse.new(@organization.debit_mandate).send(:revoke_payment)
       if result.present?
         flash[:error]   = result
       else

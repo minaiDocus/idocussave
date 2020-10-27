@@ -25,8 +25,8 @@ class AccountingWorkflow::RetrievePreAssignments
 
       pre_assignments = get_pre_assignments(xml_pieces, report)
 
-      UpdatePeriodDataService.new(period).execute
-      UpdatePeriodPriceService.new(period).execute
+      Billing::UpdatePeriodData.new(period).execute
+      Billing::UpdatePeriodPrice.new(period).execute
       next unless is_preseizure?
 
       if report.preseizures.not_locked.not_delivered.size > 0

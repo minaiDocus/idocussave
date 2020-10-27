@@ -31,8 +31,8 @@ module Reporting
 
           period_document.save
 
-          UpdatePeriodDataService.new(period_document.period).execute
-          UpdatePeriodPriceService.new(period_document.period).execute
+          Billing::UpdatePeriodData.new(period_document.period).execute
+          Billing::UpdatePeriodPrice.new(period_document.period).execute
         end
 
         if period_document.pages - period_document.uploaded_pages > 0
@@ -44,7 +44,7 @@ module Reporting
       time += period.duration.month
     end
 
-    UpdateOrganizationPeriod.new(pack.organization.subscription.current_period).fetch_all(true)
+    Billing::UpdateOrganizationPeriod.new(pack.organization.subscription.current_period).fetch_all(true)
   end
 
   def self.find_period_document(pack, start_date, end_date)

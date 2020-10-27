@@ -107,7 +107,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
     result = {}
     user = User.find params[:user_id]
     if user
-      period_service = PeriodService.new user: user
+      period_service = Billing::Period.new user: user
 
       result = {
         journals: user.account_book_types.order(:name).map(&:info),

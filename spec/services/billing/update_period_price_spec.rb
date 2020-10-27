@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe UpdatePeriodPriceService do
+describe Billing::UpdatePeriodPrice do
   before(:all) do
     @user = FactoryBot.create(:user)
     @subscription = Subscription.create(user_id: @user.id)
@@ -10,7 +10,7 @@ describe UpdatePeriodPriceService do
   it 'have default values' do
     period = Period.create(subscription: @subscription, start_date: Date.today.beginning_of_month)
 
-    UpdatePeriodPriceService.new(period).execute
+    Billing::UpdatePeriodPrice.new(period).execute
 
     expect(period.recurrent_products_price_in_cents_wo_vat).to eq 0
     expect(period.ponctual_products_price_in_cents_wo_vat).to eq 0
@@ -22,6 +22,7 @@ describe UpdatePeriodPriceService do
   context 'as customer' do
     context 'for monthly' do
       it 'set values' do
+        allow_any_instance_of(Period).to receive(:is_valid_for_quota_organization).and_return(false)
         period = Period.new
         period.user = @user
         period.subscription = @subscription
@@ -39,7 +40,7 @@ describe UpdatePeriodPriceService do
         period.expense_pieces = 105 # excesses : 5, price : 60 cents
         period.save
 
-        UpdatePeriodPriceService.new(period).execute
+        Billing::UpdatePeriodPrice.new(period).execute
 
         expect(period.recurrent_products_price_in_cents_wo_vat).to eq 1000
         expect(period.ponctual_products_price_in_cents_wo_vat).to eq 2000
@@ -68,7 +69,7 @@ describe UpdatePeriodPriceService do
         period.expense_pieces = 105 # excesses : 5, price : 60 cents
         period.save
 
-        UpdatePeriodPriceService.new(period).execute
+        Billing::UpdatePeriodPrice.new(period).execute
 
         expect(period.recurrent_products_price_in_cents_wo_vat).to eq 300
         expect(period.ponctual_products_price_in_cents_wo_vat).to eq 1500
@@ -95,7 +96,7 @@ describe UpdatePeriodPriceService do
         period.expense_pieces = 105 # excesses : 5, price : 60 cents
         period.save
 
-        UpdatePeriodPriceService.new(period).execute
+        Billing::UpdatePeriodPrice.new(period).execute
 
         expect(period.recurrent_products_price_in_cents_wo_vat).to eq 19900
         expect(period.ponctual_products_price_in_cents_wo_vat).to eq 0
@@ -108,14 +109,15 @@ describe UpdatePeriodPriceService do
 
   context 'as organization' do
     it 'set values' do
-      period = Period.create(start_date: Date.today.beginning_of_month)
-      period.subscription = Subscription.create
+      organization = FactoryBot.create(:organization)
+      period = Period.create(start_date: Date.today.beginning_of_month, organization_id: organization.id)
+      period.subscription = Subscription.create(organization_id: organization.id)
       option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
       option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 2)
       period.product_option_orders << option1
       period.product_option_orders << option2
 
-      UpdatePeriodPriceService.new(period).execute
+      Billing::UpdatePeriodPrice.new(period).execute
 
       expect(period.recurrent_products_price_in_cents_wo_vat).to eq 1000
       expect(period.ponctual_products_price_in_cents_wo_vat).to eq 2000

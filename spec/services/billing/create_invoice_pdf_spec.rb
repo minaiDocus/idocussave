@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe CreateInvoicePdf do
+describe Billing::CreateInvoicePdf do
   before(:all) do
     Timecop.freeze(Time.local(2020,04,15))
     DatabaseCleaner.start
@@ -34,14 +34,14 @@ describe CreateInvoicePdf do
   end
 
   before(:each) do
-    allow_any_instance_of(UpdatePeriodDataService).to receive(:execute).and_return(true)
-    allow_any_instance_of(UpdateOrganizationPeriod).to receive(:fetch_all).and_return(true)
-    allow(DiscountBillingService).to receive(:update_period).and_return(true)
+    allow_any_instance_of(Billing::UpdatePeriodData).to receive(:execute).and_return(true)
+    allow_any_instance_of(Billing::UpdateOrganizationPeriod).to receive(:fetch_all).and_return(true)
+    allow(Billing::DiscountBilling).to receive(:update_period).and_return(true)
     Invoice.destroy_all
   end
 
   it 'generates pdf invoices - successfully', :generate do
-    CreateInvoicePdf.for_all
+    Billing::CreateInvoicePdf.for_all
 
     invoices = Invoice.all
 
@@ -52,7 +52,7 @@ describe CreateInvoicePdf do
   end
 
   it 'creates a single invoice (for a specific organization)' do
-    CreateInvoicePdf.for Organization.first.id
+    Billing::CreateInvoicePdf.for Organization.first.id
 
     invoices = Invoice.all
 
@@ -63,7 +63,7 @@ describe CreateInvoicePdf do
   end
 
   it 'updates an existing invoice', :update_invoice do
-    CreateInvoicePdf.for_all
+    Billing::CreateInvoicePdf.for_all
 
     invoice_1 = Invoice.first
     md5_1     = DocumentTools.checksum(invoice_1.cloud_content_object.reload.path)
@@ -74,7 +74,7 @@ describe CreateInvoicePdf do
     period.current_packages = ['retriever_option']
     period.save
 
-    CreateInvoicePdf.for org, invoice_1.number
+    Billing::CreateInvoicePdf.for org, invoice_1.number
 
     invoice_2 = Invoice.first
     md5_2     = DocumentTools.checksum(invoice_2.cloud_content_object.reload.path)
@@ -95,13 +95,14 @@ describe CreateInvoicePdf do
 
     subscription.update({ is_basic_package_to_be_disabled: true, is_micro_package_active: true })
 
-    CreateInvoicePdf.for_all
+    Billing::CreateInvoicePdf.for_all
 
     invoice = Invoice.last
 
     expect(period.reload.get_active_packages).to eq [:ido_classique]
-    expect(period.product_option_orders.size).to be 1
+    expect(period.product_option_orders.size).to eq 2
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
+    expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
     expect(invoice.amount_in_cents_w_vat).to eq 4800
   end
 end

@@ -5,8 +5,8 @@ class AutoPreAssignedJefacturePieces
       AutoPreAssignedJefacturePieces.new(piece).execute
     end
 
-    UpdatePeriodDataService.new(pieces.first.user.subscription.current_period).execute
-    UpdatePeriodPriceService.new(pieces.first.user.subscription.current_period).execute
+    Billing::UpdatePeriodData.new(pieces.first.user.subscription.current_period).execute
+    Billing::UpdatePeriodPrice.new(pieces.first.user.subscription.current_period).execute
   end
 
   def initialize(piece)

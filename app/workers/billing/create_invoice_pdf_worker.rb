@@ -1,10 +1,10 @@
-class CreateInvoicePdfWorker
+class Billing::CreateInvoicePdfWorker
   include Sidekiq::Worker
   sidekiq_options queue: :high, retry: false
 
   def perform
     UniqueJobs.for 'CreateInvoicePDF' do
-      CreateInvoicePdf.for_all
+      Billing::CreateInvoicePdf.for_all
     end
   end
 end

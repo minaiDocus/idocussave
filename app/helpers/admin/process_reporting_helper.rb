@@ -62,7 +62,7 @@ module Admin::ProcessReportingHelper
     periods = Period.where(user_id: customers.map(&:id)).where('created_at >= ? AND created_at <= ?', time.dup, time.end_of_month)
 
     periods.map do |period|
-      PeriodBillingService.new(period).data(:paperclips, time.month)
+      Billing::PeriodBilling.new(period).data(:paperclips, time.month)
     end.sum
   end
 
@@ -70,7 +70,7 @@ module Admin::ProcessReportingHelper
     periods = Period.where(user_id: customers.map(&:id)).where('created_at >= ? AND created_at <= ?', time.dup, time.end_of_month)
 
     periods.map do |period|
-      PeriodBillingService.new(period).data(:oversized, time.month)
+      Billing::PeriodBilling.new(period).data(:oversized, time.month)
     end.sum
   end
 

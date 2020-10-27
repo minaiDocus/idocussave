@@ -83,7 +83,7 @@ describe CreateDematboxDocument do
           before(:all) do
             subscription = @user.find_or_create_subscription
             subscription.update_attribute(:period_duration, 3)
-            UpdatePeriod.new(subscription.current_period).execute
+            Billing::UpdatePeriod.new(subscription.current_period).execute
             @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             @dematbox_document.execute
             subscription.periods.destroy_all
@@ -135,7 +135,7 @@ describe CreateDematboxDocument do
             Timecop.freeze(Time.local(2013,1,11))
             subscription = @user.find_or_create_subscription
             subscription.update_attribute(:period_duration, 3)
-            UpdatePeriod.new(subscription.current_period).execute
+            Billing::UpdatePeriod.new(subscription.current_period).execute
             @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             @dematbox_document.execute
             subscription.periods.destroy_all

@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe PeriodBillingService do
+describe Billing::PeriodBilling do
   describe '#amount_in_cents_wo_vat' do
     context 'for month' do
       before(:all) do
@@ -10,7 +10,7 @@ describe PeriodBillingService do
         period.duration = 1
         period.price_in_cents_wo_vat = 1000
         period.save
-        @period_billing_service = PeriodBillingService.new(period)
+        @period_billing_service = Billing::PeriodBilling.new(period)
       end
 
       it 'with order 1 returns 1000' do
@@ -36,7 +36,7 @@ describe PeriodBillingService do
           period.excesses_price_in_cents_wo_vat           = 200
           period.price_in_cents_wo_vat                    = 1600
           period.save
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 800' do
@@ -90,7 +90,7 @@ describe PeriodBillingService do
           billing.order = 1
           billing.amount_in_cents_wo_vat = 900
           period.billings << billing
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 900' do
@@ -141,7 +141,7 @@ describe PeriodBillingService do
           period.products_price_in_cents_wo_vat           = 19900
           period.price_in_cents_wo_vat                    = 20400
           period.save
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 20400' do
@@ -170,7 +170,7 @@ describe PeriodBillingService do
           billing.order = 1
           billing.amount_in_cents_wo_vat = 20000
           period.billings << billing
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 20000' do
@@ -202,7 +202,7 @@ describe PeriodBillingService do
         period.duration = 1
         period.oversized = 1
         period.save
-        @period_billing_service = PeriodBillingService.new(period)
+        @period_billing_service = Billing::PeriodBilling.new(period)
       end
 
       it 'returns 1' do
@@ -226,7 +226,7 @@ describe PeriodBillingService do
           period.duration = 3
           period.oversized = 1
           period.save
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 0' do
@@ -277,7 +277,7 @@ describe PeriodBillingService do
           billing.order = 1
           billing.oversized = 1
           period.billings << billing
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'with order 1 returns 0' do
@@ -326,7 +326,7 @@ describe PeriodBillingService do
           period.duration = 12
           period.oversized = 1
           period.save
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'returns 1' do
@@ -353,7 +353,7 @@ describe PeriodBillingService do
           billing.order = 1
           billing.oversized = 1
           period.billings << billing
-          @period_billing_service = PeriodBillingService.new(period)
+          @period_billing_service = Billing::PeriodBilling.new(period)
         end
 
         it 'returns 1' do
@@ -382,7 +382,7 @@ describe PeriodBillingService do
       period = Period.new(start_date: Date.today)
       period.duration = 3
       period.save
-      period_billing_service = PeriodBillingService.new(period)
+      period_billing_service = Billing::PeriodBilling.new(period)
       order = period_billing_service.next_order
 
       expect(order).to eq(1)
@@ -394,7 +394,7 @@ describe PeriodBillingService do
       period.save
       billing = PeriodBilling.new(order: 2)
       period.billings << billing
-      period_billing_service = PeriodBillingService.new(period)
+      period_billing_service = Billing::PeriodBilling.new(period)
       order = period_billing_service.next_order
 
       expect(order).to eq(3)
@@ -425,7 +425,7 @@ describe PeriodBillingService do
         @period.paperclips                               = 5
         @period.oversized                                = 4
         @period.save
-        @period_billing_service = PeriodBillingService.new(@period)
+        @period_billing_service = Billing::PeriodBilling.new(@period)
       end
 
       after(:each) do
@@ -629,7 +629,7 @@ describe PeriodBillingService do
         @period.paperclips                               = 5
         @period.oversized                                = 4
         @period.save
-        @period_billing_service = PeriodBillingService.new(@period)
+        @period_billing_service = Billing::PeriodBilling.new(@period)
       end
 
       after(:each) do
@@ -755,7 +755,7 @@ describe PeriodBillingService do
         @period.duration = 1
         @period.start_date = Time.local(2015,1,1).to_date
         @period.save
-        @period_billing_service = PeriodBillingService.new(@period)
+        @period_billing_service = Billing::PeriodBilling.new(@period)
       end
 
       after(:each) do
@@ -779,7 +779,7 @@ describe PeriodBillingService do
         @period.duration = 3
         @period.start_date = Time.local(2015,1,1).to_date
         @period.save
-        @period_billing_service = PeriodBillingService.new(@period)
+        @period_billing_service = Billing::PeriodBilling.new(@period)
       end
 
       after(:each) do
@@ -835,7 +835,7 @@ describe PeriodBillingService do
         @period.duration = 12
         @period.start_date = Time.local(2015,1,1).to_date
         @period.save
-        @period_billing_service = PeriodBillingService.new(@period)
+        @period_billing_service = Billing::PeriodBilling.new(@period)
       end
 
       after(:each) do
@@ -896,7 +896,7 @@ describe PeriodBillingService do
       @period.duration = 3
       @period.start_date = Time.local(2015,1,1).to_date
       @period.save
-      @period_billing_service = PeriodBillingService.new(@period)
+      @period_billing_service = Billing::PeriodBilling.new(@period)
     end
 
     after(:each) do
@@ -942,19 +942,19 @@ describe PeriodBillingService do
     end
 
     it 'with order 1 returns 1500 + 900 + 20000' do
-      amount = PeriodBillingService.amount_in_cents_wo_vat(1, @periods)
+      amount = Billing::PeriodBilling.amount_in_cents_wo_vat(1, @periods)
 
       expect(amount).to eq 22300
     end
 
     it 'with order 2 returns 1500 + 300 + 400' do
-      amount = PeriodBillingService.amount_in_cents_wo_vat(2, @periods)
+      amount = Billing::PeriodBilling.amount_in_cents_wo_vat(2, @periods)
 
       expect(amount).to eq 2200
     end
 
     it 'with order 3 returns 1500 + 500 + 0' do
-      amount = PeriodBillingService.amount_in_cents_wo_vat(3, @periods)
+      amount = Billing::PeriodBilling.amount_in_cents_wo_vat(3, @periods)
 
       expect(amount).to eq 2000
     end
@@ -962,57 +962,57 @@ describe PeriodBillingService do
 
   describe '.quarter_order_of' do
     it 'returns 1' do
-      result = PeriodBillingService.quarter_order_of(1)
+      result = Billing::PeriodBilling.quarter_order_of(1)
       expect(result).to eq(1)
 
-      result = PeriodBillingService.quarter_order_of(4)
+      result = Billing::PeriodBilling.quarter_order_of(4)
       expect(result).to eq(1)
 
-      result = PeriodBillingService.quarter_order_of(7)
+      result = Billing::PeriodBilling.quarter_order_of(7)
       expect(result).to eq(1)
 
-      result = PeriodBillingService.quarter_order_of(10)
+      result = Billing::PeriodBilling.quarter_order_of(10)
       expect(result).to eq(1)
     end
 
     it 'returns 2' do
-      result = PeriodBillingService.quarter_order_of(2)
+      result = Billing::PeriodBilling.quarter_order_of(2)
       expect(result).to eq(2)
 
-      result = PeriodBillingService.quarter_order_of(5)
+      result = Billing::PeriodBilling.quarter_order_of(5)
       expect(result).to eq(2)
 
-      result = PeriodBillingService.quarter_order_of(8)
+      result = Billing::PeriodBilling.quarter_order_of(8)
       expect(result).to eq(2)
 
-      result = PeriodBillingService.quarter_order_of(11)
+      result = Billing::PeriodBilling.quarter_order_of(11)
       expect(result).to eq(2)
     end
 
     it 'returns 3' do
-      result = PeriodBillingService.quarter_order_of(3)
+      result = Billing::PeriodBilling.quarter_order_of(3)
       expect(result).to eq(3)
 
-      result = PeriodBillingService.quarter_order_of(6)
+      result = Billing::PeriodBilling.quarter_order_of(6)
       expect(result).to eq(3)
 
-      result = PeriodBillingService.quarter_order_of(9)
+      result = Billing::PeriodBilling.quarter_order_of(9)
       expect(result).to eq(3)
 
-      result = PeriodBillingService.quarter_order_of(12)
+      result = Billing::PeriodBilling.quarter_order_of(12)
       expect(result).to eq(3)
     end
   end
 
   describe '.vat_ratio' do
     it 'returns 1.196' do
-      result = PeriodBillingService.vat_ratio(Time.local(2013,12,31))
+      result = Billing::PeriodBilling.vat_ratio(Time.local(2013,12,31))
 
       expect(result).to eq(1.196)
     end
 
     it 'returns 1.2' do
-      result = PeriodBillingService.vat_ratio(Time.local(2014,1,1))
+      result = Billing::PeriodBilling.vat_ratio(Time.local(2014,1,1))
 
       expect(result).to eq(1.2)
     end

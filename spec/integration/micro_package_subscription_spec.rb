@@ -162,13 +162,13 @@ describe 'Micro package subscription' do
           end
 
           it 'costs 10€ with default options' do
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 1000
           end
 
           it 'costs 10€ without pre-assignment active' do
             @subscription.is_pre_assignment_active = false
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 1000
           end
         end
@@ -180,13 +180,13 @@ describe 'Micro package subscription' do
           end
 
           it 'costs 30€ with default options' do
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 3000
           end
 
           it 'costs 30€ without pre-assignment active' do
             @subscription.is_pre_assignment_active = false
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 3000
           end
         end

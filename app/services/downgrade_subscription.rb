@@ -52,7 +52,7 @@ class DowngradeSubscription
     if @update
       EvaluateSubscription.new(@subscription).execute unless @subscription.organization
 
-      UpdatePeriod.new(@subscription.current_period).execute
+      Billing::UpdatePeriod.new(@subscription.current_period).execute
     end
   end
 end

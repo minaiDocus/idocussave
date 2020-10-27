@@ -1,4 +1,4 @@
-class CreateInvoicePdf
+class Billing::CreateInvoicePdf
   attr_accessor :data
 
   class << self
@@ -26,8 +26,9 @@ class CreateInvoicePdf
     #_options : [notify: send notification to admin,
     #            auto_upload: send invoice to ACC%IDO and invoice_settings]
     def generate_invoice_of(organization, invoice_number=nil, _time=nil, _options={})
-      #options[:notify]      = (_options[:notify] === false)? false : true
-      #options[:auto_upload] = (_options[:auto_upload] === false)? false : true
+      options = {}
+      options[:notify]      = (_options[:notify] === false)? false : true
+      options[:auto_upload] = (_options[:auto_upload] === false)? false : true
 
       begin
         time = _time.to_date.beginning_of_month + 15.days
@@ -53,14 +54,14 @@ class CreateInvoicePdf
 
       # NOTE update all period before generating invoices
       customers_periods.each do |period|
-        UpdatePeriodDataService.new(period).execute
-        UpdatePeriod.new(period).execute
+        Billing::UpdatePeriodData.new(period).execute
+        Billing::UpdatePeriod.new(period).execute
         print '.'
       end
 
-      UpdateOrganizationPeriod.new(organization_period).fetch_all
+      Billing::UpdateOrganizationPeriod.new(organization_period).fetch_all
       #Update discount only for organization and when generating invoice
-      DiscountBillingService.update_period(organization_period, time)
+      Billing::DiscountBilling.update_period(organization_period, time)
 
       return false if customers_periods.empty? && organization_period.price_in_cents_wo_vat == 0
 
@@ -69,8 +70,7 @@ class CreateInvoicePdf
       invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
       invoice.save
       print "-> Invoice #{invoice.number}..."
-      CreateInvoicePdf.new(invoice, time).execute
-      print "done\n"
+      Billing::CreateInvoicePdf.new(invoice, time, options[:auto_upload]).execute
 
       #organization.admins.each do |admin|
       #  notification = Notification.new
@@ -169,7 +169,7 @@ class CreateInvoicePdf
     ordered_scanner_count   = @invoice.organization.orders.dematboxes.billed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
     ordered_paper_set_count = @invoice.organization.orders.paper_sets.billed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
 
-    @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
+    @total = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, periods)
 
     @data = [
       ["Nombre de dossiers actifs : #{periods.count}", ''],

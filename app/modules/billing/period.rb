@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodService
+class Billing::Period
   attr_accessor :period_duration, :authd_prev_period, :auth_prev_period_until_day, :auth_prev_period_until_month, :current_time
 
 

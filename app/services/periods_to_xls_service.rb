@@ -105,7 +105,7 @@ class PeriodsToXlsService
     list = []
 
     @periods.each do |period|
-      billing = PeriodBillingService.new(period)
+      billing = Billing::PeriodBilling.new(period)
       period.duration.times do |index|
         month = period.start_date.month + index
 

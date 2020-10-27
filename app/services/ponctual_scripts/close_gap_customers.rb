@@ -26,7 +26,7 @@ class PonctualScripts::CloseGapCustomers < PonctualScripts::PonctualScript
           setRemainMonthPrice(period, 4)
         end
 
-        UpdatePeriod.new(period).execute
+        Billing::UpdatePeriod.new(period).execute
 
         logger_infos("customer: #{customer.code.to_s}; subscription_id: #{customer.subscription.id.to_s}, package: #{period.current_packages.to_s}")
         sleep 2

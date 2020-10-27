@@ -23,7 +23,7 @@ class PonctualScripts::QuarterSubscriptionToMonthly < PonctualScripts::PonctualS
           period = subs.current_period
           period.send(:set_start_date_and_end_date)
 
-          UpdatePeriod.new(period).execute
+          Billing::UpdatePeriod.new(period).execute
           UpdatePeriodDataService.new(period).execute
           UpdatePeriodPriceService.new(period).execute
           counter += 1

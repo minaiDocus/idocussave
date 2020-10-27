@@ -64,7 +64,7 @@
                       #{[user.code,user.company].join(" - ")}
                     - periods.each_with_index do |period,index|
                       - if period
-                        - period_billing = PeriodBillingService.new(period)
+                        - period_billing = Billing::PeriodBilling.new(period)
                         - period.duration.times do |i|
                           - if period.duration == 1 || period_billing.amount_in_cents_wo_vat(i + 1) != 0
                             - annual_summary[period.start_date.month + i - 1][:active_user] += 1

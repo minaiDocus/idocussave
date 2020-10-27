@@ -15,7 +15,7 @@ class Account::PaymentsController < Account::AccountController
   def debit_mandate_notify
     # NOTE: slimpay notification doesn't work so we fetch the debit mandate infos after debit configuration
     render plain: 'OK'
-    # attributes = DebitMandateResponseService.new(params[:blob]).execute
+    # attributes = Billing::DebitMandateResponse.new(params[:blob]).execute
 
     # if attributes.present?
     #   debit_mandate = DebitMandate.where(clientReference: attributes['clientReference']).first

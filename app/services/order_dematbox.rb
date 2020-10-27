@@ -25,7 +25,7 @@ class OrderDematbox
         ConfirmOrder.delay_for(24.hours).execute(@order.id)
       end
 
-      UpdatePeriod.new(@period).execute
+      Billing::UpdatePeriod.new(@period).execute
 
       true
     else

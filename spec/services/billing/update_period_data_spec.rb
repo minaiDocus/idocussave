@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe UpdatePeriodDataService do
+describe Billing::UpdatePeriodData do
   it 'have default values' do
     period = Period.create(start_date: Date.today)
 
-    UpdatePeriodDataService.new(period).execute
+    Billing::UpdatePeriodData.new(period).execute
 
     expect(period.pieces).to eq 0
     expect(period.pages).to eq 0
@@ -27,8 +27,10 @@ describe UpdatePeriodDataService do
   end
 
   it 'set values' do
-    period = Period.create(start_date: Date.today)
-    document = PeriodDocument.create(name: 'TS%0001 J1 201501 all')
+    user = FactoryBot.create(:user, code: 'TS%0001')
+    organization = FactoryBot.create(:organization, code: 'TS')
+    period    = Period.create(start_date: Date.today)
+    document  = PeriodDocument.create(name: 'TS%0001 J1 201501 all', user: user)
     document.pieces = 10
     document.pages = 10
     document.scanned_pieces = 10
@@ -43,16 +45,18 @@ describe UpdatePeriodDataService do
     document.paperclips = 10
     document.oversized = 10
     period.documents << document
-    report = Pack::Report.create(name: document.name)
+    report     = Pack::Report.create(name: document.name, user: user, organization: organization)
     report.document = document
     report.save
-    preseizure = Pack::Report::Preseizure.create(piece_id: 1)
+    pack        = FactoryBot.create :pack, owner: user, organization: organization , name: (report.name + ' all')
+    piece       = FactoryBot.create :piece, pack: pack, user: user, organization: organization, name: (report.name + ' 002')
+    preseizure  = Pack::Report::Preseizure.create(piece_id: 1, user: user, organization: organization)
     report.preseizures << preseizure
-    preseizure2 = Pack::Report::Preseizure.create(piece_id: 1)
+    preseizure2 = Pack::Report::Preseizure.create(piece_id: 1, user: user, organization: organization)
     report.preseizures << preseizure2
-    expense = Pack::Report::Expense.create
+    expense     = Pack::Report::Expense.create(piece: piece, user: user, organization: organization)
     report.expenses << expense
-    document2 = PeriodDocument.create(name: 'TS%0001 J2 201501 all')
+    document2 = PeriodDocument.create(name: 'TS%0001 J2 201501 all', user: user)
     document2.pieces = 5
     document2.pages = 5
     document2.scanned_pieces = 5
@@ -68,7 +72,7 @@ describe UpdatePeriodDataService do
     document2.oversized = 5
     period.documents << document2
 
-    UpdatePeriodDataService.new(period).execute
+    Billing::UpdatePeriodData.new(period).execute
 
     expect(document.report.preseizures).to be_present
     expect(period.pieces).to eq 15
@@ -96,7 +100,7 @@ describe UpdatePeriodDataService do
         period = Period.create(duration: 1, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 201501 all')
 
-        UpdatePeriodDataService.new(period).execute
+        Billing::UpdatePeriodData.new(period).execute
 
         expect(period.documents_name_tags).to eq(['b_J1 y_2015 m_1'])
       end
@@ -107,7 +111,7 @@ describe UpdatePeriodDataService do
         period = Period.create(duration: 3, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 2015T1 all')
 
-        UpdatePeriodDataService.new(period).execute
+        Billing::UpdatePeriodData.new(period).execute
 
         expect(period.documents_name_tags).to eq(['b_J1 y_2015 t_1'])
       end
@@ -118,7 +122,7 @@ describe UpdatePeriodDataService do
         period = Period.create(duration: 12, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 2015T1 all')
 
-        UpdatePeriodDataService.new(period).execute
+        Billing::UpdatePeriodData.new(period).execute
 
         expect(period.documents_name_tags).to eq(['b_J1 y_2015'])
       end

@@ -5,7 +5,7 @@ module UpdateSubscriptionOption
 
       subscription_option.subscribers.each do |subscription|
         if subscription.owner.try(:active?)
-          UpdatePeriod.new(subscription.current_period).execute
+          Billing::UpdatePeriod.new(subscription.current_period).execute
         end
       end
 

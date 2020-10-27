@@ -288,7 +288,7 @@ describe EmailedDocument do
     context 'for yearly' do
       before(:all) do
         subscription = Subscription.create(user_id: @user.id, period_duration: 12)
-        UpdatePeriod.new(subscription.current_period).execute
+        Billing::UpdatePeriod.new(subscription.current_period).execute
       end
 
       it 'should be valid' do

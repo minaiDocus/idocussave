@@ -141,7 +141,7 @@ class CreateDematboxDocument
 
 
   def period_service
-    @period_service ||= PeriodService.new user: @user
+    @period_service ||= Billing::Period.new user: @user
   end
 
 

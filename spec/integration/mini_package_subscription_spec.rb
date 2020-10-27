@@ -162,13 +162,13 @@ describe 'Mini package subscription' do
           end
 
           it 'costs 19€ with default options' do
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 1900
           end
 
           it 'costs 10€ without pre-assignment active' do
             @subscription.update(is_pre_assignment_active: false)
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 1000
           end
         end
@@ -180,13 +180,13 @@ describe 'Mini package subscription' do
           end
 
           it 'costs 45€ with default options' do
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 4500
           end
 
           it 'costs 30€ without pre-assignment active' do
             @subscription.update(is_pre_assignment_active: false)
-            UpdatePeriod.new(@period).execute
+            Billing::UpdatePeriod.new(@period).execute
             expect(@period.price_in_cents_wo_vat).to eq 3000
           end
         end
@@ -194,7 +194,7 @@ describe 'Mini package subscription' do
         context 'discount price', :discount_price do
           before(:each) do
             Subscription.destroy_all
-            @discount = DiscountBillingService.new(@organization)
+            @discount = Billing::DiscountBilling.new(@organization)
           end
 
           it 'has iDoMini discount with iDoMini subscriptions > 75' do

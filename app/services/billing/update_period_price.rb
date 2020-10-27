@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 # All prices are in cents and without VAT
 # Recalculate pricing for called period
-class UpdatePeriodPriceService
+class Billing::UpdatePeriodPrice
   def initialize(period)
     @period = period
   end

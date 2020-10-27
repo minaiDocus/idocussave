@@ -19,7 +19,7 @@ class ReopenSubscription
 
     EvaluateSubscription.new(@subscription, @requester, @request).execute
 
-    UpdatePeriod.new(@subscription.current_period).execute
+    Billing::UpdatePeriod.new(@subscription.current_period).execute
 
     @user.find_or_create_external_file_storage
 

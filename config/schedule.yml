@@ -3,7 +3,7 @@
 RefreshDashboardStatisticsWorker:
   queue: default
   cron: '*/5 * * * *'
-CreateInvoicePdfWorker:
+Billing::CreateInvoicePdfWorker:
   queue: high
   cron: '0 3 1 * *'
 InitializePeriodsWorker:

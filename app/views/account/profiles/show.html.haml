@@ -88,7 +88,7 @@
                                       %button.close{type: 'button', data: {dismiss:'modal'}, aria: {label: 'Close'}} &times;
                                   .modal-body
                                     .row
-                                      - period_service = PeriodService.new user: account_sharing.account, current_time: Time.now.beginning_of_month
+                                      - period_service = Billing::Period.new user: account_sharing.account, current_time: Time.now.beginning_of_month
                                       .col-md-12
                                         .row
                                           .col-md-6
@@ -403,7 +403,7 @@
                         = f.submit 'Valider', class: 'btn btn-primary'
 
             - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
-              - period_service = PeriodService.new user: @user, current_time: Time.now.beginning_of_month
+              - period_service = Billing::Period.new user: @user, current_time: Time.now.beginning_of_month
               #emailed_documents.row.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
                 .col-md-12
                   .card

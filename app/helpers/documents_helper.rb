@@ -235,7 +235,7 @@ module DocumentsHelper
       result = {}
 
       file_upload_users_list.each do |user|
-        period_service = PeriodService.new user: user
+        period_service = Billing::Period.new user: user
 
         hsh = {
           journals: user.account_book_types.order(name: :asc).map do |j|

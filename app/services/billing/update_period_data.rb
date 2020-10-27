@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Update metrics for called period
-class UpdatePeriodDataService
+class Billing::UpdatePeriodData
   def initialize(period)
     @period = period
   end

@@ -7,7 +7,7 @@
           = link_to @customer, account_organization_customer_path(@organization, @customer), class: 'fs-origin'
 
   .row.derivationLeft
-    - period_service = PeriodService.new user: @customer, current_time: Time.now.beginning_of_month
+    - period_service = Billing::Period.new user: @customer, current_time: Time.now.beginning_of_month
     .col-md-12
       .box
         .row
