@@ -108,7 +108,7 @@ module IbizaLib
         analytics.with_indifferent_access
       end
 
-      def self.add_analytic_to_temp_document(analytic, temp_document)
+      def add_analytic_to_temp_document(analytic, temp_document)
         current_analytic = temp_document.analytic_reference
 
         if current_analytic
