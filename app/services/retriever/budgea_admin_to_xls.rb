@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaRetrieverAdminToXlsService
+class Retriever::BudgeaAdminToXls
   def execute(export_type='data')
     accounts              = BudgeaAccount.where.not(encrypted_access_token: nil)
     list_retriever_budgea = []

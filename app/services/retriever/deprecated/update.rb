@@ -1,4 +1,4 @@
-class UpdateRetriever
+class Retriever::Update
   def initialize(retriever, params)
     @retriever = retriever
     @retriever.check_journal = params[:check_journal] || false

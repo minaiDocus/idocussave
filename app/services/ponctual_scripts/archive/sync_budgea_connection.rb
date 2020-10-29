@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SyncBudgeaConnection
+class PonctualScripts::Archive::SyncBudgeaConnection
   class << self
     def execute(retriever)
       new(retriever).execute
@@ -14,7 +14,7 @@ class SyncBudgeaConnection
   def execute
     if @retriever.budgea_connector_id.present?
       if @retriever.destroying?
-        DestroyBudgeaConnection.execute(@retriever)
+        Retriever::DestroyBudgeaConnection.execute(@retriever)
       else
         data = if @retriever.budgea_id.nil?
           client.create_connection(connection_params)

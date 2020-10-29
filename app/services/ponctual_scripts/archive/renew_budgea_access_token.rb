@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RenewBudgeaAccessToken
+class PonctualScripts::Archive::RenewBudgeaAccessToken
   class << self
     def for_all
       puts "Total BudgeaAccount : #{BudgeaAccount.count}"

@@ -1,4 +1,4 @@
-class ExactOnlineMigrations
+class PonctualScripts::ExactOnlineMigrations
   class << self
     def execute
       new().execute

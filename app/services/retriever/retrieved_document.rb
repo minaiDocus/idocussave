@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RetrievedDocument
+class Retriever::RetrievedDocument
   attr_reader :temp_document
 
   def self.process_file(retriever_id, document, count_day=0)
@@ -21,7 +21,7 @@ class RetrievedDocument
       begin
         if client.response.status == 200
           processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
-          RetrievedDocument.new(retriever, document, processed_file.path)
+          Retriever::RetrievedDocument.new(retriever, document, processed_file.path)
 
           retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
           is_success    = true
@@ -37,7 +37,7 @@ class RetrievedDocument
       tries += 1
     end
 
-    RetrievedDocument.delay_for(24.hours).process_file(retriever.id, document, (count_day+1)) if !is_success && count_day <= 2
+    Retriever::RetrievedDocument.delay_for(24.hours).process_file(retriever.id, document, (count_day+1)) if !is_success && count_day <= 2
 
     FileUtils.remove_entry dir
 

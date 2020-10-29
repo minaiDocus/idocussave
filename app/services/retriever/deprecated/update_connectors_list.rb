@@ -1,9 +1,9 @@
-class UpdateConnectorsList
+class Retriever::UpdateConnectorsList
   def self.execute
     return false
     #Not used anymore just keep the code in case
-    BudgeaConnector.flush_all_cache
-    BudgeaConnector.all.each do |budgea_connector|
+    Retriever::BudgeaConnector.flush_all_cache
+    Retriever::BudgeaConnector.all.each do |budgea_connector|
       next if Rails.env.production? && budgea_connector['name'] == 'Connecteur de test'
 
       connector = Connector.find_or_initialize_by(budgea_id: budgea_connector['id'])

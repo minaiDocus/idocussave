@@ -1,10 +1,10 @@
-class UpdateConnectorsListWorker
+class Retriever::UpdateConnectorsListWorker
   include Sidekiq::Worker
   sidekiq_options queue: :default
 
   def perform
     UniqueJobs.for 'UpdateConnectorsList' do
-      UpdateConnectorsList.execute
+      Retriever::UpdateConnectorsList.execute
     end
   end
 end

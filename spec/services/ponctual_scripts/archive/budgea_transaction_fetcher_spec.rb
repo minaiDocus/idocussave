@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe BudgeaTransactionFetcher do
+describe PonctualScripts::Archive::BudgeaTransactionFetcher do
   def prepare_user_token
     allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('VNEr6s0xI8ZIho8/zna1uNP81yxHFccb')
   end
@@ -14,7 +14,7 @@ describe BudgeaTransactionFetcher do
   end
 
   it 'returns log client invalid if user not found' do
-    subject = BudgeaTransactionFetcher.new(nil, '1234', '2018-04-12', '2018-04-13')
+    subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(nil, '1234', '2018-04-12', '2018-04-13')
     response = subject.execute
 
     expect(response).to match /Budgea client invalid!/
@@ -23,7 +23,7 @@ describe BudgeaTransactionFetcher do
 
   it 'returns invalid parameters when some parameters is missing' do
     prepare_user_token
-    subject = BudgeaTransactionFetcher.new(@user, [], '2018-04-12', '2018-04-13')
+    subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(@user, [], '2018-04-12', '2018-04-13')
     response = subject.execute
 
     expect(response).to match /Parameters invalid!/
@@ -33,7 +33,7 @@ describe BudgeaTransactionFetcher do
   it 'returns unauthorized access when token or budgea webservice is invalid' do
     allow_any_instance_of(User).to receive_message_chain('budgea_account.access_token').and_return('FakeToken')
 
-    subject = BudgeaTransactionFetcher.new(@user, '1234', '2018-04-12', '2018-04-13')
+    subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(@user, '1234', '2018-04-12', '2018-04-13')
     response = VCR.use_cassette('budgea/unauthorize_access') do
       subject.execute
     end
@@ -53,7 +53,7 @@ describe BudgeaTransactionFetcher do
     @retriever.budgea_id = 13036
     @retriever.save
 
-    subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
+    subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
     response = VCR.use_cassette('budgea/transaction_fetcher') do
       subject.execute
     end
@@ -91,7 +91,7 @@ describe BudgeaTransactionFetcher do
       @retriever.capabilities   = 'bank'
       @retriever.save
 
-      subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
+      subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
       response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
         subject.execute
       end
@@ -117,7 +117,7 @@ describe BudgeaTransactionFetcher do
     #   @retriever.capabilities   = 'bank'
     #   @retriever.save
 
-    #   subject = BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
+    #   subject = PonctualScripts::Archive::BudgeaTransactionFetcher.new(@user, '15578', '2020-04-17', '2020-04-30')
     #   response = VCR.use_cassette('budgea/transaction_fetcher', preserve_exact_body_bytes: false) do
     #     subject.execute
     #   end

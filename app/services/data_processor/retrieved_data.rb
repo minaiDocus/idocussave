@@ -85,7 +85,7 @@ class DataProcessor::RetrievedData
                   end.sort_by do |document|
                     document['date'].present? ? Time.parse(document['date']) : Time.local(1970)
                   end.each do |document|
-                    file_state = RetrievedDocument.process_file(retriever.id, document, 0)
+                    file_state = Retriever::RetrievedDocument.process_file(retriever.id, document, 0)
 
                     if !file_state[:success]
                       if file_state[:return_object].try(:status).present?
@@ -241,7 +241,7 @@ class DataProcessor::RetrievedData
         end.sort_by do |document|
           document['date'].present? ? Time.parse(document['date']) : Time.local(1970)
         end.each do |document|
-          file_state = RetrievedDocument.process_file(retriever.id, document, 0)
+          file_state = Retriever::RetrievedDocument.process_file(retriever.id, document, 0)
 
           if !file_state[:success]
             @is_connection_ok = false

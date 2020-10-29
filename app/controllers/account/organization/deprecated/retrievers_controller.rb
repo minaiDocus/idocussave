@@ -36,7 +36,7 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   def edit; end
 
   def update
-    if UpdateRetriever.new(@retriever, retriever_params).execute
+    if Retriever::Update.new(@retriever, retriever_params).execute
       flash[:success] = if @retriever.configuring?
                           'Configuration en cours.'
                         else

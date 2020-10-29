@@ -1,4 +1,4 @@
-class CreateBudgeaConnection
+class Retriever::CreateBudgeaConnection
   def initialize(user, connection_params, budgea_response)
     @user = user
     @attributes = connection_params

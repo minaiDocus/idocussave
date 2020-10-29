@@ -855,7 +855,7 @@ describe DataProcessor::RetrievedData do
       TempDocument.destroy_all
 
       allow_any_instance_of(Budgea::Client).to receive(:get_file).and_return(Rails.root.join('spec', 'support', 'files', '3pages.pdf'))
-      allow_any_instance_of(RetrievedDocument).to receive(:valid?).and_return(true)
+      allow_any_instance_of(Retriever::RetrievedDocument).to receive(:valid?).and_return(true)
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
 
       json_content  = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
@@ -866,7 +866,7 @@ describe DataProcessor::RetrievedData do
     it 'makes successsed retry' do
       allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(200)
 
-      RetrievedDocument.process_file(@retriever.id, @document, @count_day)
+      Retriever::RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
       expect(TempDocument.last.user.id).to eq @retriever.user.id
       expect(TempDocument.last.api_name).to eq 'budgea'
@@ -878,7 +878,7 @@ describe DataProcessor::RetrievedData do
     it 'return true when document is already exist', :retry_already_exist do
       allow_any_instance_of(Retriever).to receive_message_chain('temp_documents.where.first').and_return(true)
 
-      result = RetrievedDocument.process_file(@retriever.id, @document, @count_day)
+      result = Retriever::RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
       expect(result[:success]).to be true
       expect(TempDocument.last.try(:user).try(:id)).to eq nil
@@ -888,7 +888,7 @@ describe DataProcessor::RetrievedData do
     it 'makes failed retry' do
       allow_any_instance_of(Budgea::Client).to receive_message_chain('response.status').and_return(401)
 
-      RetrievedDocument.process_file(@retriever.id, @document, @count_day)
+      Retriever::RetrievedDocument.process_file(@retriever.id, @document, @count_day)
 
       expect(TempDocument.last.try(:user).try(:id)).to eq nil
       expect(TempDocument.last.try(:api_id)).to_not eq @document['id'].to_s

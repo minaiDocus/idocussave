@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaConnector
+class Retriever::BudgeaConnector
   class << self
     def banks
       Rails.cache.fetch 'budgea_connector_banks', expires_in: 1.hours, compress: true do

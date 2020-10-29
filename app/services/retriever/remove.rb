@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class RemoveRetrieverService
+class Retriever::Remove
   def self.execute(user_id)
     new(user_id).execute
   end
@@ -16,7 +16,7 @@ class RemoveRetrieverService
   def execute
     @user.temp_documents.wait_selection.destroy_all
     @user.retrievers.each do |retriever|
-      DestroyBudgeaConnection.disable_accounts(retriever.id) if retriever.destroy_connection
+      Retriever::DestroyBudgeaConnection.disable_accounts(retriever.id) if retriever.destroy_connection
     end
     if @user.budgea_account.present?
       client = Budgea::Client.new(@user.budgea_account.access_token)

@@ -1,4 +1,4 @@
-class BudgeaConnectorMigration
+class PonctualScripts::Archive::BudgeaConnectorMigration
   def self.execute
     retrievers = Retriever.all
     retrievers.each do |retriever|

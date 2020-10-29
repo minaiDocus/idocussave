@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DestroyBudgeaConnection
+class Retriever::DestroyBudgeaConnection
   class << self
     def execute(retriever)
       new(retriever).destroy
@@ -22,7 +22,7 @@ class DestroyBudgeaConnection
   end
 
   def destroy
-    DestroyBudgeaConnection.delay.disable_accounts(@retriever.id)
+    Retriever::DestroyBudgeaConnection.delay.disable_accounts(@retriever.id)
     true
   end
 end

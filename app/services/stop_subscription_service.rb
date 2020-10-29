@@ -43,7 +43,7 @@ class StopSubscriptionService
     @user.account_number_rules = []
 
     # Disable external services
-    RemoveRetrieverService.delay.execute(@user.id.to_s)
+    Retriever::Remove.delay.execute(@user.id.to_s)
 
     new_provider_requests = @user.new_provider_requests.not_processed
     if new_provider_requests.any?

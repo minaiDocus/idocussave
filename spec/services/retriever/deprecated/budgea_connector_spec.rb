@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe BudgeaConnector do
+describe Retriever::BudgeaConnector do
   before(:all) do
     Rails.cache.delete 'budgea_connector_banks'
     Rails.cache.delete 'budgea_connector_providers'
@@ -10,7 +10,7 @@ describe BudgeaConnector do
   describe '.banks' do
     before(:all) do
       VCR.use_cassette('budgea/get_banks') do
-        @banks = BudgeaConnector.banks
+        @banks = Retriever::BudgeaConnector.banks
       end
     end
 
@@ -35,7 +35,7 @@ describe BudgeaConnector do
   describe '.providers' do
     before(:all) do
       VCR.use_cassette('budgea/get_providers') do
-        @providers = BudgeaConnector.providers
+        @providers = Retriever::BudgeaConnector.providers
       end
     end
 
@@ -59,15 +59,15 @@ describe BudgeaConnector do
 
   describe '.all' do
     before(:all) do
-      VCR.use_cassette('budgea/get_banks') do
-        @banks = BudgeaConnector.banks
-      end
+      # VCR.use_cassette('budgea/get_banks') do
+      #   @banks = Retriever::BudgeaConnector.banks
+      # end
 
       VCR.use_cassette('budgea/get_providers') do
-        @providers = BudgeaConnector.providers
+        @providers = Retriever::BudgeaConnector.providers
       end
 
-      @connectors = BudgeaConnector.all
+      @connectors = Retriever::BudgeaConnector.all
     end
 
     after(:all) do
@@ -82,12 +82,12 @@ describe BudgeaConnector do
 
   describe '.find' do
     before(:all) do
-      VCR.use_cassette('budgea/get_banks') do
-        BudgeaConnector.banks
-      end
+      # VCR.use_cassette('budgea/get_banks') do
+      #   Retriever::BudgeaConnector.banks
+      # end
 
       VCR.use_cassette('budgea/get_providers') do
-        BudgeaConnector.providers
+        Retriever::BudgeaConnector.providers
       end
     end
 
@@ -97,7 +97,7 @@ describe BudgeaConnector do
     end
 
     it 'returns a connector' do
-      connector = BudgeaConnector.find(40)
+      connector = Retriever::BudgeaConnector.find(40)
 
       expect(connector[:id]).to eq 40
       expect(connector[:name]).to eq 'Connecteur de test'

@@ -36,7 +36,7 @@ class RetrieversController < ApiController
 
         user = User.find local_params[:user_id]
         if user
-          CreateBudgeaConnection.new(user, local_params, remote_params).execute
+          Retriever::CreateBudgeaConnection.new(user, local_params, remote_params).execute
           flash[:success] = 'Paramétrage effectué'
         else
           flash[:error] = 'Modification non autorisée'
@@ -80,7 +80,7 @@ class RetrieversController < ApiController
     if params[:remote_method] == 'DELETE' && !@retriever.budgea_id.present?
       success = false
       if @retriever.destroy_connection
-        success = DestroyBudgeaConnection.execute(@retriever)
+        success = Retriever::DestroyBudgeaConnection.execute(@retriever)
       end
       render json: { success: success, deleted: success, bi_token: bi_token, budgea_id: nil }, status: 200
     else
@@ -105,12 +105,12 @@ class RetrieversController < ApiController
   end
 
   def create
-    CreateBudgeaConnection.new(@current_user, params[:data_local], params[:data_remote]).execute
+    Retriever::CreateBudgeaConnection.new(@current_user, params[:data_local], params[:data_remote]).execute
     render json: { success: true }, status: 200
   end
 
   def destroy
-    DestroyBudgeaConnection.execute(@retriever) if params[:success] == 'true' && @retriever.destroy_connection
+    Retriever::DestroyBudgeaConnection.execute(@retriever) if params[:success] == 'true' && @retriever.destroy_connection
 
     render json: { success: true }, status: 200
   end

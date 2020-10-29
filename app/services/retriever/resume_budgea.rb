@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ResumeBudgeaRetriever
+class Retriever::ResumeBudgea
   def execute
     retrievers = Retriever.where("updated_at < ?", 30.minutes.ago)
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe UpdateRetriever do
+describe Retriever::Update do
   before(:all) do
     @user = FactoryBot.create :user, code: 'IDO%0001'
     @user.options = UserOptions.create(user_id: @user.id)
@@ -44,21 +44,21 @@ describe UpdateRetriever do
 
     describe 'no changes' do
       it 'should not trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Connecteur de test').execute
+        result = Retriever::Update.new(@retriever, name: 'Connecteur de test').execute
 
         expect(result).to eq true
         expect(@retriever).to be_ready
       end
 
       it 'should not trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
+        result = Retriever::Update.new(@retriever, 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_ready
       end
 
       it 'should not trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Connecteur de test', 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
+        result = Retriever::Update.new(@retriever, name: 'Connecteur de test', 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_ready
@@ -67,14 +67,14 @@ describe UpdateRetriever do
 
     describe 'changes name' do
       it 'should not trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Test').execute
+        result = Retriever::Update.new(@retriever, name: 'Test').execute
 
         expect(result).to eq true
         expect(@retriever).to be_ready
       end
 
       it 'should not trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Test', 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
+        result = Retriever::Update.new(@retriever, name: 'Test', 'param1' => { 'name' => 'website', 'value' => 'par' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_ready
@@ -83,14 +83,14 @@ describe UpdateRetriever do
 
     describe 'changes params' do
       it 'should trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
+        result = Retriever::Update.new(@retriever, 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_configuring
       end
 
       it 'should trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Connecteur de test', 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
+        result = Retriever::Update.new(@retriever, name: 'Connecteur de test', 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_configuring
@@ -99,7 +99,7 @@ describe UpdateRetriever do
 
     describe 'changes both name and params' do
       it 'should trigger synchronization' do
-        result = UpdateRetriever.new(@retriever, name: 'Test', 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
+        result = Retriever::Update.new(@retriever, name: 'Test', 'param1' => { 'name' => 'website', 'value' => 'pro' }).execute
 
         expect(result).to eq true
         expect(@retriever).to be_configuring

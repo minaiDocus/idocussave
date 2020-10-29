@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaTransactionFetcher
+class PonctualScripts::Archive::BudgeaTransactionFetcher
     def initialize(user, account_ids = [], min_date=nil, max_date=nil)
       @user = user
       @account_ids = Array(account_ids)

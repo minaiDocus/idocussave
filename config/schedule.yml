@@ -55,12 +55,6 @@ AccountingPlan::ExactOnlineUpdateWorker:
   cron: '0 4 * * *'
 
 
-
-#TO DO : Remove
-# ClearCurrencyRateWorker:
-#   queue: default
-#   cron: '0 1 1 */6 *'
-
 ## Budgea retrievers workers
 
 DataProcessor::OperationsWorker:
@@ -76,18 +70,9 @@ DataProcessor::McfWorker:
   cron: '0 */5 * * * *'
 
 ## resume budgea retriever connector state
-ResumeBudgeaRetrieverWorker:
+Retriever::ResumeBudgeaWorker:
   queue: default
   cron: '0 */15 * * * *'
-
-# TO DO : Remove
-# RemoveOldestRetrievedDataWorker:
-#   queue: default
-#   cron: '0 0 * * *'
-
-# UpdateConnectorsListWorker:
-#   queue: default
-#   cron: '45 3 * * *'
 
 ## Accounting flow workers
 

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SoftwareMigration
+class PonctualScripts::SoftwareMigration
   class << self
     # migrate user_options to softwares_settings
     def migrate_options

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaArchiveFetcher
+class PonctualScripts::Archive::BudgeaArchiveFetcher
   class <<  self
     def execute
       new.execute
