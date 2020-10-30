@@ -47,7 +47,7 @@ class Admin::InvoicesController < Admin::AdminController
                      Time.now
                   end
 
-    csv = SepaDirectDebitGenerator.execute(invoice_time, debit_date)
+    csv = Billing::SepaDirectDebitGenerator.execute(invoice_time, debit_date)
 
     filename = "order_#{invoice_time.strftime('%Y%m')}.csv"
 

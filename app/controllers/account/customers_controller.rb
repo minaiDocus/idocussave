@@ -76,7 +76,7 @@ class Account::CustomersController < Account::OrganizationController
       if @organization.specific_mission
         redirect_to account_organization_customer_path(@organization, @customer)
       else
-        SubscriptionForm.new(@customer.subscription, @user, request).submit(params[:subscription])
+        Subscription::Form.new(@customer.subscription, @user, request).submit(params[:subscription])
 
         redirect_to new_customer_step_two_account_organization_customer_path(@organization, @customer)
       end
@@ -302,7 +302,7 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id/close_account
   def close_account
-    if StopSubscriptionService.new(@customer, params[:close_now]).execute
+    if Subscription::Stop.new(@customer, params[:close_now]).execute
       flash[:success] = 'Dossier clôturé avec succès.'
     else
       flash[:error] = 'Impossible de clôturer immédiatement le dossier, la période a été en partie facturé.'
@@ -315,7 +315,7 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id/reopen_account(.:format)
   def reopen_account
-    ReopenSubscription.new(@customer, @user, request).execute
+    Subscription::Reopen.new(@customer, @user, request).execute
     flash[:success] = 'Dossier réouvert avec succès.'
     redirect_to account_organization_customer_path(@organization, @customer)
   end

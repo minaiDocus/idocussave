@@ -14,7 +14,7 @@ class PonctualScripts::CloseGapCustomers < PonctualScripts::PonctualScript
 
     customers.each do |customer|
       if customer.active?
-        StopSubscriptionService.new(customer, false).execute
+        Subscription::Stop.new(customer, false).execute
 
         period = customer.subscription.current_period
 

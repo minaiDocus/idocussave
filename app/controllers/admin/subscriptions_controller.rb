@@ -23,7 +23,7 @@ class Admin::SubscriptionsController < Admin::AdminController
       format.html
       format.xls do
         filename = "Reporting_forfaits_iDocus_#{I18n.l(statistic_params[:first_period], format: '%b%y').titleize}_#{I18n.l(statistic_params[:second_period], format: '%b%y').titleize}.xls"
-        send_data SubscriptionStatisticsToXls.new(statistics).execute, type: 'application/vnd.ms-excel', filename: filename
+        send_data Subscription::StatisticsToXls.new(statistics).execute, type: 'application/vnd.ms-excel', filename: filename
       end
     end
   end

@@ -10,7 +10,7 @@ class DeactivateOrganization
 
     @organization.customers.each do |customer|
       next unless customer.active?
-      StopSubscriptionService.new(customer, false).execute
+      Subscription::Stop.new(customer, false).execute
     end
 
     @organization.reminder_emails.destroy_all

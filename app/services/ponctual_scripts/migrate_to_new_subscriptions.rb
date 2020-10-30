@@ -158,7 +158,7 @@ class PonctualScripts::MigrateToNewSubscriptions < PonctualScripts::PonctualScri
   def migrate_subscription
     params = ActionController::Parameters.new(@params_update)
 
-    SubscriptionForm.new(@subscription, requester).submit(params)
+    Subscription::Form.new(@subscription, requester).submit(params)
   end
 
   def ponctual_dir

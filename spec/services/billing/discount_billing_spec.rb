@@ -17,7 +17,7 @@ describe Billing::DiscountBilling do
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_basic_package_active: true, is_retriever_package_active: true)
           @organization.customers << user
-          EvaluateSubscription.new(subscription).execute
+          Subscription::Evaluate.new(subscription).execute
         }
         #ido_x : 5
         1.upto(5).each {
@@ -25,14 +25,14 @@ describe Billing::DiscountBilling do
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_idox_package_active: true)
           @organization.customers << user
-          EvaluateSubscription.new(subscription).execute
+          Subscription::Evaluate.new(subscription).execute
         }
         1.upto(3).each {
           user = FactoryBot.create(:user)
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_retriever_package_active: true)
           @organization.customers << user
-          EvaluateSubscription.new(subscription).execute
+          Subscription::Evaluate.new(subscription).execute
         }
         #micro_package : 5
         1.upto(5).each {
@@ -40,7 +40,7 @@ describe Billing::DiscountBilling do
           user.options = UserOptions.create(user_id: user.id)
           subscription = Subscription.create(period_duration: 1, user_id: user.id, is_micro_package_active: true, is_retriever_package_active: true)
           @organization.customers << user
-          EvaluateSubscription.new(subscription).execute
+          Subscription::Evaluate.new(subscription).execute
         }
 
         @discount = Billing::DiscountBilling.new(@organization)

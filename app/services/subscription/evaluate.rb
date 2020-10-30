@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class EvaluateSubscription
+class Subscription::Evaluate
   def initialize(subscription, requester = nil, request = nil)
     @subscription = subscription
     @customer     = subscription.user

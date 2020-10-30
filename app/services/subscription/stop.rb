@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Disable user services when a subscription is stoped
-class StopSubscriptionService
+class Subscription::Stop
   def initialize(user, close_now = false)
     @user = user
     @close_now = close_now == '1' ? true : false

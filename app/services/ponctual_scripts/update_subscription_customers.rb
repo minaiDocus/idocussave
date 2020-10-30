@@ -131,7 +131,7 @@ class PonctualScripts::UpdateSubscricptionCustomers < PonctualScripts::PonctualS
   def update_subscription_customers    
     params = ActionController::Parameters.new(@params_update)
 
-    SubscriptionForm.new(@subscription, requester).submit(params)
+    Subscription::Form.new(@subscription, requester).submit(params)
   end
 
   def ponctual_dir

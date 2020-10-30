@@ -6,8 +6,8 @@ describe 'Micro package subscription' do
     after(:each)  { DatabaseCleaner.clean }
 
     before(:each) do
-      @organization = FactoryBot.create(:organization)
-      @user = FactoryBot.create(:user)
+      @organization = FactoryBot.create(:organization, code: 'IDO')
+      @user = FactoryBot.create(:user, code: 'IDO%001')
       @user.options = UserOptions.create(user_id: @user.id)
       @organization.customers << @user
     end
@@ -16,7 +16,7 @@ describe 'Micro package subscription' do
       it 'has pre-assignment' do
         subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true)
         subscription.set_start_date_and_end_date
-        evaluator = EvaluateSubscription.new(subscription)
+        evaluator = Subscription::Evaluate.new(subscription)
         expect(evaluator).to receive(:authorize_pre_assignment)
         evaluator.execute
       end
@@ -32,7 +32,7 @@ describe 'Micro package subscription' do
 
       it 'should be called through EvaluateSubscription' do
         subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true)
-        EvaluateSubscription.new(subscription).execute
+        Subscription::Evaluate.new(subscription).execute
 
         expect(subscription.start_date).to be_present
         expect(subscription.end_date).to be_present
@@ -172,24 +172,6 @@ describe 'Micro package subscription' do
             expect(@period.price_in_cents_wo_vat).to eq 1000
           end
         end
-
-        context 'for quarterly' do
-          before(:each) do
-            @subscription.update_attribute(:period_duration, 3)
-            @period = @subscription.current_period
-          end
-
-          it 'costs 30€ with default options' do
-            Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 3000
-          end
-
-          it 'costs 30€ without pre-assignment active' do
-            @subscription.is_pre_assignment_active = false
-            Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 3000
-          end
-        end
       end
     end
   end
@@ -264,7 +246,7 @@ describe 'Micro package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 0 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.first).size).to eq(0)
           end
           it '#current_period should have start_date at 2016-01-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-01-01')
@@ -298,7 +280,7 @@ describe 'Micro package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 1 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(1)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.second).size).to eq(1)
           end
           it '#current_period should have start_date at 2016-02-01 ' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-02-01')
@@ -331,7 +313,7 @@ describe 'Micro package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 2 periods' do
-            expect(@subscription.current_preceeding_periods.size).to eq(2)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.third).size).to eq(2)
           end
           it '#current_period should have start_date at 2016-03-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-03-01')
@@ -415,7 +397,7 @@ describe 'Micro package subscription' do
       end
 
       it 'Subscription#current_preceeding_periods should be empty' do
-        expect(@subscription.current_preceeding_periods).to be_empty
+        expect(@subscription.current_preceeding_periods(@subscription.periods[4])).to be_empty
       end
 
       describe 'current_period Time.local(2017,1)' do
@@ -425,7 +407,7 @@ describe 'Micro package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 0 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods[3]).size).to eq(0)
           end
           it '#current_period should have start_date at 2017-01-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2017-01-01')
@@ -452,7 +434,7 @@ describe 'Micro package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 0 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.last).size).to eq(0)
           end
           it '#current_period should have start_date at 2016-03-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-03-01')

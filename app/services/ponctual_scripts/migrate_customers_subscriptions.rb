@@ -53,7 +53,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
 
       params = ActionController::Parameters.new(params_update)
 
-      SubscriptionForm.new(subscription, requester).submit(params)
+      Subscription::Form.new(subscription, requester).submit(params)
     end
 
     if not_updated_lists.present?
@@ -88,7 +88,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
       subscription.assign_attributes(params)
 
       if subscription.save
-        EvaluateSubscription.new(subscription, requester).execute
+        Subscription::Evaluate.new(subscription, requester).execute
 
         Billing::UpdatePeriod.new(subscription.current_period).execute
       else

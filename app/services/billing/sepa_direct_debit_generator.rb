@@ -1,5 +1,5 @@
 # Generate a SepaDirectDebit CSV format to import in Slimpay
-class SepaDirectDebitGenerator
+class Billing::SepaDirectDebitGenerator
   def self.execute(invoice_time, debit_date)
     data = DebitMandate.configured.map do |debit_mandate|
       invoice = debit_mandate.organization.invoices.where(

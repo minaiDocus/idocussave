@@ -31,7 +31,7 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
 
   # PUT /admin/subscription_options/:id
   def update
-    if UpdateSubscriptionOption.execute(@subscription_option, subscription_option_params)
+    if Subscription::UpdateOption.execute(@subscription_option, subscription_option_params)
 
       flash[:notice] = 'Modifié avec succès.'
 

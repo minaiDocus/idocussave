@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Update a subscription with parameters
-class UpdateSubscription
+class Subscription::Update
   def self.execute(subscription_id, params, requester_id, request = nil)
     requester     = User.find(requester_id)
     subscription  = Subscription.find(subscription_id)
@@ -20,7 +20,7 @@ class UpdateSubscription
   def execute
     if @subscription.update(@params)
       Billing::UpdatePeriod.new(@subscription.current_period).execute # Update current period with new subscription informations
-      EvaluateSubscription.new(@subscription, @requester, @request).execute # Assign proper rights to requester
+      Subscription::Evaluate.new(@subscription, @requester, @request).execute # Assign proper rights to requester
 
       true
     else

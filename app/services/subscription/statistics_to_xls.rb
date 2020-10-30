@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class SubscriptionStatisticsToXls
+class Subscription::StatisticsToXls
   def initialize(statistics)
     @statistics = statistics 
   end

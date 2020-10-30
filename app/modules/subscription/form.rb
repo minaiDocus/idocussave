@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SubscriptionForm
+class Subscription::Form
   def initialize(subscription, requester = nil, request = nil)
     @subscription = subscription
     @requester    = requester
@@ -43,7 +43,7 @@ class SubscriptionForm
       @subscription.set_start_date_and_end_date
 
       Billing::UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
-      EvaluateSubscription.new(@subscription, @requester, @request).execute
+      Subscription::Evaluate.new(@subscription, @requester, @request).execute
       Billing::PeriodBilling.new(@subscription.current_period).fill_past_with_0 if is_new
 
       set_prices_and_limits

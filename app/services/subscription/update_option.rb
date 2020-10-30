@@ -1,4 +1,4 @@
-module UpdateSubscriptionOption
+module Subscription::UpdateOption
   # Updates a subscription-option then updates customer's current period
   def self.execute(subscription_option, parameters)
     if subscription_option.update(parameters)

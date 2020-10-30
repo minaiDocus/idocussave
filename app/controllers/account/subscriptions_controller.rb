@@ -17,7 +17,7 @@ class Account::SubscriptionsController < Account::OrganizationController
     modif_params = params[:subscription][:subscription_option]
     params[:subscription][modif_params] = true
 
-    if SubscriptionForm.new(@subscription, @user, request).submit(params[:subscription])
+    if Subscription::Form.new(@subscription, @user, request).submit(params[:subscription])
       @customer.update(current_configuration_step: nil) unless @customer.configured?
 
       if params.try(:[], :user).try(:[], :jefacture_account_id).present?

@@ -132,7 +132,7 @@ class OrderPaperSet
   def auto_ajust_number_of_journals_authorized
     if @order.paper_set_folder_count != @user.subscription.number_of_journals && @order.paper_set_folder_count >= @user.account_book_types.count
       @user.subscription.number_of_journals = @order.paper_set_folder_count
-      EvaluateSubscription.new(@user.subscription).execute if @user.subscription.save
+      Subscription::Evaluate.new(@user.subscription).execute if @user.subscription.save
     end
   end
 end

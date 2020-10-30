@@ -6,8 +6,8 @@ describe 'Mini package subscription' do
     after(:each)  { DatabaseCleaner.clean }
 
     before(:each) do
-      @organization = FactoryBot.create(:organization)
-      @user = FactoryBot.create(:user)
+      @organization = FactoryBot.create(:organization, code: 'IDO')
+      @user = FactoryBot.create(:user, code: 'IDO%001')
       @user.options = UserOptions.create(user_id: @user.id)
       @organization.customers << @user
     end
@@ -16,7 +16,7 @@ describe 'Mini package subscription' do
       it 'has pre-assignment' do
         subscription = Subscription.create(user_id: @user.id, is_mini_package_active: true)
         # subscription.set_start_date_and_end_date
-        evaluator = EvaluateSubscription.new(subscription)
+        evaluator = Subscription::Evaluate.new(subscription)
         expect(evaluator).to receive(:authorize_pre_assignment)
         evaluator.execute
       end
@@ -32,7 +32,7 @@ describe 'Mini package subscription' do
 
       it 'should be called through EvaluateSubscription' do
         subscription = Subscription.create(user_id: @user.id, is_mini_package_active: true)
-        EvaluateSubscription.new(subscription).execute
+        Subscription::Evaluate.new(subscription).execute
 
         expect(subscription.start_date).to be_present
         expect(subscription.end_date).to be_present
@@ -163,31 +163,13 @@ describe 'Mini package subscription' do
 
           it 'costs 19€ with default options' do
             Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 1900
+            expect(@period.price_in_cents_wo_vat).to eq 2000
           end
 
           it 'costs 10€ without pre-assignment active' do
             @subscription.update(is_pre_assignment_active: false)
             Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 1000
-          end
-        end
-
-        context 'for quarterly' do
-          before(:each) do
-            @subscription.update_attribute(:period_duration, 3)
-            @period = @subscription.current_period
-          end
-
-          it 'costs 45€ with default options' do
-            Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 4500
-          end
-
-          it 'costs 30€ without pre-assignment active' do
-            @subscription.update(is_pre_assignment_active: false)
-            Billing::UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat).to eq 3000
+            expect(@period.price_in_cents_wo_vat).to eq 1100
           end
         end
 
@@ -210,7 +192,7 @@ describe 'Mini package subscription' do
             3.times { |s| Subscription.create(user_id: @user.id, is_basic_package_active: true, is_retriever_package_active: true, period_duration: 1, organization_id: @organization.id) }
             4.times { |s| Subscription.create(user_id: @user.id, is_mini_package_active: true, is_retriever_package_active: true, period_duration: 1, organization_id: @organization.id) }
 
-            expect(@discount.title).to eq 'Remise sur CA (-50 dossiers)'
+            expect(@discount.title).to eq 'Remise sur CA (- 75 dossiers)'
             expect(@discount.send(:quantity_of, :subscription)).to eq 3
             expect(@discount.send(:quantity_of, :iDoMini)).to eq 4
             expect(@discount.send(:quantity_of, :retriever)).to eq 7
@@ -222,9 +204,9 @@ describe 'Mini package subscription' do
             3.times { |s| Subscription.create(user_id: @user.id, is_mini_package_active: true, is_retriever_package_active: true, period_duration: 1, organization_id: @organization.id) }
             200.times { |s| Subscription.create(user_id: @user.id, is_basic_package_active: true, is_retriever_package_active: true, period_duration: 1, organization_id: @organization.id) }
 
-            expect(@discount.title).to eq 'Remise sur CA (Abo. mensuels : -1.5 € x 200, iDofacb. : -1 € x 203)'
+            expect(@discount.title).to eq 'Remise sur CA (Abo. mensuels : -1.5 € x 200, iDofacb. : -0.5 € x 203)'
             expect(@discount.send(:quantity_of, :iDoMini)).to eq 3
-            expect(@discount.total_amount_in_cents).to eq -50300.0
+            expect(@discount.total_amount_in_cents).to eq -40150.0
           end
         end
       end
@@ -301,7 +283,7 @@ describe 'Mini package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 0 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.first).size).to eq(0)
           end
           it '#current_period should have start_date at 2016-01-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-01-01')
@@ -309,6 +291,10 @@ describe 'Mini package subscription' do
         end
 
         describe 'excess' do
+          before(:each) do
+            allow_any_instance_of(Period).to receive(:excess_duration).and_return(1)
+          end
+
           subject { @subscription.current_period }
           it { expect(subject.excess_sheets).to eq(1) }
           it { expect(subject.excess_uploaded_pages).to eq(5) }
@@ -335,7 +321,7 @@ describe 'Mini package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 1 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods.second).size).to eq(1)
           end
           it '#current_period should have start_date at 2016-02-01 ' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-02-01')
@@ -343,6 +329,10 @@ describe 'Mini package subscription' do
         end
 
         describe 'excess' do
+          before(:each) do
+            allow_any_instance_of(Period).to receive(:excess_duration).and_return(1)
+          end
+
           subject { @subscription.current_period }
           it { expect(subject.excess_sheets).to eq(1) }
           it { expect(subject.excess_uploaded_pages).to eq(5) }
@@ -367,8 +357,8 @@ describe 'Mini package subscription' do
         end
 
         describe 'Subscription' do
-          it '#current_preceeding_periods should return 1 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+          it '#current_preceeding_periods should return 2 period' do
+            expect(@subscription.current_preceeding_periods(@subscription.periods.third).size).to eq(2)
           end
           it '#current_period should have start_date at 2016-03-01 ' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2016-03-01')
@@ -394,7 +384,7 @@ describe 'Mini package subscription' do
       end
 
       it 'Subscription#current_preceeding_periods should be empty' do
-        expect(@subscription.current_preceeding_periods).to be_empty
+        expect(@subscription.current_preceeding_periods(@subscription.periods[3])).to be_empty
       end
 
       describe 'current_period Time.local(2017,1)' do
@@ -404,7 +394,7 @@ describe 'Mini package subscription' do
 
         describe 'Subscription' do
           it '#current_preceeding_periods should return 0 period' do
-            expect(@subscription.current_preceeding_periods.size).to eq(0)
+            expect(@subscription.current_preceeding_periods(@subscription.periods[4]).size).to eq(0)
           end
           it '#current_period should have start_date at 2017-01-01' do
             expect(@subscription.current_period.start_date).to eq Date.parse('2017-01-01')
@@ -412,6 +402,10 @@ describe 'Mini package subscription' do
         end
 
         describe 'excess' do
+          before(:each) do
+            allow_any_instance_of(Period).to receive(:excess_duration).and_return(1)
+          end
+
           subject { @subscription.current_period }
           it { expect(subject.excess_sheets).to eq(0) }
           it { expect(subject.excess_uploaded_pages).to eq(0) }
