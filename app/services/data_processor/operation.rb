@@ -16,7 +16,7 @@ class DataProcessor::Operation
           pack_report = initialize_pack_report(user, pack || bank_account)
           counter = pack_report.preseizures.count
           to_deliver_preseizures = []
-          account_number_finder = AccountNumberFinderService.new(user, bank_account.try(:temporary_account).presence)
+          account_number_finder = Transaction::AccountNumberFinder.new(user, bank_account.try(:temporary_account).presence)
 
           operations.each do |operation|
             counter += 1

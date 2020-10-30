@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountNumberRulesToXlsService
+class Transaction::AccountNumberRulesToXls
   def initialize(rules)
     @rules = rules
   end

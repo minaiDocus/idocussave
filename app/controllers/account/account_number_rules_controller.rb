@@ -82,7 +82,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     if @account_number_rules.any?
       case params[:export_or_destroy]
       when 'export'
-        data = AccountNumberRulesToXlsService.new(@account_number_rules).execute
+        data = Transaction::AccountNumberRulesToXls.new(@account_number_rules).execute
 
         send_data data, type: 'application/vnd.ms-excel', filename: 'Affectation.xls'
       when 'destroy'

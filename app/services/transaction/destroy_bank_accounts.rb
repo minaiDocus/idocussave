@@ -1,4 +1,4 @@
-class DestroyBankAccounts
+class Transaction::DestroyBankAccounts
   def initialize(bank_accounts)
     @bank_accounts = bank_accounts
   end

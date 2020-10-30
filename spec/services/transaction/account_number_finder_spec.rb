@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe AccountNumberFinderService do
+describe Transaction::AccountNumberFinder do
   describe '#execute' do
     before(:all) do
       @organization = create(:organization)
@@ -20,9 +20,9 @@ describe AccountNumberFinderService do
 
     context 'without rules and without accounting plan' do
       it 'returns 0TEMP' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return([])
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end
@@ -30,42 +30,42 @@ describe AccountNumberFinderService do
 
     context 'with accounting plan' do
       it 'returns 0GOO' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0GOO')
       end
 
       it 'returns 0SLIM' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Slimpay Janvier 2015'
         @operation.amount = -100
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0SLIM')
       end
 
       it 'returns 0CAR based on scores' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'paiement par carte €20.00'
         @operation.amount = -20
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0CAR')
       end
 
       it 'returns 0TEMP based on scores' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Caisse-epargne Janvier 2015'
         @operation.amount = -20
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end
@@ -90,18 +90,18 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0ORA on "both" target rules' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return([])
         @operation.label = 'Prlv Orange Janvier 2015'
         @operation.amount = -200
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0ORA')
       end
 
       it 'returns 0TEMP on "debit" target rules and "credit" operation' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return([])
 
         @rule.rule_target = 'debit'
         @rule.save
@@ -110,13 +110,13 @@ describe AccountNumberFinderService do
         @operation.amount = -200
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end
 
       it 'returns 0ORA on "credit" target rules and "credit" operation' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return([])
 
         @rule.rule_target = 'credit'
         @rule.save
@@ -125,7 +125,7 @@ describe AccountNumberFinderService do
         @operation.amount = -200
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0ORA')
       end
@@ -149,18 +149,18 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0IBI on "both" target rules' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv iBiza $150.0'
         @operation.amount = -150
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0IBI')
       end
 
       it 'returns 0TEMP on "credit" target rules and "debit" operation' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
         @rule.rule_target = 'credit'
         @rule.save
@@ -169,13 +169,13 @@ describe AccountNumberFinderService do
         @operation.amount = 150
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end
 
       it 'returns 0IBI on "debit" target rules and "debit" operation' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
         @rule.rule_target = 'debit'
         @rule.save
@@ -184,7 +184,7 @@ describe AccountNumberFinderService do
         @operation.amount = 150
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0IBI')
       end
@@ -235,7 +235,7 @@ describe AccountNumberFinderService do
         @operation.amount = -10
         allow(@operation).to receive('credit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0PROV')
       end
@@ -245,7 +245,7 @@ describe AccountNumberFinderService do
         @operation.amount = 10
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0CUST')
       end
@@ -260,7 +260,7 @@ describe AccountNumberFinderService do
         options.skip_accounting_plan_finder = true
         options.save
 
-        result = AccountNumberFinderService.new(@user.reload, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user.reload, '0TEMP').execute(@operation)
 
         options.skip_accounting_plan_finder = false
         options.save
@@ -274,24 +274,24 @@ describe AccountNumberFinderService do
         @operation.amount = 10
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end
 
       it 'returns 0GOG based on rules' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
         @operation.label = 'Prlv Google $10.00'
         @operation.amount = 10
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0GOG')
       end
 
       it 'returns 0GOO based on accounting plan if rules is a "credit" and operation is a "debit"' do
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
         @rule.rule_target = 'credit'
         @rule.save
@@ -300,21 +300,23 @@ describe AccountNumberFinderService do
         @operation.amount = 10
         allow(@operation).to receive('debit?').and_return(true)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0GOO')
       end
 
-      it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users' do
+      it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users', :test_spec do
         allow_any_instance_of(User).to receive_message_chain('accounting_plan.customers.where').and_return([])
         allow_any_instance_of(User).to receive('uses_ibiza?').and_return(true)
-        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
         @operation.label = 'Prlv Google $10.00'
         @operation.amount = 10
         allow(@operation).to receive('debit?').and_return(true)
+        allow(Transaction::AccountNumberFinder).to receive(:find_with_rules).and_return(nil)
+        allow(Transaction::AccountNumberFinder).to receive(:find_with_accounting_plan).and_return(nil)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute(@operation)
+        result = Transaction::AccountNumberFinder.new(@user, '0TEMP').execute(@operation)
 
         expect(result).to eq('0TEMP')
       end

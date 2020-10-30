@@ -363,7 +363,7 @@ class DataProcessor::RetrievedData
     operation.comment     = transaction['comment']
     operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
-    operation.category    = BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
+    operation.category    = Transaction::BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
     operation.deleted_at  = Time.parse(transaction['deleted']) if transaction['deleted'].present?
 
     if operation.class == Operation && operation.processed_at.nil?

@@ -1,4 +1,4 @@
-class CreateOperation
+class Transaction::CreateOperation
   def initialize(operation)
     @operation = operation
     @bank_account = BankAccount.find(@operation.bank_account_id)

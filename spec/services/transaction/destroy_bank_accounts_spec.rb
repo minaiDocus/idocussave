@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe DestroyBankAccounts do
+describe Transaction::DestroyBankAccounts do
   before(:each) do
     DatabaseCleaner.start
-    @user         = FactoryBot.create :user, code: 'IDO%0001'
+    @organization = FactoryBot.create :organization, code: 'IDO'
+    @user         = FactoryBot.create :user, code: 'IDO%0001', organization: @organization
     @user.options = UserOptions.create(user_id: @user.id)
     @journal      = FactoryBot.create :account_book_type, user_id: @user.id
-    @connector    = FactoryBot.create :connector
   end
 
   after(:each) do
@@ -17,10 +17,10 @@ describe DestroyBankAccounts do
     before(:each) do
       @retriever = Retriever.new
       @retriever.user         = @user
-      @retriever.connector    = @connector
       @retriever.journal      = @journal
       @retriever.budgea_id    = 8
       @retriever.name         = 'Connecteur de test'
+      @retriever.service_name = 'Connecteur de test'
       @retriever.state        = 'ready'
       @retriever.budgea_state = 'successful'
       @retriever.save
@@ -45,6 +45,7 @@ describe DestroyBankAccounts do
 
       @operation = Operation.new
       @operation.user         = @user
+      @operation.organization = @organization
       @operation.bank_account = @bank_account
       @operation.api_id       = 504
       @operation.api_name     = 'budgea'
@@ -61,6 +62,7 @@ describe DestroyBankAccounts do
 
       @operation2 = Operation.new
       @operation2.user         = @user
+      @operation2.organization = @organization
       @operation2.bank_account = @bank_account
       @operation2.api_id       = 505
       @operation2.api_name     = 'budgea'
@@ -83,7 +85,7 @@ describe DestroyBankAccounts do
         @bank_account.reload
         @bank_account2.reload
 
-        DestroyBankAccounts.new([@bank_account, @bank_account2]).execute
+        Transaction::DestroyBankAccounts.new([@bank_account, @bank_account2]).execute
 
         @operation.reload
         @operation2.reload
@@ -104,7 +106,7 @@ describe DestroyBankAccounts do
         @bank_account.reload
         @bank_account2.reload
 
-        DestroyBankAccounts.new([@bank_account, @bank_account2]).execute
+        Transaction::DestroyBankAccounts.new([@bank_account, @bank_account2]).execute
 
         @operation.reload
         @operation2.reload

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class BankOperationCategory
+class Transaction::BankOperationCategory
   class << self
     def all
       Rails.cache.fetch(['bank_operation_categories', 'all'], :expires_in => 7.days, :compress => true) do

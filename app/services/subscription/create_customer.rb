@@ -1,4 +1,4 @@
-class CreateCustomerService
+class Subscription::CreateCustomer
   def initialize(organization, requester, params, current_user, request)
     @params       = params
     @request      = request

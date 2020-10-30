@@ -1,8 +1,8 @@
-class DestroyBankAccountsWorker
+class Transaction::DestroyBankAccountsWorker
   include Sidekiq::Worker
 
   def perform(bank_account_ids)
     bank_accounts = BankAccount.where(id: bank_account_ids)
-    DestroyBankAccounts.new(bank_accounts).execute
+    Transaction::DestroyBankAccounts.new(bank_accounts).execute
   end
 end

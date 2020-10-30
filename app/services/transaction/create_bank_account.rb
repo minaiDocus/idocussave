@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CreateBankAccount
+class Transaction::CreateBankAccount
   def self.execute(user, bank_list, options={})
     return false unless user.budgea_account.try(:persisted?)
 

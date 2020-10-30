@@ -65,7 +65,7 @@ class Account::CustomersController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/customers
   def create
-    @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
+    @customer = Subscription::CreateCustomer.new(@organization, @user, user_params, current_user, request).execute
 
     unless @organization.specific_mission
       modif_params = params[:subscription][:subscription_option]
@@ -110,7 +110,7 @@ class Account::CustomersController < Account::OrganizationController
     else
       @customer.is_group_required = @user.not_leader?
 
-      if UpdateCustomerService.new(@customer, user_params).execute
+      if Subscription::UpdateCustomer.new(@customer, user_params).execute
         flash[:success] = 'Modifié avec succès'
 
         redirect_to account_organization_customer_path(@organization, @customer)

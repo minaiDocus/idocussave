@@ -1,4 +1,4 @@
-class AccountNumberFinderService
+class Transaction::AccountNumberFinder
   class << self
     def get_the_highest_match(label, names)
       scores = names.map do |name|

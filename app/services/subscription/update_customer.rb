@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Service for generic customer update
-class UpdateCustomerService
+class Subscription::UpdateCustomer
   def initialize(customer, params)
     @params   = params
     @customer = customer
