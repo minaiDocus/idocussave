@@ -82,7 +82,7 @@ class CreateInvoicePdf
       #  notification.save
       #end
 
-      InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
+      #InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
     end
 
     def archive_invoice(time = Time.now)
@@ -118,7 +118,7 @@ class CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    auto_upload_last_invoice if @auto_upload && @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
+    #auto_upload_last_invoice if @auto_upload && @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
   end
 
   def initialize_data_utilities
@@ -236,8 +236,6 @@ class CreateInvoicePdf
     @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round
   end
 
-  private
-
   def auto_upload_last_invoice
     begin
       user = User.find_by_code 'ACC%IDO' # Always send invoice to ACC%IDO customer
@@ -254,6 +252,8 @@ class CreateInvoicePdf
       LogService.info('auto_upload_invoice', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Error: #{e.to_s}")
     end
   end
+
+  private
 
   def make_invoice_pdf
     @pdf.destroy if @pdf
