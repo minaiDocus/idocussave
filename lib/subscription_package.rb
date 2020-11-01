@@ -13,7 +13,7 @@ class SubscriptionPackage
         when :ido_classique
           10 + signing_piece_price
         when :ido_x
-          5
+          0
         when :ido_mini
           10 + signing_piece_price
         when :ido_micro
@@ -87,27 +87,27 @@ class SubscriptionPackage
     def excess_of(package)
       case package
         when :ido_classique
-          { 
+          {
             pieces:         { limit: 100, price: 25, per: :month },
             preassignments: { limit: 100, price: 25, per: :month }
           }
         when :ido_x
-          { 
+          {
             pieces:         { limit: 0, price: 0, per: :month },
             preassignments: { limit: 0, price: 0, per: :month }
           }
         when :ido_mini
-          { 
+          {
             pieces:         { limit: 100, price: 25, per: :quarter },
             preassignments: { limit: 100, price: 25, per: :quarter }
           }
         when :ido_micro
-          { 
+          {
             pieces:         { limit: 100, price: 25, per: :year },
             preassignments: { limit: 100, price: 25, per: :year }
           }
         else
-          { 
+          {
             pieces:         { limit: 100, price: 25, per: :month },
             preassignments: { limit: 100, price: 25, per: :month }
           }
