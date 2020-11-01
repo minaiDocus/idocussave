@@ -69,7 +69,7 @@ class CreateInvoicePdf
       invoice.vat_ratio    = organization.subject_to_vat ? 1.2 : 1
       invoice.save
       print "-> Invoice #{invoice.number}..."
-      CreateInvoicePdf.new(invoice, time, options[:auto_upload]).execute
+      CreateInvoicePdf.new(invoice, time).execute
       print "done\n"
 
       #organization.admins.each do |admin|
