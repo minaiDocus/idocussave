@@ -26,8 +26,8 @@ class CreateInvoicePdf
     #_options : [notify: send notification to admin,
     #            auto_upload: send invoice to ACC%IDO and invoice_settings]
     def generate_invoice_of(organization, invoice_number=nil, _time=nil, _options={})
-      options[:notify]      = (_options[:notify] === false)? false : true
-      options[:auto_upload] = (_options[:auto_upload] === false)? false : true
+      #options[:notify]      = (_options[:notify] === false)? false : true
+      #options[:auto_upload] = (_options[:auto_upload] === false)? false : true
 
       begin
         time = _time.to_date.beginning_of_month + 15.days
