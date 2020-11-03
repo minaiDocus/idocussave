@@ -7,14 +7,14 @@ class InitializePeriodsWorker
       Organization.all.each do |organization|
         next unless organization.is_active
 
-        DowngradeSubscription.new(organization.subscription).execute
+        Subscription::Downgrade.new(organization.subscription).execute
         organization.customers.active_at(1.month.ago).each do |customer|
           begin
             subscription = customer.subscription
 
             if customer.active?
               if subscription.period_duration == 1 || (subscription.period_duration == 3 && Time.now.month == Time.now.beginning_of_quarter.month) || (subscription.period_duration == 12 && Time.now.month == 1)
-                DowngradeSubscription.new(subscription).execute
+                Subscription::Downgrade.new(subscription).execute
               end
               subscription.current_period
             end

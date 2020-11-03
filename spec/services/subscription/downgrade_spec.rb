@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe DowngradeSubscription do
+describe Subscription::Downgrade do
   it "removes options who's period_duration are not 0" do
     subscription = Subscription.create
     option  = SubscriptionOption.create(name: 'Option 1', price_in_cents_wo_vat: 1000, position: 1, period_duration: 1)
@@ -9,7 +9,7 @@ describe DowngradeSubscription do
     subscription.options << option
     subscription.options << option2
 
-    DowngradeSubscription.new(subscription, false).execute
+    Subscription::Downgrade.new(subscription, false).execute
 
     expect(subscription.options).to eq([option2])
   end
@@ -19,10 +19,10 @@ describe DowngradeSubscription do
     subscription.is_scan_box_package_active     = true
     subscription.is_mail_package_active         = true
     subscription.is_mail_package_to_be_disabled = true
-    subscription.is_stamp_to_be_disabled        = false
+    subscription.is_pre_assignment_active        = false
     subscription.save
 
-    DowngradeSubscription.new(subscription, false).execute
+    Subscription::Downgrade.new(subscription, false).execute
 
     expect(subscription.is_scan_box_package_active).to     eq(true)
     expect(subscription.is_mail_package_active).to         eq(false)

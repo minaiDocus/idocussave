@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DowngradeSubscription
+class Subscription::Downgrade
   def initialize(subscription, update = true)
     @update = update
     @subscription = subscription
