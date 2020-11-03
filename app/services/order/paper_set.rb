@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class OrderPaperSet
+class Order::PaperSet
   def initialize(user, order, is_an_update = false)
     @user         = user
     @order        = order
@@ -19,7 +19,7 @@ class OrderPaperSet
     if @order.save
       unless @is_an_update
         @period.orders << @order
-        ConfirmOrder.delay_for(24.hours).execute(@order.id)
+        Order::Confirm.delay_for(24.hours).execute(@order.id)
       end
 
       auto_ajust_number_of_journals_authorized
@@ -101,7 +101,7 @@ class OrderPaperSet
 
 
   def price_of_periods
-    OrderPaperSet.paper_set_prices[casing_size_index][folder_count_index][periods_count - 1]
+    Order::PaperSet.paper_set_prices[casing_size_index][folder_count_index][periods_count - 1]
   end
 
 

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Create a dematbox order
-class OrderDematbox
+class Order::Dematbox
   def initialize(user, order, is_an_update = false)
     @user         = user
     @order        = order
@@ -22,7 +22,7 @@ class OrderDematbox
     if @order.save
       unless @is_an_update
         @period.orders << @order
-        ConfirmOrder.delay_for(24.hours).execute(@order.id)
+        Order::Confirm.delay_for(24.hours).execute(@order.id)
       end
 
       Billing::UpdatePeriod.new(@period).execute

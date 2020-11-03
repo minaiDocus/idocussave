@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class FileSendingKitGenerator
+class Order::FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/kit/"
 
   class << self
@@ -12,10 +12,10 @@ class FileSendingKitGenerator
         BarCode.generate_png(client.code, 20, 0)
       end
 
-      KitGenerator.folder to_folders(clients_data), file_sending_kit
-      KitGenerator.mail to_mails(clients), file_sending_kit
-      KitGenerator.customer_labels to_labels(clients_data, true)
-      KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
+      Order::KitGenerator.folder to_folders(clients_data), file_sending_kit
+      Order::KitGenerator.mail to_mails(clients), file_sending_kit
+      Order::KitGenerator.customer_labels to_labels(clients_data, true)
+      Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
     end
 
     def to_clients(clients_data)
@@ -59,7 +59,7 @@ class FileSendingKitGenerator
         else
           part_number = 4
         end
-        folder[:period] = "#{KitGenerator::TRIMESTRE[part_number]} #{period.year}"
+        folder[:period] = "#{Order::KitGenerator::TRIMESTRE[part_number]} #{period.year}"
       when 12
         folder[:period] = period.year.to_s
       end

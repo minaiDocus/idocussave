@@ -12,7 +12,7 @@ class Account::OrdersController < Account::OrganizationController
     @order = Order.new
     @order.user = @customer
     @order.period_duration = @customer.subscription.period_duration
-    @paper_set_prices = OrderPaperSet.paper_set_prices
+    @paper_set_prices = Order::PaperSet.paper_set_prices
 
     if params[:order][:type] == 'paper_set'
       @order.type = 'paper_set'
@@ -45,9 +45,9 @@ class Account::OrdersController < Account::OrganizationController
   # POST /account/organizations/:organization_id/customers/:customer_id/orders
   def create
     @order = Order.new(order_params)
-    @paper_set_prices = OrderPaperSet.paper_set_prices
+    @paper_set_prices = Order::PaperSet.paper_set_prices
 
-    if @order.dematbox? && OrderDematbox.new(@customer, @order).execute
+    if @order.dematbox? && Order::Dematbox.new(@customer, @order).execute
       copy_back_address
 
       if @customer.configured?
@@ -59,7 +59,7 @@ class Account::OrdersController < Account::OrganizationController
       else
         next_configuration_step
       end
-    elsif @order.paper_set? && OrderPaperSet.new(@customer, @order).execute
+    elsif @order.paper_set? && Order::PaperSet.new(@customer, @order).execute
       copy_back_address
 
       if @customer.configured?
@@ -80,16 +80,16 @@ class Account::OrdersController < Account::OrganizationController
 
   # GET /account/organizations/:organization_id/customers/:customer_id/orders/:id/edit
   def edit
-    @paper_set_prices = OrderPaperSet.paper_set_prices
+    @paper_set_prices = Order::PaperSet.paper_set_prices
   end
 
   # PUT /account/organizations/:organization_id/customers/:customer_id/orders/:id
   def update
     if @order.update(order_params)
       if @order.dematbox?
-        OrderDematbox.new(@customer, @order, true).execute
+        Order::Dematbox.new(@customer, @order, true).execute
       else
-        OrderPaperSet.new(@customer, @order, true).execute
+        Order::PaperSet.new(@customer, @order, true).execute
       end
 
       copy_back_address
@@ -107,7 +107,7 @@ class Account::OrdersController < Account::OrganizationController
 
   # DELETE /account/organizations/:organization_id/customers/:customer_id/orders/:id
   def destroy
-    DestroyOrder.new(@order).execute
+    Order::Destroy.new(@order).execute
 
     if @order.dematbox?
       flash[:success] = "Votre commande de #{@order.dematbox_count} scanner#{if @order.dematbox_count > 1

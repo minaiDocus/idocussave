@@ -115,12 +115,12 @@ class Subscription::Form
 
     unless @subscription.is_mail_package_active
       paper_set_orders = customer.orders.paper_sets.pending
-      paper_set_orders.each { |order| DestroyOrder.new(order).execute } if paper_set_orders.any?
+      paper_set_orders.each { |order| Order::Destroy.new(order).execute } if paper_set_orders.any?
     end
 
     unless @subscription.is_scan_box_package_active
       dematbox_orders = customer.orders.dematboxes.pending
-      dematbox_orders.each { |order| DestroyOrder.new(order).execute } if dematbox_orders.any?
+      dematbox_orders.each { |order| Order::Destroy.new(order).execute } if dematbox_orders.any?
     end
   end
 

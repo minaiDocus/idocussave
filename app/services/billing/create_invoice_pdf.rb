@@ -72,17 +72,17 @@ class Billing::CreateInvoicePdf
       print "-> Invoice #{invoice.number}..."
       Billing::CreateInvoicePdf.new(invoice, time, options[:auto_upload]).execute
 
-      #organization.admins.each do |admin|
-      #  notification = Notification.new
-      #  notification.user        = admin
-      #  notification.notice_type = 'invoice'
-      #  notification.title       = 'Nouvelle facture disponible'
-      #  notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
-      #  notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
-      #  notification.save
-      #end
+      # organization.admins.each do |admin|
+      #   Notifications::Notifier.new.create_notification({
+      #     url: Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options)),
+      #     user: admin,
+      #     notice_type: 'invoice',
+      #     title: "Nouvelle facture disponible",
+      #     message: "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+      #   }, false)
+      # end
 
-      #InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
+      # InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
     end
 
     def archive_invoice(time = Time.now)

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class ConfirmOrder
+class Order::Confirm
   def self.execute(object)
     @order = if object.is_a?(Integer)
                    Order.where(id: object).first
@@ -37,7 +37,7 @@ class ConfirmOrder
       @order.organization.admins.each do |admin|
         OrderMailer.notify_paper_set_reminder(@order, admin.email).deliver_later
       end
-      ConfirmOrder.delay_for(24.hours).execute(@order.id)
+      Order::Confirm.delay_for(24.hours).execute(@order.id)
     end
   end
 end

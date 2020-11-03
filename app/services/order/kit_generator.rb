@@ -1,12 +1,12 @@
 # -*- encoding : UTF-8 -*-
-class KitGenerator
+class Order::KitGenerator
   include POSIX::Spawn
 
   TRIMESTRE = [nil,"1er Trimestre","2e Trimestre","3e Trimestre","4e Trimestre"]
 
   class << self
     def folder(folders,file_sending_kit)
-      Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folders.pdf", page_layout: :landscape, page_size: 'A3', left_margin: 32, right_margin: 7, bottom_margin: 32, top_margin: 7 do |pdf|
+      Prawn::Document.generate "#{Order::FileSendingKitGenerator::TEMPDIR_PATH}/folders.pdf", page_layout: :landscape, page_size: 'A3', left_margin: 32, right_margin: 7, bottom_margin: 32, top_margin: 7 do |pdf|
         folders.each_with_index do |folder,index|
           folder_bloc pdf, folder, file_sending_kit
           if !folders[index+1].nil?
@@ -17,7 +17,7 @@ class KitGenerator
     end
 
     def mail(mails,file_sending_kit)
-      Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/mails.pdf", left_margin: 70, right_margin: 70 do |pdf|
+      Prawn::Document.generate "#{Order::FileSendingKitGenerator::TEMPDIR_PATH}/mails.pdf", left_margin: 70, right_margin: 70 do |pdf|
         pdf.font 'Helvetica'
 
         mails.each_with_index do |mail,index|
@@ -30,7 +30,7 @@ class KitGenerator
     end
 
     def customer_labels(labels)
-      Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/customer_labels.pdf", page_size: 'A4', margin: 0 do |pdf|
+      Prawn::Document.generate "#{Order::FileSendingKitGenerator::TEMPDIR_PATH}/customer_labels.pdf", page_size: 'A4', margin: 0 do |pdf|
         pdf.font_size 11
         pdf.move_down 32
         nb = 0
@@ -51,7 +51,7 @@ class KitGenerator
     end
 
     def labels(labels, filename = 'workshop_labels.pdf')
-      Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/#{filename}", page_size: 'A4', margin: 0 do |pdf|
+      Prawn::Document.generate "#{Order::FileSendingKitGenerator::TEMPDIR_PATH}/#{filename}", page_size: 'A4', margin: 0 do |pdf|
         pdf.font_size 9
         pdf.move_down 32
         nb = 0

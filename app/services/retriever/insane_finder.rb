@@ -1,5 +1,5 @@
 # TODO to be reworked
-class InsaneRetrieverFinder
+class Retriever::InsaneFinder
   def self.execute
     retrievers = Retriever.ready
     retrievers.each do |retriever|

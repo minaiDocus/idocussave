@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DestroyOrder
+class Order::Destroy
   def initialize(order)
     @order = order
   end
@@ -16,7 +16,7 @@ class DestroyOrder
 
     if is_cancelled
       Billing::UpdatePeriod.new(@order.period).execute
-      DestroyOrder.immediately(@order.id.to_s)
+      Order::Destroy.immediately(@order.id.to_s)
     end
   end
 
