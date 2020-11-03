@@ -4,7 +4,7 @@ class JobProcessorWorker
 
   def perform
     UniqueJobs.for 'JobProcessorWorker' do
-      JobProcessorService.execute
+      JobProcessor.execute
     end
   end
 end

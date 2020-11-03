@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe CustomFileNameService do
+describe CustomizeFileName do
   describe '#execute' do
     it 'returns TS%0001_AC_201501_001.pdf' do
       options = {
@@ -12,7 +12,7 @@ describe CustomFileNameService do
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001.pdf')
     end
@@ -28,7 +28,7 @@ describe CustomFileNameService do
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new(is_third_party_used: true)
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001_Google.pdf')
     end
@@ -44,7 +44,7 @@ describe CustomFileNameService do
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new(is_third_party_used: true)
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001_DIVERS_TEST.pdf')
     end
@@ -60,7 +60,7 @@ describe CustomFileNameService do
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new(is_third_party_used: true)
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001_A_B.pdf')
     end
@@ -79,7 +79,7 @@ describe CustomFileNameService do
         separator: '-',
         is_third_party_used: true
       )
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001-AC-201501-001-DIVERS-TEST.pdf')
     end
@@ -101,7 +101,7 @@ describe CustomFileNameService do
         is_invoice_number_used: true,
         is_invoice_date_used: true
       )
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001_Google_001002_2015-01-02.pdf')
     end
@@ -117,7 +117,7 @@ describe CustomFileNameService do
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new(is_third_party_used: true)
-      result = CustomFileNameService.new(policy).execute(options)
+      result = CustomizeFileName.new(policy).execute(options)
 
       expect(result).to eq('TS%0001_AC_201501_001_TEST_CO_test.pdf')
     end

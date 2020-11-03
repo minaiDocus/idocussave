@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class JobProcessorService
+class JobProcessor
   def self.execute
     new().execute
   end

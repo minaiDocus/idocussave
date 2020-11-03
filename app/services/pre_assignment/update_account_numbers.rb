@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Update account numbers for updated bank_account
-class UpdatePreseizureAccountNumbers
+class PreAssignment::UpdateAccountNumbers
   def self.execute(bank_account_id, changes)
     bank_account = BankAccount.find(bank_account_id)
 

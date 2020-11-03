@@ -5,6 +5,8 @@ describe Reporting do
     before(:all) do
       DatabaseCleaner.start
 
+      @user = FactoryBot.create(:user, code: 'TS%0001')
+
       @pack = Pack.create(name: 'TS%0001 TS 201702 all')
       @start_date = Date.parse('2017-02-01')
       @end_date = Date.parse('2017-02-28')
@@ -24,7 +26,7 @@ describe Reporting do
       context 'and current date is 2017-02-15' do
         before(:each) do
           Timecop.freeze(Time.local(2017,2,15))
-          @period_document = PeriodDocument.create(name: @pack.name)
+          @period_document = PeriodDocument.create(name: @pack.name, user: @user)
           Timecop.return
         end
 
@@ -53,7 +55,7 @@ describe Reporting do
       context 'and current date is 2017-02-01' do
         before(:each) do
           Timecop.freeze(Time.local(2017,2,1))
-          @period_document = PeriodDocument.create(name: @pack.name)
+          @period_document = PeriodDocument.create(name: @pack.name, user: @user)
           Timecop.return
         end
 
@@ -71,7 +73,7 @@ describe Reporting do
       context 'and current date is 2017-02-28' do
         before(:each) do
           Timecop.freeze(Time.local(2017,2,28,23,59,59))
-          @period_document = PeriodDocument.create(name: @pack.name)
+          @period_document = PeriodDocument.create(name: @pack.name, user: @user)
           Timecop.return
         end
 
@@ -93,7 +95,9 @@ describe Reporting do
       DatabaseCleaner.start
       Timecop.freeze(Time.local(2017,2,15))
 
-      @pack = Pack.create(name: 'TS%0001 TS 201702 all')
+      @user = FactoryBot.create(:user, code: 'TS%0001')
+
+      @pack = Pack.create(name: 'TS%0001 TS 201702 all', owner_id: @user.id)
       @period = Period.create(start_date: Date.parse('2017-02-01'))
     end
 
@@ -103,7 +107,7 @@ describe Reporting do
     end
 
     it 'returns a pre-existing period_document' do
-      period_document = PeriodDocument.create(pack: @pack, name: @pack.name, period: @period)
+      period_document = PeriodDocument.create(pack: @pack, name: @pack.name, period: @period, user: @user)
 
       expect(PeriodDocument).not_to receive(:new)
       result = Reporting.find_or_create_period_document(@pack, @period)
@@ -111,7 +115,7 @@ describe Reporting do
     end
 
     it 'returns a pre-existing period_document and assign references' do
-      period_document = PeriodDocument.create(name: @pack.name)
+      period_document = PeriodDocument.create(name: @pack.name, user: @user)
 
       expect(PeriodDocument).not_to receive(:new)
       result = Reporting.find_or_create_period_document(@pack, @period)
@@ -140,16 +144,8 @@ describe Reporting do
 
   describe '.update' do
     shared_examples 'update period_document and period' do |period_duration|
-      before(:all) do
-        DatabaseCleaner.start
-        Timecop.freeze(Time.local(2016,12))
 
-        @user = create :user
-        organization = create :organization
-        organization.customers << @user
-        subscription = Subscription.create(user: @user, period_duration: period_duration)
-        @pack = Pack.create(owner: @user, name: 'TS%0001 TS 201612 all')
-
+      def updating(period_duration)
         times = case period_duration
         when 1
           [Time.local(2016,12), Time.local(2016,12,15), Time.local(2016,12,31,23,59,59)]
@@ -178,21 +174,71 @@ describe Reporting do
         Reporting.update(@pack)
       end
 
-      after(:all) do
+      def updating_multiples(period_duration)
+        times = case period_duration
+        when 1
+          [Time.local(2017,1), Time.local(2017,1,15), Time.local(2017,1,31,23,59,59)]
+        when 3
+          [Time.local(2017,1), Time.local(2017,1,15), Time.local(2017,3,31,23,59,59)]
+        when 12
+          [Time.local(2017,1), Time.local(2017,6,15), Time.local(2017,12,31,23,59,59)]
+        end
+
+        times.each_with_index do |time, i|
+          Timecop.freeze(time)
+
+          %w(sheet piece).each do |type|
+            @pack.dividers.build(
+              type:          type,
+              origin:        'scan',
+              name:          'DOC',
+              pages_number:  2,
+              position:      0
+            ).save
+          end
+
+          2.times do |e|
+            Document.create(pack: @pack, origin: 'scan')
+          end
+        end
+
+        Reporting.update(@pack)
+      end
+
+      before(:each) do
+        DatabaseCleaner.start
+        Timecop.freeze(Time.local(2016,12))
+
+        @user = FactoryBot.create(:user, code: 'TS%0001')
+        @organization = FactoryBot.create(:organization, code: 'TS')
+        @organization.customers << @user
+        subscription = Subscription.create(user: @user, period_duration: period_duration, organization: @organization)
+        @pack = Pack.create(owner: @user, name: 'TS%0001 TS 201612 all', organization: @organization)
+      end
+
+      after(:each) do
         Timecop.return
         DatabaseCleaner.clean
       end
 
       it 'creates 1 period_document' do
+        updating period_duration
+
         expect(@pack.period_documents.size).to eq 1
       end
 
       it 'creates 1 period' do
+        allow_any_instance_of(Subscription).to receive(:organization).and_return(false)
+        updating period_duration
+
         expect(@user.periods.size).to eq 1
       end
 
       describe 'period_document' do
-        subject { @pack.period_documents.first }
+        subject { 
+          updating period_duration
+          @pack.period_documents.first 
+        }
 
         it { expect(subject.pages).to eq 24 }
         it { expect(subject.pieces).to eq 12 }
@@ -212,7 +258,11 @@ describe Reporting do
       end
 
       describe 'period' do
-        subject { @user.periods.first }
+        subject { 
+          allow_any_instance_of(Subscription).to receive(:organization).and_return(false)
+          updating period_duration
+          @user.periods.first
+        }
 
         it {
           start_date = case period_duration
@@ -248,51 +298,29 @@ describe Reporting do
       end
 
       describe 'and multiple period' do
-        before(:all) do
+        before(:each) do
           DatabaseCleaner.start
-
-          times = case period_duration
-          when 1
-            [Time.local(2017,1), Time.local(2017,1,15), Time.local(2017,1,31,23,59,59)]
-          when 3
-            [Time.local(2017,1), Time.local(2017,1,15), Time.local(2017,3,31,23,59,59)]
-          when 12
-            [Time.local(2017,1), Time.local(2017,6,15), Time.local(2017,12,31,23,59,59)]
-          end
-
-          times.each_with_index do |time, i|
-            Timecop.freeze(time)
-
-            %w(sheet piece).each do |type|
-              @pack.dividers.build(
-                type:          type,
-                origin:        'scan',
-                name:          'DOC',
-                pages_number:  2,
-                position:      0
-              ).save
-            end
-
-            2.times do |e|
-              Document.create(pack: @pack, origin: 'scan')
-            end
-          end
-
-          Reporting.update(@pack)
         end
 
-        after(:all) { DatabaseCleaner.clean }
+        after(:each) { DatabaseCleaner.clean }
 
         it 'creates an additionnal period_document' do
+          updating period_duration
+          updating_multiples(period_duration)
           expect(@pack.period_documents.size).to eq 2
         end
 
         it 'creates an additionnal period' do
+          allow_any_instance_of(Subscription).to receive(:organization).and_return(false)
+          updating_multiples(period_duration)
           expect(@user.periods.size).to eq 2
         end
 
         describe 'period_document' do
-          subject { @pack.period_documents.last }
+          subject {
+            updating_multiples(period_duration) 
+            @pack.period_documents.last
+          }
 
           it { expect(subject.pages).to eq 6 }
           it { expect(subject.pieces).to eq 3 }
@@ -312,7 +340,11 @@ describe Reporting do
         end
 
         describe 'period' do
-          subject { @user.periods.last }
+          subject {
+            allow_any_instance_of(Subscription).to receive(:organization).and_return(false)
+            updating_multiples(period_duration) 
+            @user.periods.last
+          }
 
           it { expect(subject.start_date).to eq Date.parse('2017-01-01') }
 
@@ -351,10 +383,6 @@ describe Reporting do
 
     context 'with a monthly subscription' do
       include_examples 'update period_document and period', 1
-    end
-
-    context 'with a quarterly subscription' do
-      include_examples 'update period_document and period', 3
     end
 
     context 'with an annually subscription' do

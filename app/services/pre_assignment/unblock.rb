@@ -1,4 +1,4 @@
-class UnblockPreseizures
+class PreAssignment::Unblock
   def initialize(preseizure_ids, unblocker)
     @preseizure_ids = preseizure_ids
     @unblocker = unblocker
@@ -12,7 +12,7 @@ class UnblockPreseizures
     preseizures.group_by do |preseizure|
       preseizure.report
     end.each do |report, pres|
-      CreatePreAssignmentDeliveryService.new(pres, ['ibiza', 'exact_online'], is_auto: false).execute
+      PreAssignment::CreateDelivery.new(pres, ['ibiza', 'exact_online'], is_auto: false).execute
       PreseizureExport::GeneratePreAssignment.new(pres).execute
       FileDelivery.prepare(report)
       FileDelivery.prepare(report.pack)

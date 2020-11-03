@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe DetectPreseizureDuplicate do
+describe PreAssignment::DetectDuplicate do
   def create_preseizure(options={})
     preseizure = Pack::Report::Preseizure.new
     preseizure.report        = @report
@@ -35,7 +35,7 @@ describe DetectPreseizureDuplicate do
       preseizure.piece_number = nil
       preseizure.save
 
-      service = DetectPreseizureDuplicate.new(preseizure.reload)
+      service = PreAssignment::DetectDuplicate.new(preseizure.reload)
 
       expect(service).to receive(:get_highest_match).exactly(0).times
       expect(service).to receive(:get_scored_match).exactly(0).times
@@ -57,7 +57,7 @@ describe DetectPreseizureDuplicate do
 
       preseizure  = create_preseizure
 
-      service = DetectPreseizureDuplicate.new(preseizure.reload)
+      service = PreAssignment::DetectDuplicate.new(preseizure.reload)
 
       expect(service).to receive(:get_highest_match).with([]).and_call_original
       expect(service).to receive(:get_scored_match).with([]).and_call_original
@@ -79,7 +79,7 @@ describe DetectPreseizureDuplicate do
     it 'detects a simple duplication - get highest match' do
       preseizure = create_preseizure({ third_party: 'google', piece_number: 'G001' })
 
-      service = DetectPreseizureDuplicate.new(preseizure.reload)
+      service = PreAssignment::DetectDuplicate.new(preseizure.reload)
 
       expect(service).to receive(:get_highest_match).exactly(:once).and_call_original
       expect(service).to receive(:get_scored_match).exactly(0).times.and_call_original
@@ -93,7 +93,7 @@ describe DetectPreseizureDuplicate do
     it 'detects a complex duplication - get best scored match from preseizures' do
       preseizure = create_preseizure({ third_party: 'google TEST', piece_number: 'G001' })
 
-      result = DetectPreseizureDuplicate.new(preseizure.reload).execute
+      result = PreAssignment::DetectDuplicate.new(preseizure.reload).execute
 
       expect(result).to eq true
       expect(preseizure.is_blocked_for_duplication).to eq true
@@ -104,7 +104,7 @@ describe DetectPreseizureDuplicate do
     it "undetects a complex duplication - similar words in thirds party and piece number don't match completely" do
       preseizure = create_preseizure({ third_party: 'googletest api test', piece_number: 'G001 001 20' })
 
-      result = DetectPreseizureDuplicate.new(preseizure.reload).execute
+      result = PreAssignment::DetectDuplicate.new(preseizure.reload).execute
 
       expect(result).to eq false
       expect(preseizure.is_blocked_for_duplication).to eq false

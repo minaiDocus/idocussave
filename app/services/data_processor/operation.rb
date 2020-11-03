@@ -91,7 +91,7 @@ class DataProcessor::Operation
             pack_report.remove_delivered_to
           end
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
-            CreatePreAssignmentDeliveryService.new(pres, ['ibiza', 'exact_online'], is_auto: true).execute
+            PreAssignment::CreateDelivery.new(pres, ['ibiza', 'exact_online'], is_auto: true).execute
           end
         else
           operations.each do |operation|

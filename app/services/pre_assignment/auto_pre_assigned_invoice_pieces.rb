@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
-class AutoPreAssignedInvoicePieces
+class PreAssignment::AutoPreAssignedInvoicePieces
 	def self.execute(pieces)
     pieces.each do |piece|
-      AutoPreAssignedInvoicePieces.new(piece).execute
+      PreAssignment::AutoPreAssignedInvoicePieces.new(piece).execute
     end
 
     Billing::UpdatePeriodData.new(pieces.first.user.subscription.current_period).execute
@@ -92,8 +92,8 @@ class AutoPreAssignedInvoicePieces
           @piece.update(is_awaiting_pre_assignment: false)
           preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
-          unless DetectPreseizureDuplicate.new(preseizure).execute
-            CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
+          unless PreAssignment::DetectDuplicate.new(preseizure).execute
+            PreAssignment::CreateDelivery.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
             PreseizureExport::GeneratePreAssignment.new(preseizure).execute
 
             Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available

@@ -1,4 +1,4 @@
-module RefreshDematboxServices
+module RefreshDematbox
   # Call Dematbox API to retrieve services
   # Updates service to verify if OK or invalidate if NOK
   def self.execute

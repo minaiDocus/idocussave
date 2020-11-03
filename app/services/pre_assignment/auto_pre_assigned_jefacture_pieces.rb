@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
-class AutoPreAssignedJefacturePieces
+class PreAssignment::AutoPreAssignedJefacturePieces
   def self.execute(pieces)
     pieces.each do |piece|
-      AutoPreAssignedJefacturePieces.new(piece).execute
+      PreAssignment::AutoPreAssignedJefacturePieces.new(piece).execute
     end
 
     Billing::UpdatePeriodData.new(pieces.first.user.subscription.current_period).execute
@@ -60,8 +60,8 @@ class AutoPreAssignedJefacturePieces
         @piece.update(is_awaiting_pre_assignment: false)
         preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
-        unless DetectPreseizureDuplicate.new(preseizure).execute
-          CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
+        unless PreAssignment::DetectDuplicate.new(preseizure).execute
+          PreAssignment::CreateDelivery.new(preseizure, ['ibiza', 'exact_online'], is_auto: true).execute
           PreseizureExport::GeneratePreAssignment.new(preseizure).execute
 
           Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available

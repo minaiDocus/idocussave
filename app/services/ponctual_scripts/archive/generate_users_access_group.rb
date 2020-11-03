@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class GenerateUsersAccessGroup
+class PonctualScripts::Archive::GenerateUsersAccessGroup
   class << self
 
     def execute

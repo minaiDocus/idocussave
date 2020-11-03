@@ -1,4 +1,4 @@
-class AssignDefaultJournalsService
+class AssignDefaultJournals
   def initialize(user, collaborator, request = nil)
     @user         = user
     @request      = request
@@ -32,7 +32,7 @@ class AssignDefaultJournalsService
     params = [journal, @user, @collaborator.user]
     params << { path: @request.path, ip_address: @request.remote_ip } if @request
 
-    EventCreateService.add_journal(*params)
+    CreateEvent.add_journal(*params)
   end
 
   def current_journal_names

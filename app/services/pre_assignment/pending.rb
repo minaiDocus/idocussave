@@ -1,14 +1,14 @@
 # -*- encoding : UTF-8 -*-
 # Class to get formated pre assignments for admin dashboard
-class PendingPreAssignmentService
+class PreAssignment::Pending
   class << self
-    def _pending(options = { sort: -1 })
+    def awaiting(options = { sort: -1 })
       Pack::Piece.where(is_awaiting_pre_assignment: true).group(:pack_id).group(:pre_assignment_comment).order(created_at: :desc).includes(:pack)
     end
 
 
-    def pending(options = { sort: -1 })
-      _pending(options).map do |e|
+    def unresolved(options = { sort: -1 })
+      awaiting(options).map do |e|
         o = OpenStruct.new
 
         o.date           = e.created_at.try(:localtime)

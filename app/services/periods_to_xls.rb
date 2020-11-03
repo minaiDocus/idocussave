@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class PeriodsToXlsService
+class PeriodsToXls
   def initialize(periods, with_organization_info = false)
     @periods = periods
     @with_organization_info = with_organization_info

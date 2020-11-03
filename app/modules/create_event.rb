@@ -1,4 +1,4 @@
-module EventCreateService
+module CreateEvent
   def self.add_journal(journal, user, requester, options = {})
     event = Event.new
     event.user              = requester

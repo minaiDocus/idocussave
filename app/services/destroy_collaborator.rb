@@ -1,4 +1,4 @@
-class DestroyCollaboratorService
+class DestroyCollaborator
   def initialize(collaborator)
     @collaborator = collaborator
   end

@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe PreAssignment::Delivery::ExactOnline do
   def delivery_exact_online
-    allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_exact_online?).and_return(true)
+    allow_any_instance_of(PreAssignment::CreateDelivery).to receive(:valid_exact_online?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
     allow(Settings).to receive_message_chain(:first, :notify_errors_to).and_return('test@idocus.com')
 
@@ -20,7 +20,7 @@ describe PreAssignment::Delivery::ExactOnline do
                                                         { type: 2, number: '1', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
                                                       ])
 
-    CreatePreAssignmentDeliveryService.new(preseizure, ['exact_online']).execute.first
+    PreAssignment::CreateDelivery.new(preseizure, ['exact_online']).execute.first
   end
 
   def exercices

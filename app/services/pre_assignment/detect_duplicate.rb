@@ -1,4 +1,4 @@
-class DetectPreseizureDuplicate
+class PreAssignment::DetectDuplicate
   def initialize(preseizure)
     @preseizure = preseizure
   end

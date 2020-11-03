@@ -81,7 +81,7 @@ describe PreseizureExport::PreseizureToTxt do
     @preseizure.save
   end
 
-  it 'should match', :test_spec do
+  it 'should match' do
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
     result = PreseizureExport::PreseizureToTxt.new(@preseizure).execute
     lines  = result.split("\n")

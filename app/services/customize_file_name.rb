@@ -1,4 +1,4 @@
-class CustomFileNameService
+class CustomizeFileName
   def initialize(file_naming_policy)
     @policy = file_naming_policy
   end

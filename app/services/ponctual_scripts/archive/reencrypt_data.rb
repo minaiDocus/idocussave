@@ -1,6 +1,6 @@
 # Used when rotating encryption key
 # Decrypt with the old key et re-encrypt with the new key
-class ReencryptData
+class PonctualScripts::Archive::ReencryptData
   def self.execute
     list = [
       [BudgeaAccount,      [:access_token]],

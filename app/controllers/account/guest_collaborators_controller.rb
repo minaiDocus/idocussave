@@ -40,7 +40,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   end
 
   def destroy
-    DestroyCollaboratorService.new(@guest_collaborator).execute
+    DestroyCollaborator.new(@guest_collaborator).execute
     flash[:success] = 'Supprimé avec succès.'
     redirect_to account_organization_guest_collaborators_path(@organization)
   end

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 ## Sending simultaniously to ibiza and exact_online for an user is not supported for now
-class CreatePreAssignmentDeliveryService
+class PreAssignment::CreateDelivery
   attr_reader :deliveries
 
   def initialize(preseizures, deliver_to=['ibiza'], options = {})

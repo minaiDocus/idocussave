@@ -1,4 +1,4 @@
-class JobsOrchestrator
+class PonctualScripts::Archive::JobsOrchestrator
   # TODO: optimize checks
   def self.perform
     # Send documents to operators for grouping

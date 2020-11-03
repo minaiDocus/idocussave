@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Generates an array from user collection. Array is expected to be used to generate CSV
-class UsersToCsvService
+class UsersToCsv
   def initialize(users)
     @users = users
   end

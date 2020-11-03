@@ -1,5 +1,5 @@
 # -*- encoding : UTf-8 -*-
-class UpdatePackHistoric
+class PonctualScripts::Archive::UpdatePackHistoric
   def self.execute(pack_id)
     pack = Pack.find_by_id(pack_id)
     pack.with_lock do
