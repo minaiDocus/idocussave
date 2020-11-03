@@ -33,7 +33,7 @@ describe AcceptAccountSharingRequest do
 
       it "accepts the sharing of customer's account to contact" do
         expect(Notifications::Notifier).to receive(:notify).twice
-        expect(FileImport::Dropbox::Import).to receive(:changed)
+        expect(FileImport::Dropbox).to receive(:changed)
         expect(@contact.accounts).to be_empty
 
         AcceptAccountSharingRequest.new(AccountSharing.unscoped.first).execute

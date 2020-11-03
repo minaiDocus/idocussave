@@ -22,7 +22,7 @@ describe ShareMyAccount do
     }
 
     expect(Notifications::Notifier).to receive(:notify)
-    expect(FileImport::Dropbox::Import).to receive(:changed)
+    expect(FileImport::Dropbox).to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 
@@ -37,7 +37,7 @@ describe ShareMyAccount do
     params = { email: 'john.doe@test.com' }
 
     expect(Notifications::Notifier).not_to receive(:notify)
-    expect(FileImport::Dropbox::Import).not_to receive(:changed)
+    expect(FileImport::Dropbox).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 
@@ -54,7 +54,7 @@ describe ShareMyAccount do
     params = { email: 'test2@test.com' }
 
     expect(Notifications::Notifier).to receive(:notify)
-    expect(FileImport::Dropbox::Import).to receive(:changed)
+    expect(FileImport::Dropbox).to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 
@@ -71,7 +71,7 @@ describe ShareMyAccount do
     params = { email: 'test2@test.com' }
 
     expect(Notifications::Notifier).not_to receive(:notify)
-    expect(FileImport::Dropbox::Import).not_to receive(:changed)
+    expect(FileImport::Dropbox).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 
@@ -88,7 +88,7 @@ describe ShareMyAccount do
     params = { email: 'col@test.com' }
 
     expect(Notifications::Notifier).not_to receive(:notify)
-    expect(FileImport::Dropbox::Import).not_to receive(:changed)
+    expect(FileImport::Dropbox).not_to receive(:changed)
 
     collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 
@@ -108,7 +108,7 @@ describe ShareMyAccount do
       params = { email: 'john.doe@test.com' }
 
       expect(Notifications::Notifier).to receive(:notify)
-      expect(FileImport::Dropbox::Import).to receive(:changed)
+      expect(FileImport::Dropbox).to receive(:changed)
 
       collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
 

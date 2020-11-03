@@ -38,7 +38,7 @@ describe ShareAccount do
         params = { collaborator_id: @contact.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).to receive(:notify).twice
-        expect(FileImport::Dropbox::Import).to receive(:changed)
+        expect(FileImport::Dropbox).to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
 
@@ -57,7 +57,7 @@ describe ShareAccount do
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).to receive(:notify).twice
-        expect(FileImport::Dropbox::Import).to receive(:changed)
+        expect(FileImport::Dropbox).to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
 
@@ -73,7 +73,7 @@ describe ShareAccount do
         params = { collaborator_id: contact2.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).not_to receive(:notify)
-        expect(FileImport::Dropbox::Import).not_to receive(:changed)
+        expect(FileImport::Dropbox).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
 
@@ -89,7 +89,7 @@ describe ShareAccount do
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).not_to receive(:notify)
-        expect(FileImport::Dropbox::Import).not_to receive(:changed)
+        expect(FileImport::Dropbox).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
 
@@ -104,7 +104,7 @@ describe ShareAccount do
         params = { collaborator_id: @contact.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).not_to receive(:notify)
-        expect(FileImport::Dropbox::Import).not_to receive(:changed)
+        expect(FileImport::Dropbox).not_to receive(:changed)
 
         account_sharing = ShareAccount.new(@collaborator, params).execute
 
