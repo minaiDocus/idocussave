@@ -96,7 +96,7 @@ class FecImport
   def make_column_with(line)
     column = line.split(/\t/)
 
-    compaux_is_empty        = column[6].empty? && column[7].empty?
+    compaux_is_empty        = column[6].blank? && column[7].blank?
     is_provider_or_customer = %w(401 411).include?(column[4].to_s[0..2])
     is_general_account      = column[4].in?([40100000, 41100000])
 

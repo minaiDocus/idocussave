@@ -27,7 +27,7 @@
               %a{ class: "nav-link #{(params[:tab] == 'mcf') ? 'active' : ''}", href: '#mcf', data: { toggle: 'tab' } } My Company Files
             - unless @organization.specific_mission
               %li.nav-item.dropdown
-                %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+                %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online', 'fec_agiris'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
                 %ul.dropdown-menu{ style: "min-width: 195px" }
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'ibiza') ? 'active' : ''}", href: '#ibiza', data: { toggle: 'tab' } }
@@ -529,7 +529,7 @@
                     -if @organization.is_cegid_used
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
+            #fec_agiris.tab-pane.fade{ class: ('active show' if params[:tab] == 'fec_agiris') }
               .aligncenter
                 %h4.margin1bottom Configuration Fec Agiris
               = simple_form_for [:account, @organization], html: { id: 'form_fec_agiris', class: 'form form-horizontal margin0' } do |f|
