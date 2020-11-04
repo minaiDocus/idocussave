@@ -11,14 +11,14 @@ describe CreateDematboxDocument do
         @content64 = Base64::encode64(f.readlines.join)
       end
 
-      @params = {
+      @params = ActionController::Parameters.new({
         'virtual_box_id' => 'TS0001',
         'service_id' => '1',
         'improved_scan' => @content64,
         'doc_id' => '1',
         'box_id' => '1',
         'text' => nil
-      }
+      })
 
       @user = FactoryBot.create(:user, code: 'TS0001')
       dematbox = Dematbox.new

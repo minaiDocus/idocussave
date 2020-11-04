@@ -61,23 +61,23 @@ describe Billing::CreateInvoicePdf do
 
         temp_document = TempDocument.last
 
-        expect(temp_document.delivered_by).to eq 'ACC%0239'
+        expect(temp_document.delivered_by).to eq 'ACC%IDO'
         expect(temp_document.delivery_type).to eq 'upload'
-        expect(temp_document.api_name).to eq 'invoice_setting'
+        expect(temp_document.api_name).to eq 'invoice_auto'
 
         expect(temp_document.original_file_name).to eq '2019090001.pdf'
-        expect(temp_document.content_file_name).to  eq 'ACC%0239_AC_201909'
-        expect(temp_document.state).to  eq 'ready'
+        expect(temp_document.content_file_name).to  eq 'ACC%IDO_VT_202003'
+        expect(temp_document.state).to  eq 'ocr_needed'
 
         temp_document = TempDocument.second
 
         expect(temp_document.delivered_by).to eq 'AC0077'
         expect(temp_document.delivery_type).to eq 'upload'
-        expect(temp_document.api_name).to eq 'invoice_setting'
+        expect(temp_document.api_name).to eq 'invoice_auto'
 
         expect(temp_document.original_file_name).to eq '2019090001.pdf'
-        expect(temp_document.content_file_name).to  eq 'AC0077_AC_201909'
-        expect(temp_document.state).to  eq 'ready'
+        expect(temp_document.content_file_name).to  eq 'ACC%IDO_VT_202003'
+        expect(temp_document.state).to  eq 'ocr_needed'
       end
 
 	    it 'archive invoice', :archive_invoice do
@@ -104,8 +104,8 @@ describe Billing::CreateInvoicePdf do
 
 		   	expect(temp_document.original_file_name).to eq '2019090001.pdf'
 
-		   	expect(temp_document.content_file_name).to  eq 'ACC%IDO_VT_201909'
-		    expect(temp_document.state).to  eq 'ready'
+		   	expect(temp_document.content_file_name).to  eq 'ACC%IDO_VT_202003'
+		    expect(temp_document.state).to  eq 'ocr_needed'
 	  	end
 
 	  	context 'Test success and error' do
