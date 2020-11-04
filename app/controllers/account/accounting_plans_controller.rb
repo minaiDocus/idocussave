@@ -111,7 +111,7 @@ class Account::AccountingPlansController < Account::OrganizationController
     if params[:fec_file].present?
       return false if params[:fec_file].content_type != "text/plain"
 
-      @dir = "/nfs/import/FEC/"
+      @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
       FileUtils.makedirs(@dir)
       FileUtils.chmod(0777, @dir)
 
