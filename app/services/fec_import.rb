@@ -9,15 +9,6 @@ class FecImport
     head_list_fec  = ''
 
     txt_file = File.read(@file_path)
-    txt_file.encode!('UTF-8')
-
-    begin
-      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
-    rescue => e
-      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
-    end
-
-    txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
 
     count = 0
 
@@ -52,15 +43,6 @@ class FecImport
 
   def import_txt
     txt_file = File.read(@file_path)
-    txt_file.encode!('UTF-8')
-
-    begin
-      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
-    rescue => e
-      txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
-    end
-
-    txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
 
     @third_parties  = []
     @for_num_pieces = []
@@ -94,7 +76,8 @@ class FecImport
   end
 
   def make_column_with(line)
-    column = line.split(/\t/)
+    col    = line.split(/\t/)
+    column = col.map { |c| c.strip }
 
     compaux_is_empty        = column[6].blank? && column[7].blank?
     is_provider_or_customer = %w(401 411).include?(column[4].to_s[0..2])
