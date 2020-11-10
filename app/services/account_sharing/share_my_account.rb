@@ -1,4 +1,4 @@
-class ShareMyAccount
+class AccountSharing::ShareMyAccount
   def initialize(user, params, current_user=nil)
     @user = user
     @params = params
@@ -35,7 +35,7 @@ private
       @collaborator
     else
       @collaborator = User.where(is_prescriber: false, email: @params[:email]).first
-      @collaborator ||= CreateContact.new(@params, @user.organization).execute
+      @collaborator ||= AccountSharing::CreateContact.new(@params, @user.organization).execute
       @collaborator
     end
   end

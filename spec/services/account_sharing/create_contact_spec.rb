@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CreateContact do
+describe AccountSharing::CreateContact do
   before(:each) do
     DatabaseCleaner.start
   end
@@ -18,7 +18,7 @@ describe CreateContact do
       last_name:  'Doe'
     }
 
-    user = CreateContact.new(params, organization).execute
+    user = AccountSharing::CreateContact.new(params, organization).execute
 
     expect(user).to be_valid
     expect(user).to be_persisted
@@ -34,7 +34,7 @@ describe CreateContact do
       last_name:  'Doe'
     }
 
-    user = CreateContact.new(params, organization).execute
+    user = AccountSharing::CreateContact.new(params, organization).execute
 
     expect(user).not_to be_persisted
     expect(user.errors.messages).to eq({ company: ['est vide'] })

@@ -17,7 +17,7 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
   end
 
   def create
-    @account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
+    @account_sharing = AccountSharing::ShareAccount.new(@user, account_sharing_params, current_user).execute
     if @account_sharing.persisted?
       flash[:success] = 'Dossier partagé avec succès.'
       redirect_to account_organization_account_sharings_path(@organization)
@@ -27,13 +27,13 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
   end
 
   def accept
-    AcceptAccountSharingRequest.new(@account_sharing).execute
+    AccountSharing::AcceptRequest.new(@account_sharing).execute
     flash[:success] = "Le dossier \"#{@account_sharing.account.info}\" a été partagé au contact \"#{@account_sharing.collaborator.info}\" avec succès."
     redirect_to account_organization_account_sharings_path(@organization)
   end
 
   def destroy
-    DestroyAccountSharing.new(@account_sharing).execute
+    AccountSharing::Destroy.new(@account_sharing).execute
     flash[:success] = "Partage du dossier \"#{@account_sharing.account.info}\" au contact \"#{@account_sharing.collaborator.info}\" supprimé."
     redirect_to account_organization_account_sharings_path(@organization)
   end

@@ -1,4 +1,4 @@
-class AcceptAccountSharingRequest
+class AccountSharing::AcceptRequest
   def initialize(account_sharing)
     @account_sharing = account_sharing
   end
