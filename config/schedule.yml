@@ -52,8 +52,7 @@ AccountingPlan::IbizaUpdateWorker:
 
 AccountingPlan::ExactOnlineUpdateWorker:
   queue: default
-  cron: '0 4 * * *'
-
+  cron: '0 3 * * *'
 
 ## Budgea retrievers workers
 
