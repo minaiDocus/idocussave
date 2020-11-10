@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class UpdateJournalRelation
+class Journal::UpdateRelation
   def initialize(journal)
     @journal = journal
   end

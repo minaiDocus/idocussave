@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class AccountBookTypeWriter
+class Journal::Handling
   def initialize(options)
     @params       = options[:params]
     @current_user = options[:current_user]
@@ -16,7 +16,7 @@ class AccountBookTypeWriter
     @journal.save
 
     if @owner.class == User
-      UpdateJournalRelation.new(@journal).execute
+      Journal::UpdateRelation.new(@journal).execute
 
       CreateEvent.add_journal(@journal, @owner, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
@@ -36,7 +36,7 @@ class AccountBookTypeWriter
     @journal.save
 
     if customer
-      UpdateJournalRelation.new(@journal).execute
+      Journal::UpdateRelation.new(@journal).execute
 
       CreateEvent.journal_update(@journal, customer, changes, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
@@ -55,7 +55,7 @@ class AccountBookTypeWriter
     @journal.destroy
 
     if customer
-      UpdateJournalRelation.new(@journal).execute
+      Journal::UpdateRelation.new(@journal).execute
 
       CreateEvent.remove_journal(@journal, customer, @current_user, path: @request.path, ip_address: @request.remote_ip)
 

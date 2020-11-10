@@ -42,7 +42,7 @@ class Subscription::Evaluate
       end
     end
 
-    AssignDefaultJournals.new(@customer, @requester, @request).execute if @requester
+    Journal::AssignDefault.new(@customer, @requester, @request).execute if @requester
   end
 
 private
@@ -70,7 +70,7 @@ private
   def authorize_pre_assignment
     unless @customer.options.is_preassignment_authorized
       @customer.options.update_attribute(:is_preassignment_authorized, true)
-      AssignDefaultJournals.new(@customer, @requester, @request).execute if @requester
+      Journal::AssignDefault.new(@customer, @requester, @request).execute if @requester
       FileImport::Dropbox.changed(@customer)
     end
   end
