@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class GlobalReportToXls
+class Report::GlobalToXls
   def initialize(year)
     @year = year
   end
