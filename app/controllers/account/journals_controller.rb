@@ -20,7 +20,7 @@ class Account::JournalsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/journals
   def create
-    @journal = AccountBookTypeWriter.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
+    @journal = Journal::Handling.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
 
     if !@journal.errors.messages.present?
       text = "Nouveau journal #{ @journal.name } créé avec succès"
@@ -55,7 +55,7 @@ class Account::JournalsController < Account::OrganizationController
   # PUT /account/organizations/:organization_id/journals/:journal_id/edit_analytics
   def update_analytics
     if @customer
-      analytic_reference = JournalAnalyticReferences.new(@journal)
+      analytic_reference = Journal::AnalyticReferences.new(@journal)
       if analytic_reference.add(params[:analytic])
         flash[:success] = 'Modifié avec succès.'
       else
@@ -70,7 +70,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def sync_analytics
     if @customer
-      analytic_reference = JournalAnalyticReferences.new(@journal)
+      analytic_reference = Journal::AnalyticReferences.new(@journal)
       if analytic_reference.synchronize
         flash[:success] = 'Synchronisé avec succès.'
       else
@@ -88,7 +88,7 @@ class Account::JournalsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/journals/:journal_id
   def update
-    journal = AccountBookTypeWriter.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
+    journal = Journal::Handling.new({journal: @journal, params: journal_params, current_user: current_user, request: request}).update
 
     if !journal.errors.messages.present?
       text = "Le journal #{journal.name} a été modifié avec succès."
@@ -115,7 +115,7 @@ class Account::JournalsController < Account::OrganizationController
   # DELETE /account/organizations/:organization_id/journals/:journal_id
   def destroy
     if @user.is_admin || Settings.first.is_journals_modification_authorized || !@customer || @journal.is_open_for_modification?
-      AccountBookTypeWriter.new({journal: @journal, current_user: current_user, request: request}).destroy
+      Journal::Handling.new({journal: @journal, current_user: current_user, request: request}).destroy
 
       flash[:success] = 'Supprimé avec succès.'
       if @customer
@@ -160,7 +160,7 @@ class Account::JournalsController < Account::OrganizationController
 
       copied_ids << id
 
-      UpdateJournalRelation.new(copy).execute
+      Journal::UpdateRelation.new(copy).execute
 
       CreateEvent.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
     end

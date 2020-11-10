@@ -1,4 +1,4 @@
-class AssignDefaultJournals
+class Journal::AssignDefault
   def initialize(user, collaborator, request = nil)
     @user         = user
     @request      = request

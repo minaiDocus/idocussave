@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe AssignDefaultJournals do
+describe Journal::AssignDefault do
   describe '#execute' do
     before(:all) do
       @user = create(:user, code: 'TS%0001')
@@ -39,7 +39,7 @@ describe AssignDefaultJournals do
           DatabaseCleaner.start
           @user.options.update_attribute(:max_number_of_journals, 1)
 
-          AssignDefaultJournals.new(@user, @collaborator).execute
+          Journal::AssignDefault.new(@user, @collaborator).execute
         end
 
         after(:all) do
@@ -64,7 +64,7 @@ describe AssignDefaultJournals do
           DatabaseCleaner.start
           @user.options.update_attribute(:max_number_of_journals, 2)
 
-          AssignDefaultJournals.new(@user, @collaborator).execute
+          Journal::AssignDefault.new(@user, @collaborator).execute
         end
 
         after(:all) do
@@ -109,7 +109,7 @@ describe AssignDefaultJournals do
           DatabaseCleaner.start
           @user.options.update_attribute(:is_preassignment_authorized, false)
 
-          # AssignDefaultJournals.new(@user, @collaborator).execute
+          # Journal::AssignDefault.new(@user, @collaborator).execute
         end
 
         after(:all) do
@@ -117,7 +117,7 @@ describe AssignDefaultJournals do
         end
 
         it 'does not copy journal' do
-          # allow_any_instance_of(AssignDefaultJournals).to receive(:journals).and_return(nil)
+          # allow_any_instance_of(Journal::AssignDefault).to receive(:journals).and_return(nil)
           expect(@user.account_book_types.size).to eq 0
         end
 
@@ -131,7 +131,7 @@ describe AssignDefaultJournals do
           DatabaseCleaner.start
           @user.options.update_attribute(:is_preassignment_authorized, true)
 
-          AssignDefaultJournals.new(@user, @collaborator).execute
+          Journal::AssignDefault.new(@user, @collaborator).execute
         end
 
         after(:all) do
@@ -160,7 +160,7 @@ describe AssignDefaultJournals do
         @journal2 = AccountBookType.create(name: 'AC', description: '(Achat)')
         @user.account_book_types << @journal2
 
-        AssignDefaultJournals.new(@user, @collaborator).execute
+        Journal::AssignDefault.new(@user, @collaborator).execute
       end
 
       after(:all) do
@@ -211,7 +211,7 @@ describe AssignDefaultJournals do
             is_preassignment_authorized: true,
             max_number_of_journals: 1
           )
-          AssignDefaultJournals.new(@user, @collaborator).execute
+          Journal::AssignDefault.new(@user, @collaborator).execute
         end
 
         after(:all) do

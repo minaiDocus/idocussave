@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class JournalAnalyticReferences
+class Journal::AnalyticReferences
   def initialize(journal)
     @journal  = journal
     @user     = @journal.user

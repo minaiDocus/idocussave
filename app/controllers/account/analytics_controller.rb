@@ -7,7 +7,7 @@ class Account::AnalyticsController < Account::AccountController
 
   def index
     result = IbizaLib::Analytic.new(@customer.ibiza_id, ibiza.access_token).list
-    journal_analytic_references = @journal ? JournalAnalyticReferences.new(@journal).get_analytic_references : nil
+    journal_analytic_references = @journal ? Journal::AnalyticReferences.new(@journal).get_analytic_references : nil
     pieces_analytic_references  = @pieces ? get_pieces_analytic_references : nil
     respond_to do |format|
       format.json { render json: { analytics: result, defaults: (pieces_analytic_references || journal_analytic_references) }.to_json, status: :ok }
