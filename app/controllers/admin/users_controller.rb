@@ -18,7 +18,7 @@ class Admin::UsersController < Admin::AdminController
         @users = @users.page(params[:page]).per(params[:per_page])
       end
       format.csv do
-        csv = UsersToCsv.new(@users).execute
+        csv = User::ToCsv.new(@users).execute
         send_data(csv, type: 'text/csv', filename: 'users.csv')
       end
     end

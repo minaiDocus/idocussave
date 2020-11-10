@@ -163,7 +163,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def delete_shared_contacts
     guest_collaborator = @organization.guest_collaborators.find params[:id]
-    DestroyCollaborator.new(guest_collaborator).execute
+    Collaborator::Destroy.new(guest_collaborator).execute
 
     render json: { message: 'Supprimé avec succès.' }, status: 200
   end

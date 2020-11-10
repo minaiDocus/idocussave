@@ -72,7 +72,7 @@ class Billing::UpdatePeriod
       # is_base_package_priced = false
 
       @period.get_active_packages.each do |package|
-        package_infos = SubscriptionPackage.infos_of(package)
+        package_infos = Subscription::Package.infos_of(package)
 
         option = ProductOptionOrder.new
 
@@ -82,7 +82,7 @@ class Billing::UpdatePeriod
         option.quantity = 1
         option.group_title = package_infos[:group]
         option.is_to_be_disabled = @subscription.is_to_be_disabled_package?(package)
-        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(package) * 100.0
+        option.price_in_cents_wo_vat = Subscription::Package.price_of(package) * 100.0
 
         selected_options << option
 
@@ -93,7 +93,7 @@ class Billing::UpdatePeriod
       @period.get_active_options.each do |_p_option|
         next if _p_option.to_s == 'pre_assignment_option' && !@subscription.is_pre_assignment_really_active
 
-        option_infos = SubscriptionPackage.infos_of(_p_option)
+        option_infos = Subscription::Package.infos_of(_p_option)
 
         option = ProductOptionOrder.new
 
@@ -105,7 +105,7 @@ class Billing::UpdatePeriod
         option.quantity = 1
         option.group_title = option_infos[:group]
         option.is_to_be_disabled = @subscription.is_to_be_disabled_option?(_p_option)
-        option.price_in_cents_wo_vat = SubscriptionPackage.price_of(_p_option, reduced) * 100.0
+        option.price_in_cents_wo_vat = Subscription::Package.price_of(_p_option, reduced) * 100.0
 
         selected_options << option
       end
@@ -286,7 +286,7 @@ class Billing::UpdatePeriod
       option.duration    = 1
       option.group_title = 'Autres'
       option.is_an_extra = true
-      option.price_in_cents_wo_vat = SubscriptionPackage.price_of(:ido_micro) * 100.0 * months_remaining
+      option.price_in_cents_wo_vat = Subscription::Package.price_of(:ido_micro) * 100.0 * months_remaining
 
       @micro_remaining_months_option = option
     end
@@ -308,7 +308,7 @@ class Billing::UpdatePeriod
       option.duration    = 1
       option.group_title = 'Autres'
       option.is_an_extra = true
-      option.price_in_cents_wo_vat = SubscriptionPackage.price_of(:ido_mini) * 100.0 * months_remaining
+      option.price_in_cents_wo_vat = Subscription::Package.price_of(:ido_mini) * 100.0 * months_remaining
 
       @mini_remaining_months_option = option
     end

@@ -43,7 +43,7 @@ class PonctualScripts::CloseGapCustomers < PonctualScripts::PonctualScript
     option.group_title = 'Autres'
     option.is_an_extra = true
     option.is_frozen   = true
-    option.price_in_cents_wo_vat = SubscriptionPackage.price_of(:ido_mini) * 100.0 * remaining_month
+    option.price_in_cents_wo_vat = Subscription::Package.price_of(:ido_mini) * 100.0 * remaining_month
 
     period.product_option_orders = [option]
     period.save
