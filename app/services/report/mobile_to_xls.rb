@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class MobileReportingXls
+class Report::MobileToXls
   def initialize(date)
     @date = date || "#{Date.today.strftime("%Y").to_s}#{Date.today.strftime("%m").to_s}"
   end

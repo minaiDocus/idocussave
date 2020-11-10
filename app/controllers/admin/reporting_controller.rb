@@ -18,7 +18,7 @@ class Admin::ReportingController < Admin::AdminController
         Timeout.timeout 300 do
           if params[:simplified] == '1'
             filename = "reporting_simplifié_iDocus_#{@year}.xls"
-            send_data GlobalReportToXls.new(@year).execute, type: 'application/vnd.ms-excel', filename: filename
+            send_data Report::GlobalToXls.new(@year).execute, type: 'application/vnd.ms-excel', filename: filename
           else
             if params[:organization_id].present? && (organization = Organization.find(params[:organization_id]))
               organization_ids = [organization.id]
