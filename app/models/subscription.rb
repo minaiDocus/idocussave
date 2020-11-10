@@ -178,8 +178,8 @@ class Subscription < ApplicationRecord
   end
 
   def set_start_date_and_end_date
-    commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
-    commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_mini) if self.is_mini_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.is_micro_package_active
 
     if commitment_period.to_i > 0
       # Updating start_date and end_date when subscription term is reached
@@ -242,8 +242,8 @@ class Subscription < ApplicationRecord
   end
 
   def commitment_end?(check_micro_package = true)
-    commitment_period = SubscriptionPackage.commitment_of(:ido_mini) if self.is_mini_package_active
-    commitment_period = SubscriptionPackage.commitment_of(:ido_micro) if self.is_micro_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_mini) if self.is_mini_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.is_micro_package_active
 
     return true if commitment_period.to_i <= 0 || (!check_micro_package && self.is_micro_package_active)
 

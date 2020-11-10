@@ -1,4 +1,4 @@
-class SubscriptionPackage
+class Subscription::Package
   PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_x].freeze
   OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option].freeze
 

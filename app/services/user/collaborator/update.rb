@@ -1,4 +1,4 @@
-class UpdateCollaborator
+class Collaborator::Update
   def initialize(member, params)
     @member = member
     @params = params

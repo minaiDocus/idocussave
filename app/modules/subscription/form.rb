@@ -59,7 +59,7 @@ class Subscription::Form
   private
 
   def set_prices_and_limits
-    excess_data = SubscriptionPackage.excess_of(@subscription.current_active_package)
+    excess_data = Subscription::Package.excess_of(@subscription.current_active_package)
 
     values = {
                 max_upload_pages_authorized: excess_data[:pieces][:limit],

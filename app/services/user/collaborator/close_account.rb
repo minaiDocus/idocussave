@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CloseCollaboratorAccount
+class Collaborator::CloseAccount
   def initialize(collaborator)
     @collaborator = collaborator
   end

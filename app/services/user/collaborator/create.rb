@@ -1,4 +1,4 @@
-class CreateCollaborator
+class Collaborator::Create
   def initialize(params, organization)
     @params = params
     @organization = organization

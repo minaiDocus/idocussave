@@ -5,7 +5,7 @@ class DeactivateOrganization
 
   def execute
     @organization.collaborators.each do |collaborator|
-      CloseCollaboratorAccount.new(collaborator).execute
+      Collaborator::CloseAccount.new(collaborator).execute
     end
 
     @organization.customers.each do |customer|
