@@ -1,4 +1,4 @@
-class DeactivateOrganization
+class Organization::Deactivate
   def initialize(organization_id)
     @organization = Organization.find organization_id
   end

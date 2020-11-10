@@ -11,7 +11,7 @@ class GlobalReportToXls
 
       12.times.each do |index|
         time = Time.local(@year, index + 1, 15)
-        line += OrganizationMonthlyReport.new(organization.id, customer_ids, time).execute
+        line += Organization::MonthlyReport.new(organization.id, customer_ids, time).execute
       end
 
       line
