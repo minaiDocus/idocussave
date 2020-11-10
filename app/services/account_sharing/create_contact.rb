@@ -1,4 +1,4 @@
-class CreateContact
+class AccountSharing::CreateContact
   def initialize(params, organization)
     @params = params
     @organization = organization

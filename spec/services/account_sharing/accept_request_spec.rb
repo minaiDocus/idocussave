@@ -1,6 +1,7 @@
 require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe AcceptAccountSharingRequest do
+describe AccountSharing::AcceptRequest do
   before(:each) do
     DatabaseCleaner.start
   end
@@ -16,10 +17,10 @@ describe AcceptAccountSharingRequest do
       @customer = create :user, code: 'TS%0001'
       @organization.customers << @customer
 
-      @collaborator = create :prescriber, code: 'TS%COL1'
+      @collaborator = create :user, is_prescriber: true, code: 'TS%COL1'
       Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
-      @contact = create :guest
+      @contact = create :user, is_guest: true
       @organization.guest_collaborators << @contact
     end
 
@@ -32,16 +33,16 @@ describe AcceptAccountSharingRequest do
       end
 
       it "accepts the sharing of customer's account to contact" do
-        expect(Notifications::Notifier).to receive(:notify).twice
+        expect(Notifications::Notifier).to receive(:notify).with(any_args).exactly(:twice)
         expect(FileImport::Dropbox).to receive(:changed)
         expect(@contact.accounts).to be_empty
 
-        AcceptAccountSharingRequest.new(AccountSharing.unscoped.first).execute
+        AccountSharing::AcceptRequest.new(AccountSharing.unscoped.first).execute
 
         expect(@contact.accounts).to eq [@customer]
         expect(Notification.count).to eq 2
-        expect(@contact.notifications.first.title).to eq "Demande d'accès à un dossier accepté"
-        expect(@customer.notifications.first.title).to eq 'Partage de compte'
+        expect(@contact.notifications.first.title).to eq "Partage de compte"
+        expect(@customer.notifications.first.title).to eq "Demande d'accès à un dossier accepté"
       end
     end
   end

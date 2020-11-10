@@ -6,7 +6,7 @@ class Account::AccountSharingsController < Account::AccountController
   end
 
   def create
-    @contact, @account_sharing = ShareMyAccount.new(@user, account_sharing_params, current_user).execute
+    @contact, @account_sharing = AccountSharing::ShareMyAccount.new(@user, account_sharing_params, current_user).execute
     if @account_sharing.persisted?
       flash[:success] = 'Votre compte a été partagé avec succès.'
       redirect_to account_profile_path(panel: :account_sharing)
@@ -23,7 +23,7 @@ class Account::AccountSharingsController < Account::AccountController
 
   def destroy
     @account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
-    if DestroyAccountSharing.new(@account_sharing, @user).execute
+    if AccountSharing::Destroy.new(@account_sharing, @user).execute
       flash[:success] = 'Le partage a été annulé avec succès.'
     else
       flash[:error] = 'Impossible de supprimer le partage.'

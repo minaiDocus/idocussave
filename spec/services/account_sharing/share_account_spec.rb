@@ -1,6 +1,7 @@
 require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe ShareAccount do
+describe AccountSharing::ShareAccount do
   before(:each) do
     DatabaseCleaner.start
   end
@@ -16,11 +17,11 @@ describe ShareAccount do
       @customer = create :user, code: 'TS%0001'
       @organization.customers << @customer
 
-      user = create(:prescriber)
+      user = create(:user, is_prescriber: true)
       @collaborator = Collaborator.new(user)
       @member = Member.create(user: user, organization: @organization, code: 'TS%COL1')
 
-      @contact = create :guest
+      @contact = create :user, is_guest: true
       @organization.guest_collaborators << @contact
     end
 
@@ -37,10 +38,10 @@ describe ShareAccount do
       it "shares the customer's account to the contact" do
         params = { collaborator_id: @contact.id, account_id: @customer.id }
 
-        expect(Notifications::Notifier).to receive(:notify).twice
+        expect(Notifications::Notifier).to receive(:notify).with(any_args).exactly(:twice)
         expect(FileImport::Dropbox).to receive(:changed)
 
-        account_sharing = ShareAccount.new(@collaborator, params).execute
+        account_sharing = AccountSharing::ShareAccount.new(@collaborator, params).execute
 
         expect(account_sharing).to be_persisted
         expect(@contact.accounts).to eq [@customer]
@@ -56,10 +57,10 @@ describe ShareAccount do
 
         params = { collaborator_id: customer2.id, account_id: @customer.id }
 
-        expect(Notifications::Notifier).to receive(:notify).twice
+        expect(Notifications::Notifier).to receive(:notify).with(any_args).exactly(:twice)
         expect(FileImport::Dropbox).to receive(:changed)
 
-        account_sharing = ShareAccount.new(@collaborator, params).execute
+        account_sharing = AccountSharing::ShareAccount.new(@collaborator, params).execute
 
         expect(account_sharing).to be_persisted
         expect(customer2.accounts).to eq [@customer]
@@ -69,13 +70,13 @@ describe ShareAccount do
       end
 
       it "fails to share the customer's account because contact is not part of the same organization" do
-        contact2 = create :guest
+        contact2 = create :user, is_guest: true
         params = { collaborator_id: contact2.id, account_id: @customer.id }
 
         expect(Notifications::Notifier).not_to receive(:notify)
         expect(FileImport::Dropbox).not_to receive(:changed)
 
-        account_sharing = ShareAccount.new(@collaborator, params).execute
+        account_sharing = AccountSharing::ShareAccount.new(@collaborator, params).execute
 
         expect(account_sharing).not_to be_persisted
         expect(contact2.accounts).to be_empty
@@ -91,7 +92,7 @@ describe ShareAccount do
         expect(Notifications::Notifier).not_to receive(:notify)
         expect(FileImport::Dropbox).not_to receive(:changed)
 
-        account_sharing = ShareAccount.new(@collaborator, params).execute
+        account_sharing = AccountSharing::ShareAccount.new(@collaborator, params).execute
 
         expect(account_sharing).not_to be_persisted
         expect(customer2.accounts).to be_empty
@@ -106,7 +107,7 @@ describe ShareAccount do
         expect(Notifications::Notifier).not_to receive(:notify)
         expect(FileImport::Dropbox).not_to receive(:changed)
 
-        account_sharing = ShareAccount.new(@collaborator, params).execute
+        account_sharing = AccountSharing::ShareAccount.new(@collaborator, params).execute
 
         expect(account_sharing).not_to be_persisted
         expect(@contact.accounts).to be_empty

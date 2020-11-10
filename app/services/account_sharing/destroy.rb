@@ -1,4 +1,4 @@
-class DestroyAccountSharing
+class AccountSharing::Destroy
   def initialize(account_sharing, requester=nil)
     @account_sharing = account_sharing
     @requester = requester
@@ -21,9 +21,9 @@ class DestroyAccountSharing
         Notifications::Notifier.new.create_notification({
           url: url,
           user: @account_sharing.collaborator,
-          notice_type: 'account_sharing_request_denied',
+          notice_type: 'account_sharing_request_canceled',
           title: "Demande d'accès à un compte annulé",
-          message: "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
+          message: "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
         }, true)
       else
         collaborators = if @account_sharing.account.manager&.user
@@ -41,9 +41,9 @@ class DestroyAccountSharing
            Notifications::Notifier.new.create_notification({
             url: url,
             user: collaborator,
-            notice_type: 'account_sharing_request_canceled',
+            notice_type: 'account_sharing_request_denied',
             title: "Accès à un compte refusé",
-            message: "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
+            message: "Votre demande d'accès au compte #{@account_sharing.account.info} a été refusée."
           }, true)
         end
       end

@@ -1,4 +1,4 @@
-class ShareAccount
+class AccountSharing::ShareAccount
   def initialize(requester, params, authorized_by=nil)
     @requester     = requester
     @authorized_by = authorized_by

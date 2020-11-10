@@ -1,6 +1,7 @@
 require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe ShareMyAccount do
+describe AccountSharing::ShareMyAccount do
   before(:each) do
     DatabaseCleaner.start
 
@@ -24,7 +25,7 @@ describe ShareMyAccount do
     expect(Notifications::Notifier).to receive(:notify)
     expect(FileImport::Dropbox).to receive(:changed)
 
-    collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+    collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
     expect(collaborator).to be_persisted
     expect(account_sharing).to be_persisted
@@ -39,7 +40,7 @@ describe ShareMyAccount do
     expect(Notifications::Notifier).not_to receive(:notify)
     expect(FileImport::Dropbox).not_to receive(:changed)
 
-    collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+    collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
     expect(collaborator).not_to be_persisted
     expect(account_sharing).not_to be_persisted
@@ -56,7 +57,7 @@ describe ShareMyAccount do
     expect(Notifications::Notifier).to receive(:notify)
     expect(FileImport::Dropbox).to receive(:changed)
 
-    collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+    collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
     expect(collaborator).to eq user2
     expect(account_sharing).to be_persisted
@@ -73,7 +74,7 @@ describe ShareMyAccount do
     expect(Notifications::Notifier).not_to receive(:notify)
     expect(FileImport::Dropbox).not_to receive(:changed)
 
-    collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+    collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
     expect(collaborator).to eq user2
     expect(account_sharing).not_to be_persisted
@@ -83,14 +84,14 @@ describe ShareMyAccount do
   end
 
   it 'cannot share to a collaborator' do
-    user2 = create :prescriber, email: 'col@test.com'
+    user2 = create :user, is_prescriber: true, email: 'col@test.com'
     Member.create(user: user2, organization: @organization, code: 'TS%COL1')
     params = { email: 'col@test.com' }
 
     expect(Notifications::Notifier).not_to receive(:notify)
     expect(FileImport::Dropbox).not_to receive(:changed)
 
-    collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+    collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
     expect(account_sharing).not_to be_persisted
     expect(user2.accounts).to eq []
@@ -100,7 +101,7 @@ describe ShareMyAccount do
 
   context 'given a contact already exist' do
     before(:each) do
-      @contact = create :guest, code: 'TS%SHR1', email: 'john.doe@test.com'
+      @contact = create :user, is_guest: true, code: 'TS%SHR1', email: 'john.doe@test.com'
       @organization.guest_collaborators << @contact
     end
 
@@ -110,7 +111,7 @@ describe ShareMyAccount do
       expect(Notifications::Notifier).to receive(:notify)
       expect(FileImport::Dropbox).to receive(:changed)
 
-      collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+      collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
       expect(collaborator).to be_valid
       expect(collaborator).to eq @contact
@@ -133,7 +134,7 @@ describe ShareMyAccount do
       it 'does not allow duplication' do
         params = { email: 'john.doe@test.com' }
 
-        collaborator, account_sharing = ShareMyAccount.new(@user, params, @user).execute
+        collaborator, account_sharing = AccountSharing::ShareMyAccount.new(@user, params, @user).execute
 
         expect(collaborator).to be_persisted
         expect(account_sharing).not_to be_persisted
