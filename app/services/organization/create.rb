@@ -1,4 +1,4 @@
-class CreateOrganization
+class Organization::Create
   def initialize(params)
     @params = params
   end

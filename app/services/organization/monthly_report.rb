@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Format periods for XLS reporting
-class OrganizationMonthlyReport
+class Organization::MonthlyReport
   def initialize(organization_id, customer_ids, time)
     @time = time
     @customer_ids    = customer_ids
