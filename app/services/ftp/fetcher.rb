@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'net/ftp'
 
-class FtpFetcher
+class Ftp::Fetcher
   # FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
   FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
 
@@ -12,7 +12,7 @@ class FtpFetcher
       ftp.login username, password
       ftp.passive = true
 
-      FtpFetcher::FtpProcessor.new(ftp, dir).execute
+      Ftp::Fetcher::Processor.new(ftp, dir).execute
 
       ftp.chdir dir
 
@@ -169,7 +169,7 @@ class FtpFetcher
     end
   end
 
-  class FtpProcessor
+  class Processor
     def initialize(ftp, root)
       @root_path = "/nfs/ppp/"
       @ftp = ftp

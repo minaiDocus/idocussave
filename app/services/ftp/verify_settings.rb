@@ -1,4 +1,4 @@
-class VerifyFtpSettings
+class Ftp::VerifySettings
   def initialize(ftp, requester=nil)
     @ftp = ftp
     @requester = requester
@@ -8,7 +8,7 @@ class VerifyFtpSettings
     ftp = nil
     begin
       LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`...")
-      ftp = FTPClient.new(@ftp)
+      ftp = Ftp::Client.new(@ftp)
       ftp.connect @ftp.domain, @ftp.port
       ftp.login @ftp.login, @ftp.password
       ftp.passive = @ftp.is_passive

@@ -1,4 +1,4 @@
-class FTPClient
+class Ftp::Client
   def initialize(ftp)
     @ftp = ftp
 

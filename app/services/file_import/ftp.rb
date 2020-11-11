@@ -50,7 +50,7 @@ class FileImport::Ftp
   def client
     return @client if @client
 
-    @client = FTPClient.new(@ftp)
+    @client = Ftp::Client.new(@ftp)
     @client.connect @ftp.domain, @ftp.port
     @client.login @ftp.login, @ftp.password
     @client.passive = @ftp.is_passive

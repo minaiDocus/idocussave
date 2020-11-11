@@ -13,7 +13,7 @@ class FileDelivery::Storage::Ftp < FileDelivery::Storage::Main
 
   def init_client
     code = @storage.organization.try(:code) || @storage.user.code
-    ftp = FTPClient.new(@storage)
+    ftp = Ftp::Client.new(@storage)
     ftp.connect @storage.domain, @storage.port
     ftp.login @storage.login, @storage.password
     ftp.passive = @storage.is_passive
