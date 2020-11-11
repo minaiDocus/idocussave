@@ -1,4 +1,4 @@
-class Collaborator::Destroy
+class User::Collaborator::Destroy
   def initialize(collaborator)
     @collaborator = collaborator
   end

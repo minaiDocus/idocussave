@@ -24,7 +24,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/collaborators
   def create
-    @member = Collaborator::Create.new(member_params, @organization).execute
+    @member = User::Collaborator::Create.new(member_params, @organization).execute
     if @member.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@organization, @member)
@@ -38,7 +38,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/collaborators/:id
   def update
-    updater = Collaborator::Update.new(@member, member_params)
+    updater = User::Collaborator::Update.new(@member, member_params)
     if updater.execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_collaborator_path(@organization, @member)
@@ -52,7 +52,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     if @member.user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
     elsif @user.leader? || @member.collaborator?
-      if Collaborator::Destroy.new(@member.user).execute
+      if User::Collaborator::Destroy.new(@member.user).execute
         flash[:success] = 'Supprimé avec succès.'
       else
         flash[:error] = 'Impossible de supprimer.'
