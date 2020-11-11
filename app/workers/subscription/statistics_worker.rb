@@ -1,4 +1,4 @@
-class SubscriptionStatisticsWorker
+class Subscription::StatisticsWorker
   include Sidekiq::Worker
   sidekiq_options queue: :default, retry: false
 
