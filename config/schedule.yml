@@ -9,7 +9,7 @@ Billing::CreateInvoicePdfWorker:
 InitializePeriodsWorker:
   queue: high
   cron: '0 3 1 * *'
-SubscriptionStatisticsWorker:
+Subscription::StatisticsWorker:
   queue: default
   cron: '0 5 * * *'
 Order::RemindToNewKitWorker:
@@ -155,7 +155,7 @@ DatabaseCleanerWorker:
   cron: '0 2 * * *'
 
 ## Daily data verifier worker
-DataVerificatorWorker:
+DataVerificator::DailyDataVerifierWorker:
   queue: default
   cron: '0 3 * * *'
 

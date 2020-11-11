@@ -1,4 +1,4 @@
-class DataVerificatorWorker
+class DataVerificator::DailyDataVerifierWorker
   include Sidekiq::Worker
 
   def perform
