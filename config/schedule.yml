@@ -75,7 +75,7 @@ Retriever::ResumeBudgeaWorker:
 
 ## Accounting flow workers
 
-FtpFetcherWorker:
+Ftp::FetcherWorker:
   queue: default
   cron: '*/10 * * * * *'
 
