@@ -330,9 +330,9 @@ class DataProcessor::TempPack
   def prepare_piece_for_pre_assignment
     if need_pre_assignment?
       if @inserted_piece.temp_document.api_name == 'invoice_auto'
-        AutoPreAssignedInvoicePieces.execute([@inserted_piece])
+        PreAssignment::AutoPreAssignedInvoicePieces.execute([@inserted_piece])
       elsif @inserted_piece.temp_document.api_name == 'jefacture'
-        AutoPreAssignedJefacturePieces.execute([@inserted_piece])
+        PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
       else
         Pack::Piece.extract_content(@inserted_piece)
 

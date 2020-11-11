@@ -39,7 +39,7 @@ class Account::PackReportsController < Account::OrganizationController
   def deliver
     preseizures = @report.preseizures.by_position.not_locked.not_delivered
 
-    CreatePreAssignmentDeliveryService.new(preseizures, %w[ibiza exact_online]).execute
+    PreAssignment::CreateDelivery.new(preseizures, %w[ibiza exact_online]).execute
 
     respond_to do |format|
       format.json { render json: { status: :ok } }

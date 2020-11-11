@@ -52,7 +52,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     if @member.user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
     elsif @user.leader? || @member.collaborator?
-      if DestroyCollaboratorService.new(@member.user).execute
+      if DestroyCollaborator.new(@member.user).execute
         flash[:success] = 'Supprimé avec succès.'
       else
         flash[:error] = 'Impossible de supprimer.'

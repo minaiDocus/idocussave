@@ -36,7 +36,7 @@ class AccountingWorkflow::RetrievePreAssignments
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
       not_blocked_pre_assignments = not_blocked_pre_assignments.select{|pres| !pres.has_deleted_piece? }
       if not_blocked_pre_assignments.size > 0
-        CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
+        PreAssignment::CreateDelivery.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
         PreseizureExport::GeneratePreAssignment.new(not_blocked_pre_assignments).execute
         FileDelivery.prepare(report)
         FileDelivery.prepare(pack)
@@ -171,7 +171,7 @@ class AccountingWorkflow::RetrievePreAssignments
 
     preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
-    unless DetectPreseizureDuplicate.new(preseizure).execute
+    unless PreAssignment::DetectDuplicate.new(preseizure).execute
       Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available unless preseizure.has_deleted_piece?
     end
 

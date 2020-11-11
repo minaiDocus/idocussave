@@ -16,9 +16,9 @@ class AccountBookTypeWriter
     @journal.save
 
     if @owner.class == User
-      UpdateJournalRelationService.new(@journal).execute
+      UpdateJournalRelation.new(@journal).execute
 
-      EventCreateService.add_journal(@journal, @owner, @current_user, path: @request.path, ip_address: @request.remote_ip)
+      CreateEvent.add_journal(@journal, @owner, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
       @owner.dematbox.subscribe if @owner.dematbox.try(:is_configured)
 
@@ -36,9 +36,9 @@ class AccountBookTypeWriter
     @journal.save
 
     if customer
-      UpdateJournalRelationService.new(@journal).execute
+      UpdateJournalRelation.new(@journal).execute
 
-      EventCreateService.journal_update(@journal, customer, changes, @current_user, path: @request.path, ip_address: @request.remote_ip)
+      CreateEvent.journal_update(@journal, customer, changes, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
       if changes['name'].present? && @journal.user.dematbox.try(:is_configured)
         customer.dematbox.subscribe
@@ -55,9 +55,9 @@ class AccountBookTypeWriter
     @journal.destroy
 
     if customer
-      UpdateJournalRelationService.new(@journal).execute
+      UpdateJournalRelation.new(@journal).execute
 
-      EventCreateService.remove_journal(@journal, customer, @current_user, path: @request.path, ip_address: @request.remote_ip)
+      CreateEvent.remove_journal(@journal, customer, @current_user, path: @request.path, ip_address: @request.remote_ip)
 
       customer.dematbox.subscribe if customer.dematbox.try(:is_configured)
 

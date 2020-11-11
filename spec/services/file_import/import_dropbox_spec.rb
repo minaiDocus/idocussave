@@ -328,7 +328,7 @@ describe FileImport::Dropbox do
         end
 
         context 'the number of elements exceeds one page' do
-          it 'queries multiple times', :test_spec do
+          it 'queries multiple times' do
             delta_cursor = @dropbox.delta_cursor = 'AAGHorvqbn5732RU2CX9vD2vlIBHo--yqnTrT7aePCT0ioyAMfDOp02vn1FK1f3Duvun8QTCVTKnQ8jkWz674vsRGFWZmjfGL0ibYPHrKvsK8XNV4llsPt230EHl2vODBVk6ybGtcLxlT-fETh_bVF0YnueeM5MNyS54CMlJOxUUGjTMJTgKB9Xm47Vd-5siYlAa7qBIoGijEJyKaWFpfvktECxe5ePceh_JOYw_QSxu3OoEOf7QuS9KrZey1n5QNTE'
             @dropbox.save
 

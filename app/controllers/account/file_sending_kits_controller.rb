@@ -63,7 +63,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
     end
 
     if without_shipping_address.count == 0 && error_logo.empty?
-      FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1')
+      Order::FileSendingKitGenerator.generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1')
       flash[:notice] = 'Généré avec succès.'
     else
       errors = []

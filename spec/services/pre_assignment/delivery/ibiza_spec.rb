@@ -22,7 +22,7 @@ describe PreAssignment::Delivery::Ibiza do
   end
 
   def delivery_ibiza
-    allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_ibiza?).and_return(true)
+    allow_any_instance_of(PreAssignment::CreateDelivery).to receive(:valid_ibiza?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
     allow(Settings).to receive_message_chain(:first, :notify_on_ibiza_delivery).and_return('no')
 
@@ -45,7 +45,7 @@ describe PreAssignment::Delivery::Ibiza do
       preseizures << preseizure
     end
 
-    CreatePreAssignmentDeliveryService.new(preseizures, ['ibiza']).execute.first
+    PreAssignment::CreateDelivery.new(preseizures, ['ibiza']).execute.first
   end
 
   before(:all) do

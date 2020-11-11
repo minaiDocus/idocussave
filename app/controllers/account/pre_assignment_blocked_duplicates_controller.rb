@@ -19,7 +19,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::AccountContro
 
     if !preseizures.empty?
       if params.keys.include?('unblock') && !params.keys.include?('approve_block')
-        count = UnblockPreseizures.new(preseizures.map(&:id), @user).execute
+        count = PreAssignment::Unblock.new(preseizures.map(&:id), @user).execute
 
         flash[:success] = '1 pré-affectation a été débloqué.' if count == 1
         flash[:success] ||= "#{count} pré-affectations ont été débloqués."

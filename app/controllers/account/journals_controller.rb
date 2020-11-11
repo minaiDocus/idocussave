@@ -160,9 +160,9 @@ class Account::JournalsController < Account::OrganizationController
 
       copied_ids << id
 
-      UpdateJournalRelationService.new(copy).execute
+      UpdateJournalRelation.new(copy).execute
 
-      EventCreateService.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+      CreateEvent.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
     end
 
     if ids.count == 0

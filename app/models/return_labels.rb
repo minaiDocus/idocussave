@@ -53,7 +53,7 @@ class ReturnLabels
       user.update_attribute(:return_label_generated_at, Time.now)
     end
 
-    KitGenerator.labels FileSendingKitGenerator.to_return_labels(clients_data), FILE_NAME
+    Order::KitGenerator.labels Order::FileSendingKitGenerator.to_return_labels(clients_data), FILE_NAME
   end
 
 

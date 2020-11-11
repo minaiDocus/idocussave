@@ -22,7 +22,7 @@ class Account::ReportingController < Account::AccountController
       respond_to do |format|
         format.html
         format.xls do
-          data = PeriodsToXlsService.new(periods).execute
+          data = PeriodsToXls.new(periods).execute
           send_data data, type: 'application/vnd.ms-excel', filename: "reporting_iDocus_#{@year}.xls"
         end
       end

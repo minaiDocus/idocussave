@@ -21,7 +21,7 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
   def preview
     @file_naming_policy.assign_attributes(file_naming_policy_params)
     if @file_naming_policy.valid?
-      file_name = CustomFileNameService.new(@file_naming_policy).execute(user_code: 'TS%00001',
+      file_name = CustomizeFileName.new(@file_naming_policy).execute(user_code: 'TS%00001',
                                                                          user_company: 'iDocus',
                                                                          journal: 'AC',
                                                                          period: '201501',

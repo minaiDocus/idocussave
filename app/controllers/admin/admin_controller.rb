@@ -123,13 +123,13 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/blocked_pre_assignments
   def blocked_pre_assignments
-    @blocked_pre_assignments = PendingPreAssignmentService.pending.select { |e| e.message.present? }
+    @blocked_pre_assignments = PreAssignment::Pending.unresolved.select { |e| e.message.present? }
     render partial: 'blocked_pre_assignments', locals: { collection: @blocked_pre_assignments }
   end
 
   # GET /admin/awaiting_pre_assignments
   def awaiting_pre_assignments
-    @awaiting_pre_assignments = PendingPreAssignmentService.pending.select { |e| (e.message.blank? || e.pre_assignment_state == 'force_processing') }
+    @awaiting_pre_assignments = PreAssignment::Pending.unresolved.select { |e| (e.message.blank? || e.pre_assignment_state == 'force_processing') }
 
     render partial: 'awaiting_pre_assignments', locals: { collection: @awaiting_pre_assignments }
   end

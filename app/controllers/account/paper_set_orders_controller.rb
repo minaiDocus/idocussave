@@ -36,7 +36,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order                  = Order.new(order_params)
     @order.type             = 'paper_set'
     @customer               = @organization.customers.find(params[:order][:user_id])
-    if OrderPaperSet.new(@customer, @order).execute
+    if Order::PaperSet.new(@customer, @order).execute
       copy_back_address
       flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
       redirect_to account_organization_paper_set_orders_path(@organization)
@@ -57,7 +57,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   def update
     if @order.update(order_params)
       copy_back_address
-      OrderPaperSet.new(@customer, @order, true).execute
+      Order::PaperSet.new(@customer, @order, true).execute
       flash[:success] = 'Votre commande a été modifiée avec succès.'
       redirect_to account_organization_paper_set_orders_path(@organization)
     else
@@ -67,7 +67,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
 
   # DELETE /account/organizations/:organization_id/paper_set_orders/:id
   def destroy
-    DestroyOrder.new(@order).execute
+    Order::Destroy.new(@order).execute
     flash[:success] = "Votre commande de Kit envoi courrier d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
     redirect_to account_organization_paper_set_orders_path(@organization)
   end
@@ -78,7 +78,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
 
   def order_multiple
     if params[:customer_ids].present?
-      @paper_set_prices = OrderPaperSet.paper_set_prices
+      @paper_set_prices = Order::PaperSet.paper_set_prices
       customers = @organization.customers.where(id: params[:customer_ids])
       @orders = customers.map do |customer|
         Order.new(user: customer, type: 'paper_set', period_duration: customer.subscription.period_duration)
@@ -99,7 +99,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
         order.address              = order.user.paper_set_shipping_address.try(:dup)
         order.paper_return_address = order.user.paper_return_address.try(:dup)
         order.address_required     = false
-        @orders << order unless OrderPaperSet.new(order.user, order).execute
+        @orders << order unless Order::PaperSet.new(order.user, order).execute
       end
     end
     if @orders.any?

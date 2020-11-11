@@ -36,7 +36,7 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
 
         if retry_delivery && @preseizures.size > 1
           @preseizures.each do |preseizure|
-            deliveries = CreatePreAssignmentDeliveryService.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
+            deliveries = PreAssignment::CreateDelivery.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
             deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
           end
         end

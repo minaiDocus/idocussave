@@ -240,7 +240,7 @@ class Account::DocumentsController < Account::AccountController
 
       if preseizures.present?
         preseizures.group_by(&:report_id).each do |_report_id, preseizures_by_report|
-          CreatePreAssignmentDeliveryService.new(preseizures_by_report, %w[ibiza exact_online]).execute
+          PreAssignment::CreateDelivery.new(preseizures_by_report, %w[ibiza exact_online]).execute
         end
       end
 

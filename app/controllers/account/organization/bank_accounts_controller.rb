@@ -27,7 +27,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
       if start_date_changed && @bank_account.start_date.present?
         @bank_account.operations.where('is_locked = ? and is_coming = ? and date >= ?', true, false, @bank_account.start_date).update_all(is_locked: false)
       end
-      UpdatePreseizureAccountNumbers.delay.execute(@bank_account.id.to_s, changes)
+      PreAssignment::UpdateAccountNumbers.delay.execute(@bank_account.id.to_s, changes)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
     else

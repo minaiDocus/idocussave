@@ -112,13 +112,28 @@ class Account::AccountingPlansController < Account::OrganizationController
       return false if params[:fec_file].content_type != "text/plain"
 
       @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
+      # @dir = "#{Rails.root}/files/development/imports/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/" #For development environment
       FileUtils.makedirs(@dir)
       FileUtils.chmod(0777, @dir)
 
       @file   = File.join(@dir, "file_#{Time.now.strftime('%Y%m%d%H%M%S')}.txt")
       journal = []
 
-      FileUtils.cp params[:fec_file].path, @file
+      txt_file = File.read(params[:fec_file].path)
+      txt_file.encode!('UTF-8')
+
+      begin
+        txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
+      rescue => e
+        txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+      end
+
+      begin
+        txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+      rescue => e
+      end
+
+      File.write @file, txt_file
 
       @params_fec = FecImport.new(@file).parse_metadata
 

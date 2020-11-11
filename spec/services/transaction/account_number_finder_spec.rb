@@ -305,7 +305,7 @@ describe Transaction::AccountNumberFinder do
         expect(result).to eq('0GOO')
       end
 
-      it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users', :test_spec do
+      it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users' do
         allow_any_instance_of(User).to receive_message_chain('accounting_plan.customers.where').and_return([])
         allow_any_instance_of(User).to receive('uses_ibiza?').and_return(true)
         allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
