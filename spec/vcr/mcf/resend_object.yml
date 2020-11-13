@@ -1,0 +1,47 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/resendobject
+    body:
+      encoding: UTF-8
+      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f
+    headers:
+      Accept:
+      - json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Fri, 13 Nov 2020 13:14:07 GMT
+      Content-Length:
+      - '124'
+    body:
+      encoding: UTF-8
+      string: '{"Status":909,"Message":"The efUsersPushDoc is NULL ; input.AccessToken
+        = 64b01bda571f47aea8814cb7a29a7dc356310755ce01404f"}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:52 GMT
+recorded_with: VCR 5.1.0

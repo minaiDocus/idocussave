@@ -1,0 +1,131 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"infodrm"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"type":"REQUEST_END","startedAt":1605273231141,"endedAt":1605273231391,"activeRules":[],"activeDataCollectionRules":[{"params":{"typeName":"EnvironmentSettings"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":"TUUJFk/L4K5QQge/FsbA2eqIQNM=","params":{"buid":"315152fb571c6de11273229d6ef14504","typeName":"ApiRule"},"signature":"TODO"},{"filterHash":"5Qzd2AetGEPO7bWqbpiNTVTL7fU=","params":{"buid":"3576471c3391360b977279baddfba4f4","typeName":"ApiRule"},"signature":"TODO"}],"instrumentation":{"requestBenchmark":250.0,"responseContentLength":124,"processingBeforeThreadBenchmark":-1.0,"adapterBenchmark":0.0013047749998804647},"stageType":"BodiesStage","logLevel":"ALL","protocol":"https","hostname":"uploadservice.mycompanyfiles.fr","port":443,"requestHeaders":{"accept":"json","accept-encoding":"gzip;q=1.0,deflate;q=0.6,identity;q=0.3","user-agent":"Ruby","host":"uploadservice.mycompanyfiles.fr","content-length":"60","content-type":"application/x-www-form-urlencoded"},"method":"POST","path":"/api/idocus/moveobject","url":"https://uploadservice.mycompanyfiles.fr/api/idocus/moveobject","responseHeaders":{"cache-control":"no-cache,
+        no-store","pragma":"no-cache","content-type":"application/json; charset=utf-8","expires":"-1","server":"Microsoft-IIS/8.0","access-control-allow-origin":"*","x-aspnet-version":"4.0.30319","x-powered-by":"ASP.NET","date":"Fri,
+        13 Nov 2020 13:14:06 GMT","content-length":"124"},"statusCode":200,"requestBody":"AccessToken=%5BFILTERED%5D","responseBody":"{\"Status\":909,\"Message\":\"The
+        efUsersPushDoc is NULL ; input.AccessToken = 64b01bda571f47aea8814cb7a29a7dc356310755ce01404f\"}"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2020 13:14:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '21'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:53 GMT
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"infodrm"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"type":"REQUEST_END","startedAt":1605273232626,"endedAt":1605273232881,"activeRules":[],"activeDataCollectionRules":[{"params":{"typeName":"EnvironmentSettings"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":"TUUJFk/L4K5QQge/FsbA2eqIQNM=","params":{"buid":"315152fb571c6de11273229d6ef14504","typeName":"ApiRule"},"signature":"TODO"},{"filterHash":"5Qzd2AetGEPO7bWqbpiNTVTL7fU=","params":{"buid":"3576471c3391360b977279baddfba4f4","typeName":"ApiRule"},"signature":"TODO"}],"instrumentation":{"requestBenchmark":255.0,"responseContentLength":124,"processingBeforeThreadBenchmark":-1.0,"adapterBenchmark":0.0004528760000539478},"stageType":"BodiesStage","logLevel":"ALL","protocol":"https","hostname":"uploadservice.mycompanyfiles.fr","port":443,"requestHeaders":{"accept":"json","accept-encoding":"gzip;q=1.0,deflate;q=0.6,identity;q=0.3","user-agent":"Ruby","host":"uploadservice.mycompanyfiles.fr","content-length":"60","content-type":"application/x-www-form-urlencoded"},"method":"POST","path":"/api/idocus/resendobject","url":"https://uploadservice.mycompanyfiles.fr/api/idocus/resendobject","responseHeaders":{"cache-control":"no-cache,
+        no-store","pragma":"no-cache","content-type":"application/json; charset=utf-8","expires":"-1","server":"Microsoft-IIS/8.0","access-control-allow-origin":"*","x-aspnet-version":"4.0.30319","x-powered-by":"ASP.NET","date":"Fri,
+        13 Nov 2020 13:14:07 GMT","content-length":"124"},"statusCode":200,"requestBody":"AccessToken=%5BFILTERED%5D","responseBody":"{\"Status\":909,\"Message\":\"The
+        efUsersPushDoc is NULL ; input.AccessToken = 64b01bda571f47aea8814cb7a29a7dc356310755ce01404f\"}"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2020 13:14:08 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '21'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:54 GMT
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken
+    body:
+      encoding: UTF-8
+      string: RefreshToken=d16c23253f54437db6cab93255ab1933
+    headers:
+      Accept:
+      - json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Fri, 13 Nov 2020 13:14:09 GMT
+      Content-Length:
+      - '277'
+    body:
+      encoding: UTF-8
+      string: '{"AccessToken":"758fe1bb55194506a27cc103bb364b2d141da945c5944484","Status":600,"Message":"Success","UserId":24415,"ProviderId":967,"ProviderName":"iDocus","DisplayName":"LAI
+        KAM Lola","QuotasTotal":3221225472,"QuotasUsed":-681668,"QuotaShared":0,"ExpirationDate":1636812849549}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:54 GMT
+recorded_with: VCR 5.1.0

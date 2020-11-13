@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://agent.bearer.sh/logs
+    body:
+      encoding: UTF-8
+      string: '{"secretKey":"app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38","appEnvironment":"dGVzdA==","runtime":{"type":"x86_64-linux","arch":"x86_64","platform":"linux","version":"2.6.5","hostname":"infodrm"},"agent":{"type":"ruby","version":"3.1.0","log_level":"DETECTED"},"logs":[{"type":"REQUEST_END","startedAt":1605273236806,"endedAt":1605273237058,"activeRules":[],"activeDataCollectionRules":[{"params":{"typeName":"EnvironmentSettings"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationErrorKey":"hWO0s7r2wWRmq7I57O0xL9C1c6U=","aggregationKey":null,"hasErrorTrigger":true,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":null,"params":{"aggregationKey":null,"typeName":"AggregationRule"},"signature":"TODO"},{"filterHash":"TUUJFk/L4K5QQge/FsbA2eqIQNM=","params":{"buid":"315152fb571c6de11273229d6ef14504","typeName":"ApiRule"},"signature":"TODO"},{"filterHash":"5Qzd2AetGEPO7bWqbpiNTVTL7fU=","params":{"buid":"3576471c3391360b977279baddfba4f4","typeName":"ApiRule"},"signature":"TODO"}],"instrumentation":{"requestBenchmark":252.0,"responseContentLength":89,"processingBeforeThreadBenchmark":-1.0,"adapterBenchmark":0.0003084679992753081},"stageType":"BodiesStage","logLevel":"ALL","protocol":"https","hostname":"uploadservice.mycompanyfiles.fr","port":443,"requestHeaders":{"accept":"json","accept-encoding":"gzip;q=1.0,deflate;q=0.6,identity;q=0.3","user-agent":"Ruby","host":"uploadservice.mycompanyfiles.fr","content-length":"82","content-type":"application/x-www-form-urlencoded"},"method":"POST","path":"/api/idocus/TakeAllStorages","url":"https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAllStorages","responseHeaders":{"cache-control":"no-cache,
+        no-store","pragma":"no-cache","content-type":"application/json; charset=utf-8","expires":"-1","server":"Microsoft-IIS/8.0","access-control-allow-origin":"*","x-aspnet-version":"4.0.30319","x-powered-by":"ASP.NET","date":"Fri,
+        13 Nov 2020 13:14:11 GMT","content-length":"89"},"statusCode":200,"requestBody":"AccessToken=%5BFILTERED%5D&AttributeName=Storage","responseBody":"{\"Status\":150,\"Message\":\"The
+        access Token doesn''t exist on Database\",\"ListStorageDto\":[]}"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - app_63d2b0332c5550a40a549b82a5c6ca358be62b1aaa4668df38
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 13 Nov 2020 13:14:12 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '12'
+      Connection:
+      - keep-alive
+      X-Envoy-Upstream-Service-Time:
+      - '13'
+      Server:
+      - envoy
+    body:
+      encoding: UTF-8
+      string: '{"ack":true}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:58 GMT
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
+    body:
+      encoding: UTF-8
+      string: accessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&attributeName=Storage&attributeValue=John%20Doe&file=%23%3CFile%3A0x000000000a9f18c0%3E&force=true&pathFile=TEST%2F2pages.pdf&sendMail=false
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Fri, 13 Nov 2020 13:14:12 GMT
+      Content-Length:
+      - '132'
+    body:
+      encoding: UTF-8
+      string: '{"Status":150,"ProviderId":0,"ProviderName":null,"Message":"The access
+        Token doesn''t exist on Database","StorageLimitReached":false}'
+    http_version: null
+  recorded_at: Fri, 13 Nov 2020 13:13:58 GMT
+recorded_with: VCR 5.1.0
