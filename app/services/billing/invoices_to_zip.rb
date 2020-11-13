@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 # Creates a Zip archive with instanciated invoices
-class InvoicesToZip
+class Billing::InvoicesToZip
   def initialize(invoice_ids)
     @invoice_ids = invoice_ids
   end
@@ -11,7 +11,7 @@ class InvoicesToZip
 
     FileUtils.chmod(0755, dir)
 
-    InvoicesToZip.delay_for(6.hours).remove_temp_dir(dir)
+    Billing::InvoicesToZip.delay_for(6.hours).remove_temp_dir(dir)
 
     @invoice_ids.each do |invoice_id|
       invoice = Invoice.find invoice_id
