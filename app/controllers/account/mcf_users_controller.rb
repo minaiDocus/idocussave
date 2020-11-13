@@ -30,7 +30,7 @@ class Account::McfUsersController < Account::OrganizationController
 
   def accounts
     if @accounts.nil?
-      _accounts = McfApi::Client.new(@mcf_settings.access_token).accounts
+      _accounts = McfLib::Api::Mcf::Client.new(@mcf_settings.access_token).accounts
       if _accounts.present?
         @accounts = [{ name: 'Aucun', id: '' }] + _accounts.map { |account| { name: account, id: account } }
       else

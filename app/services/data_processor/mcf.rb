@@ -52,7 +52,7 @@ class DataProcessor::Mcf
   def execute_retake
     if @mcf_document.can_retake?
       begin
-        McfApi::Client.new(@access_token).ask_to_resend_file
+        McfLib::Api::Mcf::Client.new(@access_token).ask_to_resend_file
 
         System::Log.info('mcf_processing', "[MCF][RESEND REQUEST SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
       rescue => e
@@ -112,7 +112,7 @@ class DataProcessor::Mcf
   def move_file
     if @mcf_document.is_not_moved
       begin
-        McfApi::Client.new(@access_token).move_uploaded_file
+        McfLib::Api::Mcf::Client.new(@access_token).move_uploaded_file
 
         System::Log.info('mcf_processing', "[MCF][MOVE SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
         @mcf_document.update(is_moved: true)

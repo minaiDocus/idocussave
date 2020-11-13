@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe McfApi do
-  let(:client) { McfApi::Client.new('64b01bda571f47aea8814cb7a29a7dc356310755ce01404f') }
+describe McfLib::Api::Mcf do
+  let(:client) { McfLib::Api::Mcf::Client.new('64b01bda571f47aea8814cb7a29a7dc356310755ce01404f') }
   
   context 'Receiving files from MCF', :system_in do  
     describe '#move_uploaded_file', :move_uploaded_file do
