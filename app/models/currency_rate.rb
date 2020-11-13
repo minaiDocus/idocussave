@@ -14,7 +14,7 @@ class CurrencyRate < ApplicationRecord
     current_rate = self.of(date, from, to).try(:exchange_rate)
 
     if current_rate.nil?
-      CurrencyRateService.execute from, date
+      System::CurrencyRate.execute from, date
       current_rate = self.of(date, from, to).try(:exchange_rate) || 1
     end
 

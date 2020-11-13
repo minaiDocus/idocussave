@@ -160,7 +160,7 @@ class FileDelivery::DeliverFile
     end
 
     def push_files
-      LogService.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{remote_files.size} - SYNC START")
+      System::Log.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{remote_files.size} - SYNC START")
       start_time = Time.now
 
       if @receiver.class.name == Group.name || @service_class == :dropbox_extended
@@ -183,7 +183,7 @@ class FileDelivery::DeliverFile
       end
 
       total_synced = remote_files.select { |e| e.state == 'synced' }.size
-      LogService.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)")
+      System::Log.info('processing', "[#{@service_name}][#{remote_files.first.receiver_info}] #{@pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)")
     end
   end
 end

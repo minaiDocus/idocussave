@@ -86,7 +86,7 @@ class PreAssignment::AutoPreAssignedInvoicePieces
         end
         
         if preseizure.persisted?
-          LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
+          System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
 
           @piece.processed_pre_assignment
           @piece.update(is_awaiting_pre_assignment: false)
@@ -99,11 +99,11 @@ class PreAssignment::AutoPreAssignedInvoicePieces
             Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available
           end
         else
-          LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")
+          System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")
         end
       end
     rescue => e
-      LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}")
+      System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{e.to_s}")
     end
   end
 

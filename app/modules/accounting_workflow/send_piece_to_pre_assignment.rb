@@ -42,7 +42,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
       @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
     rescue => e
-      LogService.info('sending_to_preaff', "[Error] #{@piece.id} - #{@piece.name} - #{e.to_s}")
+      System::Log.info('sending_to_preaff', "[Error] #{@piece.id} - #{@piece.name} - #{e.to_s}")
       return false
     end
   end

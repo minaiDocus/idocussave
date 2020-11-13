@@ -29,14 +29,14 @@ class DataProcessor::RetrievedData
   private
 
   def process_retrieved_data
-    LogService.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start")
+    System::Log.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start")
     start_time   = Time.now
 
     json_content = @retrieved_data.json_content
     parse_of json_content if json_content.present? && json_content[:success]
     finalize json_content
 
-    LogService.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec")
+    System::Log.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec")
   end
 
   def budgea_transaction_fetcher(type='operation')
@@ -105,17 +105,17 @@ class DataProcessor::RetrievedData
           end
         else
           log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No Ids found! OR Unauthorized => #{parsed_data.to_s}"
-          LogService.info('budgea_fetch_processing', log_message)
+          System::Log.info('budgea_fetch_processing', log_message)
           return log_message
         end
       else
         log_message += "[BudgeaTransactionFetcher][#{@user.code}] - Parameters invalid!"
-        LogService.info('budgea_fetch_processing', log_message)
+        System::Log.info('budgea_fetch_processing', log_message)
         return log_message
       end
     else
       log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - Budgea client invalid! - no budgea account configured for the user"
-      LogService.info('budgea_fetch_processing', log_message)
+      System::Log.info('budgea_fetch_processing', log_message)
       return log_message
     end
 
@@ -126,7 +126,7 @@ class DataProcessor::RetrievedData
     end
 
     log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New documents: #{new_documents_count} / Total documents fetched: #{total_documents} / New operations: #{@new_operations_count} / Deleted operations: #{@deleted_operations_count} / Total operations fetched: #{@operations_fetched_count}"
-    LogService.info('budgea_fetch_processing', log_message)
+    System::Log.info('budgea_fetch_processing', log_message)
     return log_message
   end
 
@@ -195,7 +195,7 @@ class DataProcessor::RetrievedData
       #     '[iDocus] Erreur lors du traitement des notifications Budgea',
       #     "#{@retrieved_data.id.to_s} - #{@retrieved_data.error_message}").deliver
       # end
-      LogService.info('retrieved_data', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] Error: #{@retrieved_data.error_message}")
+      System::Log.info('retrieved_data', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] Error: #{@retrieved_data.error_message}")
       @retrieved_data.error_message
     else
       @retrieved_data.processed if json_content[:success] || !@retrieved_data.cloud_content.attached?

@@ -145,24 +145,24 @@ PreAssignment::Delivery::ExactOnlineWorker:
   cron: '*/10 * * * * *'
 
 
-JobProcessorWorker:
+System::JobProcessorWorker:
   queue: high
   cron: '0 */5 * * * *'
 
 ## destroy some data
-DatabaseCleanerWorker:
+System::DatabaseCleanerWorker:
   queue: default
   cron: '0 2 * * *'
+
+## Zoho CRM sync
+System::ZohoCrmSynchronizerWorker:
+  queue: default
+  cron: '0 1 1 * *'
 
 ## Daily data verifier worker
 DataVerificator::DailyDataVerifierWorker:
   queue: default
   cron: '0 3 * * *'
-
-## Zoho CRM sync
-ZohoCrmSynchronizerWorker:
-  queue: default
-  cron: '0 1 1 * *'
 
 ## Delivery workers
 

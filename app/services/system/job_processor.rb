@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class JobProcessor
+class System::JobProcessor
   def self.execute
     new().execute
   end
@@ -38,7 +38,7 @@ class JobProcessor
 
         jobs.each(&:kill)
 
-        LogService.info('job_processing', "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} - started_at : #{job_processing.started_at.to_s} - killed_at : #{Time.now.to_s} => Success (#{result} - Nb : #{jobs.size})")
+        System::Log.info('job_processing', "[JOB PROCESSING ABORTED] -- #{job_processing.id}-#{job_processing.name} - started_at : #{job_processing.started_at.to_s} - killed_at : #{Time.now.to_s} => Success (#{result} - Nb : #{jobs.size})")
       end
     end
   end
@@ -56,7 +56,7 @@ class JobProcessor
       SidekiqUniqueJobs::Digests.delete_by_digest uniq_job_id
       Rails.cache.write([:job_processing, uniq_job_id], "killed", expires_in: 1.minutes)
 
-      LogService.info('job_processing', "[JOB PROCESSING KILLED] -- #{uniq_job_id} - killed_at : #{Time.now.to_s} => Success")
+      System::Log.info('job_processing', "[JOB PROCESSING KILLED] -- #{uniq_job_id} - killed_at : #{Time.now.to_s} => Success")
     end
   end
 

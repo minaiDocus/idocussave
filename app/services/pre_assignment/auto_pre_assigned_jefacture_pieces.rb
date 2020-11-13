@@ -54,7 +54,7 @@ class PreAssignment::AutoPreAssignedJefacturePieces
       end
       
       if preseizure.persisted?
-        LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
+        System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - preseizure persisted")
 
         @piece.processed_pre_assignment
         @piece.update(is_awaiting_pre_assignment: false)
@@ -67,7 +67,7 @@ class PreAssignment::AutoPreAssignedJefacturePieces
           Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available
         end
       else
-        LogService.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")
+        System::Log.info('auto_upload_invoice', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{preseizure.errors.full_messages}")
       end
     end
   end

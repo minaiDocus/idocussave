@@ -59,7 +59,7 @@ class DataProcessor::Operation
               entry.type     = Pack::Report::Preseizure::Entry::DEBIT
             end
             entry.number     = 1
-            entry.amount     = CurrencyRateService.convert_operation_amount operation
+            entry.amount     = System::CurrencyRate.convert_operation_amount operation
             entry.save
 
             ### 2 ###
@@ -78,7 +78,7 @@ class DataProcessor::Operation
               entry.type     = Pack::Report::Preseizure::Entry::CREDIT
             end
             entry.number     = 1
-            entry.amount     = CurrencyRateService.convert_operation_amount operation
+            entry.amount     = System::CurrencyRate.convert_operation_amount operation
             entry.save
 
             preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)

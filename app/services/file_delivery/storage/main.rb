@@ -74,13 +74,13 @@ class FileDelivery::Storage::Main
         metafile.sending! metafile.path
 
         if up_to_date?
-          LogService.info('processing', "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)")
+          System::Log.info('processing', "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)")
         else
-          LogService.info('processing', "#{metafile.description} sending")
+          System::Log.info('processing', "#{metafile.description} sending")
 
           sender.call
 
-          LogService.info('processing', "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)")
+          System::Log.info('processing', "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)")
         end
 
         metafile.synced!
@@ -130,18 +130,18 @@ class FileDelivery::Storage::Main
           min_sleep_seconds = Float(2 ** (retries/2.0))
           max_sleep_seconds = Float(2 ** retries)
           sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
-          LogService.info('processing', "#{failure_message} - retrying in #{sleep_duration} seconds")
+          System::Log.info('processing', "#{failure_message} - retrying in #{sleep_duration} seconds")
           sleep sleep_duration
           retry
         else
-          LogService.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
+          System::Log.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
           metafile.not_synced! "[#{e.class}] #{e.message}"
         end
       elsif manageable_failure?(e)
-        LogService.info('processing', "#{failure_message} - aborting (#{execution_time}s)")
+        System::Log.info('processing', "#{failure_message} - aborting (#{execution_time}s)")
         metafile.not_retryable! "[#{e.class}] #{e.message}"
       else
-        LogService.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
+        System::Log.info('processing', "#{failure_message} - retrying later (#{execution_time}s)")
         metafile.not_synced! "[#{e.class}] #{e.message}"
         raise if Rails.env.test?
       end

@@ -24,9 +24,9 @@ class Retriever::UpdateConnectorsList
       if connector.persisted?
         # Because activerecord hash change detection is dumb !
         changes = changes.select { |_, v| v.first != v.last }
-        LogService.info('processing', "[CONNECTOR UPDATED] #{connector.name} - #{connector.id} : #{changes}") if changes.present?
+        System::Log.info('processing', "[CONNECTOR UPDATED] #{connector.name} - #{connector.id} : #{changes}") if changes.present?
       else
-        LogService.info('processing', "[CONNECTOR ADDED] #{connector.name} - #{connector.id}")
+        System::Log.info('processing', "[CONNECTOR ADDED] #{connector.name} - #{connector.id}")
       end
     end
     true

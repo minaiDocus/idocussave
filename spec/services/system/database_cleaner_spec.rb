@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe DatabaseCleanerService do
+describe System::DatabaseCleaner do
 	before(:all) do
     Timecop.freeze(Time.local(2019,12,17))
 
@@ -79,7 +79,7 @@ describe DatabaseCleanerService do
 	  	expect(McfDocument.all.count).to eq 5
 	  	expect(mcf_updated).to eq 3
 
-	    DatabaseCleanerService.clear_all
+	    System::DatabaseCleaner.new.clear_all
 
 	    mcf_count = McfDocument.all
 
@@ -93,11 +93,11 @@ describe DatabaseCleanerService do
       expect(JobProcessing.all.count).to eq 6
       expect(job_processing_updated).to eq 3
 
-      DatabaseCleanerService.clear_all
+      System::DatabaseCleaner.new.clear_all
 
       job_processing_count = JobProcessing.all
 
-      expect(job_processing_count.count).to eq 3
+      expect(job_processing_count.count).to eq 5
     end
 
     it 'RetrievedData.where("created_at < ?", 1.month.ago) deleted' do
@@ -107,7 +107,7 @@ describe DatabaseCleanerService do
       expect(RetrievedData.all.count).to eq 3
       expect(retrieved_data_updated).to eq 2
 
-      DatabaseCleanerService.clear_all
+      System::DatabaseCleaner.new.clear_all
 
       retrieved_data_count = RetrievedData.all
 
@@ -120,7 +120,7 @@ describe DatabaseCleanerService do
 
       expect(CurrencyRate.all.count).to eq 3
 
-      DatabaseCleanerService.clear_all
+      System::DatabaseCleaner.new.clear_all
 
       currency_rate = CurrencyRate.all
 

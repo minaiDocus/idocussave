@@ -40,7 +40,7 @@ class UploadedDocument
           @errors << [:file_is_corrupted_or_protected, nil]
         end
       rescue => e
-        LogService.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
+        System::Log.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
         @errors << [:file_is_corrupted_or_protected, nil]
       end
 
@@ -57,10 +57,10 @@ class UploadedDocument
 
     if @errors.empty?
       temp_pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      LogService.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
+      System::Log.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
 
       temp_pack.update_pack_state # Create or update pack related to temp_pack
-      LogService.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
+      System::Log.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
 
       options = {
         delivered_by:          @uploader.code,
