@@ -18,10 +18,10 @@ class PdfIntegrator
       if File.exist?(_file) && DocumentTools.modifiable?(_file)
         FileUtils.cp _file, @file_path
       else
-        LogService.info('document_upload', "[Upload error] #{@file.path} - attempt to recreate")
+        System::Log.info('document_upload', "[Upload error] #{@file.path} - attempt to recreate")
         re_create_pdf @file.path, @file_path
         if !DocumentTools.modifiable?(@file_path)
-          LogService.info('document_upload', "[Upload error] #{@file.path} - force correction")
+          System::Log.info('document_upload', "[Upload error] #{@file.path} - force correction")
           force_correct_pdf(@file.path, @file_path)
         end
       end

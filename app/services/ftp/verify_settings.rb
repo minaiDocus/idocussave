@@ -7,7 +7,7 @@ class Ftp::VerifySettings
   def execute
     ftp = nil
     begin
-      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`...")
+      System::Log.info('debug_ftp', "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`...")
       ftp = Ftp::Client.new(@ftp)
       ftp.connect @ftp.domain, @ftp.port
       ftp.login @ftp.login, @ftp.password
@@ -22,7 +22,7 @@ class Ftp::VerifySettings
       ftp.mkdir test_item.path
       ftp.rmdir test_item.path
 
-      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful")
+      System::Log.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful")
       true
     rescue => e
       @ftp.got_error e.to_s
@@ -46,7 +46,7 @@ class Ftp::VerifySettings
 
       ErrorScriptMailer.error_notification(log_infos).deliver
 
-      LogService.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}")
+      System::Log.info('debug_ftp', "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}")
       false
     ensure
       ftp.close if ftp

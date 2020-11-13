@@ -22,18 +22,18 @@ class FileDelivery::Storage::Knowings
 
         raise Knowings::UnexpectedResponseCode.new result unless result.in? [200, 201]
 
-        LogService.info('knowings', "#{info} uploaded")
+        System::Log.info('knowings', "#{info} uploaded")
 
         remote_file.synced!
       rescue => e
         tries += 1
 
-        LogService.info('knowings', "#{info} upload failed : [#{e.class}] #{e.message}")
+        System::Log.info('knowings', "#{info} upload failed : [#{e.class}] #{e.message}")
 
         if tries < 2
           retry
         else
-          LogService.info('knowings', "#{number} retrying later")
+          System::Log.info('knowings', "#{number} retrying later")
 
           remote_file.not_retryable!("[#{e.class}] #{e.message}")
         end

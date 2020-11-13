@@ -140,7 +140,7 @@ class CustomActiveStorageObject
       end
 
       if !tmp_file_path.present?
-        LogService.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - Not generated")
+        System::Log.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - Not generated")
 
         log_document = {
             name: "CustomActiveStorageObject",
@@ -158,7 +158,7 @@ class CustomActiveStorageObject
 
       @base_path = tmp_file_path
     rescue => e
-      LogService.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retries}")
+      System::Log.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - #{e.to_s} - Retry: #{retries}")
 
       retries += 1
       if retries <= 2

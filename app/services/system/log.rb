@@ -1,4 +1,4 @@
-class LogService
+class System::Log
   def self.info(log_file_name=nil, message='')
     new().log log_file_name, message
   end

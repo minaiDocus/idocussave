@@ -22,9 +22,9 @@ class InvoiceSetting < ApplicationRecord
 
   def self.logger_message_content(uploaded_document)
     if uploaded_document.valid?
-      LogService.info('auto_upload_invoice_setting_synchronize', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded")
+      System::Log.info('auto_upload_invoice_setting_synchronize', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - Uploaded")
     else
-      LogService.info('auto_upload_invoice_setting_synchronize', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}")
+      System::Log.info('auto_upload_invoice_setting_synchronize', "[#{Time.now}] - [#{@invoice.id}] - [#{@invoice.organization.id}] - #{uploaded_document.full_error_messages}")
     end
   end
 

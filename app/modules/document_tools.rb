@@ -18,7 +18,7 @@ class DocumentTools
 
       document.pages.count
     rescue => e
-      LogService.info('poppler_errors', "[pages_number] - #{file_path.to_s} - #{e.to_s}")
+      System::Log.info('poppler_errors', "[pages_number] - #{file_path.to_s} - #{e.to_s}")
       0
     end
   end
@@ -133,7 +133,7 @@ class DocumentTools
 
       pdf_corrected
     rescue => e
-      LogService.info('poppler_errors', "[force_correct_pdf] - #{input_file_path.to_s} - #{e.to_s}")
+      System::Log.info('poppler_errors', "[force_correct_pdf] - #{input_file_path.to_s} - #{e.to_s}")
       errors        = e.to_s
       pdf_corrected = input_file_path
     end
@@ -153,7 +153,7 @@ class DocumentTools
 
         document.permissions.full?
       rescue => e
-        LogService.info('poppler_errors', "[modifiable?] - #{file_path.to_s} - #{e.to_s}")
+        System::Log.info('poppler_errors', "[modifiable?] - #{file_path.to_s} - #{e.to_s}")
         false
       end
     else
@@ -168,7 +168,7 @@ class DocumentTools
     begin
       Poppler::Document.new(file_path)
     rescue => e
-      LogService.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
+      System::Log.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
       is_ok    = false
       dir      = "#{Rails.root}/files/temp_pack_processor/poppler_error/"
 
@@ -210,7 +210,7 @@ class DocumentTools
       document.permissions.ok_to_print?
 
     rescue => e
-      LogService.info('poppler_errors', "[printable?] - #{file_path.to_s} - #{e.to_s}")
+      System::Log.info('poppler_errors', "[printable?] - #{file_path.to_s} - #{e.to_s}")
       false
     end
   end
@@ -222,7 +222,7 @@ class DocumentTools
       document.permissions.ok_to_print? && !document.permissions.full?
 
     rescue => e
-      LogService.info('poppler_errors', "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}")
+      System::Log.info('poppler_errors', "[is_printable_only?] - #{file_path.to_s} - #{e.to_s}")
       nil
     end
   end
@@ -319,7 +319,7 @@ class DocumentTools
             text name, size: font_size, align: :center
           end
         rescue Prawn::Errors::CannotFit
-          LogService.info('document_processor', "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})")
+          System::Log.info('document_processor', "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})")
         end
       end
     end

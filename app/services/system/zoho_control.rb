@@ -1,5 +1,5 @@
 # encoding: utf-8
-class ZohoControl
+class System::ZohoControl
   ZOHO_BASE_URI   = 'https://www.zohoapis.com/crm/v2/'
   ZOHO_AUTH_TOKEN = '5064b25445e1bd95b9d78c49a536ffcd' ###token Prod
   #ZOHO_AUTH_TOKEN = '7e2b6d448a6d833f46ce3f83d5d25c93' ###token Luc

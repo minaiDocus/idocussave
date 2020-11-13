@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CurrencyRateService
+class System::CurrencyRate
   def initialize(currency, date)
     begin
       tries = 0
@@ -43,7 +43,7 @@ class CurrencyRateService
           new(currency, date.to_date).execute unless CurrencyRate.already_present? currency, date.to_date 
         end
       rescue Exception => e
-        LogService.info('currency_rate', "#{Time.now} - #{e.to_s}")
+        System::Log.info('currency_rate', "#{Time.now} - #{e.to_s}")
       end
     end
 

@@ -94,7 +94,7 @@ class Ftp::Fetcher
 
       ftp.close
     rescue Errno::ETIMEDOUT, EOFError => e
-      LogService.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : #{e.to_s}")
+      System::Log.info('debug_ftp', "[#{Time.now}] FTP: connect to #{url} : #{e.to_s}")
       false
     rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
       content = "#{e.class}<br /><br />#{e.message}"

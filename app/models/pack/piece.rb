@@ -289,7 +289,7 @@ class Pack::Piece < ApplicationRecord
         self.is_signed = true
         self.cloud_content_object.attach(File.open(to_sign_file), self.cloud_content_object.filename) if self.save
       else
-        LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})")
+        System::Log.info('pieces_events', "[Signing] #{self.id} - #{self.name} - Piece can't be saved or signed file not genereted (#{to_sign_file.to_s})")
         self.is_signed = false
         self.save
 
@@ -312,7 +312,7 @@ class Pack::Piece < ApplicationRecord
         ErrorScriptMailer.error_notification(log_document).deliver
       end
     rescue => e
-      LogService.info('pieces_events', "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})")
+      System::Log.info('pieces_events', "[Signing] #{self.id} - #{self.name} - #{e.to_s} (#{to_sign_file.to_s})")
       self.is_signed = false
       self.save
 

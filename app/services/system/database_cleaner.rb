@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-class DatabaseCleanerService
+class System::DatabaseCleaner
   def clear_all
     clear_mcf
     clear_retrieved_data

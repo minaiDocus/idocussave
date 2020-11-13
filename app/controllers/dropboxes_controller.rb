@@ -11,8 +11,8 @@ class DropboxesController < ApplicationController
       render status: :ok, plain: 'OK'
     else
       #Tmp Oversight: dropbox webhook
-      LogService.info('dropbox_webhook', "[Webhook - signature] #{signature}")
-      LogService.info('dropbox_webhook', "[Webhook - header] #{request.headers['X-Dropbox-Signature']} - match : #{(signature == request.headers['X-Dropbox-Signature']).to_s}")
+      System::Log.info('dropbox_webhook', "[Webhook - signature] #{signature}")
+      System::Log.info('dropbox_webhook', "[Webhook - header] #{request.headers['X-Dropbox-Signature']} - match : #{(signature == request.headers['X-Dropbox-Signature']).to_s}")
 
       log_document = {
         name: "DropboxesController",

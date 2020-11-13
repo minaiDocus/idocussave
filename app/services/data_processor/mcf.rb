@@ -54,14 +54,14 @@ class DataProcessor::Mcf
       begin
         McfApi::Client.new(@access_token).ask_to_resend_file
 
-        LogService.info('mcf_processing', "[MCF][RESEND REQUEST SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
+        System::Log.info('mcf_processing', "[MCF][RESEND REQUEST SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
       rescue => e
-        LogService.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
+        System::Log.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
       end
 
       @mcf_document.has_retaken
     elsif @mcf_document.maximum_retake_reach?
-      LogService.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Maximum number of retake reached")
+      System::Log.info('mcf_processing', "[MCF][RESEND REQUEST ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Maximum number of retake reached")
       @mcf_document.delivery_fails
     end
   end
@@ -85,11 +85,11 @@ class DataProcessor::Mcf
 
       if uploaded_document.valid? || uploaded_document.already_exist?
         @mcf_document.processed
-        LogService.info('mcf_processing', "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}")
+        System::Log.info('mcf_processing', "[MCF][FILE PROCESSED] -- #{@mcf_document.id}-#{@mcf_document.file_name}")
 
         move_file
       else
-        LogService.info('mcf_processing', "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}")
+        System::Log.info('mcf_processing', "[MCF][FILE PROCESS ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{uploaded_document.full_error_messages}")
 
         uploaded_document.errors.each do |err|
           if err.include? :file_is_corrupted_or_protected
@@ -114,10 +114,10 @@ class DataProcessor::Mcf
       begin
         McfApi::Client.new(@access_token).move_uploaded_file
 
-        LogService.info('mcf_processing', "[MCF][MOVE SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
+        System::Log.info('mcf_processing', "[MCF][MOVE SUCCESS] -- #{@mcf_document.id}-#{@mcf_document.file_name} => Success")
         @mcf_document.update(is_moved: true)
       rescue => e
-        LogService.info('mcf_processing', "[MCF][MOVE ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
+        System::Log.info('mcf_processing', "[MCF][MOVE ERROR] -- #{@mcf_document.id}-#{@mcf_document.file_name} => #{e.message}")
         @mcf_document.update(is_moved: true) if e.message.match(/"Status"=>909/)
       end
     end

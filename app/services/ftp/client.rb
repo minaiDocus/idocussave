@@ -80,6 +80,6 @@ class Ftp::Client
 
   def log(name, args)
     _args = name == :login ? ['[FILTERED]'] : args
-    LogService.info('debug_ftp', "[FTP ID: #{@ftp.id}] #{name} - #{_args.join(', ')}")
+    System::Log.info('debug_ftp', "[FTP ID: #{@ftp.id}] #{name} - #{_args.join(', ')}")
   end
 end
