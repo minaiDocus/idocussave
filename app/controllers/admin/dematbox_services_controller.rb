@@ -10,7 +10,7 @@ class Admin::DematboxServicesController < Admin::AdminController
 
   # POST /admin/dematbox_services/load_from_external
   def load_from_external
-    RefreshDematbox.delay.execute
+    Dematbox::Refresh.delay.execute
 
     flash[:notice] = 'Configuration en cours...'
 

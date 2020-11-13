@@ -36,7 +36,7 @@ class Admin::ReportingController < Admin::AdminController
                             .where('start_date >= ? AND end_date <= ?', date, date.end_of_year)
                             .order(start_date: :asc)
 
-            data = PeriodsToXls.new(periods, with_organization_info).execute
+            data = Subscription::PeriodsToXls.new(periods, with_organization_info).execute
             send_data data, type: 'application/vnd.ms-excel', filename: filename
           end
         end

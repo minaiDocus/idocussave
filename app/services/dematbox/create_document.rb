@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class CreateDematboxDocument
+class Dematbox::CreateDocument
   attr_reader :temp_document
 
 
