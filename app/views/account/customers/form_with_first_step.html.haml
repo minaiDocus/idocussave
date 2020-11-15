@@ -84,11 +84,11 @@
                   .control-section
                     %span.radio
                       %label
-                        = radio_button_tag 'user[options_attributes][is_taxable]', true, false
+                        = radio_button_tag 'user[options_attributes][is_taxable]', true, true
                         Oui
                     %span.radio
                       %label
-                        = radio_button_tag 'user[options_attributes][is_taxable]', false, true
+                        = radio_button_tag 'user[options_attributes][is_taxable]', false, false
                         Non
                       %i.help-block Non (aucune TVA ne sera reportée en pré-saisie).
 
