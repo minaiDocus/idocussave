@@ -150,6 +150,10 @@ Rails.application.routes.draw do
         post :fetch_now, on: :collection
       end
 
+      resource :sftps, only: %w(edit update destroy), module: 'organization' do
+        post :fetch_now, on: :collection
+      end
+
       resources :reminder_emails, except: :index do
         post 'deliver', on: :member
       end
@@ -424,6 +428,8 @@ Rails.application.routes.draw do
     resource :dematbox, only: %w(create destroy)
 
     resources :retrievers do
+      get 'new_internal', on: :collection
+      get 'edit_internal', on: :collection
       get   'list',                     on: :collection
       post 'export_connector_to_xls',   on: :collection
       get  'get_connector_xls(/:key)', action: 'get_connector_xls',   on: :collection

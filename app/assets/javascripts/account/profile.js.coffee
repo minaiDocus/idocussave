@@ -76,9 +76,10 @@ jQuery ->
     update_path_preview($('#dropbox_basic_path'))
     update_path_preview($('#google_doc_path'))
     update_path_preview($('#ftp_path'))
+    update_path_preview($('#sftp_path'))
     update_path_preview($('#box_path'))
 
-    $('#dropbox_basic_path, #google_doc_path, #ftp_path, #box_path').on 'change', ->
+    $('#dropbox_basic_path, #google_doc_path, #ftp_path, #sftp_path, #box_path').on 'change', ->
       update_path_preview($(this))
 
   $('.do-popover').popover()

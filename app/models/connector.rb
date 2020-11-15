@@ -43,13 +43,15 @@ class Connector < ApplicationRecord
   # ...
   # }.stringify_keys
 
-  validates_presence_of :name, :capabilities, :apis, :active_apis, :combined_fields
-  validates_presence_of :budgea_id,   if: Proc.new { |c| c.fiduceo_ref.nil? }
-  validates_presence_of :fiduceo_ref, if: Proc.new { |c| c.budgea_id.nil? }
+  validates_presence_of :name, :capabilities, :apis, :active_apis
+  validates_presence_of :combined_fields, unless: Proc.new { |c| 'idocus'.in?(c.apis) }
+  validates_presence_of :budgea_id,   if: Proc.new { |c| c.fiduceo_ref.nil? && !'idocus'.in?(c.apis) }
+  validates_presence_of :fiduceo_ref, if: Proc.new { |c| c.budgea_id.nil? && !'idocus'.in?(c.apis) }
   validates_inclusion_of :capabilities, in: [['document'], ['bank'], ['document', 'bank'], ['bank', 'document']]
-  validates_inclusion_of :apis,         in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea']]
-  validates_inclusion_of :active_apis,  in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea']]
+  validates_inclusion_of :apis,         in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea'], ['idocus'], ['idocus', 'budgea']]
+  validates_inclusion_of :active_apis,  in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea'], ['idocus'], ['idocus', 'budgea']]
 
+  scope :idocus,              -> { where("apis LIKE '%idocus%'") }
   scope :budgea,              -> { where("apis LIKE '%budgea%'") }
   scope :fiduceo,             -> { where("apis LIKE '%fiduceo%'") }
   scope :budgea_and_fiduceo,  -> { where("apis LIKE '%budgea%' AND apis LIKE '%fiduceo%'") }
@@ -67,6 +69,10 @@ class Connector < ApplicationRecord
     else
       fiduceo_ref
     end
+  end
+
+  def is_idocus_active?
+    active_apis.include? 'idocus'
   end
 
   def is_budgea_active?

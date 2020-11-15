@@ -4,10 +4,11 @@ class RemoteFile < ApplicationRecord
   DROPBOX_EXTENDED = 'Dropbox Extended'.freeze
   GOOGLE_DRIVE     = 'Google Drive'.freeze
   FTP              = 'FTP'.freeze
+  SFTP             = 'SFTP'.freeze
   BOX              = 'Box'.freeze
   KNOWINGS         = 'Knowings'.freeze
   MY_COMPANY_FILES = 'My Company Files'.freeze
-  SERVICE_NAMES    = [DROPBOX, DROPBOX_EXTENDED, GOOGLE_DRIVE, FTP, BOX, KNOWINGS, MY_COMPANY_FILES].freeze
+  SERVICE_NAMES    = [DROPBOX, DROPBOX_EXTENDED, GOOGLE_DRIVE, FTP, SFTP, BOX, KNOWINGS, MY_COMPANY_FILES].freeze
 
   belongs_to :user, optional: true
   belongs_to :pack, optional: true

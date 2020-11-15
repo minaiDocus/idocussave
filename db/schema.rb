@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_25_103510) do
+ActiveRecord::Schema.define(version: 2020_11_15_205304) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -1644,6 +1644,10 @@ ActiveRecord::Schema.define(version: 2020_10_25_103510) do
     t.integer "budgea_connector_id"
     t.string "service_name"
     t.text "capabilities"
+    t.string "encrypted_login"
+    t.string "encrypted_password"
+    t.bigint "connector_id"
+    t.index ["connector_id"], name: "index_retrievers_on_connector_id"
     t.index ["journal_id"], name: "index_retrievers_on_journal_id"
     t.index ["state"], name: "index_retrievers_on_state"
     t.index ["user_id"], name: "index_retrievers_on_user_id"
@@ -1757,6 +1761,26 @@ ActiveRecord::Schema.define(version: 2020_10_25_103510) do
     t.text "default_url"
     t.text "inner_url"
     t.text "notify_mcf_errors_to"
+  end
+
+  create_table "sftps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "path", default: "iDocus/:code/:year:month/:account_book/", null: false
+    t.boolean "is_configured", default: false, null: false
+    t.datetime "error_fetched_at"
+    t.text "error_message", limit: 4294967295
+    t.bigint "external_file_storage_id"
+    t.string "encrypted_host"
+    t.string "encrypted_login"
+    t.string "encrypted_password"
+    t.string "encrypted_port"
+    t.string "root_path", default: "/"
+    t.datetime "import_checked_at"
+    t.string "previous_import_paths"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["external_file_storage_id"], name: "index_sftps_on_external_file_storage_id"
+    t.index ["organization_id"], name: "index_sftps_on_organization_id"
   end
 
   create_table "softwares_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

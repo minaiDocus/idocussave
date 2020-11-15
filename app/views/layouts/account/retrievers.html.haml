@@ -24,7 +24,7 @@
           - else
             = hidden_field_tag :account_id, @account.try(:id)
     .row.retractable.with-menu
-      .retractable-menu        
+      .retractable-menu
         .row
           .col-md-12
             .box.medium-shadow.bg-menu.side-menu
@@ -41,6 +41,11 @@
                   %a.nav-link{ href: ( @account.try(:id)? new_account_retriever_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                     Ajouter un automate
                     = glyphicon('plus', { class: 'float-right' })
+                - if @account.organization.specific_mission
+                  %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
+                    %a.nav-link{ href: ( @account.try(:id)? new_internal_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Ajouter un automate spécifique
+                      = glyphicon('plus', { class: 'float-right' })
                 %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
                   %a.nav-link{ href: ( @account.try(:id)? list_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                     Liste des automates disponibles

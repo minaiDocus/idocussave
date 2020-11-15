@@ -23,6 +23,8 @@ class FileDelivery::DeliverFile
         :box
       when 'ftp'
         :ftp
+      when 'sftp'
+        :sftp
       when 'kwg'
         :knowings
       when 'mcf'
@@ -44,6 +46,8 @@ class FileDelivery::DeliverFile
         RemoteFile::BOX
       when 'ftp'
         RemoteFile::FTP
+      when 'sftp'
+        RemoteFile::SFTP
       when 'kwg'
         RemoteFile::KNOWINGS
       when 'mcf'
@@ -130,6 +134,7 @@ class FileDelivery::DeliverFile
       elsif @receiver.class.name == Organization.name
         @services_name << RemoteFile::KNOWINGS if @receiver.knowings.try(:is_configured?)
         @services_name << RemoteFile::FTP if @receiver.ftp.try(:configured?)
+        @services_name << RemoteFile::SFTP if @receiver.sftp.try(:configured?)
         @services_name << RemoteFile::MY_COMPANY_FILES if @receiver.mcf_settings.try(:configured?)
       else
         @services_name = ['Dropbox Extended']
@@ -143,6 +148,7 @@ class FileDelivery::DeliverFile
 
       @storage = @receiver.external_file_storage.send(@service_class) unless @receiver.class.in? [Group, Organization]
       @storage = @receiver.ftp if @receiver.class == Organization && @receiver.ftp.try(:configured?) && @service_class == :ftp
+      @storage = @receiver.sftp if @receiver.class == Organization && @receiver.sftp.try(:configured?) && @service_class == :sftp
 
       @storage
     end
@@ -177,6 +183,8 @@ class FileDelivery::DeliverFile
           FileDelivery::Storage::Box.new(remote_files).sync
         when :ftp
           FileDelivery::Storage::Ftp.new(storage, remote_files).execute
+        when :sftp
+          FileDelivery::Storage::Sftp.new(storage, remote_files).execute
         when :google_doc
           FileDelivery::Storage::GoogleDrive.new(storage).sync(remote_files)
         end

@@ -1,14 +1,16 @@
 # -*- encoding : UTF-8 -*-
 class ExternalFileStorage < ApplicationRecord
-  SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings', 'My Company Files'].freeze
+  SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'SFTP', 'Box', 'Knowings', 'My Company Files'].freeze
 
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
   F_FTP         = 8
   F_BOX         = 16
+  F_SFTP        = 32
 
   has_one :dropbox_basic, autosave: true, dependent: :destroy
   has_one :google_doc,    autosave: true, dependent: :destroy
+  has_one :sftp,          autosave: true, dependent: :destroy
   has_one :ftp,           autosave: true, dependent: :destroy
   has_one :box,           autosave: true, dependent: :destroy
 
@@ -82,6 +84,22 @@ class ExternalFileStorage < ApplicationRecord
     self.authorized = ok ? authorized | F_FTP : authorized ^ F_FTP
   end
 
+  def is_sftp_authorized?
+    authorized & F_SFTP > 0
+  end
+
+
+  def is_sftp_authorized
+    is_sftp_authorized?
+  end
+
+
+  def is_sftp_authorized=(value)
+    ok = value.to_i == 1
+
+    self.authorized = ok ? authorized | F_SFTP : authorized ^ F_SFTP
+  end
+
 
   def is_box_authorized?
     authorized & F_BOX > 0
@@ -111,6 +129,7 @@ class ExternalFileStorage < ApplicationRecord
     services << 'Dropbox Extended' if user.is_dropbox_extended_authorized
     services << 'Google Drive'     if authorized & F_GOOGLE_DOCS > 0
     services << 'FTP'              if authorized & F_FTP > 0
+    services << 'SFTP'             if authorized & F_SFTP > 0
     services << 'Box'              if authorized & F_BOX > 0
     services.join(', ')
   end
@@ -123,6 +142,7 @@ class ExternalFileStorage < ApplicationRecord
     nb += 1 if user.is_dropbox_extended_authorized
     nb += 1 if authorized & F_GOOGLE_DOCS > 0
     nb += 1 if authorized & F_FTP > 0
+    nb += 1 if authorized & F_SFTP > 0
     nb += 1 if authorized & F_BOX > 0
 
     nb
@@ -161,6 +181,7 @@ class ExternalFileStorage < ApplicationRecord
     nb += 1 if used & F_DROPBOX > 0
     nb += 1 if used & F_GOOGLE_DOCS > 0
     nb += 1 if used & F_FTP > 0
+    nb += 1 if used & F_SFTP > 0
     nb += 1 if used & F_BOX > 0
 
     nb
@@ -173,6 +194,7 @@ class ExternalFileStorage < ApplicationRecord
     services << 'Dropbox Extended' if user.is_dropbox_extended_authorized
     services << 'Google Drive'     if (authorized & used & F_GOOGLE_DOCS > 0) && google_doc.is_configured?
     services << 'FTP'              if (authorized & used & F_FTP         > 0) && ftp.is_configured?
+    services << 'SFTP'             if (authorized & used & F_SFTP         > 0) && sftp.is_configured?
     services << 'Box'              if (authorized & used & F_BOX         > 0) && box.is_configured?
     services
   end
@@ -202,7 +224,7 @@ class ExternalFileStorage < ApplicationRecord
     info_path = Pack.info_path(remote_file.pack, remote_file.receiver)
 
     result = static_path(path_pattern.sub(/\/\z/, ''), info_path)
-    result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended', 'FTP'])
+    result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended', 'FTP', 'SFTP'])
     result
   end
 
@@ -217,6 +239,8 @@ class ExternalFileStorage < ApplicationRecord
       google_doc
     when 'FTP'
       ftp
+    when 'SFTP'
+      sftp
     when 'Box'
       box
     end
@@ -229,6 +253,7 @@ class ExternalFileStorage < ApplicationRecord
     DropboxBasic.create(external_file_storage_id: id)
     GoogleDoc.create(external_file_storage_id: id)
     Ftp.create(external_file_storage_id: id)
+    Sftp.create(external_file_storage_id: id)
     Box.create(external_file_storage_id: id)
 
     true

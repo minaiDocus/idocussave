@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
-  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls]
+  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls, new_internal]
   before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls]
-  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls]
-  before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls]
+  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls, new_internal create]
+  before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls new_internal edit_internal create]
   before_action :load_retriever_edition, only: %w[new edit]
 
   def index
@@ -12,7 +12,7 @@ class Account::RetrieversController < Account::RetrieverController
                    @account.retrievers
                  else
                    Retriever.where(user: accounts)
-                 end    
+                 end
     @retrievers = Retriever.search_for_collection(retrievers, search_terms(params[:retriever_contains]))
                            .joins(:user)
                            .order("#{sort_column} #{sort_direction}")
@@ -33,7 +33,40 @@ class Account::RetrieversController < Account::RetrieverController
     end
   end
 
+  def new_internal
+    @retriever = Retriever.new
+    @connectors = Connector.idocus
+  end
+
+  def create
+    @retriever = Retriever.new(retriever_params)
+
+    @retriever.user = @account
+    @retriever.service_name = @retriever.connector.name
+    @retriever.capabilities = @retriever.connector.capabilities
+
+    if @retriever.save
+      redirect_to account_retrievers_path
+    else
+      render 'new_internal'
+    end
+  end
+
   def edit; end
+
+  def edit_internal
+    @retriever = Retriever.find(params[:id])
+  end
+
+  def update
+    @retriever = Retriever.find(params[:id])
+
+    if @retriever.update(retriever_params)
+      redirect_to account_retrievers_path
+    else
+      render 'edit_internal'
+    end
+  end
 
   def export_connector_to_xls
     array_document = params[:documents].to_s.split(/\;/)
@@ -139,5 +172,9 @@ class Account::RetrieversController < Account::RetrieverController
     if @account.nil?
       redirect_to account_retrievers_path
     end
+  end
+
+  def retriever_params
+    params.require(:retriever).permit(:connector_id, :user_id, :journal_id, :login, :password, :name, :connector_id)
   end
 end

@@ -18,7 +18,7 @@
       = stylesheet_link_tag 'account/addresses'
     - elsif controller_name.in?(%w(invoices))
       = stylesheet_link_tag 'account/invoices'
-    - elsif !controller_name.in?(%w(accounting_plans vat_accounts knowings pack_reports reminder_emails file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharings account_sharing_groups guest_collaborators ibizabox_documents ftps mcf_settings))
+    - elsif !controller_name.in?(%w(accounting_plans vat_accounts knowings pack_reports reminder_emails file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharings account_sharing_groups guest_collaborators ibizabox_documents ftps sftps mcf_settings))
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body
@@ -51,7 +51,7 @@
                     %span.title= @organization.name
                     %span.icon= glyphicon('caret-right')
                   %ul.nav.flex-column.nav-list.dlink
-                    %li.nav-item{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps mcf_settings)) && !request.path.match(/customers/)) ? 'active' : '') }
+                    %li.nav-item{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps sftps mcf_settings)) && !request.path.match(/customers/)) ? 'active' : '') }
                       %a{ href: account_organization_path(@organization), class: 'nav-link' }
                         Paramètres
                         = glyphicon('cog',{ class: 'float-right' })
@@ -125,7 +125,7 @@
       = javascript_include_tag 'account/addresses'
     - elsif controller_name.in?(%w(invoices))
       = javascript_include_tag 'account/invoices'
-    - elsif not controller_name.in?(%w(rights collaborators organization_addresses vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharing_groups guest_collaborators mcf_settings))
+    - elsif not controller_name.in?(%w(rights collaborators organization_addresses vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharing_groups guest_collaborators mcf_settings sftps))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'

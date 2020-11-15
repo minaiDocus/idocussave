@@ -2,8 +2,12 @@
 class Retriever < ApplicationRecord
   attr_accessor :confirm_dyn_params, :check_journal
 
+  attr_encrypted :login, random_iv: true
+  attr_encrypted :password, random_iv: true
+
   belongs_to :user
   belongs_to :journal, class_name: 'AccountBookType', optional: true
+  belongs_to :connector, optional: true
   has_many   :temp_documents
   has_many   :bank_accounts
 

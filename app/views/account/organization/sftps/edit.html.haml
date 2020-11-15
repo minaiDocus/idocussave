@@ -1,0 +1,29 @@
+.card
+  .card-header
+    %h3 Edition de la configuration SFTP
+  = simple_form_for @sftp, url: account_organization_sftps_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
+    .card-body
+      .row
+        .col-md-5
+          = f.input :host
+          = f.input :port, as: :integer
+          = f.input :login
+          = f.input :password
+        .col-md-7
+          = f.input :root_path, input_html: { class: 'input-xlarge' }
+          .form-group.clearfix
+            .label-section
+              = label_tag :input_path, "Chemin d'import", class: 'control-label'
+            .control-section
+              = text_field_tag :input_path, "INPUT > CODE%001 - JOURNAL (Société)", disabled: true, class: 'input-xlarge'
+              %p.help-block Ce chemin est relatif au chemin racine.
+          = f.input :path, label: ("Chemin de livraison #{link_to(('<i class="icon-info-sign"></i>').html_safe, '#', class: 'do-popover', title: 'Informations', 'data-content' => "Choisissez l’ordre de classement de vos documents en modifiant leur positionnement dans le champ ci-contre.<br>Exemple : <b>:code/:account_book/:year:month/</b><br><br>Attention à respecter le contenu de chacun des champs:<br><b>:code</b> pour Code iDocus<br><b>:year:month</b> pour la date du lot iDocus<br><b>:account_book</b> pour le journal comptable iDocus")} : ").html_safe, hint: 'Ce chemin est relatif au chemin racine.', input_html: { class: 'input-xlarge' }
+          .form-group.clearfix
+            .label-section
+              = label_tag :prev_output_path, 'Prévisualisation du chemin de livraison : ', class: 'control-label'
+            .control-section
+              = text_field_tag :prev_output_path, '', disabled: true, class: 'input-xlarge'
+    .card-footer
+      .form-actions.margin0bottom
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        = link_to t('actions.cancel').capitalize, account_organization_path(@organization, tab: 'sftp'), class: 'btn btn-light'

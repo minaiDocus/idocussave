@@ -24,6 +24,7 @@ class Organization < ApplicationRecord
   has_one  :file_naming_policy
   has_one  :debit_mandate, dependent: :destroy
   has_one  :ftp
+  has_one  :sftp
   has_one  :mcf_settings, dependent: :destroy
   has_many :packs
   has_many :events
