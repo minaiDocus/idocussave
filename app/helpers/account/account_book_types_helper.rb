@@ -12,12 +12,14 @@ module Account::AccountBookTypesHelper
       ]
     end
 
-    if !organization.specific_mission && customer.options.is_retriever_authorized
-      options << [t('simple_form.labels.account_book_type.entry_type_4'),4]
-    end
+    if customer
+      if !organization.specific_mission && customer.options.is_retriever_authorized
+        options << [t('simple_form.labels.account_book_type.entry_type_4'),4]
+      end
 
-    if !organization.specific_mission && customer.options.is_preassignment_authorized
-      options << [t('simple_form.labels.account_book_type.entry_type_1'),1]
+      if !organization.specific_mission && customer.options.is_preassignment_authorized
+        options << [t('simple_form.labels.account_book_type.entry_type_1'),1]
+      end
     end
 
     options
