@@ -4,7 +4,7 @@
       .box.clearfix
         .float-left
           %h3
-            Journaux comptables 
+            Journaux comptables
             %span.badge.badge-info= @journals.count
         .float-right
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_journal_path(@organization), class: 'btn btn-primary'

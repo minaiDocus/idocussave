@@ -30,7 +30,11 @@ module Account::RetrieverHelper
   end
 
   def customers_active
-    accounts.active.map { |u| [u, u.id] } || []
+    if @user.organization.specific_mission
+      accounts.map { |u| [u, u.id] } || []
+    else
+      accounts.active.map { |u| [u, u.id] } || []
+    end
   end
 
   # def link_retriever_options(account)

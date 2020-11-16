@@ -19,14 +19,14 @@
                   %a{ class: "nav-link #{(params[:tab] == 'period_options') ? 'active' : ''}", href: '#period_options', data: { toggle: 'tab' } } Option téléversement
                 %li.nav-item
                   %a{ class: "nav-link #{(params[:tab] == 'reminder_emails') ? 'active' : ''}", href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
-              %li.nav-item
-                %a{ class: "nav-link #{(params[:tab] == 'knowings') ? 'active' : ''}", href: '#knowings', data: { toggle: 'tab' } } Knowings
-              %li.nav-item
-                %a{ class: "nav-link #{(params[:tab] == 'ftp') ? 'active' : ''}", href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'knowings') ? 'active' : ''}", href: '#knowings', data: { toggle: 'tab' } } Knowings
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'mcf') ? 'active' : ''}", href: '#mcf', data: { toggle: 'tab' } } My Company Files
+                %li.nav-item
+                  %a{ class: "nav-link #{(params[:tab] == 'ftp') ? 'active' : ''}", href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'sftp') ? 'active' : ''}", href: '#sftp', data: { toggle: 'tab' } } Import/Export SFTP
-            %li.nav-item
-              %a{ class: "nav-link #{(params[:tab] == 'mcf') ? 'active' : ''}", href: '#mcf', data: { toggle: 'tab' } } My Company Files
             - unless @organization.specific_mission
               %li.nav-item.dropdown
                 %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online', 'fec_agiris'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv

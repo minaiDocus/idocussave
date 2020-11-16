@@ -9,7 +9,7 @@ class Account::RetrieverController < Account::AccountController
   private
 
   def verify_rights
-    unless accounts.any? && @user.organization.is_active
+    unless (accounts.any? && @user.organization.is_active) || @user.organization.specific_mission
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end
@@ -31,6 +31,10 @@ class Account::RetrieverController < Account::AccountController
   end
 
   def accounts
-    super.joins(:options).where('user_options.is_retriever_authorized = ?', true)
+    if @user.organization.specific_mission
+      super
+    else
+      super.joins(:options).where('user_options.is_retriever_authorized = ?', true)
+    end
   end
 end

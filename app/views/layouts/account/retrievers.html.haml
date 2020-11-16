@@ -41,7 +41,7 @@
                   %a.nav-link{ href: ( @account.try(:id)? new_account_retriever_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                     Ajouter un automate
                     = glyphicon('plus', { class: 'float-right' })
-                - if @account.organization.specific_mission
+                - if @user.organization.specific_mission
                   %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
                     %a.nav-link{ href: ( @account.try(:id)? new_internal_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                       Ajouter un automate spécifique
@@ -58,30 +58,31 @@
                 /   %a.nav-link{ href: ( @account.try(:id)? account_new_provider_requests_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                 /     Suivi de mes demandes
                 /     = glyphicon('list', { class: 'float-right' })
-                %li.nav-header Historique de récupération
-                %li.nav-item{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
-                  %a.nav-link{ href: ( @account.try(:id)? account_retrieved_banking_operations_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Opérations bancaires
-                    = glyphicon('project', { class: 'float-right' })
-                %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }
-                  %a.nav-link{ href: ( @account.try(:id)? account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Documents
-                    = glyphicon('document', { class: 'float-right' })
-                %li.nav-header Autres
-                %li.nav-item{ class: ('active' if controller_name == 'bank_accounts') }
-                  %a.nav-link{ href: ( @account.try(:id)? account_bank_accounts_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Sélection des comptes bancaires
-                    = glyphicon('excerpt', { class: 'float-right' })
-                %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
-                  %a.nav-link{ href: ( @account.try(:id)? select_account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Sélection de documents restant
-                    %br
-                    à récupérer
-                    = glyphicon('align-left', { class: 'float-right', style: 'margin-top: -8px'})
-                %li.nav-item{ class: ('active' if controller_name == 'bank_settings' && action_name == 'index') }
-                  %a.nav-link{ href: ( @account.try(:id)? account_bank_settings_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Paramètres bancaires
-                    = glyphicon('cog', { class: 'float-right' })
+                - unless @user.organization.specific_mission
+                  %li.nav-header Historique de récupération
+                  %li.nav-item{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }
+                    %a.nav-link{ href: ( @account.try(:id)? account_retrieved_banking_operations_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Opérations bancaires
+                      = glyphicon('project', { class: 'float-right' })
+                  %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }
+                    %a.nav-link{ href: ( @account.try(:id)? account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Documents
+                      = glyphicon('document', { class: 'float-right' })
+                  %li.nav-header Autres
+                  %li.nav-item{ class: ('active' if controller_name == 'bank_accounts') }
+                    %a.nav-link{ href: ( @account.try(:id)? account_bank_accounts_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Sélection des comptes bancaires
+                      = glyphicon('excerpt', { class: 'float-right' })
+                  %li.nav-item{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }
+                    %a.nav-link{ href: ( @account.try(:id)? select_account_retrieved_documents_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Sélection de documents restant
+                      %br
+                      à récupérer
+                      = glyphicon('align-left', { class: 'float-right', style: 'margin-top: -8px'})
+                  %li.nav-item{ class: ('active' if controller_name == 'bank_settings' && action_name == 'index') }
+                    %a.nav-link{ href: ( @account.try(:id)? account_bank_settings_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Paramètres bancaires
+                      = glyphicon('cog', { class: 'float-right' })
       .col-md-12
         .alerts
           = render partial: 'shared/messages'

@@ -13,13 +13,17 @@
               %a.nav-link{ class: ('active' if params[:tab] == 'subscription'), href: '#subscription', data: { toggle: 'tab' } } Forfaits
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'orders'), href: '#orders', data: { toggle: 'tab' } } Commandes Kits/Scan
-          %li.nav-item
-            %a.nav-link{ class: ('active' if params[:tab] == 'addresses'), href: '#addresses', data: { toggle: 'tab' } } Adresses
+            %li.nav-item
+              %a.nav-link{ class: ('active' if params[:tab] == 'addresses'), href: '#addresses', data: { toggle: 'tab' } } Adresses
           - if @customer.active? && @customer.options.is_upload_authorized && !@organization.specific_mission
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'period_options'), href: '#period_options', data: { toggle: 'tab' } } Option téléversement
-          %li.nav-item
-            %a.nav-link{ class: ('active' if params[:tab] == 'journals'), href: '#journals', data: { toggle: 'tab' } } Journaux comptables
+          - if @organization.specific_mission
+            %li.nav-item
+              %a.nav-link{ class: ('active' if params[:tab] == 'journals'), href: '#journals', data: { toggle: 'tab' } } Dossiers
+          - else
+            %li.nav-item
+              %a.nav-link{ class: ('active' if params[:tab] == 'journals'), href: '#journals', data: { toggle: 'tab' } } Journaux comptables
           - if @customer.active? && @customer.options.is_retriever_authorized && !@organization.specific_mission
             %li.nav-item
               = link_to "iDo'FacBanque", account_retrievers_path(account_id: @customer.id), class: 'nav-link'
@@ -88,7 +92,7 @@
           - if @customer.is_dematbox_authorized
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'idocus_box'), href: '#idocus_box', data: { toggle: 'tab' } } iDocus'Box
-          - if @user.is_admin && @customer.active?
+          - if @user.is_admin && @customer.active? && !@organization.specific_mission
             %li.nav-item
               %a.nav-link{ class: ('active' if params[:tab] == 'file_storages'), href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
@@ -244,64 +248,94 @@
               %p
                 En cas de nécessité (suppression du journal), merci de contacter le
                 = link_to 'support.', 'javascript:ZDiscussions.showDiscussionsFBW();'
-            %table.table.table-striped.table-bordered-inner.table-condensed
-              %thead
-                %tr.bg-brown.text-white
-                  %th{ rowspan: 2, style: 'vertical-align:middle' } Code journal iDocus
-                  %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
-                  %th.aligncenter{ colspan: 4 } Pré-saisie comptable
-                  %th{ rowspan: 2, style: 'vertical-align:middle' } Nombre d’automates
-                  - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
-                    %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
-                %tr.bg-brown-light.text-white
-                  %th Type de pré-saisie
-                  %th Type de compte
-                  %th Compte tiers
-                  %th Compte de charge/produit
-              %tbody
-                - @journals.each do |journal|
-                  %tr
-                    %td= journal.name
-                    %td= journal.description
-                    %td= t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
-                    %td
-                      - if journal.is_pre_assignment_processable?
-                        = journal.default_account? ? 'compte par défaut' : "compte d'attente"
-                    %td= journal.meta_account_number
-                    %td= journal.meta_charge_account
-                    %td= journal.retrievers.count
+            - if @organization.specific_mission
+              %table.table.table-striped.table-bordered-inner.table-condensed
+                %thead
+                  %tr.bg-brown.text-white
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Code dossier
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Nom dossier
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Nombre d’automates
                     - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                      %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
+                %tbody
+                  - @journals.each do |journal|
+                    %tr
+                      %td= journal.name
+                      %td= journal.description
+                      %td= journal.retrievers.count
+                      - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                        %td
+                          = link_to t('actions.edit'), edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-light'
+                          - if @user.is_admin || false || journal.is_open_for_modification?
+                            = link_to 'Supprimer', account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
+                            - unless @user.is_admin || false
+                              %i (pour #{distance_of_time_in_words_to_now(journal.created_at + 24.hours)})
+            - else
+              %table.table.table-striped.table-bordered-inner.table-condensed
+                %thead
+                  %tr.bg-brown.text-white
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Code journal iDocus
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
+                    %th.aligncenter{ colspan: 4 } Pré-saisie comptable
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Nombre d’automates
+                    - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                      %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
+                  %tr.bg-brown-light.text-white
+                    %th Type de pré-saisie
+                    %th Type de compte
+                    %th Compte tiers
+                    %th Compte de charge/produit
+                %tbody
+                  - @journals.each do |journal|
+                    %tr
+                      %td= journal.name
+                      %td= journal.description
+                      %td= t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
                       %td
-                        = link_to t('actions.edit'), edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-light'
-                        - if @user.is_admin || false || journal.is_open_for_modification?
-                          = link_to 'Supprimer', account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
-                          - unless @user.is_admin || false
-                            %i (pour #{distance_of_time_in_words_to_now(journal.created_at + 24.hours)})
+                        - if journal.is_pre_assignment_processable?
+                          = journal.default_account? ? 'compte par défaut' : "compte d'attente"
+                      %td= journal.meta_account_number
+                      %td= journal.meta_charge_account
+                      %td= journal.retrievers.count
+                      - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                        %td
+                          = link_to t('actions.edit'), edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-light'
+                          - if @user.is_admin || false || journal.is_open_for_modification?
+                            = link_to 'Supprimer', account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
+                            - unless @user.is_admin || false
+                              %i (pour #{distance_of_time_in_words_to_now(journal.created_at + 24.hours)})
+
+            - unless @organization.specific_mission
+              .row
+                .col-md-7
+                  %b Pré-saisie comptable activée pour le dossier :
+                  %span.badge{ class: 'badge-' + (@customer.options.is_preassignment_authorized ? 'success fs-origin' : 'danger fs-origin') }
+                    = @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
+                  - unless @customer.options.is_preassignment_authorized
+                    %i.margin1left
+                      = link_to '(Activer la pré-saisie comptable)', edit_account_organization_customer_subscription_path(@organization, @customer)
+                  %br
+                  %b Nombre de journaux comptables utilisés :
+                  %span.badge.fs-origin= @customer.account_book_types.count
+                  %br
+                  %b Nombre de journaux comptables autorisés :
+                  %span.badge.fs-origin= @customer.options.max_number_of_journals
+                  - if @customer.options.max_number_of_journals < 10
+                    %i.margin1left
+                      = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)
             .row
               .col-md-7
-                %b Pré-saisie comptable activée pour le dossier :
-                %span.badge{ class: 'badge-' + (@customer.options.is_preassignment_authorized ? 'success fs-origin' : 'danger fs-origin') }
-                  = @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
-                - unless @customer.options.is_preassignment_authorized
-                  %i.margin1left
-                    = link_to '(Activer la pré-saisie comptable)', edit_account_organization_customer_subscription_path(@organization, @customer)
-                %br
-                %b Nombre de journaux comptables utilisés :
-                %span.badge.fs-origin= @customer.account_book_types.count
-                %br
-                %b Nombre de journaux comptables autorisés :
-                %span.badge.fs-origin= @customer.options.max_number_of_journals
-                - if @customer.options.max_number_of_journals < 10
-                  %i.margin1left
-                    = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)
               .col-md-5.alignright
                 - if @customer.active? && (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized)
                   - if is_max_number_of_journals_reached?
                     = link_to 'Ajouter nouveau', '#', class: 'btn btn-primary', disabled: 'disabled'
-                    = link_to 'Copier depuis base existante', '#', class: 'btn btn-primary', disabled: 'disabled'
+                    - unless @organization.specific_mission
+                      = link_to 'Copier depuis base existante', '#', class: 'btn btn-primary', disabled: 'disabled'
                   - elsif @customer.active?
                     = link_to 'Ajouter nouveau', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
-                    = link_to 'Copier depuis base existante', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
+                    - unless @organization.specific_mission
+                      = link_to 'Copier depuis base existante', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
+
           #compta.tab-pane.fade{ class: ('active show' if params[:tab] == 'compta') }
             %table.table.table-striped.table-condensed
               %tbody
