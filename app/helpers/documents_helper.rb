@@ -179,7 +179,7 @@ module DocumentsHelper
     contents += content_tag :h4, "Pièce n° #{piece.position} - #{piece.name}"
     contents += content_tag :div, content_tag(:iframe, "", :src => piece.cloud_content_object.url, :class => "piece_view", :style => "width:100%; min-height:550px; max-height: 600px")
     content_tag :div, contents, style: 'width: 750px; padding: 10px;z-index:200'
-  end 
+  end
 
   def quarterly_of_month(month)
     if month < 4
@@ -225,8 +225,12 @@ module DocumentsHelper
   end
 
   def file_upload_users_list
-    @file_upload_users_list ||= accounts.active.order(code: :asc).select do |user|
-      user.options.is_upload_authorized
+    if @user.organization.specific_mission
+      accounts
+    else
+      @file_upload_users_list ||= accounts.active.order(code: :asc).select do |user|
+        user.options.is_upload_authorized
+      end
     end
   end
 
