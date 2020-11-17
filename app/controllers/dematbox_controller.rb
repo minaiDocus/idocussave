@@ -25,7 +25,7 @@ class DematboxController < ApplicationController
   def SendFile
     dematbox_document = Dematbox::CreateDocument.new(params)
     dematbox_document.execute
-    @response = present(dematbox_document).response
+    @response = CreateDematboxDocumentPresenter.new(dematbox_document).response
 
     render template: 'dematbox/send_file_response',
            formats: [:xml],
