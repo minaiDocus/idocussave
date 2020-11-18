@@ -32,7 +32,7 @@ describe Api::Sgi::V1::PreassignmentController do
 
     @temp_pack = create :temp_pack, user: @user, organization: @organization, name: @pack.name
 
-    @journal = create :account_book_type, user: @user, entry_type: 1, name: @temp_pack.name.split[1]
+    @journal = create :account_book_type, user: @user, entry_type: 2, name: @temp_pack.name.split[1], account_number: "FREAFFECT", charge_account: "65899999", anomaly_account: "FANOMALIE"
 
     @period = create :period, { user: @user, organization: @organization }
 
@@ -49,7 +49,7 @@ describe Api::Sgi::V1::PreassignmentController do
       allow(Pack::Piece).to receive(:need_preassignment).and_return([])
       expect(TempPack).to receive(:find_by_name).with(any_args).exactly(0).times
 
-      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :compta_type => "AC", :access_token => @user.authentication_token }
 
       expect(response).to be_successful
 
@@ -58,22 +58,44 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(result["pieces"].size).to eq 0
     end
 
-    it "get list pieces exactly pieces1 and piece2" do
+    it "get list pieces exactly pieces1 and piece2 with compta_type AC" do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
 
-      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :compta_type => "AC", :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
       expect(result["pieces"].size).to eq 2
       expect(result["pieces"].first["piece_name"]).to eq @piece1.name
+      expect(result["pieces"].first["compta_type"]).to eq "AC"
       expect(result["pieces"].last["piece_name"]).to eq @piece2.name
+      expect(result["pieces"].last["compta_type"]).to eq "AC"
+    end
+
+    it "get list pieces exactly pieces1 and piece2 with compta_type NDF" do
+      allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
+
+      get :preassignment_needed, format: :json, params: { :compta_type => "NDF", :access_token => @user.authentication_token }
+
+      expect(response).to be_successful
+      result = JSON.parse(response.body)
+      expect(result["pieces"].size).to eq 0
+    end
+
+    it "get list pieces with unknown compta_type" do
+      allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
+
+      get :preassignment_needed, format: :json, params: { :compta_type => "MUS", :access_token => @user.authentication_token }
+
+      expect(response).to be_successful
+      result = JSON.parse(response.body)
+      expect(result["error_message"]).to eq "Compta type non reconnu"
     end
 
     it "send notif error if piece have an error condition" do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(nil)
 
-      get :preassignment_needed, format: :json, params: { :access_token => @user.authentication_token }
+      get :preassignment_needed, format: :json, params: { :compta_type => "AC", :access_token => @user.authentication_token }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)
@@ -107,7 +129,7 @@ describe Api::Sgi::V1::PreassignmentController do
       results = [{ id: @piece1.id, name: @piece1.name }, { id: @piece2.id, name: @piece2.name }]
       allow_any_instance_of(SgiApiServices::PushPreAsignmentService).to receive(:execute).and_return(results)
 
-      post :push_preassignment, format: :json, params: { :access_token => @user.authentication_token, data_preassignments: data_content }
+      post :push_preassignment, format: :json, params: {:piece_id => @piece1.id, :access_token => @user.authentication_token, data_preassignments: data_content }
 
       expect(response).to be_successful
       result = JSON.parse(response.body)

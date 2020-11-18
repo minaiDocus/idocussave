@@ -3,14 +3,21 @@
 class Api::Sgi::V1::PreassignmentController < SgiApiController
   def preassignment_needed
     @lists_pieces = []
+    @compta_type  = params[:compta_type]
 
-    Pack::Piece.need_preassignment.each do |piece|
-      temp_pack = TempPack.find_by_name piece.pack.name
+    if %w(AC VT NDF BQ).include?(params[:compta_type])
+      Pack::Piece.need_preassignment.each do |piece|
+        temp_pack = TempPack.find_by_name piece.pack.name
+        journal   = piece.user.account_book_types.where(name: piece.journal).first
 
-      add_to_list_and_update_state_of(piece) if temp_pack.is_pre_assignment_needed? && !piece.is_a_cover
-    end
+        add_to_list_and_update_state_of(piece) if temp_pack.is_pre_assignment_needed? && !piece.is_a_cover && journal.compta_type == @compta_type
+      end
 
-    render json: { success: true, pieces: @lists_pieces }, status: 200
+      render json: { success: true, pieces: @lists_pieces }, status: 200
+    else
+
+      render json: { success: false, error_message: "Compta type non reconnu" }, status: 200
+    end    
   end
 
   def download_piece
@@ -58,7 +65,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
     else
       piece.processing_pre_assignment unless piece.pre_assignment_force_processing?
 
-      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url) }
+      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url), compta_type: @compta_type }
     end
   end
 end

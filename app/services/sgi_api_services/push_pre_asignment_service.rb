@@ -1,27 +1,30 @@
 # -*- encoding : UTF-8 -*-
 class SgiApiServices::PushPreAsignmentService
   def initialize(data_preassignment)
-    @pack_preassignment = data_preassignment["packs"]
+    @data_preassignment = data_preassignment
   end
 
   def execute
-    @list_pieces = []
+    @process = @data_preassignment["process"]
+    piece    = Pack::Piece.find @data_preassignment["piece_id"]
+    journal  = piece.user.account_book_types.where(name: piece.pack.name.split[1]).first if piece
 
-    @pack_preassignment.each do |data_pack|
-      pack     = Pack.find data_pack["id"]
-      next unless pack.present?
+    errors   = []
+    errors << "Piece #{@data_preassignment["piece_id"]} unknown or deleted" if !piece
+    errors << "Journal not found" if !journal
+    errors << "Piece not awaiting for pre assignment" if !piece.is_awaiting_pre_assignment?
+    errors << "Piece #{piece.name} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
 
-      @process = data_pack["process"]
+    if errors.empty?
+      period   = piece.pack.owner.subscription.current_period
+      document = Reporting.find_or_create_period_document(piece.pack, period)
+      report   = document.report || create_report(piece.pack, document)
 
-      period   = pack.owner.subscription.current_period
-      document = Reporting.find_or_create_period_document(pack, period)
-      report   = document.report || create_report(pack, document)
+      pre_assignments = get_pre_assignments(piece, report, @data_preassignment["preseizures"])
 
-      pre_assignments = get_pre_assignments(data_pack["pieces"], report)
-
-      UpdatePeriodDataService.new(period).execute
-      UpdatePeriodPriceService.new(period).execute
-      next unless is_preseizure?
+      Billing::UpdatePeriodData.new(period).execute
+      Billing::UpdatePeriodPrice.new(period).execute
+      return @list_pieces unless is_preseizure?
 
       if report.preseizures.not_locked.not_delivered.size > 0
         report.remove_delivered_to
@@ -30,14 +33,18 @@ class SgiApiServices::PushPreAsignmentService
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
       not_blocked_pre_assignments = not_blocked_pre_assignments.select{|pres| !pres.has_deleted_piece? }
       if not_blocked_pre_assignments.size > 0
-        CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
-        GeneratePreAssignmentExportService.new(not_blocked_pre_assignments).execute
+        PreAssignment::CreateDelivery.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
+        PreseizureExport::GeneratePreAssignment.new(not_blocked_pre_assignments).execute
         FileDelivery.prepare(report)
-        FileDelivery.prepare(pack)
+        FileDelivery.prepare(piece.pack)
       end
+    else
+      piece.not_processed_pre_assignment
+
+      return { id: @data_preassignment["piece_id"], name: piece.try(:name), errors: errors}
     end
 
-    @list_pieces.flatten
+    { id: piece.id, name: piece.name, errors: errors }
   end
 
   private
@@ -50,46 +57,30 @@ class SgiApiServices::PushPreAsignmentService
     @process == 'expense'
   end
 
-  def get_pre_assignments(data_pieces, report)
+  def get_pre_assignments(piece, report, datas)
     pre_assignments = []
 
-    data_pieces.each do |data_piece|
-      _ignored = false
-      piece = Pack::Piece.find data_piece["id"]
-      journal = piece.user.account_book_types.where(name: piece.pack.name.split[1]).first if piece
+    _ignored = false
 
-      errors = []
-      errors << "Piece #{data_piece['name']} unknown or deleted" if !piece
-      errors << "Journal not found" if !journal
-      errors << "Piece not awaiting for pre assignment" if !piece.is_awaiting_pre_assignment?
-      errors << "Piece #{data_piece['name']} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@process)
+    if is_preseizure?
+      _ignoring_reason = @data_preassignment['ignore'].to_s.presence
 
-      if errors.empty?
-        if is_preseizure?
-          _ignoring_reason = data_piece['ignore'].to_s.presence
+      if _ignoring_reason.present?
+        _ignored = true
 
-          if _ignoring_reason.present?
-            _ignored = true
-
-            NotifyPreAssignmentIgnoredPiece.new(piece, 5.minutes).execute unless piece.is_deleted?
-          else
-            data_piece['preseizure'].each do |data|
-              pre_assignments << create_preseizure(piece, report, data)
-            end
-          end
-        elsif is_expense?
-          pre_assignments << create_expense(piece, report, data)
+        Notifications::PreAssignments.new({piece: piece}).notify_pre_assignment_ignored_piece unless piece.is_deleted?
+      else
+        datas.each do |data|
+          pre_assignments << create_preseizure(piece, report, data)
         end
-
-        _ignored ? piece.ignored_pre_assignment : piece.processed_pre_assignment
-      elsif piece
-        piece.not_processed_pre_assignment
       end
-
-      piece.update(pre_assignment_comment: _ignoring_reason) if piece
-
-      @list_pieces << { id: piece.id, name: piece.name, errors: errors }
+    elsif is_expense?
+      pre_assignments << create_expense(piece, report, datas)
     end
+
+    _ignored ? piece.ignored_pre_assignment : piece.processed_pre_assignment
+
+    piece.update(pre_assignment_comment: _ignoring_reason) if piece
 
     pre_assignments
   end
@@ -132,8 +123,8 @@ class SgiApiServices::PushPreAsignmentService
 
     preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
 
-    unless DetectPreseizureDuplicate.new(preseizure).execute
-      NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute unless preseizure.has_deleted_piece?
+    unless PreAssignment::DetectDuplicate.new(preseizure).execute
+      Notifications::PreAssignments.new({pre_assignment: preseizure}).notify_new_pre_assignment_available unless preseizure.has_deleted_piece?
     end
 
     preseizure
