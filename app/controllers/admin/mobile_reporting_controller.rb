@@ -22,12 +22,12 @@ class Admin::MobileReportingController < Admin::AdminController
 
   def download_mobile_users
     filename = "Reporting_users_application_iDocus_#{date_params}.xls"
-    send_data MobileReportingXls.new(date_params).users_report, type: 'application/vnd.ms-excel', filename: filename
+    send_data Report::MobileToXls.new(date_params).users_report, type: 'application/vnd.ms-excel', filename: filename
   end
 
   def download_mobile_documents
     filename = "Reporting_documents_application_iDocus_#{date_params}.xls"
-    send_data MobileReportingXls.new(date_params).documents_report, type: 'application/vnd.ms-excel', filename: filename
+    send_data Report::MobileToXls.new(date_params).documents_report, type: 'application/vnd.ms-excel', filename: filename
   end
 
   private

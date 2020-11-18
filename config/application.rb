@@ -27,6 +27,8 @@ module Idocus
     Dir.glob("#{Rails.root}/lib/ibiza_lib/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/exact_online_lib/api/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/exact_online_lib/*.{rb}").each { |file| require file }
+    Dir.glob("#{Rails.root}/lib/mcf_lib/api/*.{rb}").each { |file| require file }
+    Dir.glob("#{Rails.root}/lib/mcf_lib/*.{rb}").each { |file| require file }
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

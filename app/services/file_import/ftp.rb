@@ -29,7 +29,7 @@ class FileImport::Ftp
     return false if not @ftp.organization
     return false if customers.empty?
 
-    LogService.info('processing', "#{log_prefix} START")
+    System::Log.info('processing', "#{log_prefix} START")
     start_time = Time.now
 
     return unless test_connection
@@ -40,7 +40,7 @@ class FileImport::Ftp
 
     client.close
 
-    LogService.info('processing', "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)")
+    System::Log.info('processing', "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)")
 
     @ftp.update import_checked_at: Time.now, previous_import_paths: import_folders.map(&:path)
   end
@@ -50,7 +50,7 @@ class FileImport::Ftp
   def client
     return @client if @client
 
-    @client = FTPClient.new(@ftp)
+    @client = Ftp::Client.new(@ftp)
     @client.connect @ftp.domain, @ftp.port
     @client.login @ftp.login, @ftp.password
     @client.passive = @ftp.is_passive
@@ -369,10 +369,10 @@ class FileImport::Ftp
             uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @ftp.organization, 'ftp'
 
             if uploaded_document.valid?
-              LogService.info('processing', "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
+              System::Log.info('processing', "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
               client.delete file_path
             else
-              LogService.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
+              System::Log.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
               mark_file_error(item.path, file_name, uploaded_document.errors)
             end
           end

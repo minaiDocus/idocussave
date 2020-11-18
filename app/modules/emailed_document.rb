@@ -86,7 +86,7 @@ class EmailedDocument
 
       email.save
 
-      # LogService.info('emails', email.inspect)
+      # System::Log.info('emails', email.inspect)
 
       Dir.mktmpdir do |dir|
         file_path = "#{dir}/#{email.id}.eml"

@@ -22,7 +22,7 @@ class PonctualScripts::PonctualScript
   def logger_infos(message)
     infos = "[#{@class_name}] - #{message}"
     p infos #print infos to console and log
-    LogService.info('ponctual_scripts', infos)
+    System::Log.info('ponctual_scripts', infos)
   end
 
   private

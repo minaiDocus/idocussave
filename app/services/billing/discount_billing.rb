@@ -103,7 +103,7 @@ class Billing::DiscountBilling
     quantity  = quantity_of(package_sym)
     result    = { subscription: 0, retriever: 0 }
 
-    SubscriptionPackage.discount_billing_of(package, apply_special_policy?).each do |discount|
+    Subscription::Package.discount_billing_of(package, apply_special_policy?).each do |discount|
       if discount[:limit].include?(quantity.to_i)
         result = { subscription: discount[:subscription_price], retriever: discount[:retriever_price] }
         break

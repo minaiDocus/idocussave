@@ -101,7 +101,7 @@ describe FileDelivery::Storage::Mcf do
   it 'manages insufficient space error', :handling_space_error do
     message = "{\"CodeError\":507,\"Success\":false,\"StorageLimitReached\":true}"
     allow_any_instance_of(FileDelivery::Storage::Mcf).to receive(:up_to_date?).and_return(false)
-    allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unknown.new(message))
+    allow_any_instance_of(McfLib::Api::Mcf::Client).to receive(:upload).and_raise(McfLib::Api::Mcf::Errors::Unknown.new(message))
 
     expect(@mcf.is_delivery_activated).to eq true
 
@@ -114,7 +114,7 @@ describe FileDelivery::Storage::Mcf do
 
   it 'manages invalid token error', :handling_invalid_token do
     allow_any_instance_of(FileDelivery::Storage::Mcf).to receive(:up_to_date?).and_return(false)
-    allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unauthorized)
+    allow_any_instance_of(McfLib::Api::Mcf::Client).to receive(:upload).and_raise(McfLib::Api::Mcf::Errors::Unauthorized)
 
     expect(@mcf).to be_configured
 

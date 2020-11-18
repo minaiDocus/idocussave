@@ -81,21 +81,21 @@ class PonctualScripts::Archive::BudgeaTransactionFetcher
             end
           else
             log_message += "[BudgeaTransactionFetcher][#{@user.code}] - No bank accounts found! OR Unauthorized => #{@accounts.to_s}"
-            LogService.info('budgea_fetch_processing', log_message)
+            System::Log.info('budgea_fetch_processing', log_message)
             return log_message
           end
         else
           log_message += "[BudgeaTransactionFetcher][#{@user.code}] - Parameters invalid!"
-          LogService.info('budgea_fetch_processing', log_message)
+          System::Log.info('budgea_fetch_processing', log_message)
           return log_message
         end
       else
         log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - Budgea client invalid! - no budgea account configured for the user"
-        LogService.info('budgea_fetch_processing', log_message)
+        System::Log.info('budgea_fetch_processing', log_message)
         return log_message
       end
       log_message += "[BudgeaTransactionFetcher][#{@user.try(:code)}] - New operations: #{new_operations_count} / Deleted operations: #{deleted_operations_count} / Total operations fetched: #{operations_fetched_count}"
-      LogService.info('budgea_fetch_processing', log_message)
+      System::Log.info('budgea_fetch_processing', log_message)
       return log_message
     end
 

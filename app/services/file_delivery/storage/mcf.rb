@@ -30,7 +30,7 @@ class FileDelivery::Storage::Mcf < FileDelivery::Storage::Main
   end
 
   def init_client
-    McfApi::Client.new(@storage.access_token)
+    McfLib::Api::Mcf::Client.new(@storage.access_token)
   end
 
   def max_number_of_threads
@@ -50,24 +50,24 @@ class FileDelivery::Storage::Mcf < FileDelivery::Storage::Main
   end
 
   def retryable_failure?(error)
-    error.is_a?(McfApi::Errors::Unauthorized) || error.is_a?(McfApi::Errors::Unknown)
+    error.is_a?(McfLib::Api::Mcf::Errors::Unauthorized) || error.is_a?(McfLib::Api::Mcf::Errors::Unknown)
   end
 
   def manageable_failure?(error)
-    insufficient_space?(error) || error.class == McfApi::Errors::Unauthorized
+    insufficient_space?(error) || error.class == McfLib::Api::Mcf::Errors::Unauthorized
   end
 
   def manage_failure(error)
     if insufficient_space?(error)
       @storage.update(is_delivery_activated: false)
       Notifications::McfDocuments.new({users: @storage.organization.admins}).notify_mcf_insufficient_space
-    elsif error.class == McfApi::Errors::Unauthorized
+    elsif error.class == McfLib::Api::Mcf::Errors::Unauthorized
       @storage.reset_tokens
       Notifications::McfDocuments.new({users: @storage.organization.admins}).notify_mcf_invalid_access_token
     end
   end
 
   def insufficient_space?(error)
-    error.class == McfApi::Errors::Unknown && error.message.match(/StorageLimitReached\":true/)
+    error.class == McfLib::Api::Mcf::Errors::Unknown && error.message.match(/StorageLimitReached\":true/)
   end
 end

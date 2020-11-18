@@ -8,7 +8,7 @@ class Account::FtpsController < Account::AccountController
 
   def update
     @ftp.assign_attributes(ftp_params)
-    if @ftp.valid? && VerifyFtpSettings.new(@ftp, current_user.code).execute
+    if @ftp.valid? && Ftp::VerifySettings.new(@ftp, current_user.code).execute
       @ftp.is_configured = true
       @ftp.save
       flash[:success] = 'Votre compte FTP a été configuré avec succès.'

@@ -26,7 +26,7 @@ class Account::Organization::FtpsController < Account::OrganizationController
     result = @ftp.valid?
     is_verified = false
     if result && @ftp.password_changed?
-      result = VerifyFtpSettings.new(@ftp, current_user.code).execute
+      result = Ftp::VerifySettings.new(@ftp, current_user.code).execute
       is_verified = true
     end
     if result

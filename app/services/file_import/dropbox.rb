@@ -262,10 +262,10 @@ class FileImport::Dropbox
 
                 uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, uploader, 'dropbox')
                 if uploaded_document.valid?
-                  LogService.info('processing', "[Dropbox Import][#{uploader.code}][SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
+                  System::Log.info('processing', "[Dropbox Import][#{uploader.code}][SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
                   client.delete file_path
                 else
-                  LogService.info('processing', "[Dropbox Import][#{uploader.code}][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
+                  System::Log.info('processing', "[Dropbox Import][#{uploader.code}][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
                   mark_file_error(path, file_name, uploaded_document.errors)
                 end
               end

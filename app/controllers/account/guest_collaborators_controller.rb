@@ -18,7 +18,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   end
 
   def create
-    @guest_collaborator = CreateContact.new(user_params, @organization).execute
+    @guest_collaborator = AccountSharing::CreateContact.new(user_params, @organization).execute
     if @guest_collaborator.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_guest_collaborators_path(@organization)
@@ -40,7 +40,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   end
 
   def destroy
-    DestroyCollaborator.new(@guest_collaborator).execute
+    User::Collaborator::Destroy.new(@guest_collaborator).execute
     flash[:success] = 'Supprimé avec succès.'
     redirect_to account_organization_guest_collaborators_path(@organization)
   end

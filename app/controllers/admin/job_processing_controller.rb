@@ -23,7 +23,7 @@ class Admin::JobProcessingController < Admin::AdminController
   end
 
   def launch_data_verif
-    DataVerificatorWorker.perform_async
+    DataVerificator::DailyDataVerifierWorker.perform_async
     flash[:success] = 'Data vérificator lanché avec succès'
 
     redirect_to admin_job_processing_index_path

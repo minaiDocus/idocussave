@@ -101,7 +101,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def add_shared_docs
-    account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
+    account_sharing = AccountSharing::ShareAccount.new(@user, account_sharing_params, current_user).execute
 
     if account_sharing.persisted?
       render json: { message: 'Dossier partagé avec succès.' }, status: 200
@@ -111,7 +111,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def add_shared_contacts
-    guest_collaborator = CreateContact.new(user_params, @organization).execute
+    guest_collaborator = AccountSharing::CreateContact.new(user_params, @organization).execute
 
     if guest_collaborator.persisted?
       render json: { message: 'Créé avec succès.' }, status: 200
@@ -134,7 +134,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def accept_shared_docs
     account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
 
-    if AcceptAccountSharingRequest.new(account_sharing).execute
+    if AccountSharing::AcceptRequest.new(account_sharing).execute
       render json: { message: 'Le partage a été validé avec succès.' }, status: 200
     else
       render json: { message: 'Impossible de valider le partage.' }, status: 200
@@ -145,7 +145,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     if params[:type] && params[:type] == 'customers'
       account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
 
-      if DestroyAccountSharing.new(account_sharing, @user).execute
+      if AccountSharing::Destroy.new(account_sharing, @user).execute
         render json: { message: 'Le partage a été supprimé avec succès.' }, status: 200
       else
         render json: { message: 'Impossible de supprimer le partage.' }, status: 200
@@ -153,7 +153,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     else
       account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
 
-      if DestroyAccountSharing.new(account_sharing).execute
+      if AccountSharing::Destroy.new(account_sharing).execute
         render json: { message: 'Le partage a été supprimé avec succès.' }, status: 200
       else
         render json: { message: 'Impossible de supprimer le partage.' }, status: 200
@@ -163,7 +163,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def delete_shared_contacts
     guest_collaborator = @organization.guest_collaborators.find params[:id]
-    DestroyCollaborator.new(guest_collaborator).execute
+    User::Collaborator::Destroy.new(guest_collaborator).execute
 
     render json: { message: 'Supprimé avec succès.' }, status: 200
   end
@@ -181,7 +181,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def add_shared_docs_customers
-    contact, account_sharing = ShareMyAccount.new(@user, user_params, current_user).execute
+    contact, account_sharing = AccountSharing::ShareMyAccount.new(@user, user_params, current_user).execute
 
     if account_sharing.persisted?
       render json: { message: 'Votre compte a été partagé avec succès.' }, status: 200

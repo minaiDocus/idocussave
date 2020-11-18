@@ -85,7 +85,7 @@ class Account::OrganizationsController < Account::OrganizationController
 
   # POST /account/organizations/new
   def create
-    @organization = CreateOrganization.new(organization_params).execute
+    @organization = Organization::Create.new(organization_params).execute
     if @organization.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_path(@organization)
@@ -144,7 +144,7 @@ class Account::OrganizationsController < Account::OrganizationController
 
   # PUT /account/organizations/:id/deactivate
   def deactivate
-    DeactivateOrganization.new(@organization.id.to_s).execute
+    Organization::Deactivate.new(@organization.id.to_s).execute
     @organization.update_attribute(:is_active, false)
     flash[:success] = 'Désactivé avec succès.'
     redirect_to account_organization_path(@organization)

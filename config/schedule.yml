@@ -9,7 +9,7 @@ Billing::CreateInvoicePdfWorker:
 InitializePeriodsWorker:
   queue: high
   cron: '0 3 1 * *'
-SubscriptionStatisticsWorker:
+Subscription::StatisticsWorker:
   queue: default
   cron: '0 5 * * *'
 Order::RemindToNewKitWorker:
@@ -75,7 +75,7 @@ Retriever::ResumeBudgeaWorker:
 
 ## Accounting flow workers
 
-FtpFetcherWorker:
+Ftp::FetcherWorker:
   queue: default
   cron: '*/10 * * * * *'
 
@@ -145,24 +145,24 @@ PreAssignment::Delivery::ExactOnlineWorker:
   cron: '*/10 * * * * *'
 
 
-JobProcessorWorker:
+System::JobProcessorWorker:
   queue: high
   cron: '0 */5 * * * *'
 
 ## destroy some data
-DatabaseCleanerWorker:
+System::DatabaseCleanerWorker:
   queue: default
   cron: '0 2 * * *'
 
-## Daily data verifier worker
-DataVerificatorWorker:
-  queue: default
-  cron: '0 3 * * *'
-
 ## Zoho CRM sync
-ZohoCrmSynchronizerWorker:
+System::ZohoCrmSynchronizerWorker:
   queue: default
   cron: '0 1 1 * *'
+
+## Daily data verifier worker
+DataVerificator::DailyDataVerifierWorker:
+  queue: default
+  cron: '0 3 * * *'
 
 ## Delivery workers
 

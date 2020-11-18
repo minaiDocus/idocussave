@@ -17,7 +17,8 @@ class Api::V2::TempDocumentsController < ActionController::Base
       f.write(Base64.decode64(params[:file_base64]))
     end
 
-    uploaded_document = UploadedDocument.new(File.open(filename),
+    if customer.still_active? && (customer.try(:options).try(:is_upload_authorized) || customer.try(:subscription).try(:current_period).try(:is_active?, :ido_x))
+      uploaded_document = UploadedDocument.new(File.open(filename),
                                             temp_document_params[:content_file_name],
                                             customer,
                                             journal.name,
@@ -27,10 +28,13 @@ class Api::V2::TempDocumentsController < ActionController::Base
                                             nil,
                                             temp_document_params[:api_id])
 
-    if uploaded_document
-      render json: uploaded_document.to_json
+      if uploaded_document
+        render json: uploaded_document.to_json
+      else
+        render json: uploaded_document.try(:errors), status: :unprocessable_entity
+      end
     else
-      render json: temp_document.errors, status: :unprocessable_entity
+      render json: { message: 'Upload unauthorized - or - Inactive customer' }, status: 401
     end
   end
 

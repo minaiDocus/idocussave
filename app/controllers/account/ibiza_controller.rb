@@ -11,7 +11,7 @@ class Account::IbizaController < Account::OrganizationController
 
     if @ibiza.save
       if @ibiza.need_to_verify_access_tokens?
-        VerifyIbizaAccessTokens.new(@ibiza.id.to_s).execute
+        IbizaLib::VerifyAccessTokens.new(@ibiza.id.to_s).execute
       end
 
       flash[:success] = 'Créé avec succès.'
@@ -29,7 +29,7 @@ class Account::IbizaController < Account::OrganizationController
   def update
     if @ibiza.update(ibiza_params)
       if @ibiza.need_to_verify_access_tokens?
-        VerifyIbizaAccessTokens.new(@ibiza.id.to_s).execute
+        IbizaLib::VerifyAccessTokens.new(@ibiza.id.to_s).execute
       end
 
       flash[:success] = 'Modifié avec succès.'

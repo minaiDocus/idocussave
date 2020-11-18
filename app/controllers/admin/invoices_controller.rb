@@ -26,7 +26,7 @@ class Admin::InvoicesController < Admin::AdminController
   # GET /admin/invoices/:id/download
   def download
     if params['invoice_ids'].present?
-      zip_path = InvoicesToZip.new(params['invoice_ids']).execute
+      zip_path = Billing::InvoicesToZip.new(params['invoice_ids']).execute
       send_file(zip_path, type: 'application/zip', filename: 'factures.zip', x_sendfile: true)
     else
       redirect_to admin_invoices_path
