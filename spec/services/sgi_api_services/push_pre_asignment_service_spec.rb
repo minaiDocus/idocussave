@@ -3,23 +3,28 @@ require 'spec_helper'
 
 describe SgiApiServices::PushPreAsignmentService do
   def data_content_valid
-    { "packs": [
-        {"id": @pack.id, "name": "#{@pack.name.gsub(' all', '')}", "process": "preseizure", "pieces":
-        [
-          {"id": @piece1.id, "name": "#{@piece1.name}", "preseizure": [{"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}]},
-          {"id": @piece2.id, "name": "#{@piece2.name}", "preseizure": [{"date": "27/09/2018", "third_party": "OVH-3", "piece_number": "FR2122653601", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "debit", "number": "", "value": 2.78}}, { "type": "TVA", "number": "445660", "lettering": "", "amount": { "type": "credit", "number": "1", "value": 2.32}} ]}]}
-        ]}
+    {
+      process: "preseizure",
+      pack_name: "#{@pack.name.gsub(' all', '')}",
+      piece_id: @piece1.id,
+      preseizures: [
+        {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]},
+
+       {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}
       ]
     }
   end
 
   def data_content_ignored
-    { "packs": [
-        {"id": @pack.id, "name": "#{@pack.name.gsub(' all', '')}", "process": "preseizure", "pieces": 
-        [
-          {"id": @piece1.id, "name": "#{@piece1.name}", "ignore": "REASON 1", "preseizure": [{"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}]},
-          {"id": @piece2.id, "name": "#{@piece2.name}", "ignore": "REASON 2", "preseizure": [{"date": "27/09/2018", "third_party": "OVH-3", "piece_number": "FR2122653601", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "debit", "number": "", "value": 2.78}}, { "type": "TVA", "number": "445660", "lettering": "", "amount": { "type": "credit", "number": "1", "value": 2.32}} ]}]}
-        ]}
+    {
+      process: "preseizure",
+      pack_name: "#{@pack.name.gsub(' all', '')}",
+      piece_id: @piece1.id,
+      ignore: "REASON 1",
+      preseizures: [
+        {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]},
+
+       {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}
       ]
     }
   end
@@ -54,19 +59,9 @@ describe SgiApiServices::PushPreAsignmentService do
   end
 
   describe 'retrieve preassignment sending' do
-    it "pack not exist, process interrupted" do
-      allow(Pack).to receive(:find).with(any_args).and_return([])
-      expect(Reporting).not_to receive(:find_or_create_period_document).with(any_args)
-
-      list_pieces = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
-
-      expect(list_pieces.size).to eq 0
-    end
-
     it "creates preseizure for valid pieces" do
-      list_pieces = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
+      response = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
 
-      expect(list_pieces.size).to eq 2
       @piece1.reload
       preseizure = @piece1.preseizures.first
 
@@ -83,11 +78,8 @@ describe SgiApiServices::PushPreAsignmentService do
       expect(preseizure.entries.size).to eq 2
       expect(preseizure.entries.first.amount).to eq 2.78
 
-      expect(list_pieces.first[:id]).to eq @piece1.id
-      expect(list_pieces.first[:name]).to eq @piece1.name
-
-      expect(list_pieces.last[:id]).to eq @piece2.id
-      expect(list_pieces.last[:name]).to eq @piece2.name
+      expect(response[:id]).to eq @piece1.id
+      expect(response[:name]).to eq @piece1.name
     end
 
     it 'ignores pre-assignment when piece has an ignore element value', :ignore do
@@ -104,15 +96,15 @@ describe SgiApiServices::PushPreAsignmentService do
     it 'does not create preseizure when piece is already pre-assigned', :test do
       allow_any_instance_of(Pack::Piece).to receive(:preseizures).and_return([double(id:1), double(id:2)])
 
-      list_pieces = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
+      response = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
 
       @piece1.reload
 
       expect(@piece1.pre_assignment_not_processed?).to be true
       expect(@piece1.is_awaiting_pre_assignment?).to be false
 
-      expect(list_pieces.first[:name]).to eq @piece1.name
-      expect(list_pieces.first[:errors].to_s).to match /already pre-assigned/
+      expect(response[:name]).to eq @piece1.name
+      expect(response[:errors].to_s).to match /already pre-assigned/
     end
   end
 end

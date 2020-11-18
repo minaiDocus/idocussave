@@ -602,9 +602,9 @@ Rails.application.routes.draw do
         end
 
         resources :preassignment do
-          get 'preassignment_needed', on: :collection
+          get 'preassignment_needed(/:compta_type)', action: 'preassignment_needed', on: :collection
           get 'download_piece', on: :collection
-          post 'push_preassignment', on: :collection
+          post 'push_preassignment(/:piece_id)', action: 'push_preassignment', on: :collection
         end
 
         resources :mapping_generator do
