@@ -9,9 +9,9 @@ class Api::Sgi::V1::MappingGeneratorController < SgiApiController
   private
 
   def user
-    account_book_type = AccountBookType.find_by_user_id(params[:user_id])
-    _user = User.find(account_book_type.user_id) if account_book_type && account_book_type.entry_type > 0
-    return _user if _user.active?
+    @user = User.find_by_code(params[:user_code])
+    account_book_type = AccountBookType.find_by_user_id(@user.id)
+    return @user if account_book_type && account_book_type.entry_type > 0 && @user.active?
   end
 
   def json_content

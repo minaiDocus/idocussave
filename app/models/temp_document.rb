@@ -90,6 +90,7 @@ class TempDocument < ApplicationRecord
   scope :from_ibizabox,     -> { where.not(ibizabox_folder_id: nil) }
   scope :from_mobile,       -> { where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile'") }
   scope :fingerprint_is_nil,-> { where(original_fingerprint: [nil, ''], content_fingerprint: [nil, ''], raw_content_fingerprint: [nil, '']) }
+  scope :by_source, -> (delivery_type) { where('delivery_type = ?', delivery_type) }
 
 
   state_machine initial: :created do

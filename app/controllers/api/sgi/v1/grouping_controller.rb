@@ -2,7 +2,7 @@
 
 class Api::Sgi::V1::GroupingController < SgiApiController
 
-  # GET /api/sgi/v1/grouping/bundle_needed
+  # GET /api/sgi/v1/grouping/bundle_needed/:delivery_type
   def bundle_needed
     render json: { success: true, bundle_needed_documents: process_bundle_needed.to_json }, status: 200
   end
@@ -23,7 +23,7 @@ class Api::Sgi::V1::GroupingController < SgiApiController
   def process_bundle_needed
     temp_documents = []
     TempPack.bundle_processable.each do |temp_pack|
-      temp_pack.temp_documents.bundle_needed.by_position.each do |temp_document|
+      temp_pack.temp_documents.by_source(params[:delivery_type]).bundle_needed.by_position.each do |temp_document|
         if temp_document.bundle_needed?
           temp_documents <<  {
             id: temp_document.id,

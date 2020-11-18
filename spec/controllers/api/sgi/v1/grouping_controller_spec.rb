@@ -109,9 +109,10 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
 
   context "GET bundle_needed documents", :bundle_needed_documents do
     it "valid Authorization header, returns a 200" do
-      request.headers["Authorization"] = @token
-      request.headers["Content-Type"] = "application/json"
-      get :bundle_needed, format: :json, params: {:access_token => @token}
+      request.headers["ACCEPT"]             = "application/json"
+      request.headers["CONTENT_TYPE"]       = "application/json"
+      request.headers["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Token.encode_credentials(@token)
+      get :bundle_needed, format: :json, params: {:delivery_type => 'upload'}
 
       expect(response).to have_http_status(:ok)
     end
@@ -124,13 +125,83 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
       expect(response).to have_http_status(:unauthorized)
     end
     
-    it "JSON body response contains expected temp document attributes" do
+    it "without 'delivery_type' params" do
       @temp_pack.temp_documents.each(&:bundle_needed)
 
       @temp_pack.update_attributes(updated_at: 20.minutes.ago)
 
-      get :bundle_needed, format: :json, params: {:access_token => @token}
+      request.headers["ACCEPT"]             = "application/json"
+      request.headers["CONTENT_TYPE"]       = "application/json"
+      request.headers["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Token.encode_credentials(@token)
+
+      get :bundle_needed, format: :json
       json_response = JSON.parse(response.body)
+
+      result = JSON.parse(json_response["bundle_needed_documents"])
+
+      expect(result.size).to eq 0
+    end
+
+    it "with delivery type equals to 'upload'" do
+      @temp_pack.temp_documents.each(&:bundle_needed)
+
+      @temp_pack.update_attributes(updated_at: 20.minutes.ago)
+
+      get :bundle_needed, format: :json, params: {:access_token => @token, :delivery_type => 'upload'}
+      json_response = JSON.parse(response.body)
+
+      result = JSON.parse(json_response["bundle_needed_documents"])
+
+      expect(result.size).to eq 1
+      expect(result.first['delivery_type']).to eq 'upload'
+      expect(result.first['base_file_name']).to eq 'IDO_0001_AC_202006_003'
+
+      expect(json_response.keys).to match_array(["success", "bundle_needed_documents"])
+      expect(json_response["success"]).to be true
+      JSON.parse(json_response[ "bundle_needed_documents" ]).each do |status|
+        expect(status.keys).to contain_exactly( "base_file_name", "delivery_type", "id", "temp_document_url", "temp_pack_name" )
+      end
+    end
+
+    it "with delivery type equals to 'scan'" do
+      @temp_pack.temp_documents.each(&:bundle_needed)
+
+      @temp_pack.update_attributes(updated_at: 20.minutes.ago)
+
+      get :bundle_needed, format: :json, params: {:access_token => @token, :delivery_type => 'scan'}
+      json_response = JSON.parse(response.body)
+
+      result = JSON.parse(json_response["bundle_needed_documents"])
+
+      expect(result.size).to eq 2
+      expect(result.first['delivery_type']).to eq 'scan'
+      expect(result.first['base_file_name']).to eq 'IDO_0001_AC_202006_001'
+      expect(result.second['base_file_name']).to eq 'IDO_0001_AC_202006_002'
+
+      expect(json_response.keys).to match_array(["success", "bundle_needed_documents"])
+      expect(json_response["success"]).to be true
+      JSON.parse(json_response[ "bundle_needed_documents" ]).each do |status|
+        expect(status.keys).to contain_exactly( "base_file_name", "delivery_type", "id", "temp_document_url", "temp_pack_name" )
+      end
+    end
+
+    it "with delivery type equals to 'dematbox_scan'" do
+      @temp_pack.temp_documents.each(&:bundle_needed)
+
+      @temp_pack.update_attributes(updated_at: 20.minutes.ago)
+
+      request.headers["ACCEPT"]             = "application/json"
+      request.headers["CONTENT_TYPE"]       = "application/json"
+      request.headers["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Token.encode_credentials(@token)
+
+      get :bundle_needed, format: :json, params: {:delivery_type => 'dematbox_scan'}
+      json_response = JSON.parse(response.body)
+
+      result = JSON.parse(json_response["bundle_needed_documents"])
+
+      expect(result.size).to eq 1
+      expect(result.first['delivery_type']).to eq 'dematbox_scan'
+      expect(result.first['base_file_name']).to eq 'IDO_0001_AC_202006_004'
 
       expect(json_response.keys).to match_array(["success", "bundle_needed_documents"])
       expect(json_response["success"]).to be true
@@ -144,8 +215,9 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
     it "post params, returns a status: 200, success: true and message: nil" do
       allow_any_instance_of(SgiApiServices::GroupDocument).to receive(:execute).and_return(success: true)
 
-      request.headers["Authorization"] = @token
-      request.headers["Content-Type"] = "application/json"
+      # request.headers["ACCEPT"]             = "application/json"
+      # request.headers["CONTENT_TYPE"]       = "application/json"
+      # request.headers["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Token.encode_credentials(@token)
       post :bundled, format: :json, params: {:access_token => @token, :bundled_documents => @bundled_documents}
 
       expect(response).to have_http_status(:ok)
