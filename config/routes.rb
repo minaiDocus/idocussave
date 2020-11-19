@@ -597,14 +597,14 @@ Rails.application.routes.draw do
     namespace :sgi do
       namespace :v1 do
         resources :grouping do
-          get 'bundle_needed', on: :collection
+          get 'bundle_needed/:delivery_type', action: 'bundle_needed',  on: :collection
           post 'bundled', on: :collection
         end
 
         resources :preassignment do
-          get 'preassignment_needed(/:compta_type)', action: 'preassignment_needed', on: :collection
+          get 'preassignment_needed/:compta_type', action: 'preassignment_needed', on: :collection
           get 'download_piece', on: :collection
-          post 'push_preassignment(/:piece_id)', action: 'push_preassignment', on: :collection
+          post 'push_preassignment/:piece_id', action: 'push_preassignment', on: :collection
         end
 
         resources :mapping_generator do

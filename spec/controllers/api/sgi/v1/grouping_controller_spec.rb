@@ -120,26 +120,9 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
     it "invalid Authorization header, returns a 401" do
       request.headers["Authorization"] = @token
       request.headers["Content-Type"] = "application/json"
-      get :bundle_needed, format: :json, params: {:access_token => nil}
+      get :bundle_needed, format: :json, params: {:delivery_type => 'upload'}
 
       expect(response).to have_http_status(:unauthorized)
-    end
-    
-    it "without 'delivery_type' params" do
-      @temp_pack.temp_documents.each(&:bundle_needed)
-
-      @temp_pack.update_attributes(updated_at: 20.minutes.ago)
-
-      request.headers["ACCEPT"]             = "application/json"
-      request.headers["CONTENT_TYPE"]       = "application/json"
-      request.headers["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Token.encode_credentials(@token)
-
-      get :bundle_needed, format: :json
-      json_response = JSON.parse(response.body)
-
-      result = JSON.parse(json_response["bundle_needed_documents"])
-
-      expect(result.size).to eq 0
     end
 
     it "with delivery type equals to 'upload'" do
