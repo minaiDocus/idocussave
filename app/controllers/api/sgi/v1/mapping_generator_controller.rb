@@ -10,8 +10,8 @@ class Api::Sgi::V1::MappingGeneratorController < SgiApiController
 
   def user
     @user = User.find_by_code(params[:user_code])
-    account_book_type = AccountBookType.find_by_user_id(@user.id)
-    return @user if account_book_type && account_book_type.entry_type > 0 && @user.active?
+    account_book_types = @user.account_book_types.compta_processable
+    return @user if account_book_types && @user.still_active?
   end
 
   def json_content

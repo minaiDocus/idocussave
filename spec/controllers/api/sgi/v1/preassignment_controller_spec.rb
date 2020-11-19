@@ -139,8 +139,8 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(result["results"].first['name']).to eq @piece1.name
     end
 
-    it "try to send without params data" do
-      post :push_preassignment, format: :json, params: { :access_token => @user.authentication_token }
+    it "try to send without params data", :test do
+      post :push_preassignment, format: :json, params: { :access_token => @user.authentication_token, :piece_id => @piece1.id }
 
       expect(response.status).to eq 601
       result = JSON.parse(response.body)

@@ -5,7 +5,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
     @lists_pieces = []
     @compta_type  = params[:compta_type]
 
-    if %w(AC VT NDF BQ).include?(params[:compta_type])
+    if (AccountBookType::TYPES_NAME - ['SPEC']).include?(params[:compta_type])
       Pack::Piece.need_preassignment.each do |piece|
         temp_pack = TempPack.find_by_name piece.pack.name
         journal   = piece.user.account_book_types.where(name: piece.journal).first
