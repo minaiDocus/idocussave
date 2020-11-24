@@ -79,15 +79,15 @@
                   toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable.
             = f.input :meta_account_number, input_html: { class: 'can_be_required' }
             = f.input :meta_charge_account, input_html: { class: 'can_be_required' }
-            - if !@customer || @customer.options.is_taxable
-              - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
-              = f.input :vat_account, hint: hint
-              = f.input :vat_account_10
-              = f.input :vat_account_8_5
-              = f.input :vat_account_5_5
-              = f.input :vat_account_2_1
             = f.input :anomaly_account, input_html: { class: 'can_be_required' }, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
             = f.input :jefacture_enabled
+            %fieldset{class: 'border p-2', style: 'border:1px solid #999; border-radius:0px; box-shadow:1px 11px 10px #999;'}
+              %legend{class: 'w-auto vat_account_field', style: 'padding: 0.2em 0.5em; font-size:90%; text-align:center; position: relative'} Compte de TVA
+              - if !@customer || @customer.options.is_taxable
+                - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
+                = hidden_field_tag 'required_new_vat_accounts_element', 'default_required', hint_input: hint, hint_label: 'Compte de TVA 20% appliqué à tous les documents dans le journal comptable iDocus'
+                = f.input :vat_accounts, as: :hidden, input_html: { id: 'account-book-type-vat-accounts-hidden' }
+                = link_to 'Ajouter un compte de TVA', '#', class: 'btn btn-primary add_vat_account_field float-right'
             - # Disabled for now
             - if false && @user.is_admin
               = f.input :is_expense_categories_editable, as: :boolean

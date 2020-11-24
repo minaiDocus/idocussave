@@ -8,27 +8,47 @@
     - journal_ordered_attributes.each do |k|
       - if @event.target_attributes.include?(k)
         - v = @event.target_attributes[k]
-        %tr
-          %td= t("activerecord.models.account_book_type.attributes.#{k}")
-          - if v.is_a?(Array)
-            %td
-              - if v[0].nil?
-                %i.gray vide
-              - else
-                = format_target_attribute k, v[0]
-            %td
-              - if v[1].nil?
-                %i.gray vide
-              - else
-                = format_target_attribute k, v[1]
-          - else
-            %td
-              - if @event.action == 'add'
-                %i.gray vide
-              - elsif @event.action == 'remove'
-                = format_target_attribute k, v
-            %td
-              - if @event.action == 'add'
-                = format_target_attribute k, v
-              - elsif @event.action == 'remove'
-                %i.gray vide
+        - raw_vat_accounts = JSON.parse(v) if k == 'vat_accounts'
+        - content_for :vat_accounts do
+          - if raw_vat_accounts.present?
+            - raw_vat_accounts.each do |rate, vat_account|
+              %tr
+                %td= "Compte TVA #{rate}"
+                %td
+                  - if @event.action == 'add'
+                    %i.gray vide
+                  - elsif @event.action == 'remove'
+                    = vat_account
+                %td
+                  - if @event.action == 'add'
+                    = vat_account
+                  - elsif @event.action == 'remove'
+                    %i.gray vide
+
+        - if k == 'vat_accounts'
+          = content_for :vat_accounts
+        - else
+          %tr
+            %td= t("activerecord.models.account_book_type.attributes.#{k}")
+            - if v.is_a?(Array)
+              %td
+                - if v[0].nil?
+                  %i.gray vide
+                - else
+                  = format_target_attribute k, v[0]
+              %td
+                - if v[1].nil?
+                  %i.gray vide
+                - else
+                  = format_target_attribute k, v[1]
+            - else
+              %td
+                - if @event.action == 'add'
+                  %i.gray vide
+                - elsif @event.action == 'remove'
+                  = format_target_attribute k, v
+              %td
+                - if @event.action == 'add'
+                  = format_target_attribute k, v
+                - elsif @event.action == 'remove'
+                  %i.gray vide

@@ -64,7 +64,7 @@ class PreseizureExport::PreseizuresToCsv
       journal = entry.preseizure.report.journal({name_only: false})
 
       general_account = if(entry.account.type == Pack::Report::Preseizure::Account::TVA)
-        journal.try(:vat_account)
+        journal.try(:get_vat_accounts_of, '20')
       elsif(entry.account.type == Pack::Report::Preseizure::Account::TTC)
         journal.try(:account_number)
       else

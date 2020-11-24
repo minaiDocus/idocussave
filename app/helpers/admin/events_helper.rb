@@ -34,11 +34,7 @@ module Admin::EventsHelper
       account_number
       default_charge_account
       charge_account
-      vat_account
-      vat_account_10
-      vat_account_8_5
-      vat_account_5_5
-      vat_account_2_1
+      vat_accounts
       anomaly_account
       is_expense_categories_editable
       expense_categories

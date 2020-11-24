@@ -18,12 +18,12 @@ describe Billing::CreateInvoicePdf do
       @organization = create :organization
 
       _users.each do |user|
-        user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_account: "445660", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
+        user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_accounts: "{'20':'445660', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
         user.organization = @organization
         user.save
       end
 
-      @user.account_book_types.create(name: "VT", pseudonym: "", description: "VT (Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "0ACC", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_account: "445660", vat_account_10: nil, vat_account_8_5: nil, vat_account_5_5: nil, vat_account_2_1: nil, anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, instructions: "Regroupez dans cette chemise :\r\nLes factures payée...", organization_id: @organization.id)
+      @user.account_book_types.create(name: "VT", pseudonym: "", description: "VT (Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "0ACC", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_accounts: "{'20':'445660', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, instructions: "Regroupez dans cette chemise :\r\nLes factures payée...", organization_id: @organization.id)
       @user.organization = @organization
       @user.save
 

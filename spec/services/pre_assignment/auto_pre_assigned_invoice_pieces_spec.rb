@@ -48,7 +48,7 @@ describe PreAssignment::AutoPreAssignedInvoicePieces do
 
     @organization      = Organization.create(name: "ACCOMPLYS", description: "Organization accomplys", code: "ACC", subject_to_vat: true)
 
-    @user.account_book_types.create(name: "VT", pseudonym: "", description: "(Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "9DIV", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_account: "445710", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
+    @user.account_book_types.create(name: "VT", pseudonym: "", description: "(Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "9DIV", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_accounts: "{'20':'445710', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
     @user.organization = @organization
     @user.save
 
