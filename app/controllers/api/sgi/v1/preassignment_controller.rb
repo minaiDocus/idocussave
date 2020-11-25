@@ -65,7 +65,9 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
     else
       piece.processing_pre_assignment unless piece.pre_assignment_force_processing?
 
-      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url), compta_type: @compta_type }
+      detected_third_party_id = piece.detected_third_party_id.presence || 6930
+
+      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url), compta_type: @compta_type, detected_third_party_id: detected_third_party_id }
     end
   end
 end
