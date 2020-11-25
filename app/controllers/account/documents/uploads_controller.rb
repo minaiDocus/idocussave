@@ -10,15 +10,7 @@ class Account::Documents::UploadsController < Account::AccountController
                end
 
     if customer.try(:options).try(:is_upload_authorized) && params[:files].present?
-      dir = "/nfs/archives/uploaded_document/"
-
-      FileUtils.makedirs(dir)
-      # FileUtils.chmod(0755, dir)
-
-      filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename.tr(' ', '_')}")
-      FileUtils.copy params[:files][0].tempfile, filename
-
-      uploaded_document = UploadedDocument.new(File.open(filename),
+      uploaded_document = UploadedDocument.new(File.open(params[:files][0].tempfile),
                                                params[:files][0].original_filename,
                                                customer,
                                                params[:file_account_book_type],
@@ -26,10 +18,6 @@ class Account::Documents::UploadsController < Account::AccountController
                                                current_user,
                                                'web',
                                                params[:analytic])
-
-      if uploaded_document.errors.empty? || !uploaded_document.errors.detect { |e| e.first == :file_is_corrupted_or_protected }.present?
-       FileUtils.rm filename
-      end
 
       data = present(uploaded_document).to_json
     else
