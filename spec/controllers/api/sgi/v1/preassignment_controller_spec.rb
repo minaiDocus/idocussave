@@ -68,8 +68,10 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(result["pieces"].size).to eq 2
       expect(result["pieces"].first["piece_name"]).to eq @piece1.name
       expect(result["pieces"].first["compta_type"]).to eq "AC"
+      expect(result["pieces"].first["detected_third_party_id"]).to eq 6930
       expect(result["pieces"].last["piece_name"]).to eq @piece2.name
       expect(result["pieces"].last["compta_type"]).to eq "AC"
+      expect(result["pieces"].last["detected_third_party_id"]).to eq 6930
     end
 
     it "get list pieces exactly pieces1 and piece2 with compta_type NDF" do
