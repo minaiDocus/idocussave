@@ -13,7 +13,7 @@ class Account::Documents::UploadsController < Account::AccountController
       dir = "/nfs/archives/uploaded_document/"
 
       FileUtils.makedirs(dir)
-      FileUtils.chmod(0755, dir)
+      # FileUtils.chmod(0755, dir)
 
       filename = File.join(dir, "#{customer.code}_#{params[:files][0].original_filename.tr(' ', '_')}")
       FileUtils.copy params[:files][0].tempfile, filename
