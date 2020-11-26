@@ -147,7 +147,7 @@ show_vat_account_field = ->
       if /20/.test(rate)
         $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
         $('input[type="text"]#account_book_type_default_vat_accounts').change()
-      if !(rate == '' || rate == 'undefined' || vat_account == 'undefined' || /20/.test(rate))
+      if !(rate == '' || rate == 'undefined' || vat_account == '' || vat_account == 'undefined' || /20/.test(rate))
         add_vat_account_field(rate, vat_account)
 
   remove_vat_account_field()

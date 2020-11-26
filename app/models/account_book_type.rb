@@ -119,8 +119,7 @@ class AccountBookType < ApplicationRecord
 
 
   def get_vat_accounts_of(rate)
-    raw_vat_accounts = vat_accounts
-    JSON.parse(raw_vat_accounts)[rate]
+    JSON.parse(vat_accounts)[rate]
   end
 
 
@@ -128,7 +127,7 @@ class AccountBookType < ApplicationRecord
     vat_accounts_content = []
     raw_vat_accounts     = JSON.parse(vat_accounts)
     raw_vat_accounts.each do |rate, vat_account|
-      vat_accounts_content << vat_account
+      vat_accounts_content << vat_account if vat_account.present?
     end
 
     vat_accounts_content
