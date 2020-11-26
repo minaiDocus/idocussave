@@ -22,6 +22,7 @@ class Subscription::PeriodsToXls
       'Nom du document',
       'Piéces total',
       'Pré-affectation',
+      'Opération',
       'Piéces numérisées',
       'Piéces versées',
       'Piéces iDocus\'Box',
@@ -39,12 +40,29 @@ class Subscription::PeriodsToXls
 
     documents = PeriodDocument.where(period_id: @periods.map(&:id)).order(created_at: :asc, name: :asc)
 
-    list = []
+    @list       = []
+    customers   = []
+    period      = nil
+    indice_date = ""
 
-    documents.each do |document|
+    documents.each_with_index do |document, indx|
       user_code         = document.period.user ? document.period.user.code : ''
+      @organization     ||= User.find_by_code(user_code).organization if user_code.present?
       user_company      = document.period.user ? document.period.user.company : ''
       preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
+      operation_count   = document.period.user.operations.where(created_at: document.period.start_date..document.period.end_date).count
+
+      customers << user_code
+
+      if indice_date != document.period.end_date.month && indice_date.present? && period.present?
+        add_data_without(customers, period) unless user_code.empty?
+
+        period    = document.period
+        customers = []
+        customers << user_code
+      end
+
+      indice_date = document.period.end_date.month
 
       data = []
       data << document.period.user.try(:organization).try(:name) if @with_organization_info
@@ -56,6 +74,7 @@ class Subscription::PeriodsToXls
         document.name,
         document.pieces,
         preseizures_count,
+        operation_count,
         document.scanned_pieces,
         document.uploaded_pieces,
         document.dematbox_scanned_pieces,
@@ -69,7 +88,10 @@ class Subscription::PeriodsToXls
         document.paperclips,
         document.oversized
       ]
-      list << data
+      @list << data
+
+      add_data_without(customers, period) if documents.size == indx+1 && user_code.present?
+      period = document.period
     end
 
     range = @with_organization_info ? 0..5 : 0..4
@@ -82,7 +104,7 @@ class Subscription::PeriodsToXls
     #  _a <=> _b
     #end
 
-    list.each_with_index do |data, index|
+    @list.each_with_index do |data, index|
       sheet1.row(index + 1).replace(data)
     end
 
@@ -102,7 +124,7 @@ class Subscription::PeriodsToXls
     ]
     sheet2.row(0).concat headers
 
-    list = []
+    @list = []
 
     @periods.each do |period|
       billing = Billing::PeriodBilling.new(period)
@@ -136,7 +158,7 @@ class Subscription::PeriodsToXls
             format_price(price)
           ]
 
-          list << data
+          @list << data
         end
 
         next unless period.user && excesses_amount_in_cents_wo_vat > 0
@@ -161,13 +183,13 @@ class Subscription::PeriodsToXls
           format_price(excesses_amount_in_cents_wo_vat)
         ]
 
-        list << data
+        @list << data
       end
     end
 
     range = @with_organization_info ? 0..3 : 0..2
     month_index = @with_organization_info ? 1 : 0
-    list = list.sort do |a, b|
+    @list = @list.sort do |a, b|
       _a = a[range]
       _b = b[range]
       _a[month_index] = ("%02d" % _a[month_index])
@@ -175,7 +197,7 @@ class Subscription::PeriodsToXls
       _a <=> _b
     end
 
-    list.each_with_index do |data, index|
+    @list.each_with_index do |data, index|
       sheet2.row(index + 1).replace(data)
     end
 
@@ -184,9 +206,39 @@ class Subscription::PeriodsToXls
     io.string
   end
 
-
-
   def format_price(price_in_cents)
     ('%0.2f' % (price_in_cents.round / 100.0)).tr('.', ',')
+  end
+
+  def add_data_without(customers, period)
+    @organization.customers.active_at(period.start_date).each do |customer|
+      next if customers.include?(customer.code)
+
+      data = []
+      data += [
+        period.end_date.month,
+        period.start_date.year,
+        customer.code,
+        customer.company,
+        "",
+        0,
+        0,
+        customer.operations.where(created_at: period.start_date..period.end_date).count,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+
+      @list << data
+    end
   end
 end
