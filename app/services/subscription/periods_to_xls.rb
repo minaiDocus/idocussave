@@ -38,60 +38,22 @@ class Subscription::PeriodsToXls
     ]
     sheet1.row(0).concat headers
 
-    documents = PeriodDocument.where(period_id: @periods.map(&:id)).order(created_at: :asc, name: :asc)
-
     @list       = []
-    customers   = []
-    period      = nil
-    indice_date = ""
 
-    documents.each_with_index do |document, indx|
-      user_code         = document.period.user ? document.period.user.code : ''
-      @organization     ||= User.find_by_code(user_code).organization if user_code.present?
-      user_company      = document.period.user ? document.period.user.company : ''
-      preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
-      operation_count   = document.period.user.operations.where(created_at: document.period.start_date..document.period.end_date).count
+    @periods.sort_by(&:end_date).each do |period|
+      user            = period.user
+      documents       = period.documents.order(created_at: :asc, name: :asc)
+      @operation_count = user ? user.operations.where(created_at: period.start_date..period.end_date).count : 0
 
-      customers << user_code
-
-      if indice_date != document.period.end_date.month && indice_date.present? && period.present?
-        add_data_without(customers, period) unless user_code.empty?
-
-        period    = document.period
-        customers = []
-        customers << user_code
+      if documents.any?
+        documents.each do |document|
+          @preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
+          fill_data_with(user, period, document)
+        end
+      else
+        @preseizures_count = 0
+        fill_data_with(user, period) if user
       end
-
-      indice_date = document.period.end_date.month
-
-      data = []
-      data << document.period.user.try(:organization).try(:name) if @with_organization_info
-      data += [
-        document.period.end_date.month,
-        document.period.start_date.year,
-        user_code,
-        user_company,
-        document.name,
-        document.pieces,
-        preseizures_count,
-        operation_count,
-        document.scanned_pieces,
-        document.uploaded_pieces,
-        document.dematbox_scanned_pieces,
-        document.retrieved_pieces,
-        document.scanned_sheets,
-        document.pages,
-        document.scanned_pages,
-        document.uploaded_pages,
-        document.dematbox_scanned_pages,
-        document.retrieved_pages,
-        document.paperclips,
-        document.oversized
-      ]
-      @list << data
-
-      add_data_without(customers, period) if documents.size == indx+1 && user_code.present?
-      period = document.period
     end
 
     range = @with_organization_info ? 0..5 : 0..4
@@ -210,35 +172,31 @@ class Subscription::PeriodsToXls
     ('%0.2f' % (price_in_cents.round / 100.0)).tr('.', ',')
   end
 
-  def add_data_without(customers, period)
-    @organization.customers.active_at(period.start_date).each do |customer|
-      next if customers.include?(customer.code)
-
-      data = []
-      data += [
-        period.end_date.month,
-        period.start_date.year,
-        customer.code,
-        customer.company,
-        "",
-        0,
-        0,
-        customer.operations.where(created_at: period.start_date..period.end_date).count,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
-
-      @list << data
-    end
+  def fill_data_with(user=nil, period=nil, document=nil)
+    data = []
+    data << user.try(:organization).try(:name) if @with_organization_info
+    data += [
+              period.end_date.month,
+              period.start_date.year,
+              user.try(:code),
+              user.try(:company),
+              document.try(:name),
+              document.try(:pieces),
+              @preseizures_count,
+              @operation_count,
+              document.try(:scanned_pieces).to_i,
+              document.try(:uploaded_pieces).to_i,
+              document.try(:dematbox_scanned_pieces).to_i,
+              document.try(:retrieved_pieces).to_i,
+              document.try(:scanned_sheets).to_i,
+              document.try(:pages).to_i,
+              document.try(:scanned_pages).to_i,
+              document.try(:uploaded_pages).to_i,
+              document.try(:dematbox_scanned_pages).to_i,
+              document.try(:retrieved_pages).to_i,
+              document.try(:paperclips).to_i,
+              document.try(:oversize).to_i
+            ]
+    @list << data
   end
 end

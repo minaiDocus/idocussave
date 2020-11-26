@@ -119,7 +119,7 @@ class AccountBookType < ApplicationRecord
 
 
   def get_vat_accounts_of(rate)
-    JSON.parse(vat_accounts)[rate]
+    JSON.parse(vat_accounts)[rate.to_s]
   end
 
 
