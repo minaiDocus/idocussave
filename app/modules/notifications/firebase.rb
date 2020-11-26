@@ -17,11 +17,9 @@ class Notifications::Firebase < Notifications::Notifier
             "body": message,
           },
           "data":{
-            "message":{
-              "title": title,
-              "body": message,
-              "to_be_added": to_be_added
-            }
+            "title": title,
+            "body": message,
+            "to_be_added": to_be_added
           }
         }
         token.update_last_sending_date if send_request_fcm(payload)
@@ -37,11 +35,9 @@ class Notifications::Firebase < Notifications::Notifier
         "body": message,
       },
       "data":{
-        "message":{
-          "title": title,
-          "body": message,
-          "to_be_added": to_be_added
-        }
+        "title": title,
+        "body": message,
+        "to_be_added": to_be_added
       }
     }
 
@@ -66,6 +62,7 @@ class Notifications::Firebase < Notifications::Notifier
         request.body = payload.to_json
       end
 
+      p response
       true
     rescue Exception => e
       e.to_s
