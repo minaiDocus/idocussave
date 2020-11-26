@@ -47,7 +47,24 @@ class PreseizureExport::PreseizureToTxt
         line[41]       = entry.type == 1 ? 'D' : 'C'
         line[42]       = entry.amount >= 0.0 ? '+' : '-'
         line[43..54]   = '%012d' % entry.amount_in_cents
+
+        conterpart_account = []
+        accounting_plan    = preseizure.user.accounting_plan
+        journal = preseizure.report.journal({ name_only: false })
+
+        if journal
+          if entry.type == Pack::Report::Preseizure::Entry::DEBIT && journal.compta_type == 'AC'
+            conterpart_account << accounting_plan.active_providers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+          elsif entry.type == Pack::Report::Preseizure::Entry::CREDIT && journal.compta_type == 'VT'
+            conterpart_account << accounting_plan.active_customers.select(:conterpart_account).distinct.collect(&:conterpart_account)
+          end
+        end
+
+        line[55..62]   = conterpart_account.join(' - ')[0..7]
         line[63..68]   = preseizure.deadline_date.strftime('%d%m%y') if preseizure.deadline_date
+        line[69..73]   = entry.account.lettering[0..4] if entry.account.lettering.present?
+        line[74..78]   = preseizure.piece_number[0..4] if preseizure.piece_number.present?
+        line[99..106]  = preseizure.piece_number[0..7] if preseizure.piece_number.present?
         line[107..109] = 'EUR'
         line[110..112] = preseizure.journal_name[0..2] if preseizure.journal_name.size > 2
 
@@ -55,6 +72,8 @@ class PreseizureExport::PreseizureToTxt
           e = 116 + label.size - 1
           line[116..e] = label
         end
+
+        line[148..157] = preseizure.piece_number[0..9].rjust(10, '0') if preseizure.piece_number.present?
 
         if preseizure.piece
           file_name = preseizure.piece.position.to_s + '.pdf'
