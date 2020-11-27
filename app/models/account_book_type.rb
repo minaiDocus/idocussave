@@ -186,7 +186,7 @@ class AccountBookType < ApplicationRecord
 
 
   def format_of_name
-    errors.add(:name, :invalid) unless name =~ /\A[A-Z][A-Z0-9]+\z/
+    errors.add(:name, :invalid) unless name =~ /^[A-Za-z0-9]+$/
   end
 
   def uniqueness_of_name
