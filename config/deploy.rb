@@ -17,7 +17,6 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
 
 set :linked_files, fetch(:linked_files, []).push(
   'config/bearer.yml',
-  'config/jefacture.yml',
   'config/database.yml',
   'config/secrets.yml',
   'config/dematbox.yml',
@@ -34,7 +33,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/elastic_apm.yml',
   'config/supplier_recognition.yml',
   'config/api_authentication.yml',
-  'config/jefacture.yml'
+  'config/jefacture.yml',
+  'config/my_unisoft.yml'
 )
 
 set :slack_url, 'https://hooks.slack.com/services/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'
