@@ -1,0 +1,27 @@
+defaults: &defaults
+  base_user_url: https://app.myunisoft.fr
+  base_api_url: https://app.myunisoft.fr
+  member_group_id: 80
+  granted_for: 9
+  target: 2
+  x_third_party_secret: idocus-s7mvtqFRXNhXspJv4skMvnTq
+  user_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJzX3BoeXNpcXVlX2lkIjo1LCJtZW1iZXJfZ3JvdXBfaWQiOjgwLCJpYXQiOjE2MDM2OTMxODEsImV4cCI6MTYwNDI5Nzk4MX0.JcebFzZoT4CdRXqMlnyETD2Ox3yx8Y_VHqobSoHBi2M
+
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  base_api_url: https://yoda.myunisoft.fr:1368
+  base_user_url: https://yoda.myunisoft.fr:1338
+  user_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJzX3BoeXNpcXVlX2lkIjo1LCJtZW1iZXJfZ3JvdXBfaWQiOjgwLCJpYXQiOjE2MDM2OTMxODEsImV4cCI6MTYwNDI5Nzk4MX0.JcebFzZoT4CdRXqMlnyETD2Ox3yx8Y_VHqobSoHBi2M
+
+production:
+  <<: *defaults
+  base_api_url: https://app.myunisoft.fr
+  base_user_url: https://app.myunisoft.fr
+  user_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJzX3BoeXNpcXVlX2lkIjo1LCJtZW1iZXJfZ3JvdXBfaWQiOjgwLCJpYXQiOjE2MDM2OTMxODEsImV4cCI6MTYwNDI5Nzk4MX0.JcebFzZoT4CdRXqMlnyETD2Ox3yx8Y_VHqobSoHBi2M
