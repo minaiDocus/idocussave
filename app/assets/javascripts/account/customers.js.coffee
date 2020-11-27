@@ -327,8 +327,6 @@ load_accounting_plan_function= (id) ->
               , 3000)
             $('.import_accounting').attr('disabled', false)
 
-
-
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')
   $.ajax
@@ -490,8 +488,7 @@ update_price = ->
 
   $('.total_price').html(price+",00€ HT")
 
-
-jQuery ->
+jQuery ->  
   if ($('.import_dialog').length > 0)
     $('#import_dialog').modal('show')
 
@@ -597,8 +594,22 @@ jQuery ->
       uncheck_all_options()
       update_price()
 
+  if $(".edit.my_unisoft").length > 0
+    $("input[name='user[my_unisofts][customer_auto_deliver]']").each (index, element) =>
+      if $(element).val() == $("#auto_deliver_customer").val()
+        $(element).attr('checked', 'checked')
+        $(element).parent().addClass('checked')
+
+    $('#remove_customer').on 'click', (e) ->
+      e.stopPropagation()
+      if $(this).is(":checked")
+        $("input#user_my_unisofts_api_token").removeAttr('required')
+        $("input#required").removeClass('required')
+      else
+        $("input#user_my_unisofts_api_token").attr('required', 'required')
+        $("input#required").addClass('required')
+
   check_input_number()
   show_ibiza_customer()
   check_commitment()
   update_form()
-    

@@ -38,17 +38,23 @@
             %li.nav-item.dropdown
               %a.nav-link.dropdown-toggle{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact-online'].include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
               %ul.dropdown-menu{ style: "min-width: 195px" }
-                -if @organization.try(:ibiza).try(:used?) && !@customer.uses_exact_online?
+                -if software_uses('ibiza')   
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'ibiza'), href: '#ibiza', data: { toggle: 'tab' } }
                       .float-left iBiza
                       - if @customer.uses_ibiza?
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_exact_online_used && !@customer.uses_ibiza?
+                -if software_uses('exact_online')
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'exact_online'), href: '#exact_online', data: { toggle: 'tab' } }
                       .float-left Exact Online
                       - if @customer.uses_exact_online?
+                        = glyphicon('check', { class: 'float-right' })
+                -if software_uses('my_unisoft')
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'my_unisoft'), href: '#my_unisoft', data: { toggle: 'tab' } }
+                      .float-left My Unisoft
+                      - if @customer.uses_my_unisoft?
                         = glyphicon('check', { class: 'float-right' })
                 -if @organization.is_coala_used
                   %li
@@ -499,6 +505,65 @@
                 .row
                   .col-md-12
                     = link_to t('actions.edit'), edit_exact_online_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
+
+          - if @organization.try(:my_unisoft).try(:organization_used)
+            #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
+              %h4.margin1bottom Activation My Unisoft
+              = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_my_unisoft', class: 'form form-horizontal label-auto' } do |c|
+                = hidden_field_tag :part, 'my_unisoft'  
+                %table.table.table-condensed.table-striped
+                  %tbody
+                    %tr
+                      %th Ce dossier utilise My Unisoft ?
+                      = c.simple_fields_for :my_unisofts do |m|
+                        %td{width: '8%'}= m.input :user_used, as: 'boolean', label: 'oui?', input_html: { checked: @customer.uses_my_unisoft? }
+                      - if @user.leader?
+                        %td{width: '8%'}
+                          .alignright
+                            = c.submit t('actions.submit'), class: 'btn btn-primary'
+              - if @customer.uses_my_unisoft?
+                %hr
+                .card
+                  .card-header
+                    %h4.margin2top.margin1bottom Configuration My Unisoft
+                  .card-body
+                    - if @customer.my_unisoft.society_id.present?
+                      %table.table.table-striped.table-condensed
+                        %tbody
+                          %tr
+                            %th Etat
+                            %td{colspan: 2, width: '17%'}
+                              .badge.badge-success.fs-origin Connecté                
+                          %tr
+                            %th ID société
+                            %td{colspan: 2}= @customer.my_unisoft.society_id
+                          %tr
+                            %th Nom de la société
+                            %td{colspan: 2}= @customer.my_unisoft.name
+                    - else
+                      %h5 Ce dossier n'est pas lié à celui de My Unisoft
+
+                    - if @customer.my_unisoft.society_id.present? && @customer.try(:my_unisoft).try(:user_used)
+                      %br
+                      %hr
+                      .card.accept_my_unisoft
+                        .card-header
+                          %h4 Vos droits
+                        .card-body
+                          %table.table.table-condensed.with_custom_controls
+                            %tbody
+                              %tr
+                                %th Plan Comptable
+                                %td
+                                  = (@customer.my_unisoft.access_routes.present? && @customer.my_unisoft.access_routes.match(/account/)) ? "Oui" : "Non"
+                              %tr
+                                %th Ecriture Comptable
+                                %td
+                                  = (@customer.my_unisoft.access_routes.present? && @customer.my_unisoft.access_routes.match(/entry/)) ? "Oui" : "Non"
+                %br      
+                .row
+                  .col-md-12
+                    = link_to t('actions.edit'), edit_my_unisoft_account_organization_customer_path(@organization, @customer), class: 'btn btn-secondary float-right'
           - if @organization.is_coala_used
             #coala.tab-pane.fade{ class: ('active show' if params[:tab] == 'coala') }
               %h4.margin1bottom Activation Coala

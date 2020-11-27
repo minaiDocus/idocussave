@@ -55,8 +55,12 @@ class Account::AccountingPlansController < Account::OrganizationController
   end
 
   # POST /account/organizations/:organization_id/customers/:customer_id/accounting_plan/ibiza_auto_update
-  def ibiza_auto_update
-    @customer.softwares.update(is_ibiza_auto_updating_accounting_plan: params[:is_ibiza_auto_updating_accounting_plan])
+  def auto_update
+    if params[:software] == "My Unisoft"
+      @customer.my_unisoft.auto_update_accounting_plan = params[:auto_updating_accounting_plan] == 1
+    elsif params[:software] == "iBiza"
+      @customer.softwares.update(is_ibiza_auto_updating_accounting_plan: params[:auto_updating_accounting_plan])
+    end
 
     if @customer.save
       if @customer.softwares.ibiza_auto_update_accounting_plan?
