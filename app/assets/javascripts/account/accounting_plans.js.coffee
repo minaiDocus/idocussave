@@ -35,20 +35,20 @@ jQuery ->
     else
       $('#import_dialog #importFecAfterConfiguration').submit()
 
-  $('#user_softwares_attributes_is_ibiza_auto_updating_accounting_plan_true, #user_softwares_attributes_is_ibiza_auto_updating_accounting_plan_false').click (e) ->
+  $('#user_software_true, #user_software_false').click (e) ->
     e.preventDefault()
-    is_ibiza_auto_updating_accounting_plan = 0
-    _element = $(this).attr('info')
-    element = _element.split('-')
+    auto_updating_accounting_plan = 0
+    element         = $(this).attr('info').split('-')
+    organization_id = element[0]
+    customer_id     = element[1]
+    software        = element[2]
 
     if $(this).val() == 'true'
-      is_ibiza_auto_updating_accounting_plan = 1
+      auto_updating_accounting_plan = 1
 
-    _url = 'ibiza_auto_update'
+    _data = JSON.stringify(auto_updating_accounting_plan: auto_updating_accounting_plan, software: software)
 
-    _data = JSON.stringify(is_ibiza_auto_updating_accounting_plan: is_ibiza_auto_updating_accounting_plan)
-
-    launch_request(_url, _data, element[1], element[0])
+    launch_request('auto_update', _data, customer_id, organization_id)
 
   $('.close_modal_fec').click (e) ->
     $(this).attr('disabled', true)

@@ -427,7 +427,7 @@ update_price = ->
 
   $('.total_price').html(price+",00€ HT")
 
-jQuery ->
+jQuery -> 
   if ($('.import_dialog').length > 0)
     $('#import_dialog').modal('show')
 
@@ -521,5 +521,20 @@ jQuery ->
     $('.subscription_number_of_journals input[type="number"].special_input').bind 'keyup keydown change', (e) ->
       e.preventDefault()
       update_price()
+
+  if $(".edit.my_unisoft").length > 0
+    $("input[name='user[my_unisofts][customer_auto_deliver]']").each (index, element) =>
+      if $(element).val() == $("#auto_deliver_customer").val()
+        $(element).attr('checked', 'checked')
+        $(element).parent().addClass('checked')
+
+    $('#remove_customer').on 'click', (e) ->
+      e.stopPropagation()
+      if $(this).is(":checked")
+        $("input#user_my_unisofts_api_token").removeAttr('required')
+        $("input#required").removeClass('required')
+      else
+        $("input#user_my_unisofts_api_token").attr('required', 'required')
+        $("input#required").addClass('required')
 
   show_ibiza_customer()

@@ -17,6 +17,7 @@ class Organization < ApplicationRecord
   has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
   has_one  :ibiza
+  has_one  :my_unisoft, class_name: 'Software::MyUnisoft'
   has_one  :knowings
   has_one  :subscription
   has_one  :csv_descriptor
@@ -49,6 +50,8 @@ class Organization < ApplicationRecord
   has_many :pre_assignment_deliveries
   has_many :pre_assignment_exports
   has_many :account_sharings
+
+  accepts_nested_attributes_for :my_unisoft
 
   scope :admin,       -> { where(is_for_admin: true) }
   scope :active,      -> { where(is_active: true) }

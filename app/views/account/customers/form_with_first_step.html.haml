@@ -132,6 +132,10 @@
                         %tr
                           %td Ce dossier utilise Exact Online ?
                           %td= check_box_tag 'user[softwares_attributes][is_exact_online_used]', true, false, class: 'softwares_setting', style: "position:unset"
+                      - if @organization.my_unisoft.try(:organization_used)
+                        %tr
+                          %td Ce dossier utilise My Unisoft ?
+                          %td= check_box_tag 'user[my_unisoft_attributes][user_used]', true, false, class: 'softwares_setting', style: "position:unset"
                       - if @organization.is_coala_used
                         %tr
                           %td Ce dossier utilise Coala ?
@@ -152,7 +156,6 @@
                         %tr
                           %td Ce dossier utilise un format d'export .csv ? (personnalisable)
                           %td= check_box_tag 'user[softwares_attributes][is_csv_descriptor_used]', true, false, style: "position:unset"
-
       .card-footer
         .form-actions
           .for_submit

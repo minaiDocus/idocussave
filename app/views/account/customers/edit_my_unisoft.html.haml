@@ -1,0 +1,34 @@
+#customer.edit.my_unisoft.derivationRight
+  %input{ type: :hidden, id: "organization_id", value: "#{@organization.id}"}
+  %input{ type: :hidden, id: "customer_id", value: "#{@customer.id}"}
+  .card
+    .card-header
+      %h3
+        Configuration My Unisoft pour le dossier : 
+        %span.text-info.fs-origin= @customer
+
+    = simple_form_for @customer, url: update_my_unisoft_account_organization_customer_path(@organization, @customer), html: { class:  'form-horizontal label-medium' } do |f|
+      .card-body
+        .row
+          .col-md-12
+            .card.accept_my_unisoft{ class: ('hide' unless @customer.try(:my_unisoft).try(:user_used)) }
+              .card-header
+                %h4 Liaison avec My Unisoft
+              .card-body
+                = f.simple_fields_for :my_unisofts do |m|
+                  = m.input :encrypted_api_token, label: 'Veuillez entrer votre Clé API :', input_html: {  :value => "#{@customer.try(:my_unisoft).try(:api_token)}", :style =>"width: 655px" }
+                  = m.input :customer_auto_deliver, as: :radio_buttons, collection: auto_deliver_options, label: 'Souhaitez-vous livrer automatiquement les écritures ? '
+                  %input#auto_deliver_customer{ type: :hidden, name: "auto_deliver_customer", value: "#{@customer.my_unisoft.customer_auto_deliver}"}
+
+                - if @customer.try(:my_unisoft).try(:api_token).present?
+                  .associate
+                    %label 
+                      %input#remove_customer{ type: :checkbox, name: "remove_customer"} Désapparié le dossier
+                    
+
+      .card-footer
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'my_unisoft'), class: 'btn btn-light'
+          .float-right.loading.hide
+            %img{ src: "/assets/application/bar_loading.gif", alt: "chargement..."}
