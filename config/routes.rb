@@ -148,6 +148,10 @@ Rails.application.routes.draw do
         post    'update_skip_accounting_plan_accounts',         on: :collection
       end
 
+      resources :my_unisoft do 
+        
+      end
+
       resource :knowings, only: %w(new create edit update)
 
       resource :ftps, only: %w(edit update destroy), module: 'organization' do
@@ -205,6 +209,8 @@ Rails.application.routes.draw do
           patch 'update_ibiza'
           get   'edit_exact_online'
           patch 'update_exact_online'
+          get   'edit_my_unisoft'
+          patch 'update_my_unisoft'
           patch 'close_account'
           patch 'reopen_account'
           get   'edit_compta_options'
@@ -224,6 +230,8 @@ Rails.application.routes.draw do
           patch 'update_software'
           get   'edit_softwares_selection'
           patch 'update_softwares_selection'
+          get 'my_unisoft_societies'
+          post 'associate_society'
         end
 
         resource :setup, only: [] do
@@ -240,7 +248,7 @@ Rails.application.routes.draw do
         resource :accounting_plan, except: %w(new create destroy) do
           member do
             patch  :import
-            post   :ibiza_auto_update
+            post   :auto_update
             post   :ibiza_synchronize
             patch  :import_fec
             get    :import_model

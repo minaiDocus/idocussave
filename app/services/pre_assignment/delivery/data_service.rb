@@ -89,6 +89,8 @@ class PreAssignment::Delivery::DataService
         @report.delivered_to('ibiza') if @report.preseizures.reload.not_deleted.not_ibiza_delivered.count == 0
       when 'exact_online'
         @report.delivered_to('exact_online') if @report.preseizures.reload.not_deleted.not_exact_online_delivered.count == 0
+      when 'my_unisoft'
+        @report.delivered_to('my_unisoft') if @report.preseizures.reload.not_deleted.not_my_unisoft_delivered.count == 0
     end
 
     @report.set_delivery_message_for(@delivery.deliver_to, '')
