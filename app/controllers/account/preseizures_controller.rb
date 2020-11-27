@@ -44,7 +44,8 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    PreAssignment::CreateDelivery.new(@preseizure, %w[ibiza exact_online]).execute
+    PreAssignment::CreateDelivery.new(@preseizure, %w[ibiza exact_online my_unisoft]).execute
+
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end

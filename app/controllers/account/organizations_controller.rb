@@ -41,6 +41,8 @@ class Account::OrganizationsController < Account::OrganizationController
                        'Ibiza'
                      when 'exact_online'
                        'Exact Online'
+                     when 'my_unisofts'
+                       'My Unisoft'
                      when 'fec_agiris'
                        'Fec Agiris'
                      else
@@ -68,9 +70,11 @@ class Account::OrganizationsController < Account::OrganizationController
         softwares_params = { is_fec_agiris_used: software_users.include?(customer.to_s) }
       elsif software == 'csv_descriptor'
         softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
+      elsif software == 'my_unisofts'
+        softwares_params = { is_my_unisoft_used: software_users.include?(customer.to_s) }
       end
 
-      unless softwares_params.nil?
+      unless softwares_params.nil?        
         customer.create_or_update_software(softwares_params)
       end
     end
@@ -108,14 +112,26 @@ class Account::OrganizationsController < Account::OrganizationController
   def edit; end
 
   # PUT /account/organizations/:id
-  def update
-    if @organization.update(organization_params)
-      flash[:success] = 'Modifié avec succès.'
-      if params[:part].present?
-        redirect_to account_organization_path(@organization, tab: params[:part])
-      else
-        redirect_to account_organization_path(@organization)
+  def update 
+    if organization_params[params[:part]].present?
+      case params[:part]
+      when 'my_unisofts'
+        organization_used         = organization_params['my_unisofts']['organization_used'] == "1"
+        organization_auto_deliver = organization_params['my_unisofts']['organization_auto_deliver'] == "1"
+
+        config_update = UpdateMyUnisoftConfiguration.new(@organization).execute({organization_used: organization_used, organization_auto_deliver: organization_auto_deliver})
+
+        if config_update
+          flash[:success] = 'Modifié avec succès.'
+        else
+          flash[:error] = 'Erreur de mise à jour.'
+        end
+
+        to_redirect
       end
+    elsif @organization.update(organization_params)
+      flash[:success] = 'Modifié avec succès.'
+      to_redirect
     else
       render 'edit'
     end
@@ -125,7 +141,7 @@ class Account::OrganizationsController < Account::OrganizationController
   def suspend
     @organization.update_attribute(:is_suspended, true)
     flash[:success] = 'Suspendu avec succès.'
-    redirect_to account_organizations_path
+    redirect_to account_organizations_path  
   end
 
   # PUT /account/organizations/:id/unsuspend
@@ -261,7 +277,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_exact_online_used,
         :is_exact_online_auto_deliver,
         :jefacture_api_key,
-        :specific_mission
+        :specific_mission,
+        { my_unisofts: %i[organization_used organization_auto_deliver api_token] }
       )
     else
       params.require(:organization).permit(
@@ -286,7 +303,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :invoice_mails,
         :is_exact_online_used,
         :is_exact_online_auto_deliver,
-        :jefacture_api_key
+        :jefacture_api_key,
+        { my_unisofts: %i[organization_used organization_auto_deliver api_token] }
       )
     end
   end
@@ -304,6 +322,14 @@ class Account::OrganizationsController < Account::OrganizationController
       :postal_code,
       :country
     )
+  end
+
+  def to_redirect
+    if params[:part].present?
+      redirect_to account_organization_path(@organization, tab: params[:part])
+    else
+      redirect_to account_organization_path(@organization)
+    end    
   end
 
   def sort_column

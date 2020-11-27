@@ -12,7 +12,7 @@ class PreAssignment::Unblock
     preseizures.group_by do |preseizure|
       preseizure.report
     end.each do |report, pres|
-      PreAssignment::CreateDelivery.new(pres, ['ibiza', 'exact_online'], is_auto: false).execute
+      PreAssignment::CreateDelivery.new(pres, ['ibiza', 'exact_online', 'my_unisoft'], is_auto: false).execute
       PreseizureExport::GeneratePreAssignment.new(pres).execute
       FileDelivery.prepare(report)
       FileDelivery.prepare(report.pack)
