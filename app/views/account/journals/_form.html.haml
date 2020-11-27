@@ -29,23 +29,28 @@
                 %select.select.disabled{ disabled: 'disabled' }
                 %p
                   = render 'shared/ibiza_not_configured_warning'
-        - elsif @customer && @customer.uses_exact_online?
+        - elsif @customer && (@customer.uses_exact_online? || @customer.my_unisoft.try(:user_used))
           - if @customer.exact_online.try(:fully_configured?)
-            .block_input.clearfix
-              .row
-                .col-md-10
-                  = f.input :pseudonym, wrapper_html: { class: "external_account_book_type" }
-                .col-md-2
-                  %a{href: '#', style:"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
-                    = glyphicon('chevron-bottom')
-            .form-group.clearfix{ style: 'margin-bottom: 18px' }
-              .label-section
-                %label
-              .control-section
-                .block_selection_journals
-                  .help-block{style: 'margin-top: 2px; margin-left: 0px'} Journaux Exact Online :
-                  = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "height: auto"
-                %i.help-block si différent de "Code journal" ci-dessus
+            - text_journal = "Journaux Exact Online :"
+          - elsif @customer.my_unisoft.try(:user_used)
+            - text_journal = "Journaux My Unisoft :"
+
+          .block_input.clearfix
+            .row
+              .col-md-10
+                = f.input :pseudonym, wrapper_html: { class: "external_account_book_type" }
+              .col-md-2
+                %a{href: '#',   :"padding: 0 5px 10px 5px", id: "toogle_external_journal_list"}
+                  = glyphicon('chevron-bottom')
+          .form-group.clearfix{ style: 'margin-bottom: 18px' }
+            .label-section
+              %label
+            .control-section
+              .block_selection_journals
+                .help-block{style: 'margin-top: 2px; margin-left: 0px'}
+                  = text_journal
+                = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "height: auto"
+              %i.help-block si différent de "Code journal" ci-dessus
         - else
           = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
         = f.input :description

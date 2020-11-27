@@ -24,6 +24,8 @@
                 -list_selected = list_options.select{ |c| c.uses_ibiza? }
               -elsif @software == 'exact_online'
                 -list_selected = list_options.select{ |c| c.uses_exact_online? }
+              -elsif @software == 'my_unisofts'
+                -list_selected = list_options.select{ |c| c.uses_my_unisoft? }
               -elsif @software == 'fec_agiris'
                 -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
 

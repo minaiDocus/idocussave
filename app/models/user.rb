@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   include ::CodeFormatValidation
+  include Interfaces::User::Customer
+  include Interfaces::User::Collaborator
 
   devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
 
@@ -30,6 +32,7 @@ class User < ApplicationRecord
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
   has_one :softwares, class_name: 'SoftwaresSetting', dependent: :destroy
   has_one :exact_online, dependent: :destroy
+  has_one :my_unisoft, dependent: :destroy, class_name: 'Software::MyUnisoft'
   has_one :dematbox
   has_one :composition
   has_one :subscription
@@ -107,6 +110,7 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :softwares
   accepts_nested_attributes_for :exact_online
+  accepts_nested_attributes_for :my_unisoft
   accepts_nested_attributes_for :addresses, allow_destroy: true
   accepts_nested_attributes_for :csv_descriptor
   accepts_nested_attributes_for :external_file_storage
@@ -166,7 +170,6 @@ class User < ApplicationRecord
     info
   end
 
-
   def configured?
     current_configuration_step.nil?
   end
@@ -183,37 +186,36 @@ class User < ApplicationRecord
     User.where(authentication_token: token).first
   end
 
-  def active?
-    !inactive?
-  end
-
-  def inactive?
-    inactive_at.present?
-  end
-
-  def still_active?
-    active? || inactive_at.to_date > Date.today.end_of_month
-  end
-
   def find_or_create_subscription
     self.subscription ||= Subscription.create(user_id: id)
   end
 
-  def create_or_update_software(attributes)
-    software = self.softwares || SoftwaresSetting.new()
-    begin
-      software.assign_attributes(attributes)
-    rescue
-      software.assign_attributes(attributes.to_unsafe_hash)
-    end
+  def create_or_update_software(attributes)   
 
-    unless software.is_exact_online_used && software.is_ibiza_used
-      software.user = self
-      software.save
-      software
+    if attributes.keys.first.to_s == "is_my_unisoft_used"
+      organization_auto_deliver = true
+      api_token                 = nil
+      organization              = self.organization
+      organization_used         = true
+      is_my_unisoft_used        = attributes[:is_my_unisoft_used]
+
+      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_my_unisoft_used: is_my_unisoft_used, user_used: false, organization_auto_deliver: organization_auto_deliver, api_token: api_token, organization_used: organization_used})
     else
-      software = nil
-    end
+      software = self.softwares || SoftwaresSetting.new()
+      begin
+        software.assign_attributes(attributes)
+      rescue
+        software.assign_attributes(attributes.to_unsafe_hash)
+      end
+
+      unless software.is_exact_online_used && software.is_ibiza_used
+        software.user = self
+        software.save
+        software
+      else
+        software = nil
+      end      
+    end    
   end
 
   def paper_return_address
@@ -244,7 +246,6 @@ class User < ApplicationRecord
   def active_for_authentication?
     super && !is_disabled
   end
-
 
   def set_random_password
     new_password = rand(36**20).to_s(36)
@@ -283,7 +284,6 @@ class User < ApplicationRecord
     new_email_code
   end
 
-
   def update_email_code
     update_attribute(:email_code, get_new_email_code)
   end
@@ -317,13 +317,8 @@ class User < ApplicationRecord
     super && (active? || (inactive_at + 18.months) > Time.now)
   end
 
-
   def recently_created?
     created_at > 24.hours.ago
-  end
-
-  def collaborator?
-    is_prescriber
   end
 
   def admin?
@@ -386,64 +381,6 @@ class User < ApplicationRecord
 
     return member.user if member
     return User.find_by_code(code)
-  end
-
-  def uses_many_exportable_softwares?
-    softwares_count = 0
-    softwares_count += 1 if uses_coala?
-    softwares_count += 1 if uses_quadratus?
-    softwares_count += 1 if uses_csv_descriptor?
-
-    softwares_count > 1
-  end
-
-  def uses_api_softwares?
-    uses_ibiza? || uses_exact_online?
-  end
-
-  def uses_non_api_softwares?
-    uses_coala? || uses_quadratus? || uses_cegid? || uses_csv_descriptor? || uses_fec_agiris?
-  end
-
-  def uses_ibiza?
-    self.try(:softwares).try(:is_ibiza_used) && self.organization.try(:ibiza).try(:used?)
-  end
-
-  def uses_exact_online?
-    self.try(:softwares).try(:is_exact_online_used) && self.organization.is_exact_online_used
-  end
-
-  def uses_coala?
-    self.try(:softwares).try(:is_coala_used) && self.organization.is_coala_used
-  end
-
-  def uses_cegid?
-    self.try(:softwares).try(:is_cegid_used) && self.organization.is_cegid_used
-  end
-
-  def uses_quadratus?
-    self.try(:softwares).try(:is_quadratus_used) && self.organization.is_quadratus_used
-  end
-
-  def uses_csv_descriptor?
-    self.try(:softwares).try(:is_csv_descriptor_used) && self.organization.is_csv_descriptor_used
-  end
-
-  def uses_ibiza_analytics?
-    uses_ibiza? && self.ibiza_id.present? && self.try(:softwares).try(:ibiza_compta_analysis_activated?)
-  end
-
-  def uses_fec_agiris?
-    self.try(:softwares).try(:is_fec_agiris_used) && self.organization.is_fec_agiris_used
-  end
-
-  def validate_ibiza_analytics?
-    uses_ibiza_analytics? && self.try(:softwares).try(:ibiza_analysis_to_validate?)
-  end
-
-  def uses_manual_delivery?
-    ( uses_ibiza? && !self.try(:softwares).try(:ibiza_auto_deliver?) ) ||
-    ( uses_exact_online? && !self.try(:softwares).try(:exact_online_auto_deliver?) )
   end
 
   private

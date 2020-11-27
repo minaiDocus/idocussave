@@ -58,8 +58,6 @@ toggle_loading = ()->
     $('#slimpay_checkout #step1_buttons').removeClass('hide');
     $('#slimpay_checkout #step_loader').addClass('hide');
 
-
-
 jQuery ->
   $('#slimpay_checkout #submitSlimpay').on('click', (e)->
     e.preventDefault();
@@ -135,4 +133,15 @@ jQuery ->
           $('#payments #payment_configuration_checker').addClass('hide');
           $('#payments td#debit_state').html("<span class='badge badge-danger fs-origin'>Une erreur inattendue s'est produite, Veuillez réessayer ultérieurement.</span>");
       });
+  )
+
+  $('#organization_my_unisofts_organization_used').on('click', (e)->
+    if ($(this).is(":checked"))
+      $('.accept_my_unisoft').show('slow')
+      $('#organization_my_unisofts_api_token').addClass('required')
+      $('#organization_my_unisofts_api_token').attr('required','required')
+    else
+      $('.accept_my_unisoft').hide('fast')
+      $('#organization_my_unisofts_api_token').removeClass('required')
+      $('#organization_my_unisofts_api_token').removeAttr('required','required')
   )

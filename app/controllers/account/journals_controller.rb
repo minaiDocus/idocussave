@@ -21,7 +21,6 @@ class Account::JournalsController < Account::OrganizationController
   # POST /account/organizations/:organization_id/journals
   def create
     @journal = Journal::Handling.new({ owner: (@customer || @organization), params: journal_params, current_user: current_user, request: request }).insert
-
     if !@journal.errors.messages.present?
       text = "Nouveau journal #{ @journal.name } créé avec succès"
 

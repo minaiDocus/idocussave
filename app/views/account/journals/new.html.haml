@@ -25,7 +25,7 @@
             = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
 
 
-          - if @customer && @customer.uses_ibiza? && @organization.ibiza.try(:configured?)
+          - if (@customer && @customer.uses_ibiza? && @organization.ibiza.try(:configured?)) || @customer.my_unisoft.try(:user_used)
             - collection = journals_for_select(@journal.pseudonym)
           - else
             - collection = nil
@@ -40,7 +40,6 @@
             %h4 Knowings
             %hr
             = f.input :domain, label: 'A quel domaine Knowings souhaitez-vous rattacher le journal comptable iDocus ?', collection: journal_domain_for_select, include_blank: false
-
         - if !@customer || is_preassignment_authorized?
           .box.step.bg-light
             %h4 Pré-saisie comptable
