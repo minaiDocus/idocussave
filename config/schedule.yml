@@ -54,6 +54,10 @@ AccountingPlan::ExactOnlineUpdateWorker:
   queue: default
   cron: '0 3 * * *'
 
+AccountingPlan::MyUnisoftUpdateWorker:
+  queue: default
+  cron: '0 5 * * *'
+
 ## Budgea retrievers workers
 
 DataProcessor::OperationsWorker:
