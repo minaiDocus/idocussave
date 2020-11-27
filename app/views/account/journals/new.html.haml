@@ -65,11 +65,11 @@
               = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie ?', input_html: { class: 'can_be_required'}, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
               = f.input :jefacture_enabled
 
-              %fieldset{class: 'border p-2', style: 'border:1px solid #999; border-radius:0px; box-shadow:1px 11px 10px #999;'}
+              %fieldset{class: 'border p-2', style: 'border:1px solid #999; border-radius:0px; box-shadow:1px 11px 10px #999; padding: 17px !important'}
                 %legend{class: 'w-auto vat_account_field', style: 'padding: 0.2em 0.5em; font-size:90%; text-align:center; position: relative'} Compte de TVA
                 - if !@customer || @customer.options.is_taxable
                   - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA'
-                  = hidden_field_tag 'required_new_vat_accounts_element', 'can_be_required', hint_input: hint, hint_label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660'
+                  = hidden_field_tag 'required_new_vat_accounts_element', 'can_be_required', hint_input: hint, hint_label: 'Quel est le compte de TVA par défaut attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660'
                   = f.input :vat_accounts, as: :hidden, input_html: { id: 'account-book-type-vat-accounts-hidden' }
                   = link_to 'Ajouter un compte de TVA', '#', class: 'btn btn-primary add_vat_account_field float-right'
 

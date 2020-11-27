@@ -57,7 +57,7 @@ toggle_required_field = (type) ->
 vat_account_info = (option)->
   hint_label = ''
   if option == 'hint_label'
-    hint_label = 'Compte de TVA 20% appliqué à tous les documents dans le journal comptable iDocus'
+    hint_label = 'Compte de TVA par défaut appliqué à tous les documents dans le journal comptable iDocus'
   if $('input[type=hidden]#required_new_vat_accounts_element').length > 0
     hint_label = $('input[type=hidden]#required_new_vat_accounts_element').attr(option)
   return hint_label
@@ -78,7 +78,7 @@ vat_account_field = ->
 add_vat_account_field = (rate, vat_account) ->
   input_field = '<div class="form-group clearfix string optional account_book_type_vat_accounts">'
   input_field += '<div class="label-section">'
-  input_field += '<input class="form-control string optional vat_accounts_label account_book_type_label_vat_accounts" type="number" name="account_book_type[vat_accounts_label]" value="' + rate + '" min="0" max="20" step="0.1" id="account_book_type_label_vat_accounts" data-toggle="tooltip" data-placement="top" title="Taux de TVA (0-20)%" style="height: 31px;">'
+  input_field += '<input class="form-control string optional vat_accounts_label account_book_type_label_vat_accounts" type="number" name="account_book_type[vat_accounts_label]" value="' + rate + '" min="1" max="20" step="0.1" id="account_book_type_label_vat_accounts" data-toggle="tooltip" data-placement="top" title="Taux de TVA (1-20)%" style="height: 31px;">'
   input_field += '<i class="help-block" id="errmsg" style="color: red;"></i>'
   input_field += '</div>'
   input_field += '<div class="control-section">'
@@ -111,24 +111,20 @@ add_vat_account_field = (rate, vat_account) ->
 
     if e.type == 'input'
       value = $(this).val()
-      if parseFloat(value) > 20
+      if parseFloat(value) < 1 || parseFloat(value) > 20
         $('#errmsg').html('Taux de TVA doit être inclus entre 0 et 20%').show().delay(5000).fadeOut 'slow'
         return false
 
 add_default_vat_account = (vat_account) ->
-  can_be_required = vat_accounts_can_be_required()
-  if can_be_required != 'can_be_required'
-    can_be_required = ''
-
   input_field = '<div class="form-group clearfix string optional account_book_type_vat_accounts" id="account_book_type_with_default_vat_accounts">'
   input_field += '<div class="label-section">'
-  input_field += '<input class="form-control string optional vat_accounts_label" type="text" name="account_book_type[vat_accounts_label]" value="20" id="account_book_type_default_label_vat_accounts" style="height: 31px;" disabled>'
+  input_field += '<input class="form-control string optional vat_accounts_label" type="text" name="account_book_type[vat_accounts_label]" value="Compte de TVA par défaut" id="account_book_type_default_label_vat_accounts" style="height: 31px;" disabled>'
   input_field += '<i class="help-block">' + vat_account_info("hint_label") + '</i>'
   input_field += '</div>'
   input_field += '<div class="control-section">'
   input_field += '<div class="row">'
   input_field += '<div class="col-10" style="margin-right: -36px;">'
-  input_field += '<input class="form-control string optional vat_accounts ' + can_be_required + '" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_default_vat_accounts">'
+  input_field += '<input class="form-control string optional vat_accounts" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_default_vat_accounts">'
   input_field += '<i class="help-block">' + vat_account_info("hint_input") + '</i>'
   input_field += '</div>'
   input_field += '</div>'
@@ -144,10 +140,14 @@ show_vat_account_field = ->
   if !(vat_accounts == '' || vat_accounts == null)
     vat_accounts = JSON.parse(vat_accounts)
     for rate, vat_account of vat_accounts
-      if /20/.test(rate)
+      if /Compte de TVA par défaut/.test(rate) || rate == '0'
         $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
         $('input[type="text"]#account_book_type_default_vat_accounts').change()
-      if !(rate == '' || rate == 'undefined' || vat_account == '' || vat_account == 'undefined' || /20/.test(rate))
+
+        if $('.account_book_type_vat_accounts.error').length > 0
+          $('input[type="text"]#account_book_type_default_vat_accounts').css("border", "1px solid #b94a48")
+          $('input[type="text"]#account_book_type_default_vat_accounts').val("")
+      if !(rate == '' || rate == 'undefined' || vat_account == '' || vat_account == 'undefined' || /Compte de TVA par défaut/.test(rate) || rate == '0')
         add_vat_account_field(rate, vat_account)
 
   remove_vat_account_field()
@@ -189,6 +189,9 @@ jQuery ->
         vat_account = $(this)
         label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
         field = vat_account.find('input[type="text"].vat_accounts').val()
+
+        if label == 'Compte de TVA par défaut'
+          label = '0'
 
         if !(/undefined/.test(field) || /undefined/.test(label))
           vat_accounts[label] = field

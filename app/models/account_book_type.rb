@@ -18,7 +18,7 @@ class AccountBookType < ApplicationRecord
       journal.account_number         = ''
       journal.default_account_number = ''
       journal.charge_account         = ''
-      journal.vat_accounts           = '{"20":""}'
+      journal.vat_accounts           = '{"0":""}'
       journal.anomaly_account        = ''
     end
   end
@@ -40,6 +40,7 @@ class AccountBookType < ApplicationRecord
   validate  :only_one_jefacture_enabled_by_type
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
+  validate  :default_vat_accounts
   validates_length_of   :instructions, maximum: 400
   validates_presence_of :name
   validates_presence_of :currency
@@ -173,7 +174,7 @@ class AccountBookType < ApplicationRecord
     self.account_number                 = nil   if account_number.present?
     self.default_account_number         = nil   if default_account_number.present?
     self.charge_account                 = nil   if charge_account.present?
-    self.vat_accounts                   = '{"20":""}'   if vat_accounts.present?
+    self.vat_accounts                   = '{"0":""}'   if vat_accounts.present?
     self.anomaly_account                = nil   if anomaly_account.present?
     self.is_expense_categories_editable = false if is_expense_categories_editable.present?
   end
@@ -215,6 +216,13 @@ class AccountBookType < ApplicationRecord
     if vat_accounts.blank?
       return errors.add(:vat_accounts, :blank) if user && user.try(:options).try(:is_taxable)
       errors.add(:vat_accounts, :blank) unless user  #require vat_account on shared journals if pre_assignement_processable
+    end
+  end
+
+  def default_vat_accounts
+    if is_pre_assignment_processable? && JSON.parse(vat_accounts)['0'].blank?
+      return errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') if user && user.try(:options).try(:is_taxable)
+      errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') unless user  #require defaults vat_accounts on shared journals if pre_assignement_processable
     end
   end
 end

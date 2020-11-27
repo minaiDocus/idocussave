@@ -203,7 +203,7 @@ class PreseizureExport::PreseizureToTxt
 
           if preseizure.piece_id.present?
             general_account = if(account.type == Pack::Report::Preseizure::Account::TVA)
-                                journal.try(:get_vat_accounts_of, '20')
+                                journal.try(:get_vat_accounts_of, '0')
                               elsif(account.type == Pack::Report::Preseizure::Account::TTC)
                                 journal.try(:account_number)
                               else
