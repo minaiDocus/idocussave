@@ -167,20 +167,19 @@ describe SgiApiServices::GroupDocument do
         has_invalid_temp_pack_name = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO0001_AC_2020",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_001.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "pages": [2, 5]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [1, 3, 4]
                 }
               ]
             }
@@ -191,27 +190,25 @@ describe SgiApiServices::GroupDocument do
 
         response = group_document.execute
 
-        expect(response['pack_name_unknown_with_pack_id_1']).to eq 'Pack name : "IDO0001_AC_2020", unknown.'
+        expect(response['pack_name_unknown']).to eq 'Pack name : "IDO0001_AC_2020", unknown.'
       end
 
       it 'has invalid origin', :has_invalid_origin do
         has_invalid_origin = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_001.pdf",
-                  "origin": "fake",
-                  "piece_url": "FAKE_PIECE_URL_IDO_0001_AC_2020_001.pdf"
+                  "origin": "fake"
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "pages": [2, 5]
                 }
               ]
             }
@@ -231,14 +228,12 @@ describe SgiApiServices::GroupDocument do
         doesnot_match_origin_scan = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_002_001.pdf",
-                  "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "origin": "scan"
                 }
               ]
             }
@@ -256,14 +251,13 @@ describe SgiApiServices::GroupDocument do
         doesnot_match_origin_upload = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "upload",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559604/download/original?token=244owwqjv0ifxqmaqfclx85srtafsyth1r1mrzepsep7me2ccm"
+                  "pages": [2, 5]
                 }
               ]
             }
@@ -281,20 +275,19 @@ describe SgiApiServices::GroupDocument do
         file_names_unknown = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_001.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [2, 5]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "pages": [1, 3, 4]
                 }
               ]
             }
@@ -336,20 +329,19 @@ describe SgiApiServices::GroupDocument do
         file_names_unknown = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_001.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559604/download/original?token=244owwqjv0ifxqmaqfclx85srtafsyth1r1mrzepsep7me2ccm"
+                  "pages": [2, 5]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [1, 3, 4]
                 }
               ]
             }
@@ -365,76 +357,35 @@ describe SgiApiServices::GroupDocument do
         expect(response['file_name_unknown_with_piece_id_2']).to eq 'File name : "IDO_0001_AC_2020_002.pdf", unknown.'
       end
 
-      it 'file not found', :file_not_found do
-        allow_any_instance_of(SgiApiServices::GroupDocument).to receive(:url_exist?).and_return(false)
-
-        temp_document = TempDocument.new
-        temp_document.temp_pack      = @temp_pack
-        temp_document.user           = @user
-        temp_document.organization   = @user.organization
-        temp_document.position       = 1
-        temp_document.pages_number   = 2
-        temp_document.delivered_by   = 'test'
-        temp_document.delivery_type  = 'scan'
-        temp_document.is_an_original = true
-        temp_document.is_a_cover     = false
-        temp_document.state          = 'bundling'
-        temp_document.save
-
-        file_not_found = {
-          "packs": [
-            {
-              "id": 1,
-              "name": "IDO%0001_AC_202006",
-              "pieces": [
-                {
-                  "id": 1,
-                  "file_name": "IDO_0001_AC_202006_001.pdf",
-                  "origin": "scan",
-                  "piece_url": "http://localhost:3000/account/documents/pieces/1/download/original?token=arq4s5fy0vsna0kkwv4gmz9jawmoliftgxup5b56hii7jd1pw0"
-                }
-              ]
-            }
-          ]
-        }
-        params_content = ActionController::Parameters.new(file_not_found)
-        group_document = SgiApiServices::GroupDocument.new(params_content)
-
-        response = group_document.execute
-
-        expect(response['undownloadable_file_for_piece_id_1']).to eq 'File name : "IDO_0001_AC_202006_001.pdf" and piece_url: "http://localhost:3000/account/documents/pieces/1/download/original?token=arq4s5fy0vsna0kkwv4gmz9jawmoliftgxup5b56hii7jd1pw0", not found.'
-      end
-
       it 'has 1 duplicate', :has_1_duplicate do
         has_1_duplicate = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_2020_001.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559604/download/original?token=244owwqjv0ifxqmaqfclx85srtafsyth1r1mrzepsep7me2ccm"
+                  "pages": [1]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559612/download/original?token=h86h38dkd5fy4oup49d9nffvau5jgpuhwynkejupzjjx9ithe6"
+                  "pages": [2]
                 },
                 {
                   "id": 3,
                   "file_name": "IDO_0001_AC_2020_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "pages": [2]
                 },
                 {
                   "id": 4,
                   "file_name": "IDO_0001_AC_2020_003.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [4, 5]
                 }
               ]
             }
@@ -445,7 +396,7 @@ describe SgiApiServices::GroupDocument do
         group_document = SgiApiServices::GroupDocument.new(params_content)
 
         response = group_document.execute
-        expect(response['file_name_duplicated_with_pack_id_1']).to eq 'File name : 1 duplicate(s).'
+        expect(response['file_name_duplicated_with_pack_name_IDO%0001_AC_202006']).to eq 'File name : 1 duplicate(s).'
       end
 
       it 'is already grouped', :temp_document_already_grouped do
@@ -465,14 +416,13 @@ describe SgiApiServices::GroupDocument do
         temp_document_already_grouped = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_202006_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [2, 5]
                 }
               ]
             }
@@ -501,7 +451,10 @@ describe SgiApiServices::GroupDocument do
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
-          temp_document.save
+
+          file = File.open("#{Rails.root}/spec/support/files/5pages.pdf", "r")
+
+          temp_document.cloud_content_object.attach(file, "IDO_0001_AC_202006_00#{i + 1}.pdf") if temp_document.save
         end
 
         @temp_pack.update(position_counter: 2)
@@ -509,20 +462,19 @@ describe SgiApiServices::GroupDocument do
         group_scanned_document = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_202006_001.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2554873/download/original?token=qchrgvrzi5ws3623da63u9cfa561zc1h6s5df76wx2kh00mt2"
+                  "pages": [2, 5]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_202006_002.pdf",
                   "origin": "scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2555008/download/original?token=2tigcmsx1as221a05fyx605arspo3bihz7giei7t7sp4iq8ht9"
+                  "pages": [1]
                 }
               ]
             }
@@ -553,11 +505,14 @@ describe SgiApiServices::GroupDocument do
           temp_document.position       = 1+i
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'upload'
-          temp_document.pages_number   = i == 0 ? 2 : 1
+          temp_document.pages_number   = 2
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
-          temp_document.save
+          
+          file = File.open("#{Rails.root}/spec/support/files/2pages.pdf", "r")
+
+          temp_document.cloud_content_object.attach(file, "IDO_0001_AC_202006_00#{i + 1}_00#{i + 1}.pdf") if temp_document.save
         end
 
         @temp_pack.update(position_counter: 2)
@@ -565,26 +520,25 @@ describe SgiApiServices::GroupDocument do
         group_uploaded_document = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_202006_001_001.pdf",
                   "origin": "upload",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559612/download/original?token=h86h38dkd5fy4oup49d9nffvau5jgpuhwynkejupzjjx9ithe6"
+                  "pages": [1, 2]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_202006_002_002.pdf",
                   "origin": "upload",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559604/download/original?token=244owwqjv0ifxqmaqfclx85srtafsyth1r1mrzepsep7me2ccm"
+                  "pages": [1]
                 },
                 {
                   "id": 3,
                   "file_name": "IDO_0001_AC_202006_003_003.pdf",
                   "origin": "upload",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559605/download/original?token=cnffqr74zhaa89e8hajbengb1m0b6yvr59zetgps3020omfffn"
+                  "pages": [1]
                 }
               ]
             }
@@ -609,19 +563,22 @@ describe SgiApiServices::GroupDocument do
       end
 
       it 'successfully group dematbox scanned documents', :group_dematbox_scanned_document do
-        5.times do |i|
+        2.times do |i|
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
           temp_document.user           = @user
           temp_document.organization   = @user.organization
-          temp_document.position       = 1+i
+          temp_document.position       = 4
           temp_document.delivered_by   = 'test'
           temp_document.delivery_type  = 'dematbox_scan'
-          temp_document.pages_number   = 1
+          temp_document.pages_number   = 5
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
-          temp_document.save
+          
+          file = File.open("#{Rails.root}/spec/support/files/5pages.pdf", "r")
+
+          temp_document.cloud_content_object.attach(file, "IDO_0001_AC_202006_004_00#{1 + i}.pdf") if temp_document.save
         end
 
         @temp_pack.update(position_counter: 2)
@@ -629,38 +586,19 @@ describe SgiApiServices::GroupDocument do
         group_dematbox_scanned_document = {
           "packs": [
             {
-              "id": 1,
               "name": "IDO%0001_AC_202006",
               "pieces": [
                 {
                   "id": 1,
                   "file_name": "IDO_0001_AC_202006_004_001.pdf",
                   "origin": "dematbox_scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559611/download/original?token=s2vpt8vi9fmhzq51vkz4rcnenbs6hl7poqk6yuseowp8os9ebu"
+                  "pages": [2, 4, 1]
                 },
                 {
                   "id": 2,
                   "file_name": "IDO_0001_AC_202006_004_002.pdf",
                   "origin": "dematbox_scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559610/download/original?token=f5xru8n9zyh9ug8kvy5kw5o6c4av29cki354e5m33rq2qgevlk"
-                },
-                {
-                  "id": 3,
-                  "file_name": "IDO_0001_AC_202006_005_003.pdf",
-                  "origin": "dematbox_scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559608/download/original?token=m9s5kjr4dcrq56pmyvy6rsx0wl2vn2w4u98rcv80d1nrxg7r2t"
-                },
-                {
-                  "id": 4,
-                  "file_name": "IDO_0001_AC_202006_005_004.pdf",
-                  "origin": "dematbox_scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559607/download/original?token=hr4ly9pvfz3dysmztdhz7lj598cqzp79ysdpls1jkg2i5iuebb"
-                },
-                {
-                  "id": 5,
-                  "file_name": "IDO_0001_AC_202006_004_005.pdf",
-                  "origin": "dematbox_scan",
-                  "piece_url": "https://my.idocus.com/account/documents/pieces/2559237/download/original?token=7i5kejgidxsxv6ba83kmbabexheetx9ouk0bvql32jrkzqs8em"
+                  "pages": [5, 3]
                 }
               ]
             }
@@ -674,18 +612,12 @@ describe SgiApiServices::GroupDocument do
 
         new_temp_document_1 = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_004_001").first
         new_temp_document_2 = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_004_002").first
-        new_temp_document_3 = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_005_003").first
-        new_temp_document_4 = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_005_004").first
-        new_temp_document_5 = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_004_005").first
         expect(response[:success]).to be true
-        expect(@temp_pack.temp_documents.count).to eq 10
+        expect(@temp_pack.temp_documents.count).to eq 4
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
-        expect(@temp_pack.temp_documents.ready.count).to eq 5
-        expect(DocumentTools.pages_number(new_temp_document_1.cloud_content_object.path)).to eq 1
+        expect(@temp_pack.temp_documents.ready.count).to eq 2
+        expect(DocumentTools.pages_number(new_temp_document_1.cloud_content_object.path)).to eq 3
         expect(DocumentTools.pages_number(new_temp_document_2.cloud_content_object.path)).to eq 2
-        expect(DocumentTools.pages_number(new_temp_document_3.cloud_content_object.path)).to eq 1
-        expect(DocumentTools.pages_number(new_temp_document_4.cloud_content_object.path)).to eq 1
-        expect(DocumentTools.pages_number(new_temp_document_5.cloud_content_object.path)).to eq 5
       end
     end
   end

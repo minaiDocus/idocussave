@@ -1,5 +1,4 @@
 # -*- encoding : UTF-8 -*-
-require 'open-uri'
 
 class SgiApiServices::GroupDocument
   FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}\.pdf\z/i
@@ -16,9 +15,13 @@ class SgiApiServices::GroupDocument
       @json_content['packs'].each do |pack|
         temp_pack = find_temp_pack(pack['name'])
 
+        merged_dir = Dir.mktmpdir
+
         pack['pieces'].each do |piece|
-          CreateTempDocumentFromGrouping.new(piece['piece_url'], temp_pack, piece['file_name']).execute
+          CreateTempDocumentFromGrouping.new(temp_pack, piece['pages'], piece['file_name'], merged_dir).execute
         end
+
+        clean_tmp merged_dir
       end
 
       { success: true }
@@ -65,15 +68,14 @@ class SgiApiServices::GroupDocument
       if (temp_pack = find_temp_pack(pack['name']))
         file_names = pack['pieces'].map{|p| p['file_name']}
         if file_names.uniq.size != file_names.size
-          @errors << { "file_name_duplicated_with_pack_id_#{pack['id']}" => "File name : #{file_names.size - file_names.uniq.size} duplicate(s)."}
+          @errors << { "file_name_duplicated_with_pack_name_#{pack['name']}" => "File name : #{file_names.size - file_names.uniq.size} duplicate(s)."}
         else
           pack['pieces'].each do |piece|
-            @piece_url = piece['piece_url']
             verify_piece temp_pack, file_names, piece['origin'], piece['id']
           end
         end
       else
-        @errors << { "pack_name_unknown_with_pack_id_#{pack['id']}" => "Pack name : \"#{pack['name']}\", unknown." }
+        @errors << { "pack_name_unknown" => "Pack name : \"#{pack['name']}\", unknown." }
       end
     end
 
@@ -108,8 +110,6 @@ class SgiApiServices::GroupDocument
       if is_basename_match && temp_document
         if temp_document.bundled?
           @errors << { "file_name_already_grouped_with_piece_id_#{piece_id}" => "File name : \"#{file_name}\", already grouped." }
-        elsif !url_exist?
-          @errors << { "undownloadable_file_for_piece_id_#{piece_id}" => "File name : \"#{file_name}\" and piece_url: \"#{@piece_url}\", not found." }
         end
       else
         @errors << { "file_name_unknown_with_piece_id_#{piece_id}" => "File name : \"#{file_name}\", unknown." }
@@ -117,29 +117,34 @@ class SgiApiServices::GroupDocument
     end
   end
 
-  def url_exist?
-    uri = URI.parse(@piece_url)
-    response = Net::HTTP.get_response(uri)
-    response.code.to_i == 200
+
+  def clean_tmp(merged_dir)
+    FileUtils.remove_entry merged_dir if merged_dir
   end
 
+
   class CreateTempDocumentFromGrouping
-    def initialize(piece_url, temp_pack, file_name)
-      @piece_url = piece_url
-      @temp_pack = temp_pack
-      @file_name = file_name
+    def initialize(temp_pack, pages, file_name, merged_path)
+      @temp_pack   = temp_pack
+      @pages       = pages
+      @file_name   = file_name
+      @merged_path = merged_path
     end
 
     # Create a secondary temp documents it comes back from grouping
     def execute
       Dir.mktmpdir do |tmpdir|
-        @file_path = File.join tmpdir
+        @file_path = tmpdir
 
-        download = open(@piece_url)
-
-        IO.copy_stream(download, "#{@file_path}/#{@file_name}")
+        split if Dir.entries(@merged_path).size <= 2
 
         @file_path = File.join(@file_path, @file_name)
+
+        if file_paths.size > 1
+          Pdftk.new.merge file_paths, @file_path
+        else
+          FileUtils.cp file_paths.first, @file_path
+        end
 
         begin
 
@@ -149,8 +154,8 @@ class SgiApiServices::GroupDocument
         rescue => e
           log_document = {
             name: "SgiApiServices::CreateTempDocumentFromGrouping",
-            error_group: "[sgi-api-services-create-temp-document-from-grouping] piece url is unreadable",
-            erreur_type: "Piece url is unreadable",
+            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors",
+            erreur_type: "create temp document with errors",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
               temp_dir_path: @file_path,
@@ -164,6 +169,18 @@ class SgiApiServices::GroupDocument
     end
 
     private
+
+    def file_paths
+      @file_paths = @pages.sort.map do |page|
+        position = "%03d" % page
+        content_file_name = "page_#{position}.pdf"
+        File.join(@merged_path, content_file_name)
+      end
+    end
+
+    def split
+      Pdftk.new.burst original_temp_document.cloud_content_object.path, @merged_path, 'page', DataProcessor::TempPack::POSITION_SIZE
+    end
 
     def temp_document_positions
       @piece_positions ||= SgiApiServices::GroupDocument.position(@file_name)
