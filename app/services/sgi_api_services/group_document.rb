@@ -126,6 +126,7 @@ class SgiApiServices::GroupDocument
     end
   end
 
+
   class CreateTempDocumentFromGrouping
     def initialize(temp_pack, pages, temp_document_id, merged_path)
       @temp_pack        = temp_pack
