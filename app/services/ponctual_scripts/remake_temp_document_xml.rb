@@ -9,6 +9,9 @@ class PonctualScripts::RemakeTempDocumentXml < PonctualScripts::PonctualScript
     @schema = Nokogiri::XML::Schema(Rails.root.join('lib/xsd/group_documents.xsd'))
     @errors = []
     @processed_file_paths = []
+
+    CustomUtils.add_chmod_access_into(0777, "/nfs/staffing/")
+
     basepath = '/nfs/staffing/grouping/errors/'
 
     @options[:file_names].each do |xml_file_name|

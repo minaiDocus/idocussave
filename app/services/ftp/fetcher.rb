@@ -182,6 +182,8 @@ class Ftp::Fetcher
     end
 
     def execute
+      CustomUtils.add_chmod_access_into(0777, "/nfs/ppp/")
+
       dirs = @ftp.nlst.sort
 
       dirs.each do |f_path|
