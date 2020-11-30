@@ -178,7 +178,7 @@ describe SgiApiServices::GroupDocument do
                id: 2,
                pages: [1]
              }
-            ]   
+            ]
           ]
         }
         params_content = ActionController::Parameters.new(has_invalid_temp_pack_name)
@@ -198,7 +198,7 @@ describe SgiApiServices::GroupDocument do
                id: 1,
                pages: [1]
              }
-            ]            
+            ]
           ]
         }
 
@@ -232,7 +232,7 @@ describe SgiApiServices::GroupDocument do
                id: 1,
                pages: [2,3]
              }
-            ]   
+            ]
           ]
         }
 
@@ -296,7 +296,6 @@ describe SgiApiServices::GroupDocument do
                  pages: [1, 4, 5]
                }
              ]
-            
           ]
         }
 
