@@ -138,7 +138,7 @@ class Account::CustomersController < Account::OrganizationController
     @software = params[:software]
   end
 
-  def update_software    
+  def update_software
     software = @customer.create_or_update_software(params[:user][:softwares_attributes])
     if software&.persisted?
       flash[:success] = 'Modifié avec succès.'

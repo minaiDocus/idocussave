@@ -9,14 +9,14 @@ class Software::MyUnisoft < ApplicationRecord
     if my_unisoft.user_used && !my_unisoft.organization_used
       my_unisoft.organization_used = true
       my_unisoft.organization      = my_unisoft.user.organization
-   	end
+    end
   end
 
   def configured?
-  	name.present? && society_id.present? && member_id.present?  	
+    name.present? && society_id.present? && member_id.present?  	
   end
 
-  def auto_deliver?  	
-  	customer_auto_deliver ? customer_auto_deliver : user.organization.try(:my_unisoft).try(:organization_auto_deliver)
+  def auto_deliver?
+    customer_auto_deliver ? customer_auto_deliver : user.organization.try(:my_unisoft).try(:organization_auto_deliver)
   end
 end

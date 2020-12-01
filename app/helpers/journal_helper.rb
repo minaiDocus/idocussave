@@ -19,7 +19,7 @@ module JournalHelper
   def my_unisoft_journals
     if @customer.my_unisoft.try(:user_used)
       Rails.cache.fetch [:my_unisoft, :user, @customer.my_unisoft.id, :journals], expires_in: 1.minutes do
-        client   = MyUnisoft::Client.new(@customer.my_unisoft.api_token)
+        client   = MyUnisoftLib::Api::Client.new(@customer.my_unisoft.api_token)
         journals = client.get_diary(@customer.my_unisoft.society_id)
 
         if journals
@@ -95,15 +95,15 @@ module JournalHelper
   end
 
 
-  def journals_for_select(journal_name, type = nil)    
-    journals = if @customer.uses_exact_online? 
+  def journals_for_select(journal_name, type = nil)
+    journals = if @customer.uses_exact_online?
                  exact_online_journals
               elsif @customer.my_unisoft.try(:user_used)
                 my_unisoft_journals
               else
                 ibiza_journals
               end
-    
+
     if journals.any?
       journals = journals.select do |j|
         j[:closed].to_i == 0

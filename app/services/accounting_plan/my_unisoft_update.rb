@@ -5,7 +5,7 @@ class AccountingPlan::MyUnisoftUpdate < AccountingPlan::UpdateService
 
   private
 
-  def execute    
+  def execute
     if @user.try(:my_unisoft).try(:present?) && @user.my_unisoft.user_used && @accounting_plan.need_update?
       @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
@@ -27,7 +27,7 @@ class AccountingPlan::MyUnisoftUpdate < AccountingPlan::UpdateService
   end
 
   def my_unisoft_client
-    @my_unisoft_client ||= MyUnisoft::Client.new(@user.my_unisoft.api_token)
+    @my_unisoft_client ||= MyUnisoftLib::Api::Client.new(@user.my_unisoft.api_token)
   end
 
   def my_unisoft_accounts
