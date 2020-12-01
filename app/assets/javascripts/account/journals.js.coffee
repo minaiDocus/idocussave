@@ -158,7 +158,7 @@ remove_vat_account_field = ->
     $('[data-toggle="tooltip"]').tooltip("hide")
     $(this).closest('.account_book_type_vat_accounts').remove()
 
-on_submit_form = (form)->
+window.on_submit_form = (form)->
   vat_accounts = {}
   $(form).each (index,element) ->
     vat_account = $(this)
@@ -172,6 +172,8 @@ on_submit_form = (form)->
       vat_accounts[label] = field
   vat_accounts = JSON.stringify(vat_accounts)
   $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
+
+
 
 
 jQuery ->
@@ -204,5 +206,5 @@ jQuery ->
     show_vat_account_field()
 
     $('#journal form').submit ->
-      on_submit_form('#journal form .account_book_type_vat_accounts')
+      window.on_submit_form('#journal form .account_book_type_vat_accounts')
       true
