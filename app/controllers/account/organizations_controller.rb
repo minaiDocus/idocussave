@@ -74,7 +74,7 @@ class Account::OrganizationsController < Account::OrganizationController
         softwares_params = { is_my_unisoft_used: software_users.include?(customer.to_s) }
       end
 
-      unless softwares_params.nil?        
+      unless softwares_params.nil?
         customer.create_or_update_software(softwares_params)
       end
     end
@@ -112,7 +112,7 @@ class Account::OrganizationsController < Account::OrganizationController
   def edit; end
 
   # PUT /account/organizations/:id
-  def update 
+  def update
     if organization_params[params[:part]].present?
       case params[:part]
       when 'my_unisofts'
@@ -141,7 +141,7 @@ class Account::OrganizationsController < Account::OrganizationController
   def suspend
     @organization.update_attribute(:is_suspended, true)
     flash[:success] = 'Suspendu avec succès.'
-    redirect_to account_organizations_path  
+    redirect_to account_organizations_path
   end
 
   # PUT /account/organizations/:id/unsuspend
@@ -330,7 +330,7 @@ class Account::OrganizationsController < Account::OrganizationController
       redirect_to account_organization_path(@organization, tab: params[:part])
     else
       redirect_to account_organization_path(@organization)
-    end    
+    end
   end
 
   def sort_column

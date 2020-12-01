@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe PreAssignment::Builder::MyUnisoft do
   def delivery_my_unisoft
-    allow_any_instance_of(CreatePreAssignmentDeliveryService).to receive(:valid_my_unisoft?).and_return(true)
+    allow_any_instance_of(PreAssignment::CreateDelivery).to receive(:valid_my_unisoft?).and_return(true)
     allow_any_instance_of(User).to receive_message_chain('options.pre_assignment_date_computed?').and_return(false)
     allow(Settings).to receive_message_chain(:first, :notify_errors_to).and_return('test@idocus.com')
 
@@ -20,7 +20,7 @@ describe PreAssignment::Builder::MyUnisoft do
                                                         { type: 2, number: 'ALLBATTERIES', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
                                                       ])
 
-    CreatePreAssignmentDeliveryService.new(preseizure, ['my_unisoft']).execute.first
+    PreAssignment::CreateDelivery.new(preseizure, ['my_unisoft']).execute.first
   end
 
   before(:all) do
@@ -46,7 +46,7 @@ describe PreAssignment::Builder::MyUnisoft do
   describe "Build pre assignment data", :data_builder do
     context "My Unisoft", :my_unisoft_builder do
       it "create successfull txt data" do
-        allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('AC')        
+        allow_any_instance_of(Pack::Report::Preseizure).to receive(:journal_name).and_return('AC')
         allow_any_instance_of(Pack::Piece).to receive_message_chain('cloud_content_object.path').and_return("#{Rails.root}/spec/support/files/2019100001.pdf")
         allow(Base64).to receive(:encode64).with(any_args).and_return('JVBERi0xLjQKJeLjz9MKMSAwIG9iaiAKPDwKL0Zvcm1UeXBlIDEKL1N1YnR5\ncGUgL0Zvcm0KL1Jlc291cmNlcyAKPDwKL0ZvbnQgCjw8Ci9GMS4wIDIgMCBS\nCj4+Ci9Qcm9jU2V0IFsvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1h\nZ2VJXQo+PgovVHlwZSAvWE9iamVj==')
         delivery = delivery_my_unisoft

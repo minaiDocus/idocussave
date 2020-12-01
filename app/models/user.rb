@@ -191,8 +191,7 @@ class User < ApplicationRecord
     self.subscription ||= Subscription.create(user_id: id)
   end
 
-  def create_or_update_software(attributes)   
-
+  def create_or_update_software(attributes)
     if attributes.keys.first.to_s == "is_my_unisoft_used"
       organization_auto_deliver = true
       api_token                 = nil
@@ -215,8 +214,8 @@ class User < ApplicationRecord
         software
       else
         software = nil
-      end      
-    end    
+      end
+    end
   end
 
   def paper_return_address
