@@ -36,6 +36,21 @@ load_account_book_type_function= () ->
         $('#for_step_two').modal('show')
         load_modal_function(id)
 
+on_submit_form = (form)->
+  vat_accounts = {}
+  $(form).each (index,element) ->
+    vat_account = $(this)
+    label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
+    field = vat_account.find('input[type="text"].vat_accounts').val()
+
+    if label == 'Compte de TVA par défaut'
+      label = '0'
+
+    if !(/undefined/.test(field) || /undefined/.test(label))
+      vat_accounts[label] = field
+  vat_accounts = JSON.stringify(vat_accounts)
+  $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
+
 load_modal_function= (id) ->
   $('#account_book_type_entry_type').unbind 'change'
   $('#account_book_type_entry_type').on 'change', (e) ->
@@ -59,6 +74,9 @@ load_modal_function= (id) ->
   $('#valider').unbind 'click'
   $('#valider').on 'click', (e) ->
     e.stopPropagation()
+
+    on_submit_form('form#account_book_type .account_book_type_vat_accounts')
+
     data            = $(".modal form#account_book_type").serialize()
     organization_id = $('#organization_id').val()
     customer_id     = $('#customer_id').val()

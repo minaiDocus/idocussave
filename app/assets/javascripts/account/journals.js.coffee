@@ -67,7 +67,7 @@ vat_accounts_can_be_required = ->
     return $('input[type=hidden]#required_new_vat_accounts_element').val()
 
 vat_account_field = ->
-  if $('#journal form').length > 0
+  if $('#journal form, #for_step_two.modal').length > 0
     $('a.add_vat_account_field').unbind('click')
     $('a.add_vat_account_field').on 'click', (e) ->
       e.preventDefault()
@@ -93,7 +93,7 @@ add_vat_account_field = (rate, vat_account) ->
   input_field += '</div>'
   input_field += '</div>'
 
-  $('.pre-assignment-attributes #account_book_type_with_default_vat_accounts').after(input_field)
+  $('.pre-assignment-attributes #account_book_type_with_default_vat_accounts, #pre-assignment-attributes #account_book_type_with_default_vat_accounts').after(input_field)
 
   $('#account_book_type_label_vat_accounts').focus()
 
@@ -131,7 +131,7 @@ add_default_vat_account = (vat_account) ->
   input_field += '</div>'
   input_field += '</div>'
 
-  $('.pre-assignment-attributes .vat_account_field').after(input_field)
+  $('.pre-assignment-attributes .vat_account_field, #pre-assignment-attributes .vat_account_field').after(input_field)
 
 show_vat_account_field = ->
   add_default_vat_account(445660)
@@ -158,10 +158,26 @@ remove_vat_account_field = ->
     $('[data-toggle="tooltip"]').tooltip("hide")
     $(this).closest('.account_book_type_vat_accounts').remove()
 
+on_submit_form = (form)->
+  vat_accounts = {}
+  $(form).each (index,element) ->
+    vat_account = $(this)
+    label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
+    field = vat_account.find('input[type="text"].vat_accounts').val()
+
+    if label == 'Compte de TVA par défaut'
+      label = '0'
+
+    if !(/undefined/.test(field) || /undefined/.test(label))
+      vat_accounts[label] = field
+  vat_accounts = JSON.stringify(vat_accounts)
+  $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
+
+
 jQuery ->
   vat_account_field()
 
-  if $('#journal form').length > 0
+  if $('#journal form, #for_step_two.modal').length > 0
     if $('#journal.new form').length > 0
       form_to_wizard()
 
@@ -181,20 +197,12 @@ jQuery ->
     $("#account_book_type_entry_type, #account_book_type_account_type").change ->
       update_form()
 
+    $('#for_step_two.modal').on 'show.bs.modal', (e) ->
+      vat_account_field()
+      show_vat_account_field()
+
     show_vat_account_field()
 
     $('#journal form').submit ->
-      vat_accounts = {}
-      $('#journal form .account_book_type_vat_accounts').each (index,element) ->
-        vat_account = $(this)
-        label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
-        field = vat_account.find('input[type="text"].vat_accounts').val()
-
-        if label == 'Compte de TVA par défaut'
-          label = '0'
-
-        if !(/undefined/.test(field) || /undefined/.test(label))
-          vat_accounts[label] = field
-      vat_accounts = JSON.stringify(vat_accounts)
-      $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
+      on_submit_form('#journal form .account_book_type_vat_accounts')
       true
