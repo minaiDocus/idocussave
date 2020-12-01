@@ -14,11 +14,11 @@ class PreAssignment::Builder::MyUnisoft < PreAssignment::Builder::DataService
   def execute
     @delivery.building_data
 
-    response = MyUnisoft::DataBuilder.new(@preseizures).execute
+    response = MyUnisoftLib::DataBuilder.new(@preseizures).execute
 
     if response[:data_built]
       save_data_to_storage(response[:data], 'txt')
-      
+
       building_success response[:data_count]
     else
       building_failed response[:error_messages]

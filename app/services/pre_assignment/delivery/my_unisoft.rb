@@ -5,7 +5,7 @@ class PreAssignment::Delivery::MyUnisoft < PreAssignment::Delivery::DataService
 
   def initialize(delivery)
     super
-   
+
   end
 
   private
@@ -14,9 +14,9 @@ class PreAssignment::Delivery::MyUnisoft < PreAssignment::Delivery::DataService
     @delivery.sending
 
     begin
-      send_data = MyUnisoft::DataSender.new(@user)
+      send_data = MyUnisoftLib::DataSender.new(@user)
       response  = send_data.execute(@delivery.cloud_content_object.path)
-      
+
       if response[:error].present?
         handle_delivery_error(response[:error])
       else
@@ -42,6 +42,6 @@ class PreAssignment::Delivery::MyUnisoft < PreAssignment::Delivery::DataService
       end
     end
 
-    @delivery.sent?    
+    @delivery.sent?
   end
 end
