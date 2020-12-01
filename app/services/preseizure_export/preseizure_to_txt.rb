@@ -48,6 +48,9 @@ class PreseizureExport::PreseizureToTxt
         line[42]       = entry.amount >= 0.0 ? '+' : '-'
         line[43..54]   = '%012d' % entry.amount_in_cents
         line[63..68]   = preseizure.deadline_date.strftime('%d%m%y') if preseizure.deadline_date
+        line[69..73]   = entry.account.lettering[0..4] if entry.account.lettering.present?
+        line[74..78]   = preseizure.piece_number[0..4] if preseizure.piece_number.present?
+        line[99..106]  = preseizure.piece_number[0..7] if preseizure.piece_number.present?
         line[107..109] = 'EUR'
         line[110..112] = preseizure.journal_name[0..2] if preseizure.journal_name.size > 2
 
@@ -55,6 +58,8 @@ class PreseizureExport::PreseizureToTxt
           e = 116 + label.size - 1
           line[116..e] = label
         end
+
+        line[148..157] = preseizure.piece_number[0..9].rjust(10, '0') if preseizure.piece_number.present?
 
         if preseizure.piece
           file_name = preseizure.piece.position.to_s + '.pdf'
@@ -198,7 +203,7 @@ class PreseizureExport::PreseizureToTxt
 
           if preseizure.piece_id.present?
             general_account = if(account.type == Pack::Report::Preseizure::Account::TVA)
-                                journal.try(:vat_account)
+                                journal.try(:get_vat_accounts_of, '0')
                               elsif(account.type == Pack::Report::Preseizure::Account::TTC)
                                 journal.try(:account_number)
                               else

@@ -4,7 +4,7 @@ class CsvDescriptor < ApplicationRecord
 
 
   def directive_to_a
-    (directive || '').split('|').map do |e|
+    directive.to_s.split('|').map do |e|
       e.scan(/(\w+)-?(.+)?/).first
     end
   end
@@ -12,9 +12,9 @@ class CsvDescriptor < ApplicationRecord
   def directive_to_h
     directives_a = []
 
-    _directive = directive.gsub('|separator', '&sep').gsub('|space', '&spa')
+    _directive = directive.to_s.gsub('|separator', '&sep').gsub('|space', '&spa')
 
-    (_directive || '').split('|').each do |e|
+    _directive.to_s.split('|').each do |e|
       scaner = e.scan(/(\w+)-?([^&]+)?[&]?(.+)?/).flatten
       directives_a << { name: scaner.first, separator: (scaner.third != 'spa'), format: scaner.second.to_s }
     end

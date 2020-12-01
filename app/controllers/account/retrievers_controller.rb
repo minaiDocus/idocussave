@@ -71,6 +71,7 @@ class Account::RetrieversController < Account::RetrieverController
   def export_connector_to_xls
     array_document = params[:documents].to_s.split(/\;/)
     array_bank     = params[:banks].to_s.split(/\;/)
+    CustomUtils.add_chmod_access_into(0777, "/nfs/tmp/")
     dir            = Dir.mktmpdir(nil, "/nfs/tmp")
     file           = OpenStruct.new({path: "#{dir}/list_des_automates.xls", close: nil})
     xls_data       = []

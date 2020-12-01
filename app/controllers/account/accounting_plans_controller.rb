@@ -111,6 +111,7 @@ class Account::AccountingPlansController < Account::OrganizationController
     if params[:fec_file].present?
       return false if params[:fec_file].content_type != "text/plain"
 
+      CustomUtils.add_chmod_access_into(0777, "/nfs/import/")
       @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
       # @dir = "#{Rails.root}/files/development/imports/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/" #For development environment
       FileUtils.makedirs(@dir)

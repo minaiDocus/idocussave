@@ -22,6 +22,7 @@ class Subscription::PeriodsToXls
       'Nom du document',
       'Piéces total',
       'Pré-affectation',
+      'Opération',
       'Piéces numérisées',
       'Piéces versées',
       'Piéces iDocus\'Box',
@@ -37,39 +38,22 @@ class Subscription::PeriodsToXls
     ]
     sheet1.row(0).concat headers
 
-    documents = PeriodDocument.where(period_id: @periods.map(&:id)).order(created_at: :asc, name: :asc)
+    @list       = []
 
-    list = []
+    @periods.sort_by(&:end_date).each do |period|
+      user            = period.user
+      documents       = period.documents.order(created_at: :asc, name: :asc)
+      @operation_count = user ? user.operations.where(created_at: period.start_date..period.end_date).count : 0
 
-    documents.each do |document|
-      user_code         = document.period.user ? document.period.user.code : ''
-      user_company      = document.period.user ? document.period.user.company : ''
-      preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
-
-      data = []
-      data << document.period.user.try(:organization).try(:name) if @with_organization_info
-      data += [
-        document.period.end_date.month,
-        document.period.start_date.year,
-        user_code,
-        user_company,
-        document.name,
-        document.pieces,
-        preseizures_count,
-        document.scanned_pieces,
-        document.uploaded_pieces,
-        document.dematbox_scanned_pieces,
-        document.retrieved_pieces,
-        document.scanned_sheets,
-        document.pages,
-        document.scanned_pages,
-        document.uploaded_pages,
-        document.dematbox_scanned_pages,
-        document.retrieved_pages,
-        document.paperclips,
-        document.oversized
-      ]
-      list << data
+      if documents.any?
+        documents.each do |document|
+          @preseizures_count = document.report ? (Pack::Report::Preseizure.unscoped.where(report_id: document.report).where.not(piece_id: nil).count  + document.report.expenses.count) : 0
+          fill_data_with(user, period, document)
+        end
+      else
+        @preseizures_count = 0
+        fill_data_with(user, period) if user
+      end
     end
 
     range = @with_organization_info ? 0..5 : 0..4
@@ -82,7 +66,7 @@ class Subscription::PeriodsToXls
     #  _a <=> _b
     #end
 
-    list.each_with_index do |data, index|
+    @list.each_with_index do |data, index|
       sheet1.row(index + 1).replace(data)
     end
 
@@ -102,7 +86,7 @@ class Subscription::PeriodsToXls
     ]
     sheet2.row(0).concat headers
 
-    list = []
+    @list = []
 
     @periods.each do |period|
       billing = Billing::PeriodBilling.new(period)
@@ -136,7 +120,7 @@ class Subscription::PeriodsToXls
             format_price(price)
           ]
 
-          list << data
+          @list << data
         end
 
         next unless period.user && excesses_amount_in_cents_wo_vat > 0
@@ -161,13 +145,13 @@ class Subscription::PeriodsToXls
           format_price(excesses_amount_in_cents_wo_vat)
         ]
 
-        list << data
+        @list << data
       end
     end
 
     range = @with_organization_info ? 0..3 : 0..2
     month_index = @with_organization_info ? 1 : 0
-    list = list.sort do |a, b|
+    @list = @list.sort do |a, b|
       _a = a[range]
       _b = b[range]
       _a[month_index] = ("%02d" % _a[month_index])
@@ -175,7 +159,7 @@ class Subscription::PeriodsToXls
       _a <=> _b
     end
 
-    list.each_with_index do |data, index|
+    @list.each_with_index do |data, index|
       sheet2.row(index + 1).replace(data)
     end
 
@@ -184,9 +168,35 @@ class Subscription::PeriodsToXls
     io.string
   end
 
-
-
   def format_price(price_in_cents)
     ('%0.2f' % (price_in_cents.round / 100.0)).tr('.', ',')
+  end
+
+  def fill_data_with(user=nil, period=nil, document=nil)
+    data = []
+    data << user.try(:organization).try(:name) if @with_organization_info
+    data += [
+              period.end_date.month,
+              period.start_date.year,
+              user.try(:code),
+              user.try(:company),
+              document.try(:name),
+              document.try(:pieces),
+              @preseizures_count,
+              @operation_count,
+              document.try(:scanned_pieces).to_i,
+              document.try(:uploaded_pieces).to_i,
+              document.try(:dematbox_scanned_pieces).to_i,
+              document.try(:retrieved_pieces).to_i,
+              document.try(:scanned_sheets).to_i,
+              document.try(:pages).to_i,
+              document.try(:scanned_pages).to_i,
+              document.try(:uploaded_pages).to_i,
+              document.try(:dematbox_scanned_pages).to_i,
+              document.try(:retrieved_pages).to_i,
+              document.try(:paperclips).to_i,
+              document.try(:oversize).to_i
+            ]
+    @list << data
   end
 end

@@ -151,7 +151,7 @@ describe AccountingWorkflow::GroupDocument do
 
       @organization = create :organization, code: "TS"
       @user = FactoryBot.create(:user, code: 'TS%0001', organization: @organization)
-      @user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_account: "445660", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
+      @user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_accounts: "{'20':'445660', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
     end
 
     before(:each) do

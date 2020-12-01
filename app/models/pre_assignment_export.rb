@@ -30,6 +30,7 @@ class PreAssignmentExport < ApplicationRecord
   end
 
   def base_path
+    CustomUtils.add_chmod_access_into(0777, "/nfs/export/pre_assignment/")
     Pathname.new('/nfs/export/pre_assignment').join(self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
   end
 

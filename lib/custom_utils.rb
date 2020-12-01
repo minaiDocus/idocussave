@@ -14,5 +14,9 @@ class CustomUtils
     def manual_scans_codes
       ['AC0162', 'MFA%ADAPTO']
     end
+
+    def add_chmod_access_into(type, nfs_directory)
+      FileUtils.chmod(type, nfs_directory)
+    end
   end
 end

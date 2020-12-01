@@ -224,11 +224,7 @@ class Account::JournalsController < Account::OrganizationController
         account_type
         meta_account_number
         meta_charge_account
-        vat_account
-        vat_account_10
-        vat_account_8_5
-        vat_account_5_5
-        vat_account_2_1
+        vat_accounts
         anomaly_account
         jefacture_enabled
       ]

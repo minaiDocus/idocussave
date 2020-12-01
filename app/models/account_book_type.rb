@@ -18,11 +18,7 @@ class AccountBookType < ApplicationRecord
       journal.account_number         = ''
       journal.default_account_number = ''
       journal.charge_account         = ''
-      journal.vat_account            = ''
-      journal.vat_account_10         = ''
-      journal.vat_account_8_5        = ''
-      journal.vat_account_5_5        = ''
-      journal.vat_account_2_1        = ''
+      journal.vat_accounts           = '{"0":""}'
       journal.anomaly_account        = ''
     end
   end
@@ -44,11 +40,12 @@ class AccountBookType < ApplicationRecord
   validate  :only_one_jefacture_enabled_by_type
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
+  validate  :default_vat_accounts
   validates_length_of   :instructions, maximum: 400
   validates_presence_of :name
   validates_presence_of :currency
   validates_presence_of :description
-  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
+  validates_presence_of :vat_accounts,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
   validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? }
@@ -122,6 +119,22 @@ class AccountBookType < ApplicationRecord
   end
 
 
+  def get_vat_accounts_of(rate)
+    JSON.parse(vat_accounts)[rate.to_s]
+  end
+
+
+  def get_vat_accounts
+    vat_accounts_content = []
+    raw_vat_accounts     = JSON.parse(vat_accounts)
+    raw_vat_accounts.each do |rate, vat_account|
+      vat_accounts_content << vat_account if vat_account.present?
+    end
+
+    vat_accounts_content
+  end
+
+
   def compta_processable?
     entry_type > 0
   end
@@ -161,11 +174,7 @@ class AccountBookType < ApplicationRecord
     self.account_number                 = nil   if account_number.present?
     self.default_account_number         = nil   if default_account_number.present?
     self.charge_account                 = nil   if charge_account.present?
-    self.vat_account                    = nil   if vat_account.present?
-    self.vat_account_10                 = nil   if vat_account_10.present?
-    self.vat_account_8_5                = nil   if vat_account_8_5.present?
-    self.vat_account_5_5                = nil   if vat_account_5_5.present?
-    self.vat_account_2_1                = nil   if vat_account_2_1.present?
+    self.vat_accounts                   = '{"0":""}'   if vat_accounts.present?
     self.anomaly_account                = nil   if anomaly_account.present?
     self.is_expense_categories_editable = false if is_expense_categories_editable.present?
   end
@@ -203,10 +212,17 @@ class AccountBookType < ApplicationRecord
     end
   end
 
-  def presence_of_vat_account
-    if vat_account.blank?
-      return errors.add(:vat_account, :blank) if user && user.try(:options).try(:is_taxable)
-      errors.add(:vat_account, :blank) unless user  #require vat_account on shared journals if pre_assignement_processable
+  def presence_of_vat_accounts
+    if vat_accounts.blank?
+      return errors.add(:vat_accounts, :blank) if user && user.try(:options).try(:is_taxable)
+      errors.add(:vat_accounts, :blank) unless user  #require vat_account on shared journals if pre_assignement_processable
+    end
+  end
+
+  def default_vat_accounts
+    if is_pre_assignment_processable? && JSON.parse(vat_accounts)['0'].blank?
+      return errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') if user && user.try(:options).try(:is_taxable)
+      errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') unless user  #require defaults vat_accounts on shared journals if pre_assignement_processable
     end
   end
 end

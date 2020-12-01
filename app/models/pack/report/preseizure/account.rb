@@ -63,11 +63,7 @@ class Pack::Report::Preseizure::Account < ApplicationRecord
         end
 
         if self.type == Pack::Report::Preseizure::Account::TVA
-          accounts_name << journal.vat_account
-          accounts_name << journal.vat_account_10
-          accounts_name << journal.vat_account_8_5
-          accounts_name << journal.vat_account_5_5
-          accounts_name << journal.vat_account_2_1
+          accounts_name << journal.get_vat_accounts
 
           accounts_name << accounting_plan.vat_accounts.collect(&:account_number)
         end
