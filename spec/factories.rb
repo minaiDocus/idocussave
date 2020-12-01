@@ -41,7 +41,7 @@ FactoryBot.define do
       description { '(description)' }
       trait :journal_with_preassignment do
         entry_type { 2 }
-        vat_accounts { '{"20":"123", "8.5":"426", "13": "13256"}' }
+        vat_accounts { '{"0":"123", "8.5":"426", "13": "13256"}' }
         anomaly_account { '123' }
         account_number { '123' }
         charge_account { '123' }

@@ -488,7 +488,7 @@ update_price = ->
 
   $('.total_price').html(price+",00€ HT")
 
-jQuery ->  
+jQuery ->
   if ($('.import_dialog').length > 0)
     $('#import_dialog').modal('show')
 

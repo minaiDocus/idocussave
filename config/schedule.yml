@@ -140,11 +140,19 @@ PreAssignment::Builder::ExactOnlineWorker:
   queue: high
   cron: '*/10 * * * * *'
 
+PreAssignment::Builder::MyUnisoftWorker:
+  queue: high
+  cron: '*/10 * * * * *'
+
 PreAssignment::Delivery::IbizaWorker:
   queue: high
   cron: '*/10 * * * * *'
 
 PreAssignment::Delivery::ExactOnlineWorker:
+  queue: high
+  cron: '*/10 * * * * *'
+
+PreAssignment::Delivery::MyUnisoftWorker:
   queue: high
   cron: '*/10 * * * * *'
 
