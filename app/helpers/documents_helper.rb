@@ -226,7 +226,7 @@ module DocumentsHelper
 
   def file_upload_users_list
     if @user.organization.specific_mission
-      accounts
+      @user.organization.customers.active.order(code: :asc)
     else
       @file_upload_users_list ||= accounts.active.order(code: :asc).select do |user|
         user.options.is_upload_authorized
