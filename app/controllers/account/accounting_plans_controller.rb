@@ -109,45 +109,51 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   def import_fec
     if params[:fec_file].present?
-      return false if params[:fec_file].content_type != "text/plain"
+      unless DocumentTools.is_utf8(params[:fec_file].path)
+        flash[:error] = '<b>Format de fichier non supporté.</b>'
+      else
+        return false if params[:fec_file].content_type != "text/plain"
 
-      CustomUtils.add_chmod_access_into(0777, "/nfs/import/")
-      @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
-      # @dir = "#{Rails.root}/files/development/imports/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/" #For development environment
-      FileUtils.makedirs(@dir)
-      FileUtils.chmod(0777, @dir)
+        # CustomUtils.add_chmod_access_into(0777, "/nfs/import/")
+        @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
+        @dir = "#{Rails.root}/files/development/imports/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/" #For development environment
+        FileUtils.makedirs(@dir)
+        FileUtils.chmod(0777, @dir)
 
-      @file   = File.join(@dir, "file_#{Time.now.strftime('%Y%m%d%H%M%S')}.txt")
-      journal = []
+        @file   = File.join(@dir, "file_#{Time.now.strftime('%Y%m%d%H%M%S')}.txt")
+        journal = []
 
-      txt_file = File.read(params[:fec_file].path)
-      txt_file.encode!('UTF-8')
+        txt_file = File.read(params[:fec_file].path)
+        txt_file.encode!('UTF-8')
 
-      begin
-        txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
-      rescue => e
-        txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+        begin
+          txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '') if txt_file.match(/\\x([0-9a-zA-Z]{2})/)
+        rescue => e
+          txt_file.force_encoding('ISO-8859-1').encode!('UTF-8', undef: :replace, invalid: :replace, replace: '')
+        end
+
+        begin
+          txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
+        rescue => e
+        end
+
+        File.write @file, txt_file
+
+        @params_fec = FecImport.new(@file).parse_metadata
+
+        @customer.account_book_types.each { |jl| journal << jl.name }
+
+        @params_fec = @params_fec.merge(dir: @dir, file: @file, journal_ido: journal)
       end
-
-      begin
-        txt_file.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '') #deletion of UTF-8 BOM
-      rescue => e
-      end
-
-      File.write @file, txt_file
-
-      @params_fec = FecImport.new(@file).parse_metadata
-
-      @customer.account_book_types.each { |jl| journal << jl.name }
-
-      @params_fec = @params_fec.merge(dir: @dir, file: @file, journal_ido: journal)
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
 
     if params[:new_create_book_type].present?
-      @params_fec = @params_fec.merge(new_create_book_type: params[:new_create_book_type])
-      render :partial => "/account/accounting_plans/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }
+      if @params_fec.present?
+        @params_fec = @params_fec.merge(new_create_book_type: params[:new_create_book_type])
+        render :partial => "/account/accounting_plans/dialog_box", locals: { organization: @organization, customer: @customer, params_fec: @params_fec }
+      end
     else
       render :show
     end

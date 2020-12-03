@@ -200,8 +200,9 @@ jQuery ->
       update_form()
 
     $('#for_step_two.modal').on 'show.bs.modal', (e) ->
-      vat_account_field()
-      show_vat_account_field()
+      if $("#new_create_book_type").length > 0
+        vat_account_field()
+        show_vat_account_field()
 
     show_vat_account_field()
 

@@ -386,7 +386,6 @@ class DocumentTools
     Date.new(year, month, 1)
   end
 
-
   def self.mimetype(filename)
     extension = File.extname(filename)
     case extension
@@ -399,5 +398,11 @@ class DocumentTools
 
   def self.checksum(file_path)
     `md5sum "#{file_path}"`.split[0]
+  end
+
+  def self.is_utf8(file_path)
+    is = `file -i #{file_path}`
+
+    is.match /utf-8/
   end
 end
