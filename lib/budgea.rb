@@ -215,14 +215,14 @@ class Budgea
       end
     end
 
-    def resume_connexion(retriever, force_resume = false, notify=false)
+    def resume_connexion(retriever, force_resume = false)
       if retriever.budgea_id.present?
 
         last_log = get_connections_log(retriever.budgea_id).try(:[], 'connectionlogs').try(:first) unless force_resume
 
         if !force_resume && last_log.present?
           last_log.merge!({"source"=> "ProcessRetrievedData", "id"=> retriever.budgea_id})
-          retriever.update_state_with(last_log.with_indifferent_access, notify)
+          retriever.update_state_with(last_log.with_indifferent_access)
 
           { from: 'last_log', response: last_log }
         else
@@ -239,7 +239,7 @@ class Budgea
 
             connections.merge!({"source"=> "ProcessRetrievedData", "id"=> retriever.budgea_id})
 
-            retriever.update_state_with(connections.with_indifferent_access, notify)
+            retriever.update_state_with(connections.with_indifferent_access)
           end
 
           { from: 'resume', response: @response.body }
