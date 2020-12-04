@@ -106,7 +106,8 @@ class User < ApplicationRecord
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
   scope :using_ibiza,                 -> { joins(:softwares).where(softwares_settings: { is_ibiza_used: true } ) }
-  scope :using_exact_online,          -> { joins(:softwares).where(softwares_settings: { is_exact_online_used: true } ) }
+  scope :using_exact_online,          -> { joins(:softwares).where(softwares_settings: { is_exact_online_used: true } ) } 
+
 
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :softwares
@@ -128,6 +129,28 @@ class User < ApplicationRecord
     user.format_name
   end
 
+  def self.filter_by_software(software=nil)
+    response = self.all
+
+    response.map do |user|
+      next if user.collaborator?
+
+      case software
+        when 'ibiza'
+          skip_user = user.uses_exact_online? || user.uses_my_unisoft?
+        when 'exact_online'
+          skip_user = user.uses_ibiza? || user.uses_my_unisoft?
+        when 'my_unisofts'
+          skip_user = user.uses_ibiza? || user.uses_exact_online?
+        else
+          skip_user = false
+      end
+
+      next if skip_user
+      user
+    end
+  end
+
   #Overwrite User code method
   def my_code
     self.code.presence || self.memberships.first.try(:code)
@@ -136,7 +159,6 @@ class User < ApplicationRecord
   def to_param
     [id, company.parameterize].join('-')
   end
-
 
   def name
     [first_name.presence, last_name.presence].compact.join(' ')
@@ -199,7 +221,7 @@ class User < ApplicationRecord
       organization_used         = true
       is_my_unisoft_used        = attributes[:is_my_unisoft_used]
 
-      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_my_unisoft_used: is_my_unisoft_used, user_used: false, organization_auto_deliver: organization_auto_deliver, api_token: api_token, organization_used: organization_used})
+      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_my_unisoft_used: is_my_unisoft_used, user_used: false, organization_auto_deliver: organization_auto_deliver, api_token: api_token, organization_used: organization_used, action: "update"})
     else
       software = self.softwares || SoftwaresSetting.new()
       begin

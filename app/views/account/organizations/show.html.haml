@@ -547,12 +547,12 @@
                       %td{width: '5%'}
                         = f.simple_fields_for :my_unisofts do |m|
                           = m.input :organization_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:organization_used) }
-                    %tr.hide
+                    %tr{ class: "#{@organization.try(:my_unisoft).try(:organization_used) ? '' : 'hide' }"}
                       %th Souhaitez-vous livrer automatiquement les écritures ?
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.            
                       %td{width: '5%'}
                         = f.simple_fields_for :my_unisofts do |m|
-                          = m.input :organization_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:organization_used) }
+                          = m.input :organization_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:organization_auto_deliver) }
                 - if @user.leader?
                   %br
                   .alignright

@@ -64,12 +64,12 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     if @customer.save
       if @customer.softwares.ibiza_auto_update_accounting_plan?
-        render json: { success: true, message: 'La mis à jour automatique du plan comptable chez iBiza est activé' }, status: 200
+        render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est activé" }, status: 200
       else
-        render json: { success: true, message: 'La mis à jour automatique du plan comptable chez iBiza est désactivé' }, status: 200
+        render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est désactivé" }, status: 200
       end
     else
-      render json: { success: false, message: 'Impossible d\'activer/désactiver le mis à jour automatique du plan comptable chez iBiza' }, status: 200
+      render json: { success: false, message: "Impossible d\'activer/désactiver le mis à jour automatique du plan comptable chez #{params[:software]}" }, status: 200
     end
   end
 
