@@ -112,7 +112,7 @@ module McfLib
         def send_request(uri, params)
           @response = connection(uri).post do |request|
             request.headers = { accept: 'json' }
-            request.options.timeout = 20
+            request.options.timeout = 80
             request.body = params.to_query #params.to_json not supported
           end
         end
@@ -122,7 +122,7 @@ module McfLib
             uri,
             method:  :post,
             headers: { accept: :json },
-            timeout: 20,
+            timeout: 80,
             body: params
           )
           @request.run
