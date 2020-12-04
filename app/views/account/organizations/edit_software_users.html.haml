@@ -10,7 +10,7 @@
             .label-section
               = label_tag 'software_account_list', "Liste des clients assignés à l'option : #{@software_name}", class: 'select control-label'
             .control-section
-              -list_options  = @organization.customers.active.order(:code)
+              -list_options = @organization.customers.active.order(:code).filter_by_software(@software).compact
               -list_selected = []
               -if @software == 'coala'
                 -list_selected = list_options.select{ |c| c.uses_coala? }

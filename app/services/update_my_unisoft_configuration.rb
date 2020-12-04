@@ -16,10 +16,13 @@ class UpdateMyUnisoftConfiguration
 
       if params[:action] == "update"
         if params[:is_my_unisoft_used]
-          @mu           = Software::MyUnisoft.new if @mu.nil?
-          @mu.user_used = true
+          @mu                   = Software::MyUnisoft.new if @mu.nil?
+          @mu.user_used         = true
+          @mu.organization_used = true
+          @mu.organization      = @organization
+          @mu.user              = @customer
         else
-          @mu.destroy
+          @mu.destroy if @mu.present?
 
           return true
         end
@@ -27,13 +30,15 @@ class UpdateMyUnisoftConfiguration
         save
       else
         if params[:remove_customer]
-          @mu.api_token  = nil
-          @mu.society_id = nil
+          @mu.api_token     = nil
+          @mu.society_id    = nil
+          @mu.access_routes = ""
+          @mu.customer_auto_deliver = -1
 
           @mu.save
 
           return true
-        else
+        elsif params[:api_token].present?
           @api_token = params[:api_token]
           list_keys  = get_list_key
 
@@ -75,7 +80,7 @@ class UpdateMyUnisoftConfiguration
 
   def save
     @mu.organization_used         = @params[:organization_used]
-    @mu.organization_auto_deliver = @params[:organization_auto_deliver]
+    @mu.organization_auto_deliver = @params[:organization_used] ? @params[:organization_auto_deliver] : false
     @mu.api_token                 = @params[:api_token]                    if @params[:api_token].present?
     @mu.customer_auto_deliver     = @params[:customer_auto_deliver]        if @params[:customer_auto_deliver].present?
     @mu.organization              = @organization                          if @organization
