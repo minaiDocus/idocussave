@@ -25,7 +25,7 @@ class Pack::Report::Preseizure < ApplicationRecord
   scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"').distinct }
   scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
   scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"').distinct }
-  scope :not_my_unisoft_delivered,    -> { joins('INNER JOIN my_unisofts ON my_unisofts.user_id = pack_report_preseizures.user_id').where(my_unisofts: { user_used: true } ).where('is_delivered_to != "my_unisoft"').distinct }
+  scope :not_my_unisoft_delivered,    -> { joins('INNER JOIN my_unisofts ON my_unisofts.owner_id = pack_report_preseizures.user_id').where(my_unisofts: { is_used: true, owner_type: 'User'}).where('is_delivered_to != "my_unisoft"').distinct }
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }

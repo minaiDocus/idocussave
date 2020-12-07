@@ -116,10 +116,10 @@ class Account::OrganizationsController < Account::OrganizationController
     if organization_params[params[:part]].present?
       case params[:part]
       when 'my_unisofts'
-        organization_used         = organization_params['my_unisofts']['organization_used'] == "1"
-        organization_auto_deliver = organization_params['my_unisofts']['organization_auto_deliver'] == "1"
+        is_used         = organization_params['my_unisofts']['is_used'] == "1"
+        auto_deliver    = organization_params['my_unisofts']['auto_deliver']
 
-        config_update = UpdateMyUnisoftConfiguration.new(@organization).execute({organization_used: organization_used, organization_auto_deliver: organization_auto_deliver})
+        config_update = UpdateMyUnisoftConfiguration.new(@organization).execute({is_used: is_used, auto_deliver: auto_deliver})
 
         if config_update
           flash[:success] = 'Modifié avec succès.'
@@ -279,7 +279,7 @@ class Account::OrganizationsController < Account::OrganizationController
         :jefacture_api_key,
         :specific_mission,
         :default_banking_provider
-        { my_unisofts: %i[organization_used organization_auto_deliver api_token] }
+        { my_unisofts: %i[auto_deliver is_used] }
       )
     else
       params.require(:organization).permit(
@@ -305,7 +305,7 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_exact_online_used,
         :is_exact_online_auto_deliver,
         :jefacture_api_key,
-        { my_unisofts: %i[organization_used organization_auto_deliver api_token] }
+        { my_unisofts: %i[auto_deliver is_used] }
       )
     end
   end

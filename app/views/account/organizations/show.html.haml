@@ -44,7 +44,7 @@
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'my_unisofts') ? 'active' : ''}", href: '#my_unisofts', data: { toggle: 'tab' } }
                       .float-left My Unisoft
-                      - if @organization.try(:my_unisoft).try(:organization_used)
+                      - if @organization.try(:my_unisoft).try(:is_used)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'coala') ?  'active' : ''}", href: '#coala', data: { toggle: 'tab' } }
@@ -546,17 +546,17 @@
                       %td{width: '40%'} Cette option permet de selectionner/utiliser My Unisoft dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte my unisoft).
                       %td{width: '5%'}
                         = f.simple_fields_for :my_unisofts do |m|
-                          = m.input :organization_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:organization_used) }
-                    %tr{ class: "#{@organization.try(:my_unisoft).try(:organization_used) ? '' : 'hide' }"}
+                          = m.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:is_used) }
+                    %tr{ class: "#{@organization.try(:my_unisoft).try(:is_used) ? '' : 'hide' }"}
                       %th Souhaitez-vous livrer automatiquement les écritures ?
                       %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.            
                       %td{width: '5%'}
                         = f.simple_fields_for :my_unisofts do |m|
-                          = m.input :organization_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:organization_auto_deliver) }
+                          = m.input :auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:auto_deliver?)}
                 - if @user.leader?
                   %br
                   .alignright
-                    - if @organization.try(:my_unisoft).try(:organization_used)
+                    - if @organization.try(:my_unisoft).try(:is_used)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'my_unisofts'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }

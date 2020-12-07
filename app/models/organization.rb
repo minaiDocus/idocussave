@@ -17,7 +17,7 @@ class Organization < ApplicationRecord
   has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
   has_one  :ibiza
-  has_one  :my_unisoft, class_name: 'Software::MyUnisoft'
+  has_one  :my_unisoft, class_name: 'Software::MyUnisoft', as: :owner
   has_one  :knowings
   has_one  :subscription
   has_one  :csv_descriptor
