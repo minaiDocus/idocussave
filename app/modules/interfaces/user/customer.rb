@@ -70,6 +70,6 @@ module Interfaces::User::Customer
   end
 
   def uses_my_unisoft?
-    my_unisoft.present?
+    my_unisoft.try(:is_used)
   end
 end

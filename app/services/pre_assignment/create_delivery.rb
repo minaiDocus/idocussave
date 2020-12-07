@@ -29,7 +29,14 @@ class PreAssignment::CreateDelivery
   end
 
   def valid_my_unisoft?
-    @preseizures.any? && @report.try(:organization).try(:my_unisoft).try(:organization_used) && (!@is_auto || (@report.user.my_unisoft.customer_auto_deliver == 1 || (@report.user.my_unisoft.customer_auto_deliver == -1 && @report.user.organization.my_unisoft.organization_auto_deliver))) && !@preseizures.select(&:is_locked).first
+    @preseizures.any? && @report.try(:organization).try(:my_unisoft).try(:is_used) &&
+    (
+      !@is_auto ||
+      (@report.user.my_unisoft.try(:auto_deliver) == 1 ||
+        (@report.user.my_unisoft.try(:auto_deliver) == -1 && @report.user.organization.my_unisoft.try(:auto_deliver?)
+        )
+      )
+    ) && !@preseizures.select(&:is_locked).first
   end
 
   def execute

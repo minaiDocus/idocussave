@@ -595,7 +595,7 @@ jQuery ->
       update_price()
 
   if $(".edit.my_unisoft").length > 0
-    $("input[name='user[my_unisofts][customer_auto_deliver]']").each (index, element) =>
+    $("input[name='user[my_unisofts][auto_deliver]']").each (index, element) =>
       if $(element).val() == $("#auto_deliver_customer").val()
         $(element).attr('checked', 'checked')
         $(element).parent().addClass('checked')

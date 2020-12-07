@@ -506,7 +506,7 @@
                   .col-md-12
                     = link_to t('actions.edit'), edit_exact_online_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
 
-          - if @organization.try(:my_unisoft).try(:organization_used)
+          - if @customer.organization.try(:my_unisoft).try(:is_used)
             #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
               %h4.margin1bottom Activation My Unisoft
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_my_unisoft', class: 'form form-horizontal label-auto' } do |c|
@@ -516,7 +516,7 @@
                     %tr
                       %th Ce dossier utilise My Unisoft ?
                       = c.simple_fields_for :my_unisofts do |m|
-                        %td{width: '8%'}= m.input :user_used, as: 'boolean', label: 'oui?', input_html: { checked: @customer.uses_my_unisoft? }
+                        %td{width: '8%'}= m.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @customer.uses_my_unisoft? }
                       - if @user.leader?
                         %td{width: '8%'}
                           .alignright
@@ -543,7 +543,7 @@
                     - else
                       %h5 Ce dossier n'est pas lié à celui de My Unisoft
 
-                    - if @customer.my_unisoft.society_id.present? && @customer.try(:my_unisoft).try(:user_used)
+                    - if @customer.my_unisoft.society_id.present? && @customer.uses_my_unisoft?
                       %br
                       %hr
                       .card.accept_my_unisoft

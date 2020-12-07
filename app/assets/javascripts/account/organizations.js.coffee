@@ -134,14 +134,3 @@ jQuery ->
           $('#payments td#debit_state').html("<span class='badge badge-danger fs-origin'>Une erreur inattendue s'est produite, Veuillez réessayer ultérieurement.</span>");
       });
   )
-
-  $('#organization_my_unisofts_organization_used').on('click', (e)->
-    if ($(this).is(":checked"))
-      $('.accept_my_unisoft').show('slow')
-      $('#organization_my_unisofts_api_token').addClass('required')
-      $('#organization_my_unisofts_api_token').attr('required','required')
-    else
-      $('.accept_my_unisoft').hide('fast')
-      $('#organization_my_unisofts_api_token').removeClass('required')
-      $('#organization_my_unisofts_api_token').removeAttr('required','required')
-  )

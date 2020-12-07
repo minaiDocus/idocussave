@@ -8,7 +8,7 @@ module Account::CustomersHelper
     when 'exact_online'
       @organization.is_exact_online_used && !@customer.uses_ibiza? && !@customer.uses_my_unisoft?
     when 'my_unisoft'
-      @organization.try(:my_unisoft).try(:organization_used) && !@customer.uses_ibiza? && !@customer.uses_exact_online?
+      @organization.try(:my_unisoft).try(:is_used) && !@customer.uses_ibiza? && !@customer.uses_exact_online?
     end
   end
 end

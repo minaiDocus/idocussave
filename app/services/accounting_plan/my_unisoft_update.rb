@@ -6,7 +6,7 @@ class AccountingPlan::MyUnisoftUpdate < AccountingPlan::UpdateService
   private
 
   def execute
-    if @user.try(:my_unisoft).try(:present?) && @user.my_unisoft.user_used && @accounting_plan.need_update?
+    if @user.try(:my_unisoft).try(:present?) && @user.my_unisoft.is_used && @accounting_plan.need_update?
       @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
       @accounting_plan.providers.update_all(is_updated: false)
