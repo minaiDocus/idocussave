@@ -192,8 +192,8 @@ class Order < ApplicationRecord
   private
 
   def paper_set_starting_date
-    #Order paper set for the new year is only available from the 15th of december
-    start_date = (Date.today.day >= 15 && Date.today.month == 12) ? 1.month.from_now.to_date : Date.today
+    #Order paper set for the new year is only available from the 1th of december (it was 15th of december before)
+    start_date = (Date.today.day >= 1 && Date.today.month == 12) ? 1.month.from_now.to_date : Date.today
 
     case period_duration
     when 1
