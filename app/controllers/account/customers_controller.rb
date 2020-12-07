@@ -108,10 +108,10 @@ class Account::CustomersController < Account::OrganizationController
 
       redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
     elsif params[:part] == 'my_unisoft'
-      user_used = is_my_unisoft_used = organization_used = params['user']['my_unisofts']['user_used'] == "1"
+      is_used = params['user']['my_unisofts']['is_used'] == "1"
       action = params[:action]
 
-      config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({user_used: user_used, is_my_unisoft_used: is_my_unisoft_used, organization_auto_deliver: true, organization_used: organization_used, action: action})
+      config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({is_used: is_used, action: action})
 
       if config_update
         flash[:success] = 'Modifié avec succès.'
@@ -198,11 +198,11 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id/update_my_unisoft
   def update_my_unisoft
-    api_token             = params['user']['my_unisofts']['encrypted_api_token']
-    remove_customer       = params['user']['my_unisofts']['encrypted_api_token'].blank? && params[:check_api_token] == "true"
-    customer_auto_deliver = params['user']['my_unisofts']['customer_auto_deliver']
+    api_token       = params['user']['my_unisofts']['encrypted_api_token']
+    remove_customer = params['user']['my_unisofts']['encrypted_api_token'].blank? && params[:check_api_token] == "true"
+    auto_deliver    = params['user']['my_unisofts']['auto_deliver']
 
-    config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({organization_used: true, api_token: api_token, remove_customer: remove_customer, customer_auto_deliver: customer_auto_deliver})
+    config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({api_token: api_token, remove_customer: remove_customer, auto_deliver: auto_deliver})
 
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'my_unisoft')
   end
@@ -428,8 +428,8 @@ class Account::CustomersController < Account::OrganizationController
       :jefacture_account_id,
       { group_ids: [] },
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
-      { my_unisofts: %i[user_used is_auto_deliver encrypted_api_token is_my_unisoft_used check_api_token] },
-      { my_unisoft_attributes: %i[user_used] },
+      { my_unisofts: %i[is_used auto_deliver encrypted_api_token check_api_token] },
+      { my_unisoft_attributes: %i[is_used] },
       { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
     ]
 
