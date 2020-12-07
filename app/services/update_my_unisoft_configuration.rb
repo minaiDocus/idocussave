@@ -8,24 +8,25 @@ class UpdateMyUnisoftConfiguration
     @params = params
 
     unless @customer
-      @mu  = Software::MyUnisoft.where(organization_id: @organization.id, user_id: nil).first || Software::MyUnisoft.new
+      @mu       = @organization.my_unisoft.presence || Software::MyUnisoft.new
+      @mu.owner = @organization
 
       save
     else
-      @mu  = Software::MyUnisoft.where(organization_id: @organization.id, user_id: @customer.id).first
+      @mu  = @customer.my_unisoft
 
-      if params[:action] == "update"
-        if params[:is_my_unisoft_used]
-          @mu                   = Software::MyUnisoft.new if @mu.nil?
-          @mu.user_used         = true
-          @mu.organization_used = true
-          @mu.organization      = @organization
-          @mu.user              = @customer
-        else
-          @mu.destroy if @mu.present?
+      if params[:action] == "update" 
+        return false if !@params[:is_used] && @mu.nil?
+
+        if @mu.present? && !@params[:is_used]
+          @mu.destroy
 
           return true
         end
+
+        @mu         = Software::MyUnisoft.new if @mu.nil?
+        @mu.owner   = @customer
+        @mu.is_used = @params[:is_used]
 
         save
       else
@@ -33,7 +34,7 @@ class UpdateMyUnisoftConfiguration
           @mu.api_token     = nil
           @mu.society_id    = nil
           @mu.access_routes = ""
-          @mu.customer_auto_deliver = -1
+          @mu.auto_deliver  = -1
 
           @mu.save
 
@@ -79,12 +80,8 @@ class UpdateMyUnisoftConfiguration
   end
 
   def save
-    @mu.organization_used         = @params[:organization_used]
-    @mu.organization_auto_deliver = @params[:organization_used] ? @params[:organization_auto_deliver] : false
-    @mu.api_token                 = @params[:api_token]                    if @params[:api_token].present?
-    @mu.customer_auto_deliver     = @params[:customer_auto_deliver]        if @params[:customer_auto_deliver].present?
-    @mu.organization              = @organization                          if @organization
-    @mu.user                      = @customer                              if @customer
+    @mu.auto_deliver    = @params[:auto_deliver]  if @params[:auto_deliver].present?
+    @mu.api_token       = @params[:api_token]     if @params[:api_token].present?
 
     @mu.save
   end

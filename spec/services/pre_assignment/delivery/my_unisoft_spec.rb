@@ -43,7 +43,20 @@ describe PreAssignment::Delivery::MyUnisoft do
 
     AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )', pseudonym: "20")
 
-    my_unisoft    = Software::MyUnisoft.create( encrypted_api_token: "QEVuQwBAEAByOREAFhHULN2CJGaf125G4YhHmu/s35ujaoOnwQc65t/n8HeJfIfBhI2aU0wt73fJCiLh51pa9bkB79K61o7Xvru4rIX2v4q+SAkGZrwM04HpoBLNzCaYTQwOKSlkgpbltj3kwv9uJsv+Ug2jGGD5LIxCHqS9MnBILfAmW2aJyUaoJxyAG+sAspfSHkJMHO1YN6+1i9lGqXTbQNWjx8wU0YcOJiemBlx3I1L/WVrRxg==", society_id: 3, organization_id: 7, user_id: @user.id, customer_auto_deliver: 1, organization_used: true, user_used: true, auto_update_accounting_plan: true)
+    mu1 = Software::MyUnisoft.new
+    mu1.is_used = true
+    mu1.owner   = @organization
+    mu1.auto_deliver = 1
+    mu1.save
+
+    mu2 = Software::MyUnisoft.new
+    mu2.is_used = true
+    mu2.owner   = @user
+    mu2.encrypted_api_token = "QEVuQwBAEAByOREAFhHULN2CJGaf125G4YhHmu/s35ujaoOnwQc65t/n8HeJfIfBhI2aU0wt73fJCiLh51pa9bkB79K61o7Xvru4rIX2v4q+SAkGZrwM04HpoBLNzCaYTQwOKSlkgpbltj3kwv9uJsv+Ug2jGGD5LIxCHqS9MnBILfAmW2aJyUaoJxyAG+sAspfSHkJMHO1YN6+1i9lGqXTbQNWjx8wU0YcOJiemBlx3I1L/WVrRxg=="
+    mu2.society_id = 3
+    mu2.auto_deliver = 1
+    mu2.auto_update_accounting_plan = true
+    mu2.save
   end
 
   after(:all) do

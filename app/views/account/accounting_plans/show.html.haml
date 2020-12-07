@@ -44,7 +44,7 @@
           - software       = "iBiza"
           - software_value = @customer.softwares.ibiza_auto_update_accounting_plan?
           - software_id    = @customer.ibiza_id
-        - elsif @organization.my_unisoft.try(:organization_used) && @customer.my_unisoft.try(:user_used)
+        - elsif @customer.organization.my_unisoft.try(:is_used) && @customer.my_unisoft.try(:is_used)
           - to_show        = true
           - software       = "My Unisoft"
           - software_value = @customer.my_unisoft.auto_update_accounting_plan

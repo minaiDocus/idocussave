@@ -32,7 +32,7 @@ class User < ApplicationRecord
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
   has_one :softwares, class_name: 'SoftwaresSetting', dependent: :destroy
   has_one :exact_online, dependent: :destroy
-  has_one :my_unisoft, dependent: :destroy, class_name: 'Software::MyUnisoft'
+  has_one :my_unisoft, dependent: :destroy, class_name: 'Software::MyUnisoft', as: :owner
   has_one :dematbox
   has_one :composition
   has_one :subscription
@@ -214,13 +214,7 @@ class User < ApplicationRecord
 
   def create_or_update_software(attributes)
     if attributes.keys.first.to_s == "is_my_unisoft_used"
-      organization_auto_deliver = true
-      api_token                 = nil
-      organization              = self.organization
-      organization_used         = true
-      is_my_unisoft_used        = attributes[:is_my_unisoft_used]
-
-      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_my_unisoft_used: is_my_unisoft_used, user_used: false, organization_auto_deliver: organization_auto_deliver, api_token: api_token, organization_used: organization_used, action: "update"})
+      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_used: attributes[:is_my_unisoft_used], action: "update"})
     else
       software = self.softwares || SoftwaresSetting.new()
       begin

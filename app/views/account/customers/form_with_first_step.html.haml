@@ -120,10 +120,10 @@
                         %tr
                           %td Ce dossier utilise Exact Online ?
                           %td= check_box_tag 'user[softwares_attributes][is_exact_online_used]', true, false, class: 'softwares_setting', style: "position:unset"
-                      - if @organization.my_unisoft.try(:organization_used)
+                      - if @organization.my_unisoft.try(:is_used)
                         %tr
                           %td Ce dossier utilise My Unisoft ?
-                          %td= check_box_tag 'user[my_unisoft_attributes][user_used]', true, false, class: 'softwares_setting', style: "position:unset"
+                          %td= check_box_tag 'user[my_unisoft_attributes][is_used]', true, false, class: 'softwares_setting', style: "position:unset"
                       - if @organization.is_coala_used
                         %tr
                           %td Ce dossier utilise Coala ?
