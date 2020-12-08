@@ -15,24 +15,24 @@ class PreAssignment::CreateDelivery
 
   def valid_ibiza?
     @preseizures.any? && ibiza.try(:configured?) &&
-    (!@is_auto || @report.user.softwares.ibiza_auto_deliver?) &&
-    @report.user.try(:ibiza_id).present? && @report.user.uses_ibiza? &&
+    (!@is_auto || @report.user.try(:ibiza).try(:auto_deliver?)) &&
+    @report.user.try(:ibiza).try(:ibiza_id?) && @report.user.uses?(:ibiza) &&
     !@preseizures.select(&:is_locked).first
     #preseizures locked test stops sending to exact_online => to review if simultanious sending needed (actually not supported)
   end
 
   def valid_exact_online?
-    @preseizures.any? && @report.try(:organization).try(:is_exact_online_used) &&
-    (!@is_auto || @report.user.softwares.exact_online_auto_deliver?) &&
-    @report.user.exact_online.try(:fully_configured?) && @report.user.uses_exact_online? &&
+    @preseizures.any? && @report.try(:organization).try(:exact_online).try(:used?) &&
+    (!@is_auto || @report.user.try(:exact_online).try(:auto_deliver?)) &&
+    @report.user.exact_online.try(:fully_configured?) && @report.user.uses?(:exact_online) &&
     !@preseizures.select(&:is_locked).first
   end
 
   def valid_my_unisoft?
-    @preseizures.any? && @report.try(:organization).try(:my_unisoft).try(:is_used) &&
+    @preseizures.any? && @report.try(:organization).try(:my_unisoft).try(:used?) &&
     (
       !@is_auto ||
-      (@report.user.my_unisoft.try(:auto_deliver) == 1 ||
+      (@report.user.my_unisoft.try(:auto_deliver?) ||
         (@report.user.my_unisoft.try(:auto_deliver) == -1 && @report.user.organization.my_unisoft.try(:auto_deliver?)
         )
       )
@@ -83,7 +83,7 @@ class PreAssignment::CreateDelivery
         delivery.user         = @report.user
         delivery.organization = @report.organization
         delivery.pack_name    = @report.name
-        delivery.software_id  = @report.user.ibiza_id
+        delivery.software_id  = @report.user.try(:ibiza).try(:ibiza_id)
         delivery.is_auto      = @is_auto
         delivery.grouped_date = date
         delivery.total_item   = preseizures.size
@@ -123,7 +123,7 @@ class PreAssignment::CreateDelivery
         delivery.user         = @report.user
         delivery.organization = @report.organization
         delivery.pack_name    = @report.name
-        delivery.software_id  = @report.user.exact_online.client_id
+        delivery.software_id  = @report.user.try(:exact_online).try(:client_id)
         delivery.is_auto      = @is_auto
         delivery.grouped_date = date
         delivery.total_item   = preseizures.size

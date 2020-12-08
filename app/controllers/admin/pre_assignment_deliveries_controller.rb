@@ -8,6 +8,8 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
       ibiza_deliveries
     when 'exact_online'
       exact_online_deliveries
+    when 'my_unisoft'
+      my_unisoft_deliveries
     else
       ibiza_deliveries
     end
@@ -32,6 +34,11 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
   def exact_online_deliveries
     @pre_assignment_deliveries_software = 'Exact Online'
     @pre_assignment_deliveries = PreAssignmentDelivery.search(search_terms(params[:pre_assignment_delivery_contains])).exact_online.order(sort_column => sort_direction)
+  end
+
+  def my_unisoft_deliveries
+    @pre_assignment_deliveries_software = 'My Unisoft'
+    @pre_assignment_deliveries = PreAssignmentDelivery.search(search_terms(params[:pre_assignment_delivery_contains])).my_unisoft.order(sort_column => sort_direction)
   end
 
   def sort_column

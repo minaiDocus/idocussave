@@ -34,7 +34,8 @@ class Account::CustomersController < Account::OrganizationController
     @period           = @subscription.periods.order(created_at: :desc).first
     @journals         = @customer.account_book_types.order(name: :asc)
     @pending_journals = @customer.retrievers.where(journal_id: nil).where.not(journal_name: [nil]).distinct.pluck(:journal_name)
-    @customer.build_softwares if @customer.softwares.nil?
+    
+    build_softwares
   end
 
   # GET /account/organizations/:organization_id/customers/info
@@ -95,25 +96,18 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id
   def update
-    if params[:user][:softwares_attributes].present?
-      software = @customer.create_or_update_software(params[:user][:softwares_attributes])
-      if software&.persisted?
+    if params[:part].present? && params[:part] == Interfaces::Software::Configuration.h_softwares[params[:part]] && user_params[softwares_attributes.to_sym].present?
+      if params[:part] == 'my_unisoft'
+        result = MyUnisoftLib::Setup.new({organization: @organization, customer: @customer, columns: {is_used: user_params[softwares_attributes.to_sym]['is_used'] == "1", action: params[:action]}}).execute
+      else
+        software = @customer.create_or_update_software({columns: user_params[softwares_attributes.to_sym], software: params[:part]})
+        result   = software&.persisted?
+      end
+
+      if result
         flash[:success] = 'Modifié avec succès.'
       else
         flash[:error] = 'Impossible de modifier.'
-      end
-
-      redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
-    elsif params[:part] == 'my_unisoft'
-      is_used = params['user']['my_unisofts']['is_used'] == "1"
-      action = params[:action]
-
-      config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({is_used: is_used, action: action})
-
-      if config_update
-        flash[:success] = 'Modifié avec succès.'
-      else
-        flash[:error] = 'Erreur de mise à jour.'
       end
 
       redirect_to account_organization_customer_path(@organization, @customer, tab: params[:part])
@@ -131,12 +125,12 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def edit_software
-    @customer.build_softwares if @customer.softwares.nil?
+    build_softwares
     @software = params[:software]
   end
 
   def update_software
-    software = @customer.create_or_update_software(params[:user][:softwares_attributes])
+    software = @customer.create_or_update_software({columns: user_params[softwares_attributes.to_sym], software: params[:part]})
     if software&.persisted?
       flash[:success] = 'Modifié avec succès.'
     else
@@ -149,12 +143,12 @@ class Account::CustomersController < Account::OrganizationController
     if @customer.configured?
       redirect_to account_organization_customer_path(@organization, @customer)
     else
-      @customer.build_softwares if @customer.softwares.nil?
+      build_softwares
     end
   end
 
   def update_softwares_selection
-    software = @customer.create_or_update_software(params[:user][:softwares_attributes])
+    software = @customer.create_or_update_software({columns: user_params[softwares_attributes.to_sym], software: params[:part]})
     next_configuration_step
   end
 
@@ -195,13 +189,30 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id/update_my_unisoft
   def update_my_unisoft
-    api_token       = params['user']['my_unisofts']['encrypted_api_token']
-    remove_customer = params['user']['my_unisofts']['encrypted_api_token'].blank? && params[:check_api_token] == "true"
-    auto_deliver    = params['user']['my_unisofts']['auto_deliver']
+    @customer.assign_attributes(my_unisoft_params)
 
-    config_update = UpdateMyUnisoftConfiguration.new(@organization, @customer).execute({api_token: api_token, remove_customer: remove_customer, auto_deliver: auto_deliver})
+    is_api_token_changed = @customer.try(:my_unisoft).try(:api_token_changed?)
 
-    redirect_to account_organization_customer_path(@organization, @customer, tab: 'my_unisoft')
+    if @customer.save
+      if @customer.configured?
+        if is_api_token_changed
+          api_token       = my_unisoft_params['encrypted_api_token']
+          remove_customer = my_unisoft_params['encrypted_api_token'].blank? && my_unisoft_params['check_api_token'] == "true"
+          auto_deliver    = my_unisoft_params['auto_deliver']
+
+          MyUnisoftLib::Setup.new({organization: @organization, customer: @customer, columns: {api_token: api_token, remove_customer: remove_customer, auto_deliver: auto_deliver}}).execute
+        end
+
+        flash[:success] = 'Modifié avec succès'
+
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'my_unisoft')
+      else
+        next_configuration_step
+      end
+    else
+      flash[:error] = 'Impossible de modifier'
+      render 'edit'
+    end
   end
 
   # GET /account/organizations/:organization_id/customers/:id/edit_ibiza
@@ -211,11 +222,11 @@ class Account::CustomersController < Account::OrganizationController
   def update_ibiza
     @customer.assign_attributes(ibiza_params)
 
-    is_ibiza_id_changed = @customer.ibiza_id_changed?
+    is_ibiza_id_changed = @customer.try(:ibiza).try(:ibiza_id_changed?)
 
     if @customer.save
       if @customer.configured?
-        if is_ibiza_id_changed && @user.ibiza_id.present?
+        if is_ibiza_id_changed && @user.try(:ibiza).ibiza_id?
           AccountingPlan::IbizaUpdate.new(@user).run
         end
 
@@ -388,9 +399,12 @@ class Account::CustomersController < Account::OrganizationController
     if action_name.in?(%w[edit_ibiza update_ibiza]) && !@organization.ibiza.try(:configured?)
       authorized = false
     end
-    if action_name.in?(%w[edit_exact_online update_exact_online]) && !@organization.is_exact_online_used
+    if action_name.in?(%w[edit_exact_online update_exact_online]) && !@organization.try(:exact_online).try(:used?)
       authorized = false
     end
+    # if action_name.in?(%w[edit_my_unisoft update_my_unisoft]) && !@organization.try(:my_unisoft).try(:used?)
+    #   authorized = false
+    # end
 
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
@@ -427,17 +441,19 @@ class Account::CustomersController < Account::OrganizationController
       :jefacture_account_id,
       { group_ids: [] },
       { options_attributes: %i[id is_taxable is_pre_assignment_date_computed default_banking_provider] },
-      { my_unisofts: %i[is_used auto_deliver encrypted_api_token check_api_token] },
-      { my_unisoft_attributes: %i[is_used] },
-      { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
+      { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
+      { ibiza_attributes: %i[id is_used ibiza_id auto_deliver is_analysis_activated is_analysis_to_validate] },
+      { exact_online_attributes: %i[id is_used auto_deliver client_id client_secret] },
+      { my_unisoft_attributes: %i[id is_used auto_deliver encrypted_api_token check_api_token] },
+      { coala_attributes: %i[id is_used auto_deliver] },
+      { fec_agiris_attributes: %i[id is_used auto_deliver] },
+      { cegid_attributes: %i[id is_used auto_deliver] },
+      { quatratus_attributes: %i[id is_used auto_deliver] },
+      { csv_descriptor_attributes: %i[id is_used auto_deliver use_own_csv_descriptor_format] }
     ]
 
     if @user.is_admin
-      attributes[-1][:softwares_attributes] << :use_own_csv_descriptor_format
-    end
-
-    if params[:user].try(:[], :softwares_attributes).try(:[], :is_ibiza_used)
-      attributes << :ibiza_id
+      attributes[-1][:csv_descriptor_attributes] << :use_own_csv_descriptor_format
     end
 
     attributes << :code if action_name == 'create'
@@ -446,11 +462,15 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, softwares_attributes: %i[id is_ibiza_auto_deliver is_ibiza_compta_analysis_activated is_ibiza_analysis_to_validate])
+    params.require(:user).permit(ibiza_attributes: %i[id ibiza_id auto_deliver is_analysis_activated is_analysis_to_validate])
   end
 
   def exact_online_params
-    params.require(:user).permit(exact_online_attributes: %i[id client_id client_secret], softwares_attributes: %i[id is_exact_online_auto_deliver])
+    params.require(:user).permit(exact_online_attributes: %i[id client_id client_secret auto_deliver])
+  end
+
+  def my_unisoft_params
+    params.require(:user).permit(my_unisoft_attributes: %i[id is_used auto_deliver encrypted_api_token check_api_token])
   end
 
   def period_options_params
@@ -504,6 +524,18 @@ class Account::CustomersController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de traiter la demande.'
     end
+  end
+
+
+  def build_softwares
+    Interfaces::Software::Configuration::SOFTWARES.each do |software|
+      @customer.send("build_#{software}".to_sym) if @customer.send(software.to_sym).nil?
+    end
+  end
+  
+
+  def softwares_attributes
+    "#{Interfaces::Software::Configuration.h_softwares[params[:part]]}_attributes"
   end
 
   def load_customer

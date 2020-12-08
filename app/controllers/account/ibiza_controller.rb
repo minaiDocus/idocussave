@@ -6,8 +6,8 @@ class Account::IbizaController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/ibiza
   def create
-    @ibiza = Ibiza.new(ibiza_params)
-    @ibiza.organization = @organization
+    @ibiza = Software::Ibiza.new(ibiza_params)
+    @ibiza.owner = @organization
 
     if @ibiza.save
       if @ibiza.need_to_verify_access_tokens?
@@ -54,7 +54,7 @@ class Account::IbizaController < Account::OrganizationController
   end
 
   def ibiza_params
-    params.require(:ibiza).permit(:specific_url_options, :access_token, :access_token_2, :is_auto_deliver, :is_analysis_activated, :is_analysis_to_validate, :description_separator, :piece_name_format_sep, :voucher_ref_target).tap do |whitelist|
+    params.require(:ibiza).permit(:specific_url_options, :ibiza_id, :access_token, :access_token_2, :auto_deliver, :is_analysis_activated, :is_analysis_to_validate, :description_separator, :piece_name_format_sep, :voucher_ref_target).tap do |whitelist|
       whitelist[:description]       = params[:ibiza][:description].permit!.to_hash
       whitelist[:piece_name_format] = params[:ibiza][:piece_name_format].permit!.to_hash
     end

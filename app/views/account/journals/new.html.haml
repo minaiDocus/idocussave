@@ -25,13 +25,13 @@
             = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
 
 
-          - if (@customer && @customer.uses_ibiza? && @organization.ibiza.try(:configured?)) || @customer.my_unisoft.try(:user_used)
+          - if (@customer && @customer.uses?(:ibiza) && @organization.ibiza.try(:configured?)) || @customer.my_unisoft.try(:used?)
             - collection = journals_for_select(@journal.pseudonym)
           - else
             - collection = nil
           - unless @organization.specific_mission
             = f.input :pseudonym, label: 'Quel est le code journal comptable de votre outil comptable à associer ?', collection: collection, hint: (collection.present? ? 'Choisissez dans le menu déroulant les journaux comptables issus de la connexion avec votre outil comptable.' : nil)
-          - if @customer && @customer.uses_ibiza? && !@organization.ibiza.try(:configured?)
+          - if @customer && @customer.uses?(:ibiza) && !@organization.ibiza.try(:configured?)
             %p.margin2bottom.margin30left
               = render 'shared/ibiza_not_configured_warning'
 

@@ -122,7 +122,7 @@ class Transaction::AccountNumberFinder
 
       if @user.organization.ibiza.try(:configured?)
         AccountingPlan::IbizaUpdate.new(@user).run
-      elsif @user.organization.is_exact_online_used
+      elsif @user.organization.try(:exact_online).try(:used?)
         AccountingPlan::ExactOnlineUpdate.new(@user).run
       end
 
@@ -139,7 +139,7 @@ class Transaction::AccountNumberFinder
   private
 
   def validate_account(account_number)
-    return account_number unless @user.uses_ibiza?
+    return account_number unless @user.uses?(:ibiza)
 
     if @operation.credit?
       item_found = @user.accounting_plan.providers.where(is_updated: true, third_party_account: account_number).first

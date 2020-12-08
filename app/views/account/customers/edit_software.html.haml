@@ -14,23 +14,30 @@
           %span.text-info.fs-origin= @customer
 
     = simple_form_for @customer, url: update_software_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal label-medium' } do |c|
+      - softwares = ['coala', 'quadratus', 'cegid', 'fec_agiris', 'csv_descriptor']
       .card-body
-        = hidden_field_tag :software, @software
-        = c.simple_fields_for :softwares do |f|
-          -if @software == 'coala'
-            = f.input :is_coala_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+        - softwares.each do |software|
+          = hidden_field_tag :software, @software
+          = c.simple_fields_for software.to_sym do |f|
+            -if software.to_s == 'coala' && @software == 'coala'
+              = hidden_field_tag :part, 'coala'
+              = f.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
-          -if @software == 'quadratus'
-            = f.input :is_quadratus_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+            -if software.to_s == 'quadratus' && @software == 'quadratus'
+              = hidden_field_tag :part, 'quadratus'
+              = f.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
-          -if @software == 'cegid'
-            = f.input :is_cegid_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+            -if software.to_s == 'cegid' && @software == 'cegid'
+              = hidden_field_tag :part, 'cegid'
+              = f.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
 
-          -if @software == 'fec_agiris'
-            = f.input :is_fec_agiris_auto_deliver, collection: auto_deliver_options, include_blank: false
+            -if software.to_s == 'fec_agiris' && @software == 'fec_agiris'
+              = hidden_field_tag :part, 'fec_agiris'
+              = f.input :auto_deliver, collection: auto_deliver_options, include_blank: false
 
-          -if @software == 'csv_descriptor'
-            = f.input :is_csv_descriptor_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
+            -if software.to_s == 'csv_descriptor' && @software == 'csv_descriptor'
+              = hidden_field_tag :part, 'csv_descriptor'
+              = f.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
       .card-footer      
         .form-actions
           - if @customer.configured?

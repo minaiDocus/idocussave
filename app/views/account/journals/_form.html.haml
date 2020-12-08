@@ -3,7 +3,7 @@
     .row
       .col-md-5
         = f.input :name, hint: journal_name_hint, input_html: { disabled: is_journal_name_disabled }
-        - if @customer && @customer.uses_ibiza?
+        - if @customer && @customer.uses?(:ibiza)
           - if @organization.ibiza.configured?
             .block_input.clearfix
               .row
@@ -29,10 +29,10 @@
                 %select.select.disabled{ disabled: 'disabled' }
                 %p
                   = render 'shared/ibiza_not_configured_warning'
-        - elsif @customer && (@customer.uses_exact_online? || @customer.my_unisoft.try(:user_used))
+        - elsif @customer && (@customer.uses?(:exact_online) || @customer.my_unisoft.try(:used?))
           - if @customer.exact_online.try(:fully_configured?)
             - text_journal = "Journaux Exact Online :"
-          - elsif @customer.my_unisoft.try(:user_used)
+          - elsif @customer.my_unisoft.try(:used?)
             - text_journal = "Journaux My Unisoft :"
 
           .block_input.clearfix

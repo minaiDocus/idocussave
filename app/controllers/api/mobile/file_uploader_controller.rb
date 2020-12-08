@@ -22,12 +22,12 @@ class Api::Mobile::FileUploaderController < MobileApiController
 
     result = journal_analytic_references = pieces_analytic_references = {}
 
-    if @customer && @customer.organization.ibiza.try(:configured?) && @customer.ibiza_id.present? && @customer.softwares.ibiza_compta_analysis_activated?
+    if @customer && @customer.organization.ibiza.try(:configured?) && @customer.try(:ibiza).try(:ibiza_id?) && @customer.try(:ibiza).try(:compta_analysis_activated?)
       if params[:journal].present?
         load_default_analytic_by_params params[:journal], 'journal'
       end
 
-      result = IbizaLib::Analytic.new(@customer.ibiza_id, @customer.organization.ibiza.access_token, @customer.organization.ibiza.specific_url_options).list
+      result = IbizaLib::Analytic.new(@customer.try(:ibiza).try(:ibiza_id), @customer.organization.ibiza.access_token, @customer.organization.ibiza.specific_url_options).list
       journal_analytic_references = @journal ? Journal::AnalyticReferences.new(@journal).get_analytic_references : {}
       pieces_analytic_references  = @pieces ? get_pieces_analytic_references : {}
     end

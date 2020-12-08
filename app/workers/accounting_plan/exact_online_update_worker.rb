@@ -22,7 +22,7 @@ class AccountingPlan::ExactOnlineUpdateWorker
       UniqueJobs.for "AccountinpPlanExactOnlineUpdate-#{customer_id}", 1.day do
         customer = User.find(customer_id)
 
-        AccountingPlan::ExactOnlineUpdate.new(customer).run if customer.organization.is_exact_online_used
+        AccountingPlan::ExactOnlineUpdate.new(customer).run if customer.organization.try(:exact_online).try(:used?)
         AccountingWorkflow::MappingGenerator.new([customer]).execute
       end
     end

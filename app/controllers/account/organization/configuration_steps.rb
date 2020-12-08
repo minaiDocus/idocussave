@@ -40,9 +40,9 @@ module Account::Organization::ConfigurationSteps
                                              end
                                            when 'period_options'
                                              if @customer.subscription.is_package?('pre_assignment_option')
-                                               if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+                                               if @organization.ibiza.try(:configured?) && @customer.uses?(:ibiza)
                                                  'ibiza'
-                                               elsif @customer.uses_csv_descriptor?
+                                               elsif @customer.uses?(:csv_descriptor)
                                                  'use_csv_descriptor'
                                                elsif !@customer.uses_api_softwares?
                                                  'accounting_plans'
@@ -53,7 +53,7 @@ module Account::Organization::ConfigurationSteps
                                                'journals'
                                              end
                                            when 'use_csv_descriptor'
-                                             if @customer.softwares.use_own_csv_descriptor_format
+                                             if @customer.try(:csv_descriptor).try(:use_own_csv_descriptor_format)
                                                'csv_descriptor'
                                              elsif !@customer.uses_api_softwares?
                                                'accounting_plans'
@@ -128,7 +128,7 @@ module Account::Organization::ConfigurationSteps
                                              'journals'
                                            when 'journals'
                                              if @customer.subscription.is_package?('pre_assignment_option')
-                                               if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
+                                               if @organization.ibiza.try(:configured?) && @customer.uses?(:ibiza)
                                                  'ibiza'
                                                elsif !@customer.uses_api_softwares?
                                                  'vat_accounts'
@@ -155,9 +155,9 @@ module Account::Organization::ConfigurationSteps
                                            when 'vat_accounts'
                                              'accounting_plans'
                                            when 'accounting_plans'
-                                             if @customer.softwares.use_own_csv_descriptor_format
+                                             if @customer.try(:csv_descriptor).try(:use_own_csv_descriptor_format)
                                                'csv_descriptor'
-                                             elsif @customer.uses_csv_descriptor?
+                                             elsif @customer.uses?(:csv_descriptor)
                                                'use_csv_descriptor'
                                              else
                                                'period_options'

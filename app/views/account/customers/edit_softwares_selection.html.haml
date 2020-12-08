@@ -10,41 +10,62 @@
         %span.text-info.fs-origin= @customer
     = simple_form_for @customer, url: update_softwares_selection_account_organization_customer_path(@organization, @customer), html: { class: 'form-horizontal' } do |c|
       .card-body
-        = c.simple_fields_for :softwares do |f|
-          .row
-            .col-md-6
-              %table.table.table-condensed.table-striped
-                -if @organization.ibiza.try(:used?)
-                  %tr
-                    %td Ce dossier utilise Ibiza ?
-                    %td= f.check_box :is_ibiza_used, class: 'softwares_setting', style: "position:unset"
-                -if @organization.is_exact_online_used
-                  %tr
-                    %td Ce dossier utilise Exact Online ?
-                    %td= f.check_box :is_exact_online_used, class: 'softwares_setting', style: "position:unset"
-                -if @organization.is_coala_used
-                  %tr
-                    %td Ce dossier utilise Coala ?
-                    %td= f.check_box :is_coala_used, style: "position:unset"
-                -if @organization.is_quadratus_used
-                  %tr
-                    %td Ce dossier utilise Quadratus ?
-                    %td= f.check_box :is_quadratus_used, style: "position:unset"
-                -if @organization.is_cegid_used
-                  %tr
-                    %td Ce dossier utilise Cegid ?
-                    %td= f.check_box :is_cegid_used, style: "position:unset"
-                - if @organization.is_fec_agiris_used
-                  %tr
-                    %td Ce dossier utilise Fec Agiris ?
-                    %td= f.check_box :is_fec_agiris_used, style: "position:unset"
-                -if @organization.is_csv_descriptor_used
-                  %tr
-                    %td Ce dossier utilise un format d'export .csv ? (personnalisable)
-                    %td= f.check_box :is_csv_descriptor_used, style: "position:unset"
-          .card-footer
-            .form-actions.margin0bottom
-              = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
-              = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
-              = f.submit t('actions.next_step'), class: 'btn btn-primary'
+        - Interfaces::Software::Configuration::SOFTWARES.each do |software|
+          = c.simple_fields_for software.to_sym do |f|
+            .row
+              .col-md-6
+                %table.table.table-condensed.table-striped
+                  -if software.to_s == 'ibiza' && @organization.try(:ibiza).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Ibiza ?
+                      %td
+                        = hidden_field_tag :part, 'ibiza'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'exact_online' && @organization.try(:exact_online).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Exact Online ?
+                      %td
+                        = hidden_field_tag :part, 'exact_online'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'my_unisoft' && @organization.try(:my_unisoft).try(:used?)
+                    %tr
+                      %td Ce dossier utilise My Unisoft ?
+                      %td
+                        = hidden_field_tag :part, 'my_unisoft'
+                        = f.check_box :is_used, class: 'softwares_setting', style: "position:unset"
+                  -if software.to_s == 'coala' && @organization.try(:coala).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Coala ?
+                      %td
+                        = hidden_field_tag :part, 'coala'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'quadratus' && @organization.try(:quadratus).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Quadratus ?
+                      %td
+                        = hidden_field_tag :part, 'quadratus'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'cegid' && @organization.try(:cegid).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Cegid ?
+                      %td
+                        = hidden_field_tag :part, 'cegid'
+                        = f.check_box :is_used, style: "position:unset"
+                  - if software.to_s == 'fec_agiris' && @organization.try(:fec_agiris).try(:used?)
+                    %tr
+                      %td Ce dossier utilise Fec Agiris ?
+                      %td
+                        = hidden_field_tag :part, 'fec_agiris'
+                        = f.check_box :is_used, style: "position:unset"
+                  -if software.to_s == 'csv_descriptor' && @organization.try(:csv_descriptor).try(:used?)
+                    %tr
+                      %td Ce dossier utilise un format d'export .csv ? (personnalisable)
+                      %td
+                        = hidden_field_tag :part, 'csv_descriptor'
+                        = f.check_box :is_used, style: "position:unset"
+            .card-footer
+              .form-actions.margin0bottom
+                = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'
+                = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-light'
+                = f.submit t('actions.next_step'), class: 'btn btn-primary'
 = javascript_include_tag 'account/customers'

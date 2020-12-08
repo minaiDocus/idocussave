@@ -32,11 +32,11 @@ module IbizaLib
     end
 
     def notify_disabled
-      @ibiza.organization.admins.each do |admin|
+      @ibiza.try(:owner).try(:organization).try(:admins).each do |admin|
         next if notified?(admin)
 
         Notifications::Notifier.new.create_notification({
-          url: Rails.application.routes.url_helpers.account_organization_url(@ibiza.organization, { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options)),
+          url: Rails.application.routes.url_helpers.account_organization_url(@ibiza.try(:owner).try(:organization), { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options)),
           user: admin,
           notice_type: 'ibiza_invalid_access_token',
           title: 'Compte iBiza déconnecté',

@@ -6,7 +6,7 @@ class AccountingPlan::IbizaUpdate < AccountingPlan::UpdateService
   private
 
   def execute
-    if @user.ibiza_id.present? && @user.uses_ibiza? && @accounting_plan.need_update? && get_ibiza_accounting_plan
+    if @user.try(:ibiza).ibiza_id? && @user.uses?(:ibiza) && @accounting_plan.need_update? && get_ibiza_accounting_plan
       @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 
       @accounting_plan.providers.update_all(is_updated: false)
@@ -32,7 +32,7 @@ class AccountingPlan::IbizaUpdate < AccountingPlan::UpdateService
 
   def get_ibiza_accounting_plan
     ibiza_client.request.clear
-    ibiza_client.company(@user.ibiza_id).accounts?
+    ibiza_client.company(@user.try(:ibiza).try(:ibiza_id)).accounts?
 
     if ibiza_client.response.success?
       @xml_data = ibiza_client.response.body.force_encoding('UTF-8')

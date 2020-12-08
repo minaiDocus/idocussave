@@ -21,7 +21,7 @@ class PreseizureExport::PreseizuresToCsv
   private
 
   def descriptor
-    if @user.try(:softwares).try(:use_own_csv_descriptor_format)
+    if @user.try(:csv_descriptor).try(:use_own_csv_descriptor_format)
       @user.csv_descriptor!
     else
       @user.organization.csv_descriptor!

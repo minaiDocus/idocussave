@@ -124,38 +124,38 @@
                             .softwares-section
                               .form-group.clearfix.form-inline{ style: 'margin: 0' }
                                 .label-section
-                                  = label_tag 'user[ibiza_id]', "Sélectionner le dossier correspondant dans iBiza", class: 'control-label'
+                                  = label_tag 'user[ibiza_attributes][ibiza_id]', "Sélectionner le dossier correspondant dans iBiza", class: 'control-label'
                                 .controls-section
-                                  = select_tag 'user[ibiza_id]', nil, class: 'form-control select optional ibiza-customers-list', placeholder: 'Choisir un dossier', data: { original_value: nil, users_list_url: account_organization_ibiza_users_path(@organization, format: 'json') }
-                          %td= check_box_tag 'user[softwares_attributes][is_ibiza_used]', true, false, class: 'softwares_setting ibiza-customer-select', style: "position:unset"
-                      - if @organization.is_exact_online_used
+                                  = select_tag 'user[ibiza_attributes][ibiza_id]', nil, class: 'form-control select optional ibiza-customers-list', placeholder: 'Choisir un dossier', data: { original_value: nil, users_list_url: account_organization_ibiza_users_path(@organization, format: 'json') }
+                          %td= check_box_tag 'user[ibiza_attributes][is_used]', true, false, class: 'softwares_setting ibiza-customer-select', style: "position:unset"
+                      - if @organization.try(:exact_online).try(:used?)
                         %tr
                           %td Ce dossier utilise Exact Online ?
-                          %td= check_box_tag 'user[softwares_attributes][is_exact_online_used]', true, false, class: 'softwares_setting', style: "position:unset"
-                      - if @organization.my_unisoft.try(:is_used)
+                          %td= check_box_tag 'user[exact_online_attributes][is_used]', true, false, class: 'softwares_setting', style: "position:unset"
+                      - if @organization.try(:my_unisoft).try(:used?)
                         %tr
                           %td Ce dossier utilise My Unisoft ?
                           %td= check_box_tag 'user[my_unisoft_attributes][is_used]', true, false, class: 'softwares_setting', style: "position:unset"
-                      - if @organization.is_coala_used
+                      - if @organization.try(:coala).try(:used?)
                         %tr
                           %td Ce dossier utilise Coala ?
-                          %td= check_box_tag 'user[softwares_attributes][is_coala_used]', true, false, style: "position:unset"
-                      - if @organization.is_quadratus_used
+                          %td= check_box_tag 'user[coala_attributes][is_used]', true, false, style: "position:unset"
+                      - if @organization.try(:quadratus).try(:used?)
                         %tr
                           %td Ce dossier utilise Quadratus ?
-                          %td= check_box_tag 'user[softwares_attributes][is_quadratus_used]', true, false, style: "position:unset"
-                      - if @organization.is_cegid_used
+                          %td= check_box_tag 'user[quadratus_attributes][is_used]', true, false, style: "position:unset"
+                      - if @organization.try(:cegid).try(:used?)
                         %tr
                           %td Ce dossier utilise Cegid ?
-                          %td= check_box_tag 'user[softwares_attributes][is_cegid_used]', true, false, style: "position:unset"
-                      - if @organization.is_fec_agiris_used
+                          %td= check_box_tag 'user[cegid_attributes][is_used]', true, false, style: "position:unset"
+                      - if @organization.try(:fec_agiris).try(:used?)
                         %tr
                           %td Ce dossier utilise Fec Agiris ?
-                          %td= check_box_tag 'user[softwares_attributes][is_fec_agiris_used]', true, false, style: "position:unset"
-                      - if @organization.is_csv_descriptor_used
+                          %td= check_box_tag 'user[fec_agiris_attributes][is_used]', true, false, style: "position:unset"
+                      - if @organization.try(:csv_descriptor).try(:used?)
                         %tr
                           %td Ce dossier utilise un format d'export .csv ? (personnalisable)
-                          %td= check_box_tag 'user[softwares_attributes][is_csv_descriptor_used]', true, false, style: "position:unset"
+                          %td= check_box_tag 'user[csv_descriptor_attributes][is_used]', true, false, style: "position:unset"
       .card-footer
         .form-actions
           .for_submit

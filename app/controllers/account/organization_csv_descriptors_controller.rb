@@ -21,7 +21,7 @@ class Account::OrganizationCsvDescriptorsController < Account::OrganizationContr
   private
 
   def verify_rights
-    unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @organization.is_csv_descriptor_used
+    unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @organization.try(:csv_descriptor).try(:used?)
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to account_organization_path(@organization)
@@ -33,6 +33,6 @@ class Account::OrganizationCsvDescriptorsController < Account::OrganizationContr
   end
 
   def csv_descriptor_params
-    params.require(:csv_descriptor).permit(:directive, :comma_as_number_separator)
+    params.require(:software_csv_descriptor).permit(:directive, :comma_as_number_separator)
   end
 end

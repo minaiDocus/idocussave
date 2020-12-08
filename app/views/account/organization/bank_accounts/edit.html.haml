@@ -12,7 +12,7 @@
       .card-body
         = f.input :number,            disabled: true
         = f.input :journal, required: true
-        - if @customer.uses_ibiza?
+        - if @customer.uses?(:ibiza)
           - if @organization.ibiza.configured?
             = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus'
           - else

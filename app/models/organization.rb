@@ -16,11 +16,10 @@ class Organization < ApplicationRecord
   has_many :guest_collaborators, -> { guest_collaborators }, class_name: 'User'
   has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
-  has_one  :ibiza
-  has_one  :my_unisoft, class_name: 'Software::MyUnisoft', as: :owner
+  include Owner
+
   has_one  :knowings
   has_one  :subscription
-  has_one  :csv_descriptor
   has_one  :file_sending_kit
   has_one  :file_naming_policy
   has_one  :debit_mandate, dependent: :destroy
@@ -51,7 +50,14 @@ class Organization < ApplicationRecord
   has_many :pre_assignment_exports
   has_many :account_sharings
 
+  accepts_nested_attributes_for :ibiza
+  accepts_nested_attributes_for :coala
+  accepts_nested_attributes_for :quadratus
+  accepts_nested_attributes_for :fec_agiris
+  accepts_nested_attributes_for :cegid
+  accepts_nested_attributes_for :exact_online
   accepts_nested_attributes_for :my_unisoft
+  accepts_nested_attributes_for :csv_descriptor
 
   scope :admin,       -> { where(is_for_admin: true) }
   scope :active,      -> { where(is_active: true) }
@@ -109,7 +115,7 @@ class Organization < ApplicationRecord
   alias foc_file_naming_policy find_or_create_file_naming_policy
 
   def create_csv_descriptor
-    CsvDescriptor.create(organization_id: id)
+    Software::CsvDescriptor.create(owner_id: id)
   end
 
   def billing_address
@@ -168,11 +174,20 @@ class Organization < ApplicationRecord
   end
 
   def uses_api_softwares?
-    is_exact_online_used || ibiza.try(:configured?)
+    exact_online.try(:used?) || ibiza.try(:configured?) || my_unisoft.try(:used?)
   end
 
   def uses_non_api_softwares?
-    is_coala_used || is_quadratus_used || is_cegid_used || is_csv_descriptor_used
+    coala.try(:used?) || quadratus.try(:used?) || cegid.try(:used?) || csv_descriptor.try(:used?) || fec_agiris.try(:used?)
+  end
+
+  def auto_deliver?(software)
+    if software.is_a?(Object)
+      software = software.to_s.split('<')[1].split(':0x')[0]
+      software = Interfaces::Software::Configuration.software_object_name[software]
+    end
+
+    self.try(software.to_sym).auto_deliver == 1
   end
 
   def banking_provider

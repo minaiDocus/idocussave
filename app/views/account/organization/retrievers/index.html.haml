@@ -27,36 +27,36 @@
           %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
           %li= link_to 'Paramètres bancaires', account_bank_settings_path({account_id: @customer.id})
         %li= link_to 'Comptabilité', account_organization_customer_path(@organization, @customer, tab: 'compta')
-        - if @customer.uses_ibiza?
+        - if @customer.uses?(:ibiza)
           %li= link_to 'Ibiza Box', account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')
-        %li.dropdown{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus'].include? params[:tab]) }
+        %li.dropdown{ class: ('active' if Interfaces::Software::Configuration::SOFTWARES.include? params[:tab]) }
           %a.dropdown-toogle{ href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
           %ul.dropdown-menu{ style: "min-width: 187px" }
             -if @organization.ibiza.try(:used?)
               %li{ class: ('active' if params[:tab] == 'ibiza') }
                 %a{ href: account_organization_customer_path(@organization, @customer, tab: 'ibiza') }
                   .pull-left iBiza
-                  - if @customer.uses_ibiza?
+                  - if @customer.uses?(:ibiza)
                     %i.icon-ok.pull-right
-            -if @organization.is_coala_used
+            -if @organization.try(:coala).try(:used?)
               %li{ class: ('active' if params[:tab] == 'coala') }
                 %a{ href: account_organization_customer_path(@organization, @customer, tab: 'coala') }
                   .pull-left Coala
-                  - if @customer.uses_coala?
+                  - if @customer.uses?(:coala)
                     %i.icon-ok.pull-right
-            -if @organization.is_quadratus_used
+            -if @organization.try(:quadratus).try(:used?)
               %li{ class: ('active' if params[:tab] == 'quadratus') }
                 %a{ href: account_organization_customer_path(@organization, @customer, tab: 'quadratus') }
                   .pull-left Quadratus
-                  - if @customer.uses_quadratus?
+                  - if @customer.uses?(:quadratus)
                     %i.icon-ok.pull-right
-            -if @organization.is_csv_descriptor_used
+            -if @organization.try(:csv_descriptor).try(:used?)
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') }
                   .pull-left Format d’export (.csv)
-                  - if @customer.uses_csv_descriptor?
+                  - if @customer.uses?(:csv_descriptor)
                     %i.icon-ok.pull-right
-        - unless @customer.uses_ibiza?
+        - unless @customer.uses?(:ibiza)
           %li= link_to 'Plan comptable', account_organization_customer_path(@organization, @customer, tab: 'others')
         - if @organization.knowings.try(:ready?)
           %li= link_to 'Outil GED', account_organization_customer_path(@organization, @customer, tab: 'ged')

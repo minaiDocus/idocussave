@@ -12,7 +12,7 @@ module IbizaLib
     def execute
       if valid?
         client.request.clear
-        client.company(@user.ibiza_id).journal?
+        client.company(@user.ibiza.ibiza_id).journal?
 
         if success? && client.response.data.present?
           @journals = client.response.data.map do |j|
@@ -31,7 +31,7 @@ module IbizaLib
 
 
     def valid?
-      @user.ibiza_id.present? && client
+      @user.try(:ibiza).try(:ibiza_id?) && client
     end
 
 

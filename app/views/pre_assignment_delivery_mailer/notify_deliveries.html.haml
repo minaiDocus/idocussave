@@ -36,7 +36,7 @@
             %td= I18n.l(delivery.updated_at)
             %td= delivery.organization.name
             %td= delivery.user.company
-            %td= delivery.deliver_to == 'ibiza' ? delivery.user.ibiza_id : delivery.user.try(:exact_online).try(:client_id)
+            %td= delivery.deliver_to == 'ibiza' ? delivery.user.try(:ibiza).try(:ibiza_id) : delivery.user.try(:exact_online).try(:client_id)
             %td= delivery.deliver_to == 'ibiza' ? delivery.ibiza_access_token : '-'
             %td= delivery.pack_name
             %td= delivery.preseizures.count

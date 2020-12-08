@@ -2,7 +2,7 @@
   .card
     .card-header
       %h3 Configuration de iBiza
-    = simple_form_for (@ibiza || Ibiza.new), url: account_organization_ibiza_path(@organization), html: { class: 'form-horizontal' } do |f|
+    = simple_form_for (@ibiza || Software::Ibiza.new), url: account_organization_ibiza_path(@organization), html: { class: 'form-horizontal' } do |f|
       .card-body
         .card.margin1bottom
           .card-header
@@ -11,7 +11,7 @@
             = f.input :specific_url_options, hint: "Pour connecter iBiZa à iDocus, Vous pouvez spécifier votre URL de connexion (Par défaut: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc)", placeholder: 'https://webservice.irf-cloud.com/IRFService/services/IRFService.svc'
             = f.input :access_token, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
             = f.input :access_token_2, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
-            = f.input :is_auto_deliver, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
+            = f.input :auto_deliver, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
             = f.input :is_analysis_activated, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
             = f.input :is_analysis_to_validate, as: :boolean, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées (peut être ré-écrite au niveau de chaque dossier)."
         .card.margin1bottom

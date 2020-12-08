@@ -28,9 +28,9 @@
             = f.input :specific_mission, as: :boolean
             = f.input :default_banking_provider, as: :select, collection: default_banking_provider_options_for_select
         - elsif !@organization.specific_mission
-          = f.input :is_quadratus_used, as: 'boolean'
-          = f.input :is_coala_used, as: 'boolean'
-          = f.input :is_csv_descriptor_used, as: 'boolean'
+          - ['quadratus', 'coala', 'csv_descriptor'].each do |software|
+            = f.simple_fields_for software.to_sym do |sf|
+              = sf.input :is_used, as: 'boolean'
       .card-footer
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'

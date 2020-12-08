@@ -205,8 +205,11 @@ fr:
         right_logo_path: Chemin
         right_logo_height: Hauteur
         right_logo_width: Largeur
-      csv_descriptor:
+      software_csv_descriptor:
+        is_used: Activer l’option de création d'export (csv) des écritures comptables ?
         comma_as_number_separator: Séparer les chiffres par une virgule
+        use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures ?
       external_file_storage:
         is_dropbox_basic_authorized: Dropbox Basic autorisé ?
         is_google_docs_authorized: Google Drive autorisé ?
@@ -255,8 +258,9 @@ fr:
         is_for_paper_return: Pour le retour des factures papier ?
         is_for_paper_set_shipping: Pour la livraison du kit envoi courrier ?
         is_for_dematbox_shipping: Pour la livraison de l’iDocus Box ?
-      ibiza:
-        is_auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+      software_ibiza:
+        is_used: Utilise Ibiza?
+        auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
         is_analysis_activated: Souhaitez-vous activer la compta analytique ?
         is_analysis_to_validate: Souhaitez-vous valider la compta analytique des pièces avant envoi en pré-affectation ?
         specific_url_options: URL de connexion iBiZa à iDocus (Optionnel)
@@ -268,9 +272,23 @@ fr:
         description_separator: Séparateur du champ description
         piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
         piece_name_format_sep: Séparateur du format de nom de la pièce
-      exact_online:
+      software_exact_online:
+        is_used: Utilise Exact Online?
         client_id: Client ID
         client_secret : Client Secret
+        auto_deliver: Souhaitez-vous livrer automatiquement les écritures ?
+      software_coala:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_cegid:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_quadratus:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+        auto_deliver: Souhaitez-vous générer automatiquement l'export (zip) des écritures et pièces ?
+      software_fec_agiris:
+        is_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+
       account_number_rule:
         rule_target: Appliqué à
         name: Nom de la règle

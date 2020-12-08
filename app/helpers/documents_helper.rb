@@ -134,9 +134,9 @@ module DocumentsHelper
   end
 
   def preseizures_informations(pack_or_report, content_width)
-    software =  if pack_or_report.user.try(:uses_ibiza?)
+    software =  if pack_or_report.user.try(:uses?, :ibiza)
                   { human_name: 'Ibiza', name: 'ibiza' }
-                elsif pack_or_report.user.try(:uses_exact_online?)
+                elsif pack_or_report.user.try(:uses?, :exact_online)
                   { human_name: 'Exact Online', name: 'exact_online' }
                 else
                   { human_name: '', name: '' }
@@ -268,7 +268,7 @@ module DocumentsHelper
           journals: journals,
           journals_compta_processable: journals_compta_processable,
           periods:  options_for_period(period_service),
-          is_analytic_used: (user.ibiza_id.present? && user.uses_ibiza? && user.try(:softwares).try(:ibiza_compta_analysis_activated?))
+          is_analytic_used: (user.try(:ibiza).try(:ibiza_id?) && user.uses?(:ibiza) && user.try(:ibiza).try(:compta_analysis_activated?))
         }
 
         if period_service.prev_expires_at

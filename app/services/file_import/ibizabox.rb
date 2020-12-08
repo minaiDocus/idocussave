@@ -1,7 +1,7 @@
 class FileImport::Ibizabox
   class << self
     def update_folders(user)
-      return false unless user.organization.ibiza.try(:first_configured?) && user.uses_ibiza?
+      return false unless user.organization.ibiza.try(:first_configured?) && user.uses?(:ibiza)
       folder_ids = if user.ibizabox_folders.exists?
         user.account_book_types.map(&:id) - user.ibizabox_folders.map(&:journal_id)
       else
@@ -21,7 +21,7 @@ class FileImport::Ibizabox
 
       if client
         client.request.clear
-        client.company(user.ibiza_id).journal
+        client.company(user.try(:ibiza).try(:ibiza_id)).journal
         client.request.run
 
         if client.response.success?
@@ -65,7 +65,7 @@ class FileImport::Ibizabox
   end
 
   def valid?
-    @folder.active? && @user.organization.ibiza.first_configured? && @user.uses_ibiza? && accessible_ibiza_journal
+    @folder.active? && @user.organization.ibiza.first_configured? && @user.uses?(:ibiza) && accessible_ibiza_journal
   end
 
   def accessible_ibiza_periods
@@ -81,7 +81,7 @@ class FileImport::Ibizabox
 
   def accessible_ibiza_journal
     client.request.clear
-    client.company(@user.ibiza_id).journal
+    client.company(@user.try(:ibiza).try(:ibiza_id)).journal
     client.request.path += "/#{@journal_ref}"
     client.request.run
 
@@ -99,7 +99,7 @@ class FileImport::Ibizabox
 
   def get_file(document_id, file_path)
     client.request.clear
-    client.company(@user.ibiza_id).ged.file?(document_id)
+    client.company(@user.try(:ibiza).try(:ibiza_id)).ged.file?(document_id)
 
     if client.response.success?
       xml_file  = Nokogiri::XML(client.response.body.force_encoding('UTF-8'))
@@ -112,7 +112,7 @@ class FileImport::Ibizabox
 
   def get_ibiza_folder_contents(period)
     client.request.clear
-    client.company(@user.ibiza_id).box.accountingdocuments
+    client.company(@user.try(:ibiza).try(:ibiza_id)).box.accountingdocuments
     client.request.path += "?journal=#{@journal_ref}&period=#{period}"
     client.request.run
 

@@ -146,7 +146,7 @@ module IbizaLib
         new_analytic = AnalyticReference.create(analytic_attributes(analytic)) if analytic.present?
 
         pieces.each do |pi|
-          if pi.preseizures.ibiza_delivered.count.to_i > 0
+          if pi.preseizures.delivered('ibiza').count.to_i > 0
             piece_not_modifiable_count += 1
             next
           end
@@ -187,7 +187,7 @@ module IbizaLib
 
       def valid_analytic_presence?
         if analytic_params_present?
-          IbizaLib::Analytic.new(@user.ibiza_id, @user.organization.ibiza.access_token, @user.organization.ibiza.specific_url_options).exists?(@analytic)
+          IbizaLib::Analytic.new(@user.try(:ibiza).try(:ibiza_id), @user.organization.ibiza.access_token, @user.organization.ibiza.specific_url_options).exists?(@analytic)
         elsif !@params_valid
           false
         else

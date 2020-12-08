@@ -17,7 +17,7 @@ module JournalHelper
   end
 
   def my_unisoft_journals
-    if @customer.my_unisoft.try(:user_used)
+    if @customer.my_unisoft.try(:used?)
       Rails.cache.fetch [:my_unisoft, :user, @customer.my_unisoft.id, :journals], expires_in: 1.minutes do
         client   = MyUnisoftLib::Api::Client.new(@customer.my_unisoft.api_token)
         journals = client.get_diary(@customer.my_unisoft.society_id)
@@ -41,7 +41,7 @@ module JournalHelper
   end
 
   def exact_online_journals
-    if @customer.exact_online.try(:fully_configured?) && @customer.uses_exact_online?
+    if @customer.exact_online.try(:fully_configured?) && @customer.uses?(:exact_online)
       Rails.cache.fetch [:exact_online, :user, @customer.exact_online.id, :journals], expires_in: 5.minutes do
         journals = ExactOnlineLib::Data.new(@customer).journals
         if journals
@@ -63,8 +63,8 @@ module JournalHelper
   end
 
   def ibiza_journals
-    if @customer.ibiza_id.present? && @customer.uses_ibiza?
-      Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/, ''), :journals], expires_in: 5.minutes do
+    if @customer.try(:ibiza).ibiza_id? && @customer.uses?(:ibiza)
+      Rails.cache.fetch [:ibiza, :user, @customer.try(:ibiza).try(:ibiza_id).gsub(/({|})/, ''), :journals], expires_in: 5.minutes do
         service = IbizaLib::Journals.new(@customer)
 
         service.execute
@@ -96,9 +96,9 @@ module JournalHelper
 
 
   def journals_for_select(journal_name, type = nil)
-    journals = if @customer.uses_exact_online?
+    journals = if @customer.uses?(:exact_online)
                  exact_online_journals
-              elsif @customer.my_unisoft.try(:user_used)
+              elsif @customer.my_unisoft.try(:used?)
                 my_unisoft_journals
               else
                 ibiza_journals
@@ -109,7 +109,7 @@ module JournalHelper
         j[:closed].to_i == 0
       end
 
-      if type == 'bank' && @customer.uses_ibiza?
+      if type == 'bank' && @customer.uses?(:ibiza)
         journals = journals.select do |j|
           j[:type].to_i.in? [5, 6]
         end
@@ -117,13 +117,13 @@ module JournalHelper
 
       values = journals.map do |j|
         description = "#{j[:name]} (#{j[:description]})"
-        description = 'JC' + description if j[:name] =~ /\A\d/ && !@customer.my_unisoft.try(:user_used)
+        description = 'JC' + description if j[:name] =~ /\A\d/ && !@customer.try(:my_unisoft).try(:used?)
         [description, j[:name]]
       end
 
       if journal_name.present? && !journal_name.in?(values.map(&:last))
         description = journal_name
-        description = 'JC' + description if journal_name =~ /\A\d/ && !@customer.my_unisoft.try(:user_used)
+        description = 'JC' + description if journal_name =~ /\A\d/ && !@customer.try(:my_unisoft).try(:used?)
         values << ["#{description} (inaccessible depuis la ged)", journal_name]
         values.sort_by(&:first)
       else
@@ -132,7 +132,7 @@ module JournalHelper
       
     elsif journal_name.present?
       description = journal_name
-      description = 'JC' + description if journal_name =~ /\A\d/ && !@customer.my_unisoft.try(:user_used)
+      description = 'JC' + description if journal_name =~ /\A\d/ && !@customer.try(:my_unisoft).try(:used?)
       [["#{description} (inaccessible depuis la ged)", journal_name]]
     else
       []
@@ -140,7 +140,7 @@ module JournalHelper
   end
 
   def external_journal_title
-    if @customer.uses_exact_online?
+    if @customer.uses?(:exact_online)
       'Journaux Exact Online :'
     elsif @customer.my_unisoft.user_used
       'Journaux My Unisoft :'

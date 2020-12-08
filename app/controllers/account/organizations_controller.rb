@@ -41,7 +41,7 @@ class Account::OrganizationsController < Account::OrganizationController
                        'Ibiza'
                      when 'exact_online'
                        'Exact Online'
-                     when 'my_unisofts'
+                     when 'my_unisoft'
                        'My Unisoft'
                      when 'fec_agiris'
                        'Fec Agiris'
@@ -56,28 +56,20 @@ class Account::OrganizationsController < Account::OrganizationController
     software_users = params[:software_account_list] || ''
     @organization.customers.active.each do |customer|
       softwares_params = nil
-      if software == 'coala'
-        softwares_params = { is_coala_used: software_users.include?(customer.to_s) }
-      elsif software == 'quadratus'
-        softwares_params = { is_quadratus_used: software_users.include?(customer.to_s) }
-      elsif software == 'cegid'
-        softwares_params = { is_cegid_used: software_users.include?(customer.to_s) }
-      elsif software == 'ibiza'
-        softwares_params = { is_ibiza_used: (software_users.include?(customer.to_s) && !customer.uses_exact_online?) }
+
+      if software == 'ibiza'
+        softwares_params = {columns: { is_used: (software_users.include?(customer.to_s) && !customer.uses?(:exact_online)) }, software: 'ibiza'}
       elsif software == 'exact_online'
-        softwares_params = { is_exact_online_used: (software_users.include?(customer.to_s) && !customer.uses_ibiza?) }
-      elsif software == 'fec_agiris'
-        softwares_params = { is_fec_agiris_used: software_users.include?(customer.to_s) }
-      elsif software == 'csv_descriptor'
-        softwares_params = { is_csv_descriptor_used: software_users.include?(customer.to_s) }
-      elsif software == 'my_unisofts'
-        softwares_params = { is_my_unisoft_used: software_users.include?(customer.to_s) }
+        softwares_params = {columns: { is_used: (software_users.include?(customer.to_s) && !customer.uses?(:ibiza)) }, software: 'exact_online'}
+      else
+        softwares_params = {columns: { is_used: software_users.include?(customer.to_s) }, software: software}
       end
 
       unless softwares_params.nil?
         customer.create_or_update_software(softwares_params)
       end
     end
+
     flash[:success] = 'Modifié avec succès.'
     redirect_to edit_software_users_account_organization_path(@organization, software: software)
   end
@@ -113,22 +105,26 @@ class Account::OrganizationsController < Account::OrganizationController
 
   # PUT /account/organizations/:id
   def update
-    if organization_params[params[:part]].present?
+    if params[:part].present? && organization_params["#{params[:part]}_attributes"].present?
       case params[:part]
-      when 'my_unisofts'
-        is_used         = organization_params['my_unisofts']['is_used'] == "1"
-        auto_deliver    = organization_params['my_unisofts']['auto_deliver']
+      when 'my_unisoft'
+        is_used         = organization_params['my_unisoft_attributes']['is_used'] == "1"
+        auto_deliver    = organization_params['my_unisoft_attributes']['auto_deliver']
 
-        config_update = UpdateMyUnisoftConfiguration.new(@organization).execute({is_used: is_used, auto_deliver: auto_deliver})
-
-        if config_update
-          flash[:success] = 'Modifié avec succès.'
-        else
-          flash[:error] = 'Erreur de mise à jour.'
-        end
-
-        to_redirect
+        result = MyUnisoftLib::Setup.new({organization: @organization, columns: {is_used: is_used, auto_deliver: auto_deliver}}).execute 
+      else
+        is_used         = organization_params["#{params[:part]}_attributes"]['is_used'] == "1"
+        auto_deliver    = organization_params["#{params[:part]}_attributes"]['auto_deliver']
+        result = Software::UpdateOrCreate.assign_or_new({owner: @organization, columns: {is_used: is_used, auto_deliver: auto_deliver}, software: params[:part]})
       end
+
+      if result
+        flash[:success] = 'Modifié avec succès.'
+      else
+        flash[:error] = 'Erreur de mise à jour.'
+      end
+
+      to_redirect
     elsif @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       to_redirect
@@ -257,16 +253,6 @@ class Account::OrganizationsController < Account::OrganizationController
         :code,
         :is_detail_authorized,
         :is_test,
-        :is_quadratus_used,
-        :is_quadratus_auto_deliver,
-        :is_coala_used,
-        :is_coala_auto_deliver,
-        :is_cegid_used,
-        :is_cegid_auto_deliver,
-        :is_fec_agiris_used,
-        :is_fec_agiris_auto_deliver,
-        :is_csv_descriptor_used,
-        :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
@@ -274,38 +260,36 @@ class Account::OrganizationsController < Account::OrganizationController
         :preseizure_date_option,
         :subject_to_vat,
         :invoice_mails,
-        :is_exact_online_used,
-        :is_exact_online_auto_deliver,
         :jefacture_api_key,
         :specific_mission,
         :default_banking_provider
-        { my_unisofts: %i[auto_deliver is_used] }
+        { quadratus_attributes: %i[auto_deliver is_used] },
+        { coala_attributes: %i[auto_deliver is_used] },
+        { cegid_attributes: %i[auto_deliver is_used] },
+        { fec_agiris_attributes: %i[auto_deliver is_used] },
+        { csv_descriptor_attributes: %i[id auto_deliver is_used] },
+        { exact_online_attributes: %i[auto_deliver is_used] },
+        { my_unisoft_attributes: %i[auto_deliver is_used] }
       )
     else
       params.require(:organization).permit(
         :name,
         :authd_prev_period,
         :auth_prev_period_until_day,
-        :is_quadratus_used,
-        :is_quadratus_auto_deliver,
-        :is_coala_used,
-        :is_coala_auto_deliver,
-        :is_cegid_used,
-        :is_cegid_auto_deliver,
-        :is_fec_agiris_used,
-        :is_fec_agiris_auto_deliver,
-        :is_csv_descriptor_used,
-        :is_csv_descriptor_auto_deliver,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
         :is_operation_value_date_needed,
         :is_duplicate_blocker_activated,
         :preseizure_date_option,
         :invoice_mails,
-        :is_exact_online_used,
-        :is_exact_online_auto_deliver,
         :jefacture_api_key,
-        { my_unisofts: %i[auto_deliver is_used] }
+        { quadratus_attributes: %i[auto_deliver is_used] },
+        { coala_attributes: %i[auto_deliver is_used] },
+        { cegid_attributes: %i[auto_deliver is_used] },
+        { fec_agiris_attributes: %i[auto_deliver is_used] },
+        { csv_descriptor_attributes: %i[id auto_deliver is_used] },
+        { exact_online_attributes: %i[auto_deliver is_used] },
+        { my_unisoft_attributes: %i[auto_deliver is_used] }
       )
     end
   end

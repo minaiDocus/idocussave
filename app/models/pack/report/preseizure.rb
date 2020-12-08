@@ -19,13 +19,6 @@ class Pack::Report::Preseizure < ApplicationRecord
   belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure', optional: true
 
   scope :locked,                        -> { where(is_locked: true) }
-  scope :delivered,                     -> { where.not(is_delivered_to: [nil, '']) }
-  scope :not_delivered,                 -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where('is_ibiza_used = 1 OR is_exact_online_used = 1').where(is_delivered_to: [nil, '']).distinct }
-  scope :ibiza_delivered,               -> { where('is_delivered_to = "ibiza"') }
-  scope :not_ibiza_delivered,           -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_ibiza_used: true } ).where('is_delivered_to != "ibiza"').distinct }
-  scope :exact_online_delivered,        -> { where('is_delivered_to = "exact_online"') }
-  scope :not_exact_online_delivered,    -> { joins('INNER JOIN softwares_settings ON softwares_settings.user_id = pack_report_preseizures.user_id').where(softwares_settings: { is_exact_online_used: true } ).where('is_delivered_to != "exact_online"').distinct }
-  scope :not_my_unisoft_delivered,    -> { joins('INNER JOIN my_unisofts ON my_unisofts.owner_id = pack_report_preseizures.user_id').where(my_unisofts: { is_used: true, owner_type: 'User'}).where('is_delivered_to != "my_unisoft"').distinct }
   scope :failed_delivery,               -> { where(is_delivered_to: [nil, '']).where.not(delivery_message: [nil, '', '{}']).where.not(delivery_tried_at: nil) }
   scope :not_locked,                    -> { where(is_locked: false) }
   scope :by_position,                   -> { order(position: :asc) }
@@ -87,6 +80,33 @@ class Pack::Report::Preseizure < ApplicationRecord
     preseizures = preseizures.where('pack_report_preseizures.third_party LIKE ?', "%#{options[:third_party]}%") if options[:third_party].present?
 
     preseizures.distinct
+  end
+
+  def self.not_delivered(software=nil)
+    preseizures = self.all
+
+    if software.nil?
+      preseizures = preseizures.joins("INNER JOIN software_ibizas ON software_ibizas.owner_id = pack_report_preseizures.user_id").where(software_ibizas: { is_used: true, owner_type: 'User'}).where(is_delivered_to: [nil, '']).distinct.presence || preseizures.joins("INNER JOIN software_exact_online ON software_exact_online.owner_id = pack_report_preseizures.user_id").where(software_exact_online: { is_used: true, owner_type: 'User'}).where(is_delivered_to: [nil, '']).distinct.presence || preseizures.joins("INNER JOIN software_my_unisofts ON software_my_unisofts.owner_id = pack_report_preseizures.user_id").where(software_my_unisofts: { is_used: true, owner_type: 'User'}).where(is_delivered_to: [nil, '']).distinct.presence
+    else
+      return nil unless software.in? Interfaces::Software::Configuration::SOFTWARES
+
+      table_name  = Interfaces::Software::Configuration.softwares_table_name[software.to_sym]
+      preseizures = preseizures.joins("INNER JOIN #{table_name} ON #{table_name}.owner_id = pack_report_preseizures.user_id").where("#{table_name}".to_sym => { is_used: true, owner_type: 'User'}).where("is_delivered_to != '#{software}'").distinct
+    end
+
+    preseizures
+  end
+
+  def self.delivered(software=nil)
+    preseizures = self.all
+
+    if software.nil?
+      preseizures = preseizures.where.not(is_delivered_to: [nil, ''])
+    else
+      preseizures = preseizures.where("is_delivered_to = '#{software}'")
+    end
+
+    preseizures
   end
 
   #Override belong_to piece getter because of default scope
@@ -252,13 +272,13 @@ class Pack::Report::Preseizure < ApplicationRecord
   end
 
   def is_delivered?
-    ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
-    ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
+    ( self.user.try(:uses?, :ibiza) && is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses?, :exact_online) && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
-    ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
+    ( self.user.try(:uses?, :ibiza) && !is_delivered_to?('ibiza') ) ||
+    ( self.user.try(:uses?, :exact_online) && !is_delivered_to?('exact_online') )
   end
 
   def is_exported?

@@ -8,7 +8,7 @@
         - if @customer && @customer.uses_api_softwares?
           - is_ibiza_configured = @organization.ibiza.configured?
 
-          - if is_ibiza_configured || @customer.exact_online.try(:fully_configured?) || @customer.my_unisoft.user_used
+          - if is_ibiza_configured || @customer.exact_online.try(:fully_configured?) || @customer.try(:my_unisoft).try(:used?)
             .row
               .block_input.clearfix.col-md-11
                 = f.input :pseudonym, wrapper_html: { class: "external_account_book_type" }
@@ -22,9 +22,9 @@
                   .help-block{style: 'margin-top: 2px; margin-left: 0px'}= external_journal_title
                   = select_tag 'select_external_journal', options_for_select(journals_for_select(@journal.pseudonym), @journal.pseudonym), size: 8, style: "height: auto"
                 %i.help-block si différent de "Code journal" ci-dessus
-            - if is_ibiza_configured && !@customer.my_unisoft.user_used
+            - if is_ibiza_configured && !@customer.try(:my_unisoft).try(:used?)
               = f.input :use_pseudonym_for_import, wrapper_html: { class: 'pseudonyme_for_import' }, collection: [['Oui', true], ['Non', false]], as: :radio_buttons, hint: "Utiliser le code journal comptable comme répértoire d'import (Ibiza box), Si non, utiliser le code journal iDocus"
-          - elsif !is_ibiza_configured && @customer.uses_ibiza?
+          - elsif !is_ibiza_configured && @customer.uses?(:ibiza)
             .form-group.clearfix
               .label-section
                 %label.control-label= t('simple_form.labels.account_book_type.pseudonym')

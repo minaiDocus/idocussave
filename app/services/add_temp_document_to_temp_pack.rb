@@ -121,8 +121,8 @@ class AddTempDocumentToTempPack
       temp_pack.save
     end
 
-    AccountingPlan::IbizaUpdateWorker.perform_async user.id       if user.accounting_plan.try(:need_update?) && user.uses_ibiza?
-    AccountingPlan::ExactOnlineUpdateWorker.perform_async user.id if user.accounting_plan.try(:need_update?) && user.uses_exact_online?
+    AccountingPlan::IbizaUpdateWorker.perform_async user.id       if user.accounting_plan.try(:need_update?) && user.uses?(:ibiza)
+    AccountingPlan::ExactOnlineUpdateWorker.perform_async user.id if user.accounting_plan.try(:need_update?) && user.uses?(:exact_online)
 
     temp_document
   end

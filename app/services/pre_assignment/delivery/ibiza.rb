@@ -18,9 +18,9 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
 
     begin
       if @delivery.cloud_content_object.path.present?
-        ibiza_client.company(@user.ibiza_id).entries!(File.read(@delivery.cloud_content_object.path))
+        ibiza_client.company(@user.try(:ibiza).try(:ibiza_id)).entries!(File.read(@delivery.cloud_content_object.path))
       else
-        ibiza_client.company(@user.ibiza_id).entries!(@delivery.data_to_deliver)
+        ibiza_client.company(@user.try(:ibiza).try(:ibiza_id)).entries!(@delivery.data_to_deliver)
       end
 
       if ibiza_client.response.success?

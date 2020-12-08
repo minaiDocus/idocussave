@@ -307,7 +307,7 @@ describe Transaction::AccountNumberFinder do
 
       it 'returns 0TEMP, if founded rule is not in accounting plan for ibiza users' do
         allow_any_instance_of(User).to receive_message_chain('accounting_plan.customers.where').and_return([])
-        allow_any_instance_of(User).to receive('uses_ibiza?').and_return(true)
+        allow_any_instance_of(User).to receive('uses?').with(:ibiza).and_return(true)
         allow_any_instance_of(Transaction::AccountNumberFinder).to receive(:accounting_plan).and_return(@accounting_plan)
 
         @operation.label = 'Prlv Google $10.00'

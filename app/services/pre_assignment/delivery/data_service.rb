@@ -29,6 +29,7 @@ class PreAssignment::Delivery::DataService
 
   def initialize(delivery)
     @delivery    = delivery
+    @software    = @delivery.deliver_to
     @preseizures = @delivery.preseizures
     @report      = @delivery.report
     @user        = @delivery.user
@@ -56,13 +57,13 @@ class PreAssignment::Delivery::DataService
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.set_delivery_message_for(@delivery.deliver_to, error_message.to_s) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
+      preseizure.set_delivery_message_for(@software, error_message.to_s) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time
     @report.is_locked         = false
     @report.save
-    @report.set_delivery_message_for(@delivery.deliver_to, error_message.to_s)
+    @report.set_delivery_message_for(@software, error_message.to_s)
 
     Notifications::PreAssignments.new({delivery: @delivery, user: @delivery.user}).notify_pre_assignment_delivery_failure
   end
@@ -76,24 +77,17 @@ class PreAssignment::Delivery::DataService
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.delivered_to(@delivery.deliver_to)
-      preseizure.set_delivery_message_for(@delivery.deliver_to, '') if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
+      preseizure.delivered_to(@software)
+      preseizure.set_delivery_message_for(@software, '') if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time
     @report.is_locked         = false
     @report.save
 
-    case @delivery.deliver_to
-      when 'ibiza'
-        @report.delivered_to('ibiza') if @report.preseizures.reload.not_deleted.not_ibiza_delivered.count == 0
-      when 'exact_online'
-        @report.delivered_to('exact_online') if @report.preseizures.reload.not_deleted.not_exact_online_delivered.count == 0
-      when 'my_unisoft'
-        @report.delivered_to('my_unisoft') if @report.preseizures.reload.not_deleted.not_my_unisoft_delivered.count == 0
-    end
+    @report.delivered_to(@software) if @report.preseizures.reload.not_deleted.not_delivered(@software).count == 0
 
-    @report.set_delivery_message_for(@delivery.deliver_to, '')
+    @report.set_delivery_message_for(@software, '')
   end
 
   def notify?

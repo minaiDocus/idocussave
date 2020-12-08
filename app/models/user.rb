@@ -30,13 +30,12 @@ class User < ApplicationRecord
   has_many :organizations, through: :memberships
 
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
-  has_one :softwares, class_name: 'SoftwaresSetting', dependent: :destroy
-  has_one :exact_online, dependent: :destroy
-  has_one :my_unisoft, dependent: :destroy, class_name: 'Software::MyUnisoft', as: :owner
+
+  include Owner
+
   has_one :dematbox
   has_one :composition
   has_one :subscription
-  has_one :csv_descriptor, autosave: true
   has_one :accounting_plan
   has_one :external_file_storage, autosave: true, dependent: :destroy
   has_one :notify, dependent: :destroy
@@ -105,12 +104,13 @@ class User < ApplicationRecord
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
-  scope :using_ibiza,                 -> { joins(:softwares).where(softwares_settings: { is_ibiza_used: true } ) }
-  scope :using_exact_online,          -> { joins(:softwares).where(softwares_settings: { is_exact_online_used: true } ) } 
-
 
   accepts_nested_attributes_for :options
-  accepts_nested_attributes_for :softwares
+  accepts_nested_attributes_for :ibiza
+  accepts_nested_attributes_for :coala
+  accepts_nested_attributes_for :quadratus
+  accepts_nested_attributes_for :fec_agiris
+  accepts_nested_attributes_for :cegid
   accepts_nested_attributes_for :exact_online
   accepts_nested_attributes_for :my_unisoft
   accepts_nested_attributes_for :addresses, allow_destroy: true
@@ -129,6 +129,12 @@ class User < ApplicationRecord
     user.format_name
   end
 
+  def self.using_by_software(software)
+    if software.in? Interfaces::Software::Configuration::SOFTWARES
+      self.all.joins(software.to_sym).where("#{Interfaces::Software::Configuration.softwares_table_name[software.to_sym]}".to_sym => { is_used: true } )
+    end
+  end
+
   def self.filter_by_software(software=nil)
     response = self.all
 
@@ -137,11 +143,11 @@ class User < ApplicationRecord
 
       case software
         when 'ibiza'
-          skip_user = user.uses_exact_online? || user.uses_my_unisoft?
+          skip_user = user.uses?(:exact_online) || user.uses?(:my_unisoft)
         when 'exact_online'
-          skip_user = user.uses_ibiza? || user.uses_my_unisoft?
-        when 'my_unisofts'
-          skip_user = user.uses_ibiza? || user.uses_exact_online?
+          skip_user = user.uses?(:ibiza) || user.uses?(:my_unisoft)
+        when 'my_unisoft'
+          skip_user = user.uses?(:ibiza) || user.uses?(:exact_online)
         else
           skip_user = false
       end
@@ -214,18 +220,18 @@ class User < ApplicationRecord
   end
 
   def create_or_update_software(attributes)
-    if attributes.keys.first.to_s == "is_my_unisoft_used"
-      UpdateMyUnisoftConfiguration.new(organization, self).execute({is_used: attributes[:is_my_unisoft_used], action: "update"})
+    if attributes[:software].to_s == "my_unisoft"
+      MyUnisoftLib::Setup.new({organization: @organization, customer: self, columns: {is_used: attributes[:columns][:is_used], action: "update"}}).execute
     else
-      software = self.softwares || SoftwaresSetting.new()
+      software = self.send(attributes[:software].to_sym) || Interfaces::Software::Configuration.softwares[attributes[:software].to_sym].new
       begin
-        software.assign_attributes(attributes)
+        software.assign_attributes(attributes[:columns])
       rescue
-        software.assign_attributes(attributes.to_unsafe_hash)
+        software.assign_attributes(attributes[:columns].to_unsafe_hash)
       end
 
-      unless software.is_exact_online_used && software.is_ibiza_used
-        software.user = self
+      unless software.is_a?(Software::ExactOnline) && software.is_a?(Software::Ibiza) && software.is_a?(Software::MyUnisoft)
+        software.owner = self
         software.save
         software
       else
@@ -255,7 +261,7 @@ class User < ApplicationRecord
 
 
   def csv_descriptor!
-    self.csv_descriptor ||= CsvDescriptor.create(user_id: id)
+    self.csv_descriptor ||= Software::CsvDescriptor.create(owner_id: id)
   end
 
 

@@ -14,10 +14,7 @@ class Pack::Report < ApplicationRecord
   belongs_to :document, class_name: 'PeriodDocument', inverse_of: :report, foreign_key: :document_id, optional: true
   belongs_to :organization
 
-  scope :delivered,                 -> { where.not(is_delivered_to: [nil, '']) }
   scope :not_delivered,             -> { joins(:preseizures).merge(Pack::Report::Preseizure.not_deleted.not_delivered).distinct }
-  scope :ibiza_delivered,           -> { where('is_delivered_to = "ibiza"') }
-  scope :exact_online_delivered,    -> { where('is_delivered_to = "exact_online"') }
   scope :locked,                    -> { where(is_locked: true) }
   scope :expenses,                  -> { where(type: 'NDF') }
   scope :not_locked,                -> { where(is_locked: false) }
@@ -31,6 +28,11 @@ class Pack::Report < ApplicationRecord
     reports = reports.where('pack_reports.name LIKE ?', "%#{options[:name]}%")  if options[:name].present?
 
     reports
+  end
+
+  def self.delivered(software=nil)
+    reports = self.all
+    software.nil? ? reports.where.not(is_delivered_to: [nil, '']) : reports.where("is_delivered_to = '#{software}'")
   end
 
   def journal(options={ name_only: true })
@@ -50,17 +52,19 @@ class Pack::Report < ApplicationRecord
   end
 
   def is_delivered?
-    self.preseizures.not_deleted.ibiza_delivered.first.present? ||
-    self.preseizures.not_deleted.exact_online_delivered.first.present?
-    # ( self.user.try(:uses_ibiza?) && is_delivered_to?('ibiza') ) ||
-    # ( self.user.try(:uses_exact_online?) && is_delivered_to?('exact_online') )
+    self.preseizures.not_deleted.delivered('ibiza').first.present? ||
+    self.preseizures.not_deleted.delivered('exact_online').first.present? ||
+    self.preseizures.not_deleted.delivered('my_unisoft').first.present?
+    # ( self.user.try(:uses?, :ibiza) && is_delivered_to?('ibiza') ) ||
+    # ( self.user.try(:uses?, :exact_online) && is_delivered_to?('exact_online') )
   end
 
   def is_not_delivered?
-    self.preseizures.not_deleted.not_ibiza_delivered.first.present? ||
-    self.preseizures.not_deleted.not_exact_online_delivered.first.present?
-    # ( self.user.try(:uses_ibiza?) && !is_delivered_to?('ibiza') ) ||
-    # ( self.user.try(:uses_exact_online?) && !is_delivered_to?('exact_online') )
+    self.preseizures.not_deleted.not_delivered('ibiza').first.present? ||
+    self.preseizures.not_deleted.not_delivered('exact_online').first.present? ||
+    self.preseizures.not_deleted.not_delivered('my_unisoft').first.present?
+    # ( self.user.try(:uses?, :ibiza) && !is_delivered_to?('ibiza') ) ||
+    # ( self.user.try(:uses?, :exact_online) && !is_delivered_to?('exact_online') )
   end
 
   def self.failed_delivery(user_ids = [], limit = 50)
@@ -83,11 +87,12 @@ class Pack::Report < ApplicationRecord
             max_date              = preseizures.first.delivery_tried_at
             message_ibiza         = preseizures.first.get_delivery_message_of('ibiza')
             message_exact_online  = preseizures.first.get_delivery_message_of('exact_online')
+            message_my_unisoft    = preseizures.first.get_delivery_message_of('my_unisoft')
 
-            if message_ibiza.present? && message_exact_online.present?
-              full_message = "-iBiza : #{message_ibiza} <br> -ExactOnline : #{message_exact_online}"
+            if message_ibiza.present? && message_exact_online.present? && message_my_unisoft.present?
+              full_message = "-iBiza : #{message_ibiza} <br> -ExactOnline : #{message_exact_online} <br> -MyUnisoft : #{message_my_unisoft}"
             else
-              full_message = message_ibiza.presence || message_exact_online.presence
+              full_message = message_ibiza.presence || message_exact_online.presence || message_my_unisoft.presence
             end
 
             result << OpenStruct.new({date: max_date, document_count: preseizures_count, name: preseizures.first.try(:name), message: full_message})
@@ -113,8 +118,9 @@ class Pack::Report < ApplicationRecord
 
   def remove_delivered_to
     temp_delivered_to = self.is_delivered_to
-    temp_delivered_to = temp_delivered_to.gsub('ibiza', '') if self.user.uses_ibiza?
-    temp_delivered_to = temp_delivered_to.gsub('exact_online', '') if self.user.uses_exact_online?
+    temp_delivered_to = temp_delivered_to.gsub('ibiza', '') if self.user.uses?(:ibiza)
+    temp_delivered_to = temp_delivered_to.gsub('exact_online', '') if self.user.uses?(:exact_online)
+    temp_delivered_to = temp_delivered_to.gsub('my_unisoft', '') if self.user.uses?(:my_unisoft)
     temp_delivered_to = temp_delivered_to.gsub(/^[,]+/, '')
     temp_delivered_to = temp_delivered_to.gsub(/[,]+$/, '')
     temp_delivered_to = temp_delivered_to.gsub(/(,)+/, ',')
@@ -123,11 +129,7 @@ class Pack::Report < ApplicationRecord
 
   def is_delivered_to?(software='ibiza')
     # self.is_delivered_to.to_s.match(/#{software}/) ? true : false
-    if software == 'ibiza'
-      self.preseizures.not_deleted.ibiza_delivered.first.present?
-    else
-      self.preseizures.not_deleted.exact_online_delivered.first.present?
-    end
+    self.preseizures.not_deleted.delivered(software).first.present?
   end
 
   def set_delivery_message_for(software='ibiza', message)

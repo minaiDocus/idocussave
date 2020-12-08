@@ -7,7 +7,7 @@ module IbizaLib
     end
 
     def execute
-      ibiza = Ibiza.find @ibiza_id
+      ibiza = Software::Ibiza.find @ibiza_id
 
       if ibiza.state == 'waiting'
         client = IbizaLib::Api::Client.new(ibiza.access_token, ibiza.specific_url_options)

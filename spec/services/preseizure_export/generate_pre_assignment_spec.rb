@@ -38,14 +38,14 @@ describe PreseizureExport::GeneratePreAssignment do
   context 'software coala', :coala_spec do
     before(:each) do
       @report.reload.pre_assignment_exports.each(&:destroy)
-      @user.reload.softwares.destroy if @user.reload.softwares
+      @user.reload.coala.destroy if @user.reload.coala
     end
 
     it 'generates coala successfully' do
       allow_any_instance_of_object
 
-      @user.reload.create_or_update_software({is_coala_used: true, is_coala_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'coala'})
+      @user.reload.coala.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -59,8 +59,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'doesn\'t generates coala when not auto deliver' do
-      @user.reload.create_or_update_software({is_coala_used: true, is_coala_auto_deliver: 0})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 0}, software: 'coala'})
+      @user.reload.coala.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -71,8 +71,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'got coala error when errors occure' do
-      @user.reload.create_or_update_software({is_coala_used: true, is_coala_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'coala'})
+      @user.reload.coala.reload
       @report.reload
 
       allow_any_instance_of(PreseizureExport::Software::Coala).to receive(:execute).and_raise("file unzip error")
@@ -90,14 +90,14 @@ describe PreseizureExport::GeneratePreAssignment do
   context 'software quadratus', :quadratus_spec do
     before(:each) do
       @report.reload.pre_assignment_exports.each(&:destroy)
-      @user.reload.softwares.destroy if @user.reload.softwares
+      @user.reload.quadratus.destroy if @user.reload.quadratus
     end
 
     it 'generates quadratus successfully' do
       allow_any_instance_of_object
 
-      @user.reload.create_or_update_software({is_quadratus_used: true, is_quadratus_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'quadratus'})
+      @user.reload.quadratus.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -111,8 +111,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'doesn\'t generates quadratus when not auto deliver' do
-      @user.reload.create_or_update_software({is_quadratus_used: true, is_quadratus_auto_deliver: 0})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 0}, software: 'quadratus'})
+      @user.reload.quadratus.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -123,8 +123,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'got quadratus error when errors occure' do
-      @user.reload.create_or_update_software({is_quadratus_used: true, is_quadratus_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'quadratus'})
+      @user.reload.quadratus.reload
       @report.reload
 
       allow_any_instance_of(PreseizureExport::Software::Quadratus).to receive(:execute).and_raise("file unzip error")
@@ -142,15 +142,15 @@ describe PreseizureExport::GeneratePreAssignment do
   context 'software cegid', :cegid_spec do
     before(:each) do
       @report.reload.pre_assignment_exports.each(&:destroy)
-      @user.reload.softwares.destroy if @user.reload.softwares
+      @user.reload.cegid.destroy if @user.reload.cegid
     end
 
     it 'generates cegid successfully' do
       allow_any_instance_of_object
 
-      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 1})
-      @user.build_softwares
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'cegid'})
+      @user.build_cegid
+      @user.reload.cegid.reload
       @report.reload
 
       accounting_plan = AccountingPlan.new
@@ -168,8 +168,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'doesn\'t generates cegid when not auto deliver' do
-      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 0})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 0}, software: 'cegid'})
+      @user.reload.cegid.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -180,8 +180,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'got cegid error when errors occure' do
-      @user.reload.create_or_update_software({is_cegid_used: true, is_cegid_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'cegid'})
+      @user.reload.cegid.reload
       @report.reload
 
       allow_any_instance_of(PreseizureExport::Software::Cegid).to receive(:execute).and_raise("file unzip error")
@@ -199,14 +199,14 @@ describe PreseizureExport::GeneratePreAssignment do
   context 'software csv_descriptor', :csv_descriptor_spec do
     before(:each) do
       @report.reload.pre_assignment_exports.each(&:destroy)
-      @user.reload.softwares.destroy if @user.reload.softwares
+      @user.reload.csv_descriptor.destroy if @user.reload.csv_descriptor
     end
 
     it 'generates csv csv_descriptor successfully' do
       allow_any_instance_of_object
 
-      @user.reload.create_or_update_software({is_csv_descriptor_used: true, is_csv_descriptor_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'csv_descriptor'})
+      @user.reload.csv_descriptor.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -220,8 +220,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'doesn\'t generates csv csv_descriptor when not auto deliver' do
-      @user.reload.create_or_update_software({is_csv_descriptor_used: true, is_csv_descriptor_auto_deliver: 0})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'csv_descriptor'})
+      @user.reload.csv_descriptor.reload
       @report.reload
 
       PreseizureExport::GeneratePreAssignment.new(@preseizures.reload).execute
@@ -232,8 +232,8 @@ describe PreseizureExport::GeneratePreAssignment do
     end
 
     it 'got csv_descriptor error when errors occure' do
-      @user.reload.create_or_update_software({is_csv_descriptor_used: true, is_csv_descriptor_auto_deliver: 1})
-      @user.reload.softwares.reload
+      @user.reload.create_or_update_software({columns: {is_used: true, auto_deliver: 1}, software: 'csv_descriptor'})
+      @user.reload.csv_descriptor.reload
       @report.reload
 
       allow_any_instance_of(PreseizureExport::PreseizuresToCsv).to receive(:execute).and_raise("file copy error")

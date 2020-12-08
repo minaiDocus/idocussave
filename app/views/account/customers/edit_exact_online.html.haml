@@ -24,6 +24,7 @@
                 = e.hidden_field :id
                 = e.input :client_id
                 = e.input :client_secret
+                = e.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
             .col-md-5
               Vous devez fournir votre identifiant api depuis votre compte "Exact Online" pour établir la liaison iDocus/Exact Online
               %br
@@ -37,9 +38,6 @@
               %br
               %span.badge.badge-secondary.fs-origin
                 = subscribe_account_exact_online_url
-        = f.simple_fields_for :softwares do |o|
-          = o.hidden_field :id
-          = o.input :is_exact_online_auto_deliver, collection: auto_deliver_options, as: :radio_buttons
       .card-footer
         .form-actions.margin0bottom
           - if @customer.configured?

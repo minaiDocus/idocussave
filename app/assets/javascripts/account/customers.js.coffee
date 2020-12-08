@@ -476,10 +476,15 @@ jQuery ->
 
   if $('#customer.edit_softwares_selection').length > 0
     $('#customer.edit_softwares_selection .softwares_setting').on 'click', ->
-      if($(this).attr('id') == 'user_softwares_attributes_is_ibiza_used' && $(this).is(':checked'))
-        $('#user_softwares_attributes_is_exact_online_used').removeAttr('checked')
-      else if($(this).attr('id') == 'user_softwares_attributes_is_exact_online_used' && $(this).is(':checked'))
-        $('#user_softwares_attributes_is_ibiza_used').removeAttr('checked')
+      if($(this).attr('id') == 'user_ibiza_attributes_is_used' && $(this).is(':checked'))
+        $('#user_exact_online_attributes_is_used').removeAttr('checked')
+        $('#user_my_unisoft_attributes_is_used').removeAttr('checked')
+      else if($(this).attr('id') == 'user_exact_online_attributes_is_used' && $(this).is(':checked'))
+        $('#user_ibiza_attributes_is_used').removeAttr('checked')
+        $('#user_my_unisoft_attributes_is_used').removeAttr('checked')
+      else if($(this).attr('id') == 'user_my_unisoft_attributes_is_used' && $(this).is(':checked'))
+        $('#user_ibiza_attributes_is_used').removeAttr('checked')
+        $('#user_exact_online_attributes_is_used').removeAttr('checked')
 
   load_account_book_type_function()
   load_vat_function('vat_account', 'vats_accounts')
@@ -523,7 +528,7 @@ jQuery ->
       update_price()
 
   if $(".edit.my_unisoft").length > 0
-    $("input[name='user[my_unisofts][auto_deliver]']").each (index, element) =>
+    $("input[name='user[my_unisoft_attributes][auto_deliver]']").each (index, element) =>
       if $(element).val() == $("#auto_deliver_customer").val()
         $(element).attr('checked', 'checked')
         $(element).parent().addClass('checked')
@@ -531,10 +536,10 @@ jQuery ->
     $('#remove_customer').on 'click', (e) ->
       e.stopPropagation()
       if $(this).is(":checked")
-        $("input#user_my_unisofts_api_token").removeAttr('required')
+        $("input#user_my_unisoft_attributes_encrypted_api_token").removeAttr('required')
         $("input#required").removeClass('required')
       else
-        $("input#user_my_unisofts_api_token").attr('required', 'required')
+        $("input#user_my_unisoft_attributes_encrypted_api_token").attr('required', 'required')
         $("input#required").addClass('required')
 
   show_ibiza_customer()

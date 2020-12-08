@@ -19,7 +19,9 @@ class Subscription::CreateCustomer
       @customer.reset_password_token   = encrypted_token
       @customer.reset_password_sent_at = Time.now
 
-      @customer.build_softwares if @customer.softwares.nil?
+      Interfaces::Software::Configuration::SOFTWARES.each do |software|
+        @customer.send("build_#{software}".to_sym) if @customer.send(software.to_sym).nil?
+      end
       @customer.build_options   if @customer.options.nil?
       @customer.create_notify
       @customer.current_configuration_step = nil
@@ -35,7 +37,7 @@ class Subscription::CreateCustomer
         scanning_provider.save
       end
 
-      CsvDescriptor.create(user_id: @customer.id)
+      Software::CsvDescriptor.create(owner_id: @customer.id)
 
       @customer.authd_prev_period            = @organization.authd_prev_period
       @customer.auth_prev_period_until_day   = @organization.auth_prev_period_until_day

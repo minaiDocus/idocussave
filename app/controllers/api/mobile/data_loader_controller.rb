@@ -456,9 +456,9 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def get_software_info(user)
-    software = if user.try(:uses_ibiza?)
+    software = if user.try(:uses?, :ibiza)
                  { human_name: 'Ibiza', name: 'ibiza' }
-               elsif user.try(:uses_exact_online?)
+               elsif user.try(:uses?, :exact_online)
                  { human_name: 'Exact Online', name: 'exact_online' }
                else
                  { human_name: '', name: '' }

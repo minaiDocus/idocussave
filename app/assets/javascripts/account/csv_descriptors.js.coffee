@@ -132,5 +132,5 @@ jQuery ->
       last_element = last_element.split("|")[0]
       directive.splice(-1, 1, last_element)
 
-      $('#csv_descriptor_directive').val(directive.join('|'))
+      $('#software_csv_descriptor_directive').val(directive.join('|'))
       true

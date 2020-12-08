@@ -56,6 +56,6 @@ class PreAssignment::Builder::Ibiza < PreAssignment::Builder::DataService
   end
 
   def is_ibiza_exercises_present?
-    Rails.cache.read(IbizaLib::ExerciseFinder.ibiza_exercises_cache_name(@user.ibiza_id, @software.updated_at)).present?
+    Rails.cache.read(IbizaLib::ExerciseFinder.ibiza_exercises_cache_name(@user.try(:ibiza).try(:ibiza_id), @software.updated_at)).present?
   end
 end

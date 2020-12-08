@@ -6,7 +6,7 @@ class Account::AnalyticsController < Account::AccountController
   before_action :verify_rights
 
   def index
-    result = IbizaLib::Analytic.new(@customer.ibiza_id, ibiza.access_token, ibiza.specific_url_options).list
+    result = IbizaLib::Analytic.new(@customer.ibiza.try(:ibiza_id), ibiza.access_token, ibiza.specific_url_options).list
     journal_analytic_references = @journal ? Journal::AnalyticReferences.new(@journal).get_analytic_references : nil
     pieces_analytic_references  = @pieces ? get_pieces_analytic_references : nil
     respond_to do |format|
@@ -36,7 +36,7 @@ class Account::AnalyticsController < Account::AccountController
   end
 
   def verify_rights
-    unless @customer && @customer.ibiza_id.present? && @customer.uses_ibiza? && @customer.try(:softwares).try(:ibiza_compta_analysis_activated?) && ibiza.try(:configured?)
+    unless @customer && @customer.ibiza.ibiza_id? && @customer.uses?(:ibiza) && @customer.try(:ibiza).try(:compta_analysis_activated?) && ibiza.try(:configured?)
       respond_to do |format|
         format.json { render json: { message: 'Unauthorized' }, status: 401 }
       end

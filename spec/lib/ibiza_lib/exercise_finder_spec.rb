@@ -146,7 +146,7 @@ describe IbizaLib::ExerciseFinder do
     context 'use ibiza exercises' do
       context 'ibiza is not configured' do
         it 'returns false' do
-          ibiza = Ibiza.new
+          ibiza = Software::Ibiza.new
           expect(IbizaLib::ExerciseFinder.new(@user, Date.parse('15-01-2015'), ibiza).execute).to eq false
         end
       end

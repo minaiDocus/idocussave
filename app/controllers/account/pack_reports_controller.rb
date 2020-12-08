@@ -54,12 +54,12 @@ class Account::PackReportsController < Account::OrganizationController
 
     case params[:download].try(:[], :format)
     when 'csv'
-      if preseizures.any? && @report.user.uses_csv_descriptor?
+      if preseizures.any? && @report.user.uses?(:csv_descriptor)
         data = PreseizureExport::PreseizuresToCsv.new(@report.user, preseizures).execute
 
         send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_').tr('%', '_')}.csv", x_sendfile: true, disposition: 'inline')
       else
-        unless @report.user.uses_csv_descriptor?
+        unless @report.user.uses?(:csv_descriptor)
           flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation et paramètres client avant d'utiliser cette fonctionnalité."
         end
         render :select_to_download
@@ -71,7 +71,7 @@ class Account::PackReportsController < Account::OrganizationController
 
           ibiza = @organization.ibiza
 
-          if ibiza.try(:configured?) && @report.user.ibiza_id && @report.user.uses_ibiza?
+          if ibiza.try(:configured?) && @report.user.try(:ibiza).try(:ibiza_id) && @report.user.uses?(:ibiza)
             date = DocumentTools.to_period(@report.name)
 
             exercise = IbizaLib::ExerciseFinder.new(@report.user, date, ibiza).execute
@@ -90,42 +90,42 @@ class Account::PackReportsController < Account::OrganizationController
         end
       end
     when 'zip_quadratus'
-      if @report.user.uses_quadratus?
+      if @report.user.uses?(:quadratus)
         file_path = PreseizureExport::Software::Quadratus.new(preseizures).execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render :select_to_download
       end
     when 'tra_cegid'
-      if @report.user.uses_cegid?
+      if @report.user.uses?(:cegid)
         file_path = PreseizureExport::Software::Cegid.new(preseizures, 'tra_cegid').execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render :select_to_download
       end
     when 'zip_coala'
-      if @report.user.uses_coala?
+      if @report.user.uses?(:coala)
         file_path = PreseizureExport::Software::Coala.new(@report.user, preseizures, to_xls: true).execute
         send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
     when 'xls_coala'
-      if @organization.is_coala_used
+      if @organization.try(:coala).try(:used?)
         file_path = PreseizureExport::Software::Coala.new(@report.user, preseizures, preseizures_only: true, to_xls: true).execute
         send_file(file_path, type: 'text/xls', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
     when 'txt_fec_agiris'
-      if @organization.is_fec_agiris_used
+      if @organization.try(:fec_agiris).try(:used?)
         file_path = PreseizureExport::Software::FecAgiris.new(preseizures).execute
         send_file(file_path, type: 'application/txt', filename: File.basename(file_path), x_sendfile: true)
       else
         render action: 'select_to_download'
       end
     when 'csv_cegid'
-      if @report.user.uses_cegid?
+      if @report.user.uses?(:cegid)
         file_path = PreseizureExport::Software::Cegid.new(preseizures, 'csv_cegid', @report.user).execute
         send_file(file_path, type: 'text/csv', filename: File.basename(file_path), x_sendfile: true)
       else

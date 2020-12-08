@@ -32,59 +32,59 @@
           - unless @organization.specific_mission
             %li.nav-item{ class: ('active' if params[:tab] == 'compta') }
               %a.nav-link{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
-            - if @customer.uses_ibiza?
+            - if @customer.uses?(:ibiza)
               %li.nav-item
                 %a.nav-link{ class: ('active' if params[:tab] == 'ibiza_box'), href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
             %li.nav-item.dropdown
-              %a.nav-link.dropdown-toggle{ class: ('active' if ['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact-online'].include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+              %a.nav-link.dropdown-toggle{ class: ('active' if Interfaces::Software::Configuration::SOFTWARES.include? params[:tab]), href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
               %ul.dropdown-menu{ style: "min-width: 195px" }
                 -if software_uses('ibiza')   
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'ibiza'), href: '#ibiza', data: { toggle: 'tab' } }
                       .float-left iBiza
-                      - if @customer.uses_ibiza?
+                      - if @customer.uses?(:ibiza)
                         = glyphicon('check', { class: 'float-right' })
                 -if software_uses('exact_online')
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'exact_online'), href: '#exact_online', data: { toggle: 'tab' } }
                       .float-left Exact Online
-                      - if @customer.uses_exact_online?
+                      - if @customer.uses?(:exact_online)
                         = glyphicon('check', { class: 'float-right' })
                 -if software_uses('my_unisoft')
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'my_unisoft'), href: '#my_unisoft', data: { toggle: 'tab' } }
                       .float-left My Unisoft
-                      - if @customer.uses_my_unisoft?
+                      - if @customer.uses?(:my_unisoft)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_coala_used
+                -if @organization.try(:coala).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'coala'), href: '#coala', data: { toggle: 'tab' } }
                       .float-left Coala
-                      - if @customer.uses_coala?
+                      - if @customer.uses?(:coala)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_quadratus_used
+                -if @organization.try(:quadratus).try(:used)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'quadratus'), href: '#quadratus', data: { toggle: 'tab' } }
                       .float-left Quadratus
-                      - if @customer.uses_quadratus?
+                      - if @customer.uses?(:quadratus)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_cegid_used
+                -if @organization.try(:cegid).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'cegid'), href: '#cegid', data: { toggle: 'tab' } }
                       .float-left Cegid
-                      - if @customer.uses_cegid?
+                      - if @customer.uses?(:cegid)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_fec_agiris_used
+                -if @organization.try(:fec_agiris).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'fec_agiris'), href: '#fec_agiris', data: { toggle: 'tab' } }
                       .float-left Fec Agiris
-                      - if @customer.uses_fec_agiris?
+                      - if @customer.uses?(:fec_agiris)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.is_csv_descriptor_used
+                -if @organization.try(:csv_descriptor).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'csv_descriptor'), href: '#csv_descriptor', data: { toggle: 'tab' } }
                       .float-left Format d’export (.csv)
-                      - if @customer.uses_csv_descriptor?
+                      - if @customer.uses?(:csv_descriptor)
                         = glyphicon('check', { class: 'float-right' })
           - unless @organization.specific_mission
             %li.nav-item
@@ -370,7 +370,7 @@
             .row
               .col-md-12
                 = link_to t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-          - if @customer.uses_ibiza?
+          - if @customer.uses?(:ibiza)
             #ibiza_box.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza_box') }
               - if @organization.ibiza.first_configured?
                 = render 'ibiza_box'
@@ -408,21 +408,21 @@
                 .row
                   .col-md-12
                     = link_to 'Détails des erreurs', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
-          - if @organization.ibiza.try(:used?)
+          - if @organization.try(:ibiza).try(:used?)
             #ibiza.tab-pane.fade{ class: ('active show' if params[:tab] == 'ibiza') }
               %h4.margin1bottom Activation Ibiza
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_ibiza', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'ibiza'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :ibiza do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Ibiza?'
-                        %td{width: '8%'}= f.input :is_ibiza_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.uses_ibiza?
+              - if @customer.uses?(:ibiza)
                 %hr
                 %h4.margin2top.margin1bottom Configuration Ibiza
                 - unless @organization.ibiza.configured?
@@ -431,14 +431,14 @@
                 %table.table.table-striped.table-condensed
                   %tbody
                     %tr
-                      %th= t('activerecord.models.user.attributes.ibiza_id')
-                      - if @organization.ibiza.configured?
-                        - users = @organization.ibiza.users
-                        - if @customer.ibiza_id.nil?
+                      %th= t('activerecord.models.ibiza.attributes.ibiza_id')
+                      - if @organization.ibiza.try(:configured?)
+                        - users = @organization.try(:ibiza).users
+                        - if @customer.ibiza.try(:ibiza_id).nil?
                           %td
                             %i{ style: 'color:gray' } Aucun
                         - elsif users.is_a?(Array)
-                          %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
+                          %td= users.select { |e| e.id == @customer.ibiza.try(:ibiza_id) }.first.try(:name)
                         - elsif users.nil?
                           %td
                             %span.label Rafraîchissement en cours
@@ -448,36 +448,36 @@
                       - else
                         %td
                     %tr
-                      %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_auto_deliver')
-                      %td= @customer.try(:softwares).try(:ibiza_auto_deliver?) ? t('yes_value') : t('no_value')
+                      %th= t('activerecord.models.ibiza.attributes.auto_deliver')
+                      %td= @customer.ibiza.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                     %tr
-                      %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_compta_analysis_activated')
-                      %td= @customer.try(:softwares).try(:ibiza_compta_analysis_activated?) ? t('yes_value') : t('no_value')
-                    - if @customer.try(:softwares).try(:ibiza_compta_analysis_activated?)
+                      %th= t('activerecord.models.ibiza.attributes.is_analysis_activated')
+                      %td= @customer.ibiza.try(:compta_analysis_activated?) ? t('yes_value') : t('no_value')
+                    - if @customer.ibiza.try(:compta_analysis_activated?)
                       %tr
-                        %th= t('activerecord.models.softwares_settings.attributes.is_ibiza_analysis_to_validate')
-                        %td= @customer.try(:softwares).try(:ibiza_analysis_to_validate?) ? t('yes_value') : t('no_value')
+                        %th= t('activerecord.models.ibiza.attributes.is_analysis_to_validate')
+                        %td= @customer.ibiza.try(:analysis_to_validate?) ? t('yes_value') : t('no_value')
                 .row
                   .col-md-12
-                    - if @organization.ibiza.configured?
+                    - if @organization.ibiza.try(:configured?)
                       = link_to t('actions.edit'), edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
                     - else
                       = link_to t('actions.edit'), '#', class: 'btn btn-primary float-right', disabled: true
-          - if @organization.is_exact_online_used
+          - if @organization.try(:exact_online).try(:used?)
             #exact_online.tab-pane.fade{ class: ('active show' if params[:tab] == 'exact_online') }
               %h4.margin1bottom Activation Exact Online
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_exact_online', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'exact_online'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :exact_online do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Exact Online?'
-                        %td{width: '8%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader?
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.uses_exact_online?
+              - if @customer.uses?(:exact_online)
                 %hr
                 %h4.margin2top.margin1bottom Configuration Exact Online
                 %table.table.table-striped.table-condensed
@@ -485,12 +485,12 @@
                     %tr
                       %th Etat
                       %td{colspan: 2, width: '17%'}
-                        - if @customer.try(:exact_online).try(:fully_configured?)
+                        - if @customer.exact_online.try(:fully_configured?)
                           %span.badge.badge-success OK
                           = link_to 'Supprimer la liaison', unsubscribe_account_exact_online_path(u: Base64.encode64(@customer.id.to_s)), method: 'POST', data: { confirm: t('actions.confirm') }, class: 'btn btn-danger margin1left'
-                        - elsif !@customer.try(:exact_online).try(:api_keys_present?)
+                        - elsif !@customer.exact_online.try(:api_keys_present?)
                           %span.badge.badge-danger Clé api non renseigné
-                        - elsif !@customer.try(:exact_online).try(:linked?)
+                        - elsif !@customer.exact_online.try(:linked?)
                           %span.badge.badge-danger Liaison non établie
                           = link_to 'Configurer la liaison', authenticate_account_exact_online_path(customer_id: @customer.id), class: 'btn btn-primary margin1left'
                     %tr
@@ -503,13 +503,13 @@
                       %th= t('activerecord.models.exact_online.attributes.full_name')
                       %td{colspan: 2}= @customer.exact_online.try(:full_name)
                     %tr
-                      %th= t('activerecord.models.softwares_settings.attributes.is_exact_online_auto_deliver')
-                      %td= @customer.try(:softwares).try(:exact_online_auto_deliver?) ? t('yes_value') : t('no_value')
+                      %th= t('activerecord.models.exact_online.attributes.auto_deliver')
+                      %td= @customer.exact_online.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                 .row
                   .col-md-12
                     = link_to t('actions.edit'), edit_exact_online_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
 
-          - if @customer.organization.try(:my_unisoft).try(:is_used)
+          - if @customer.organization.try(:my_unisoft).try(:used?)
             #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
               %h4.margin1bottom Activation My Unisoft
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_my_unisoft', class: 'form form-horizontal label-auto' } do |c|
@@ -518,13 +518,13 @@
                   %tbody
                     %tr
                       %th Ce dossier utilise My Unisoft ?
-                      = c.simple_fields_for :my_unisofts do |m|
-                        %td{width: '8%'}= m.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @customer.uses_my_unisoft? }
+                      = c.simple_fields_for :my_unisoft do |m|
+                        %td{width: '8%'}= m.input :is_used, as: :boolean, label: 'oui?', input_html: { checked: @customer.uses?(:my_unisoft) }
                       - if @user.leader?
                         %td{width: '8%'}
                           .alignright
                             = c.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.uses_my_unisoft?
+              - if @customer.uses?(:my_unisoft)
                 %hr
                 .card
                   .card-header
@@ -546,7 +546,7 @@
                     - else
                       %h5 Ce dossier n'est pas lié à celui de My Unisoft
 
-                    - if @customer.my_unisoft.society_id.present? && @customer.uses_my_unisoft?
+                    - if @customer.my_unisoft.society_id.present? && @customer.uses?(:my_unisoft)
                       %br
                       %hr
                       .card.accept_my_unisoft
@@ -567,21 +567,21 @@
                 .row
                   .col-md-12
                     = link_to t('actions.edit'), edit_my_unisoft_account_organization_customer_path(@organization, @customer), class: 'btn btn-secondary float-right'
-          - if @organization.is_coala_used
+          - if @organization.try(:coala).try(:used?)
             #coala.tab-pane.fade{ class: ('active show' if params[:tab] == 'coala') }
               %h4.margin1bottom Activation Coala
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_coala', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'coala'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :coala do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Coala?'
-                        %td{width: '8%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.try(:softwares).try(:is_coala_used)
+              - if @customer.try(:coala).try(:used?)
                 .hide
                   %hr
                   %h4.margin2top.margin1bottom Configuration Coala
@@ -589,25 +589,25 @@
                     %tbody
                       %tr
                         %th Générer automatiquement l'export des écritures et pièces ?
-                        %td= @customer.try(:softwares).try(:coala_auto_deliver?) ? t('yes_value') : t('no_value')
+                        %td= @customer.coala.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                   .row
                     .col-md-12
                       = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'coala'), class: 'btn btn-primary float-right'
-          - if @organization.is_quadratus_used
+          - if @organization.try(:quadratus).try(:used?)
             #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
               %h4.margin1bottom Activation Quadratus
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'quadratus'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :quadratuis do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Quadratus?'
-                        %td{width: '8%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.try(:softwares).try(:is_quadratus_used)
+              - if @customer.try(:quadratus).try(:used?)
                 .hide
                   %hr
                   %h4.margin2top.margin1bottom Configuration Quadratus
@@ -615,25 +615,25 @@
                     %tbody
                       %tr
                         %th Générer automatiquement l'export des écritures et pièces ?
-                        %td= @customer.try(:softwares).try(:quadratus_auto_deliver?) ? t('yes_value') : t('no_value')
+                        %td= @customer.quadratus.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                   .row
                     .col-md-12
                       = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'quadratus'), class: 'btn btn-primary float-right'
-          - if @organization.is_cegid_used
+          - if @organization.try(:cegid).try(:used?)
             #cegid.tab-pane.fade{ class: ('active' if params[:tab] == 'cegid') }
               %h4.margin1bottom Activation Cegid
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_cegid', class: 'form form-horizontal margin0' } do |c|
                 = hidden_field_tag :part, 'cegid'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :cegid do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Cegid?'
-                        %td{width: '5%'}= f.input :is_cegid_used, as: 'boolean', label: 'oui?'
+                        %td{width: '5%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.try(:softwares).try(:is_cegid_used)
+              - if @customer.try(:cegid).try(:used?)
                 .hide
                   %hr
                   %h4.margin2top.margin1bottom Configuration Cegid
@@ -641,25 +641,25 @@
                     %tbody
                       %tr
                         %th Générer automatiquement l'export des écritures et pièces ?
-                        %td= @customer.try(:softwares).try(:cegid_auto_deliver?) ? t('yes_value') : t('no_value')
+                        %td= @customer.cegid.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                   .row
                     .col-md-12
                       = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'cegid'), class: 'btn btn-primary float-right'
-          - if @organization.is_fec_agiris_used
+          - if @organization.try(:fec_agiris).try(:used?)
             #fec_agiris.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_agiris') }
               %h4.margin1bottom Activation Fec Agiris
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_fec_agiris', class: 'form form-horizontal margin0' } do |c|
                 = hidden_field_tag :part, 'fec_agiris'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :fec_agiris do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= 'Ce dossier utilise Fec Agiris?'
-                        %td{width: '5%'}= f.input :is_fec_agiris_used, as: 'boolean', label: 'oui?'
+                        %td{width: '5%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.try(:softwares).try(:is_fec_agiris_used)
+              - if @customer.try(:fec_agiris).try(:used?)
                 .hide
                   %hr
                   %h4.margin2top.margin1bottom Configuration Fec Agiris
@@ -667,25 +667,25 @@
                     %tbody
                       %tr
                         %th Générer automatiquement l'export des écritures et pièces ?
-                        %td= @customer.try(:softwares).try(:fec_agiris_auto_deliver?) ? t('yes_value') : t('no_value')
+                        %td= @customer.fec_agiris.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                   .row
                     .col-md-12
                       = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_agiris'), class: 'btn btn-primary float-right'
-          - if @organization.is_csv_descriptor_used
+          - if @organization.try(:csv_descriptor).try(:used?)
             #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               %h4.margin1bottom Activation Fichier d'export personnalisé (.csv)
-              = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal label-auto' } do |c|
+              = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_csv_descriptor', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'csv_descriptor'
-                = c.simple_fields_for :softwares do |f|
+                = c.simple_fields_for :csv_descriptor do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
                         %th= "Ce dossier utilise un format d'export personnalisé ?"
-                        %td{width: '8%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
+                        %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
                         - if @user.leader? || @user.manage_customers
                           %td{width: '8%'}
                             .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
-              - if @customer.uses_csv_descriptor?
+              - if @customer.uses?(:csv_descriptor)
                 %hr
                 %h4.margin2top.margin1bottom Configuration Fichier d'export personnalisé (.csv)
                 %table.table.table-striped.table-condensed
@@ -694,23 +694,23 @@
                       %th Générer automatiquement l'export des écritures et pièces ?
                       %td
                         .alignright
-                          %span{style: "padding:10px 50px"}= @customer.try(:softwares).try(:csv_descriptor_auto_deliver?) ? t('yes_value') : t('no_value')
+                          %span{style: "padding:10px 50px"}= @customer.try(:csv_descriptor).try(:auto_deliver?) ? t('yes_value') : t('no_value')
                           -if @user.leader? || @user.manage_customers
                             = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
                     %tr
                       %th
-                        - if @customer.softwares.use_own_csv_descriptor_format
+                        - if @customer.csv_descriptor.try(:use_own_csv_descriptor_format)
                           Ce dossier utilise son propre format de fichier d'export .csv.
                         - else
                           Ce dossier utilise le format de fichier d'export .csv de l'organisation.
-                        - unless @organization.try(:csv_descriptor).try(:directive).present?
+                        - unless @organization.csv_descriptor.try(:directive).present?
                           %br
                           %i (L'organisation n'a pas de format csv configuré)
                       %td
                         - if @user.leader? || @user.manage_customers
                           .alignright
-                            - if @customer.softwares.use_own_csv_descriptor_format
-                              - if @organization.try(:csv_descriptor).try(:directive).present?
+                            - if @customer.csv_descriptor.try(:use_own_csv_descriptor_format)
+                              - if @organization.csv_descriptor.try(:directive).present?
                                 = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
                               = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
                             - else

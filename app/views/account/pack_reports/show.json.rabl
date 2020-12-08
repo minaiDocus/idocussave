@@ -29,9 +29,9 @@ node :delivery_message do |report|
 end
 
 node :user_software do |report|
-  if report.user.uses_ibiza?
+  if report.user.uses?(:ibiza)
     'Ibiza'
-  elsif report.user.uses_exact_online? && report.user.exact_online.try(:fully_configured?)
+  elsif report.user.uses?(:exact_online) && report.user.exact_online.try(:fully_configured?)
     'Exact Online'
   else
     nil
@@ -39,9 +39,9 @@ node :user_software do |report|
 end
 
 node :is_delivered_to do |report|
-  if report.user.uses_ibiza? && report.is_delivered_to?('ibiza')
+  if report.user.uses?(:ibiza) && report.is_delivered_to?('ibiza')
     'ibiza'
-  elsif report.user.uses_exact_online? && report.user.exact_online.try(:fully_configured?) && report.is_delivered_to?('exact_online')
+  elsif report.user.uses?(:exact_online) && report.user.exact_online.try(:fully_configured?) && report.is_delivered_to?('exact_online')
     'exact_online'
   else
     ''

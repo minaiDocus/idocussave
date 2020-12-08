@@ -26,7 +26,7 @@ module IbizaLib
     end
 
     def valid?
-      ibiza.try(:configured?) && user.try(:ibiza_id).present?
+      ibiza.try(:configured?) && user.try(:ibiza).try(:ibiza_id?)
     end
 
     def is_delivered?(preseizure)
@@ -63,9 +63,9 @@ module IbizaLib
       voucher_ref_target = ibiza.try(:voucher_ref_target).presence || 'piece_number'
       case voucher_ref_target
         when 'piece_name'
-          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_A}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
+          client.company(user.try(:ibiza).try(:ibiza_id)).grandlivregeneral?("q=#{search_query_A}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
         else
-          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_B}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
+          client.company(user.try(:ibiza).try(:ibiza_id)).grandlivregeneral?("q=#{search_query_B}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
       end
 
       if client.response.success?

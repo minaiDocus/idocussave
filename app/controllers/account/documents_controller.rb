@@ -128,10 +128,10 @@ class Account::DocumentsController < Account::AccountController
     user = @preseizure.try(:user)
     @ibiza = user.try(:organization).try(:ibiza)
     @software = @software_human_name = ''
-    if user.try(:uses_ibiza?)
+    if user.try(:uses?, :ibiza)
       @software = 'ibiza'
       @software_human_name = 'Ibiza'
-    elsif user.try(:uses_exact_online?)
+    elsif user.try(:uses?, :exact_online)
       @software = 'exact_online'
       @software_human_name = 'Exact Online'
     end
@@ -300,17 +300,17 @@ class Account::DocumentsController < Account::AccountController
     options = []
 
     if user
-      options << %w[CSV csv] if user.uses_csv_descriptor?
-      if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
+      options << %w[CSV csv] if user.uses?(:csv_descriptor)
+      if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses?(:ibiza)
         options << ['XML (Ibiza)', 'xml_ibiza']
       end
-      options << ['TXT (Quadratus)', 'txt_quadratus']          if user.uses_quadratus?
-      options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses_quadratus?
-      options << ['ZIP (Coala)', 'zip_coala']                  if user.uses_coala?
-      options << ['XLS (Coala)', 'xls_coala']                  if user.uses_coala?
-      options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses_cegid?
-      options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses_cegid?
-      options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses_fec_agiris?
+      options << ['TXT (Quadratus)', 'txt_quadratus']          if user.uses?(:quadratus)
+      options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses?(:quadratus)
+      options << ['ZIP (Coala)', 'zip_coala']                  if user.uses?(:coala)
+      options << ['XLS (Coala)', 'xls_coala']                  if user.uses?(:coala)
+      options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses?(:cegid)
+      options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses?(:cegid)
+      options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses?(:fec_agiris)
     end
 
     render json: { options: options }, status: 200
@@ -689,10 +689,10 @@ class Account::DocumentsController < Account::AccountController
 
     @software = @software_human_name = ''
 
-    if user.try(:uses_ibiza?)
+    if user.try(:uses?, :ibiza)
       @software = 'ibiza'
       @software_human_name = 'Ibiza'
-    elsif user.try(:uses_exact_online?)
+    elsif user.try(:uses?, :exact_online)
       @software = 'exact_online'
       @software_human_name = 'Exact Online'
     end
@@ -728,10 +728,10 @@ class Account::DocumentsController < Account::AccountController
 
     @software = @software_human_name = ''
 
-    if user.try(:uses_ibiza?)
+    if user.try(:uses?, :ibiza)
       @software = 'ibiza'
       @software_human_name = 'Ibiza'
-    elsif user.try(:uses_exact_online?)
+    elsif user.try(:uses?, :exact_online)
       @software = 'exact_online'
       @software_human_name = 'Exact Online'
     end

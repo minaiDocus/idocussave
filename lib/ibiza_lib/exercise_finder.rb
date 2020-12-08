@@ -12,7 +12,7 @@ module IbizaLib
     def execute
       if @ibiza
         if @ibiza.configured?
-          exercises = self.class.ibiza_exercises(@ibiza.client, @user.ibiza_id, @ibiza.updated_at)
+          exercises = self.class.ibiza_exercises(@ibiza.client, @ibiza.ibiza_id, @ibiza.updated_at)
         else
           exercises = false
         end

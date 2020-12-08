@@ -494,7 +494,7 @@ fr:
           title: Nom (public)
           position: Position
           is_option_dependent: Bouton radio ? (sinon case à cocher)
-      csv_descriptor:
+      software_csv_descriptor:
         zero: 0 descripteur csv
         one: 1 descripteur csv
         other: '%{count} descripteurs csv'
@@ -524,6 +524,9 @@ fr:
           lettering: Lettrage
           piece_url: URL pièce
           remark: Remarque
+          use_own_csv_descriptor_format: Utilise son propre format de CSV ?
+          auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces?
+          is_used: Activer l’option de création d'export (csv) des écritures comptables ?
       remote_file:
         zero: 0 fichier distant
         one: 1 fichier distant
@@ -613,13 +616,15 @@ fr:
             right: Logo droite
         actions:
           generate: Générer
-      ibiza:
+      software_ibiza:
         zero: 0 iBiza
         one: iBiza
         other: '%{count} iBiza'
         name: iBiza
         attributes:
-          is_auto_deliver: Livrer automatiquement les écritures ?
+          is_used: Utilise Ibiza?
+          ibiza_id: Dossier correspondant dans iBiza
+          auto_deliver: Livrer automatiquement les écritures ?
           is_analysis_activated: Activer la compta analytique ?
           is_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
           specific_url_options: URL de connexion iBiZa à iDocus (Optionnel)
@@ -636,6 +641,7 @@ fr:
             waiting: en cours de vérification
             valid: validé
             invalid: non valide
+
       ibizabox_folder:
         zero: 0 répertoire iBiza
         one: répertoire iBiza
@@ -1067,7 +1073,7 @@ fr:
           is_quadratus_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
           use_own_csv_descriptor_format: Utilise son propre format de CSV ?
           is_csv_descriptor_auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
-      exact_online:
+      software_exact_online:
         zero: 0 Exact online
         one: 1 Exact online
         other: '%{count} Exact online'
@@ -1076,8 +1082,25 @@ fr:
           user_name: Nom d'utilisateur
           email: Email
           full_name: Nom complet
-          is_auto_deliver: Livrer automatiquement les écritures ?
+          auto_deliver: Livrer automatiquement les écritures ?
+          is_used: Utilise Exact Online?
           state: Etat
+      software_coala:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Coala (.zip)?
+          auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+      software_cegid:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Cegid (.zip)?
+          auto_deliver: Générer automatiquement le fichier d'export (zip) des écritures et pièces ?
+      software_quadratus:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Quadratus (.zip)?
+          auto_deliver: Activer la génération automatique de l'export (zip) des écritures comptables et pièces pour Quadratus?
+      software_fec_agiris:
+        attributes:
+          is_used: Activer l'option d'export des écritures comptables et pièces pour Fec Agiris?
+          auto_deliver: Activer la génération automatique de l'export des écritures comptables et pièces pour Fec Agiris?
     state_machines:
       retriever:
         states:

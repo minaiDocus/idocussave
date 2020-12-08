@@ -66,7 +66,7 @@ class Account::ExercisesController < Account::OrganizationController
   end
 
   def verify_access
-    if @customer.uses_ibiza?
+    if @customer.uses?(:ibiza)
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to account_organization_path(@organization)

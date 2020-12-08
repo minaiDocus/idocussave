@@ -20,7 +20,7 @@
                 %td= check_box_tag 'download[preseizure_ids][]', preseizure.id, true, id: "preseizure_#{preseizure.id}", style: 'top:0;', class: 'checkbox'
                 %td= label_tag "preseizure_#{preseizure.id}", ("%03d" % preseizure.position)
                 %td= label_tag "preseizure_#{preseizure.id}", I18n.l(preseizure.created_at)
-                - if @organization.ibiza && @report.user.uses_ibiza?
+                - if @organization.ibiza && @report.user.uses?(:ibiza)
                   %td= label_tag "preseizure_#{preseizure.id}", IbizaLib::Api::Utils.description(preseizure, @organization.ibiza.description, @organization.ibiza.description_separator)
                 - else
                   %td= label_tag "preseizure_#{preseizure.id}", preseizure.third_party || '-'
@@ -28,14 +28,14 @@
           = label_tag 'download[format]', 'Format', class: 'control-label'
           .controls
             - formats = [['CSV', 'csv']]
-            - formats << ['XML (Ibiza)', 'xml_ibiza'] if @user.is_admin && @organization.ibiza.try(:configured?) && @report.user.uses_ibiza?
-            - formats << ['TXT (Quadratus)', 'txt_quadratus'] if @report.user.uses_quadratus?
-            - formats << ['ZIP (Quadratus)', 'zip_quadratus'] if @report.user.uses_quadratus?
-            - formats << ['ZIP (Coala)', 'zip_coala'] if @report.user.uses_coala?
-            - formats << ['XLS (Coala)', 'xls_coala'] if @report.user.uses_coala?
-            - formats << ['CSV (Cegid)', 'csv_cegid'] if @report.user.uses_cegid?
-            - formats << ['TRA + pièce jointe (Cegid)', 'tra_cegid'] if @report.user.uses_cegid?
-            - formats << ['TXT (Fec Agiris)', 'txt_fec_agiris'] if @report.user.uses_fec_agiris?
+            - formats << ['XML (Ibiza)', 'xml_ibiza'] if @user.is_admin && @organization.ibiza.try(:configured?) && @report.user.uses?(:ibiza)
+            - formats << ['TXT (Quadratus)', 'txt_quadratus'] if @report.user.uses?(:quadratus)
+            - formats << ['ZIP (Quadratus)', 'zip_quadratus'] if @report.user.uses?(:quadratus)
+            - formats << ['ZIP (Coala)', 'zip_coala'] if @report.user.uses?(:coala)
+            - formats << ['XLS (Coala)', 'xls_coala'] if @report.user.uses?(:coala)
+            - formats << ['CSV (Cegid)', 'csv_cegid'] if @report.user.uses?(:cegid)
+            - formats << ['TRA + pièce jointe (Cegid)', 'tra_cegid'] if @report.user.uses?(:cegid)
+            - formats << ['TXT (Fec Agiris)', 'txt_fec_agiris'] if @report.user.uses?(:fec_agiris)
             = select_tag 'download[format]', options_for_select(formats), include_blank: false
         .form-actions.margin0top.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'

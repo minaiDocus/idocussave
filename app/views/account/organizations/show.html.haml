@@ -29,7 +29,7 @@
                 %a{ class: "nav-link #{(params[:tab] == 'sftp') ? 'active' : ''}", href: '#sftp', data: { toggle: 'tab' } } Import/Export SFTP
             - unless @organization.specific_mission
               %li.nav-item.dropdown
-                %a.dropdown-toggle{ class: "nav-link #{(['ibiza', 'csv_descriptor', 'coala', 'quadratus', 'exact_online', 'fec_agiris', 'my_unisofts'].include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
+                %a.dropdown-toggle{ class: "nav-link #{(Interfaces::Software::Configuration::SOFTWARES.include? params[:tab]) ? 'active' : ''}", href: '#', data: {toggle: "dropdown"} } Logiciels comptables / export csv
                 %ul.dropdown-menu{ style: "min-width: 195px" }
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'ibiza') ? 'active' : ''}", href: '#ibiza', data: { toggle: 'tab' } }
@@ -39,37 +39,37 @@
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'exact_online') ? 'active' : ''}", href: '#exact_online', data: { toggle: 'tab' } }
                       .float-left Exact Online
-                      - if @organization.is_exact_online_used
+                      - if @organization.try(:exact_online).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
-                    %a{ class: "dropdown-item #{(params[:tab] == 'my_unisofts') ? 'active' : ''}", href: '#my_unisofts', data: { toggle: 'tab' } }
+                    %a{ class: "dropdown-item #{(params[:tab] == 'my_unisoft') ? 'active' : ''}", href: '#my_unisoft', data: { toggle: 'tab' } }
                       .float-left My Unisoft
-                      - if @organization.try(:my_unisoft).try(:is_used)
+                      - if @organization.try(:my_unisoft).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'coala') ?  'active' : ''}", href: '#coala', data: { toggle: 'tab' } }
                       .float-left Coala
-                      - if @organization.is_coala_used
+                      - if @organization.try(:coala).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'quadratus') ? 'active' : ''}", href: '#quadratus', data: { toggle: 'tab' } }
                       .float-left Quadratus
-                      - if @organization.is_quadratus_used
+                      - if @organization.try(:quadratus).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'cegid') ? 'active' : ''}", href: '#cegid', data: { toggle: 'tab' } }
                       .float-left Cegid
-                      - if @organization.is_cegid_used
+                      - if @organization.try(:cegid).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'fec_agiris') ? 'active' : ''}", href: '#fec_agiris', data: { toggle: 'tab' } }
                       .float-left Fec Agiris
-                      - if @organization.is_fec_agiris_used
+                      - if @organization.try(:fec_agiris).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'csv_descriptor') ? 'active' : ''}", href: '#csv_descriptor', data: { toggle: 'tab' } }
                       .float-left Autre (format d'export .csv)
-                      - if @organization.is_csv_descriptor_used
+                      - if @organization.try(:csv_descriptor).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
             - if @user.leader? && !@organization.specific_mission
               %li.nav-item
@@ -317,23 +317,23 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('activerecord.models.ibiza.attributes.access_token')
+                    %th= t('activerecord.models.software_ibiza.attributes.access_token')
                     %td
                       %span{ class: "fs-origin badge #{ibiza_state_label(@organization.ibiza.try(:state))}" }= ibiza_state(@organization.ibiza.try(:state))
                   %tr
-                    %th= t('activerecord.models.ibiza.attributes.access_token_2')
+                    %th= t('activerecord.models.software_ibiza.attributes.access_token_2')
                     %td
                       %span{ class: "fs-origin badge #{ibiza_state_label(@organization.ibiza.try(:state_2))}" }= ibiza_state(@organization.ibiza.try(:state_2))
                   %tr
-                    %th= t('activerecord.models.ibiza.attributes.is_auto_deliver')
-                    %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
+                    %th= t('activerecord.models.software_ibiza.attributes.is_auto_deliver')
+                    %td= @organization.ibiza.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                   %tr
-                    %th= t('activerecord.models.ibiza.attributes.is_analysis_activated')
-                    %td= @organization.ibiza.try(:is_analysis_activated) ? t('yes_value') : t('no_value')
-                  - if @organization.ibiza.try(:is_analysis_activated)
+                    %th= t('activerecord.models.software_ibiza.attributes.is_analysis_activated')
+                    %td= @organization.ibiza.try(:compta_analysis_activated?) ? t('yes_value') : t('no_value')
+                  - if @organization.ibiza.try(:compta_analysis_activated?)
                     %tr
-                      %th= t('activerecord.models.ibiza.attributes.is_analysis_to_validate')
-                      %td= @organization.ibiza.try(:is_analysis_to_validate) ? t('yes_value') : t('no_value')
+                      %th= t('activerecord.models.software_ibiza.attributes.is_analysis_to_validate')
+                      %td= @organization.ibiza.try(:analysis_to_validate?) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
                 .card.margin1bottom
                   .card-header
@@ -499,19 +499,20 @@
                 %h4.margin1bottom Configuration Coala
               = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
                 = hidden_field_tag :part, 'coala'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_coala_used')
-                      %td{width: '40%'} Cette option permet de selectionner/utiliser Coala dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_coala_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_coala_auto_deliver')
-                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_coala_auto_deliver, as: 'boolean', label: 'oui?'
+                = f.simple_fields_for :coala do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_coala.attributes.is_used')
+                        %td{width: '40%'} Cette option permet de selectionner/utiliser Coala dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: 'boolean', label: 'oui?'
+                      %tr.hide
+                        %th= t('activerecord.models.software_coala.attributes.auto_deliver')
+                        %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: 'boolean', label: 'oui?'
                 - if @user.leader?
                   .alignright
-                    -if @organization.is_coala_used
+                    -if @organization.try(:coala).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'coala'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #exact_online.tab-pane.fade{ class: ('active show' if params[:tab] == 'exact_online') }
@@ -519,64 +520,63 @@
                 %h4.margin1bottom Configuration Exact Online
               = simple_form_for [:account, @organization], html: { id: 'form_exact_online', class: 'form-horizontal label-auto' } do |f|
                 = hidden_field_tag :part, 'exact_online'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_exact_online_used')
-                      %td{width: '40%'} Cette option permet de selectionner/utiliser Exact Online dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte exact online).
-                      %td{width: '5%'}= f.input :is_exact_online_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_used }
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_exact_online_auto_deliver')
-                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.
-                      %td{width: '5%'}= f.input :is_exact_online_auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.is_exact_online_auto_deliver }
+                = f.simple_fields_for :exact_online do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_exact_online.attributes.is_used')
+                        %td{width: '40%'} Cette option permet de selectionner/utiliser Exact Online dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte exact online).
+                        %td{width: '5%'}= sf.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:exact_online).try(:used?)}
+                      %tr.hide
+                        %th= t('activerecord.models.software_exact_online.attributes.auto_deliver')
+                        %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.
+                        %td{width: '5%'}= sf.input :auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:exact_online).try(:auto_deliver?)}
                 - if @user.leader?
                   .alignright
-                    - if @organization.is_exact_online_used
+                    - if @organization.try(:exact_online).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #my_unisofts.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisofts') }
+            #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
               .aligncenter
                 %h4.margin1bottom Configuration My Unisoft
               = simple_form_for [:account, @organization], html: { id: 'form_my_unisoft', class: 'form-horizontal label-auto' } do |f|
-                = hidden_field_tag :part, 'my_unisofts'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody        
-                    %tr
-                      %th Utilise My Unisoft ?
-                      %td{width: '40%'} Cette option permet de selectionner/utiliser My Unisoft dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte my unisoft).
-                      %td{width: '5%'}
-                        = f.simple_fields_for :my_unisofts do |m|
-                          = m.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:is_used) }
-                    %tr{ class: "#{@organization.try(:my_unisoft).try(:is_used) ? '' : 'hide' }"}
-                      %th Souhaitez-vous livrer automatiquement les écritures ?
-                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.            
-                      %td{width: '5%'}
-                        = f.simple_fields_for :my_unisofts do |m|
-                          = m.input :auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:auto_deliver?)}
+                = hidden_field_tag :part, 'my_unisoft'
+                = f.simple_fields_for :my_unisoft do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th Utilise My Unisoft ?
+                        %td{width: '40%'} Cette option permet de selectionner/utiliser My Unisoft dans le paramétrage dossier client <br> La liaison doit être paramètrée au niveau de chaque dossier (Configuration compte my unisoft).
+                        %td{width: '5%'}= sf.input :is_used, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:used?) }
+                      %tr{ class: "#{@organization.try(:my_unisoft).try(:used?) ? '' : 'hide' }"}
+                        %th Souhaitez-vous livrer automatiquement les écritures ?
+                        %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client.
+                        %td{width: '5%'}= sf.input :auto_deliver, as: 'boolean', label: 'oui?', input_html: { checked: @organization.try(:my_unisoft).try(:auto_deliver?)}
                 - if @user.leader?
                   %br
                   .alignright
-                    - if @organization.try(:my_unisoft).try(:is_used)
-                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'my_unisofts'), class: 'btn btn-secondary'
+                    - if @organization.try(:my_unisoft).try(:used?)
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'my_unisoft'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #quadratus.tab-pane.fade{ class: ('active show' if params[:tab] == 'quadratus') }
               .aligncenter
                 %h4.margin1bottom Configuration Quadratus
               = simple_form_for [:account, @organization], html: { id: 'form_coala', class: 'form-horizontal label-auto' } do |f|
                 = hidden_field_tag :part, 'quadratus'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_quadratus_used')
-                      %td{width: '40%'} Cette option permet de selectionner/utiliser Quadratus dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_quadratus_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_quadratus_auto_deliver')
-                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_quadratus_auto_deliver, as: 'boolean', label: 'oui?'
+                = f.simple_fields_for :quadratus do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_quadratus.attributes.is_used')
+                        %td{width: '40%'} Cette option permet de selectionner/utiliser Quadratus dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: 'boolean', label: 'oui?'
+                      %tr.hide
+                        %th= t('activerecord.models.software_quadratus.attributes.auto_deliver')
+                        %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: :boolean, label: 'oui?'
                 - if @user.leader?
                   .alignright
-                    -if @organization.is_quadratus_used
+                    -if @organization.try(:quadratus).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'quadratus'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #cegid.tab-pane.fade{ class: ('active show' if params[:tab] == 'cegid') }
@@ -584,19 +584,20 @@
                 %h4.margin1bottom Configuration Cegid
               = simple_form_for [:account, @organization], html: { id: 'form_cegid', class: 'form form-horizontal margin0' } do |f|
                 = hidden_field_tag :part, 'cegid'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_cegid_used')
-                      %td{width: '30%'} Cette option permet de selectionner/utiliser Cegid dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_cegid_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_cegid_auto_deliver')
-                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_cegid_auto_deliver, as: 'boolean', label: 'oui?'
+                = f.simple_fields_for :cegid do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_cegid.attributes.is_used')
+                        %td{width: '30%'} Cette option permet de selectionner/utiliser Cegid dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: :boolean, label: 'oui?'
+                      %tr.hide
+                        %th= t('activerecord.models.software_cegid.attributes.auto_deliver')
+                        %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: :boolean, label: 'oui?'
                 - if @user.leader?
                   .alignright
-                    -if @organization.is_cegid_used
+                    -if @organization.try(:cegid).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'cegid'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #fec_agiris.tab-pane.fade{ class: ('active show' if params[:tab] == 'fec_agiris') }
@@ -604,19 +605,20 @@
                 %h4.margin1bottom Configuration Fec Agiris
               = simple_form_for [:account, @organization], html: { id: 'form_fec_agiris', class: 'form form-horizontal margin0' } do |f|
                 = hidden_field_tag :part, 'fec_agiris'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_fec_agiris_used')
-                      %td{width: '30%'} Cette option permet de selectionner/utiliser Fec Agiris dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_fec_agiris_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_fec_agiris_auto_deliver')
-                      %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_fec_agiris_auto_deliver, as: 'boolean', label: 'oui?'
+                = f.simple_fields_for :fec_agiris do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_fec_agiris.attributes.is_used')
+                        %td{width: '30%'} Cette option permet de selectionner/utiliser Fec Agiris dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: :boolean, label: 'oui?'
+                      %tr.hide
+                        %th= t('activerecord.models.software_fec_agiris.attributes.auto_deliver')
+                        %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: :boolean, label: 'oui?'
                 - if @user.leader?
                   .alignright
-                    -if @organization.is_fec_agiris_used
+                    -if @organization.try(:fec_agiris).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_agiris'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
@@ -624,22 +626,23 @@
                 %h4.margin1bottom Configuration d'export .csv
               = simple_form_for [:account, @organization], html: { id: 'form_csv_descriptor', class: 'form-horizontal label-auto' } do |f|
                 = hidden_field_tag :part, 'csv_descriptor'
-                %table.table.table-condensed.with_custom_controls
-                  %tbody
-                    %tr
-                      %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
-                      %td{width: '40%'} Cette option permet de selectionner/utiliser un format d'export personnalisé dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_csv_descriptor_used, as: 'boolean', label: 'oui?'
-                    %tr.hide
-                      %th= t('activerecord.models.organization.attributes.is_csv_descriptor_auto_deliver')
-                      %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
-                      %td{width: '5%'}= f.input :is_csv_descriptor_auto_deliver, as: 'boolean', label: 'oui?'
+                = f.simple_fields_for :csv_descriptor do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_csv_descriptor.attributes.is_used')
+                        %td{width: '40%'} Cette option permet de selectionner/utiliser un format d'export personnalisé dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: :boolean, label: 'oui?'
+                      %tr.hide
+                        %th= t('activerecord.models.software_csv_descriptor.attributes.auto_deliver')
+                        %td{width: '40%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: :boolean, label: 'oui?'
                 - if @user.leader?
                   .alignright
-                    -if @organization.is_csv_descriptor_used
+                    -if @organization.try(:csv_descriptor).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'csv_descriptor'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-              -if @organization.is_csv_descriptor_used && @user.leader?
+              -if @organization.try(:csv_descriptor).try(:used?) && @user.leader?
                 %hr
                 .row
                   .col-md-10

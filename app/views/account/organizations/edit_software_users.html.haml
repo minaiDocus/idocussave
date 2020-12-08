@@ -13,21 +13,21 @@
               -list_options = @organization.customers.active.order(:code).filter_by_software(@software).compact
               -list_selected = []
               -if @software == 'coala'
-                -list_selected = list_options.select{ |c| c.uses_coala? }
+                -list_selected = list_options.select{ |c| c.uses?(:coala) }
               -elsif @software == 'quadratus'
-                -list_selected = list_options.select{ |c| c.uses_quadratus? }
+                -list_selected = list_options.select{ |c| c.uses?(:quadratus) }
               -elsif @software == 'cegid'
-                -list_selected = list_options.select{ |c| c.uses_cegid? }
+                -list_selected = list_options.select{ |c| c.uses?(:cegid) }
               -elsif @software == 'csv_descriptor'
-                -list_selected = list_options.select{ |c| c.uses_csv_descriptor? }
+                -list_selected = list_options.select{ |c| c.uses?(:csv_descriptor) }
               -elsif @software == 'ibiza'
-                -list_selected = list_options.select{ |c| c.uses_ibiza? }
+                -list_selected = list_options.select{ |c| c.uses?(:ibiza) }
               -elsif @software == 'exact_online'
-                -list_selected = list_options.select{ |c| c.uses_exact_online? }
-              -elsif @software == 'my_unisofts'
-                -list_selected = list_options.select{ |c| c.uses_my_unisoft? }
+                -list_selected = list_options.select{ |c| c.uses?(:exact_online) }
+              -elsif @software == 'my_unisoft'
+                -list_selected = list_options.select{ |c| c.uses?(:my_unisoft) }
               -elsif @software == 'fec_agiris'
-                -list_selected = list_options.select{ |c| c.uses_fec_agiris? }
+                -list_selected = list_options.select{ |c| c.uses?(:fec_agiris) }
 
               = select_tag 'software_account_list', options_for_select(list_options, list_selected), include_blank: false, multiple: true, class: 'searchable-option-list'
         .card-footer

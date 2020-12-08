@@ -1,4 +1,4 @@
-#pre_assignments{ data: { is_ibiza_configured: @ibiza.try(:configured?).to_s, is_exact_online_configured: @organization.is_exact_online_used.to_s } }
+#pre_assignments{ data: { is_ibiza_configured: @ibiza.try(:configured?).to_s, is_exact_online_configured: @organization.try(:exact_online).try(:used?).to_s } }
   .row-fluid
     .span12.box
       .row-fluid

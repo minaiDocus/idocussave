@@ -6,27 +6,27 @@ class PreseizureExport::GeneratePreAssignment
   end
 
   def valid_ibiza?
-    @report.user.uses_ibiza? && @report.user.try(:softwares).try(:ibiza_auto_deliver?) && @report.organization.try(:ibiza).try(:configured?) && @report.user.try(:ibiza_id).try(:present?)
+    @report.user.uses?(:ibiza) && @report.user.try(:ibiza).try(:auto_deliver?) && @report.organization.try(:ibiza).try(:configured?) && @report.user.try(:ibiza).try(:ibiza_id?)
   end
 
   def valid_coala?
-    @report.user.uses_coala? && @report.user.try(:softwares).try(:coala_auto_deliver?)
+    @report.user.uses?(:coala) && @report.user.try(:coala).try(:auto_deliver?)
   end
 
   def valid_cegid?
-    @report.user.uses_cegid? && @report.user.try(:softwares).try(:cegid_auto_deliver?)
+    @report.user.uses?(:cegid) && @report.user.try(:cegid).try(:auto_deliver?)
   end
 
   def valid_fec_agiris?
-    @report.user.uses_fec_agiris? && @report.user.try(:softwares).try(:fec_agiris_auto_deliver?)
+    @report.user.uses?(:fec_agiris) && @report.user.try(:fec_agiris).try(:auto_deliver?)
   end
 
   def valid_quadratus?
-    @report.user.uses_quadratus? && @report.user.try(:softwares).try(:quadratus_auto_deliver?)
+    @report.user.uses?(:quadratus) && @report.user.try(:quadratus).try(:auto_deliver?)
   end
 
   def valid_csv_descriptor?
-    @report.user.uses_csv_descriptor? && @report.user.try(:softwares).try(:csv_descriptor_auto_deliver?)
+    @report.user.uses?(:csv_descriptor) && @report.user.try(:csv_descriptor).try(:auto_deliver?)
   end
 
   def execute

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 module ExactOnlineLib
-  class ExactOnlineLib::Setup
+  class Setup
     def initialize(exact_online, code, callback_url)
       if exact_online.is_a? String
         @exact_online = ExactOnline.find exact_online

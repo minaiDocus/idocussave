@@ -6,7 +6,7 @@ class AccountingPlan::ExactOnlineUpdate < AccountingPlan::UpdateService
   private
 
   def execute
-    if @user.exact_online.try(:fully_configured?) && @user.uses_exact_online? && @accounting_plan.need_update? && exact_online_accounts.present?
+    if @user.exact_online.try(:fully_configured?) && @user.uses?(:exact_online) && @accounting_plan.need_update? && exact_online_accounts.present?
 
         @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
 

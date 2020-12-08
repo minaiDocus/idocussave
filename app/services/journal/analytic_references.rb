@@ -38,7 +38,7 @@ class Journal::AnalyticReferences
       @errors << ['Aucune donnée analytique trouvée chez ibiza']
       false
       # client.request.clear
-      # client.company(@user.ibiza_id).analyzes.complete
+      # client.company(@user.try(:ibiza).try(:ibiza_id)).analyzes.complete
       # client.request.run
 
       # if client.response.success?
@@ -84,7 +84,7 @@ class Journal::AnalyticReferences
 
   def valid?
     @errors = []
-    @errors << ['Ibiza non configuré sur le dossier'] unless @user.uses_ibiza? 
+    @errors << ['Ibiza non configuré sur le dossier'] unless @user.uses?(:ibiza)
     @errors << ['Paramètre analytiques non configurées sur le dossier'] unless @user.uses_ibiza_analytics?
     @errors.empty?
   end

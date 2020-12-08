@@ -49,9 +49,9 @@ node :delivery_tried_at do |preseizure|
 end
 
 node :user_software do |preseizure|
-  if preseizure.user.uses_ibiza?
+  if preseizure.user.uses?(:ibiza)
     'Ibiza'
-  elsif preseizure.user.uses_exact_online? && preseizure.user.exact_online.try(:fully_configured?)
+  elsif preseizure.user.uses?(:exact_online) && preseizure.user.exact_online.try(:fully_configured?)
     'Exact Online'
   else
     nil
@@ -59,9 +59,9 @@ node :user_software do |preseizure|
 end
 
 node :is_delivered_to do |preseizure|
-  if preseizure.user.uses_ibiza? && preseizure.is_delivered_to?('ibiza')
+  if preseizure.user.uses?(:ibiza) && preseizure.is_delivered_to?('ibiza')
     'ibiza'
-  elsif preseizure.user.uses_exact_online? && preseizure.user.exact_online.try(:fully_configured?) && preseizure.is_delivered_to?('exact_online')
+  elsif preseizure.user.uses?(:exact_online) && preseizure.user.exact_online.try(:fully_configured?) && preseizure.is_delivered_to?('exact_online')
     'exact_online'
   else
     ''
