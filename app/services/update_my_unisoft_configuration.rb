@@ -26,7 +26,6 @@ class UpdateMyUnisoftConfiguration
 
         @mu         = Software::MyUnisoft.new if @mu.nil?
         @mu.owner   = @customer
-        @mu.is_used = @params[:is_used]
 
         save
       else
@@ -82,6 +81,7 @@ class UpdateMyUnisoftConfiguration
   def save
     @mu.auto_deliver    = @params[:auto_deliver]  if @params[:auto_deliver].present?
     @mu.api_token       = @params[:api_token]     if @params[:api_token].present?
+    @mu.is_used         = @params[:is_used]       if @params[:is_used].present?
 
     @mu.save
   end
