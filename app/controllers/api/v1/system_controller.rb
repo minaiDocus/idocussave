@@ -20,7 +20,7 @@ class Api::V1::SystemController < ApiController
     list_url = {}
 
     Pack::Piece.where(name: params_list).each do |piece|
-      list_url["#{piece.name}"] = 'https://my.idocus.com' + piece.try(:get_access_url)
+      list_url["#{piece.name}"] = Domains::BASE_URL + piece.try(:get_access_url)
     end
 
     render json: { list_url: list_url }, status: 200

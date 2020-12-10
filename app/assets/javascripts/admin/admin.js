@@ -19,7 +19,6 @@ $(document).ready(function() {
   var resources = [
     'ocr_needed_temp_packs',
     'bundle_needed_temp_packs',
-    'bundling_temp_packs',
     'processing_temp_packs',
     'currently_being_delivered_packs',
     'failed_packs_delivery',

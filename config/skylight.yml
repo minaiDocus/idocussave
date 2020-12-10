@@ -5,7 +5,6 @@ authentication: QfwXry--1pgK7HY3fAqMBSORcCXaUW7ehDoWRLvVzDc
 ignored_endpoints:
   - Account::RetrieversController#index
   - Admin::AdminController#reports_delivery
-  - Admin::AdminController#bundling_temp_packs
   - Admin::AdminController#ocr_needed_temp_packs
   - Admin::AdminController#processing_temp_packs
   - Admin::AdminController#failed_packs_delivery

@@ -719,7 +719,6 @@ Rails.application.routes.draw do
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
   get '/admin/reporting(/:year)',              controller: 'admin/reporting', action: :index
-  get 'admin/bundling_temp_packs',             controller: 'admin/admin', action: 'bundling_temp_packs'
   get 'admin/ocr_needed_temp_packs',           controller: 'admin/admin', action: 'ocr_needed_temp_packs'
   get 'admin/processing_temp_packs',           controller: 'admin/admin', action: 'processing_temp_packs'
   get 'admin/failed_packs_delivery',           controller: 'admin/admin', action: 'failed_packs_delivery'

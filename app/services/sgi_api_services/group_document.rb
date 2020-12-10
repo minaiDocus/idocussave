@@ -1,5 +1,4 @@
 # -*- encoding : UTF-8 -*-
-require 'open-uri'
 
 class SgiApiServices::GroupDocument
   FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}\.pdf\z/i
@@ -13,13 +12,17 @@ class SgiApiServices::GroupDocument
 
   def execute
     if valid_json_content?
-      @json_content['packs'].each do |pack|
-        temp_pack = find_temp_pack(pack['name'])
+      @temp_pack = find_temp_pack(@json_content['pack_name'])
 
-        pack['pieces'].each do |piece|
-          CreateTempDocumentFromGrouping.new(piece['piece_url'], temp_pack, piece['file_name']).execute
-        end
-      end
+      @merged_dir = Dir.mktmpdir
+
+      files_input
+
+      create_new_temp_document
+
+      @temp_pack.temp_documents.where(id: temp_document_ids(@json_content['pieces'])).each(&:bundled)
+
+      clean_tmp
 
       { success: true }
     else
@@ -61,96 +64,99 @@ class SgiApiServices::GroupDocument
 
 
   def valid_json_content?
-    @json_content['packs'].each do |pack|
-      if (temp_pack = find_temp_pack(pack['name']))
-        file_names = pack['pieces'].map{|p| p['file_name']}
-        if file_names.uniq.size != file_names.size
-          @errors << { "file_name_duplicated_with_pack_id_#{pack['id']}" => "File name : #{file_names.size - file_names.uniq.size} duplicate(s)."}
-        else
-          pack['pieces'].each do |piece|
-            @piece_url = piece['piece_url']
-            verify_piece temp_pack, file_names, piece['origin'], piece['id']
-          end
-        end
-      else
-        @errors << { "pack_name_unknown_with_pack_id_#{pack['id']}" => "Pack name : \"#{pack['name']}\", unknown." }
+    if (temp_pack = find_temp_pack(@json_content['pack_name']))
+      temp_document_ids(@json_content['pieces']).uniq.each do |id|
+        verify_temp_document_bundled temp_pack, id
       end
+    else
+      @errors << { "pack_name_unknown" => "Pack name : #{@json_content['pack_name']}, unknown." }
     end
 
     @errors.empty?
   end
 
 
-  def verify_piece(temp_pack, file_names, origin, piece_id)
-    if origin.in?(%w(scan dematbox_scan upload))
-      file_names.uniq.each do |file_name|
-        verify_file_name temp_pack, file_name, origin, piece_id
+  def verify_temp_document_bundled(temp_pack, id)
+    basename = @json_content['pack_name'].split(' ')[0]
+    basename = CustomUtils.replace_code_of(basename)
+
+    is_basename_match = temp_pack.name.match(/\A#{basename}/)
+    temp_document     = temp_pack.temp_documents.where(id: id).first
+
+    if is_basename_match && temp_document
+      if temp_document.bundled?
+        @errors << { "piece_already_bundled" => "Piece already bundled with an id : #{id} in pack name: #{@json_content['pack_name']}." }
       end
     else
-      @errors << { "piece_origin_unknown_with_piece_id_#{piece_id}" => "Piece origin : \"#{origin}\", unknown." }
+      @errors << { "parent_temp_document_unknown" => "Unknown temp document with an id: #{id} in pack name: #{@json_content['pack_name']}." }
     end
   end
 
 
-  def verify_file_name(temp_pack, file_name, origin, piece_id)
-    if (origin == 'scan' && !FILE_NAME_PATTERN_1.match(file_name)) || (origin != 'scan' && !FILE_NAME_PATTERN_2.match(file_name))
-      @errors << { "file_name_does_not_match_origin_with_piece_id_#{piece_id}" => "File name : \"#{file_name}\", does not match origin : \"#{origin}\"." }
-    else
-      position = self.class.position(file_name)
-      basename = self.class.basename(file_name)
+  def clean_tmp
+    FileUtils.remove_entry @merged_dir if @merged_dir
+  end
 
-      basename = CustomUtils.replace_code_of(basename)
+  def create_new_temp_document
+    @json_content['pieces'].each do |pieces|
+      pieces.each do |piece|
+        merged_dir = File.join(@merged_dir, "#{piece['id']}")
 
-      is_basename_match = temp_pack.name.match(/\A#{basename}/)
+        CreateTempDocumentFromGrouping.new(@temp_pack, piece['pages'], piece['id'], merged_dir).execute
+      end
+    end
+  end
 
-      temp_document = temp_pack.temp_documents.where(position: position).first
-
-      if is_basename_match && temp_document
-        if temp_document.bundled?
-          @errors << { "file_name_already_grouped_with_piece_id_#{piece_id}" => "File name : \"#{file_name}\", already grouped." }
-        elsif !url_exist?
-          @errors << { "undownloadable_file_for_piece_id_#{piece_id}" => "File name : \"#{file_name}\" and piece_url: \"#{@piece_url}\", not found." }
-        end
+  def temp_document_ids(bundled_temp_documents)
+    bundled_temp_documents.inject([]) do |result, element|
+      result + if element.is_a?(Array)
+        temp_document_ids(element)
       else
-        @errors << { "file_name_unknown_with_piece_id_#{piece_id}" => "File name : \"#{file_name}\", unknown." }
+        [element['id']]
       end
     end
   end
 
-  def url_exist?
-    uri = URI.parse(@piece_url)
-    response = Net::HTTP.get_response(uri)
-    response.code.to_i == 200
+  def files_input
+    temp_document_ids(@json_content['pieces']).uniq.each do |id|
+      merged_dir = File.join(@merged_dir, "#{id}")
+      FileUtils.mkdir_p merged_dir
+
+      Pdftk.new.burst @temp_pack.temp_documents.where(id: id).first.cloud_content_object.path, merged_dir, 'page', DataProcessor::TempPack::POSITION_SIZE
+    end
   end
 
   class CreateTempDocumentFromGrouping
-    def initialize(piece_url, temp_pack, file_name)
-      @piece_url = piece_url
-      @temp_pack = temp_pack
-      @file_name = file_name
+    def initialize(temp_pack, pages, temp_document_id, merged_path)
+      @temp_pack        = temp_pack
+      @pages            = pages
+      @temp_document_id = temp_document_id
+      @file_name        = @temp_pack.name.tr(' ', '_') + '.pdf'
+      @merged_path      = merged_path
     end
 
     # Create a secondary temp documents it comes back from grouping
     def execute
       Dir.mktmpdir do |tmpdir|
-        @file_path = File.join tmpdir
-
-        download = open(@piece_url)
-
-        IO.copy_stream(download, "#{@file_path}/#{@file_name}")
+        @file_path = tmpdir
 
         @file_path = File.join(@file_path, @file_name)
+
+        if file_paths.size > 1
+          Pdftk.new.merge file_paths, @file_path
+        else
+          FileUtils.cp file_paths.first, @file_path
+        end
 
         begin
 
           create_temp_document
 
-          temp_documents.each(&:bundled)
         rescue => e
           log_document = {
             name: "SgiApiServices::CreateTempDocumentFromGrouping",
-            error_group: "[sgi-api-services-create-temp-document-from-grouping] piece url is unreadable",
-            erreur_type: "Piece url is unreadable",
+            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors",
+            erreur_type: "create temp document with errors",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
               temp_dir_path: @file_path,
@@ -165,12 +171,12 @@ class SgiApiServices::GroupDocument
 
     private
 
-    def temp_document_positions
-      @piece_positions ||= SgiApiServices::GroupDocument.position(@file_name)
+    def file_paths
+      @file_paths = @pages.map {|page| File.join(@merged_path, 'page_' + ("%03d" % page) + '.pdf') }
     end
 
     def temp_documents
-      @temp_documents ||= @temp_pack.temp_documents.where(position: temp_document_positions).by_position
+      @temp_documents ||= @temp_pack.temp_documents.where(id: @temp_document_id).by_position
     end
 
     def original_temp_document
