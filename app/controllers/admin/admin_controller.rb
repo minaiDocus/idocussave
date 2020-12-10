@@ -41,21 +41,6 @@ class Admin::AdminController < ApplicationController
     render partial: 'bundle_needed_temp_packs', locals: { collection: @bundle_needed_temp_packs }
   end
 
-  # GET /admin/bundling_temp_packs
-  def bundling_temp_packs
-    @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
-      temp_documents = temp_pack.temp_documents.bundling.by_position
-      object = OpenStruct.new
-      object.date           = temp_documents.last.try(:updated_at).try(:localtime)
-      object.name           = temp_pack.name.sub(/ all\z/, '')
-      object.document_count = temp_documents.count
-      object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
-      object
-    end.sort_by { |o| [o.date ? 0 : 1, o.date] }.reverse
-
-    render partial: 'bundling_temp_packs', locals: { collection: @bundling_temp_packs }
-  end
-
   # GET /admin/processing_temp_packs
   def processing_temp_packs
     @processing_temp_packs = TempPack.not_processed.map do |temp_pack|

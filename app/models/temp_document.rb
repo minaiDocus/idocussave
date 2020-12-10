@@ -67,14 +67,13 @@ class TempDocument < ApplicationRecord
   end
 
   scope :scan,              -> { where(delivery_type: 'scan') }
-  scope :valid,             -> { where(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }
+  scope :valid,             -> { where(state: %w(ready ocr_needed bundle_needed bundled processed)) }
   scope :ready,             -> { where(state: 'ready', is_locked: false) }
   scope :locked,            -> { where(is_locked: true) }
   scope :upload,            -> { where(delivery_type: 'upload') }
   scope :retrieved,         -> { where(delivery_type: 'retriever') }
   scope :created,           -> { where(state: 'created') }
   scope :bundled,           -> { where(state: 'bundled') }
-  scope :bundling,          -> { where(state: 'bundling') }
   scope :originals,         -> { where(is_an_original: true) }
   scope :processed,         -> { where(state: %w(processed bundled)) }
   scope :not_locked,        -> { where(is_locked: false) }
@@ -97,7 +96,6 @@ class TempDocument < ApplicationRecord
     state :ready
     state :created
     state :bundled
-    state :bundling
     state :processed
     state :unreadable
     state :ocr_needed
@@ -122,17 +120,6 @@ class TempDocument < ApplicationRecord
 
     after_transition on: :bundle_needed do |temp_document, _transition|
       temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, 1)
-    end
-
-
-    after_transition on: :bundling do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, -1)
-      temp_document.temp_pack.increment_counter!(:document_bundling_count, 1)
-    end
-
-
-    after_transition on: :bundled do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_bundling_count, -1)
     end
 
 
@@ -161,13 +148,8 @@ class TempDocument < ApplicationRecord
     end
 
 
-    event :bundling do
-      transition bundle_needed: :bundling
-    end
-
-
     event :bundled do
-      transition bundling: :bundled
+      transition bundle_needed: :bundled
     end
 
 

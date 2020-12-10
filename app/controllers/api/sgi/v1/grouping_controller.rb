@@ -4,7 +4,7 @@ class Api::Sgi::V1::GroupingController < SgiApiController
 
   # GET /api/sgi/v1/grouping/bundle_needed/:delivery_type
   def bundle_needed
-    render json: { success: true, bundle_needed_documents: process_bundle_needed.to_json }, status: 200
+    render json: { success: true, bundling_documents: process_bundle_needed }, status: 200
   end
 
   # POST /api/sgi/v1/grouping/bundled
@@ -28,12 +28,10 @@ class Api::Sgi::V1::GroupingController < SgiApiController
           temp_documents <<  {
             id: temp_document.id,
             temp_pack_name: temp_document.temp_pack.name,
-            temp_document_url: 'https://my.idocus.com' + temp_document.try(:get_access_url),
+            temp_document_url: Domains::BASE_URL + temp_document.try(:get_access_url),
             delivery_type: temp_document.delivery_type,
             base_file_name: temp_document.name_with_position
-          }
-
-          temp_document.bundling
+          }.with_indifferent_access
         end
       end
     end

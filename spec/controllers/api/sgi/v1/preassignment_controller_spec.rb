@@ -12,7 +12,7 @@ describe Api::Sgi::V1::PreassignmentController do
     temp_document.pages_number   = 2
     temp_document.is_an_original = true
     temp_document.is_a_cover     = false
-    temp_document.state          = 'bundling'
+    temp_document.state          = 'bundle_needed'
     temp_document.save
 
     temp_document

@@ -203,7 +203,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document.pages_number   = 2
         temp_document.is_an_original = true
         temp_document.is_a_cover     = false
-        temp_document.state          = 'bundling'
+        temp_document.state          = 'bundle_needed'
         temp_document.save
       end
 
@@ -359,7 +359,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document.pages_number   = 2
         temp_document.is_an_original = true
         temp_document.is_a_cover     = false
-        temp_document.state          = 'bundling'
+        temp_document.state          = 'bundle_needed'
         temp_document.save
 
         temp_document = TempDocument.new
@@ -370,7 +370,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document.pages_number   = 2
         temp_document.is_an_original = true
         temp_document.is_a_cover     = false
-        temp_document.state          = 'bundling'
+        temp_document.state          = 'bundle_needed'
         temp_document.save
 
         data = '<?xml version="1.0" encoding="utf-8"?>
@@ -402,7 +402,7 @@ describe AccountingWorkflow::GroupDocument do
         temp_document.delivery_type  = 'scan'
         temp_document.is_an_original = true
         temp_document.is_a_cover     = false
-        temp_document.state          = 'bundling'
+        temp_document.state          = 'bundle_needed'
         temp_document.save
 
         data = '<?xml version="1.0" encoding="utf-8"?>
@@ -492,7 +492,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.pages_number   = 2
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
         end
 
@@ -541,7 +541,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.delivery_type  = 'upload'
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
 
           Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DataProcessor::TempPack::POSITION_SIZE
@@ -608,7 +608,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.delivery_type  = 'upload'
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
 
           Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", DataProcessor::TempPack::POSITION_SIZE
@@ -675,7 +675,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.delivery_type  = 'dematbox_scan'
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
 
           Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DataProcessor::TempPack::POSITION_SIZE
@@ -742,7 +742,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.pages_number   = 2
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
         end
         base_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'scans')
@@ -760,7 +760,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.delivery_type  = 'upload'
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
           Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{3+index}", DataProcessor::TempPack::POSITION_SIZE
         end
@@ -776,7 +776,7 @@ describe AccountingWorkflow::GroupDocument do
           temp_document.delivery_type  = 'dematbox_scan'
           temp_document.is_an_original = true
           temp_document.is_a_cover     = false
-          temp_document.state          = 'bundling'
+          temp_document.state          = 'bundle_needed'
           temp_document.save
           Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{5+index}", DataProcessor::TempPack::POSITION_SIZE
         end

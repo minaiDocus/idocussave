@@ -1,0 +1,25 @@
+defaults: &defaults
+  protocol: http
+  host: localhost
+  port: 3000
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  protocol: http
+  host: sandbox.idocus.com
+  port:
+
+staging:
+  protocol: https
+  host: staging.idocus.com
+  port:
+
+production:
+  protocol: https
+  host: my.idocus.com
+  port:

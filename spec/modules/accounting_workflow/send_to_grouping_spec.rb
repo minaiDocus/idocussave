@@ -127,8 +127,8 @@ describe AccountingWorkflow::SendToGrouping do
       expect(File.exist?(path)).to be false
     end
 
-    it 'change all temp_documents states to bundling' do
-      expect(@temp_pack.temp_documents.pluck(:state).uniq).to eq ['bundling']
+    it 'change all temp_documents states to bundle_needed' do
+      expect(@temp_pack.temp_documents.pluck(:state).uniq).to eq ['bundle_needed']
     end
   end
 end

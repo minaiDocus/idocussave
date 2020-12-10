@@ -10,10 +10,8 @@ class TempPack < ApplicationRecord
   belongs_to :document_delivery, optional: true
 
 
-
-  scope :bundling,             -> { where("document_bundling_count > ?", 0) }
   scope :bundle_needed,        -> { where("document_bundle_needed_count > ?", 0) }
-  scope :not_published,        -> { where('document_not_processed_count > ? OR document_bundling_count > ? OR document_bundle_needed_count > ?', 0, 0, 0) }
+  scope :not_published,        -> { where('document_not_processed_count > ? OR document_bundle_needed_count > ?', 0, 0) }
   scope :not_processed,        -> { where("document_not_processed_count > ?", 0) }
   scope :not_recently_updated, -> { where("updated_at < ?", 15.minutes.ago) }
 
