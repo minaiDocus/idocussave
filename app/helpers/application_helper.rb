@@ -307,6 +307,7 @@ module ApplicationHelper
     [
       [t('activerecord.models.csv_descriptor.attributes.client_code'), :client_code],
       [t('activerecord.models.csv_descriptor.attributes.journal'), :journal],
+      [t('activerecord.models.csv_descriptor.attributes.pseudonym'), :pseudonym],
       [t('activerecord.models.csv_descriptor.attributes.period'), :period],
       [t('activerecord.models.csv_descriptor.attributes.piece_number'), :piece_number],
       [t('activerecord.models.csv_descriptor.attributes.original_piece_number'), :original_piece_number],

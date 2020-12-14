@@ -500,6 +500,7 @@ fr:
         attributes:
           client_code: Code client
           journal: Journal iDocus
+          pseudonym: Journal comptable
           type: Type de traitement
           period: Période iDocus
           piece_number: Numéro de pièce iDocus

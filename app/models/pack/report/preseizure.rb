@@ -118,6 +118,21 @@ class Pack::Report::Preseizure < ApplicationRecord
     end
   end
 
+  # type may only be pseudonym or name
+  def journal_prefered_name(type = :pseudonym)
+    journal = report.journal({ name_only: false })
+
+    begin
+      if self.operation
+        operation.bank_account.try(:foreign_journal).presence || operation.bank_account.try(:journal) || journal.send(type.to_sym).to_s
+      else
+        journal.send(type.to_sym).to_s
+      end
+    rescue
+      ''
+    end
+  end
+
   def period_date
     Time.local(year, month, 1)
   end

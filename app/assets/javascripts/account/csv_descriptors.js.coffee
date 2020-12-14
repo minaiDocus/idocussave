@@ -6,7 +6,7 @@ update_directive_input = (type, element) ->
     element.parents('li').find('.number-input #number-input').attr('disabled','disabled')
     element.parents('li').find('#select_format').show()
     element.parents('li').find('#select_format').removeAttr('disabled')
-  else if type == 'client_code' || type == 'journal' || type == 'original_piece_number' || type == 'operation_label' || type == 'piece' || type == 'lettering' || type == 'remark' || type == 'third_party'
+  else if type == 'client_code' || type == 'journal' || type == 'pseudonym' || type == 'original_piece_number' || type == 'operation_label' || type == 'piece' || type == 'lettering' || type == 'remark' || type == 'third_party'
     element.parents('li').find('#text_format').hide()
     element.parents('li').find('#text_format').attr('disabled','disabled')
     element.parents('li').find('#select_format').hide()
@@ -118,7 +118,7 @@ jQuery ->
         field = li.find('option:selected').val()
         if field == 'date' || field == 'deadline_date' || field == 'period_date'
           part = field + '-' + li.find('#select_format').val()
-        else if field == 'client_code' || field == 'journal' || field == 'original_piece_number' || field == 'operation_label' || field == 'piece' || field == 'lettering' || field == 'remark' || field == 'third_party'
+        else if field == 'client_code' || field == 'journal' || field == 'pseudonym' || field == 'original_piece_number' || field == 'operation_label' || field == 'piece' || field == 'lettering' || field == 'remark' || field == 'third_party'
           part = field + '-' + li.find('.number-input #number-input').val()
         else if field == 'other'
           part = field + '-' + li.find('#text_format').val()

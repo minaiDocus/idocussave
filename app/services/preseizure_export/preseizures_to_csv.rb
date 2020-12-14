@@ -167,7 +167,9 @@ class PreseizureExport::PreseizuresToCsv
         when /\Aclient_code\z/
           part[1].to_i > 0 ? entry.preseizure.report.user.code[0, part[1].to_i] : entry.preseizure.report.user.code
         when /\Ajournal\z/
-          part[1].to_i > 0 ? entry.preseizure.journal_name[0, part[1].to_i] : entry.preseizure.journal_name
+          part[1].to_i > 0 ? entry.preseizure.journal_prefered_name(:name)[0, part[1].to_i] : entry.preseizure.journal_prefered_name(:name)
+        when /\Apseudonym\z/
+          part[1].to_i > 0 ? entry.preseizure.journal_prefered_name(:pseudonym)[0, part[1].to_i] : entry.preseizure.journal_prefered_name(:pseudonym)
         when /\Aperiod\z/
           entry.preseizure.piece_name.try(:split).try(:[], 2)
         when /\Apiece_number\z/
