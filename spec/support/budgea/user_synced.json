@@ -1,0 +1,212 @@
+{
+  "user": {
+    "signin": "2019-11-25 17:36:55",
+    "platform": "sharedAccess",
+    "id": 1
+  },
+  "connections": [
+    {
+      "connector_uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+      "id_user": 1,
+      "created": "2020-01-23 18:38:43",
+      "id_provider": 59,
+      "error_message": null,
+      "last_push": null,
+      "last_update": "2020-05-18 10:36:50",
+      "connector": {
+        "sync_frequency": null,
+        "code": null,
+        "color": "5c2963",
+        "auth_mechanism": "credentials",
+        "id": 59,
+        "uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+        "account_types": [
+          "perco",
+          "checking",
+          "loan",
+          "savings",
+          "card",
+          "pee",
+          "market",
+          "lifeinsurance"
+        ],
+        "documents_type": [],
+        "restricted": false,
+        "available_transfer_mechanisms": [
+          "credentials"
+        ],
+        "capabilities": [
+          "profile",
+          "banktransfer",
+          "banktransferaddrecipient",
+          "contact",
+          "bankwealth",
+          "document",
+          "bank"
+        ],
+        "transfer_beneficiary_types": [
+          "recipient"
+        ],
+        "transfer_execution_date_types": [
+          "first_open_day",
+          "deferred"
+        ],
+        "months_to_fetch": null,
+        "siret": null,
+        "hidden": false,
+        "beta": false,
+        "slug": "EXA",
+        "categories": [],
+        "name": "Connecteur de test",
+        "available_auth_mechanisms": [
+          "credentials",
+          "webauth"
+        ],
+        "urls": [],
+        "charged": false
+      },
+      "active": true,
+      "state": null,
+      "expire": null,
+      "accounts": [
+        {
+          "ownership": "owner",
+          "loan": null,
+          "webid": "3002900000",
+          "number": "3002900000",
+          "disabled": null,
+          "currency": {
+            "name": "Euro",
+            "symbol": "€",
+            "crypto": false,
+            "precision": 2,
+            "prefix": false,
+            "marketcap": null,
+            "datetime": null,
+            "id": "EUR"
+          },
+          "id": 274,
+          "formatted_balance": "2381,86 €",
+          "id_connection": 76,
+          "original_name": "Compte chèque",
+          "last_update": "2020-05-18 10:36:40",
+          "id_source": 133,
+          "company_name": null,
+          "usage": "PRIV",
+          "type": "checking",
+          "recipients": [],
+          "deleted": null,
+          "id_parent": null,
+          "bic": "CDTBFRBIXXX",
+          "iban": "EX6713679564637300290000028",
+          "id_type": 2,
+          "coming_balance": 2381.86,
+          "coming": null,
+          "transfers": [],
+          "id_user": 1,
+          "name": "Compte chèque",
+          "display": true,
+          "transactions": [
+            {
+              "webid": null,
+              "active": true,
+              "simplified_wording": "Virement Internet",
+              "original_gross_value": null,
+              "id": 6394,
+              "original_value": null,
+              "original_wording": "Virement Internet",
+              "id_account": 274,
+              "id_cluster": null,
+              "deleted": null,
+              "last_update": "2020-05-18 10:36:41",
+              "commission": null,
+              "state": "categorized_by_hashtable",
+              "gross_value": null,
+              "new": true,
+              "type": "transfer",
+              "commission_currency": null,
+              "id_category": 9998,
+              "counterparty": null,
+              "original_currency": null,
+              "nopurge": 0,
+              "formatted_value": "-837,95€",
+              "rdate": "2020-01-31",
+              "coming": false,
+              "date": "2020-01-31",
+              "application_date": "2020-01-31",
+              "card": null,
+              "date_scraped": "2020-02-01 17:24:05",
+              "bdate": "2020-01-31",
+              "vdate": null,
+              "country": null,
+              "value": -837.95,
+              "documents_count": 0,
+              "stemmed_wording": "VIREMENT INTERNET",
+              "wording": "Virement Internet"
+            }
+          ],
+          "error": null,
+          "balance": 2381.86
+        }
+      ],
+      "error": null,
+      "id_bank": 59,
+      "next_try": "2020-05-19 13:06:50",
+      "id_connector": 59,
+      "id": 76,
+      "bank": {
+        "sync_frequency": null,
+        "code": null,
+        "color": "5c2963",
+        "auth_mechanism": "credentials",
+        "id": 59,
+        "uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+        "account_types": [
+          "perco",
+          "checking",
+          "loan",
+          "savings",
+          "card",
+          "pee",
+          "market",
+          "lifeinsurance"
+        ],
+        "documents_type": [],
+        "restricted": false,
+        "available_transfer_mechanisms": [
+          "credentials"
+        ],
+        "capabilities": [
+          "profile",
+          "banktransfer",
+          "banktransferaddrecipient",
+          "contact",
+          "bankwealth",
+          "document",
+          "bank"
+        ],
+        "transfer_beneficiary_types": [
+          "recipient"
+        ],
+        "transfer_execution_date_types": [
+          "first_open_day",
+          "deferred"
+        ],
+        "months_to_fetch": null,
+        "siret": null,
+        "hidden": false,
+        "beta": false,
+        "slug": "EXA",
+        "categories": [],
+        "name": "Connecteur de test",
+        "available_auth_mechanisms": [
+          "credentials",
+          "webauth"
+        ],
+        "urls": [],
+        "charged": false
+      }
+    }
+  ],
+  "total": 1
+}

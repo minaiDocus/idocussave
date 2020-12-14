@@ -2,9 +2,92 @@
 
 class RetrieversController < ApiController
   before_action :load_retriever, only: %i[destroy trigger get_retriever_infos update_budgea_error_message]
-  before_action :authenticate_current_user, except: %i[callback destroy trigger get_retriever_infos update_budgea_error_message fetch_webauth_url]
+  before_action :authenticate_current_user, except: %i[callback destroy trigger get_retriever_infos update_budgea_error_message fetch_webauth_url user_synced user_deleted connection_synced connection_deleted accounts_fetched]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_rights
+
+  def user_synced
+    if params['user'].present? && params["connections"].present?
+      retriever = Retriever.where(budgea_id: params["connections"][0]['id']).first
+      if retriever
+        DataProcessor::RetrievedData.new(params, "USER_SYNCED", retriever.user).execute
+
+        send_webauth_notification(params, 'USER_SYNCED', '', 'USER_SYNCED')
+      else
+        retriever_alert(params, 'USER_SYNCED')
+      end
+
+      render plain: '', status: :ok
+    else
+      render json: { success: false, error: 'Erreur de données' }, status: 400
+    end
+  end
+
+  def user_deleted
+    if params["id"].present?
+      budgea_account = BudgeaAccount.where(identifier: params["id"]).first
+
+      DataProcessor::RetrievedData.new(params, "USER_DELETED", budgea_account.user).execute
+
+      send_webauth_notification(params, 'USER_DELETED', '', 'USER_DELETED')
+
+      render plain: '', status: :ok
+    else
+      render json: { success: false, error: 'Erreur de données' }, status: 400
+    end
+  end
+
+  def connection_synced
+    if params["user"].present? && params["connection"].present?
+      retriever = Retriever.where(budgea_id: params["connection"]['id']).first
+      if retriever
+        DataProcessor::RetrievedData.new(params, "CONNECTION_SYNCED", retriever.user).execute
+
+        send_webauth_notification(params, 'CONNECTION_SYNCED', '', 'CONNECTION_SYNCED')
+      else
+        retriever_alert(params, 'CONNECTION_SYNCED')
+      end
+
+      render plain: '', status: :ok
+    else
+      render json: { success: false, error: 'Erreur de données' }, status: 400
+    end
+  end
+
+  def connection_deleted
+    if params["id_user"].present? && params['id'].present?
+      retriever = Retriever.where(budgea_id: params['id']).first
+      if retriever
+        DataProcessor::RetrievedData.new(params, "CONNECTION_DELETED", retriever.user).execute
+
+        send_webauth_notification(params, 'CONNECTION_DELETED', '', 'CONNECTION_DELETED')
+      else
+        retriever_alert(params, 'CONNECTION_DELETED')
+      end
+
+      render plain: '', status: :ok
+    else
+      render json: { success: false, error: 'Erreur de données' }, status: 400
+    end
+  end
+
+  def accounts_fetched
+    if params["connection"].present?
+      retriever = Retriever.where(budgea_id: params["connection"]['id']).first
+
+      if retriever
+        DataProcessor::RetrievedData.new(params, "ACCOUNTS_FETCHED", retriever.user).execute
+
+        send_webauth_notification(params, 'ACCOUNTS_FETCHED', '', 'ACCOUNTS_FETCHED')
+      else
+        retriever_alert(params, 'ACCOUNTS_FETCHED')
+      end
+
+      render plain: '', status: :ok
+    else
+      render json: { success: false, error: 'Erreur de données' }, status: 400
+    end
+  end
 
   def callback
     authorization = request.headers['Authorization']
@@ -235,6 +318,18 @@ class RetrieversController < ApiController
       erreur_type: "Callback retriever",
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
       more_information: { access_token: access_token, params: parameters.inspect }
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
+  end
+
+  def retriever_alert(params, type_synced)
+    log_document = {
+      name: "BudgeaWebhookCallback",
+      error_group: "[Budgea Webhook Callback] : Retriever does not exist - #{type_synced}",
+      erreur_type: "retriever does not exist",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: { params: params.inspect }
     }
 
     ErrorScriptMailer.error_notification(log_document).deliver

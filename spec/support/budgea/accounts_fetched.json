@@ -1,0 +1,148 @@
+{
+  "connection": {
+    "connector_uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+    "id_user": 1,
+    "created": "2020-05-18 18:41:08",
+    "id_provider": 59,
+    "error_message": null,
+    "last_push": null,
+    "last_update": null,
+    "connector": {
+      "sync_frequency": null,
+      "code": null,
+      "color": "5c2963",
+      "auth_mechanism": "credentials",
+      "id": 59,
+      "uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+      "account_types": [
+        "perco",
+        "checking",
+        "loan",
+        "savings",
+        "card",
+        "pee",
+        "market",
+        "lifeinsurance"
+      ],
+      "documents_type": [],
+      "restricted": false,
+      "available_transfer_mechanisms": [
+        "credentials"
+      ],
+      "capabilities": [
+        "profile",
+        "banktransfer",
+        "bankwealth",
+        "banktransferaddrecipient",
+        "contact",
+        "document",
+        "bank"
+      ],
+      "transfer_beneficiary_types": [
+        "recipient"
+      ],
+      "transfer_execution_date_types": [
+        "first_open_day",
+        "deferred"
+      ],
+      "months_to_fetch": null,
+      "siret": null,
+      "hidden": false,
+      "beta": false,
+      "slug": "EXA",
+      "categories": [],
+      "name": "Connecteur de test",
+      "available_auth_mechanisms": [
+        "credentials",
+        "webauth"
+      ],
+      "urls": [],
+      "charged": false
+    },
+    "active": true,
+    "state": null,
+    "expire": null,
+    "accounts": [
+      {
+        "ownership": "owner",
+        "loan": null,
+        "webid": "3002900000",
+        "number": "3002900000",
+        "disabled": null,
+        "currency": {
+          "name": "Euro",
+          "symbol": "\\u20ac",
+          "crypto": false,
+          "precision": 2,
+          "prefix": false,
+          "marketcap": null,
+          "datetime": null,
+          "id": "EUR"
+        },
+        "id": 722,
+        "bookmarked": 0,
+        "formatted_balance": "3163,69\\u00a0\\u20ac",
+        "id_connection": 154,
+        "original_name": "Compte ch\\u00e8que",
+        "last_update": "2020-05-18 18:44:09",
+        "id_source": 271,
+        "company_name": null,
+        "usage": "PRIV",
+        "type": "checking",
+        "information": {},
+        "deleted": null,
+        "id_parent": null,
+        "bic": "CDTBFRBIXXX",
+        "iban": "EX6713662733300300290000019",
+        "id_type": 2,
+        "coming_balance": 3163.69,
+        "coming": null,
+        "id_user": 51,
+        "name": "Compte ch\\u00e8que",
+        "error": null,
+        "balance": 3163.69,
+        "display": true
+      }
+    ],
+    "error": null,
+    "id_bank": 59,
+    "subscriptions": [
+      {
+        "documents" : [
+          {
+            "id_category" : null,
+            "id_user" : 7,
+            "name" : "Not loaded",
+            "id_thumbnail" : 12,
+            "id_file" : 11,
+            "url" : "https://idocus-test.biapi.pro/2.0/users/me/documents/15/file/2pages.pdf",
+            "timestamp" : "2015-07-04 15:16:30",
+            "number" : "2pages",
+            "duedate" : null,
+            "untaxed_amount" : 0.0,
+            "issuer" : "Connecteur de test",
+            "readonly" : true,
+            "id_type" : 8,
+            "id_subscription" : 5,
+            "income" : false,
+            "date" : "2015-07-01",
+            "thumb_url" : "https://idocus-test.biapi.pro/2.0/users/me/documents/15/thumbnail/2pages.pdf_thumbnail.png",
+            "id" : 15,
+            "vat" : null,
+            "total_amount" : 0.0
+          }
+        ]
+      }
+    ],
+    "next_try": null,
+    "id_connector": 59,
+    "id": 76
+  },
+  "total": 1,
+  "push_type": "accounts",
+  "user": {
+    "signin": "2020-05-18 18:40:40",
+    "platform": "sharedAccess",
+    "id": 51
+  }
+}
