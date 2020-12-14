@@ -9,7 +9,8 @@ class Notifications::Notifier
     NotificationsMailer.notify(notification).deliver
 
     #sending push notification to FCM
-    Notifications::Firebase.new({ notification: notification }).send_firebase_notification
+    # TEMP : Disable sending FCM until new mobile version is released
+    # Notifications::Firebase.new({ notification: notification }).send_firebase_notification
 
     notification.update is_sent: true
   end
