@@ -1,5 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class DataProcessor::RetrievedData
+  attr_accessor :retriever
+
+  SYNCED_BUDGEA_LISTS = ["USER_SYNCED", "USER_DELETED", "CONNECTION_SYNCED", "CONNECTION_DELETED", "ACCOUNTS_FETCHED"].freeze
 
   def self.process(retrieved_data_id)
     UniqueJobs.for "ProcessRetrievedData-#{retrieved_data_id}" do
@@ -8,9 +11,9 @@ class DataProcessor::RetrievedData
     end
   end
 
-  def initialize(retrieved_data, run_until=nil, user=nil)
+  def initialize(retrieved_data, type_synced=nil, user=nil)
     @retrieved_data = retrieved_data
-    @run_until      = run_until
+    @type_synced    = type_synced
     @user           = user.presence || @retrieved_data.try(:user)
   end
 
@@ -29,14 +32,19 @@ class DataProcessor::RetrievedData
   private
 
   def process_retrieved_data
-    System::Log.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start")
+    System::Log.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start") unless @type_synced.present?
     start_time   = Time.now
 
-    json_content = @retrieved_data.json_content
-    parse_of json_content if json_content.present? && json_content[:success]
-    finalize json_content
+    if SYNCED_BUDGEA_LISTS.include?(@type_synced)
+      json_content = @retrieved_data
+    elsif @retrieved_data.json_content
+      json_content = @retrieved_data.json_content
+    end
 
-    System::Log.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec")
+    parse_of json_content if (json_content.present? && (json_content[:success] || @type_synced.present?))
+    finalize json_content unless @type_synced.present?
+
+    System::Log.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec") unless @type_synced.present?
   end
 
   def budgea_transaction_fetcher(type='operation')
@@ -131,24 +139,60 @@ class DataProcessor::RetrievedData
   end
 
   def parse_of(json_content)
-    connections = json_content[:content]['connections']
+    webhook_notification(json_content)
 
-    connections.each do |connection|
-      next if connection['id'].in?(@retrieved_data.processed_connection_ids)
+    if @type_synced.nil? || (@type_synced.present? && @type_synced == 'USER_SYNCED')
+      connections = @type_synced.present? ? json_content['connections'] : json_content[:content]['connections']
 
-      @is_connection_ok = true
-      @connection_id    = connection['id']
+      connections.each do |connection|
+        next if connection['id'].in?(@retrieved_data.processed_connection_ids) unless @type_synced.present?
 
-      connection.merge!("source"=>"ProcessRetrievedData")
-      process connection if retriever
+        execute_process connection
+      end
+    elsif json_content['connection'].present?
+      execute_process json_content['connection']
+    elsif @type_synced == 'CONNECTION_DELETED'
+      @connection_id    = json_content['id']
 
-      if @is_connection_ok
-        @retrieved_data.processed_connection_ids << connection['id']
-        @retrieved_data.save
+      Retriever::DestroyBudgeaConnection.execute(retriever) if retriever && retriever.try(:destroy_connection)
+    elsif @type_synced == 'USER_DELETED' && @user.budgea_account
+
+      retrievers = @user.retrievers
+
+      retrievers.each do |retr|
+        Retriever::DestroyBudgeaConnection.execute(retr) if retr && retr.try(:destroy_connection)
+
+        save(json_content, retr)
       end
 
-      # break if @run_until && @run_until < Time.now
+      @user.budgea_account.destroy
     end
+
+    save json_content if @type_synced.present? && @type_synced != "USER_DELETED"
+  end
+
+  def execute_process(connection)
+    @is_connection_ok = true
+    @connection_id    = connection['id']
+
+    connection.merge!("source"=>"ProcessRetrievedData")
+    process connection if retriever
+
+    if @is_connection_ok && @type_synced.nil?
+      @retrieved_data.processed_connection_ids << connection['id']
+      @retrieved_data.save
+    end
+  end
+
+  def save(contents, retr=nil)
+    conn     = Archive::WebhookContent.new
+    retrieve = retr.present? ? retr : retriever
+
+    conn.synced_date  = Time.now
+    conn.synced_type  = @type_synced
+    conn.json_content = contents
+    conn.retriever    = retrieve
+    conn.save
   end
 
   def process(connection)
@@ -327,7 +371,7 @@ class DataProcessor::RetrievedData
       date:       transaction['date'],
       value_date: transaction['rdate'],
       amount:     set_transaction_value(bank_account, transaction),
-      comment:    transaction['comment'],
+      comment:    transaction['comment'].presence || '',
       api_id:     nil
     )
 
@@ -360,7 +404,7 @@ class DataProcessor::RetrievedData
     end
 
     operation.amount      = set_transaction_value(bank_account, transaction)
-    operation.comment     = transaction['comment']
+    operation.comment     = transaction['comment'] if transaction['comment'].present?
     operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
     operation.category    = Transaction::BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
@@ -401,5 +445,17 @@ class DataProcessor::RetrievedData
 
   def get_bank_account_of(account)
     @user.bank_accounts.where('api_id = ? OR (name = ? AND number = ?)', account['id'], account['name'], account['number']).first
+  end
+
+  def webhook_notification(json_content)
+    log_document = {
+      name: "RetrievedDataWebhook",
+      error_group: "[Retrieved Data Webhook] : Data for - #{@type_synced}",
+      erreur_type: "Data for - #{@type_synced}",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: { json_content: json_content.inspect, type_synced: @type_synced }
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
   end
 end

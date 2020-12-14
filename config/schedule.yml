@@ -60,9 +60,9 @@ DataProcessor::OperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
-DataProcessor::RetrievedDataWorker:
-  queue: high
-  cron: '*/2 * * * * *'
+# DataProcessor::RetrievedDataWorker:
+#   queue: high
+#   cron: '*/2 * * * * *'
 
 DataProcessor::McfWorker:
   queue: default

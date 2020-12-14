@@ -10,6 +10,7 @@ class Retriever < ApplicationRecord
   belongs_to :connector, optional: true
   has_many   :temp_documents
   has_many   :bank_accounts
+  has_many   :webhook_contents, class_name: 'Archive::WebhookContent'
 
   serialize :capabilities
 

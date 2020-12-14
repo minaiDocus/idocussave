@@ -1,0 +1,17 @@
+{
+  "connector_uuid": "338178e6-3d01-564f-9a7b-52ca442459bf",
+  "id_user": 1,
+  "created": "2020-01-01 12:35:41",
+  "id_provider": 59,
+  "error_message": null,
+  "last_push": null,
+  "last_update": "2020-02-18 17:57:51",
+  "state": null,
+  "expire": null,
+  "error": null,
+  "id_bank": 59,
+  "active": true,
+  "next_try": "2020-02-19 17:58:53",
+  "id_connector": 76,
+  "id": 76
+}

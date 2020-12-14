@@ -964,6 +964,112 @@ describe DataProcessor::RetrievedData do
     end
   end
 
+  context 'Budgea webhook', :budgea_webhook do
+    before(:each) do
+      DatabaseCleaner.start
+      @organization_webhook = FactoryBot.create :organization, code: 'ICO'
+      @user_webhook = FactoryBot.create(:user, code: 'ICO%0002', organization: @organization_webhook)
+      @user_webhook.create_options
+
+      @retriever_webhook = Retriever.new
+      @retriever_webhook.user           = @user_webhook
+      @retriever_webhook.budgea_id      = 76
+      @retriever_webhook.budgea_connector_id = 59
+      @retriever_webhook.name           = 'Connecteur de test'
+      @retriever_webhook.service_name   = 'Connecteur de test'          
+      @retriever_webhook.state          = 'ready'
+      @retriever_webhook.budgea_state   = 'successful'
+      @retriever_webhook.capabilities   = 'bank'
+      @retriever_webhook.save
+
+      @budgea_account = BudgeaAccount.new
+      @budgea_account.user = @user_webhook
+      @budgea_account.identifier = 1
+      @budgea_account.access_token = 'Xhhdghsidhgius'
+      @budgea_account.save
+    end
+
+    after(:each) do
+      DatabaseCleaner.clean
+    end
+    
+    it 'process user_synced callback', :user_synced do      
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'user_synced.json')))
+
+      retriever = Retriever.where(budgea_id: json_content["connections"][0]['id']).first
+
+      DataProcessor::RetrievedData.new(json_content, "USER_SYNCED", retriever.user).execute
+
+      archive_webhook = Archive::WebhookContent.last
+      
+      expect(archive_webhook.synced_type).to eq "USER_SYNCED"
+      expect(@user_webhook.operations.count).to eq 1
+      expect(@user_webhook.operations.first.amount).to eq -0.83795e3
+      expect(@user_webhook.operations.first.label).to eq 'Virement Internet'
+    end
+
+    it 'process user_deleted callback', :user_deleted  do
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'user_deleted.json')))
+
+      budgea_account_before = BudgeaAccount.where(identifier: json_content["id"]).first    
+
+      DataProcessor::RetrievedData.new(json_content, "USER_DELETED", budgea_account_before.user).execute
+
+      archive_webhook       = Archive::WebhookContent.last
+      budgea_account_after  = BudgeaAccount.where(identifier: json_content["id"]).first
+
+      expect(archive_webhook.synced_type).to eq "USER_DELETED"
+      expect(@user_webhook.retrievers.last.state).to eq "destroying"
+      expect(archive_webhook.retriever).to eq nil 
+      expect(budgea_account_after).to eq nil 
+    end
+
+    it 'process connection_synced callback', :connection_synced  do
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'connection_synced.json')))
+
+      DataProcessor::RetrievedData.new(json_content, "CONNECTION_SYNCED", @user_webhook).execute
+
+      archive_webhook = Archive::WebhookContent.last
+
+      expect(archive_webhook.synced_type).to eq "CONNECTION_SYNCED"
+      expect(@user_webhook.operations.count).to eq 1
+      expect(@user_webhook.operations.first.amount).to eq -0.83795e3
+      expect(@user_webhook.operations.first.label).to eq 'DEBIT MENSUEL CARTE'
+    end
+
+    it 'process connection_deleted callback', :connection_deleted  do
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'connection_deleted.json')))
+
+      DataProcessor::RetrievedData.new(json_content, "CONNECTION_DELETED", @user_webhook).execute      
+      
+      archive_webhook = Archive::WebhookContent.last
+
+      expect(archive_webhook.synced_type).to eq "CONNECTION_DELETED"
+      expect(@retriever_webhook.reload.state).to eq "destroying"
+    end
+
+    it 'process accounts_fetched callback', :accounts_fetched  do
+      journal = FactoryBot.create :account_book_type, user_id: @user_webhook.id
+      allow_any_instance_of(Retriever).to receive(:resume_me).and_return(true)
+
+      @retriever_webhook.capabilities  = 'document'
+      @retriever_webhook.journal       = journal
+      @retriever_webhook.save
+
+      json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'accounts_fetched.json')))
+
+      VCR.use_cassette('budgea/get_document') do
+        DataProcessor::RetrievedData.new(json_content, "ACCOUNTS_FETCHED", @user_webhook).execute
+      end
+
+      archive_webhook = Archive::WebhookContent.last
+
+      expect(archive_webhook.synced_type).to eq "ACCOUNTS_FETCHED"
+      expect(@retriever_webhook.temp_documents.count).to eq 1
+      expect(@retriever_webhook.temp_documents.last.retriever_name).to eq @retriever_webhook.name
+    end
+  end
+
   # context 'Budgea transaction fetcher', :budgea_transaction_fetcher do
   #   before(:each) do
   #     organization = create :organization, code: 'IDOC'

@@ -91,6 +91,12 @@ Rails.application.routes.draw do
   post 'retriever/get_retriever_infos', controller: 'retrievers', action: 'get_retriever_infos'
   post 'retriever/update_budgea_error_message', controller: 'retrievers', action: 'update_budgea_error_message'
 
+  post 'retriever/user_synced', controller: 'retrievers', action: 'user_synced'
+  post 'retriever/user_deleted', controller: 'retrievers', action: 'user_deleted'
+  post 'retriever/connection_synced', controller: 'retrievers', action: 'connection_synced'
+  post 'retriever/connection_deleted', controller: 'retrievers', action: 'connection_deleted'
+  post 'retriever/accounts_fetched', controller: 'retrievers', action: 'accounts_fetched'
+
   get '/docs/download', controller: 'account/docs', action: 'download'
 
   post 'my_company_files/upload', controller: :my_company_files, action: 'upload'
