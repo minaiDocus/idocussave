@@ -21,6 +21,9 @@
           = f.input :email, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
           - unless @organization.specific_mission
             = f.input :is_pre_assignement_displayed, collection: [[t('yes_value'), true], [t('no_value'), false]], as: :radio_buttons, required: true
+            = f.simple_fields_for :options do |o|
+              = o.hidden_field :id
+              = o.input :is_taxable, collection: [['Oui', true], ['Non', false]], as: :radio_buttons, hint: "Non (aucune TVA ne sera reportée en pré-saisie)."
   .card-footer
     .form-actions.margin0bottom
       - if params[:action].in?(%w(new create))

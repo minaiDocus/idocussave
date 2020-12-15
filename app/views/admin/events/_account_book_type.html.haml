@@ -8,7 +8,7 @@
     - journal_ordered_attributes.each do |k|
       - if @event.target_attributes.include?(k)
         - v = @event.target_attributes[k]
-        - raw_vat_accounts = JSON.parse(v) if k == 'vat_accounts'
+        - raw_vat_accounts = JSON.parse(v) if k == 'vat_accounts' && !v.nil? && !v.is_a?(Array) && !v.is_a?(Hash)
         - content_for :vat_accounts do
           - if raw_vat_accounts.present?
             - raw_vat_accounts.each do |rate, vat_account|

@@ -120,13 +120,13 @@ class AccountBookType < ApplicationRecord
 
 
   def get_vat_accounts_of(rate)
-    JSON.parse(vat_accounts)[rate.to_s]
+    JSON.parse(vat_accounts)[rate.to_s] if !vat_accounts.nil?
   end
 
 
   def get_vat_accounts
     vat_accounts_content = []
-    raw_vat_accounts     = JSON.parse(vat_accounts)
+    raw_vat_accounts     = JSON.parse(vat_accounts) if !vat_accounts.nil?
     raw_vat_accounts.each do |rate, vat_account|
       vat_accounts_content << vat_account if vat_account.present?
     end
@@ -220,7 +220,7 @@ class AccountBookType < ApplicationRecord
   end
 
   def default_vat_accounts
-    if is_pre_assignment_processable? && JSON.parse(vat_accounts)['0'].blank?
+    if is_pre_assignment_processable? && !vat_accounts.nil? && JSON.parse(vat_accounts)['0'].blank?
       return errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') if user && user.try(:options).try(:is_taxable)
       errors.add(:vat_accounts, 'Compte de TVA par défaut ne peut pas être vide') unless user  #require defaults vat_accounts on shared journals if pre_assignement_processable
     end

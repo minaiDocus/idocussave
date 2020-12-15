@@ -137,18 +137,21 @@ show_vat_account_field = ->
   add_default_vat_account(445660)
 
   vat_accounts = $('input[type=hidden]#account-book-type-vat-accounts-hidden').val()
-  if !(vat_accounts == '' || vat_accounts == null || vat_accounts == 'undefined')
-    vat_accounts = JSON.parse(vat_accounts)
-    for rate, vat_account of vat_accounts
-      if /Compte de TVA par défaut/.test(rate) || rate == '0'
-        $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
-        $('input[type="text"]#account_book_type_default_vat_accounts').change()
+  if !(vat_accounts == '' || vat_accounts == null || vat_accounts == 'undefined' || vat_accounts == undefined)
+    try
+      vat_accounts = JSON.parse(vat_accounts)
+      for rate, vat_account of vat_accounts
+        if /Compte de TVA par défaut/.test(rate) || rate == '0'
+          $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
+          $('input[type="text"]#account_book_type_default_vat_accounts').change()
 
-        if $('.account_book_type_vat_accounts.error').length > 0
-          $('input[type="text"]#account_book_type_default_vat_accounts').css("border", "1px solid #b94a48")
-          $('input[type="text"]#account_book_type_default_vat_accounts').val("")
-      if !(rate == '' || rate == 'undefined' || rate == null || vat_account == '' || vat_account == 'undefined' || vat_account == null || /Compte de TVA par défaut/.test(rate) || rate == '0')
-        add_vat_account_field(rate, vat_account)
+          if $('.account_book_type_vat_accounts.error').length > 0
+            $('input[type="text"]#account_book_type_default_vat_accounts').css("border", "1px solid #b94a48")
+            $('input[type="text"]#account_book_type_default_vat_accounts').val("")
+        if !(rate == '' || rate == 'undefined' || rate == null || rate == undefined || vat_account == '' || vat_account == 'undefined' || vat_account == null || vat_account == undefined || /Compte de TVA par défaut/.test(rate) || rate == '0')
+          add_vat_account_field(rate, vat_account)
+    catch e
+      return false
 
   remove_vat_account_field()
 
@@ -168,7 +171,7 @@ window.on_submit_form = (form)->
     if label == 'Compte de TVA par défaut'
       label = '0'
 
-    if !(/undefined/.test(field) || /undefined/.test(label) || label == null || label == '' || field == null || field == '')
+    if !(/undefined/.test(field) || /undefined/.test(label) || label == null || label == undefined || label == '' || field == null || field == '' || field == undefined)
       vat_accounts[label] = field
   vat_accounts = JSON.stringify(vat_accounts)
   $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
