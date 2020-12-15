@@ -144,6 +144,10 @@
                           %br
                       - else
                         %i{ style: 'color:gray' } Aucun
+                  - unless @organization.specific_mission
+                    %tr
+                      %th= t('activerecord.models.user_options.attributes.is_taxable')
+                      %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
                   %tr
                     %th Information d'envoi de document par mail
                     %td
