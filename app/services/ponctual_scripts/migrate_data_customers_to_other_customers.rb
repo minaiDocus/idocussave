@@ -10,8 +10,8 @@ class PonctualScripts::MigrateDataCustomersToOtherCustomers < PonctualScripts::P
   private
 
   def execute
-    user_id_before = get_user_id 'EG%PAULGRESHAM'
-    user_id_after  = get_user_id 'EG%GRESHAM'
+    user_id_before = get_user_id 'ACC%ADAPTO'
+    user_id_after  = get_user_id 'ACC%0455'
 
     models.each do |mod|
       if mod.to_s == 'Pack'
@@ -36,8 +36,8 @@ class PonctualScripts::MigrateDataCustomersToOtherCustomers < PonctualScripts::P
   end
 
   def backup
-    user_id_before = get_user_id 'EG%GRESHAM'
-    user_id_after  = get_user_id 'EG%PAULGRESHAM'
+    user_id_before = get_user_id 'ACC%0455'
+    user_id_after  = get_user_id 'ACC%ADAPTO'
 
     models.each do |mod|
       file_path = File.join(ponctual_dir, "#{mod}.csv")

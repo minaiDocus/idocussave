@@ -5,7 +5,7 @@ class CustomUtils
       if code.match(/^AC0162/)
         code.gsub('AC0162', 'MVN%GRHCONSULT')
       elsif code.match(/^MFA[%]ADAPTO/)
-        code.gsub('MFA%ADAPTO', 'ACC%ADAPTO')
+        code.gsub('MFA%ADAPTO', 'ACC%0455')
       else
         code
       end
