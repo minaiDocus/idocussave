@@ -65,7 +65,8 @@ module IbizaLib
               xml.importDate exercise.end_date
               xml.wsImportEntry do
                 preseizures.each do |preseizure|
-                  if !force && (preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaLib::PreseizureFinder.is_delivered?(preseizure))
+                  date = preseizure.computed_date exercise
+                  if !force && (preseizure.pre_assignment_deliveries.sent.size > 0 || IbizaLib::PreseizureFinder.is_delivered?(preseizure, date))
                     preseizure.delivered_to('ibiza')
                     preseizure.set_delivery_message_for('ibiza', 'already sent')
                     preseizure.save
@@ -76,7 +77,7 @@ module IbizaLib
                   preseizure.accounts.each do |account|
                     xml.importEntry do
                       xml.journalRef preseizure.journal_name
-                      xml.date preseizure.computed_date exercise
+                      xml.date date
 
                       if preseizure.piece
                         case voucher_ref_target

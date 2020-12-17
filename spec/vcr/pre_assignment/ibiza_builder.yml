@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=voucherRef='12345'%20and%20number='601109'%20and%20debit='1213.48'
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=voucherRef='12345'%20and%20number='601109'%20and%20debit='1213.48'%20and%20date='2018-12-21'
     body:
       encoding: UTF-8
       string: ''
@@ -50,7 +50,7 @@ http_interactions:
   recorded_at: Tue, 18 Dec 2018 21:00:00 GMT
 - request:
     method: get
-    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=voucherRef='12345'%20and%20number='601109'%20and%20debit='1213.48'
+    uri: https://beta.irf-cloud.com/IRFService/services/IRFService.svc/company/%7B595450CA-6F48-4E88-91F0-C225A95F5F16%7D/grandlivregeneral/q=voucherRef='12345'%20and%20number='601109'%20and%20debit='1213.48'%20and%20date='2018-12-21'
     body:
       encoding: UTF-8
       string: ''

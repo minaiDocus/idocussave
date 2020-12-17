@@ -3,19 +3,20 @@ module IbizaLib
   class PreseizureFinder
     attr_accessor :user, :ibiza
 
-    def initialize(preseizures)
+    def initialize(preseizures, date)
       @preseizures = Array(preseizures)
       @user        = @preseizures.first.user
       @ibiza       = @user.organization.try(:ibiza)
+      @date        = date
     end
 
     class << self
-      def not_delivered(preseizures)
-        new(preseizures).not_delivered
+      def not_delivered(preseizures, date)
+        new(preseizures, date).not_delivered
       end
 
-      def is_delivered?(preseizures)
-        not_delivered(preseizures).empty?
+      def is_delivered?(preseizures, date)
+        not_delivered(preseizures, date).empty?
       end
     end
 
@@ -62,9 +63,9 @@ module IbizaLib
       voucher_ref_target = ibiza.try(:voucher_ref_target).presence || 'piece_number'
       case voucher_ref_target
         when 'piece_name'
-          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_A}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}'")
+          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_A}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
         else
-          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_B}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}'")
+          client.company(user.ibiza_id).grandlivregeneral?("q=#{search_query_B}='#{search_term.to_s.gsub(/[\[\]()=&!]/, '')}' and number='#{third_party.to_s.gsub(/[\[\]()=&!]/, '')}' and #{entry_type}='#{amount}' and date='#{@date}'")
       end
 
       if client.response.success?
