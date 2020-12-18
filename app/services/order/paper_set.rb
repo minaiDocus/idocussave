@@ -24,7 +24,7 @@ class Order::PaperSet
 
       auto_ajust_number_of_journals_authorized
 
-      UpdatePeriod.new(@period).execute
+      Billing::UpdatePeriod.new(@period).execute
 
       true
     else
