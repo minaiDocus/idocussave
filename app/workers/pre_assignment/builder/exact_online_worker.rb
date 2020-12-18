@@ -13,7 +13,7 @@ class PreAssignment::Builder::ExactOnlineWorker
 
   class Launcher
     def self.process(delivery_id)
-      UniqueJobs.for "PreAssignmentBuilderExactOnline-#{delivery.id}" do
+      UniqueJobs.for "PreAssignmentBuilderExactOnline-#{delivery_id}" do
         delivery = PreAssignmentDelivery.find(delivery_id)
         PreAssignment::Builder::ExactOnline.new(delivery).run if delivery.pending?
       end
