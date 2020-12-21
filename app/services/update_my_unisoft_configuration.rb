@@ -8,7 +8,13 @@ class UpdateMyUnisoftConfiguration
     @params = params
 
     unless @customer
-      @mu       = @organization.my_unisoft.presence || Software::MyUnisoft.new
+      @mu = @organization.my_unisoft.presence || Software::MyUnisoft.new
+
+      if !params[:is_used] && @mu.present?
+        @mu.destroy
+        return true
+      end
+
       @mu.owner = @organization
 
       save
