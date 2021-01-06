@@ -3,7 +3,7 @@ class Api::V2::OperationsController < ActionController::Base
   skip_before_action :verify_authenticity_token
 
   def create
-    result = Transaction::CreateOperation.perform(operation_params.to_h["_json"], 'capidocus')
+    result = Transaction::CreateOperation.perform(operation_params.to_h["_json"])
 
     render json: result, status: :ok
   end

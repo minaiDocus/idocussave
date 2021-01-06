@@ -4,12 +4,14 @@ class Transaction::CreateOperation
     @bank_account = BankAccount.find(@operation.bank_account_id)
   end
 
-  def self.perform(operations, api_name)
+  def self.perform(operations)
     result = { created_operation: 0, rejected_operation: 0 }
 
     operations.each do |o|
       operation = Operation.new(o)
-      operation.api_name = api_name
+      operation.api_name ||= 'capidocus'
+
+      @api_name = operation.api_name
 
       if new(operation).perform.persisted?
         result[:created_operation] += 1
@@ -18,7 +20,7 @@ class Transaction::CreateOperation
       end
     end
 
-    if api_name == 'capidocus' && operations[0]['api_id']
+    if @api_name == 'capidocus' && operations[0]['api_id']
       piece = Pack::Piece.find_by_name(operations[0]['api_id'].gsub("_", ' '))
 
       if piece

@@ -494,8 +494,14 @@ Rails.application.routes.draw do
 
       resources :pieces,            only: %w(update)
       resources :operations,        only: %w(create)
-      resources :bank_accounts,     only: %w(index)
       resources :temp_documents,    only: %w(create)
+
+      resources :bank_accounts,     only: %w(index) do
+        member do
+          get :last_operation
+        end
+      end
+
     end
 
     namespace :v1 do
