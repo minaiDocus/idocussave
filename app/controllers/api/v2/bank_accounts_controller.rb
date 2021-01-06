@@ -8,6 +8,12 @@ class Api::V2::BankAccountsController < ActionController::Base
      render json: serializer.new(bank_accounts)
   end
 
+  def last_operation
+    bank_account = BankAccount.find(params[:id])
+
+    render json: OperationSerializer.new(bank_account.operations.order(date: :desc).first), status: 200
+  end
+
   protected
 
   def authenticate
