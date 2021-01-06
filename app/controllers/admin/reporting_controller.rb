@@ -15,7 +15,7 @@ class Admin::ReportingController < Admin::AdminController
     respond_to do |format|
       format.html
       format.xls do
-        Timeout.timeout 300 do
+        Timeout.timeout 600 do
           if params[:simplified] == '1'
             filename = "reporting_simplifié_iDocus_#{@year}.xls"
             send_data Report::GlobalToXls.new(@year).execute, type: 'application/vnd.ms-excel', filename: filename
