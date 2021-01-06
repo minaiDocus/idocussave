@@ -11,7 +11,7 @@ class McfDocument < ApplicationRecord
   scope :processed_but_not_moved,         -> { where("state = 'processed' AND is_moved = false") }
   scope :to_process,                      -> { where(state: 'ready') }
   scope :not_delivered_and_not_notified,  -> { where("state = 'not_delivered' AND is_notified = false") }
-  scope :not_processable,                 -> { where("state = 'not_processable' AND is_generated = true") }
+  scope :not_processable,                 -> { where("state = 'not_processable'") }
   scope :not_processable_and_not_notified,-> { where("state = 'not_processable' AND is_notified = false") }
 
   before_destroy do |document|
@@ -115,7 +115,7 @@ class McfDocument < ApplicationRecord
 
   def reset
     self.state = 'ready'
-    self.is_generated = false
+    self.is_generated = true
     self.error_message = nil
     self.save
   end
