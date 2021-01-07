@@ -80,6 +80,13 @@ jQuery ->
 
     request.send()
 
+    handle_error = (e) ->
+      $('#reporting #show-export-xls-link .show-notify-content').hide('fade', 100)
+      $('#reporting .download-export_xls').show()
+      $('#reporting #show-export-xls-link').append('<span class="alert alert-danger show-content">Erreur de génération du fichier (<strong>Request too long</strong>), Veuillez réessayer ultérieuremnet svp<span/>')
+
+    request.onerror = (e) -> handle_error(e)
+
     request.onload = (e) ->
       if @status == 200
         blob = @response
@@ -98,6 +105,8 @@ jQuery ->
           $('#reporting #show-export-xls-link').append download_link
           download_link.click()
           $('#reporting #show-export-xls-link').innerHTML = ''
+      else
+        handle_error(e)
 
     #request.send()
 
