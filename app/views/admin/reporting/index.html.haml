@@ -23,8 +23,11 @@
                 = @year
                 \-
                 = link_to (@year + 1), "/admin/reporting/#{(@year + 1)}"
-              - t('date.month_names').compact.each do |month_name|
-                %th= month_name.capitalize
+              - t('date.month_names').compact.each.with_index(1) do |month_name, index|
+                %th
+                  %span.float-left
+                    = month_name.capitalize
+                  = link_to image_tag('application/icon-xls.png', alt: "Export XLS #{month_name.capitalize}", style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?month=#{'%02d' % index}", title: "Export XLS #{month_name.capitalize}", class: 'float-right'
           = render partial: 'reporting_table', locals: { collection: @organizations }
 
   #showInvoice.modal.hide.fade
