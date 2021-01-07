@@ -7,7 +7,7 @@ class Admin::ReportingController < Admin::AdminController
             rescue StandardError
               Time.now.year
             end
-    date = Date.parse("#{@year}-01-01")
+    date = params[:month].present? ? Date.parse("#{@year}-#{'%02d' % Integer(params[:month].to_i)}-01") : Date.parse("#{@year}-01-01")
     @organizations = Organization.billed_for_year(@year).order(name: :asc)
 
     @total = 12.times.map { |e| [0,0,0] }
@@ -28,12 +28,14 @@ class Admin::ReportingController < Admin::AdminController
             else
               organization_ids = @organizations.pluck(:id)
               customer_ids = @organizations.map { |o| o.customers.pluck(:id) }.flatten
-              filename = "reporting_iDocus_#{@year}.xls"
+              filename = params[:month].present? ? "reporting_iDocus_#{Date::MONTHNAMES[params[:month].to_i].downcase}_#{@year}.xls" : "reporting_iDocus_#{@year}.xls"
               with_organization_info = true
             end
 
-            periods = Period.includes(:billings).where('user_id IN (?) OR organization_id IN (?)', customer_ids, organization_ids)
-                            .where('start_date >= ? AND end_date <= ?', date, date.end_of_year)
+            end_date = params[:month].present? ? date.end_of_month : date.end_of_year
+
+            periods  = Period.includes(:billings).where('user_id IN (?) OR organization_id IN (?)', customer_ids, organization_ids)
+                            .where('start_date >= ? AND end_date <= ?', date, end_date)
                             .order(start_date: :asc)
 
             data = Subscription::PeriodsToXls.new(periods, with_organization_info).execute
