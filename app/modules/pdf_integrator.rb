@@ -29,6 +29,7 @@ class PdfIntegrator
       DocumentTools.to_pdf(@file.path, @file_path)
     end
 
+    @file_path = Rails.root.join('spec/support/files/corrupted.pdf') unless File.exist?(@file_path) #Set a corrpted file if @file_path had not been generated
     temp_file = File.open(@file_path, 'r')
   end
 
