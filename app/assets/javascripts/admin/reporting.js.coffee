@@ -14,11 +14,11 @@ jQuery ->
         total_1 = $(val).find('input[type=hidden].total-span-1').val()
         total_2 = $(val).find('input[type=hidden].total-span-2').val()
 
-        if !(total_0 == 'undefined' || total_0 == undefined || total_0 == '' || total_0 == null) && parseInt(total_0) >= 0
-          footer_table_data[0][index] += parseInt(total_0)
-        if !(total_1 == 'undefined' || total_1 == undefined || total_1 == '' || total_1 == null) && parseInt(total_1) >= 0
-          footer_table_data[1][index] += parseInt(total_1)
-        if !(total_2 == 'undefined' || total_2 == undefined || total_2 == '' || total_2 == null) && parseInt(total_2) >= 0
+        if !(total_0 == 'undefined' || total_0 == undefined || total_0 == '' || total_0 == null)
+          footer_table_data[0][index] += parseFloat(total_0)
+        if !(total_1 == 'undefined' || total_1 == undefined || total_1 == '' || total_1 == null)
+          footer_table_data[1][index] += parseFloat(total_1)
+        if !(total_2 == 'undefined' || total_2 == undefined || total_2 == '' || total_2 == null)
           footer_table_data[2][index] += parseInt(total_2)
     
     $.ajax(
