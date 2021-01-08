@@ -28,7 +28,7 @@ class Admin::ReportingController < Admin::AdminController
             else
               organization_ids = @organizations.pluck(:id)
               customer_ids = @organizations.map { |o| o.customers.pluck(:id) }.flatten
-              filename = params[:month].present? ? "reporting_iDocus_#{Date::MONTHNAMES[params[:month].to_i].downcase}_#{@year}.xls" : "reporting_iDocus_#{@year}.xls"
+              filename = params[:month].present? ? "reporting_iDocus_#{'%02d' % params[:month].to_i}_#{@year}.xls" : "reporting_iDocus_#{@year}.xls"
               with_organization_info = true
             end
 

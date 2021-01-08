@@ -27,9 +27,10 @@
                 %th
                   %span.float-left
                     = month_name.capitalize
-                  = link_to image_tag('application/icon-xls.png', alt: "Export XLS #{month_name.capitalize}", style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?month=#{'%02d' % index}", title: "Export XLS #{month_name.capitalize}", class: 'float-right'
+                  = link_to image_tag('application/icon-xls.png', alt: "Export XLS #{month_name.capitalize}", style: 'position:relative;top:-2px;'), "#", title: "Export XLS #{month_name.capitalize}", class: 'float-right monthly-export', data: { hrf: "/admin/reporting/#{@year}.xls?month=#{'%02d' % index}", month: "#{'%02d' % index}", year: @year }
           = render partial: 'reporting_table', locals: { collection: @organizations }
-
+  #loadingPage
+    = image_tag('application/spinner_loading.gif', alt: 'logo', class: 'logo')
   #showInvoice.modal.hide.fade
     .modal-dialog
       .modal-content

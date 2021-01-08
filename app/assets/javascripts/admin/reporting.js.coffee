@@ -5,6 +5,7 @@ jQuery ->
   elements_count = $('#reporting .organization_list tr.row_organizations').size()
 
   finalize_table_loading = () ->
+    $('#reporting #loadingPage').addClass('hide')
     footer_table_data = [[0,0,0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0,0,0]]
     with_params_year  = $('input[type=hidden].total-span-3').val()
 
@@ -26,7 +27,6 @@ jQuery ->
       data: JSON.stringify({ total: footer_table_data, year: with_params_year })
       url: '/admin/reporting/total_footer',
       contentType: 'application/json',
-      async: false,
       ).success (response) ->
         $("#reporting .organization_list tr#total_footer").html(response)
 
@@ -38,7 +38,6 @@ jQuery ->
       data: { organization_id: organization_id, year: current_year }
       url: '/admin/reporting/row_organization',
       contentType: 'application/json',
-      async: false,
       ).success (response) ->
         $("#reporting .organization_list tr#row-" + organization_id).html(response)
         if(elements_count > 1)
@@ -83,7 +82,6 @@ jQuery ->
     handle_error = (e) ->
       $('#reporting #show-export-xls-link .show-notify-content').hide('fade', 100)
       $('#reporting .download-export_xls').show()
-      $('#reporting #show-export-xls-link').append('<span class="alert alert-danger show-content">Erreur de génération du fichier (<strong>Request too long</strong>), Veuillez réessayer ultérieuremnet svp<span/>')
 
     request.onerror = (e) -> handle_error(e)
 
@@ -107,6 +105,7 @@ jQuery ->
           $('#reporting #show-export-xls-link').innerHTML = ''
       else
         handle_error(e)
+        $('#reporting #show-export-xls-link').append('<span class="alert alert-danger show-content">Erreur de génération du fichier (<strong>Request too long</strong>), Veuillez réessayer ultérieuremnet svp<span/>')
 
     #request.send()
 
@@ -116,3 +115,30 @@ jQuery ->
     $invoiceDialog.find('h3').text($(this).attr('title'))
     $invoiceDialog.find("iframe").attr('src',$(this).attr('href'))
     $invoiceDialog.modal()
+
+  $('a.monthly-export').click (e) ->
+    e.preventDefault()
+    url = $(this).attr('data-hrf')
+    month = $(this).attr('data-month')
+    year = $(this).attr('data-year')
+
+    if url != ''
+      $('#reporting #loadingPage').removeClass('hide')
+      request = new XMLHttpRequest
+      request.open 'GET', url, true
+      request.setRequestHeader 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'
+      request.responseType = 'blob'
+      request.send()
+
+      request.onerror = (e) ->
+        $('#reporting #loadingPage').addClass('hide')
+
+      request.onload = (e) ->
+        $('#reporting #loadingPage').addClass('hide')
+        if @status == 200
+          blob = @response
+          download_link = document.createElement('a')
+          download_link.href = window.URL.createObjectURL(new Blob([ blob ], type: 'application/vnd.ms-excel; charset=utf-8'))
+          download_link.download = "reporting_iDocus_#{month}_#{year}.xls"
+          download_link.click()
+          

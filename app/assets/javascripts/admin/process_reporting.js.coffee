@@ -31,7 +31,6 @@ jQuery ->
       data: { organization_id: organization_id, year: current_year, month: current_month }
       url: '/admin/process_reporting/process_reporting_table',
       contentType: 'application/json',
-      async: false,
       ).success (response) ->
         $("#process_reporting .organization_list tr#row-" + organization_id).html(response)
         if(elements_count > 1)
