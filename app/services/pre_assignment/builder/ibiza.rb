@@ -42,6 +42,8 @@ class PreAssignment::Builder::Ibiza < PreAssignment::Builder::DataService
   def grouped_date
     first_date = @preseizures.map(&:date).compact.sort.first
 
+    return first_date.to_date if @preseizures.first.operation
+
     if first_date && @delivery.grouped_date.year == first_date.year && @delivery.grouped_date.month == first_date.month
       first_date.to_date
     else
