@@ -67,7 +67,7 @@
             /     .form-actions.float-left.margin1left.row
             /       = link_to 'Synchronizer le plan comptable avec Ibiza', ibiza_synchronize_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn btn-secondary'
         .row
-          .col-md-8
+          .col-md-6
             .box.bg-light.height_groups.groups_1
               .float-left.margin1bottom
                 %h3 Fournisseurs
@@ -91,9 +91,9 @@
                     %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
                     %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
                     %th= t('activerecord.models.accounting_plan_item.attributes.code')
-                    %th= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
-                    %th= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
-                    %th= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
+                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
+                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
+                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
                 %tbody
                   - @accounting_plan.providers.each do |provider|
                     %tr
@@ -101,10 +101,10 @@
                       %td= provider.third_party_account
                       %td= provider.conterpart_account
                       %td= provider.code
-                      %td= provider.vat_autoliquidation ? icon_ok : icon_not_ok
-                      %td= provider.vat_autoliquidation_debit_account
-                      %td= provider.vat_autoliquidation_credit_account
-          .col-md-4
+                      %td.hide= provider.vat_autoliquidation ? icon_ok : icon_not_ok
+                      %td.hide= provider.vat_autoliquidation_debit_account
+                      %td.hide= provider.vat_autoliquidation_credit_account
+          .col-md-6
             .box.bg-light.height_groups.groups_1
               .float-left.margin1bottom
                 %h3 Clients
