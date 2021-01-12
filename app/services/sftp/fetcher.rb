@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'net/sftp'
 
-class SFtpFetcher
+class Sftp::Fetcher
   # FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
   FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
 
@@ -12,7 +12,7 @@ class SFtpFetcher
       sftp.login username, password
       sftp.passive = true
 
-      SFtpFetcher::SFtpProcessor.new(sftp, dir).execute
+      Sftp::Fetcher::SFtpProcessor.new(sftp, dir).execute
 
       sftp.chdir dir
 

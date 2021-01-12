@@ -1,4 +1,4 @@
-class VerifySftpSettings
+class Sftp::VerifySettings
   def initialize(sftp, requester=nil)
     @sftp = sftp
     @requester = requester
@@ -8,7 +8,7 @@ class VerifySftpSettings
     sftp = nil
     begin
       LogService.info('debug_sftp', "[VerifySftpSettings][#{runner}] trying to connect to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}`...")
-      sftp = SFTPClient.new(@sftp)
+      sftp = Sftp::Client.new(@sftp)
 
       sftp.dir.entries(@sftp.root_path || '/').map { |e| e.name }
 

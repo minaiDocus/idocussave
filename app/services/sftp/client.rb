@@ -1,4 +1,4 @@
-class SFTPClient
+class Sftp::Client
   def initialize(sftp)
     @sftp = sftp
 

@@ -23,7 +23,7 @@ class Account::Organization::SftpsController < Account::OrganizationController
     result = @sftp.valid?
     is_verified = false
     if result && @sftp.password_changed?
-      result = VerifySftpSettings.new(@sftp, current_user.code).execute
+      result = Sftp::VerifySettings.new(@sftp, current_user.code).execute
       is_verified = true
     end
     if result

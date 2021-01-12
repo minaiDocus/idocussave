@@ -50,7 +50,7 @@ class FileImport::Sftp
   def client
     return @client if @client
 
-    @client = SFTPClient.new(@sftp)
+    @client = Sftp::Client.new(@sftp)
     @client.connect @sftp.domain, @sftp.port
     @client.login @sftp.login, @sftp.password
 

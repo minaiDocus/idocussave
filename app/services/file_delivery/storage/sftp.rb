@@ -13,7 +13,7 @@ class FileDelivery::Storage::Sftp < FileDelivery::Storage::Main
 
   def init_client
     code = @storage.organization.try(:code) || @storage.user.code
-    sftp = SFTPClient.new(@storage)
+    sftp = Sftp::Client.new(@storage)
     sftp.connect @storage.domain, @storage.port
     sftp.login @storage.login, @storage.password
     sftp.passive = @storage.is_passive
