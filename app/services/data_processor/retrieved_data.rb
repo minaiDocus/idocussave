@@ -368,7 +368,7 @@ class DataProcessor::RetrievedData
 
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
-      if lock_operation?(bank_account, operation)
+      if operation.to_lock?
         operation.is_locked = true
       else
         operation.is_locked = !(bank_account.is_used && bank_account.configured?)
@@ -382,19 +382,6 @@ class DataProcessor::RetrievedData
     else
       transaction['value']
     end
-  end
-
-  def lock_operation?(bank_account, operation)
-    (bank_account.start_date.present? && operation.date < bank_account.start_date) ||
-      operation.date < Date.parse('2017-01-01') ||
-      operation.is_coming ||
-      is_operation_old?(bank_account, operation)
-  end
-
-  def is_operation_old?(bank_account, operation)
-    bank_account.lock_old_operation &&
-      bank_account.created_at < 1.month.ago &&
-      operation.date < bank_account.permitted_late_days.days.ago.to_date
   end
 
   def client

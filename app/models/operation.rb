@@ -73,6 +73,22 @@ class Operation < ApplicationRecord
     operations + forced_operations
   end
 
+  def old?
+    bank_account = self.bank_account
+
+    bank_account.lock_old_operation &&
+    bank_account.created_at < 1.month.ago &&
+    self.date < bank_account.permitted_late_days.days.ago.to_date
+  end
+
+  def to_lock?
+    bank_account = self.bank_account
+
+    (bank_account.start_date.present? && self.date < bank_account.start_date) ||
+    self.date < Date.parse('2017-01-01') ||
+    self.is_coming || old?
+  end
+
   def need_conversion?
     currency['id'] != bank_account.currency
   end

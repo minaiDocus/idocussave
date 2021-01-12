@@ -1,6 +1,6 @@
 class Transaction::CreateOperation
   def initialize(operation)
-    @operation = operation
+    @operation    = operation
     @bank_account = BankAccount.find(@operation.bank_account_id)
   end
 
@@ -13,10 +13,12 @@ class Transaction::CreateOperation
 
       @api_name = operation.api_name
 
-      if new(operation).perform.persisted?
-        result[:created_operation] += 1
-      else
+      new_operation = new(operation).perform
+
+      if new_operation.is_locked
         result[:rejected_operation] += 1
+      else
+        result[:created_operation] += 1
       end
     end
 
@@ -33,26 +35,26 @@ class Transaction::CreateOperation
   end
 
   def perform
-    if check_duplicates
-      append_credit_card_tag if @bank_account.type_name == 'card'
+    set_operation_currency
+    set_operation_administrative_infos
 
-      set_operation_currency
-      set_operation_administrative_infos
+    append_credit_card_tag if @bank_account.type_name == 'card'
 
-      @operation.save
-    else
-      @operation.errors.add(:amount, :invalid, message: 'La transaction semble déjà présente en base')
+    is_duplicate = is_duplicate?
+    if is_duplicate || @operation.to_lock?
+      @operation.is_locked = true
+      @operation.comment = 'Locked for duplication' if is_duplicate
     end
+
+    @operation.save
 
     @operation
   end
 
   private
 
-  def check_duplicates
-    duplicates = @bank_account.operations.where(amount: @operation.amount, date: @operation.date)
-
-    duplicates.count > 0 ? false : true
+  def is_duplicate?
+    @bank_account.operations.where(amount: @operation.amount, date: @operation.date).count > 0
   end
 
   def append_credit_card_tag
