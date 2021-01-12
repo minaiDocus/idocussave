@@ -145,7 +145,7 @@ class RemoteFile < ApplicationRecord
                        invoice_date:   preseizure.date.try(:to_date).try(:to_s).presence)
       end
 
-      CustomizeFileName.new(pack.organization.foc_file_naming_policy).execute(options)
+      CustomUtils.customize_file_name(pack.organization.foc_file_naming_policy, options)
     else
       local_name
     end

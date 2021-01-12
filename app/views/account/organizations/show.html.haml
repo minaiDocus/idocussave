@@ -151,7 +151,7 @@
                         collaborateurs uniquement
                   %tr
                     %th Exemple
-                    %td= CustomizeFileName.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
+                    %td= CustomUtils.customize_file_name(@organization.foc_file_naming_policy, {'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
               - if @user.leader?
                 = link_to t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
             #addresses.tab-pane.fade{ class: ('active show' if params[:tab] == 'addresses') }

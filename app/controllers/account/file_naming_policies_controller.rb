@@ -21,7 +21,7 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
   def preview
     @file_naming_policy.assign_attributes(file_naming_policy_params)
     if @file_naming_policy.valid?
-      file_name = CustomizeFileName.new(@file_naming_policy).execute(user_code: 'TS%00001',
+      file_name = CustomUtils.customize_file_name(@file_naming_policy, { user_code: 'TS%00001',
                                                                          user_company: 'iDocus',
                                                                          journal: 'AC',
                                                                          period: '201501',
@@ -29,7 +29,7 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
                                                                          third_party: 'Google',
                                                                          invoice_number: '001002',
                                                                          invoice_date: '2015-01-02',
-                                                                         extension: '.pdf')
+                                                                         extension: '.pdf' })
     else
       file_name = 'invalide'
     end
