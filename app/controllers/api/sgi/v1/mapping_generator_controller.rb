@@ -3,7 +3,7 @@
 class Api::Sgi::V1::MappingGeneratorController < SgiApiController
   # GET /api/sgi/v1/mapping_generator/get_json
   def get_json
-    render json: { success: true, data: json_content.to_json }, status: 200
+    render json: { success: true, data: json_content }, status: 200
   end
 
   private

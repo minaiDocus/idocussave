@@ -77,10 +77,10 @@ describe Api::Sgi::V1::MappingGeneratorController, :type => :controller do
         }
       }
 
-      expect(@accounting_plan.create_json_format.to_json).to eq(json_content.to_json)
+      expect(@accounting_plan.create_json_format).to eq(json_content)
 
       get :get_json, format: :json, params: { :user_code => @user.code }
-      expect(JSON.parse(response.body)['data']).to eq(json_content.to_json)
+      expect(JSON.parse(response.body)['data']).to eq(json_content)
     end
   end
 end
