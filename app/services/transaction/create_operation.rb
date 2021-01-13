@@ -9,9 +9,7 @@ class Transaction::CreateOperation
 
     operations.each do |o|
       operation = Operation.new(o)
-      operation.api_name ||= 'capidocus'
-
-      @api_name = operation.api_name
+      operation.api_name = 'capidocus'
 
       new_operation = new(operation).perform
 
@@ -20,14 +18,14 @@ class Transaction::CreateOperation
       else
         result[:created_operation] += 1
       end
-    end
 
-    if @api_name == 'capidocus' && operations[0]['api_id']
-      piece = Pack::Piece.find_by_name(operations[0]['api_id'].gsub("_", ' '))
+      if operation.api_name == 'capidocus' && operation.api_id
+        piece = Pack::Piece.find_by_name(operation.api_id.gsub("_", ' '))
 
-      if piece
-        piece.update(is_awaiting_pre_assignment: false)
-        piece.processed_pre_assignment
+        if piece && !piece.pre_assignment_processed?
+          piece.update(is_awaiting_pre_assignment: false)
+          piece.processed_pre_assignment
+        end
       end
     end
 
