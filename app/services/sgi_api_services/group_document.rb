@@ -6,7 +6,7 @@ class SgiApiServices::GroupDocument
 
   def initialize(json_content)
     @errors       = []
-    @json_content = json_content.with_indifferent_access
+    @json_content = json_content
   end
 
 

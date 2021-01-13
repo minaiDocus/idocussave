@@ -28,7 +28,6 @@ class Account::PreAssignmentIgnoredController < Account::AccountController
 
     if !pieces.empty?
       pieces.each(&:force_processing_pre_assignment)
-      AccountingWorkflow::SendPieceToPreAssignment.execute(pieces)
 
       flash[:success] = 'Renvoi en pré-affectation en cours ...'
     else

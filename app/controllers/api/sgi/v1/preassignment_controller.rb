@@ -24,7 +24,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
     if params[:piece_id].present?
       piece = Pack::Piece.find params[:piece_id]
 
-      render json: { success: true, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url) }, status: 200
+      render json: { success: true, url_piece: Domains::BASE_URL + piece.try(:get_access_url) }, status: 200
     else
       render json: { success: false, message: 'Id pièce absent' }, status: 601
     end
@@ -63,11 +63,9 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
 
         ErrorScriptMailer.error_notification(log_document).deliver
     else
-      piece.processing_pre_assignment unless piece.pre_assignment_force_processing?
-
       detected_third_party_id = piece.detected_third_party_id.presence || 6930
 
-      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: 'https://my.idocus.com' + piece.try(:get_access_url), compta_type: @compta_type, detected_third_party_id: detected_third_party_id }
+      @lists_pieces << { id: piece.id, piece_name: piece.name, url_piece: Domains::BASE_URL + piece.try(:get_access_url), compta_type: @compta_type, detected_third_party_id: detected_third_party_id, recycle: piece.pre_assignment_force_processing? }
     end
   end
 end

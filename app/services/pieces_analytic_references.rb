@@ -32,9 +32,7 @@ class PiecesAnalyticReferences
           modified_piece_message = "Modification validée pour une piece"
         end
 
-        pieces_to_pre_assigned = @pieces.select{ |piece| piece.preseizures.empty? && piece.pre_assignment_waiting_analytics? }
-
-        AccountingWorkflow::SendPieceToPreAssignment.execute(pieces_to_pre_assigned) if pieces_to_pre_assigned.any?
+        @pieces.each { |piece| piece.waiting_pre_assignment if piece.preseizures.empty? && piece.pre_assignment_waiting_analytics? }
       end
     else
       not_modified_piece_message = 'Aucune piece modifiable'

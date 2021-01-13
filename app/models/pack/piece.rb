@@ -58,8 +58,8 @@ class Pack::Piece < ApplicationRecord
 
   #WORKARROUND : Get pieces with suplier_recognition state and detected_third_party_id present
   # scope :need_preassignment,   -> { where(pre_assignment_state: 'waiting') }
-  scope :need_preassignment,     -> { where('(pre_assignment_state = "waiting" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0))') }
-  scope :awaiting_preassignment, -> { where('pre_assignment_state = "processing" OR pre_assignment_state = "force_processing"') }
+  scope :need_preassignment,     -> { where('(pre_assignment_state = "waiting" OR pre_assignment_state = "force_processing" OR (pre_assignment_state = "supplier_recognition" && detected_third_party_id > 0))') }
+  scope :awaiting_preassignment, -> { where('pre_assignment_state = "waiting" OR pre_assignment_state = "force_processing"') }
 
   scope :pre_assignment_supplier_recognition, -> { where(pre_assignment_state: ['supplier_recognition']) }
 
@@ -97,7 +97,7 @@ class Pack::Piece < ApplicationRecord
     end
 
     event :waiting do
-      transition [:supplier_recognition, :ready] => :waiting
+      transition [:supplier_recognition, :ready, :waiting_analytics] => :waiting
     end
 
     event :recognize_supplier do
@@ -108,20 +108,16 @@ class Pack::Piece < ApplicationRecord
       transition :ready => :waiting_analytics
     end
 
-    event :processing do
-      transition [:ready, :waiting, :waiting_analytics, :supplier_recognition] => :processing
-    end
-
     event :force_processing do
       transition [:ready, :waiting, :waiting_analytics, :ignored] => :force_processing
     end
 
     event :processed do
-      transition [:processing, :force_processing] => :processed
+      transition [:waiting, :force_processing] => :processed
     end
 
     event :ignored do
-      transition processing: :ignored
+      transition waiting: :ignored
     end
 
     event :confirm_ignorance do
@@ -129,7 +125,7 @@ class Pack::Piece < ApplicationRecord
     end
 
     event :not_processed do
-      transition [:processing, :force_processing] => :not_processed
+      transition [:waiting, :force_processing] => :not_processed
     end
   end
 
