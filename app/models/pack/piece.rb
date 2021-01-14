@@ -407,7 +407,7 @@ class Pack::Piece < ApplicationRecord
   end
 
   def is_awaiting_pre_assignment?
-    self.pre_assignment_processing? || self.pre_assignment_force_processing?
+    self.pre_assignment_waiting? || self.pre_assignment_force_processing?
   end
 
   def is_already_pre_assigned_with?(process='preseizure')
