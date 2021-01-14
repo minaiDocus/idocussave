@@ -263,7 +263,7 @@ class DataProcessor::RetrievedData
       bank_account.name              = account['name']
       bank_account.number            = account['number']
       bank_account.type_name         = account['type']
-      bank_account.original_currency = account['currency']
+      bank_account.original_currency = account['currency'].to_unsafe_h
       bank_account.api_name          = 'budgea'
       is_new                         = !bank_account.persisted?
 

@@ -996,9 +996,11 @@ describe DataProcessor::RetrievedData do
     it 'process user_synced callback', :user_synced do      
       json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'user_synced.json')))
 
+      params = ActionController::Parameters.new(json_content)
+
       retriever = Retriever.where(budgea_id: json_content["connections"][0]['id']).first
 
-      DataProcessor::RetrievedData.new(json_content, "USER_SYNCED", retriever.user).execute
+      DataProcessor::RetrievedData.new(params, "USER_SYNCED", retriever.user).execute
 
       archive_webhook = Archive::WebhookContent.last
       
