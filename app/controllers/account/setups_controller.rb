@@ -74,7 +74,7 @@ class Account::SetupsController < Account::OrganizationController
                  end
       elsif step == 'csv_descriptor'
         result = if @customer.subscription.is_package?('pre_assignment_option')
-                   if @customer.try(:softwares).try(:use_own_csv_descriptor_format)
+                   if @customer.try(:csv_descriptor).try(:use_own_format?)
                      'csv_descriptor'
                    else
                      'use_csv_descriptor'

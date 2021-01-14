@@ -431,7 +431,7 @@
                 %table.table.table-striped.table-condensed
                   %tbody
                     %tr
-                      %th= t('activerecord.models.ibiza.attributes.ibiza_id')
+                      %th= t('activerecord.models.software_ibiza.attributes.ibiza_id')
                       - if @organization.ibiza.try(:configured?)
                         - users = @organization.try(:ibiza).users
                         - if @customer.ibiza.try(:ibiza_id).nil?
@@ -448,14 +448,14 @@
                       - else
                         %td
                     %tr
-                      %th= t('activerecord.models.ibiza.attributes.auto_deliver')
+                      %th= t('activerecord.models.software_ibiza.attributes.auto_deliver')
                       %td= @customer.ibiza.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                     %tr
-                      %th= t('activerecord.models.ibiza.attributes.is_analysis_activated')
+                      %th= t('activerecord.models.software_ibiza.attributes.is_analysis_activated')
                       %td= @customer.ibiza.try(:compta_analysis_activated?) ? t('yes_value') : t('no_value')
                     - if @customer.ibiza.try(:compta_analysis_activated?)
                       %tr
-                        %th= t('activerecord.models.ibiza.attributes.is_analysis_to_validate')
+                        %th= t('activerecord.models.software_ibiza.attributes.is_analysis_to_validate')
                         %td= @customer.ibiza.try(:analysis_to_validate?) ? t('yes_value') : t('no_value')
                 .row
                   .col-md-12
@@ -494,16 +494,16 @@
                           %span.badge.badge-danger Liaison non établie
                           = link_to 'Configurer la liaison', authenticate_account_exact_online_path(customer_id: @customer.id), class: 'btn btn-primary margin1left'
                     %tr
-                      %th= t('activerecord.models.exact_online.attributes.user_name')
+                      %th= t('activerecord.models.software_exact_online.attributes.user_name')
                       %td{colspan: 2}= @customer.exact_online.try(:user_name)
                     %tr
-                      %th= t('activerecord.models.exact_online.attributes.email')
+                      %th= t('activerecord.models.software_exact_online.attributes.email')
                       %td{colspan: 2}= @customer.exact_online.try(:email)
                     %tr
-                      %th= t('activerecord.models.exact_online.attributes.full_name')
+                      %th= t('activerecord.models.software_exact_online.attributes.full_name')
                       %td{colspan: 2}= @customer.exact_online.try(:full_name)
                     %tr
-                      %th= t('activerecord.models.exact_online.attributes.auto_deliver')
+                      %th= t('activerecord.models.software_exact_online.attributes.auto_deliver')
                       %td= @customer.exact_online.try(:auto_deliver?) ? t('yes_value') : t('no_value')
                 .row
                   .col-md-12
@@ -699,7 +699,7 @@
                             = link_to t('actions.edit'), edit_software_account_organization_customer_path(@organization, @customer, software: 'csv_descriptor'), class: 'btn btn-primary float-right'
                     %tr
                       %th
-                        - if @customer.csv_descriptor.try(:use_own_csv_descriptor_format)
+                        - if @customer.csv_descriptor.try(:use_own_format?)
                           Ce dossier utilise son propre format de fichier d'export .csv.
                         - else
                           Ce dossier utilise le format de fichier d'export .csv de l'organisation.
@@ -709,7 +709,7 @@
                       %td
                         - if @user.leader? || @user.manage_customers
                           .alignright
-                            - if @customer.csv_descriptor.try(:use_own_csv_descriptor_format)
+                            - if @customer.csv_descriptor.try(:use_own_format?)
                               - if @organization.csv_descriptor.try(:directive).present?
                                 = link_to "Utiliser le format de l'organisation", deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch, class: 'btn btn-secondary', data: {confirm: "Voulez-vous vraiment utiliser le format défini pour l'organisation?"}
                               = link_to 'Modifier le format propre au dossier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'

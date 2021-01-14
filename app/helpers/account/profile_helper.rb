@@ -2,7 +2,7 @@
 
 module Account::ProfileHelper
   def ibiza_state(state)
-    t('activerecord.models.ibiza.attributes.states.' + (state.presence || 'none'))
+    t('activerecord.models.software_ibiza.attributes.states.' + (state.presence || 'none'))
   end
 
   def ibiza_state_label(state)

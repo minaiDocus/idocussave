@@ -1,6 +1,6 @@
 module Interfaces::Software::IbizaSetting
   def compta_analysis_activated?
-    (owner.is_a?(User) && is_analysis_activated == -1) ? self.organization.compta_analysis_activated? : (is_analysis_activated == 1)
+    (owner.is_a?(User) && is_analysis_activated == -1) ? self.owner.organization.compta_analysis_activated?(self) : (is_analysis_activated == 1)
   end
 
   # def uses_analytics?
@@ -12,7 +12,7 @@ module Interfaces::Software::IbizaSetting
   end
 
   def analysis_to_validate?
-    (owner.is_a?(User) && is_analysis_to_validate == -1) ? self.organization.analysis_to_validate? : (is_analysis_to_validate == 1)
+    (owner.is_a?(User) && is_analysis_to_validate == -1) ? self.owner.organization.analysis_to_validate?(self) : (is_analysis_to_validate == 1)
   end
 
   def auto_update_accounting_plan?

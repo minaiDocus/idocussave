@@ -230,7 +230,19 @@ class User < ApplicationRecord
         software.assign_attributes(attributes[:columns].to_unsafe_hash)
       end
 
-      unless software.is_a?(Software::ExactOnline) && software.is_a?(Software::Ibiza) && software.is_a?(Software::MyUnisoft)
+      counter = 0
+      counter += 1 if software.try(:ibiza).try(:used?)
+      counter += 1 if software.try(:my_unisoft).try(:used?)
+      counter += 1 if software.try(:exact_online).try(:used?)
+
+      if counter <= 1
+        if software.is_a?(Software::Ibiza) # Assign default value to avoid validation exception
+          software.state                            = 'none'
+          software.state_2                          = 'none'
+          software.voucher_ref_target               = 'piece_number'
+          software.is_auto_updating_accounting_plan = true
+        end
+
         software.owner = self
         software.save
         software

@@ -13,7 +13,7 @@
           %span.text-info.fs-origin= @customer
     = simple_form_for @customer, url: account_organization_customer_use_csv_descriptor_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
       .card-body
-        = f.simple_fields_for :softwares do |o|
+        = f.simple_fields_for :csv_descriptor do |o|
           = o.hidden_field :id
           = o.input :use_own_csv_descriptor_format, as: :radio_buttons
       .card-footer

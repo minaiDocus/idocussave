@@ -8,11 +8,18 @@ check_disabled_options = ->
         $(this).after('<input type="hidden" name="'+$(this).attr('name')+'" value="'+$(this).is(':checked')+'">')
   )
 
+# The refresh_softwares(obj) method is unused after new customer update form
+
 refresh_softwares = (obj)->
-  if(obj.attr('id') == 'softwares_is_ibiza_used' && obj.is(':checked'))
-    $('#softwares_is_exact_online_used').removeAttr('checked')
-  else if(obj.attr('id') == 'softwares_is_exact_online_used' && obj.is(':checked'))
-    $('#softwares_is_ibiza_used').removeAttr('checked')
+  if(obj.attr('id') == 'ibiza_is_used' && obj.is(':checked'))
+    $('exact_online_is_used').removeAttr('checked')
+    $('my_unisoft_is_used').removeAttr('checked')
+  else if(obj.attr('id') == 'exact_online_is_used' && obj.is(':checked'))
+    $('#ibiza_is_used').removeAttr('checked')
+    $('my_unisoft_is_used').removeAttr('checked')
+  else if(obj.attr('id') == 'my_unisoft_is_used' && obj.is(':checked'))
+    $('#ibiza_is_used').removeAttr('checked')
+    $('exact_online_is_used').removeAttr('checked')
 
 jQuery ->
   if $('#organization_subscriptions.edit').length > 0

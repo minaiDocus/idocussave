@@ -66,6 +66,6 @@ class Account::CsvDescriptorsController < Account::OrganizationController
   end
 
   def csv_descriptor_params
-    params.require(:csv_descriptor).permit(:directive, :comma_as_number_separator)
+    params.require(:software_csv_descriptor).permit(:directive, :comma_as_number_separator)
   end
 end

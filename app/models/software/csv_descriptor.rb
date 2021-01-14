@@ -24,6 +24,10 @@ class Software::CsvDescriptor < ApplicationRecord
     directives_a
   end
 
+  def use_own_format?
+    use_own_csv_descriptor_format
+  end
+
   def separator
     comma_as_number_separator ? ',' : '.'
   end

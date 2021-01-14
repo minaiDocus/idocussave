@@ -27,33 +27,33 @@
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[piece_name_format][code][is_used]", 1, (@ibiza.piece_name_format['code']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[piece_name_format][code][is_used]", 1, (@ibiza.piece_name_format['code']['is_used'] rescue false)
                       %span.text Code complet
-                  %td= number_field_tag "ibiza[piece_name_format][code][position]", (@ibiza.piece_name_format['code']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[piece_name_format][code][position]", (@ibiza.piece_name_format['code']['position'] rescue 1)
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[piece_name_format][code_wp][is_used]", 1, (@ibiza.piece_name_format['code_wp']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[piece_name_format][code_wp][is_used]", 1, (@ibiza.piece_name_format['code_wp']['is_used'] rescue false)
                       %span.text Code dossier sans code cabinet
-                  %td= number_field_tag "ibiza[piece_name_format][code_wp][position]", (@ibiza.piece_name_format['code_wp']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[piece_name_format][code_wp][position]", (@ibiza.piece_name_format['code_wp']['position'] rescue 1)
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[piece_name_format][journal][is_used]", 1, (@ibiza.piece_name_format['journal']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[piece_name_format][journal][is_used]", 1, (@ibiza.piece_name_format['journal']['is_used'] rescue false)
                       %span.text Journal
-                  %td= number_field_tag "ibiza[piece_name_format][journal][position]", (@ibiza.piece_name_format['journal']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[piece_name_format][journal][position]", (@ibiza.piece_name_format['journal']['position'] rescue 1)
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[piece_name_format][period][is_used]", 1, (@ibiza.piece_name_format['period']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[piece_name_format][period][is_used]", 1, (@ibiza.piece_name_format['period']['is_used'] rescue false)
                       %span.text Période de traitement
                   %td= number_field_tag "ibiza[piece_name_format][period][position]", (@ibiza.piece_name_format['period']['position'] rescue 1)
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[piece_name_format][number][is_used]", 1, (@ibiza.piece_name_format['number']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[piece_name_format][number][is_used]", 1, (@ibiza.piece_name_format['number']['is_used'] rescue false)
                       %span.text Numéro
-                  %td= number_field_tag "ibiza[piece_name_format][number][position]", (@ibiza.piece_name_format['number']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[piece_name_format][number][position]", (@ibiza.piece_name_format['number']['position'] rescue 1)
             = f.input :piece_name_format_sep
         .card.margin1bottom
           .card-header
@@ -69,72 +69,72 @@
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][operation_label][is_used]", 1, true, readonly: true
+                      = check_box_tag "software_ibiza[description][operation_label][is_used]", 1, true, readonly: true
                       %span.text Libellé de l'opération bancaire
-                  %td= number_field_tag "ibiza[description][operation_label][position]", (@ibiza.description['operation_label']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][operation_label][position]", (@ibiza.description['operation_label']['position'] rescue 1)
                   %td Obligatoire pour une opération provenant d'un automate bancaire.
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][date][is_used]", 1, (@ibiza.description['date']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][date][is_used]", 1, (@ibiza.description['date']['is_used'] rescue false)
                       %span.text Date réelle
-                  %td= number_field_tag "ibiza[description][date][position]", (@ibiza.description['date']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][date][position]", (@ibiza.description['date']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][third_party][is_used]", 1, (@ibiza.description['third_party']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][third_party][is_used]", 1, (@ibiza.description['third_party']['is_used'] rescue false)
                       %span.text Tiers
-                  %td= number_field_tag "ibiza[description][third_party][position]", (@ibiza.description['third_party']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][third_party][position]", (@ibiza.description['third_party']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
                       %span.text Montant d'origine
                   %td= number_field_tag "ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][currency][is_used]", 1, (@ibiza.description['currency']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][currency][is_used]", 1, (@ibiza.description['currency']['is_used'] rescue false)
                       %span.text Devise
-                  %td= number_field_tag "ibiza[description][currency][position]", (@ibiza.description['currency']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][currency][position]", (@ibiza.description['currency']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][conversion_rate][is_used]", 1, (@ibiza.description['conversion_rate']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][conversion_rate][is_used]", 1, (@ibiza.description['conversion_rate']['is_used'] rescue false)
                       %span.text Taux de conversion
-                  %td= number_field_tag "ibiza[description][conversion_rate][position]", (@ibiza.description['conversion_rate']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][conversion_rate][position]", (@ibiza.description['conversion_rate']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][observation][is_used]", 1, (@ibiza.description['observation']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][observation][is_used]", 1, (@ibiza.description['observation']['is_used'] rescue false)
                       %span.text Remarque
-                  %td= number_field_tag "ibiza[description][observation][position]", (@ibiza.description['observation']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][observation][position]", (@ibiza.description['observation']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][journal][is_used]", 1, (@ibiza.description['journal']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][journal][is_used]", 1, (@ibiza.description['journal']['is_used'] rescue false)
                       %span.text Journal
-                  %td= number_field_tag "ibiza[description][journal][position]", (@ibiza.description['journal']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][journal][position]", (@ibiza.description['journal']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][piece_name][is_used]", 1, (@ibiza.description['piece_name']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][piece_name][is_used]", 1, (@ibiza.description['piece_name']['is_used'] rescue false)
                       %span.text Nom de pièce (iDocus)
-                  %td= number_field_tag "ibiza[description][piece_name][position]", (@ibiza.description['piece_name']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][piece_name][position]", (@ibiza.description['piece_name']['position'] rescue 1)
                   %td
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
+                      = check_box_tag "software_ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
                       %span.text Numéro de pièce d'origine
-                  %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
                   %td
             = f.input :description_separator
         .card.margin1bottom
@@ -148,7 +148,7 @@
               %tbody
                 %tr
                   %td
-                    = radio_button_tag "ibiza[voucher_ref_target]", 'piece_number', (@ibiza.try(:voucher_ref_target) == 'piece_number' ? true : false), class: "voucher_ref_radio piece_number"
+                    = radio_button_tag "software_ibiza[voucher_ref_target]", 'piece_number', (@ibiza.try(:voucher_ref_target) == 'piece_number' ? true : false), class: "voucher_ref_radio piece_number"
                     %span.text
                       Format n°1 :
                       %strong Ref. pièce =
@@ -158,7 +158,7 @@
                       %i Nom de la pièce (iDocus)
                 %tr
                   %td
-                    = radio_button_tag "ibiza[voucher_ref_target]", 'piece_name', (@ibiza.try(:voucher_ref_target) == 'piece_name' ? true : false), class: "voucher_ref_radio piece_name"
+                    = radio_button_tag "software_ibiza[voucher_ref_target]", 'piece_name', (@ibiza.try(:voucher_ref_target) == 'piece_name' ? true : false), class: "voucher_ref_radio piece_name"
                     %span.text
                       Format n°2 :
                       %strong Ref. pièce =

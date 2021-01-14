@@ -56,20 +56,18 @@ class Account::AccountingPlansController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/customers/:customer_id/accounting_plan/ibiza_auto_update
   def auto_update
-    if params[:software] == "My Unisoft"
-      @customer.my_unisoft.auto_update_accounting_plan = params[:auto_updating_accounting_plan] == 1
-    elsif params[:software] == "iBiza"
-      @customer.softwares.update(is_ibiza_auto_updating_accounting_plan: params[:auto_updating_accounting_plan])
-    end
+    if params[:software].present? && params[:software_table].present?
+      @customer.try(params[:software_table].to_sym).update(is_auto_updating_accounting_plan: auto_update_accounting_plan_active?)
 
-    if @customer.save
-      if @customer.softwares.ibiza_auto_update_accounting_plan?
-        render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est activé" }, status: 200
+      if @customer.save
+        if @customer.try(params[:software_table].to_sym).try(:auto_update_accounting_plan?)
+          render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est activé" }, status: 200
+        else
+          render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est désactivé" }, status: 200
+        end
       else
-        render json: { success: true, message: "La mis à jour automatique du plan comptable chez #{params[:software]} est désactivé" }, status: 200
+        render json: { success: false, message: "Impossible d\'activer/désactiver le mis à jour automatique du plan comptable chez #{params[:software]}" }, status: 200
       end
-    else
-      render json: { success: false, message: "Impossible d\'activer/désactiver le mis à jour automatique du plan comptable chez #{params[:software]}" }, status: 200
     end
   end
 
@@ -238,5 +236,9 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
 
     attributes
+  end
+
+  def auto_update_accounting_plan_active?
+    params[:auto_updating_accounting_plan] == 1
   end
 end

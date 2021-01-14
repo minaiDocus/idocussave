@@ -1,6 +1,7 @@
 module Interfaces::Software::Configuration
   SOFTWARES = ['ibiza', 'exact_online', 'my_unisoft', 'coala', 'quadratus', 'cegid', 'fec_agiris', 'csv_descriptor']
   TABLE_NAME_WITH_SOFTWARES_USING_API = ['software_ibizas', 'software_exact_online', 'software_my_unisofts']
+  SOFTWARES_OBJECTS = [::Software::Ibiza, ::Software::ExactOnline, ::Software::Cegid, ::Software::Coala, ::Software::FecAgiris, ::Software::Quadratus, ::Software::CsvDescriptor, ::Software::MyUnisoft]
 
   def self.softwares
     {

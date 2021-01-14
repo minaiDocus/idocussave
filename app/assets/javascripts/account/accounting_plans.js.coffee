@@ -42,11 +42,14 @@ jQuery ->
     organization_id = element[0]
     customer_id     = element[1]
     software        = element[2]
+    software_table  = 'ibiza'
 
     if $(this).val() == 'true'
       auto_updating_accounting_plan = 1
+    if software == 'My Unisoft'
+      software_table = 'my_unisoft'
 
-    _data = JSON.stringify(auto_updating_accounting_plan: auto_updating_accounting_plan, software: software)
+    _data = JSON.stringify(auto_updating_accounting_plan: auto_updating_accounting_plan, software: software, software_table: software_table)
 
     launch_request('auto_update', _data, customer_id, organization_id)
 

@@ -181,16 +181,36 @@ class Organization < ApplicationRecord
     coala.try(:used?) || quadratus.try(:used?) || cegid.try(:used?) || csv_descriptor.try(:used?) || fec_agiris.try(:used?)
   end
 
-  def auto_deliver?(software)
-    if software.is_a?(Object)
-      software = software.to_s.split('<')[1].split(':0x')[0]
-      software = Interfaces::Software::Configuration.software_object_name[software]
-    end
+  def auto_deliver?(_software)
+    @software = _software
 
     self.try(software.to_sym).auto_deliver == 1
   end
 
   def banking_provider
     default_banking_provider ? default_banking_provider : 'budget_insight'
+  end
+
+  def compta_analysis_activated?(_software)
+    @software = _software
+
+    self.try(software.to_sym).is_analysis_activated == 1
+  end
+
+  def analysis_to_validate?(_software)
+    @software = _software
+
+    self.try(software.to_sym).is_analysis_to_validate == 1
+  end
+
+  private
+
+  def software
+    if Interfaces::Software::Configuration::SOFTWARES_OBJECTS.include?(@software) || @software.is_a?(ActiveRecord::Base)
+      @software = @software.to_s.split('<')[1].split(':0x')[0]
+      @software = Interfaces::Software::Configuration.software_object_name[@software]
+    end
+
+    @software
   end
 end
