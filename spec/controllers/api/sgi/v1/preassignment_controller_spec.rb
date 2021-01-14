@@ -19,25 +19,40 @@ describe Api::Sgi::V1::PreassignmentController do
   end
 
   def data_content
-    { "packs": [{"id": @pack.id, "name": "#{@pack.name.gsub(' all', '')}", "process": "preseizure", "pieces": [{"id": @piece1.id, "name": "#{@piece1.name}", "preseizure": [{"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "account": [{"type": "TTC", "number": "0DIV", "lettering": "", "debit": [{ "number": "", "value": 0}], "credit": [{ "number": "", "value": 2.78}]}, { "type": "HT", "number": "471000", "lettering": "", "debit": [{ "number": "1", "value": 2.32}], "credit": [{ "number": "", "value": 0}] }]}]}, {"id": @piece2.id, "name": "#{@piece2.name}", "preseizure": [{"date": "27/09/2018", "third_party": "OVH-3", "piece_number": "FR2122653601", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "account": [{"type": "TTC", "number": "0DIV", "lettering": "", "debit": [{ "number": "", "value": 0.46}], "credit": [{ "number": "", "value": 2.78}]}, { "type": "TVA", "number": "445660", "lettering": "", "debit": [{ "number": "1", "value": 2.32}], "credit": [{ "number": "", "value": 0}] }]}]}]}]
+    {
+      process: "preseizure",
+      pack_name: "#{@pack.name.gsub(' all', '')}",
+      piece_id: @piece1.id,
+      preseizures: [
+        {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]},
+
+       {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}
+      ]
     }
   end
 
   before(:all) do
     @organization = create :organization, code: 'IDOC'
+    @organization2 = create :organization, code: 'TEEO'
     @user = create :user, :admin, code: 'IDOC%ALPHA', organization: @organization
+    @user2 = create :user, :admin, code: 'TEEO%0001', organization: @organization2
     @user.update_authentication_token
+    @user2.update_authentication_token
 
     @pack = create :pack, { name: "IDOC%ALPHA AC 201804 ALL", owner: @user, organization: @organization }
+    @pack2 = create :pack, { name: "TEEO%0001 AC 201804 ALL", owner: @user, organization: @organization }
 
     @temp_pack = create :temp_pack, user: @user, organization: @organization, name: @pack.name
+    @temp_pack2 = create :temp_pack, user: @user2, organization: @organization2, name: @pack2.name
 
     @journal = create :account_book_type, user: @user, entry_type: 2, name: @temp_pack.name.split[1], account_number: "FREAFFECT", charge_account: "65899999", anomaly_account: "FANOMALIE"
+    @journal2 = create :account_book_type, user: @user2, entry_type: 2, name: @temp_pack2.name.split[1], account_number: "FREAFFECTEEO", charge_account: "65899988", anomaly_account: "FANOMALIEEO"
 
     @period = create :period, { user: @user, organization: @organization }
 
     @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
     @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
+    @piece3 = create :piece, { user: @user, name: 'TEEO%0001 AC 202001 002', organization: @organization2, pack: @pack2, pre_assignment_state: "waiting" }
   end
 
   before(:each) do
@@ -58,7 +73,22 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(result["pieces"].size).to eq 0
     end
 
-    it "get list pieces exactly pieces1 and piece2 with compta_type AC" do
+    it 'get preassignment needed pieces TEEO', :piece_teeo do
+      allow(Pack::Piece).to receive(:need_preassignment).and_return([@piece3, @piece2])
+      allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
+
+      get :preassignment_needed, format: :json, params: { :compta_type => "TEEO", :access_token => @user.authentication_token }
+
+      result = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(result["pieces"].size).to eq 1
+      expect(result["pieces"].first["piece_name"]).to eq @piece3.name
+      expect(result["pieces"].first["compta_type"]).to eq "AC"
+      expect(result["pieces"].first["detected_third_party_id"]).to eq 6930
+    end
+
+    it "get list pieces exactly pieces1 and piece2 with compta_type AC", :ac do
       allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
 
       get :preassignment_needed, format: :json, params: { :compta_type => "AC", :access_token => @user.authentication_token }
@@ -113,7 +143,7 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(response).to be_successful
       result = JSON.parse(response.body)
 
-      expect(result["url_piece"]).to eq "https://my.idocus.com#{url}"
+      expect(result["url_piece"]).to eq Domains::BASE_URL + url
     end
 
     it "download piece failed because id nil" do
@@ -148,6 +178,15 @@ describe Api::Sgi::V1::PreassignmentController do
       result = JSON.parse(response.body)
 
       expect(result["message"]).to eq "Paramètre absent"
+    end
+
+    it 'update teeo piece to processed', :teeo do
+      @piece1.reload.waiting_pre_assignment
+
+      post :update_teeo_pieces, format: :json, params: {:piece_ids => [@piece1.id], :access_token => @user.authentication_token}
+
+      expect(response.status).to eq 200
+      expect(@piece1.reload.pre_assignment_processed?).to eq true
     end
   end
 end

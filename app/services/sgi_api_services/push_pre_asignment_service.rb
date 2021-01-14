@@ -114,7 +114,7 @@ class SgiApiServices::PushPreAsignmentService
 
       entry = Pack::Report::Preseizure::Entry.new
       entry.type   = "Pack::Report::Preseizure::Entry::#{data_account['amount']['type'].to_s.upcase}".constantize
-      entry.number = data_account['amount']['number'].to_i
+      entry.number = 0
       entry.amount = data_account['amount']["value"].try(:to_f)
       entry.save
       account.entries << entry
