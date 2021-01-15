@@ -20,11 +20,11 @@ class SgiApiServices::PushPreAsignmentService
       document = Reporting.find_or_create_period_document(piece.pack, period)
       report   = document.report || create_report(piece.pack, document)
 
-      pre_assignments = get_pre_assignments(piece, report, @data_preassignment["preseizures"])
+      pre_assignments = get_pre_assignments(piece, report, @data_preassignment["datas"])
 
       Billing::UpdatePeriodData.new(period).execute
       Billing::UpdatePeriodPrice.new(period).execute
-      return @list_pieces unless is_preseizure?
+      return { id: @data_preassignment["piece_id"], name: piece.try(:name), errors: errors} unless is_preseizure?
 
       if report.preseizures.not_locked.not_delivered.size > 0
         report.remove_delivered_to
@@ -151,9 +151,9 @@ class SgiApiServices::PushPreAsignmentService
     observation.comment = obs['observation']
     observation.save
 
-    obs['guest'].each do |guest|
-      first_name = guest['first_name'].first
-      last_name  = guest['last_name'].first
+    obs['guests'].each do |guest|
+      first_name = guest['first_name']
+      last_name  = guest['last_name']
       next unless first_name.present? || last_name.present?
       g = Pack::Report::Observation::Guest.new
       g.observation = observation

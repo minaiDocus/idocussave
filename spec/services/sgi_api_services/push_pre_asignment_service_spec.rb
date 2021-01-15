@@ -7,7 +7,7 @@ describe SgiApiServices::PushPreAsignmentService do
       process: "preseizure",
       pack_name: "#{@pack.name.gsub(' all', '')}",
       piece_id: @piece1.id,
-      preseizures: [
+      datas: [
         {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]},
 
        {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}
@@ -21,11 +21,39 @@ describe SgiApiServices::PushPreAsignmentService do
       pack_name: "#{@pack.name.gsub(' all', '')}",
       piece_id: @piece1.id,
       ignore: "REASON 1",
-      preseizures: [
+      datas: [
         {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]},
 
        {"date": "27/09/2017", "third_party": "OVH", "piece_number": "FR21226536", "amount": "", "currency": "", "conversion_rate": "", "unit": "", "deadline_date": "", "observation": "TIERS NON TROUVE DANS LE PLAN COMPTABLE", "is_made_by_abbyy": true, "accounts": [{"type": "TTC", "number": "0DIV", "lettering": "", "amount": { "type": "credit", "number": "", "value": 2.78}}, { "type": "HT", "number": "471000", "lettering": "", "amount": { "type": "debit", "number": "1", "value": 2.32}} ]}
       ]
+    }
+  end
+
+  def data_content_expense
+    {
+      process: "expense",
+      piece_id: @piece1.id,
+      datas:
+      {
+        date: "01/12/2020",
+        type: "DIVERS",
+        source: "PRO",
+        ht: "3289,5",
+        tva: "17,65",
+        ttc: "3307,15",
+        obs:
+          {
+            type: "1",
+            observation: nil,
+            guests:
+            [
+              {
+                first_name: nil,
+                last_name: nil
+              }
+            ]
+          }
+      }
     }
   end
 
@@ -46,11 +74,11 @@ describe SgiApiServices::PushPreAsignmentService do
   before(:each) do
     allow_any_instance_of(User).to receive_message_chain("subscription.current_period").and_return(@period)
 
-    @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: 'processing' }
-    @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: 'processing' }
+    @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: 'waiting' }
+    @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: 'waiting' }
 
-    @piece1.processing_pre_assignment
-    @piece2.processing_pre_assignment
+    @piece1.waiting_pre_assignment
+    @piece2.waiting_pre_assignment
   end
 
   after(:each) do
@@ -105,6 +133,27 @@ describe SgiApiServices::PushPreAsignmentService do
 
       expect(response[:name]).to eq @piece1.name
       expect(response[:errors].to_s).to match /already pre-assigned/
+    end
+
+    it 'create expense', :expense do
+      response = SgiApiServices::PushPreAsignmentService.new(data_content_expense.with_indifferent_access).execute
+
+      @piece1.reload
+
+      expense = @piece1.expense
+
+      expect(@piece1.pre_assignment_processed?).to be true
+      expect(@piece1.is_already_pre_assigned_with?('expense')).to be true
+      expect(@piece1.is_awaiting_pre_assignment?).to be false
+      expect(@piece1.pre_assignment_comment).to be nil
+
+      expect(expense.type).to eq 'DIVERS'
+      expect(expense.origin).to eq "PRO"
+      expect(expense.amount_in_cents_wo_vat).to eq 3289.0
+
+
+      expect(response[:id]).to eq @piece1.id
+      expect(response[:name]).to eq @piece1.name
     end
   end
 end

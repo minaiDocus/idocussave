@@ -84,7 +84,6 @@ class Pack::Piece < ApplicationRecord
     state :ready
     state :waiting
     state :supplier_recognition
-    state :processing
     state :waiting_analytics
     state :force_processing
     state :processed
