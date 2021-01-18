@@ -32,9 +32,6 @@ class DataProcessor::RetrievedData
   private
 
   def process_retrieved_data
-    System::Log.info('processing', "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start") unless @type_synced.present?
-    start_time   = Time.now
-
     if SYNCED_BUDGEA_LISTS.include?(@type_synced)
       json_content = @retrieved_data
     elsif @retrieved_data.json_content
@@ -43,8 +40,6 @@ class DataProcessor::RetrievedData
 
     parse_of json_content if (json_content.present? && (json_content[:success] || @type_synced.present?))
     finalize json_content unless @type_synced.present?
-
-    System::Log.info('processing', "[#{@user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec") unless @type_synced.present?
   end
 
   def budgea_transaction_fetcher(type='operation')
@@ -152,23 +147,23 @@ class DataProcessor::RetrievedData
     elsif json_content['connection'].present?
       execute_process json_content['connection']
     elsif @type_synced == 'CONNECTION_DELETED'
+      System::Log.info('webhook', "[#{@type_synced}] =========== User_id [#{@user.id}] =================== #{json_content} ============================ BudgeaName [#{retriever.service_name}] =====================") if retriever
       @connection_id    = json_content['id']
 
+      add_webhook(retriever, json_content)
       Retriever::DestroyBudgeaConnection.execute(retriever) if retriever && retriever.try(:destroy_connection)
     elsif @type_synced == 'USER_DELETED' && @user.budgea_account
-
       retrievers = @user.retrievers
 
       retrievers.each do |retr|
+        System::Log.info('webhook', "[#{@type_synced}] =========== User_id [#{@user.id}] =================== RetID [#{retr.id}] ============================ BudgeaName [#{retr.service_name}] =====================") if retr
         Retriever::DestroyBudgeaConnection.execute(retr) if retr && retr.try(:destroy_connection)
 
-        save(json_content, retr)
+        add_webhook(retr, json_content)
       end
 
       @user.budgea_account.destroy
     end
-
-    save json_content if @type_synced.present? && @type_synced != "USER_DELETED"
   end
 
   def execute_process(connection)
@@ -176,6 +171,7 @@ class DataProcessor::RetrievedData
     @connection_id    = connection['id']
 
     connection.merge!("source"=>"ProcessRetrievedData")
+
     process connection if retriever
 
     if @is_connection_ok && @type_synced.nil?
@@ -184,18 +180,9 @@ class DataProcessor::RetrievedData
     end
   end
 
-  def save(contents, retr=nil)
-    conn     = Archive::WebhookContent.new
-    retrieve = retr.present? ? retr : retriever
-
-    conn.synced_date  = Time.now
-    conn.synced_type  = @type_synced
-    conn.json_content = contents
-    conn.retriever    = retrieve
-    conn.save
-  end
-
   def process(connection)
+    System::Log.info('webhook', "[#{@type_synced}] =========== User_id [#{@user.id}] =================== RetID [#{retriever.id}] ============================ BudgeaName [#{retriever.service_name}] =====================")
+
     @is_new_transaction_present = false
     @new_operations_count       = 0
 
@@ -213,11 +200,14 @@ class DataProcessor::RetrievedData
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
 
-    retriever.resume_me
+    if retriever.sync_at <= 3.minutes.ago
+      retriever.resume_me
+      retriever.update(sync_at: Time.now)
+    end
 
     notify connection
 
-    retriever.update(sync_at: Time.now)
+    add_webhook(retriever, connection)
 
     if retriever.is_selection_needed && (@is_new_document_present || @is_new_transaction_present)
       retriever.update(is_selection_needed: false) if retriever.wait_selection
@@ -440,11 +430,24 @@ class DataProcessor::RetrievedData
   def retriever
     return @retriever if @retriever && @retriever.budgea_id == @connection_id && @retriever.user == @user
 
-    @retriever = @user.retrievers.where(budgea_id: @connection_id).order(created_at: :asc).first
+    @retriever = @user.retrievers.where(budgea_id: @connection_id).where.not(state: 'destroying').order(created_at: :asc).first
+
+    @retriever
   end
 
   def get_bank_account_of(account)
     @user.bank_accounts.where('api_id = ? OR (name = ? AND number = ?)', account['id'], account['name'], account['number']).first
+  end
+
+  def add_webhook(retriever, contents)
+    whook              = Archive::WebhookContent.new
+
+    whook.synced_date  = Time.now
+    whook.synced_type  = @type_synced
+    whook.json_content = contents
+    whook.retriever    = retriever
+
+    whook.save
   end
 
   def webhook_notification(json_content)

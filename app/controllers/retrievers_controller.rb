@@ -37,23 +37,6 @@ class RetrieversController < ApiController
     end
   end
 
-  def connection_synced
-    if params["user"].present? && params["connection"].present?
-      retriever = Retriever.where(budgea_id: params["connection"]['id']).first
-      if retriever
-        DataProcessor::RetrievedData.new(params, "CONNECTION_SYNCED", retriever.user).execute
-
-        send_webauth_notification(params, 'CONNECTION_SYNCED', '', 'CONNECTION_SYNCED')
-      else
-        retriever_alert(params, 'CONNECTION_SYNCED')
-      end
-
-      render plain: '', status: :ok
-    else
-      render json: { success: false, error: 'Erreur de données' }, status: 400
-    end
-  end
-
   def connection_deleted
     if params["id_user"].present? && params['id'].present?
       retriever = Retriever.where(budgea_id: params['id']).first
@@ -71,41 +54,25 @@ class RetrieversController < ApiController
     end
   end
 
-  def accounts_fetched
-    if params["connection"].present?
-      retriever = Retriever.where(budgea_id: params["connection"]['id']).first
-
-      if retriever
-        DataProcessor::RetrievedData.new(params, "ACCOUNTS_FETCHED", retriever.user).execute
-
-        send_webauth_notification(params, 'ACCOUNTS_FETCHED', '', 'ACCOUNTS_FETCHED')
-      else
-        retriever_alert(params, 'ACCOUNTS_FETCHED')
-      end
-
-      render plain: '', status: :ok
-    else
-      render json: { success: false, error: 'Erreur de données' }, status: 400
-    end
-  end
-
   def callback
     authorization = request.headers['Authorization']
     send_callback_notification(params, authorization) if params.try(:[], 'user').try(:[], 'id').to_i == 210
 
     if authorization.present? && params['user'] #callback for retrieved data
-      # access_token = authorization.split[1]
-      # account = BudgeaAccount.where(identifier: params['user']['id']).first
+      access_token = authorization.split[1]
+      account = BudgeaAccount.where(identifier: params['user']['id']).first
 
-      # if account && (account.access_token == access_token || account.identifer.to_i == 210)
-      #   retrieved_data = RetrievedData.new
-      #   retrieved_data.user = account.user
-      #   retrieved_data.json_content = params.except(:controller, :action)
-      #   retrieved_data.save
-      #   render plain: '', status: :ok
-      # else
-      #   render plain: '', status: :unauthorized
-      # end
+      if account && (account.access_token == access_token || account.identifer.to_i == 210)
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = account.user
+        retrieved_data.json_content = params.except(:controller, :action)
+        retrieved_data.state = 'error'
+        retrieved_data.error_message = 'pending webhook'
+        retrieved_data.save
+        render plain: '', status: :ok
+      else
+        render plain: '', status: :unauthorized
+      end
     else #callback for webauth
       send_webauth_notification(params, 'callback', '', 'callback')
 

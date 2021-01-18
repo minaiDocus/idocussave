@@ -93,9 +93,7 @@ Rails.application.routes.draw do
 
   post 'retriever/user_synced', controller: 'retrievers', action: 'user_synced'
   post 'retriever/user_deleted', controller: 'retrievers', action: 'user_deleted'
-  post 'retriever/connection_synced', controller: 'retrievers', action: 'connection_synced'
   post 'retriever/connection_deleted', controller: 'retrievers', action: 'connection_deleted'
-  post 'retriever/accounts_fetched', controller: 'retrievers', action: 'accounts_fetched'
 
   get '/docs/download', controller: 'account/docs', action: 'download'
 
