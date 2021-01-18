@@ -3,6 +3,7 @@ class Retriever::RetrievedDocument
   attr_reader :temp_document
 
   def self.process_file(retriever_id, document, count_day=0)
+    document      = document.try(:to_unsafe_h) || document
     retriever     = Retriever.find retriever_id
     already_exist = retriever.temp_documents.where(api_id: document['id']).first
 

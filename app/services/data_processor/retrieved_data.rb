@@ -4,6 +4,10 @@ class DataProcessor::RetrievedData
 
   SYNCED_BUDGEA_LISTS = ["USER_SYNCED", "USER_DELETED", "CONNECTION_SYNCED", "CONNECTION_DELETED", "ACCOUNTS_FETCHED"].freeze
 
+  def self.execute(retrieved_param, type_synced=nil, user=nil)
+    DataProcessor::RetrievedData.new(retrieved_param, type_synced, user).execute
+  end
+
   def self.process(retrieved_data_id)
     UniqueJobs.for "ProcessRetrievedData-#{retrieved_data_id}" do
       retrieved_data = RetrievedData.find retrieved_data_id
@@ -134,8 +138,6 @@ class DataProcessor::RetrievedData
   end
 
   def parse_of(json_content)
-    webhook_notification(json_content)
-
     if @type_synced.nil? || (@type_synced.present? && @type_synced == 'USER_SYNCED')
       connections = @type_synced.present? ? json_content['connections'] : json_content[:content]['connections']
 
@@ -164,6 +166,8 @@ class DataProcessor::RetrievedData
 
       @user.budgea_account.destroy
     end
+
+    webhook_notification(json_content)
   end
 
   def execute_process(connection)
@@ -253,7 +257,7 @@ class DataProcessor::RetrievedData
       bank_account.name              = account['name']
       bank_account.number            = account['number']
       bank_account.type_name         = account['type']
-      bank_account.original_currency = account['currency'].to_unsafe_h
+      bank_account.original_currency = account['currency'].try(:to_unsafe_h)
       bank_account.api_name          = 'budgea'
       is_new                         = !bank_account.persisted?
 
@@ -290,13 +294,16 @@ class DataProcessor::RetrievedData
     end
 
     if errors.present?
-      if @retrieved_data.error_message.present?
-        @retrieved_data.error_message += errors.join("\n")
-      else
-        @retrieved_data.error_message = errors.join("\n")
+      unless @type_synced.present?
+        if @retrieved_data.error_message.present?
+          @retrieved_data.error_message += errors.join("\n")
+        else
+          @retrieved_data.error_message = errors.join("\n")
+        end
+        @retrieved_data.save
+        @retrieved_data.error
       end
-      @retrieved_data.save
-      @retrieved_data.error
+
       retriever.update(error_message: "Certains documents n'ont pas pu être récupérés.")
       retriever.error
     end
@@ -456,9 +463,9 @@ class DataProcessor::RetrievedData
       error_group: "[Retrieved Data Webhook] : Data for - #{@type_synced}",
       erreur_type: "Data for - #{@type_synced}",
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-      more_information: { json_content: json_content.inspect, type_synced: @type_synced }
+      more_information: { user_code: @user.code, type_synced: @type_synced }
     }
 
-    ErrorScriptMailer.error_notification(log_document).deliver
+    ErrorScriptMailer.error_notification(log_document, { attachements: [{name: 'json_content.json', file: json_content.try(:to_unsafe_h).to_s}] }).deliver
   end
 end

@@ -10,9 +10,7 @@ class RetrieversController < ApiController
     if params['user'].present? && params["connections"].present?
       retriever = Retriever.where(budgea_id: params["connections"][0]['id']).first
       if retriever
-        DataProcessor::RetrievedData.new(params, "USER_SYNCED", retriever.user).execute
-
-        send_webauth_notification(params, 'USER_SYNCED', '', 'USER_SYNCED')
+        DataProcessor::RetrievedData.delay.execute(params, "USER_SYNCED", retriever.user)
       else
         retriever_alert(params, 'USER_SYNCED')
       end
@@ -27,9 +25,7 @@ class RetrieversController < ApiController
     if params["id"].present?
       budgea_account = BudgeaAccount.where(identifier: params["id"]).first
 
-      DataProcessor::RetrievedData.new(params, "USER_DELETED", budgea_account.try(:user)).execute
-
-      send_webauth_notification(params, 'USER_DELETED', '', 'USER_DELETED')
+      DataProcessor::RetrievedData.delay.execute(params, "USER_DELETED", budgea_account.try(:user))
 
       render plain: '', status: :ok
     else
@@ -41,9 +37,7 @@ class RetrieversController < ApiController
     if params["id_user"].present? && params['id'].present?
       retriever = Retriever.where(budgea_id: params['id']).first
       if retriever
-        DataProcessor::RetrievedData.new(params, "CONNECTION_DELETED", retriever.user).execute
-
-        send_webauth_notification(params, 'CONNECTION_DELETED', '', 'CONNECTION_DELETED')
+        DataProcessor::RetrievedData.delay.execute(params, "CONNECTION_DELETED", retriever.user)
       else
         retriever_alert(params, 'CONNECTION_DELETED')
       end
