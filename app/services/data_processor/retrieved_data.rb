@@ -204,7 +204,7 @@ class DataProcessor::RetrievedData
     @new_documents_count     = (retriever.temp_documents.count - initial_documents_count)
     @is_new_document_present = @new_documents_count > 0
 
-    if retriever.sync_at <= 3.minutes.ago
+    if retriever.sync_at.blank? || retriever.sync_at <= 3.minutes.ago
       retriever.resume_me
       retriever.update(sync_at: Time.now)
     end
