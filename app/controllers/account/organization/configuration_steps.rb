@@ -17,7 +17,7 @@ module Account::Organization::ConfigurationSteps
                                            when 'account'
                                              'subscription'
                                            when 'subscription'
-                                             if @customer.subscription.is_pre_assignment_active
+                                             if @customer.subscription.is_package?('pre_assignment_option')
                                                'compta_options'
                                              elsif @organization.uses_softwares?
                                                'softwares_selection'
@@ -39,7 +39,7 @@ module Account::Organization::ConfigurationSteps
                                                'journals'
                                              end
                                            when 'period_options'
-                                             if @customer.subscription.is_pre_assignment_active
+                                             if @customer.subscription.is_package?('pre_assignment_option')
                                                if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
                                                elsif @customer.uses_csv_descriptor?
@@ -73,7 +73,7 @@ module Account::Organization::ConfigurationSteps
                                            when 'ibiza'
                                              'journals'
                                            when 'journals'
-                                             if @customer.subscription.is_mail_package_active
+                                             if @customer.subscription.is_package?('mail_option')
                                                if @customer.account_book_types.count > 0
                                                  'order_paper_set'
                                                else
@@ -113,13 +113,13 @@ module Account::Organization::ConfigurationSteps
                                            when 'ged'
                                              if @customer.is_dematbox_authorized
                                                'order_dematbox'
-                                             elsif @customer.subscription.is_mail_package_active
+                                             elsif @customer.subscription.is_package?('mail_option')
                                                'order_paper_set'
                                              else
                                                'journals'
                                             end
                                            when 'order_dematbox'
-                                             if @customer.subscription.is_mail_package_active
+                                             if @customer.subscription.is_package?('mail_option')
                                                'order_paper_set'
                                              else
                                                'journals'
@@ -127,7 +127,7 @@ module Account::Organization::ConfigurationSteps
                                            when 'order_paper_set'
                                              'journals'
                                            when 'journals'
-                                             if @customer.subscription.is_pre_assignment_active
+                                             if @customer.subscription.is_package?('pre_assignment_option')
                                                if @organization.ibiza.try(:configured?) && @customer.uses_ibiza?
                                                  'ibiza'
                                                elsif !@customer.uses_api_softwares?
@@ -136,7 +136,7 @@ module Account::Organization::ConfigurationSteps
                                                  'period_options'
                                                elsif @organization.uses_softwares?
                                                  'softwares_selection'
-                                               elsif @customer.subscription.is_pre_assignment_active
+                                               elsif @customer.subscription.is_package?('pre_assignment_option')
                                                  'compta_options'
                                                else
                                                  'subscription'
@@ -145,7 +145,7 @@ module Account::Organization::ConfigurationSteps
                                                'period_options'
                                              elsif @organization.uses_softwares?
                                                'softwares_selection'
-                                             elsif @customer.subscription.is_pre_assignment_active
+                                             elsif @customer.subscription.is_package?('pre_assignment_option')
                                                'compta_options'
                                              else
                                                'subscription'
@@ -169,13 +169,13 @@ module Account::Organization::ConfigurationSteps
                                            when 'period_options'
                                              if @organization.uses_softwares?
                                                'softwares_selection'
-                                             elsif @customer.subscription.is_pre_assignment_active
+                                             elsif @customer.subscription.is_package?('pre_assignment_option')
                                                'compta_options'
                                              else
                                                'subscription'
                                              end
                                            when 'softwares_selection'
-                                             if @customer.subscription.is_pre_assignment_active
+                                             if @customer.subscription.is_package?('pre_assignment_option')
                                                'compta_options'
                                              else
                                                'subscription'
@@ -227,7 +227,7 @@ module Account::Organization::ConfigurationSteps
   def last_step?
     case @customer.current_configuration_step
     when 'journals'
-      !@customer.subscription.is_mail_package_active &&
+      !@customer.subscription.is_package?('mail_option') &&
         !@customer.is_dematbox_authorized &&
         !@organization.knowings.try(:configured?)
     when 'order_paper_set'

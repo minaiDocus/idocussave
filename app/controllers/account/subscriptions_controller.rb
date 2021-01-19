@@ -8,9 +8,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_action :load_subscription
 
   # /account/organizations/:organization_id/organization_subscription/edit
-  def edit
-    @subscription.downgrade
-  end
+  def edit; end
 
   # PUT /account/organizations/:organization_id/organization_subscription
   def update

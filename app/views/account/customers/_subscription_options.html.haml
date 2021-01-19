@@ -3,61 +3,65 @@
     Abonnement
   %hr
   #personalize_subscription_package_form
+    - if @subscription
+      - current_package = @subscription.futur_packages.present? ? @subscription.futur_packages : @subscription.current_packages
+    - else
+      - current_package = []
     .center{ style: "text-align: center" }
-      .notify-warning.fs-origin.mb-3.hide
+      .notify-warning.fs-origin.mb-3{ class: "#{(@subscription && @subscription.futur_packages.present? && @subscription.futur_packages != '[]') ? '' : 'hide' }" }
         Disparaîtra le mois prochain
     .row
       .col-md-6
-        .form-check.form-check-inline{title: Subscription::Package.infos_of(:ido_x)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'is_idox_package_active', (@subscription.is_idox_package_active && !@subscription.is_idox_package_to_be_disabled), class: 'form-check-input idox-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_idox_package_active || @subscription.is_idox_package_to_be_disabled) ? 1 : 0) }
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_x')}", title: Subscription::Package.infos_of(:ido_x)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'ido_x', current_package.include?('ido_x'), class: 'form-check-input ido_x radio-button', data: { package: "ido_x" }
           = label_tag 'subscription[subscription_option]', "iDo'X", class: 'form-check-label'
       .col-md-6.form_check_idox_package
         .float-right
           .form-inline
             = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
             &nbsp;&nbsp;&nbsp;&nbsp;
-            = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control subscription-package-form-change idox_option option_checkbox'
+            = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control ido_x_option option_checkbox', disabled: !current_package.include?('ido_x')
     .row
       .col-md-6
-        .form-check.form-check-inline{title: Subscription::Package.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'is_micro_package_active', (@subscription.is_micro_package_active && !@subscription.is_micro_package_to_be_disabled), class: "form-check-input micro-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
+        .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_micro')}", title: Subscription::Package.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'ido_micro', current_package.include?('ido_micro'), class: "form-check-input ido_micro radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_micro" }
           = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
       .col-md-6.form_check_micro_package
         .float-right{ style: 'padding-right: 17em' }
-          .form-check.form-check-inline{title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox micro_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-            = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
+          .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_micro', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_micro') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_micro_option #{'active_option' if (current_package.include?('ido_micro') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_micro')
+            = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
     - if @user.is_admin || @organization.code.in?(['GAP'])
       .row
         .col-md-6
-          .form-check.form-check-inline{title: Subscription::Package.infos_of(:ido_mini)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = radio_button_tag 'subscription[subscription_option]', 'is_mini_package_active', (@subscription.is_mini_package_active && !@subscription.is_mini_package_to_be_disabled), class: "form-check-input mini-check-radio radio-button subscription-package-form-change package_radio #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { original_value: ((@subscription.is_mini_package_active || @subscription.is_mini_package_to_be_disabled) ? 1 : 0) }
+          .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_mini')}", title: Subscription::Package.infos_of(:ido_mini)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = radio_button_tag 'subscription[subscription_option]', 'ido_mini',current_package.include?('ido_mini'), class: "form-check-input ido_mini radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_mini" }
             = label_tag 'subscription[subscription_option]', "iDo'Mini", class: 'form-check-label'
         .col-md-6.form_check_mini_package
           .float-right{style: 'padding-right: 4.5em'}
-            .form-check.form-check-inline{title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-              = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox mini_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-              = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
-            .form-check.form-check-inline{title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-              = check_box_tag 'subscription[is_retriever_package_active]', true, (@subscription.is_retriever_package_active && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox mini_option', data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
-              = label_tag 'subscription[is_retriever_package_active]', "Avec option automate", class: 'form-check-label'
+            .form-check.form-check-inline{class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_mini', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+              = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_mini') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_mini_option #{'active_option' if (current_package.include?('ido_mini') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_mini')
+              = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
+            .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_mini', 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+              = check_box_tag 'subscription[retriever_option]', true, (current_package.include?('ido_mini') && current_package.include?('retriever_option')), class: "form-check-input option_checkbox ido_mini_option #{'active_option' if (current_package.include?('ido_mini') && current_package.include?('retriever_option'))}", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }, disabled: !current_package.include?('ido_mini')
+              = label_tag 'subscription[retriever_option]', "Avec option automate", class: 'form-check-label'
     .row
       .col-md-6
-        .form-check.form-check-inline{title: Subscription::Package.infos_of(:ido_classique)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'is_basic_package_active', (!@subscription.configured? || (@subscription.is_basic_package_active && !@subscription.is_basic_package_to_be_disabled)), class: 'form-check-input basic-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique')}", title: Subscription::Package.infos_of(:ido_classique)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'ido_classique', current_package.include?('ido_classique'), class: 'form-check-input ido_classique radio-button', data: { package: "ido_classique" }
           = label_tag 'subscription[subscription_option]', "iDo'Classique", class: 'form-check-label'
       .col-md-6.form_check_basic_package
         .float-right{ style: 'padding-right: 4.5em' }
-          .form-check.form-check-inline{title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = check_box_tag 'subscription[is_mail_package_active]', true, (@subscription.is_mail_package_active && !@subscription.is_mail_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox basic_option', data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-            = label_tag 'subscription[is_mail_package_active]', "Avec option courrier", class: 'form-check-label'
-          .form-check.form-check-inline{title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = check_box_tag 'subscription[is_retriever_package_active]', true, (@subscription.is_retriever_package_active && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input subscription-package-form-change option_checkbox basic_option', data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
-            = label_tag 'subscription[is_retriever_package_active]', "Avec option automate", class: 'form-check-label'
+          .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_classique') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_classique')
+            = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
+          .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique', 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = check_box_tag 'subscription[retriever_option]', true, (current_package.include?('ido_classique') && current_package.include?('retriever_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('retriever_option'))}", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }, disabled: !current_package.include?('ido_classique')
+            = label_tag 'subscription[retriever_option]', "Avec option automate", class: 'form-check-label'
     .row
       .col-md-12
-        .form-check.form-check-inline{title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'is_retriever_package_active', (@subscription.is_retriever_only? && !@subscription.is_retriever_package_to_be_disabled), class: 'form-check-input retriever-uniquess-check-radio radio-button subscription-package-form-change package_radio', data: { original_value: ((@subscription.is_retriever_only? && @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'retriever_option', (current_package.include?('retriever_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_micro') && !current_package.include?('ido_x')), class: 'form-check-input retriever-uniquess-check-radio radio-button', data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }
           = label_tag 'subscription[subscription_option]', "Automate uniquement", class: 'form-check-label'
     .row.mt-4.number_of_journals
       .col-md-6
@@ -66,7 +70,7 @@
             = label_tag 'subscription[number_of_journals]', "Nombre de journaux", class: 'control-label required'
           .control-section
             .subscription_number_of_journals
-              = number_field_tag 'subscription[number_of_journals]', @subscription.number_of_journals, class: 'form-control col-md-3 special_input subscription-package-form-change', min: 5, max: 30, style: 'font-weight:bold;margin-left: 20px', required: true, autofocus: true, pattern: '/^[0-9]+$/'
+              = number_field_tag 'subscription[number_of_journals]', @subscription.try(:number_of_journals).presence || 5, class: 'form-control col-md-3 special_input ', min: 5, max: 30, style: 'font-weight:bold;margin-left: 20px', required: true, autofocus: true, pattern: '/^[0-9]+$/'
               &nbsp;
               %span{id: 'err-msg-input-number'}
               - if @customer.account_book_types.count > 5
@@ -74,18 +78,17 @@
                   %i Supprimez un journal comptable avant de baisser cette option.
 
     %br
-    .form-group.clearfix.radio_buttons.label-50.pre_assignment
+    .form-group.clearfix.radio_buttons.label-50.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
       .label-section{style: 'width: 256px;'}
-        = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-saisie comptable ?", class: 'subscription_is_pre_assignment_active_label'
-        = hidden_field_tag 'is_pre_assignment_active_hidden', ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0)
+        = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-saisie comptable ?", class: 'subscription_is_pre_assignment_active_label'        
       .control-section
         %span.radio.pre-assignment-state{title: 'Pré-saisie comptable activée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_true' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', true, @subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }, class: 'is_pre_assignment_active_true is_pre_assignment_applied radio-button'
+            = radio_button_tag 'subscription[is_pre_assignment_active]', true, current_package.include?('pre_assignment_option'), data: { class: 'is_pre_assignment_active_true is_pre_assignment_active radio-button' }
             Oui
         %span.radio.pre-assignment-state{title: 'Pré-saisie comptable désactivée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_false' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', false, !@subscription.is_pre_assignment_active, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }, class: 'is_pre_assignment_active_false is_pre_assignment_applied radio-button'
+            = radio_button_tag 'subscription[is_pre_assignment_active]', false, !current_package.include?('pre_assignment_option'), data: { class: 'is_pre_assignment_active_false is_pre_assignment_active radio-button' }
             Non
     %br
     - if @user.is_admin

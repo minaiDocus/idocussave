@@ -132,7 +132,7 @@ class Account::OrdersController < Account::OrganizationController
     authorized = true
     authorized = false unless @user.leader? || @user.manage_customers
     authorized = false unless @customer.active?
-    unless subscription.is_mail_package_active || @customer.is_dematbox_authorized || subscription.is_annual_package_active
+    unless subscription.is_package?('mail_option') || @customer.is_dematbox_authorized || subscription.is_package?('ido_annual')
       authorized = false
     end
 
@@ -144,7 +144,7 @@ class Account::OrdersController < Account::OrganizationController
           authorized = false
         end
 
-        if params[:order][:type] == 'paper_set' && !subscription.is_mail_package_active && !subscription.is_annual_package_active
+        if params[:order][:type] == 'paper_set' && !subscription.is_package?('mail_option') && !subscription.is_package?('ido_annual')
           authorized = false
         end
       end

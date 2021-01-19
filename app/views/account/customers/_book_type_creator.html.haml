@@ -35,7 +35,7 @@
         - else
           = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
         = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.', input_html: { class: "can_be_required" }
-        - if !@customer || @customer.subscription.is_mail_package_active
+        - if !@customer || @customer.subscription.is_package?('mail_option')
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
         #error_reports.hide

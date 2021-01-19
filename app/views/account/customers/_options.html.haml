@@ -11,19 +11,24 @@
     - active_packages  = @subscription.get_active_packages_and_options
     - found_pending    = false
 
+    - pack = nil
+
     - enabled_packages.each do |package|
-      - unless active_packages.include? package
+      - pack = package if Subscription::Package::PACKAGES_LIST.include?(package)
+
+      - if !active_packages.include?(pack)
         - found_pending = true
         - package_infos = Subscription::Package.infos_of(package)
-        %tr
-          %td= package_infos[:group]
-          %td
-            = package_infos[:label]
-            %b (Applicable le mois prochain)
-          %td.price
-            %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100) + ' €)' rescue '0,00 €'
-          %td.price
-            %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100 * period.tva_ratio) + ' €)' rescue '0,00 €'
+        - unless package_infos[:group].blank?
+          %tr
+            %td= package_infos[:group]
+            %td
+              = package_infos[:label]
+              %b (Applicable le mois prochain)
+            %td.price
+              %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100) + ' €)' rescue '0,00 €'
+            %td.price
+              %i= '(' + format_price_00(Subscription::Package.price_of(package).to_i * 100 * period.tva_ratio) + ' €)' rescue '0,00 €'
 
     - if found_pending
       %tr

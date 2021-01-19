@@ -9,12 +9,9 @@ class Subscription < ApplicationRecord
   has_many :invoices
   has_and_belongs_to_many :options, class_name: 'SubscriptionOption', inverse_of: :subscribers
 
-
   attr_accessor :is_to_apply_now
 
-
   validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 30 }
-
 
   validates_inclusion_of :period_duration, in: [1, 12]
 
@@ -54,47 +51,19 @@ class Subscription < ApplicationRecord
   end
 
   def configured?
-    is_basic_package_active     ||
-    is_micro_package_active     ||
-    is_mail_package_active      ||
-    is_scan_box_package_active  ||
-    is_retriever_package_active ||
-    is_annual_package_active    ||
-    is_mini_package_active      ||
-    is_idox_package_active
+    current_packages.present?
   end
-
 
   def to_be_configured?
-    is_basic_package_active     && !is_basic_package_to_be_disabled     ||
-    is_micro_package_active     && !is_micro_package_to_be_disabled     ||
-    is_mini_package_active      && !is_mini_package_to_be_disabled      ||
-    is_mail_package_active      && !is_mail_package_to_be_disabled      ||
-    is_scan_box_package_active  && !is_scan_box_package_to_be_disabled  ||
-    is_retriever_package_active && !is_retriever_package_to_be_disabled ||
-    is_idox_package_active      && !is_idox_package_to_be_disabled      ||
-    is_annual_package_active
+    self.current_packages.present? && self.futur_packages.present?
   end
-
-
-  def downgrade
-    self.is_mail_package_active      = false if is_mail_package_to_be_disabled
-    self.is_basic_package_active     = false if is_basic_package_to_be_disabled
-    self.is_micro_package_active     = false if is_micro_package_to_be_disabled
-    self.is_mini_package_active      = false if is_mini_package_to_be_disabled
-    self.is_pre_assignment_active    = false if is_pre_assignment_to_be_disabled
-    self.is_scan_box_package_active  = false if is_scan_box_package_to_be_disabled
-    self.is_retriever_package_active = false if is_retriever_package_to_be_disabled
-    self.is_idox_package_active      = false if is_idox_package_to_be_disabled
-  end
-
 
   def light_package?
-    !is_annual_package_active
+    !is_package?('ido_annual')
   end
 
   def heavy_package?
-    is_annual_package_active || is_micro_package_active || is_mini_package_active
+    is_package?('ido_annual') || is_package?('ido_micro') || is_package?('ido_mini')
   end
 
   def owner
@@ -104,14 +73,7 @@ class Subscription < ApplicationRecord
   def get_enabled_packages_and_options
     result = []
 
-    result << :ido_classique if self.is_basic_package_active
-    result << :ido_mini      if self.is_mini_package_active
-    result << :ido_micro     if self.is_micro_package_active
-    result << :ido_x         if self.is_idox_package_active
-
-    result << :mail_option      if self.is_mail_package_active
-    result << :retriever_option if self.is_retriever_package_active
-    result << :pre_assignment_option if self.is_pre_assignment_really_active
+    result = self.futur_packages.tr('["\]','   ').tr('"', '').split(',').map { |package| package.strip().to_sym } if self.futur_packages.present?
 
     result
   end
@@ -136,31 +98,27 @@ class Subscription < ApplicationRecord
     get_active_packages.try(:first) || :ido_classique
   end
 
-  def is_to_be_disabled_package?(package)
-    case package
-      when :ido_classique
-        self.is_basic_package_active && self.is_basic_package_to_be_disabled
-      when :ido_mini
-        self.is_mini_package_active && self.is_mini_package_to_be_disabled
-      when :ido_micro
-        self.is_micro_package_active && self.is_micro_package_to_be_disabled
-      when :ido_x
-        self.is_idox_package_active && self.is_idox_package_to_be_disabled
-      else
-        false
+  def is_to_be_disabled_package?(pack)
+    return false unless Subscription::Package::PACKAGES_LIST.include?(pack)
+
+    if self.futur_packages
+      is_package?(pack.to_s) && !self.futur_packages.include?(pack.to_s)
+    else
+      false
     end
   end
 
   def is_to_be_disabled_option?(option)
-    case option
-      when :mail_option
-        self.is_mail_package_active && self.is_mail_package_to_be_disabled
-      when :retriever_option
-        self.is_retriever_package_active && self.is_retriever_package_to_be_disabled
-      when :pre_assignment_option
-        self.is_pre_assignment_active && self.is_pre_assignment_to_be_disabled
-      else
-        false
+    return false unless Subscription::Package::OPTIONS_LIST.include?(option)
+
+    pack = self.current_package?
+
+    if is_package?(pack.to_s) && self.futur_packages && self.futur_packages.include?(pack.to_s)
+      self.current_packages.include?(option.to_s) && !self.futur_packages.include?(option.to_s)
+    elsif self.futur_packages && !self.futur_packages.include?(pack.to_s)
+      true
+    else
+      false
     end
   end
 
@@ -169,7 +127,7 @@ class Subscription < ApplicationRecord
   end
 
   def is_pre_assignment_really_active
-    self.is_pre_assignment_active && (self.is_basic_package_active || self.is_mini_package_active)
+    self.current_packages.include?('pre_assignment_option') && (self.current_packages.include?('ido_classique') || self.current_packages.include?('ido_mini'))
   end
 
   def retriever_price_option
@@ -178,8 +136,8 @@ class Subscription < ApplicationRecord
   end
 
   def set_start_date_and_end_date
-    commitment_period = Subscription::Package.commitment_of(:ido_mini) if self.is_mini_package_active
-    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.is_micro_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if self.current_packages.include?('ido_mini')
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.current_packages.include?('ido_micro')
 
     if commitment_period.to_i > 0
       # Updating start_date and end_date when subscription term is reached
@@ -242,14 +200,14 @@ class Subscription < ApplicationRecord
   end
 
   def commitment_end?(check_micro_package = true)
-    commitment_period = Subscription::Package.commitment_of(:ido_mini) if self.is_mini_package_active
-    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.is_micro_package_active
+    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if self.current_packages.include?('ido_mini')
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.current_packages.include?('ido_micro')
 
-    return true if commitment_period.to_i <= 0 || (!check_micro_package && self.is_micro_package_active)
+    return true if commitment_period.to_i <= 0 || (!check_micro_package && self.current_packages.include?('ido_micro'))
 
-    return true if self.is_micro_package_active && self.commitment_counter > 1
+    return true if self.current_packages.include?('ido_micro') && self.commitment_counter > 1
 
-    if self.is_mini_package_active && self.commitment_counter > 1
+    if self.current_packages.include?('ido_mini') && self.commitment_counter > 1
       quarter1_end = (self.start_date + 3.months).strftime("%Y%m")
       quarter2_end = (self.start_date + 6.months).strftime("%Y%m")
       quarter3_end = (self.start_date + 9.months).strftime("%Y%m")
@@ -259,5 +217,24 @@ class Subscription < ApplicationRecord
     end
 
     return false
+  end
+
+  def current_package?
+    actual_package = ""
+
+    actual_package = 'ido_x'                   if is_package?('ido_x')
+    actual_package = 'ido_micro'               if is_package?('ido_micro')
+    actual_package = 'ido_mini'                if is_package?('ido_mini')
+    actual_package = 'ido_classique'           if is_package?('ido_classique')
+
+    current_package_size = self.current_packages.tr('["\]','   ').tr('"', '').split(',').size
+
+    actual_package = 'retriever_option' if current_package_size == 1 && is_package?('retriever_option')
+
+    actual_package
+  end
+
+  def is_package?(package_option)
+    current_packages.include?(package_option)
   end
 end

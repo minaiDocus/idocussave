@@ -73,7 +73,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   end
 
   def select_for_orders
-    @customers = customers.active.joins(:subscription).where('period_duration != 3').where('is_mail_package_active = ? or is_annual_package_active = ?', true, true)
+    @customers = customers.active.joins(:subscription).where('period_duration != 3').where('current_packages LIKE ? or current_packages LIKE ?', '%mail_option%', '%ido_annual%')
   end
 
   def order_multiple
@@ -150,7 +150,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   def verify_if_customer_can_order_paper_sets
     authorized = true
     authorized = false unless @customer.active?
-    unless @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
+    unless @customer.subscription.is_package?('mail_option') || @customer.subscription.is_package?('ido_annual')
       authorized = false
     end
     unless authorized

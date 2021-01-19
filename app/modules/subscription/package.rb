@@ -13,7 +13,7 @@ class Subscription::Package
         when :ido_classique
           10 + signing_piece_price
         when :ido_x
-          0
+          5
         when :ido_mini
           10 + signing_piece_price
         when :ido_micro

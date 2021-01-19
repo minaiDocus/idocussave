@@ -223,7 +223,7 @@
                           = link_to 'Annuler', account_organization_customer_order_path(@organization, @customer, order), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
               - if @customer.is_dematbox_authorized
                 = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' }), class: 'btn btn-primary'
-              - if @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
+              - if @customer.subscription.is_package?('mail_option') || @customer.subscription.is_package?('ido_annual')
                 = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary'
             - if @customer.options.is_upload_authorized
               #period_options.tab-pane.fade{ class: ('active show' if params[:tab] == 'period_options') }

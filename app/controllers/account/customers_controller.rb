@@ -57,7 +57,6 @@ class Account::CustomersController < Account::OrganizationController
   # GET /account/organizations/:organization_id/customers/form_with_first_step
   def form_with_first_step
     @customer = User.new(code: "#{@organization.code}%")
-    fake_subscription
   end
 
   # GET /account/organizations/:organization_id/customers/new
@@ -87,8 +86,6 @@ class Account::CustomersController < Account::OrganizationController
       html_ul_content += "</ul>"
 
       flash[:error] = html_ul_content.html_safe
-
-      fake_subscription
       render :form_with_first_step
     end
   end
@@ -458,24 +455,6 @@ class Account::CustomersController < Account::OrganizationController
 
   def mcf_params
     params.require(:user).permit(:mcf_storage)
-  end
-
-  def fake_subscription
-    @subscription = OpenStruct.new(
-      {
-        is_idox_package_active: false,
-        is_idox_package_to_be_disabled: false,
-        is_micro_package_active: false,
-        is_mini_package_active: false,
-        is_basic_package_active: false,
-        is_mail_package_active: false,
-        is_retriever_package_active: false,
-        number_of_journals: 5,
-        is_pre_assignment_active: true,
-        is_to_apply_now: true,
-        retriever_price_option: 'retriever',
-        configured?: false
-      })
   end
 
   def retake_mcf_documents

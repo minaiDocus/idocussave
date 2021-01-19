@@ -73,7 +73,7 @@
                   = f.input :vat_accounts, as: :hidden, input_html: { id: 'account-book-type-vat-accounts-hidden' }
                   = link_to 'Ajouter un compte de TVA', '#', class: 'btn btn-primary add_vat_account_field float-right'
 
-        - if !@customer || @customer.subscription.is_mail_package_active
+        - if !@customer || @customer.subscription.is_package?('mail_option')
           .box.step.bg-light{ style: 'display:none' }
             %h4 Instructions pour iDo'Courrier
             %hr

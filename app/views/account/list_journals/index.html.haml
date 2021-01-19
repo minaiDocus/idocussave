@@ -10,7 +10,7 @@
         %span.text-info.fs-origin= @customer
 
     .card-body
-      - if @customer.subscription.is_mail_package_active
+      - if @customer.subscription.is_package?('mail_option')
         Rappel: il est nécessaire de créer vos journaux comptables afin de créer les chemises correspondantes lors de la commande de votre kit.
         %br
         %br
