@@ -263,13 +263,13 @@ class Account::OrganizationsController < Account::OrganizationController
         :jefacture_api_key,
         :specific_mission,
         :default_banking_provider
-        { quadratus_attributes: %i[auto_deliver is_used] },
-        { coala_attributes: %i[auto_deliver is_used] },
-        { cegid_attributes: %i[auto_deliver is_used] },
-        { fec_agiris_attributes: %i[auto_deliver is_used] },
-        { csv_descriptor_attributes: %i[id auto_deliver is_used] },
-        { exact_online_attributes: %i[auto_deliver is_used] },
-        { my_unisoft_attributes: %i[auto_deliver is_used] }
+        { :quadratus_attributes => %i[id is_used auto_deliver] },
+        { :coala_attributes => %i[id is_used auto_deliver] },
+        { :cegid_attributes => %i[id is_used auto_deliver] },
+        { :fec_agiris_attributes => %i[id is_used auto_deliver] },
+        { :csv_descriptor_attributes => %i[id is_used auto_deliver] },
+        { :exact_online_attributes => %i[id is_used auto_deliver] },
+        { :my_unisoft_attributes => %i[id is_used auto_deliver] }
       )
     else
       params.require(:organization).permit(
@@ -283,13 +283,13 @@ class Account::OrganizationsController < Account::OrganizationController
         :preseizure_date_option,
         :invoice_mails,
         :jefacture_api_key,
-        { quadratus_attributes: %i[auto_deliver is_used] },
-        { coala_attributes: %i[auto_deliver is_used] },
-        { cegid_attributes: %i[auto_deliver is_used] },
-        { fec_agiris_attributes: %i[auto_deliver is_used] },
-        { csv_descriptor_attributes: %i[id auto_deliver is_used] },
-        { exact_online_attributes: %i[auto_deliver is_used] },
-        { my_unisoft_attributes: %i[auto_deliver is_used] }
+        { :quadratus_attributes => %i[id is_used auto_deliver] },
+        { :coala_attributes => %i[id is_used auto_deliver] },
+        { :cegid_attributes => %i[id is_used auto_deliver] },
+        { :fec_agiris_attributes => %i[id is_used auto_deliver] },
+        { :csv_descriptor_attributes => %i[id is_used auto_deliver] },
+        { :exact_online_attributes => %i[id is_used auto_deliver] },
+        { :my_unisoft_attributes => %i[id is_used auto_deliver] }
       )
     end
   end
