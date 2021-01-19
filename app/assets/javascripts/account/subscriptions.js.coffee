@@ -1,33 +1,3 @@
-update_warning = ->
-  is_recently_created = $('form').data('is-recently-created') == true
-  $('.notify-warning').addClass('hide')
-  $('.to_disable_later').removeClass('to_disable_later')
-
-  if !$('#subscription_subscription_option_is_idox_package_active').is(':checked') && $('#subscription_subscription_option_is_idox_package_active').data('original-value') == 1 && !is_recently_created
-    $('#subscription_subscription_option_is_idox_package_active').parent('.form-check-inline').addClass('to_disable_later')
-
-  if !$('#subscription_subscription_option_is_basic_package_active').is(':checked') && $('#subscription_subscription_option_is_basic_package_active').data('original-value') == 1 && !is_recently_created
-    $('#subscription_subscription_option_is_basic_package_active').parent('.form-check-inline').addClass('to_disable_later')
-
-  if !$('#subscription_subscription_option_is_micro_package_active').is(':checked') && $('#subscription_subscription_option_is_micro_package_active').data('original-value') == 1 && !is_recently_created
-    $('#subscription_subscription_option_is_micro_package_active').parent('.form-check-inline').addClass('to_disable_later')
-
-  if !$('#subscription_subscription_option_is_mini_package_active').is(':checked') && $('#subscription_subscription_option_is_mini_package_active').data('original-value') == 1 && !is_recently_created
-    $('#subscription_subscription_option_is_mini_package_active').parent('.form-check-inline').addClass('to_disable_later')
-
-  if $('#subscription_subscription_option_is_retriever_package_active').is(':checked') && $('#subscription_subscription_option_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
-    $('#subscription_subscription_option_is_retriever_package_active').parent('.form-check-inline').addClass('to_disable_later')
-  if !$('#subscription_is_pre_assignment_active_true').is(':checked') && $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
-    $('.subscription_is_pre_assignment_active_label').addClass('to_disable_later')
-
-  $('.active_options').each (e) ->
-    $(this).find('.option_checkbox').each (e) ->
-      if !$(this).is(':checked') && $(this).data('original-value') == 1 && !is_recently_created
-        $(this).parent('.form-check-inline').addClass('to_disable_later')
-
-  if $('.to_disable_later').length > 0
-    $('.notify-warning').removeClass('hide')
-
 check_disabled_options = ->
   $('#subscription_package_form input:checkbox').each(->
     if $(this).attr('disabled') == 'disabled'
@@ -45,10 +15,6 @@ refresh_softwares = (obj)->
     $('#softwares_is_ibiza_used').removeAttr('checked')
 
 jQuery ->
-  $('#personalize_subscription_package_form input.subscription-package-form-change').on 'click', ->
-    update_warning()
-  update_warning()
-
   if $('#organization_subscriptions.edit').length > 0
     $('#subscriptions #admin_options_button').on 'click', ->
       if $('#subscriptions .admin_options').is(':visible')

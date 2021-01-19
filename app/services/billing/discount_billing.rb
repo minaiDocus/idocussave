@@ -77,11 +77,11 @@ class Billing::DiscountBilling
   def classic_quantity_of(option)
     case option.to_s
       when 'subscription'
-        concerned_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true).size
+        concerned_subscriptions.where("subscriptions.current_packages LIKE '%ido_classique%' OR subscriptions.current_packages LIKE '%mail_option%'").size       
       when 'retriever'
-        concerned_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
+        concerned_subscriptions.where("subscriptions.current_packages LIKE '%retriever_option%'").size
       when 'iDoMini'
-        concerned_subscriptions.where("subscriptions.is_mini_package_active" => true).size
+        concerned_subscriptions.where("subscriptions.current_packages LIKE '%ido_mini%'").size
       else 0
     end
   end
@@ -95,7 +95,7 @@ class Billing::DiscountBilling
   end
 
   def concerned_subscriptions
-    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
+    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'")
   end
 
   def get_amount_policy(package_sym)
@@ -126,11 +126,11 @@ class Billing::DiscountBilling
   def special_extentis_quantity_of(option)
     case option.to_s
       when 'subscription'
-        extentis_subscriptions.where("subscriptions.is_basic_package_active = ? OR subscriptions.is_mail_package_active = ?", true, true).size
+        extentis_subscriptions.where("subscriptions.current_packages LIKE '%ido_classique%' OR subscriptions.current_packages LIKE '%mail_option%'").size
       when 'retriever'
-        extentis_subscriptions.where("subscriptions.is_retriever_package_active" => true).size
+        extentis_subscriptions.where("subscriptions.current_packages LIKE '%retriever_option%'").size
       when 'iDoMini'
-        extentis_subscriptions.where("subscriptions.is_mini_package_active" => true).size
+        extentis_subscriptions.where("subscriptions.current_packages LIKE '%ido_mini%'").size
       else 0
     end
   end
@@ -140,7 +140,7 @@ class Billing::DiscountBilling
   end
 
   def extentis_subscriptions
-    @extentis_subscriptions ||= extentis_customers.joins(:subscription).where("subscriptions.period_duration" => 1, "subscriptions.is_micro_package_active" => false)
+    @extentis_subscriptions ||= extentis_customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'")
   end
 
 end

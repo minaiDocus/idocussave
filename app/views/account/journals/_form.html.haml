@@ -51,9 +51,9 @@
         = f.input :description
         - if @organization.knowings.try(:is_configured?)
           = f.input :domain, collection: journal_domain_for_select, include_blank: false
-        - if !@customer || is_preassignment_authorized? || @customer.subscription.is_idox_package_active
+        - if !@customer || is_preassignment_authorized? || @customer.subscription.is_package?('ido_x')
           = f.input :entry_type, collection: account_book_type_entry_type_for_select(@organization, @customer), include_blank: false
-        - if !@customer || @customer.subscription.is_mail_package_active
+        - if !@customer || @customer.subscription.is_package?('mail_option')
           = f.input :instructions, as: :text, input_html: { maxlength: 400 }
         = f.input :is_default, as: :boolean unless @customer
       .col-md-7

@@ -8,38 +8,56 @@ class Subscription::Form
   end
 
   def submit(params)
+    current_packages  = []
+    futur_packages    = []
+    packages          = []
+
     @params = params
-    is_new = !@subscription.configured?
+    is_new  = !@subscription.configured?
 
     @to_apply_now = @subscription.user.recently_created? || (@requester.is_admin && get_param(:is_to_apply_now).to_i == 1)
 
-    @subscription.is_annual_package_active           = value_of(:is_annual_package_active)   || false
-    @subscription.is_scan_box_package_active         = value_of(:is_scan_box_package_active) || false
-    @subscription.is_scan_box_package_to_be_disabled = false
+    current_package_data = @subscription.current_packages.nil? ? [] : @subscription.current_packages.tr('["\]','   ').tr('"', '').split(',').map { |pack| pack.strip }
 
-    @subscription.is_basic_package_to_be_disabled = (!@to_apply_now && @subscription.is_basic_package_active && get_param(:is_basic_package_active).to_i == 0)
-    @subscription.is_idox_package_to_be_disabled  = (!@to_apply_now && @subscription.is_idox_package_active  && get_param(:is_idox_package_active).to_i == 0)
-    @subscription.is_micro_package_to_be_disabled = (!@to_apply_now && @subscription.is_micro_package_active && get_param(:is_micro_package_active).to_i == 0)
-    @subscription.is_mini_package_to_be_disabled  = (!@to_apply_now && @subscription.is_mini_package_active  && get_param(:is_mini_package_active).to_i == 0)
+    if current_package_data.include?(@params[:subscription_option]) || @to_apply_now
+      if @params[:subscription_option] == 'retriever_option'
+        current_packages << @params[:subscription_option]
+      else
+        current_packages << @params[:subscription_option]
 
-    @subscription.is_mail_package_to_be_disabled  = (!@to_apply_now && @subscription.is_mail_package_active  && get_param(:is_mail_package_active).to_i == 0)
-    @subscription.is_retriever_package_to_be_disabled  = (!@to_apply_now && @subscription.is_retriever_package_active && get_param(:is_retriever_package_active).to_i == 0)
-    @subscription.is_pre_assignment_to_be_disabled  = (!@to_apply_now && @subscription.is_pre_assignment_active && get_param(:is_pre_assignment_active).to_i == 0)
+        current_packages << 'mail_option'             if params[:mail_option] && !current_package_data.include?(params[:mail_option])
+        current_packages << 'retriever_option'        if params[:retriever_option] && !current_package_data.include?(params[:retriever_option])
+        current_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && !current_package_data.include?(params[:is_pre_assignment_active]) && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
+      end
 
-    @subscription.is_basic_package_active = value_of(:is_basic_package_active) unless value_of(:is_basic_package_active).nil?
-    @subscription.is_idox_package_active  = value_of(:is_idox_package_active)  unless value_of(:is_idox_package_active).nil?
-    @subscription.is_mini_package_active  = value_of(:is_mini_package_active)  unless value_of(:is_mini_package_active).nil?
-    @subscription.is_micro_package_active = value_of(:is_micro_package_active) unless value_of(:is_micro_package_active).nil?
+      if current_package_data.size > current_packages.size
+        futur_packages   = current_packages
+      else
+        current_package_data = current_package_data + current_packages
+      end
 
-    @subscription.is_mail_package_active      = value_of(:is_mail_package_active) unless value_of(:is_mail_package_active).nil?
-    @subscription.is_retriever_package_active = value_of(:is_retriever_package_active) unless value_of(:is_retriever_package_active).nil?
-    @subscription.is_pre_assignment_active    = value_of(:is_pre_assignment_active) unless value_of(:is_pre_assignment_active).nil?
+      @to_apply_now = true
+    else
+      futur_packages << @params[:subscription_option]
+
+      futur_packages << 'mail_option'             if params[:mail_option]
+      futur_packages << 'retriever_option'        if params[:retriever_option] && @params[:subscription_option] != 'retriever_option'
+      futur_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && @params[:subscription_option] != 'retriever_option' && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
+    end
+
+    @subscription.current_packages = current_package_data.uniq
+    @subscription.futur_packages   = futur_packages.any? ? futur_packages.uniq : nil
+
+    if @to_apply_now && !@subscription.current_packages.include?(@params[:subscription_option])
+      @subscription.current_packages = futur_packages
+      @subscription.futur_packages   = nil
+    end
 
     @subscription.period_duration = 1
 
-    @subscription.number_of_journals = get_param(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count    
+    @subscription.number_of_journals = get_param(:number_of_journals) if get_param(:number_of_journals).to_i > @subscription.user.account_book_types.count
 
-    if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
+    if @subscription.configured? && @subscription.save
       @subscription.set_start_date_and_end_date
 
       Billing::UpdatePeriod.new(@subscription.current_period, { renew_packages: @to_apply_now }).execute
@@ -98,7 +116,7 @@ class Subscription::Form
   end
 
   def set_special_excess_values
-    if @subscription.is_mini_package_active
+    if @subscription.is_package?('ido_mini')
       values = {
         max_upload_pages_authorized: 600,
         max_preseizure_pieces_authorized: 300,
@@ -113,12 +131,12 @@ class Subscription::Form
     customer = @subscription.user
     return false unless customer
 
-    unless @subscription.is_mail_package_active
+    unless @subscription.is_package?('mail_option')
       paper_set_orders = customer.orders.paper_sets.pending
       paper_set_orders.each { |order| Order::Destroy.new(order).execute } if paper_set_orders.any?
     end
 
-    unless @subscription.is_scan_box_package_active
+    unless @subscription.is_package?('scan')
       dematbox_orders = customer.orders.dematboxes.pending
       dematbox_orders.each { |order| Order::Destroy.new(order).execute } if dematbox_orders.any?
     end

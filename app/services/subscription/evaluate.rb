@@ -13,34 +13,28 @@ class Subscription::Evaluate
     period = @subscription.current_period
     update_max_number_of_journals
 
-    if @subscription.is_annual_package_active
-      unauthorize_dematbox
-      authorize_retriever
-      authorize_pre_assignment
+    period.is_active?(:ido_x) ? unauthorize_dematbox : authorize_dematbox
+
+    if period.is_active?(:ido_classique) || period.is_active?(:ido_micro) || period.is_active?(:ido_mini)
       authorize_upload
     else
-      period.is_active?(:ido_x) ? unauthorize_dematbox : authorize_dematbox
-
-      if period.is_active?(:ido_classique) || period.is_active?(:ido_micro) || period.is_active?(:ido_mini)
-        authorize_upload
-      else
-        unauthorize_upload
-      end
-
-      if period.is_active?(:retriever_option) || period.is_active?(:ido_micro)
-        authorize_retriever
-      else
-        unauthorize_retriever
-      end
-
-      if period.is_active?(:pre_assignment_option) && ( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) )
-        authorize_pre_assignment
-      elsif period.is_active?(:ido_micro) || ( period.is_active?(:retriever_option) && !( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) ))
-        authorize_pre_assignment
-      else
-        unauthorize_pre_assignment
-      end
+      unauthorize_upload
     end
+
+    if period.is_active?(:retriever_option) || period.is_active?(:ido_micro)
+      authorize_retriever
+    else
+      unauthorize_retriever
+    end
+
+    if period.is_active?(:pre_assignment_option) && ( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) )
+      authorize_pre_assignment
+    elsif period.is_active?(:ido_micro) || ( period.is_active?(:retriever_option) && !( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) ))
+      authorize_pre_assignment
+    else
+      unauthorize_pre_assignment
+    end
+    
 
     Journal::AssignDefault.new(@customer, @requester, @request).execute if @requester
   end

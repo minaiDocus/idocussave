@@ -78,7 +78,7 @@ class Period < ApplicationRecord
     result = []
 
     result << :mail_option      if self.current_packages.include?('mail_option')
-    result << :retriever_option if self.current_packages.include?('retriever_option')
+    result << :retriever_option if self.current_packages.include?('retriever_option') 
     result << :pre_assignment_option if self.current_packages.include?('pre_assignment_option')
 
     result
@@ -88,20 +88,7 @@ class Period < ApplicationRecord
     return false if self.organization.present?
     return false unless force || !is_configured?
 
-    packages = []
-
-    #packages
-    packages << 'ido_classique' if self.subscription.is_basic_package_active
-    packages << 'ido_mini' if self.subscription.is_mini_package_active
-    packages << 'ido_micro' if self.subscription.is_micro_package_active
-    packages << 'ido_x' if self.subscription.is_idox_package_active
-
-    #options
-    packages << 'mail_option' if self.subscription.is_mail_package_active
-    packages << 'retriever_option' if self.subscription.is_retriever_package_active
-    packages << 'pre_assignment_option' if self.subscription.is_pre_assignment_really_active
-
-    self.update({ current_packages: packages.presence })
+    self.update({ current_packages: self.subscription.current_packages.presence })
   end
 
   def is_active?(package)
@@ -110,7 +97,7 @@ class Period < ApplicationRecord
   end
 
   def is_valid_for_quota_organization
-    !self.organization && self.duration == 1 && !self.subscription.is_micro_package_active && !self.subscription.is_mini_package_active
+    !self.organization && self.duration == 1 && !self.subscription.is_package?('ido_micro') && !self.subscription.is_package?('ido_mini') 
   end
 
   def amount_in_cents_wo_vat
@@ -358,9 +345,9 @@ private
   def excess_duration
     return 1 if organization
 
-    if subscription.try(:is_micro_package_active)
+    if subscription.is_package?('ido_micro')
       12
-    elsif subscription.try(:is_mini_package_active)
+    elsif subscription.is_package?('ido_mini')
       3
     else
       1

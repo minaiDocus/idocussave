@@ -327,8 +327,6 @@ load_accounting_plan_function= (id) ->
               , 3000)
             $('.import_accounting').attr('disabled', false)
 
-
-
 get_ibiza_customers_list = (element)->
   element.after('<div class="removable-feedback feedback"></div>')
   $.ajax
@@ -354,82 +352,6 @@ get_ibiza_customers_list = (element)->
         $('input[type=submit]').removeAttr('disabled')
       $('#create_customer .softwares-section').css('display', 'none')
 
-check_input_number = ->
-  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').focus()
-
-  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').click (e) -> update_price()
-
-  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').keypress (e) ->
-    e.preventDefault()
-
-update_form = ->
-  lock_package()
-  options = ['number_of_journals', 'pre_assignment']
-  selected_options = []
-
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked')
-    active_option_of('basic')
-    selected_options.push 'number_of_journals', 'pre_assignment'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').is(':checked')
-    active_option_of('idox')
-    selected_options.push 'number_of_journals'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').is(':checked')
-    active_option_of('micro')
-    selected_options.push 'number_of_journals'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked')
-    active_option_of('mini')
-    selected_options.push 'number_of_journals', 'pre_assignment'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').is(':checked')
-    remove_active_class()
-    selected_options.push 'number_of_journals'
-  if $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').is(':checked')
-    selected_options.push 'number_of_journals'
-  if $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').is(':checked')
-    selected_options.push 'number_of_journals'
-
-  for option in options
-    if selected_options.indexOf(option) != -1
-      $('.'+option).show()
-      if (option == 'pre_assignment')
-        if $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val() > 0
-          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').prop('checked', true)
-    else
-      $('.'+option).hide()
-
-  uncheck_all_options()
-  update_price()
-
-uncheck_all_options = ->
-  $('#personalize_subscription_package_form .option_checkbox').each (e) ->
-    if !$(this).hasClass('checkbox_active')
-      $(this).removeAttr('checked')
-
-active_option_of = (group) ->
-  $("#personalize_subscription_package_form .#{group}_option").removeAttr('disabled')
-  remove_active_class()
-
-  $("#personalize_subscription_package_form #subscription_subscription_option_is_#{group}_package_active").addClass('active')
-  $("#personalize_subscription_package_form .form_check_#{group}_package").addClass('active_options')
-  $("#personalize_subscription_package_form .active_options input[type='checkbox']").addClass('checkbox_active')
-
-remove_active_class = ->
-  $("#personalize_subscription_package_form .active").removeClass('active')
-  $("#personalize_subscription_package_form .active_options").removeClass('active_options')
-  $("#personalize_subscription_package_form .checkbox_active").removeClass('checkbox_active')
-
-get_data_original_value_of = (group, option) ->
-  return parseInt($("#personalize_subscription_package_form .#{group} input#{option}").data('original-value'))
-
-lock_package = ->
-  $("#personalize_subscription_package_form .option_checkbox").attr('disabled', 'disabled')
-
-check_commitment = ->
-  if $('#personalize_subscription_package_form .commitment_pending').length > 0
-    $('#personalize_subscription_package_form .radio-button').attr('disabled', 'disabled')
-    $('#personalize_subscription_package_form .commitment_pending').each (e) ->
-      if $(this).is(':checked')
-        $(this).removeAttr('disabled')
-
 show_ibiza_customer = ->
   $('#create_customer input.ibiza-customer-select').change ->
     if @checked
@@ -439,6 +361,21 @@ show_ibiza_customer = ->
 
   if $('#create_customer .softwares-section .ibiza-customers-list').length > 0
     get_ibiza_customers_list($('#create_customer .softwares-section .ibiza-customers-list'))
+
+check_input_number = ->
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').focus()
+
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').click (e) -> update_price()
+
+  $('#personalize_subscription_package_form .subscription_number_of_journals .special_input').keypress (e) ->
+    e.preventDefault()
+
+check_commitment = ->
+  if $('#personalize_subscription_package_form .commitment_pending').length > 0
+    $('#personalize_subscription_package_form .radio-button').attr('disabled', 'disabled')
+    $('#personalize_subscription_package_form .commitment_pending').each (e) ->
+      if $(this).is(':checked')
+        $(this).removeAttr('disabled')
 
 update_price = ->
   price_list = {
@@ -457,21 +394,24 @@ update_price = ->
   price = 0
   options = []
 
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_idox_package_active') == 1
+  if $('#subscription_subscription_option_ido_x').is(':checked')
     options.push 'idox'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_basic_package_active') == 1
-    options.push 'subscription', 'subscription_plus', 'pre_assignment'
-  if $('#personalize_subscription_package_form .active_options input#subscription_is_mail_package_active').is(':checked') || get_data_original_value_of('active_options', '#subscription_is_mail_package_active') == 1
-    options.push 'return_paper'
-  if $('#personalize_subscription_package_form .active_options input#subscription_is_retriever_package_active').is(':checked') || get_data_original_value_of('active_options', '#subscription_is_retriever_package_active') == 1
-    options.push $('#personalize_subscription_package_form input#subscription_is_retriever_package_active').data('retriever-price-option')
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_retriever_package_active') == 1
-    options.push $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').data('retriever-price-option')
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_micro_package_active') == 1
+  if $('#subscription_subscription_option_ido_micro').is(':checked')
     options.push 'subscription'
-  if $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').is(':checked') || get_data_original_value_of('form-check', '#subscription_subscription_option_is_mini_package_active') == 1
+  if $('#subscription_subscription_option_ido_mini').is(':checked')
     options.push 'subscription', 'subscription_plus', 'pre_assignment'
-  options = _.uniq(options)
+  if $('#subscription_subscription_option_ido_classique').is(':checked')
+    options.push 'subscription', 'subscription_plus', 'pre_assignment'
+
+  if $('.active_option#subscription_mail_option').is(':checked')
+    options.push 'return_paper'
+
+  if $('.active_option#subscription_retriever_option').is(':checked')
+    options.push $('.active_option#subscription_retriever_option').data('retriever-price-option')
+
+  if $('#subscription_subscription_option_retriever_option').is(':checked')
+    options.push $('#subscription_subscription_option_retriever_option').data('retriever-price-option')
+
 
   for option in options
     if option == 'pre_assignment'
@@ -489,7 +429,6 @@ update_price = ->
     price += price_list[option]
 
   $('.total_price').html(price+",00€ HT")
-
 
 jQuery ->
   if ($('.import_dialog').length > 0)
@@ -553,52 +492,37 @@ jQuery ->
   load_accounting_plan_function('providers')
   load_accounting_plan_function('customers')
 
-  $('#personalize_subscription_package_form .form-check.form-check-inline, #personalize_subscription_package_form span.radio.pre-assignment-state').tooltip()
-  
-  $('#personalize_subscription_package_form input[type="checkbox"].option_checkbox').click (e) -> update_price()
-
-  $('#personalize_subscription_package_form .subscription_number_of_journals input[type="number"].special_input').bind 'keyup keydown change', (e) ->
-    e.preventDefault()
+  if $('#personalize_subscription_package_form').length > 0
+    check_input_number()
+    check_commitment()
     update_price()
 
-  $('#personalize_subscription_package_form input[type="radio"].radio-button').on 'click', (e) ->
-    $("#personalize_subscription_package_form .form-check input").data('original-value', 0)
+    $('#personalize_subscription_package_form .radio-button').on 'click', (e) ->
+      package_name = $(this).data('package')
 
-    if !$("##{e.currentTarget.id}").hasClass('active')
-      class_list = $(this).attr('class').split(/\s+/)
-      lock_package()
+      if !$(this).hasClass('is_pre_assignment_active')
+        $('.option_checkbox').attr('disabled', 'disabled')
+        $('.option_checkbox').prop('checked', false)
 
-      $.each class_list, (index, item) ->
-        if item == 'idox-check-radio'
-          $('#personalize_subscription_package_form input#subscription_subscription_option_is_idox_package_active').attr('checked', 'checked')
-          active_option_of('idox')
-        if item == 'micro-check-radio'
-          $('#personalize_subscription_package_form input#subscription_subscription_option_is_micro_package_active').attr('checked', 'checked')
-          active_option_of('micro')
-        if item == 'mini-check-radio'
-          $('#personalize_subscription_package_form input#subscription_subscription_option_is_mini_package_active').attr('checked', 'checked')
-          active_option_of('mini')
-        if item == 'basic-check-radio'
-          $('#personalize_subscription_package_form input#subscription_subscription_option_is_basic_package_active').attr('checked', 'checked')
-          active_option_of('basic')
-        if item == 'retriever-uniquess-check-radio'
-          $('#personalize_subscription_package_form input#subscription_subscription_option_is_retriever_package_active').attr('checked', 'checked')
-          remove_active_class()
-        if item == 'is_pre_assignment_active_true'
-          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').attr('checked', 'checked')
-          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').removeAttr('checked')
-          $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val(1)
-        if item == 'is_pre_assignment_active_false'
-          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_false').attr('checked', 'checked')
-          $('#personalize_subscription_package_form input#subscription_is_pre_assignment_active_true').removeAttr('checked')
-          $('#personalize_subscription_package_form input#is_pre_assignment_active_hidden').val(0)
+        $(".#{package_name}_option").removeAttr('disabled')
 
-      update_form()
-      uncheck_all_options()
+        $('.option_checkbox').removeClass('active_option')
+
+        if package_name != 'ido_mini' && package_name != 'ido_classique'
+          $('.pre_assignment').hide('')
+        else
+          $('.pre_assignment').show('')
+
       update_price()
 
-  check_input_number()
+    $('.form-check.form-check-inline, #personalize_subscription_package_form span.radio.pre-assignment-state').tooltip()
+
+    $('.option_checkbox').click (e) ->
+      $(this).addClass('active_option')
+      update_price()
+
+    $('.subscription_number_of_journals input[type="number"].special_input').bind 'keyup keydown change', (e) ->
+      e.preventDefault()
+      update_price()
+
   show_ibiza_customer()
-  check_commitment()
-  update_form()
-    

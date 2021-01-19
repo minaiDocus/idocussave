@@ -4,14 +4,14 @@ class Admin::SubscriptionsController < Admin::AdminController
   before_action :load_accounts_ids
   # GET /admin/subscriptions
   def index
-    @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mail_package_active: true).count }
-    @basic_package_count     = Rails.cache.fetch('admin_report_basic_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_basic_package_active: true).count }
-    @annual_package_count    = Rails.cache.fetch('admin_report_annual_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_annual_package_active:    true).count }
-    @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_pre_assignment_active:    true).count }
-    @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_scan_box_package_active: true).count }
-    @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_retriever_package_active: true).count }
-    @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_mini_package_active: true).count }
-    @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids, is_micro_package_active: true).count }
+    @mail_package_count      = Rails.cache.fetch('admin_report_mail_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%mail_option%'").count }
+    @basic_package_count     = Rails.cache.fetch('admin_report_basic_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_classique%'").count }
+    @annual_package_count    = Rails.cache.fetch('admin_report_annual_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%annual%'").count }
+    @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%pre_assignment_option%'").count }
+    @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%scan%'").count }
+    @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%retriever_option%'").count }
+    @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_mini%'").count }
+    @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_micro%'").count }
 
     params[:per_page] ||= 50
     statistics = order(StatisticsManager.get_compared_subscription_statistics(statistic_params))
@@ -33,21 +33,21 @@ class Admin::SubscriptionsController < Admin::AdminController
 
     case params[:type]
     when 'mail_package'
-      data_accounts = Rails.cache.fetch('admin_report_mail_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_mail_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_mail_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%mail_option%'")) }
     when 'basic_package'
-      data_accounts = Rails.cache.fetch('admin_report_basic_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_basic_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_basic_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_classique%'")) }
     when 'annual_package'
-      data_accounts = Rails.cache.fetch('admin_report_annual_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_annual_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_annual_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%annual%'")) }
     when 'pre_assignment_active'
-      data_accounts = Rails.cache.fetch('admin_report_pre_assignment_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_pre_assignment_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_pre_assignment_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%pre_assignment_option%'")) }
     when 'scan_box_package'
-      data_accounts = Rails.cache.fetch('admin_report_scan_box_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_scan_box_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_scan_box_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%scan%'")) }
     when 'retriever_package'
-      data_accounts = Rails.cache.fetch('admin_report_retriever_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_retriever_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_retriever_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%retriever_option%'")) }
     when 'mini_package'
-      data_accounts = Rails.cache.fetch('admin_report_mini_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_mini_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_mini_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_mini%'")) }
     when 'micro_package'
-      data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(is_micro_package_active: true)) }
+      data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_micro%'")) }
     else
       data_accounts = []
       end

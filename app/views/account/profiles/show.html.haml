@@ -370,7 +370,7 @@
                               = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox
                             - if @user.is_prescriber
                               = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint pour l'un de mes clients.", wrapper: :inline_checkbox
-                            - elsif @user.is_guest || @user.subscription.is_mail_package_active || @user.subscription.is_annual_package_active
+                            - elsif @user.is_guest || @user.subscription.is_package?('mail_option') || @user.subscription.is_package?('ido_annual')
                               = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque le quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
                             - if @user.is_prescriber
                               = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
