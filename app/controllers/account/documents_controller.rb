@@ -3,7 +3,7 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  skip_before_action :login_user!, only: %w[download piece handle_bad_url]
+  skip_before_action :login_user!, only: %w[download piece handle_bad_url temp_document]
 
   # GET /account/documents
   def index
