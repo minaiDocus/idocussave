@@ -362,7 +362,7 @@ class FileImport::Ftp
           next
         end
 
-        Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+        CustomUtils.mktmpdir do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
             client.getbinaryfile file_path, file
 

@@ -93,7 +93,7 @@ class Billing::CreateInvoicePdf
 
       archive_name = "invoices_#{(time - 1.month).strftime('%Y%m')}.zip"
 
-      Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+      CustomUtils.mktmpdir do |dir|
         archive_path = DocumentTools.archive("#{dir}/#{archive_name}", invoices_files_path)
 
         _archive_invoice      = ArchiveInvoice.new

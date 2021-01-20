@@ -229,7 +229,9 @@ describe DocumentTools do
 
   context 'force correct pdf', :force_correct do
     before(:all) do
-      @dir = Dir.mktmpdir
+      CustomUtils.mktmpdir(nil, false) do |dir|
+        @dir = dir
+      end
     end
 
     after(:all) do

@@ -16,7 +16,7 @@ class PreAssignment::Builder::DataService
 
   def save_data_to_storage(data_built, extension)
     if data_built.present?
-      Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+      CustomUtils.mktmpdir do |dir|
         file_name = @delivery.pack_name.tr('% ', '_')
         file_path = "#{dir}/#{file_name}_#{@delivery.id}.#{extension}"
 

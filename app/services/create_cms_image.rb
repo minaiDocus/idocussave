@@ -5,7 +5,7 @@ class CreateCmsImage
 
     cms_image.original_file_name = original_filename
 
-    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+    CustomUtils.mktmpdir do |dir|
       file_path = File.join(dir, original_filename)
 
       FileUtils.cp original_path, file_path

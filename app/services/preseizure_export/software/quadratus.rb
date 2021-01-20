@@ -8,31 +8,30 @@ class PreseizureExport::Software::Quadratus
 
   def execute
     base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
+    file_path = ''
 
-    # Initialize a temp directory
-    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    FileUtils.chmod(0755, dir)
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      PreseizureExport::Software::Quadratus.delay_for(6.hours).remove_temp_dir(dir)
 
-    PreseizureExport::Software::Quadratus.delay_for(6.hours).remove_temp_dir(dir)
+      data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute # Generate a txt with preseizures
 
-    data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute # Generate a txt with preseizures
+      File.open("#{dir}/#{base_name}.txt", 'w') do |f|
+        f.write(data)
+      end
 
-    File.open("#{dir}/#{base_name}.txt", 'w') do |f|
-      f.write(data)
+      # Copy pieces to temp directory
+      @preseizures.each do |preseizure|
+        @piece = preseizure.piece
+        FileUtils.cp @piece.cloud_content_object.path, File.join(dir, preseizure.piece.position.to_s + '.pdf') if preseizure.piece
+      end
+
+      file_path = File.join(dir, base_name + '.zip')
+
+      Dir.chdir dir
+
+      # Finaly zip the temp dir
+      POSIX::Spawn.system "zip #{file_path} *"
     end
-
-    # Copy pieces to temp directory
-    @preseizures.each do |preseizure|
-      @piece = preseizure.piece
-      FileUtils.cp @piece.cloud_content_object.path, File.join(dir, preseizure.piece.position.to_s + '.pdf') if preseizure.piece
-    end
-
-    file_path = File.join(dir, base_name + '.zip')
-
-    Dir.chdir dir
-
-    # Finaly zip the temp dir
-    POSIX::Spawn.system "zip #{file_path} *"
 
     file_path
   end

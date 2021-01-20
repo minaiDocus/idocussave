@@ -378,7 +378,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def multi_pack_download
-    CustomUtils.add_chmod_access_into(0777, "/nfs/tmp/")
+    CustomUtils.add_chmod_access_into("/nfs/tmp/")
     _tmp_archive = Tempfile.new(['archive', '.zip'], '/nfs/tmp/')
     _tmp_archive_path = _tmp_archive.path
     _tmp_archive.close

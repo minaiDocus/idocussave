@@ -79,7 +79,7 @@ describe FileDelivery::Storage::Mcf do
     end
 
     it 'updates a modified existing file' do
-      Dir.mktmpdir do |dir|
+      CustomUtils.mktmpdir do |dir|
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
 

@@ -49,38 +49,39 @@ class Api::Mobile::FileUploaderController < MobileApiController
     @errors = []
 
     if customer.try(:options).try(:is_upload_authorized)
-      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-      final_file_name = "composed_mobile_img_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
-      @final_file_path = File.join(@dir, final_file_name)
+      CustomUtils.mktmpdir do |dir|
+        @dir = dir
 
-      @uploaded_files.each do |p_file|
-        merge_img_file p_file.tempfile, p_file.original_filename
-      end
+        final_file_name = "composed_mobile_img_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+        @final_file_path = File.join(@dir, final_file_name)
 
-      if File.exist? @final_file_path
-        final_file = File.open(@final_file_path, 'r')
-
-        uploaded_document = UploadedDocument.new(
-          final_file,
-          final_file_name,
-          customer,
-          params[:file_account_book_type],
-          params[:file_prev_period_offset],
-          @user,
-          'mobile',
-          parse_analytic_params
-        )
-
-        data = present(uploaded_document).to_json
-
-        if uploaded_document.errors.any?
-          set_errors_to_files(uploaded_document.full_error_messages)
+        @uploaded_files.each do |p_file|
+          merge_img_file p_file.tempfile, p_file.original_filename
         end
-      else
-        set_errors_to_files("Une erreur inatendue s'est produite, veuillez relancer l'upload svp")
-      end
 
-      FileUtils.remove_entry @dir if @dir
+        if File.exist? @final_file_path
+          final_file = File.open(@final_file_path, 'r')
+
+          uploaded_document = UploadedDocument.new(
+            final_file,
+            final_file_name,
+            customer,
+            params[:file_account_book_type],
+            params[:file_prev_period_offset],
+            @user,
+            'mobile',
+            parse_analytic_params
+          )
+
+          data = present(uploaded_document).to_json
+
+          if uploaded_document.errors.any?
+            set_errors_to_files(uploaded_document.full_error_messages)
+          end
+        else
+          set_errors_to_files("Une erreur inatendue s'est produite, veuillez relancer l'upload svp")
+        end
+      end
     else
       render json: { error: true, message: 'Accès non autorisé.' }, status: 401
       return

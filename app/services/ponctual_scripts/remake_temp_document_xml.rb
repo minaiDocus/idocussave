@@ -10,7 +10,7 @@ class PonctualScripts::RemakeTempDocumentXml < PonctualScripts::PonctualScript
     @errors = []
     @processed_file_paths = []
 
-    CustomUtils.add_chmod_access_into(0777, "/nfs/staffing/")
+    CustomUtils.add_chmod_access_into("/nfs/staffing/")
 
     basepath = '/nfs/staffing/grouping/errors/'
 

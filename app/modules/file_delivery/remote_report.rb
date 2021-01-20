@@ -56,11 +56,13 @@ module FileDelivery::RemoteReport
 
     basename = "#{name.tr(' ', '_')}-L#{number}"
 
-    dir = Dir.mktmpdir("#{basename}__", Rails.root.join('tmp/'))
+    file_path = ''
 
-    file_path = File.join(dir, "#{basename}.csv")
+    CustomUtils.mktmpdir("#{basename}__", false) do |dir|
+      file_path = File.join(dir, "#{basename}.csv")
 
-    File.write(file_path, data)
+      File.write(file_path, data)
+    end
 
     file_path
   end

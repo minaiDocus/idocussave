@@ -88,7 +88,7 @@ class EmailedDocument
 
       # System::Log.info('emails', email.inspect)
 
-      Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+      CustomUtils.mktmpdir do |dir|
         file_path = "#{dir}/#{email.id}.eml"
 
         File.open file_path, 'w' do |f|

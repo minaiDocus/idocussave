@@ -251,7 +251,7 @@ class FileImport::Dropbox
           customer, journal_name, period_offset, collaborator_code = get_info_from_path path
 
           begin
-            Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+            CustomUtils.mktmpdir do |dir|
               File.open File.join(dir, file_name), 'wb' do |file|
                 client.download file_path do |content|
                   file.puts content.force_encoding('UTF-8')

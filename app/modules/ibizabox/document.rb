@@ -10,28 +10,29 @@ class Ibizabox::Document
     @document_id        = document_id
     @prev_period_offset = prev_period_offset
 
-    @dir            = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    file_path       = File.join(@dir, file_name)
-    @processed_file = PdfIntegrator.new(@file, file_path, 'ibiza').processed_file
+    CustomUtils.mktmpdir do |dir|
+      @dir            = dir
+      file_path       = File.join(@dir, file_name)
+      @processed_file = PdfIntegrator.new(@file, file_path, 'ibiza').processed_file
 
-    if valid?
-      temp_pack = TempPack.find_or_create_by_name pack_name
+      if valid?
+        temp_pack = TempPack.find_or_create_by_name pack_name
 
-      options = {
-        original_file_name:     File.basename(@file),
-        delivered_by:           'ibiza',
-        delivery_type:          'upload',
-        user_id:                @user.id,
-        api_id:                 document_id,
-        api_name:               'ibiza',
-        original_fingerprint:   fingerprint,
-        is_content_file_valid:  true,
-        wait_selection:         @folder.is_selection_needed
-      }
-      @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options)
-      @folder.temp_documents << @temp_document
+        options = {
+          original_file_name:     File.basename(@file),
+          delivered_by:           'ibiza',
+          delivery_type:          'upload',
+          user_id:                @user.id,
+          api_id:                 document_id,
+          api_name:               'ibiza',
+          original_fingerprint:   fingerprint,
+          is_content_file_valid:  true,
+          wait_selection:         @folder.is_selection_needed
+        }
+        @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options)
+        @folder.temp_documents << @temp_document
+      end
     end
-    clean_tmp
   end
 
   def file_name
@@ -80,11 +81,6 @@ private
 
   def extension
     File.extname(@file.path).downcase
-  end
-
-  def clean_tmp
-    @temp_file.close if @temp_file
-    FileUtils.remove_entry @dir if @dir
   end
 
   def fingerprint

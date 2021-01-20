@@ -71,7 +71,7 @@ describe FileDelivery::Storage::Dropbox do
     end
 
     it 'updates an existing file' do
-      Dir.mktmpdir do |dir|
+      CustomUtils.mktmpdir(nil, false) do |dir|
         file_path = File.join(dir, '2pages.pdf')
         FileUtils.cp Rails.root.join('spec/support/files/3pages.pdf'), file_path
 

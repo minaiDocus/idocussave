@@ -8,14 +8,16 @@ class PreseizureExport::Software::Cegid
 
   def execute
     @base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
+    file_path  = ''
 
-    # initialising a temp dir into rails_app insted of /tmp
-    @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    FileUtils.chmod(0755, @dir)
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      @dir      = dir
+      PreseizureExport::Software::Cegid.delay_for(6.hours).remove_temp_dir(@dir)
 
-    PreseizureExport::Software::Cegid.delay_for(6.hours).remove_temp_dir(@dir)
+      file_path = @software_type == 'csv_cegid' ? cegid : cegid_tra
+    end
 
-    @software_type == 'csv_cegid' ? cegid : cegid_tra    
+     file_path
   end
 
   class << self

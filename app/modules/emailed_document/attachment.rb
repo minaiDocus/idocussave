@@ -100,11 +100,15 @@ class EmailedDocument::Attachment
 
 
   def dir
-    @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      @dir = dir
+    end
   end
 
   def dir_2
-    @dir_2 = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      @dir_2 = dir
+    end
   end
 
   def clean_dir

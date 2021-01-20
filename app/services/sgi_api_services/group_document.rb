@@ -14,15 +14,15 @@ class SgiApiServices::GroupDocument
     if valid_json_content?
       @temp_pack = find_temp_pack(@json_content['pack_name'])
 
-      @merged_dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
+      CustomUtils.mktmpdir do |dir|
+        @merged_dir = dir
 
-      files_input
+        files_input
 
-      create_new_temp_document
+        create_new_temp_document
 
-      @temp_pack.temp_documents.where(id: temp_document_ids(@json_content['pieces'])).each(&:bundled)
-
-      clean_tmp
+        @temp_pack.temp_documents.where(id: temp_document_ids(@json_content['pieces'])).each(&:bundled)
+      end
 
       { success: true }
     else
@@ -94,10 +94,6 @@ class SgiApiServices::GroupDocument
   end
 
 
-  def clean_tmp
-    FileUtils.remove_entry @merged_dir if @merged_dir
-  end
-
   def create_new_temp_document
     @json_content['pieces'].each do |pieces|
       pieces.each do |piece|
@@ -138,8 +134,8 @@ class SgiApiServices::GroupDocument
 
     # Create a secondary temp documents it comes back from grouping
     def execute
-      Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |tmpdir|
-        @file_path = tmpdir
+      CustomUtils.mktmpdir(nil, false) do |dir|
+        @file_path = dir
 
         @file_path = File.join(@file_path, @file_name)
 

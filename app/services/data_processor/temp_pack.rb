@@ -28,7 +28,7 @@ class DataProcessor::TempPack
     @original_doc_merged = true
     sleep_counter = 5
 
-    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+    CustomUtils.mktmpdir do |dir|
       @dir = dir
       prepare_original_document #For appending or prepending bundled document
 

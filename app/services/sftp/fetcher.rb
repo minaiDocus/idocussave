@@ -157,7 +157,7 @@ class Sftp::Fetcher
 
 
   def self.get_file(sftp, file_name, new_file_name)
-    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
+    CustomUtils.mktmpdir do |dir|
       begin
         file = File.open(File.join(dir, new_file_name), 'w')
         sftp.getbinaryfile(file_name, file.path)
@@ -182,7 +182,7 @@ class Sftp::Fetcher
     end
 
     def execute
-      CustomUtils.add_chmod_access_into(0777, "/nfs/ppp/")
+      CustomUtils.add_chmod_access_into("/nfs/ppp/")
 
       dirs = @sftp.nlst.sort
 

@@ -440,7 +440,7 @@ describe UploadedDocument do
         @user.account_book_types.create(name: 'TS', description: 'TEST')
 
         allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
-        allow_any_instance_of(UploadedDocument).to receive(:clean_tmp).and_return(true)
+        # allow_any_instance_of(UploadedDocument).to receive(:clean_tmp).and_return(true)
 
         uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
 

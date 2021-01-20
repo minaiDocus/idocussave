@@ -7,34 +7,34 @@ class Billing::InvoicesToZip
 
 
   def execute
-    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
+    zip_path = ''
 
-    FileUtils.chmod(0755, dir)
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      Billing::InvoicesToZip.delay_for(6.hours).remove_temp_dir(dir)
 
-    Billing::InvoicesToZip.delay_for(6.hours).remove_temp_dir(dir)
+      @invoice_ids.each do |invoice_id|
+        invoice = Invoice.find invoice_id
+        filepath = invoice.cloud_content_object.path
 
-    @invoice_ids.each do |invoice_id|
-      invoice = Invoice.find invoice_id
-      filepath = invoice.cloud_content_object.path
+        next unless File.exist?(filepath)
 
-      next unless File.exist?(filepath)
+        if invoice.organization
+          filename = invoice.organization.name + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
+        elsif invoice.user
+          filename =  invoice.user.code + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
+        else
+          filename = File.basename(filepath)
+        end
 
-      if invoice.organization
-        filename = invoice.organization.name + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
-      elsif invoice.user
-        filename =  invoice.user.code + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
-      else
-        filename = File.basename(filepath)
+        new_filepath = File.join dir, filename
+
+        FileUtils.cp(filepath, new_filepath)
       end
 
-      new_filepath = File.join dir, filename
+      zip_path = File.join(dir, 'factures.zip')
 
-      FileUtils.cp(filepath, new_filepath)
+      system "zip -j #{zip_path} #{dir}/*"
     end
-
-    zip_path =  File.join(dir, 'factures.zip')
-
-    system "zip -j #{zip_path} #{dir}/*"
 
     zip_path
   end

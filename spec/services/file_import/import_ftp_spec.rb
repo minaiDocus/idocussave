@@ -4,8 +4,8 @@ require 'spec_helper'
 
 describe FileImport::Ftp do
   class Driver
-    def initialize(temp_dir, is_authenticatable=true)
-      @temp_dir = temp_dir
+    def initialize(dir, is_authenticatable=true)
+      @dir = dir
       @is_authenticatable = is_authenticatable
     end
 
@@ -14,7 +14,7 @@ describe FileImport::Ftp do
     end
 
     def file_system(user)
-      Ftpd::DiskFileSystem.new @temp_dir
+      Ftpd::DiskFileSystem.new @dir
     end
   end
 
@@ -46,8 +46,8 @@ describe FileImport::Ftp do
       leader.create_notify
       Member.create(user: leader, organization: @organization, code: 'IDOC%LEAD', role: Member::ADMIN)
 
-      Dir.mktmpdir do |temp_dir|
-        driver = Driver.new temp_dir, false
+      CustomUtils.mktmpdir do |dir|
+        driver = Driver.new dir, false
         server = Ftpd::FtpServer.new driver
         server.start
         @ftp.update port: server.bound_port
@@ -63,34 +63,34 @@ describe FileImport::Ftp do
     end
 
     it 'creates folders successfully' do
-      Dir.mktmpdir do |temp_dir|
-        driver = Driver.new temp_dir
+      CustomUtils.mktmpdir do |dir|
+        driver = Driver.new dir
         server = Ftpd::FtpServer.new driver
         server.start
         @ftp.update port: server.bound_port
 
         FileImport::Ftp.new(@ftp).execute
 
-        folders = Dir.glob(File.join(temp_dir, 'INPUT', '*'))
+        folders = Dir.glob(File.join(dir, 'INPUT', '*'))
         expect(folders.size).to eq 4
-        expect(folders.include?(File.join(temp_dir, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
-        expect(folders.include?(File.join(temp_dir, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
-        expect(folders.include?(File.join(temp_dir, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
-        expect(folders.include?(File.join(temp_dir, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
+        expect(folders.include?(File.join(dir, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
+        expect(folders.include?(File.join(dir, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
+        expect(folders.include?(File.join(dir, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
+        expect(folders.include?(File.join(dir, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
 
         server.stop
       end
     end
 
     it 'imports a file successfully' do
-      Dir.mktmpdir do |temp_dir|
-        driver = Driver.new temp_dir
+      CustomUtils.mktmpdir do |dir|
+        driver = Driver.new dir
         server = Ftpd::FtpServer.new driver
         server.start
         @ftp.update port: server.bound_port
 
-        FileUtils.mkdir_p File.join(temp_dir, 'INPUT', 'IDOC%0001 - AC (Test)')
-        FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, 'INPUT', 'IDOC%0001 - AC (Test)')
+        FileUtils.mkdir_p File.join(dir, 'INPUT', 'IDOC%0001 - AC (Test)')
+        FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(dir, 'INPUT', 'IDOC%0001 - AC (Test)')
 
         FileImport::Ftp.new(@ftp).execute
 
@@ -101,17 +101,17 @@ describe FileImport::Ftp do
     end
 
     it 'rejects a file' do
-      Dir.mktmpdir do |temp_dir|
-        driver = Driver.new temp_dir
+      CustomUtils.mktmpdir do |dir|
+        driver = Driver.new dir
         server = Ftpd::FtpServer.new driver
         server.start
         @ftp.update port: server.bound_port
 
         original_file_path = Rails.root.join('spec/support/files/corrupted.pdf')
-        file_path = File.join(temp_dir, 'INPUT/IDOC%0001 - AC (Test)/corrupted.pdf')
-        new_file_path = File.join(temp_dir, 'INPUT/IDOC%0001 - AC (Test)/corrupted (fichier corrompu ou protégé par mdp).pdf')
+        file_path = File.join(dir, 'INPUT/IDOC%0001 - AC (Test)/corrupted.pdf')
+        new_file_path = File.join(dir, 'INPUT/IDOC%0001 - AC (Test)/corrupted (fichier corrompu ou protégé par mdp).pdf')
 
-        FileUtils.mkdir_p File.join(temp_dir, 'INPUT/IDOC%0001 - AC (Test)')
+        FileUtils.mkdir_p File.join(dir, 'INPUT/IDOC%0001 - AC (Test)')
         FileUtils.cp original_file_path, file_path
 
         FileImport::Ftp.new(@ftp).execute
@@ -131,34 +131,34 @@ describe FileImport::Ftp do
       end
 
       it 'creates folders successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
           FileImport::Ftp.new(@ftp).execute
 
-          folders = Dir.glob(File.join(temp_dir, @root_path, 'INPUT', '*'))
+          folders = Dir.glob(File.join(dir, @root_path, 'INPUT', '*'))
           expect(folders.size).to eq 4
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
 
           server.stop
         end
       end
 
       it 'imports a file successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
-          FileUtils.mkdir_p File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
-          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
+          FileUtils.mkdir_p File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
+          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
 
           FileImport::Ftp.new(@ftp).execute
 
@@ -176,34 +176,34 @@ describe FileImport::Ftp do
       end
 
       it 'creates folders successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
           FileImport::Ftp.new(@ftp).execute
 
-          folders = Dir.glob(File.join(temp_dir, @root_path, 'INPUT', '*'))
+          folders = Dir.glob(File.join(dir, @root_path, 'INPUT', '*'))
           expect(folders.size).to eq 4
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
-          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - VT (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0002 - AC (Test)'))).to eq true
+          expect(folders.include?(File.join(dir, @root_path, 'INPUT', 'IDOC%0002 - VT (Test)'))).to eq true
 
           server.stop
         end
       end
 
       it 'imports a file successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
-          FileUtils.mkdir_p File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
-          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
+          FileUtils.mkdir_p File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
+          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(dir, @root_path, 'INPUT', 'IDOC%0001 - AC (Test)')
 
           FileImport::Ftp.new(@ftp).execute
 

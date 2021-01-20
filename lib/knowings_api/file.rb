@@ -15,12 +15,15 @@ class KnowingsApi::File
 
   # Generates a kzip formated package with the document and meta informations as XML
   def create
-    dir         = Dir.mktmpdir('knowings', Rails.root.join('tmp/'))
-    metapath    = create_meta(dir)
-    basename    = ::File.basename(@file_name, '.pdf')
-    output_path = ::File.join(dir, "#{basename}#{EXTENSION}")
+    output_path = ''
 
-    POSIX::Spawn.system "zip -j #{output_path} #{metapath} #{@filepath}"
+    CustomUtils.mktmpdir("/nfs/tmp/#{Time.now.strftime('%Y%m%d%H%M%s')}/knowings/") do |dir|
+      metapath    = create_meta(dir)
+      basename    = ::File.basename(@file_name, '.pdf')
+      output_path = ::File.join(dir, "#{basename}#{EXTENSION}")
+
+      POSIX::Spawn.system "zip -j #{output_path} #{metapath} #{@filepath}"
+    end
 
     output_path
   end

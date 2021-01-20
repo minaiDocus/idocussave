@@ -84,8 +84,8 @@ describe 'SendToFTP' do
       end
 
       it 'fails to authenticate' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir, false
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir, false
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
@@ -101,15 +101,15 @@ describe 'SendToFTP' do
       end
 
       it 'sends 3 files successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
           FileDelivery::Storage::Ftp.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-          files = Dir.glob("#{temp_dir}/files/iDocus/IDO%001/202010/AC/*.pdf").sort.map do |path|
+          files = Dir.glob("#{dir}/files/iDocus/IDO%001/202010/AC/*.pdf").sort.map do |path|
             File.basename path
           end
 
@@ -172,15 +172,15 @@ describe 'SendToFTP' do
       end
 
       it 'sends 3 files successfully' do
-        Dir.mktmpdir do |temp_dir|
-          driver = Driver.new temp_dir
+        CustomUtils.mktmpdir do |dir|
+          driver = Driver.new dir
           server = Ftpd::FtpServer.new driver
           server.start
           @ftp.update port: server.bound_port
 
           FileDelivery::Storage::Ftp.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-          files = Dir.glob(File.join(temp_dir, @ftp.root_path, "OUTPUT/IDO%001/202010/AC/*.pdf")).sort.map do |path|
+          files = Dir.glob(File.join(dir, @ftp.root_path, "OUTPUT/IDO%001/202010/AC/*.pdf")).sort.map do |path|
             File.basename path
           end
 

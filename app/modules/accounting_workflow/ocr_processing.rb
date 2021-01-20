@@ -60,27 +60,27 @@ module AccountingWorkflow::OcrProcessing
           if temp_document.ocr_needed? && File.exists?(file_path)
             # temp_document.raw_content           = File.open(temp_document.cloud_content_object.path)
 
-            dir                                 = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-            temp_document_file_path             = File.join(dir, temp_document.cloud_content_object.filename)
-            FileUtils.cp file_path, temp_document_file_path
+            CustomUtils.mktmpdir do |dir|
+              temp_document_file_path             = File.join(dir, temp_document.cloud_content_object.filename)
+              FileUtils.cp file_path, temp_document_file_path
 
-            # temp_document.content               = File.open(temp_document_file_path)
-            temp_document.is_ocr_layer_applied  = true
+              # temp_document.content               = File.open(temp_document_file_path)
+              temp_document.is_ocr_layer_applied  = true
 
-            # INFO : Blank pages are removed, so we need to reassign pages_number
-            temp_document.pages_number = DocumentTools.pages_number file_path
+              # INFO : Blank pages are removed, so we need to reassign pages_number
+              temp_document.pages_number = DocumentTools.pages_number file_path
 
-            content_file = temp_document.cloud_content_object
-            temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if temp_document.save
-            temp_document.cloud_content_object.attach(File.open(temp_document_file_path), File.basename(temp_document_file_path))
+              content_file = temp_document.cloud_content_object
+              temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if temp_document.save
+              temp_document.cloud_content_object.attach(File.open(temp_document_file_path), File.basename(temp_document_file_path))
 
-            if temp_document.is_bundle_needed?
-              temp_document.bundle_needed
-            else
-              temp_document.ready
+              if temp_document.is_bundle_needed?
+                temp_document.bundle_needed
+              else
+                temp_document.ready
+              end
             end
 
-            clean_tmp dir
             move_to_archive file_path
           end
         end

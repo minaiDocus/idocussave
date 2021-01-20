@@ -15,51 +15,53 @@ class Dematbox::CreateDocument
 
 
   def execute
-    if valid?
-      if @service_id == DematboxServiceApi.config.service_id.to_s
-        # @temp_document.raw_content          = File.open(@temp_document.content.path)
-        # @temp_document.content              = file
-        @temp_document.dematbox_text        = @params['text']
-        @temp_document.dematbox_box_id      = @params['boxId']
-        @temp_document.dematbox_service_id  = @params['serviceId']
-        @temp_document.is_ocr_layer_applied = true
+    CustomUtils.mktmpdir do |dir|
+      @dir = dir
 
-        content_file = @temp_document.cloud_content_object
-        @temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if @temp_document.save
-        @temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path))
+      if valid?
+        if @service_id == DematboxServiceApi.config.service_id.to_s
+          # @temp_document.raw_content          = File.open(@temp_document.content.path)
+          # @temp_document.content              = file
+          @temp_document.dematbox_text        = @params['text']
+          @temp_document.dematbox_box_id      = @params['boxId']
+          @temp_document.dematbox_service_id  = @params['serviceId']
+          @temp_document.is_ocr_layer_applied = true
 
-        # INFO : Blank pages are removed, so we need to reassign pages_number
-        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)
+          content_file = @temp_document.cloud_content_object
+          @temp_document.cloud_raw_content_object.attach(File.open(content_file.path), File.basename(content_file.path)) if @temp_document.save
+          @temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file.path))
 
-        @temp_document.save
+          # INFO : Blank pages are removed, so we need to reassign pages_number
+          @temp_document.pages_number = DocumentTools.pages_number(@temp_document.cloud_content_object.path)
 
-        if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
-          @temp_document.bundle_needed
+          @temp_document.save
+
+          if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
+            @temp_document.bundle_needed
+          else
+            @temp_document.ready
+          end
         else
-          @temp_document.ready
+          pack = TempPack.find_or_create_by_name(pack_name)
+
+          pack.update_pack_state
+
+          options = {
+            delivered_by:          user.code,
+            delivery_type:         'dematbox_scan',
+            dematbox_doc_id:       @params['docId'],
+            dematbox_box_id:       @params['boxId'],
+            dematbox_service_id:   @params['serviceId'],
+            dematbox_text:         @params['text'],
+            is_content_file_valid: true
+          }
+
+          @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
         end
-      else
-        pack = TempPack.find_or_create_by_name(pack_name)
 
-        pack.update_pack_state
-
-        options = {
-          delivered_by:          user.code,
-          delivery_type:         'dematbox_scan',
-          dematbox_doc_id:       @params['docId'],
-          dematbox_box_id:       @params['boxId'],
-          dematbox_service_id:   @params['serviceId'],
-          dematbox_text:         @params['text'],
-          is_content_file_valid: true
-        }
-
-        @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
+        Notifications::DematboxUploaded.delay_for(5.seconds).notify_dematbox_document_uploaded(@temp_document.id, 3) if Rails.env != 'test'
       end
-
-      Notifications::DematboxUploaded.delay_for(5.seconds).notify_dematbox_document_uploaded(@temp_document.id, 3) if Rails.env != 'test'
     end
-
-    clean_tmp
   end
 
 
@@ -107,8 +109,6 @@ class Dematbox::CreateDocument
     if @file
       @file
     else
-      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-
       file_path = File.join(@dir, file_name)
 
       File.open file_path, 'w' do |f|
@@ -117,11 +117,6 @@ class Dematbox::CreateDocument
 
       @file = File.open(file_path)
     end
-  end
-
-
-  def clean_tmp
-    FileUtils.remove_entry @dir if @dir
   end
 
 

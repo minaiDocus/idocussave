@@ -30,52 +30,53 @@ class UploadedDocument
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
-    if @errors.empty?
-      @dir            = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-      file_path       = File.join(@dir, file_name)
-      @processed_file = PdfIntegrator.new(@file, file_path, api_name).processed_file
+    CustomUtils.mktmpdir do |dir|
+      if @errors.empty?
+        @dir            = dir
+        file_path       = File.join(@dir, file_name)
+        @processed_file = PdfIntegrator.new(@file, file_path, api_name).processed_file
 
-      begin
-        unless File.exist?(@file.path) && DocumentTools.modifiable?(@processed_file.path)
+        begin
+          unless File.exist?(@file.path) && DocumentTools.modifiable?(@processed_file.path)
+            @errors << [:file_is_corrupted_or_protected, nil]
+          end
+        rescue => e
+          System::Log.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
           @errors << [:file_is_corrupted_or_protected, nil]
         end
-      rescue => e
-        System::Log.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
-        @errors << [:file_is_corrupted_or_protected, nil]
-      end
 
-      @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
-      @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
-      @errors << [:already_exist, nil]                                   unless unique?
+        @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
+        @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
+        @errors << [:already_exist, nil]                                   unless unique?
+
+        if @errors.empty?
+          analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)
+          @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
+          @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
+        end
+      end
 
       if @errors.empty?
-        analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)
-        @errors << [:invalid_analytic_params, nil]                         unless analytic_validator.valid_analytic_presence?
-        @errors << [:invalid_analytic_ventilation, nil]                    unless analytic_validator.valid_analytic_ventilation?
+        temp_pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
+        System::Log.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
+
+        temp_pack.update_pack_state # Create or update pack related to temp_pack
+        System::Log.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
+
+        options = {
+          delivered_by:          @uploader.code,
+          delivery_type:         'upload',
+          api_id:                api_id,
+          api_name:              api_name,
+          original_file_name:    @original_file_name,
+          is_content_file_valid: true,
+          original_fingerprint:  fingerprint,
+          analytic:              analytic_validator.analytic_params_present? ? analytic : nil
+        }
+
+        @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options) # Create temp document for temp pack
       end
     end
-
-    if @errors.empty?
-      temp_pack = TempPack.find_or_create_by_name(pack_name) # Create pack to host the temp document
-      System::Log.info('document_upload', "[Temp_pack - #{api_name}] #{temp_pack.name} - #{TempPack.where(name: temp_pack.name).size} found - temp_pack")
-
-      temp_pack.update_pack_state # Create or update pack related to temp_pack
-      System::Log.info('document_upload', "[Pack - #{api_name}] #{temp_pack.name} - #{Pack.where(name: temp_pack.name).size} found - pack")
-
-      options = {
-        delivered_by:          @uploader.code,
-        delivery_type:         'upload',
-        api_id:                api_id,
-        api_name:              api_name,
-        original_file_name:    @original_file_name,
-        is_content_file_valid: true,
-        original_fingerprint:  fingerprint,
-        analytic:              analytic_validator.analytic_params_present? ? analytic : nil
-      }
-
-      @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options) # Create temp document for temp pack
-    end
-    clean_tmp
   end
 
   def valid?
@@ -153,10 +154,6 @@ class UploadedDocument
 
   def valid_pages_number?
     pages_number <= 100
-  end
-
-  def clean_tmp
-    FileUtils.remove_entry @dir if @dir
   end
 
   def pages_number

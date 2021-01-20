@@ -9,38 +9,40 @@ class Retriever::RetrievedDocument
 
     return { success: true, return_object: nil } if count_day >= 3 || already_exist
 
-    client     = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
-    is_success = false
-    tries      = 1
-    dir        = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    file_path  = File.join(dir, 'retriever_processed_file.pdf')
+    client         = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
+    is_success     = false
+    tries          = 1
+    temp_file_path = ''
+    return_object  = nil
 
-    while tries <= 3 && !is_success
-      sleep(tries)
-      temp_file_path = client.get_file document['id']
+    CustomUtils.mktmpdir do |dir|
+      file_path  = File.join(dir, 'retriever_processed_file.pdf')
 
-      begin
-        if client.response.status == 200
-          processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
-          Retriever::RetrievedDocument.new(retriever, document, processed_file.path)
+      while tries <= 3 && !is_success
+        sleep(tries)
+        temp_file_path = client.get_file document['id']
 
-          retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
-          is_success    = true
-          return_object = client.response
-          count_day     = 3
-        else
-          is_success    = false
-          return_object = client.response
+        begin
+          if client.response.status == 200
+            processed_file = PdfIntegrator.new(File.open(temp_file_path), file_path, 'retrieved_document').processed_file
+            Retriever::RetrievedDocument.new(retriever, document, processed_file.path)
+
+            retriever.update(error_message: "") if retriever.error_message.to_s.match(/Certains documents n'ont pas/)
+            is_success    = true
+            return_object = client.response
+            count_day     = 3
+          else
+            is_success    = false
+            return_object = client.response
+          end
+        rescue Errno::ENOENT => e
+          return_object = e
         end
-      rescue Errno::ENOENT => e
-        return_object = e
+        tries += 1
       end
-      tries += 1
+
+      Retriever::RetrievedDocument.delay_for(24.hours).process_file(retriever.id, document, (count_day+1)) if !is_success && count_day <= 2
     end
-
-    Retriever::RetrievedDocument.delay_for(24.hours).process_file(retriever.id, document, (count_day+1)) if !is_success && count_day <= 2
-
-    FileUtils.remove_entry dir
 
     log_document = {
       name: "RetrievedDocument",
@@ -71,41 +73,46 @@ class Retriever::RetrievedDocument
     @document       = document
     @temp_file_path = temp_file_path
 
-    if valid?
-      pack = TempPack.find_or_create_by_name pack_name
-      options = {
-        original_file_name:     "#{document['number']}.pdf",
-        delivered_by:           'budgea',
-        delivery_type:          'retriever',
-        fingerprint:            fingerprint,
-        user_id:                @user.id,
-        api_id:                 document['id'],
-        api_name:               'budgea',
-        retriever_service_name: retriever.service_name,
-        retriever_name:         retriever.name,
-        retrieved_metadata:     document,
-        metadata:               formatted_metadata,
-        is_content_file_valid:  true,
-        wait_selection:         waiting_selection?
-      }
-      @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
-      retriever.temp_documents << @temp_document
-    else
-      log_document = {
-        name: "RetrievedDocument",
-        error_group: "[retrieved-document] invalid retrieved document",
-        erreur_type: "Invalid document from retriever : #{retriever.name.to_s}",
-        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-        more_information: {
-          retriever: retriever.inspect,
-          document: document.inspect,
-          modifiable: DocumentTools.modifiable?(@temp_file_path).to_s
-        }
-      }
+    CustomUtils.mktmpdir do |dir|
+      @dir = dir
 
-      ErrorScriptMailer.error_notification(log_document).deliver
+      if valid?
+        pack = TempPack.find_or_create_by_name pack_name
+        options = {
+          original_file_name:     "#{document['number']}.pdf",
+          delivered_by:           'budgea',
+          delivery_type:          'retriever',
+          fingerprint:            fingerprint,
+          user_id:                @user.id,
+          api_id:                 document['id'],
+          api_name:               'budgea',
+          retriever_service_name: retriever.service_name,
+          retriever_name:         retriever.name,
+          retrieved_metadata:     document,
+          metadata:               formatted_metadata,
+          is_content_file_valid:  true,
+          wait_selection:         waiting_selection?
+        }
+        @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
+        retriever.temp_documents << @temp_document
+      else
+        log_document = {
+          name: "RetrievedDocument",
+          error_group: "[retrieved-document] invalid retrieved document",
+          erreur_type: "Invalid document from retriever : #{retriever.name.to_s}",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: {
+            retriever: retriever.inspect,
+            document: document.inspect,
+            modifiable: DocumentTools.modifiable?(@temp_file_path).to_s
+          }
+        }
+
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
+
+      @file.close if @file
     end
-    clean_tmp
   end
 
   def file_name
@@ -142,16 +149,10 @@ private
     if @file
       @file
     else
-      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
       file_path = File.join(@dir, file_name)
       FileUtils.cp @temp_file_path, file_path
       @file = File.open(file_path, 'r')
     end
-  end
-
-  def clean_tmp
-    @file.close if @file
-    FileUtils.remove_entry @dir if @dir
   end
 
   def fingerprint

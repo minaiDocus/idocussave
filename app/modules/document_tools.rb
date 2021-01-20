@@ -196,10 +196,12 @@ class DocumentTools
   end
 
   def self.gs_error_found?(file_path)
-    dir          = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    verification = `gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="/#{dir}/verif_gs_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf" #{file_path}`
+    verification = ''
 
-    FileUtils.remove_entry dir if dir
+    CustomUtils.mktmpdir do |dir|
+      verification = `gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="/#{dir}/verif_gs_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf" #{file_path}`
+    end
+
     verification.match(/Error:/)
   end
 

@@ -7,22 +7,21 @@ class PreseizureExport::Software::FecAgiris
 
   def execute
     base_name = @preseizures.first.report.name.tr(' %', '__')
+    file_path = ''
 
-    # Initialize a temp directory
-    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
-    FileUtils.chmod(0755, dir)
+    CustomUtils.mktmpdir(nil, false) do |dir|
+      PreseizureExport::Software::FecAgiris.delay_for(6.hours).remove_temp_dir(dir)
 
-    PreseizureExport::Software::FecAgiris.delay_for(6.hours).remove_temp_dir(dir)
+      data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute("fec_agiris") # Generate a txt with preseizures
 
-    data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute("fec_agiris") # Generate a txt with preseizures
+      File.open("#{dir}/#{base_name}.txt", 'w') do |f|
+        f.write(data)
+      end
 
-    File.open("#{dir}/#{base_name}.txt", 'w') do |f|
-      f.write(data)
+      file_path = "#{dir}/#{base_name}.txt"
+
+      Dir.chdir dir
     end
-
-    file_path = "#{dir}/#{base_name}.txt"
-
-    Dir.chdir dir
 
     file_path
   end

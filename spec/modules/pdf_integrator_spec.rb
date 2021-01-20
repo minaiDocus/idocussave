@@ -8,8 +8,10 @@ describe PdfIntegrator do
     after(:all) { SpecModule.remove_tmp_dir }
 
     before(:each) do
-      @dir            = Dir.mktmpdir
-      @file_path      = File.join(@dir, 'ACC%001_AC_202004.pdf')
+      CustomUtils.mktmpdir(nil, false) do |dir|
+        @dir       = dir
+        @file_path = File.join(@dir, 'ACC%001_AC_202004.pdf')
+      end
 
       allow(Settings).to receive_message_chain('first.notify_errors_to').and_return('no')
     end

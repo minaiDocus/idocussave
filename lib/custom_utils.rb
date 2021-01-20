@@ -15,7 +15,7 @@ class CustomUtils
       ['AC0162', 'MFA%ADAPTO']
     end
 
-    def add_chmod_access_into(type, nfs_directory)
+    def add_chmod_access_into(type=0777, nfs_directory)
       FileUtils.chmod(type, nfs_directory)
     end
 
@@ -48,6 +48,24 @@ class CustomUtils
                       .gsub(/\s+/, file_naming_policy.separator)
 
       file_name + options['extension']
+    end
+
+    def mktmpdir(specific_dir=nil, with_remove=true)
+      rails_env = Rails.env == "production"
+      add_chmod_access_into("/nfs/tmp/") if rails_env
+
+      specific_dir = Rails.root.join("tmp", "#{Time.now.strftime('%Y%m%d%H%M%s')}") if !rails_env
+
+      dir = (specific_dir.nil? && rails_env) ? File.join("/nfs/tmp/", "#{Time.now.strftime('%Y%m%d%H%M%s')}") : File.join(specific_dir)
+      FileUtils.mkdir_p dir
+
+      add_chmod_access_into(dir) if rails_env
+
+      yield(dir)
+
+      FileUtils.remove_entry dir if with_remove && dir
+
+      dir
     end
   end
 end
