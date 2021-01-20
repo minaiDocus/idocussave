@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'Pdftk' do
   context 'Merge' do
     before(:each) do
-      @dir = Dir.mktmpdir
+      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
 
       @first_file  = File.join(@dir, '2pages.pdf')
       FileUtils.cp(Rails.root.join('spec', 'support', 'files', '2pages.pdf'), @first_file)

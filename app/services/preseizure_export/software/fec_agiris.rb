@@ -9,7 +9,7 @@ class PreseizureExport::Software::FecAgiris
     base_name = @preseizures.first.report.name.tr(' %', '__')
 
     # Initialize a temp directory
-    dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
+    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     FileUtils.chmod(0755, dir)
 
     PreseizureExport::Software::FecAgiris.delay_for(6.hours).remove_temp_dir(dir)

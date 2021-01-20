@@ -9,7 +9,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
 
   # Create a secondary temp documents it comes back from grouping
   def execute
-    Dir.mktmpdir do |tmpdir|
+    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |tmpdir|
       file_path = File.join tmpdir, @temp_pack.basefilename
 
       if file_paths.size > 1

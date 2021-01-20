@@ -3,7 +3,7 @@ class SpecModule
 
   class << self
     def create_tmp_dir
-      @@dir = Dir.mktmpdir
+      @@dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     end
 
     def remove_tmp_dir

@@ -328,7 +328,7 @@ class Pack < ApplicationRecord
   def append(file_path, tmp_dir = nil, append_to = nil)
     return merge_document('append', file_path, tmp_dir, append_to) if tmp_dir
 
-    Dir.mktmpdir do |dir|
+    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
       merge_document('append', file_path, dir, append_to)
     end
   end
@@ -337,7 +337,7 @@ class Pack < ApplicationRecord
   def prepend(file_path, tmp_dir = nil, prepend_to = nil)
     return merge_document('prepend', file_path, tmp_dir, prepend_to) if tmp_dir
 
-    Dir.mktmpdir do |dir|
+    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
       merge_document('prepend', file_path, dir, prepend_to)
     end
   end
@@ -360,7 +360,7 @@ class Pack < ApplicationRecord
     sleep_counter = 5
 
     if pieces.present?
-      Dir.mktmpdir do |dir|
+      Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
         temp_final_file = File.join(dir, self.pdf_name.gsub('.pdf', '_temp.pdf'))
         FileUtils.rm temp_final_file, force: true
 

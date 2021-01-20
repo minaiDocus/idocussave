@@ -107,7 +107,7 @@ class Dematbox::CreateDocument
     if @file
       @file
     else
-      @dir = Dir.mktmpdir
+      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
 
       file_path = File.join(@dir, file_name)
 

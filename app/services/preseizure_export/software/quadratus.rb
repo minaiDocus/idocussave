@@ -10,7 +10,7 @@ class PreseizureExport::Software::Quadratus
     base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
 
     # Initialize a temp directory
-    dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
+    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     FileUtils.chmod(0755, dir)
 
     PreseizureExport::Software::Quadratus.delay_for(6.hours).remove_temp_dir(dir)

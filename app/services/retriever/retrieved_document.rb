@@ -12,7 +12,7 @@ class Retriever::RetrievedDocument
     client     = Budgea::Client.new(retriever.user.budgea_account.try(:access_token))
     is_success = false
     tries      = 1
-    dir        = Dir.mktmpdir
+    dir        = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     file_path  = File.join(dir, 'retriever_processed_file.pdf')
 
     while tries <= 3 && !is_success
@@ -142,7 +142,7 @@ private
     if @file
       @file
     else
-      @dir = Dir.mktmpdir
+      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
       file_path = File.join(@dir, file_name)
       FileUtils.cp @temp_file_path, file_path
       @file = File.open(file_path, 'r')

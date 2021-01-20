@@ -31,7 +31,7 @@ class UploadedDocument
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
     if @errors.empty?
-      @dir            = Dir.mktmpdir
+      @dir            = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
       file_path       = File.join(@dir, file_name)
       @processed_file = PdfIntegrator.new(@file, file_path, api_name).processed_file
 

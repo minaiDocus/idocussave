@@ -49,7 +49,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
     @errors = []
 
     if customer.try(:options).try(:is_upload_authorized)
-      @dir = Dir.mktmpdir
+      @dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
       final_file_name = "composed_mobile_img_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
       @final_file_path = File.join(@dir, final_file_name)
 

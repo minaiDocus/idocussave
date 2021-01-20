@@ -361,7 +361,7 @@ class FileImport::Sftp
           next
         end
 
-        Dir.mktmpdir do |dir|
+        Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
             client.getbinaryfile file_path, file
 

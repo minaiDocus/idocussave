@@ -157,7 +157,7 @@ class Ftp::Fetcher
 
 
   def self.get_file(ftp, file_name, new_file_name)
-    Dir.mktmpdir do |dir|
+    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
       begin
         file = File.open(File.join(dir, new_file_name), 'w')
         ftp.getbinaryfile(file_name, file.path)

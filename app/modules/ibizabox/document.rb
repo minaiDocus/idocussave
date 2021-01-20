@@ -10,7 +10,7 @@ class Ibizabox::Document
     @document_id        = document_id
     @prev_period_offset = prev_period_offset
 
-    @dir            = Dir.mktmpdir
+    @dir            = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     file_path       = File.join(@dir, file_name)
     @processed_file = PdfIntegrator.new(@file, file_path, 'ibiza').processed_file
 

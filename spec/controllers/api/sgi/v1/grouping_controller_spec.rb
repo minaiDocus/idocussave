@@ -16,7 +16,7 @@ describe Api::Sgi::V1::GroupingController, :type => :controller do
     file_with_2_pages = Rails.root.join('spec', 'support', 'files', '2pages.pdf')
     file_with_3_pages = Rails.root.join('spec', 'support', 'files', '3pages.pdf')
 
-    Dir.mktmpdir do |dir|
+    Dir.mktmpdir(nil, Rails.root.join('tmp/')) do |dir|
       @temp_pack = TempPack.find_or_create_by_name 'IDO%0001 AC 202006 all'
       2.times do |i|
         file_name = "IDO_0001_AC_202006_%03d.pdf" % (i+1)

@@ -12,7 +12,7 @@ class PreseizureExport::Software::Coala
   def execute
     base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     # initialising a temp dir into rails_app insted of /tmp
-    dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
+    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
     FileUtils.chmod(0755, dir)
 
     PreseizureExport::Software::Coala.delay_for(6.hours).remove_temp_dir(dir)

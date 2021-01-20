@@ -244,7 +244,7 @@ class Pack::Piece < ApplicationRecord
       return false
     end
 
-    dir = temp_dir || Dir.mktmpdir
+    dir = temp_dir || Dir.mktmpdir(nil, Rails.root.join('tmp/'))
 
     piece_file_name = DocumentTools.file_name self.name
     piece_file_path = File.join(dir, piece_file_name)

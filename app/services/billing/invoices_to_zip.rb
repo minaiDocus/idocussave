@@ -7,7 +7,7 @@ class Billing::InvoicesToZip
 
 
   def execute
-    dir = Dir.mktmpdir
+    dir = Dir.mktmpdir(nil, Rails.root.join('tmp/'))
 
     FileUtils.chmod(0755, dir)
 
