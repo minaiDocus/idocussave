@@ -18,7 +18,7 @@ class PreAssignment::AutoPreAssignedJefacturePieces
   def execute
     if @temp_document.present? && @raw_presezeizure['piece_number'] && @piece.preseizures.empty? && !@piece.is_awaiting_pre_assignment?
       # @piece.update(is_awaiting_pre_assignment: true)
-      @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+      # @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
       preseizure = Pack::Report::Preseizure.new
       preseizure.organization     = @piece.user.organization

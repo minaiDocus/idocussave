@@ -19,7 +19,7 @@ class PreAssignment::AutoPreAssignedInvoicePieces
     begin
       if @temp_document.present? && @invoice.present? && @piece.preseizures.empty? && !@piece.is_awaiting_pre_assignment?
         # @piece.update(is_awaiting_pre_assignment: true)
-        @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
+        # @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
         preseizure = Pack::Report::Preseizure.new
         preseizure.organization     = @piece.user.organization
