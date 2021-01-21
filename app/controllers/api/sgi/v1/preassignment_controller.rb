@@ -63,7 +63,10 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
 
   def add_to_list_and_update_state_of(piece, compta_type)
     if piece.temp_document.nil? || piece.preseizures.any?
-      piece.update(pre_assignment_state: 'ready') if piece.pre_assignment_state == 'waiting'
+      if piece.pre_assignment_state == 'waiting'
+        piece.update(pre_assignment_state: 'ready')     if piece.temp_document.nil?
+        piece.update(pre_assignment_state: 'processed') if piece.preseizures.any?
+      end
 
       log_document = {
           name: "Api::Sgi::V1::PreassignmentController",

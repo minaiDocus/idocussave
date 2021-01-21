@@ -84,7 +84,8 @@ class SgiApiServices::GroupDocument
     temp_document     = temp_pack.temp_documents.where(id: id).first
 
     if is_basename_match && temp_document
-      if temp_document.bundled?
+      if temp_document.children.size > 0 || temp_document.bundled?
+        temp_document.update(state: 'bundled')
         @errors << { "piece_already_bundled" => "Piece already bundled with an id : #{id} in pack name: #{@json_content['pack_name']}." }
       end
     else
