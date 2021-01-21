@@ -21,9 +21,6 @@ describe PreAssignment::AutoPreAssignedInvoicePieces do
     allow_parameter
 
     @temp_pack = @user.temp_packs.last
-    @temp_pack.document_not_processed_count = 1
-    @temp_pack.save
-
     updating
 
     DataProcessor::TempPack.execute(@temp_pack)
@@ -48,7 +45,7 @@ describe PreAssignment::AutoPreAssignedInvoicePieces do
 
     @organization      = Organization.create(name: "ACCOMPLYS", description: "Organization accomplys", code: "ACC", subject_to_vat: true)
 
-    @user.account_book_types.create(name: "VT", pseudonym: "", description: "(Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "9DIV", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_accounts: "{'20':'445710', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
+    @user.account_book_types.create(name: "VT", pseudonym: "", description: "(Ventes)", position: 1, entry_type: 2, currency: "EUR", domain: "VT - Ventes", account_number: "9DIV", default_account_number: "", charge_account: "471000", default_charge_account: "", vat_accounts: {'0':'445710', '20':'152451', '8.5':'153141', '13':'754213'}.to_json, anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: @organization.id)
     @user.organization = @organization
     @user.save
 
@@ -75,13 +72,13 @@ describe PreAssignment::AutoPreAssignedInvoicePieces do
       @temp_pack = @user.temp_packs.last
     end
 
-    it '@temp_pack.document_not_processed_count should 0 and @temp_document.api_name should be invoice_auto' do
-      expect(@temp_pack.document_not_processed_count).to eq(0)
+    it '@temp_pack.not_processed_count should 0 and @temp_document.api_name should be invoice_auto' do
+      expect(@temp_pack.not_processed_count).to eq(0)
       expect(Pack::Piece.count).to eq(0)
       expect(@temp_pack.temp_documents.first.api_name).to eq 'invoice_auto'
     end
 
-    it '@temp_pack.document_not_processed_count should 0 and @temp_document.api_name should be invoice_auto' do
+    it '@temp_pack.not_processed_count should 0 and @temp_document.api_name should be invoice_auto' do
       allow_parameter
 
       updating
@@ -90,7 +87,7 @@ describe PreAssignment::AutoPreAssignedInvoicePieces do
 
       @temp_pack.reload
 
-      expect(@temp_pack.document_not_processed_count).to eq(-1)
+      expect(@temp_pack.not_processed_count).to eq(0)
       expect(@temp_pack.temp_documents.first.api_name).to eq 'invoice_auto'
       expect(Pack::Piece.count).to eq(1)
     end

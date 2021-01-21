@@ -107,25 +107,6 @@ class TempDocument < ApplicationRecord
       temp_document.stated_at = Time.now
     end
 
-
-    after_transition on: :ready do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_not_processed_count, 1)
-    end
-
-
-    after_transition on: :processed do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_not_processed_count, -1)
-    end
-
-
-    after_transition on: :bundle_needed do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, 1)
-    end
-
-    after_transition on: :bundled do |temp_document, _transition|
-      temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, -1)
-    end
-
     after_transition on: :ocr_needed do |temp_document, _transition|
       AccountingWorkflow::OcrProcessing.delay_for(10.seconds, queue: :low).send_document(temp_document.id)
     end

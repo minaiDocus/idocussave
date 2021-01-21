@@ -12,11 +12,7 @@ describe DataProcessor::TempPack do
       file = File.open("#{Rails.root}/spec/support/files/upload.pdf", "r")
 
       td.cloud_content_object.attach(file, 'test.pdf') if td.save
-
-      @temp_pack.document_not_processed_count += 1
     end
-
-    @temp_pack.save
   end
 
   def allow_parameters
@@ -48,7 +44,7 @@ describe DataProcessor::TempPack do
     divider = pack.dividers.first
     @original_document = pack.cloud_content_object.path
 
-    expect(@temp_pack.document_not_processed_count).to eq 0
+    expect(@temp_pack.not_processed_count).to eq 0
     expect(@temp_pack.temp_documents.first.state).to eq 'processed'
 
     expect( pack.try(:pieces).try(:size) ).to eq 3
@@ -81,7 +77,7 @@ describe DataProcessor::TempPack do
     pack = Pack.find_by_name @temp_pack.name
     @original_document = pack.cloud_content_object.path
 
-    expect(@temp_pack.document_not_processed_count).to eq 1
+    expect(@temp_pack.not_processed_count).to eq 1
     expect(@temp_pack.temp_documents.first.state).to eq 'ready'
     expect(@temp_pack.temp_documents.second.state).to eq 'processed'
 
@@ -102,7 +98,7 @@ describe DataProcessor::TempPack do
     pack = Pack.find_by_name @temp_pack.name
     @original_document = pack.cloud_content_object.path
 
-    expect(@temp_pack.document_not_processed_count).to eq 0
+    expect(@temp_pack.not_processed_count).to eq 0
     expect(@temp_pack.temp_documents.first.state).to eq 'processed'
 
     expect( pack.try(:pieces).try(:size) ).to eq 3

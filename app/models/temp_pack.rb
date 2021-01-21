@@ -10,9 +10,6 @@ class TempPack < ApplicationRecord
   belongs_to :document_delivery, optional: true
 
 
-  scope :bundle_needed,        -> { where("document_bundle_needed_count > ?", 0) }
-  scope :not_published,        -> { where('document_not_processed_count > ? OR document_bundle_needed_count > ?', 0, 0) }
-  scope :not_processed,        -> { where("document_not_processed_count > ?", 0) }
   scope :not_recently_updated, -> { where("updated_at < ?", 15.minutes.ago) }
 
 
@@ -35,6 +32,26 @@ class TempPack < ApplicationRecord
 
   def self.bundle_processable
     bundle_needed.not_recently_updated.order(updated_at: :asc).select { |temp_pack| temp_pack.temp_documents.ocr_needed.size == 0 }
+  end
+
+
+  def self.temp_documents
+    joins(:temp_documents)
+  end
+
+
+  def self.bundle_needed
+    temp_documents.where('temp_documents.state = ?', 'undle_needed')
+  end
+
+
+  def self.not_published
+    temp_documents.where('temp_documents.state IN (?)', ['bundle_needed', 'ready'])
+  end
+
+
+  def self.not_processe
+    temp_documents.where('temp_documents.state = ?', 'ready')
   end
 
 
@@ -123,7 +140,15 @@ class TempPack < ApplicationRecord
   end
 
   def not_processed?
-    document_not_processed_count > 0
+    temp_documents.where(state: 'ready').size > 0
+  end
+
+  def not_processed_count
+    temp_documents.where(state: 'ready').size
+  end
+
+  def bundle_needed_count
+    temp_documents.where(state: 'bundle_needed').size
   end
 
   private

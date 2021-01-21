@@ -183,7 +183,7 @@ class DataProcessor::TempPack
     pack.set_tags
     pack.is_update_notified = false
     pack.locked_at = nil
-    pack.is_fully_processed = true if @temp_pack.reload && @temp_pack.document_bundle_needed_count == 0
+    pack.is_fully_processed = true if @temp_pack.reload && @temp_pack.bundle_needed_count == 0
 
     pack.save
   end
