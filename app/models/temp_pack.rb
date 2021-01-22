@@ -10,9 +10,9 @@ class TempPack < ApplicationRecord
   belongs_to :document_delivery, optional: true
 
 
-  scope :bundle_needed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'bundle_needed', false) }
-  scope :not_published,        -> { joins(:temp_documents).where('temp_documents.state IN (?) AND temp_documents.is_locked = ?', ['bundle_needed', 'ready'], false) }
-  scope :not_processed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'ready', false) }
+  scope :bundle_needed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'bundle_needed', false).distinct }
+  scope :not_published,        -> { joins(:temp_documents).where('temp_documents.state IN (?) AND temp_documents.is_locked = ?', ['bundle_needed', 'ready'], false).distinct }
+  scope :not_processed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'ready', false).distinct }
 
   scope :not_recently_updated, -> { where("temp_packs.updated_at < ?", 15.minutes.ago) }
 

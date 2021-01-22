@@ -113,7 +113,7 @@ class TempDocument < ApplicationRecord
 
 
     event :unreadable do
-      transition created: :unreadable
+      transition [:created, :ready] => :unreadable
     end
 
 

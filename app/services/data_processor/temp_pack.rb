@@ -46,7 +46,13 @@ class DataProcessor::TempPack
           temp_document.processed
           next
         end
-        next if !File.exist?(temp_document.cloud_content_object.path.to_s)
+        if !File.exist?(temp_document.cloud_content_object.path.to_s)
+          sleep(5)
+          if !File.exist?(temp_document.cloud_content_object.reload.path.to_s)
+            temp_document.unreadable
+            next
+          end
+        end
 
         if create_or_update_piece_with(temp_document)
           create_dividers_with(temp_document)
