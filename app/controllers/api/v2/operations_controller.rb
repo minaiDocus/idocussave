@@ -8,6 +8,21 @@ class Api::V2::OperationsController < ActionController::Base
     render json: result, status: :ok
   end
 
+  # /api/v2/operations/not_processed/:piece_id
+  def not_processed
+    piece = Pack::Piece.find(params[:piece_id])
+
+    if piece
+      piece.not_processed
+
+      response = { message: "Piece with id: #{params[:piece_id]} was marked as not processed(unprocessable piece)", success: true }
+    else
+      response = { message: "error encountered, Piece with id: #{params[:piece_id]} not found", success: false }
+    end
+
+    render json: response, status: :ok
+  end
+
   protected
 
   def authenticate

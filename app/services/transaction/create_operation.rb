@@ -22,10 +22,7 @@ class Transaction::CreateOperation
       if operation.api_name == 'capidocus' && operation.api_id
         piece = Pack::Piece.find_by_name(operation.api_id.gsub("_", ' '))
 
-        if piece && !piece.pre_assignment_processed?
-          piece.update(is_awaiting_pre_assignment: false)
-          piece.processed_pre_assignment
-        end
+        piece.processed_pre_assignment if piece && !piece.pre_assignment_processed?
       end
     end
 
