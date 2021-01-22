@@ -95,8 +95,7 @@ class Transaction::AccountNumberFinder
     number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty? || @user.options.try(:skip_accounting_plan_finder)
     number ||= @temporary_account
 
-    # TEMP : Disable account presence validation in accounting plan
-    #number = validate_account(number) if number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder)
+    number = validate_account(number) if number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder)
 
     number
   end
@@ -111,9 +110,9 @@ class Transaction::AccountNumberFinder
 
   def find_or_update_accounting_plan
     if @operation.credit?
-      accounts = @user.accounting_plan.reload.providers
+      accounts = @user.accounting_plan.reload.active_providers
     else #debit
-      accounts = @user.accounting_plan.reload.customers
+      accounts = @user.accounting_plan.reload.active_customers
     end
 
     if accounts.present?
@@ -127,9 +126,9 @@ class Transaction::AccountNumberFinder
       end
 
       if @operation.credit?
-        @user.accounting_plan.reload.providers
+        @user.accounting_plan.reload.active_providers
       else #debit
-        @user.accounting_plan.reload.customers
+        @user.accounting_plan.reload.active_customers
       end
     else
       []
