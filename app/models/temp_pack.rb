@@ -10,6 +10,10 @@ class TempPack < ApplicationRecord
   belongs_to :document_delivery, optional: true
 
 
+  scope :bundle_needed,        -> { joins(:temp_documents).where('temp_documents.state = ?', 'bundle_needed') }
+  scope :not_published,        -> { joins(:temp_documents).where('temp_documents.state IN (?)', ['bundle_needed', 'ready']) }
+  scope :not_processed,        -> { joins(:temp_documents).where('temp_documents.state = ?', 'ready') }
+
   scope :not_recently_updated, -> { where("updated_at < ?", 15.minutes.ago) }
 
 
@@ -33,27 +37,6 @@ class TempPack < ApplicationRecord
   def self.bundle_processable
     bundle_needed.not_recently_updated.order(updated_at: :asc).select { |temp_pack| temp_pack.temp_documents.ocr_needed.size == 0 }
   end
-
-
-  def self.temp_documents
-    joins(:temp_documents)
-  end
-
-
-  def self.bundle_needed
-    temp_documents.where('temp_documents.state = ?', 'undle_needed')
-  end
-
-
-  def self.not_published
-    temp_documents.where('temp_documents.state IN (?)', ['bundle_needed', 'ready'])
-  end
-
-
-  def self.not_processe
-    temp_documents.where('temp_documents.state = ?', 'ready')
-  end
-
 
   def update_pack_state
     if journal && journal.compta_processable?
@@ -140,7 +123,7 @@ class TempPack < ApplicationRecord
   end
 
   def not_processed?
-    temp_documents.where(state: 'ready').size > 0
+    not_processed_count > 0
   end
 
   def not_processed_count
