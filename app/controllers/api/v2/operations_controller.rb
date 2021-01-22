@@ -13,9 +13,11 @@ class Api::V2::OperationsController < ActionController::Base
     piece = Pack::Piece.find(params[:piece_id])
 
     if piece
-      piece.not_processed
-
-      response = { message: "Piece with id: #{params[:piece_id]} was marked as not processed(unprocessable piece)", success: true }
+      if piece.pre_assignment_waiting? && piece.not_processed_pre_assignment 
+        response = { message: "Piece with id: #{params[:piece_id]} was marked as not processed(unprocessable piece)", success: true }
+      else
+        response = { message: "Piece with id: #{params[:piece_id]} can not marked piece as unprocessable (current state: #{ piece.pre_assignment_state})", success: false }
+      end
     else
       response = { message: "error encountered, Piece with id: #{params[:piece_id]} not found", success: false }
     end
