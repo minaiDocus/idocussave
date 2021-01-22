@@ -10,11 +10,11 @@ class TempPack < ApplicationRecord
   belongs_to :document_delivery, optional: true
 
 
-  scope :bundle_needed,        -> { joins(:temp_documents).where('temp_documents.state = ?', 'bundle_needed') }
-  scope :not_published,        -> { joins(:temp_documents).where('temp_documents.state IN (?)', ['bundle_needed', 'ready']) }
-  scope :not_processed,        -> { joins(:temp_documents).where('temp_documents.state = ?', 'ready') }
+  scope :bundle_needed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'bundle_needed', false) }
+  scope :not_published,        -> { joins(:temp_documents).where('temp_documents.state IN (?) AND temp_documents.is_locked = ?', ['bundle_needed', 'ready'], false) }
+  scope :not_processed,        -> { joins(:temp_documents).where('temp_documents.state = ? AND temp_documents.is_locked = ?', 'ready', false) }
 
-  scope :not_recently_updated, -> { where("updated_at < ?", 15.minutes.ago) }
+  scope :not_recently_updated, -> { where("temp_packs.updated_at < ?", 15.minutes.ago) }
 
 
   def self.find_by_name(name)
@@ -35,7 +35,7 @@ class TempPack < ApplicationRecord
   end
 
   def self.bundle_processable
-    bundle_needed.not_recently_updated.order(updated_at: :asc).select { |temp_pack| temp_pack.temp_documents.ocr_needed.size == 0 }
+    bundle_needed.not_recently_updated.order('temp_packs.updated_at ASC').select { |temp_pack| temp_pack.temp_documents.ocr_needed.size == 0 }
   end
 
   def update_pack_state
@@ -127,11 +127,11 @@ class TempPack < ApplicationRecord
   end
 
   def not_processed_count
-    temp_documents.where(state: 'ready').size
+    temp_documents.where(state: 'ready', is_locked: false).size
   end
 
   def bundle_needed_count
-    temp_documents.where(state: 'bundle_needed').size
+    temp_documents.where(state: 'bundle_needed', is_locked: false).size
   end
 
   private

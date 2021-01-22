@@ -60,13 +60,13 @@ class CustomUtils
 
       begin
         add_chmod_access_into(final_dir)
-        final_dir = File.join(final_dir, Time.now.strftime('%Y%m%d%H%M%s'))
+        final_dir = File.join(final_dir, Time.now.strftime("%Y%m%d%H%M%s_#{SecureRandom.alphanumeric}"))
         FileUtils.mkdir_p final_dir
         add_chmod_access_into(final_dir)
 
         yield(final_dir) if block_given?
 
-        FileUtils.remove_entry final_dir if block_given? && with_remove && final_dir
+        FileUtils.remove_entry(final_dir, true) if block_given? && with_remove && final_dir
       rescue => e
         log_document = {
           name: "CustomTempDir",

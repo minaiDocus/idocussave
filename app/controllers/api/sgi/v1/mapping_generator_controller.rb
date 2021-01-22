@@ -15,6 +15,7 @@ class Api::Sgi::V1::MappingGeneratorController < SgiApiController
   end
 
   def json_content
+    return {} unless user
     user.accounting_plan.create_json_format if user.accounting_plan
   end
 
