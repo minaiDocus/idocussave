@@ -15,7 +15,7 @@ class CustomUtils
       ['AC0162', 'MFA%ADAPTO']
     end
 
-    def add_chmod_access_into(type=0777, nfs_directory)
+    def add_chmod_access_into(nfs_directory, type=0777)
       FileUtils.chmod(type, nfs_directory)
     end
 
@@ -51,21 +51,38 @@ class CustomUtils
     end
 
     def mktmpdir(specific_dir=nil, with_remove=true)
-      rails_env = Rails.env == "production"
-      add_chmod_access_into("/nfs/tmp/") if rails_env
+      rails_env_prod = Rails.env == "production"
 
-      specific_dir = Rails.root.join("tmp", "#{Time.now.strftime('%Y%m%d%H%M%s')}") if !rails_env
+      default_tmp_dir = "/nfs/tmp/" if rails_env_prod
+      default_tmp_dir = Rails.root.join("tmp") if !rails_env_prod
 
-      dir = (specific_dir.nil? && rails_env) ? File.join("/nfs/tmp/", "#{Time.now.strftime('%Y%m%d%H%M%s')}") : File.join(specific_dir)
-      FileUtils.mkdir_p dir
+      final_dir = specific_dir || default_tmp_dir
 
-      add_chmod_access_into(dir) if rails_env
+      begin
+        add_chmod_access_into(final_dir)
+        final_dir = File.join(final_dir, Time.now.strftime('%Y%m%d%H%M%s'))
+        FileUtils.mkdir_p final_dir
+        add_chmod_access_into(final_dir)
 
-      yield(dir)
+        yield(final_dir) if block_given?
 
-      FileUtils.remove_entry dir if with_remove && dir
+        FileUtils.remove_entry final_dir if block_given? && with_remove && final_dir
+      rescue => e
+        log_document = {
+          name: "CustomTempDir",
+          error_group: "[CustomTempDir] error on tmp dir creation",
+          erreur_type: "temp dir error creation",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%s'),
+          more_information: {
+            final_dir: final_dir,
+            error: e.to_s,
+          }
+        }
 
-      dir
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
+
+      final_dir
     end
   end
 end
