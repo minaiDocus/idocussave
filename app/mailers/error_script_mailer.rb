@@ -1,5 +1,7 @@
 class ErrorScriptMailer < ActionMailer::Base
 	def error_notification(script, options={})
+    return true if Rails.env != 'production'
+
     @script = script
 
     if options[:attachements].present?
