@@ -31,6 +31,8 @@ class DataVerificator::DataVerificator
 
     @mail_infos << DataVerificator::ErrorScriptMailerInfo.new().execute
 
+    @mail_infos << DataVerificator::UpdateMcfSettingsToken.new().execute
+
     daily_mail
   end
 

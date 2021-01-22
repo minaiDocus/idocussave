@@ -34,4 +34,14 @@ class McfSettings < ApplicationRecord
     self.is_delivery_activated   = true
     save
   end
+
+  def refresh
+    result = McfLib::Api::Mcf::Client.new(self.access_token).renew_access_token(self.refresh_token)
+
+    if result && result[:access_token] && result[:expires_at]
+      self.access_token            = result[:access_token]
+      self.access_token_expires_at = result[:expires_at]
+      save
+    end
+  end
 end
