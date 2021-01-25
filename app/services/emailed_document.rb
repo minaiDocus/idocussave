@@ -66,8 +66,11 @@ class EmailedDocument
 
 
   def self.receive(mail, rescue_error = true)
+    debugger
     email = Email.find_by(message_id: mail.message_id)
-    mail.subject = mail.subject.gsub(/fwd([ ]+)?(:)?/i, '').strip
+    mail.subject = mail.subject.to_s.gsub(/fwd([ ]+)?(:)?/i, '').strip
+
+    return false unless mail.subject
 
     unless email
       mail_to = mail.to.try(:grep, /@fw.idocus.com/i).try(:first)
