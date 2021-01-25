@@ -57,6 +57,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     if params[:account_number_rule] && params[:account_number_rule][:user_ids].present?
       params[:account_number_rule][:user_ids] += (@account_number_rule.users - customers).map(&:id).map(&:to_s)
     end
+
     if @account_number_rule.update(account_number_rule_params)
       flash[:success] = 'Modifié avec succès.'
 
@@ -162,17 +163,11 @@ class Account::AccountNumberRulesController < Account::OrganizationController
       third_party_account
       categorization
     ]
-    if params[:account_number_rule][:rule_type] == 'truncate'
-      params[:account_number_rule][:third_party_account] = nil
-    end
+    
+    params[:account_number_rule][:third_party_account] = nil if params[:account_number_rule][:rule_type] == 'truncate'
 
-    attributes << :affect if action_name == 'create'
-
-    if @account_number_rule.try(:persisted?)
-      attributes << { user_ids: [] } if @account_number_rule.affect == 'user'
-    elsif params[:account_number_rule][:affect] == 'user'
-      attributes << { user_ids: [] }
-    end
+    attributes << :affect
+    attributes << { user_ids: [] } if params[:account_number_rule][:affect] == 'user'
 
     params.require(:account_number_rule).permit(*attributes)
   end
