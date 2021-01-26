@@ -198,7 +198,7 @@ class DocumentTools
   def self.gs_error_found?(file_path)
     verification = ''
 
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('document_tools') do |dir|
       verification = `gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="/#{dir}/verif_gs_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf" #{file_path}`
     end
 

@@ -14,7 +14,7 @@ class SgiApiServices::GroupDocument
     if valid_json_content?
       @temp_pack = find_temp_pack(@json_content['pack_name'])
 
-      CustomUtils.mktmpdir(Rails.root.join('tmp')) do |dir|
+      CustomUtils.mktmpdir('api_group_document', Rails.root.join('tmp')) do |dir|
         @merged_dir = dir
 
         files_input
@@ -134,7 +134,7 @@ class SgiApiServices::GroupDocument
 
     # Create a secondary temp documents it comes back from grouping
     def execute
-      CustomUtils.mktmpdir(Rails.root.join('tmp'), false) do |dir|
+      CustomUtils.mktmpdir('api_group_document_2', Rails.root.join('tmp'), false) do |dir|
         @file_path = dir
 
         @file_path = File.join(@file_path, @file_name)

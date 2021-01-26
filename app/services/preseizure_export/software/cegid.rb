@@ -10,7 +10,7 @@ class PreseizureExport::Software::Cegid
     @base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     file_path  = ''
 
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('cegid_export', nil, false) do |dir|
       @dir      = dir
       PreseizureExport::Software::Cegid.delay_for(6.hours).remove_temp_dir(@dir)
 

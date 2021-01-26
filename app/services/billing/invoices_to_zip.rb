@@ -9,7 +9,7 @@ class Billing::InvoicesToZip
   def execute
     zip_path = ''
 
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('invoice_to_zip', nil, false) do |dir|
       Billing::InvoicesToZip.delay_for(6.hours).remove_temp_dir(dir)
 
       @invoice_ids.each do |invoice_id|

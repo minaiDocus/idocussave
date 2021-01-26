@@ -246,7 +246,7 @@ class Pack::Piece < ApplicationRecord
 
     piece_file_path = ''
 
-    CustomUtils.mktmpdir(temp_dir, !temp_dir.present?) do |dir|
+    CustomUtils.mktmpdir('piece', temp_dir, !temp_dir.present?) do |dir|
       piece_file_name = DocumentTools.file_name self.name
       piece_file_path = File.join(dir, piece_file_name)
 

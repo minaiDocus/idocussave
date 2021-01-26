@@ -13,7 +13,7 @@ class PreseizureExport::Software::Coala
     base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     file_path = ''
 
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('coala_export', nil, false) do |dir|
       PreseizureExport::Software::Coala.delay_for(6.hours).remove_temp_dir(dir)
       data = PreseizureExport::PreseizuresToCsv.new(@user, @preseizures, 'coala').execute
 

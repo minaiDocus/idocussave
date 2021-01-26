@@ -9,7 +9,7 @@ class PreseizureExport::Software::FecAgiris
     base_name = @preseizures.first.report.name.tr(' %', '__')
     file_path = ''
 
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('fec_agiris_export', nil, false) do |dir|
       PreseizureExport::Software::FecAgiris.delay_for(6.hours).remove_temp_dir(dir)
 
       data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute("fec_agiris") # Generate a txt with preseizures

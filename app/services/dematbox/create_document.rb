@@ -15,7 +15,7 @@ class Dematbox::CreateDocument
 
 
   def execute
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('dematbox_create_document') do |dir|
       @dir = dir
 
       if valid?

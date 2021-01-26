@@ -3,7 +3,7 @@ class SpecModule
 
   class << self
     def create_tmp_dir
-      CustomUtils.mktmpdir("/nfs/tmp/#{Time.now.strftime('%Y%m%d%H%M%s')}/knowings/") do |dir|
+      CustomUtils.mktmpdir('spec_module', "/nfs/tmp/knowings/") do |dir|
         @@dir = dir
       end
     end

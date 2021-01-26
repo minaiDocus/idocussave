@@ -362,7 +362,7 @@ class FileImport::Ftp
           next
         end
 
-        CustomUtils.mktmpdir do |dir|
+        CustomUtils.mktmpdir('ftp_import') do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
             client.getbinaryfile file_path, file
 

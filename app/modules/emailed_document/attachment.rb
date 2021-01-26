@@ -100,13 +100,13 @@ class EmailedDocument::Attachment
 
 
   def dir
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('attachment_1', nil, false) do |dir|
       @dir = dir
     end
   end
 
   def dir_2
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('attachment_2', nil, false) do |dir|
       @dir_2 = dir
     end
   end

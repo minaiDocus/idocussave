@@ -157,7 +157,7 @@ class Ftp::Fetcher
 
 
   def self.get_file(ftp, file_name, new_file_name)
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('ftp_fetcher') do |dir|
       begin
         file = File.open(File.join(dir, new_file_name), 'w')
         ftp.getbinaryfile(file_name, file.path)

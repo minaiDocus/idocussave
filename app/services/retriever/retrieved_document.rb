@@ -15,7 +15,7 @@ class Retriever::RetrievedDocument
     temp_file_path = ''
     return_object  = nil
 
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('retriever_retrieved_document') do |dir|
       file_path  = File.join(dir, 'retriever_processed_file.pdf')
 
       while tries <= 3 && !is_success
@@ -73,7 +73,7 @@ class Retriever::RetrievedDocument
     @document       = document
     @temp_file_path = temp_file_path
 
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('retriever_retrieved_document_2') do |dir|
       @dir = dir
 
       if valid?

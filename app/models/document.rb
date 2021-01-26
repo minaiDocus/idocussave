@@ -172,7 +172,7 @@ class Document < ApplicationRecord
 
 
   def append(file_path)
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('document_1') do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
       Pdftk.new.merge([self.cloud_content_object.path, file_path], merged_file_path)
@@ -185,7 +185,7 @@ class Document < ApplicationRecord
 
 
   def prepend(file_path)
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('document_2') do |dir|
       merged_file_path = File.join(dir, content_file_name)
 
       Pdftk.new.merge([file_path, self.cloud_content_object.path], merged_file_path)

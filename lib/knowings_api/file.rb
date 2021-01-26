@@ -17,7 +17,7 @@ class KnowingsApi::File
   def create
     output_path = ''
 
-    CustomUtils.mktmpdir("/nfs/tmp/#{Time.now.strftime('%Y%m%d%H%M%s')}/knowings/") do |dir|
+    CustomUtils.mktmpdir('knowings_api_file', "/nfs/tmp/knowings/") do |dir|
       metapath    = create_meta(dir)
       basename    = ::File.basename(@file_name, '.pdf')
       output_path = ::File.join(dir, "#{basename}#{EXTENSION}")

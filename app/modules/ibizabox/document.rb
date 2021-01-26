@@ -10,7 +10,7 @@ class Ibizabox::Document
     @document_id        = document_id
     @prev_period_offset = prev_period_offset
 
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('ibizabox_document') do |dir|
       @dir            = dir
       file_path       = File.join(@dir, file_name)
       @processed_file = PdfIntegrator.new(@file, file_path, 'ibiza').processed_file

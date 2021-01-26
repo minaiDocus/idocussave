@@ -60,7 +60,7 @@ module AccountingWorkflow::OcrProcessing
           if temp_document.ocr_needed? && File.exists?(file_path)
             # temp_document.raw_content           = File.open(temp_document.cloud_content_object.path)
 
-            CustomUtils.mktmpdir do |dir|
+            CustomUtils.mktmpdir('ocr_processing') do |dir|
               temp_document_file_path             = File.join(dir, temp_document.cloud_content_object.filename)
               FileUtils.cp file_path, temp_document_file_path
 

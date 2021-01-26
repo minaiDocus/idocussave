@@ -90,7 +90,7 @@ class EmailedDocument
 
       # System::Log.info('emails', email.inspect)
 
-      CustomUtils.mktmpdir do |dir|
+      CustomUtils.mktmpdir('emailed_document') do |dir|
         file_path = "#{dir}/#{email.id}.eml"
 
         File.open file_path, 'w' do |f|

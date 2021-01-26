@@ -361,7 +361,7 @@ class FileImport::Sftp
           next
         end
 
-        CustomUtils.mktmpdir do |dir|
+        CustomUtils.mktmpdir('sftp_import') do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
             client.getbinaryfile file_path, file
 

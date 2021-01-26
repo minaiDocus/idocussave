@@ -10,7 +10,7 @@ class PreseizureExport::Software::Quadratus
     base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     file_path = ''
 
-    CustomUtils.mktmpdir(nil, false) do |dir|
+    CustomUtils.mktmpdir('quadratus_export', nil, false) do |dir|
       PreseizureExport::Software::Quadratus.delay_for(6.hours).remove_temp_dir(dir)
 
       data = PreseizureExport::PreseizureToTxt.new(@preseizures).execute # Generate a txt with preseizures

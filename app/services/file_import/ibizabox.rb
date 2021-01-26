@@ -129,7 +129,7 @@ class FileImport::Ibizabox
       document_id = data.at_css('objectID').content
       unless @user.temp_documents.where(api_id: document_id, delivered_by: 'ibiza').first
         if UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
-          CustomUtils.mktmpdir do |dir|
+          CustomUtils.mktmpdir('ibizabox_import') do |dir|
             begin
               file_path = File.join(dir, file_name)
               file = get_file(document_id, file_path)

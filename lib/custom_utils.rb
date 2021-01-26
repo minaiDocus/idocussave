@@ -50,7 +50,7 @@ class CustomUtils
       file_name + options['extension']
     end
 
-    def mktmpdir(specific_dir=nil, with_remove=true)
+    def mktmpdir(from, specific_dir=nil, with_remove=true)
       rails_env_prod = Rails.env == "production"
 
       default_tmp_dir = "/nfs/tmp/" if rails_env_prod
@@ -74,6 +74,7 @@ class CustomUtils
           erreur_type: "temp dir error creation",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%s'),
           more_information: {
+            from: from.to_s,
             final_dir: final_dir,
             error: e.to_s,
           }

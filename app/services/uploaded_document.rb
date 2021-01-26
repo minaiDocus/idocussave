@@ -30,7 +30,7 @@ class UploadedDocument
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('uploaded_document') do |dir|
       if @errors.empty?
         @dir            = dir
         file_path       = File.join(@dir, file_name)

@@ -157,7 +157,7 @@ class Sftp::Fetcher
 
 
   def self.get_file(sftp, file_name, new_file_name)
-    CustomUtils.mktmpdir do |dir|
+    CustomUtils.mktmpdir('sftp_fetcher') do |dir|
       begin
         file = File.open(File.join(dir, new_file_name), 'w')
         sftp.getbinaryfile(file_name, file.path)
