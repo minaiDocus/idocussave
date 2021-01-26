@@ -114,11 +114,11 @@ class Account::AccountingPlansController < Account::OrganizationController
       else
         return false if params[:fec_file].content_type != "text/plain"
 
-        CustomUtils.add_chmod_access_into("/nfs/import/") if Rails.env == "production"
-        @dir = "/nfs/import/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/"
-        @dir = "#{Rails.root}/files/#{Rails.env}/imports/FEC/#{Time.now.strftime('%Y%m%d%H%M%s')}/" if Rails.env != "production"
-        FileUtils.makedirs(@dir)
-        FileUtils.chmod(0777, @dir)
+        if Rails.env == "production"
+          @dir = CustomUtils.mktmpdir('fec_import', "/nfs/import/FEC/", false)
+        else
+          @dir = CustomUtils.mktmpdir('fec_import', nil, false)
+        end
 
         @file   = File.join(@dir, "file_#{Time.now.strftime('%Y%m%d%H%M%S')}.txt")
         journal = []
@@ -164,7 +164,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     FecImport.new(file_path).execute(@customer, params)
 
-    FileUtils.remove_entry params[:dir_tmp] if params[:dir_tmp]
+    FileUtils.remove_entry_secure params[:dir_tmp] if params[:dir_tmp]
 
     if params[:new_create_book_type].present?
       render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }

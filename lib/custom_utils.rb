@@ -51,10 +51,7 @@ class CustomUtils
     end
 
     def mktmpdir(from, specific_dir=nil, with_remove=true)
-      rails_env_prod = Rails.env == "production"
-
-      default_tmp_dir = "/nfs/tmp/" if rails_env_prod
-      default_tmp_dir = Rails.root.join("tmp") if !rails_env_prod
+      default_tmp_dir = Rails.root.join("tmp")
 
       final_dir = specific_dir || default_tmp_dir
 
@@ -66,7 +63,7 @@ class CustomUtils
 
         yield(final_dir) if block_given?
 
-        FileUtils.rm_rf(final_dir) if block_given? && with_remove && final_dir
+        FileUtils.delay_for(rand(2..10).minutes, queue: :low).remove_entry_secure(final_dir, true) if block_given? && with_remove && final_dir
       rescue => e
         log_document = {
           name: "CustomTempDir",

@@ -235,7 +235,7 @@ describe DocumentTools do
     end
 
     after(:all) do
-      FileUtils.remove_dir(@dir, true)
+      FileUtils.remove_entry_secure(@dir, true)
     end
 
     it 'return corrected pdf with 1 page document', :correct_corrupted do

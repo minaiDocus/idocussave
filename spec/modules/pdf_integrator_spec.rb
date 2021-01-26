@@ -17,7 +17,7 @@ describe PdfIntegrator do
     end
 
     after(:each) do
-      FileUtils.remove_entry @dir if @dir
+      FileUtils.remove_entry_secure @dir if @dir
     end
 
     it 'try with a normal file pdf' do

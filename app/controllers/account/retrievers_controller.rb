@@ -94,7 +94,7 @@ class Account::RetrieversController < Account::RetrieverController
 
       ToXls::Writer.new(xls_data, columns: [:documents, :banques], headers: false).write_io(file.path)
 
-      FileUtils.delay_for(5.minutes, queue: :low).remove_dir(dir, true)
+      FileUtils.delay_for(5.minutes, queue: :low).remove_entry_secure(dir, true)
     end
 
     render json: { key: Base64.encode64(file.path.to_s), status: :ok }

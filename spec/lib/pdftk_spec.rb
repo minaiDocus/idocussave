@@ -17,7 +17,7 @@ describe 'Pdftk' do
     end
 
     after(:each) do
-      FileUtils.remove_dir(@dir, true)
+      FileUtils.remove_entry_secure(@dir, true)
     end
 
     it 'merge with mergeable file', :default do

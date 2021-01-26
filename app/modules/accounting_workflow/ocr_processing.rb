@@ -92,7 +92,7 @@ module AccountingWorkflow::OcrProcessing
     end
 
     def clean_tmp(dir)
-      FileUtils.remove_entry dir if dir
+      FileUtils.remove_entry_secure dir if dir
     end
 
     def ready_files_path

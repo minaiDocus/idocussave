@@ -69,7 +69,7 @@ describe AccountingWorkflow::SendToGrouping do
     end
 
     after(:all) do
-      FileUtils.remove_entry Rails.root.join('files', 'test', 'prepa_compta', 'grouping')
+      FileUtils.remove_entry_secure Rails.root.join('files', 'test', 'prepa_compta', 'grouping')
     end
 
     it 'create file TS0001_TS_201501_001.pdf in files/test/prepa_compta/grouping/scans' do
