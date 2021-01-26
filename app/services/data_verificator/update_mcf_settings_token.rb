@@ -1,15 +1,15 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::UpdateMcfSettingsToken < DataVerificator::DataVerificator
   def execute
-    organizations = Organization.active.billed
-
     messages = []
-
     counter  = 0
 
-    organizations.each do |organization|
+    Organization.billed.each do |organization|
       mcf_setting      = organization.mcf_settings
+      next if !mcf_setting
+
       old_access_token = mcf_setting.access_token
+      old_expires_at   = mcf_setting.access_token_expires_at
 
       if mcf_setting.access_token_expires_at < Time.now
         mcf_setting.refresh
@@ -17,7 +17,7 @@ class DataVerificator::UpdateMcfSettingsToken < DataVerificator::DataVerificator
 
         mcf_setting.reload
 
-        messages << "organization_name: #{organization.name}, old_access_token: #{old_access_token}, new_access_token: #{mcf_setting.access_token}"
+        messages << "organization_code: #{organization.code}, old_access_token: #{old_access_token}, old_expires_at: #{old_expires_at}, new_access_token: #{mcf_setting.access_token}, new_expires_at: #{mcf_setting.access_token_expires_at}"
       end      
     end
 

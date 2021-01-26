@@ -36,6 +36,8 @@ class McfSettings < ApplicationRecord
   end
 
   def refresh
+    return false if !self.refresh_token
+
     result = McfLib::Api::Mcf::Client.new(self.access_token).renew_access_token(self.refresh_token)
 
     if result && result[:access_token] && result[:expires_at]
