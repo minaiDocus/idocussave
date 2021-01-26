@@ -66,7 +66,7 @@ class CustomUtils
 
         yield(final_dir) if block_given?
 
-        FileUtils.remove_entry(final_dir, true) if block_given? && with_remove && final_dir
+        FileUtils.rm_rf(final_dir) if block_given? && with_remove && final_dir
       rescue => e
         log_document = {
           name: "CustomTempDir",
