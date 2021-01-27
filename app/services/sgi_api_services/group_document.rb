@@ -128,7 +128,7 @@ class SgiApiServices::GroupDocument
       @temp_pack        = temp_pack
       @pages            = pages
       @temp_document_id = temp_document_id
-      @file_name        = @temp_pack.name.tr(' ', '_') + '.pdf'
+      @file_name        = @temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf'
       @merged_path      = merged_path
     end
 

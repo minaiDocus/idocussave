@@ -54,7 +54,7 @@ module FileDelivery::RemoteReport
 
     data = PreseizureExport::PreseizuresToCsv.new(user, pres).execute
 
-    basename = "#{name.tr(' ', '_')}-L#{number}"
+    basename = "#{name.tr('%', '_').tr(' ', '_')}-L#{number}"
 
     file_path = ''
 
