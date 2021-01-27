@@ -23,6 +23,7 @@ class McfDocument < ApplicationRecord
     state :processing
     state :processed
     state :not_processable
+    state :truly_not_processable
     state :not_delivered
     state :needs_retake
 
@@ -40,6 +41,10 @@ class McfDocument < ApplicationRecord
 
     event :unprocessable do
       transition processing: :not_processable
+    end
+
+    event :confirm_unprocessable do
+      transition not_processable: :truly_not_processable
     end
 
     event :needs_retake do

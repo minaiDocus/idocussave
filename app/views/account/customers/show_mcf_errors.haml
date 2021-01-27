@@ -34,5 +34,6 @@
                   %td{colspan: 6}
                     = glyphicon('arrow-top')
                     = submit_tag 'Relancer la récupération', name: 'retake_mcf_documents', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
+                    = submit_tag 'Marquer la séléction comme vu', name: 'confirm_unprocessable_mcf', class: 'btn btn-primary margin1right', data: {confirm: 'Etes-vous sûr?'}
         .float-right
           = paginate @mcf_documents_error

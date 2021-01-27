@@ -280,11 +280,12 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def retake_mcf_errors
-    mcf_documents_errors = @customer.mcf_documents.where(id: params[:mcf_documents_ids])
-    if mcf_documents_errors.any?
-      mcf_documents_errors.each(&:reset)
-      flash[:success] = 'Récupération en cours...'
+    if params[:confirm_unprocessable_mcf].present?
+      confirm_unprocessable_mcf
+    elsif params[:retake_mcf_documents].present?
+      retake_mcf_documents
     end
+
     redirect_to show_mcf_errors_account_organization_customer_path(@organization, @customer)
   end
 
@@ -475,6 +476,25 @@ class Account::CustomersController < Account::OrganizationController
         retriever_price_option: 'retriever',
         configured?: false
       })
+  end
+
+  def retake_mcf_documents
+    mcf_documents_errors = @customer.mcf_documents.where(id: params[:mcf_documents_ids])
+    if mcf_documents_errors.any?
+      mcf_documents_errors.each(&:reset)
+      flash[:success] = 'Récupération en cours...'
+    end
+  end
+
+
+  def confirm_unprocessable_mcf
+    unprocessable_mcf = @customer.mcf_documents.where(id: params[:mcf_documents_ids]).not_processable
+    if unprocessable_mcf.any?
+      unprocessable_mcf.each(&:confirm_unprocessable)
+      flash[:success] = 'Modifié avec succès.'
+    else
+      flash[:error] = 'Impossible de traiter la demande.'
+    end
   end
 
   def load_customer
