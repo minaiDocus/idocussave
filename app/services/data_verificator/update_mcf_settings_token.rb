@@ -11,7 +11,7 @@ class DataVerificator::UpdateMcfSettingsToken < DataVerificator::DataVerificator
       old_access_token = mcf_setting.access_token
       old_expires_at   = mcf_setting.access_token_expires_at
 
-      if mcf_setting.access_token_expires_at < Time.now
+      if mcf_setting.access_token_expires_at.present? && mcf_setting.access_token_expires_at < Time.now
         mcf_setting.refresh
         counter += 1
 
