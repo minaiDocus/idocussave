@@ -103,28 +103,28 @@ class PreseizureExport::PreseizureToTxt
                   'OD'
                  end
 
-        file_name = preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf'
+        # file_name = preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf'
 
-        line = ' ' * 222
+        # line = ' ' * 222
 
-        line[0] = preseizure.journal_name[0..2]
-        line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
-        line[11] = nature
-        line[13] = case journal.compta_type
-                   when 'AC'
-                    '401000'
-                   when 'VT'
-                    '411000'
-                   when 'NDF'
-                    '471000'
-                   end
+        # line[0] = preseizure.journal_name[0..2]
+        # line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+        # line[11] = nature
+        # line[13] = case journal.compta_type
+        #            when 'AC'
+        #             '401000'
+        #            when 'VT'
+        #             '411000'
+        #            when 'NDF'
+        #             '471000'
+        #            end
 
-        line[30] = 'G'
-        line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
-        line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
-        line[83] = file_name
+        # line[30] = 'G'
+        # line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
+        # line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
+        # line[83] = file_name
 
-        data << line
+        # data << line
 
 
         preseizure.entries.each do |entry|
@@ -168,7 +168,7 @@ class PreseizureExport::PreseizureToTxt
             account_number = entry.account.try(:number) || ''
             line[31] = account_number if entry.account.type == Pack::Report::Preseizure::Account::TTC
 
-            line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
+            line[48] = preseizure.piece_number
 
             line[83] = label
 
@@ -177,6 +177,7 @@ class PreseizureExport::PreseizureToTxt
             line[130] = entry.amount.to_f.to_s
 
             line[150] = 'N'
+            line[151] = preseizure.piece.number.to_s
             line[172] = 'E--'
 
             data << line
