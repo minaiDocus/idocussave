@@ -4,6 +4,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
   def preassignment_needed
     @lists_pieces = []
     @compta_type  = params[:compta_type]
+    @errors = []
 
     if (AccountBookType::TYPES_NAME - ['SPEC'] + ['TEEO']).include?(params[:compta_type])
       Pack::Piece.need_preassignment.each do |piece|
@@ -12,7 +13,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
         get_list(piece, (params[:compta_type].upcase == "TEEO" && piece.organization.code.upcase == "TEEO"))
       end
 
-      render json: { success: true, pieces: @lists_pieces }, status: 200
+      render json: { success: true, pieces: @lists_pieces, errors: @errors }, status: 200
     else
 
       render json: { success: false, error_message: "Compta type non reconnu" }, status: 200
@@ -56,9 +57,11 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
 
     journal = piece.user.account_book_types.where(name: piece.journal).first
 
-    compta_type_verificator = is_teeo ? true : journal.compta_type == @compta_type
+    compta_type_verificator = is_teeo ? true : journal.try(:compta_type) == @compta_type
 
     add_to_list_and_update_state_of(piece, journal.compta_type) if temp_pack && temp_pack.is_pre_assignment_needed? && !piece.is_a_cover && compta_type_verificator
+
+    @errors << { piece_id: piece.id, error_message: "Pas de journal correspondant à #{piece.journal}"} if journal.nil?
   end
 
   def add_to_list_and_update_state_of(piece, compta_type)

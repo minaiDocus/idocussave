@@ -34,16 +34,23 @@ describe Api::Sgi::V1::PreassignmentController do
   before(:all) do
     @organization = create :organization, code: 'IDOC'
     @organization2 = create :organization, code: 'TEEO'
+    @organization3 = create :organization, code: 'GMBA'
+
     @user = create :user, :admin, code: 'IDOC%ALPHA', organization: @organization
     @user2 = create :user, :admin, code: 'TEEO%0001', organization: @organization2
+    @user3 = create :user, :admin, code: 'GMBA%0001', organization: @organization3
+
     @user.update_authentication_token
     @user2.update_authentication_token
+    @user3.update_authentication_token
 
     @pack = create :pack, { name: "IDOC%ALPHA AC 201804 ALL", owner: @user, organization: @organization }
-    @pack2 = create :pack, { name: "TEEO%0001 AC 201804 ALL", owner: @user, organization: @organization }
+    @pack2 = create :pack, { name: "TEEO%0001 AC 201804 ALL", owner: @user2, organization: @organization2 }
+    @pack3 = create :pack, { name: "GMBA%0001 AC 201804 ALL", owner: @user3, organization: @organization3 }
 
     @temp_pack = create :temp_pack, user: @user, organization: @organization, name: @pack.name
     @temp_pack2 = create :temp_pack, user: @user2, organization: @organization2, name: @pack2.name
+    @temp_pack3 = create :temp_pack, user: @user2, organization: @organization2, name: @pack3.name
 
     @journal = create :account_book_type, user: @user, entry_type: 2, name: @temp_pack.name.split[1], account_number: "FREAFFECT", charge_account: "65899999", anomaly_account: "FANOMALIE"
     @journal2 = create :account_book_type, user: @user2, entry_type: 2, name: @temp_pack2.name.split[1], account_number: "FREAFFECTEEO", charge_account: "65899988", anomaly_account: "FANOMALIEEO"
@@ -53,6 +60,7 @@ describe Api::Sgi::V1::PreassignmentController do
     @piece1 = create :piece, { user: @user, name: 'TS%0001 AC 202001 001', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
     @piece2 = create :piece, { user: @user, name: 'TS%0001 AC 202001 002', organization: @organization, pack: @pack, pack_id: @pack.id, pre_assignment_state: "waiting" }
     @piece3 = create :piece, { user: @user, name: 'TEEO%0001 AC 202001 002', organization: @organization2, pack: @pack2, pre_assignment_state: "waiting" }
+    @piece4 = create :piece, { user: @user3, name: 'GMBA%0001 AC 202001 002', organization: @organization3, pack: @pack3, pre_assignment_state: "waiting" }
   end
 
   before(:each) do
@@ -132,6 +140,21 @@ describe Api::Sgi::V1::PreassignmentController do
       expect(response).to be_successful
       result = JSON.parse(response.body)
       expect(result["pieces"].size).to eq 0
+    end
+
+    it 'get list pieces with an error', :error do
+      allow(Pack::Piece).to receive(:need_preassignment).and_return([@piece4, @piece2])
+      allow_any_instance_of(Pack::Piece).to receive(:temp_document).and_return(temp_document)
+
+      get :preassignment_needed, format: :json, params: { :compta_type => "AC", :access_token => @user.authentication_token }
+
+      expect(response).to be_successful
+      result = JSON.parse(response.body)
+
+      expect(result["pieces"].size).to eq 1
+      expect(result["errors"].size).to eq 1
+      expect(result["errors"].first["error_message"]).to eq 'Pas de journal correspondant à AC'
+      expect(result["errors"].first["piece_id"]).to eq @piece4.id
     end
   end
 
