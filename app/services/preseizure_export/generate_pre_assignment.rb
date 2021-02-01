@@ -252,6 +252,8 @@ private
   def file_path
     FileUtils.mkdir_p @export.path unless File.exists? @export.path
 
+    CustomUtils.add_chmod_access_into(@export.path)
+
     @export.path
   end
 

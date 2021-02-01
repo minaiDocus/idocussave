@@ -393,6 +393,9 @@ class User < ApplicationRecord
     softwares_count += 1 if uses_coala?
     softwares_count += 1 if uses_quadratus?
     softwares_count += 1 if uses_csv_descriptor?
+    softwares_count += 1 if uses_cegid?
+    softwares_count += 1 if uses_fec_agiris?
+    softwares_count += 1 if uses_ibiza?
 
     softwares_count > 1
   end

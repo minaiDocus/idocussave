@@ -329,6 +329,19 @@ class Account::DocumentsController < Account::AccountController
       preseizures = Pack::Report.where(id: export_ids).first.preseizures
     elsif export_ids && export_type == 'pack'
       reports     = Pack.where(id: export_ids).first.reports
+
+      if reports.empty?
+        pack = Pack.where(id: export_ids).first
+        if pack
+          reports = Pack::Report.where(name: pack.name.split(' all')[0])
+          if reports.any?
+            reports.update_all(pack_id: pack.id)
+
+            reports.reload
+          end
+        end
+      end
+
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
@@ -337,15 +350,14 @@ class Account::DocumentsController < Account::AccountController
     if preseizures.any? && export_format.in?(supported_format)
       preseizures = preseizures.by_position
 
-      retries = 0
-        export = PreseizureExport::GeneratePreAssignment.new(preseizures, export_format).generate_on_demand
-        if export.file_name.present? && export.file_path.present?
-          contents = File.read(export.file_path.to_s)
+      export = PreseizureExport::GeneratePreAssignment.new(preseizures, export_format).generate_on_demand
+      if export && export.file_name.present? && export.file_path.present?
+        contents = File.read(export.file_path.to_s)
 
-          send_data(contents, filename: File.basename(export.file_name.to_s), disposition: 'attachment')
-        else
-          render plain: 'Aucun résultat'
-        end
+        send_data(contents, filename: File.basename(export.file_name.to_s), disposition: 'attachment')
+      else
+        render plain: 'Aucun résultat'
+      end
     elsif !export_format.in?(supported_format)
       render plain: 'Traitement impossible : le format est incorrect.'
     else
