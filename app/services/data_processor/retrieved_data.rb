@@ -329,6 +329,9 @@ class DataProcessor::RetrievedData
           operation.destroy
 
           @deleted_operations_count = @deleted_operations_count.to_i + 1
+        else
+          assign_attributes(bank_account, operation, transaction)
+          operation.save if operation.changed?
         end
       else
         orphaned_operation = find_orphaned_operation(bank_account, transaction)
