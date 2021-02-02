@@ -7,7 +7,7 @@ class Sftp::VerifySettings
   def execute
     sftp = nil
     begin
-      LogService.info('debug_sftp', "[VerifySftpSettings][#{runner}] trying to connect to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}`...")
+      System::Log.info('debug_sftp', "[VerifySftpSettings][#{runner}] trying to connect to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}`...")
       sftp = Sftp::Client.new(@sftp)
 
       sftp.dir.entries(@sftp.root_path || '/').map { |e| e.name }
@@ -17,12 +17,12 @@ class Sftp::VerifySettings
       sftp.mkdir test_item.path
       sftp.rmdir test_item.path
 
-      LogService.info('debug_sftp', "[VerifySftpSettings][#{runner}] connection to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}` successful")
+      System::Log.info('debug_sftp', "[VerifySftpSettings][#{runner}] connection to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}` successful")
       true
     rescue => e
       @sftp.got_error e.to_s
 
-      LogService.info('debug_sftp', "[VerifySftpSettings][#{runner}] connection to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}` failed with : [#{e.class}] #{e.message}")
+      System::Log.info('debug_sftp', "[VerifySftpSettings][#{runner}] connection to `#{@sftp.domain}:#{@sftp.port}` with user `#{@sftp.login}` failed with : [#{e.class}] #{e.message}")
       false
     end
   end

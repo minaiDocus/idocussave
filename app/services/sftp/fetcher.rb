@@ -94,7 +94,7 @@ class Sftp::Fetcher
 
       sftp.close
     rescue Errno::ETIMEDOUT, EOFError => e
-      LogService.info('debug_sftp', "[#{Time.now}] SFTP: connect to #{url} : #{e.to_s}")
+      System::Log.info('debug_sftp', "[#{Time.now}] SFTP: connect to #{url} : #{e.to_s}")
       false
     rescue Net::SFTPConnectionError, Net::SFTPError, Net::SFTPPermError, Net::SFTPProtoError, Net::SFTPReplyError, Net::SFTPTempError, SocketError, Errno::ECONNREFUSED => e
       content = "#{e.class}<br /><br />#{e.message}"

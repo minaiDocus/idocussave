@@ -53,6 +53,6 @@ class Sftp::Client
 
   def log(name, args)
     _args = name == :login ? ['[FILTERED]'] : args
-    LogService.info('debug_sftp', "[SFTP ID: #{@sftp.id}] #{name} - #{_args.join(', ')}")
+    System::Log.info('debug_sftp', "[SFTP ID: #{@sftp.id}] #{name} - #{_args.join(', ')}")
   end
 end
