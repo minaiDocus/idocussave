@@ -95,7 +95,7 @@ class Billing::DiscountBilling
   end
 
   def concerned_subscriptions
-    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'")
+    @concerned_subscriptions ||= customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'").where.not("subscriptions.current_packages LIKE '%ido_nano%'")
   end
 
   def get_amount_policy(package_sym)
@@ -140,7 +140,7 @@ class Billing::DiscountBilling
   end
 
   def extentis_subscriptions
-    @extentis_subscriptions ||= extentis_customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'")
+    @extentis_subscriptions ||= extentis_customers.joins(:subscription).where("subscriptions.period_duration" => 1).where.not("subscriptions.current_packages LIKE '%ido_micro%'").where.not("subscriptions.current_packages LIKE '%ido_nano%'")
   end
 
 end

@@ -23,6 +23,16 @@
             = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control ido_x_option option_checkbox', disabled: !current_package.include?('ido_x')
     .row
       .col-md-6
+        .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_nano')}", title: Subscription::Package.infos_of(:ido_nano)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'ido_nano', current_package.include?('ido_nano'), class: "form-check-input ido_nano radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_nano" }
+          = label_tag 'subscription[subscription_option]', "iDo'Nano", class: 'form-check-label'
+      .col-md-6.form_check_micro_package
+        .float-right{ style: 'padding-right: 17em' }
+          .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_nano', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_nano') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_nano_option #{'active_option' if (current_package.include?('ido_nano') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_nano')
+            = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
+    .row
+      .col-md-6
         .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_micro')}", title: Subscription::Package.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_micro', current_package.include?('ido_micro'), class: "form-check-input ido_micro radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_micro" }
           = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
@@ -78,7 +88,7 @@
                   %i Supprimez un journal comptable avant de baisser cette option.
 
     %br
-    .form-group.clearfix.radio_buttons.label-50.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
+    .form-group.clearfix.radio_buttons.label-50.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')} #{'hide' unless (@subscription.try(:is_package?, 'ido_mini') || @subscription.try(:is_package?, 'ido_classique'))}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
       .label-section{style: 'width: 256px;'}
         = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-saisie comptable ?", class: 'subscription_is_pre_assignment_active_label'        
       .control-section

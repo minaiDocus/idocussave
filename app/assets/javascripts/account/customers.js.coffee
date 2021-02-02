@@ -396,6 +396,8 @@ update_price = ->
 
   if $('#subscription_subscription_option_ido_x').is(':checked')
     options.push 'idox'
+  if $('#subscription_subscription_option_ido_nano').is(':checked')
+    options.push 'subscription'
   if $('#subscription_subscription_option_ido_micro').is(':checked')
     options.push 'subscription'
   if $('#subscription_subscription_option_ido_mini').is(':checked')
