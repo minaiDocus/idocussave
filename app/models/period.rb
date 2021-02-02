@@ -67,6 +67,7 @@ class Period < ApplicationRecord
     result << :ido_classique if self.current_packages.include?('ido_classique')
     result << :ido_mini      if self.current_packages.include?('ido_mini')
     result << :ido_micro     if self.current_packages.include?('ido_micro')
+    result << :ido_nano     if self.current_packages.include?('ido_nano')
     result << :ido_x         if self.current_packages.include?('ido_x')
 
     result
@@ -97,7 +98,7 @@ class Period < ApplicationRecord
   end
 
   def is_valid_for_quota_organization
-    !self.organization && self.duration == 1 && !self.subscription.is_package?('ido_micro') && !self.subscription.is_package?('ido_mini') 
+    !self.organization && self.duration == 1 && !self.subscription.is_package?('ido_micro') && !self.subscription.is_package?('ido_nano') && !self.subscription.is_package?('ido_mini')
   end
 
   def amount_in_cents_wo_vat
@@ -345,7 +346,7 @@ private
   def excess_duration
     return 1 if organization
 
-    if subscription.is_package?('ido_micro')
+    if subscription.is_package?('ido_micro') || subscription.is_package?('ido_nano')
       12
     elsif subscription.is_package?('ido_mini')
       3

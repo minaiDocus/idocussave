@@ -1,5 +1,5 @@
 class Subscription::Package
-  PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_x].freeze
+  PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_nano, :ido_x].freeze
   OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option].freeze
 
   class << self
@@ -17,6 +17,8 @@ class Subscription::Package
         when :ido_mini
           10 + signing_piece_price
         when :ido_micro
+          10
+        when :ido_nano
           10
         #options
         when :mail_option
@@ -40,6 +42,8 @@ class Subscription::Package
           { retriever: true, upload: true, email: true, scan: true }
         when :ido_micro
           { retriever: false, upload: true, email: true, scan: true }
+        when :ido_nano
+          { retriever: false, upload: true, email: true, scan: true }
         else
           { retriever: true, upload: true, email: true, scan: true }
       end
@@ -56,6 +60,8 @@ class Subscription::Package
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'mini_package_subscription', group: "iDo'Mini", tooltip: "iDo Mini (10€ / mois)  : vous permet de transférer jusqu'à 300 pièces/trimèstre, mutualisation des quotas au niveau du cabinet. Au-delà du quota cabinet cumulé, calcul du dépassement simplifié : 0,25€ ht/facture" }
         when :ido_micro
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro", tooltip: "iDo Micro (10€ / mois). vous permet de transférer jusqu'à 100 pièces/an et de bénéficier des automates de récupérations bancaires et documentaires pour un engagement de 12 mois. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
+        when :ido_nano
+          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'nano_package_subscription', group: "iDo'Nano", tooltip: "iDo Nano (10€ / mois). vous permet de transférer jusqu'à 100 pièces/an. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
         #options
         when :mail_option
           { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier", tooltip: "Courrier (10€ / mois) : vous permet d’adresser vos pièces par courrier à notre centre de numérisation. Disponible pour les forfaits iDo Mini et iDo Classique" }
@@ -78,6 +84,8 @@ class Subscription::Package
         when :ido_mini
           12
         when :ido_micro
+          12
+        when :ido_nano
           12
         else
           0
@@ -102,6 +110,11 @@ class Subscription::Package
             preassignments: { limit: 100, price: 25, per: :quarter }
           }
         when :ido_micro
+          {
+            pieces:         { limit: 100, price: 25, per: :year },
+            preassignments: { limit: 100, price: 25, per: :year }
+          }
+        when :ido_nano
           {
             pieces:         { limit: 100, price: 25, per: :year },
             preassignments: { limit: 100, price: 25, per: :year }

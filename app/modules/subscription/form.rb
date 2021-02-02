@@ -10,7 +10,6 @@ class Subscription::Form
   def submit(params)
     current_packages  = []
     futur_packages    = []
-    packages          = []
 
     @params = params
     is_new  = !@subscription.configured?
@@ -20,18 +19,16 @@ class Subscription::Form
     current_package_data = @subscription.current_packages.nil? ? [] : @subscription.current_packages.tr('["\]','   ').tr('"', '').split(',').map { |pack| pack.strip }
 
     if current_package_data.include?(@params[:subscription_option]) || @to_apply_now
-      if @params[:subscription_option] == 'retriever_option'
-        current_packages << @params[:subscription_option]
-      else
-        current_packages << @params[:subscription_option]
+      current_packages << @params[:subscription_option]
 
-        current_packages << 'mail_option'             if params[:mail_option] && !current_package_data.include?(params[:mail_option])
-        current_packages << 'retriever_option'        if params[:retriever_option] && !current_package_data.include?(params[:retriever_option])
-        current_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && !current_package_data.include?(params[:is_pre_assignment_active]) && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
-      end
+      current_packages << 'mail_option'             if params[:mail_option] && !current_package_data.include?(params[:mail_option])
+      current_packages << 'retriever_option'        if params[:retriever_option] && !current_package_data.include?(params[:retriever_option])
+      current_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && !current_package_data.include?(params[:is_pre_assignment_active]) && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
 
-      if current_package_data.size > current_packages.size
-        futur_packages   = current_packages
+      if current_package_data.size > current_packages.size && @params[:subscription_option] != 'retriever_option'
+        futur_packages = current_packages
+      elsif (current_package_data.size == 1 && !current_package_data.include?(@params[:subscription_option])) || @params[:subscription_option] == 'retriever_option'
+        current_package_data = current_packages
       else
         current_package_data = current_package_data + current_packages
       end

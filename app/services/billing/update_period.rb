@@ -86,7 +86,7 @@ class Billing::UpdatePeriod
 
         selected_options << option
 
-        selected_options << micro_remaining_months_option if package == :ido_micro && micro_remaining_months_option.present?
+        selected_options << remaining_months_option(package) if (package == :ido_micro || package == :ido_nano) && remaining_months_option.present?
         #selected_options << mini_remaining_months_option  if package == :ido_mini && mini_remaining_months_option.present?
       end
 
@@ -127,26 +127,34 @@ class Billing::UpdatePeriod
     option
   end
 
-  def micro_remaining_months_option
-    return @micro_remaining_months_option unless @micro_remaining_months_option.nil?
+  def remaining_months_option(package=:ido_micro)
+    return @remaining_months_option unless @remaining_months_option.nil?
 
-    @micro_remaining_months_option = ''
+    @remaining_months_option = ''
     months_remaining = difference_in_months(@period.end_date, @subscription.end_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0
-      option = ProductOptionOrder.new
+      option       = ProductOptionOrder.new
+      package_text = ""
 
-      option.title       = "iDo'Micro : engagement #{months_remaining} mois restant(s)"
+      case package
+        when :ido_micro
+          package_text = "iDo'Micro"
+        when :ido_nano
+          package_text = "iDo'Nano"
+      end
+
+      option.title       = "#{package_text} : engagement #{months_remaining} mois restant(s)"
       option.name        = 'extra_option'
       option.duration    = 1
       option.group_title = 'Autres'
       option.is_an_extra = true
-      option.price_in_cents_wo_vat = Subscription::Package.price_of(:ido_micro) * 100.0 * months_remaining
+      option.price_in_cents_wo_vat = Subscription::Package.price_of(package) * 100.0 * months_remaining
 
-      @micro_remaining_months_option = option
+      @remaining_months_option = option
     end
 
-    @micro_remaining_months_option
+    @remaining_months_option
   end
 
   def mini_remaining_months_option

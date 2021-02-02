@@ -63,7 +63,7 @@ class Subscription < ApplicationRecord
   end
 
   def heavy_package?
-    is_package?('ido_annual') || is_package?('ido_micro') || is_package?('ido_mini')
+    is_package?('ido_annual') || is_package?('ido_micro') || is_package?('ido_mini') || is_package?('ido_nano')
   end
 
   def owner
@@ -114,7 +114,7 @@ class Subscription < ApplicationRecord
     pack = self.current_package?
 
     if is_package?(pack.to_s) && self.futur_packages && self.futur_packages.include?(pack.to_s)
-      self.current_packages.include?(option.to_s) && !self.futur_packages.include?(option.to_s)
+      is_package?(option.to_s) && !self.futur_packages.include?(option.to_s)
     elsif self.futur_packages && !self.futur_packages.include?(pack.to_s)
       true
     else
@@ -127,7 +127,7 @@ class Subscription < ApplicationRecord
   end
 
   def is_pre_assignment_really_active
-    self.current_packages.include?('pre_assignment_option') && (self.current_packages.include?('ido_classique') || self.current_packages.include?('ido_mini'))
+    is_package?('pre_assignment_option') && (is_package?('ido_classique') || is_package?('ido_mini'))
   end
 
   def retriever_price_option
@@ -136,8 +136,9 @@ class Subscription < ApplicationRecord
   end
 
   def set_start_date_and_end_date
-    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if self.current_packages.include?('ido_mini')
-    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.current_packages.include?('ido_micro')
+    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if is_package?('ido_mini')
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if is_package?('ido_micro')
+    commitment_period = Subscription::Package.commitment_of(:ido_nano)  if is_package?('ido_nano')
 
     if commitment_period.to_i > 0
       # Updating start_date and end_date when subscription term is reached
@@ -200,14 +201,15 @@ class Subscription < ApplicationRecord
   end
 
   def commitment_end?(check_micro_package = true)
-    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if self.current_packages.include?('ido_mini')
-    commitment_period = Subscription::Package.commitment_of(:ido_micro) if self.current_packages.include?('ido_micro')
+    commitment_period = Subscription::Package.commitment_of(:ido_mini)  if is_package?('ido_mini')
+    commitment_period = Subscription::Package.commitment_of(:ido_micro) if is_package?('ido_micro')
+    commitment_period = Subscription::Package.commitment_of(:ido_nano)  if is_package?('ido_nano')
 
-    return true if commitment_period.to_i <= 0 || (!check_micro_package && self.current_packages.include?('ido_micro'))
+    return true if commitment_period.to_i <= 0 || (!check_micro_package && is_package?('ido_micro')) || (!check_micro_package && is_package?('ido_nano'))
 
-    return true if self.current_packages.include?('ido_micro') && self.commitment_counter > 1
+    return true if (is_package?('ido_micro') || is_package?('ido_nano')) && self.commitment_counter > 1
 
-    if self.current_packages.include?('ido_mini') && self.commitment_counter > 1
+    if is_package?('ido_mini') && self.commitment_counter > 1
       quarter1_end = (self.start_date + 3.months).strftime("%Y%m")
       quarter2_end = (self.start_date + 6.months).strftime("%Y%m")
       quarter3_end = (self.start_date + 9.months).strftime("%Y%m")
@@ -223,6 +225,7 @@ class Subscription < ApplicationRecord
     actual_package = ""
 
     actual_package = 'ido_x'                   if is_package?('ido_x')
+    actual_package = 'ido_nano'                if is_package?('ido_nano')
     actual_package = 'ido_micro'               if is_package?('ido_micro')
     actual_package = 'ido_mini'                if is_package?('ido_mini')
     actual_package = 'ido_classique'           if is_package?('ido_classique')
