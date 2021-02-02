@@ -44,7 +44,7 @@
               .label-section
                 = label_tag 'by_piece[state_piece]', "Etat pièce", class: 'control-label'
               .controls-section
-                = select_tag 'by_piece[state_piece]', options_for_select([['En attente validation analytique', 'waiting_analytics'], ['Ignorée', 'ignored,truly_ignored'], ['Pré-saisie en cours', 'processing']]), include_blank: true
+                = select_tag 'by_piece[state_piece]', options_for_select([['En attente validation analytique', 'waiting_analytics'], ['Ignorée', 'ignored,truly_ignored'], ['Pré-saisie en cours', 'waiting']]), include_blank: true
           - if @user.pre_assignement_displayed?
             .by_preseizure_filter.box.clearfix
               %span.badge.badge-warning.fs-origin
