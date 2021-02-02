@@ -64,6 +64,16 @@
           .card-body
             .form-group
               .label-section
+                = label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
+              .control-section
+                = text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
+                = label_tag 'organization_contains[code]', t('activerecord.models.organization.attributes.code')
+              .control-section
+                = text_field_tag 'organization_contains[code]', (params[:organization_contains][:code] rescue ''), class: 'input-small'
+            .form-group
+              .label-section
                 = label_tag 'organization_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
               .control-section
                 .input-append.date.datepicker
@@ -120,11 +130,6 @@
                   = @debit_mandate_not_configured_count
               .control-section
                 = select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true
-            .form-group
-              .label-section
-                = label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
-              .control-section
-                = text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
           .card-footer
             .form-actions
               = submit_tag t('filters.action'), class: 'btn btn-primary'

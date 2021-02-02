@@ -149,6 +149,7 @@ class Organization < ApplicationRecord
       end
     end
 
+    organizations = organizations.where("code LIKE ?", "%#{contains[:code]}%")               if contains[:code].present?
     organizations = organizations.where("name LIKE ?", "%#{contains[:name]}%")               unless contains[:name].blank?
     organizations = organizations.where("description LIKE ?", "%#{contains[:description]}%") unless contains[:description].blank?
 
