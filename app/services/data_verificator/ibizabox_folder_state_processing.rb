@@ -11,7 +11,7 @@ class DataVerificator::IbizaboxFolderStateProcessing
       counter += 1
       messages << "ibizabox_folder_id: #{ibizabox_folder.id}, user_code: #{ibizabox_folder.user.code}"
 
-      accounting_plan.update(state: 'ready')
+      ibizabox_folder.update(state: 'ready')
     end
 
     {

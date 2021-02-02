@@ -328,17 +328,15 @@ class Account::DocumentsController < Account::AccountController
     elsif export_ids && export_type == 'report'
       preseizures = Pack::Report.where(id: export_ids).first.preseizures
     elsif export_ids && export_type == 'pack'
-      reports     = Pack.where(id: export_ids).first.reports
+      pack    = Pack.where(id: export_ids).first
+      reports = pack.reports
 
       if reports.empty?
-        pack = Pack.where(id: export_ids).first
-        if pack
-          reports = Pack::Report.where(name: pack.name.split(' all')[0])
-          if reports.any?
-            reports.update_all(pack_id: pack.id)
+        reports = Pack::Report.where(name: pack.name.gsub('all', '').strip)
+        if reports.any?
+          reports.update_all(pack_id: pack.id)
 
-            reports.reload
-          end
+          reports.reload
         end
       end
 

@@ -164,7 +164,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 
     FecImport.new(file_path).execute(@customer, params)
 
-    FileUtils.remove_entry_secure params[:dir_tmp] if params[:dir_tmp]
+    FileUtils.remove_entry_secure(params[:dir_tmp], true) if params[:dir_tmp]
 
     if params[:new_create_book_type].present?
       render partial: '/account/customers/table', locals: { providers: @customer.accounting_plan.providers, customers: @customer.accounting_plan.customers }

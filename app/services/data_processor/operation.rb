@@ -85,7 +85,7 @@ class DataProcessor::Operation
 
             preseizures << preseizure
             to_deliver_preseizures << preseizure
-            operation.update_attribute(:processed_at, Time.now)
+            operation.update({ processed_at: Time.now, is_locked: false })
           end
           if pack_report.preseizures.not_locked.not_delivered.size > 0
             pack_report.remove_delivered_to
