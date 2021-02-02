@@ -318,7 +318,7 @@ class FileImport::Ftp
 
   def process
     import_folders.each do |item|
-      next if item.to_be_created? || item.customer.subscription.current_period.is_active?(:ido_x)
+      next if item.to_be_created? || (item.customer && item.customer.subscription.current_period.is_active?(:ido_x))
 
       file_paths = begin
         client.nlst(item.path + '/*.*')

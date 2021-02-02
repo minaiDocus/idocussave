@@ -236,6 +236,11 @@
                           le #{@organization.ftp.error_fetched_at.strftime("%d-%m-%Y %H:%M:%S")} :
                         %span
                           = @organization.ftp.error_message
+              - if @user.leader?
+                = link_to 'Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
+                - if @organization.ftp.try(:configured?)
+                  = link_to 'Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn btn-secondary', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
+                  = link_to 'Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
             #sftp.tab-pane.fade{ class: ('active show' if params[:tab] == 'sftp') }
               %table.table.table-condensed.table-striped
                 %tbody
@@ -272,7 +277,7 @@
 
               - if @user.leader?
                 = link_to 'Configurer', edit_account_organization_sftps_path(@organization), class: 'btn btn-primary'
-                - if @organization.ftp.try(:configured?)
+                - if @organization.sftp.try(:configured?)
                   = link_to 'Récupérer maintenant', fetch_now_account_organization_sftps_path(@organization), class: 'btn btn-secondary', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
                   = link_to 'Réinitialiser mes paramètres', account_organization_sftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
             #mcf.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'mcf') }
