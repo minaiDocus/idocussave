@@ -10,6 +10,8 @@ class DataVerificator::IbizaboxFolderStateProcessing
     ibizabox_folders.each do |ibizabox_folder|
       counter += 1
       messages << "ibizabox_folder_id: #{ibizabox_folder.id}, user_code: #{ibizabox_folder.user.code}"
+
+      accounting_plan.update(state: 'ready')
     end
 
     {

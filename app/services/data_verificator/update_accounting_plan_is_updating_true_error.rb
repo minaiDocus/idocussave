@@ -10,6 +10,8 @@ class DataVerificator::UpdateAccountingPlanIsUpdatingTrueError < DataVerificator
     accounting_plans.each do |accounting_plan|
       counter += 1
       messages << "accounting_plan_id: #{accounting_plan.id}, accounting_plan_user_code: #{accounting_plan.user.code}"
+
+      accounting_plan.update(is_updating: false)
     end
 
     {
