@@ -92,7 +92,7 @@ class DataProcessor::TempPack
   def need_pre_assignment?
     return @need_pre_assignment unless @need_pre_assignment.nil?
 
-    @need_pre_assignment = @temp_pack.is_pre_assignment_needed?
+    @need_pre_assignment = @temp_pack.is_compta_processable?
   end
 
   def uses_analytics?
@@ -275,7 +275,7 @@ class DataProcessor::TempPack
       position        = @is_a_cover ? 0 : (position + 1)
       base_file_name  = basename.tr(' ', '_')
 
-      if @temp_pack.is_bundle_needed?
+      if @temp_pack.is_compta_processable?
         temp_document.scan_bundling_document_ids.each do |id|
           bundling_document         = TempDocument.find(id)
 

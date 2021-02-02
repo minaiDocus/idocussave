@@ -36,7 +36,7 @@ class Dematbox::CreateDocument
 
           @temp_document.save
 
-          if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
+          if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_compta_processable?
             @temp_document.bundle_needed
           else
             @temp_document.ready

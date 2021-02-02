@@ -63,7 +63,7 @@ class DocumentDelivery < ApplicationRecord
     # temp_document.content = file
     temp_document.cloud_content_object.attach(File.open(file.path), File.basename(file)) if temp_document.save
 
-    temp_document.temp_pack.is_bundle_needed? ? temp_document.bundle_needed : temp_document.ready
+    temp_document.temp_pack.is_compta_processable? ? temp_document.bundle_needed : temp_document.ready
   end
 
 

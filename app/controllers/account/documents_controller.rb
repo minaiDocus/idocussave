@@ -618,7 +618,7 @@ class Account::DocumentsController < Account::AccountController
 
     temp_pack = TempPack.find_by_name(pack.name)
 
-    piece.waiting_pre_assignment if temp_pack.is_pre_assignment_needed? && piece.preseizures.size == 0 && piece.temp_document.try(:api_name) != 'invoice_auto' && !piece.pre_assignment_waiting_analytics?
+    piece.waiting_pre_assignment if temp_pack.is_compta_processable? && piece.preseizures.size == 0 && piece.temp_document.try(:api_name) != 'invoice_auto' && !piece.pre_assignment_waiting_analytics?
 
     render json: { success: true }, status: 200
   end

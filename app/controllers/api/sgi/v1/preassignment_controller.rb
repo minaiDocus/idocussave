@@ -59,7 +59,7 @@ class Api::Sgi::V1::PreassignmentController < SgiApiController
 
     compta_type_verificator = is_teeo ? true : journal.try(:compta_type) == @compta_type
 
-    add_to_list_and_update_state_of(piece, journal.compta_type) if journal && temp_pack && temp_pack.is_pre_assignment_needed? && !piece.is_a_cover && compta_type_verificator
+    add_to_list_and_update_state_of(piece, journal.compta_type) if journal && temp_pack && temp_pack.is_compta_processable? && !piece.is_a_cover && compta_type_verificator
 
     if journal.nil?
       _error_mess = "Aucun journal correspondant : #{piece.journal}"

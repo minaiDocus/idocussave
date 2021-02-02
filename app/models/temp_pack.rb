@@ -56,12 +56,7 @@ class TempPack < ApplicationRecord
   end
 
 
-  def is_bundle_needed?
-    journal.try(:compta_processable?) || false
-  end
-
-
-  def is_pre_assignment_needed?
+  def is_compta_processable?
     journal.try(:compta_processable?) || false
   end
 
