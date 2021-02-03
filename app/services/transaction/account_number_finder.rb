@@ -95,7 +95,7 @@ class Transaction::AccountNumberFinder
     number ||= self.class.find_with_accounting_plan(accounting_plan, label, target, @rules) unless accounting_plan.empty? || @user.options.try(:skip_accounting_plan_finder)
     number ||= @temporary_account
 
-    number = validate_account(number) if number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder)
+    # number = validate_account(number) if number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder)
 
     number
   end
