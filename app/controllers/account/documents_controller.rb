@@ -325,20 +325,22 @@ class Account::DocumentsController < Account::AccountController
     preseizures = []
     if export_ids && export_type == 'preseizure'
       preseizures = Pack::Report::Preseizure.where(id: export_ids)
+      if preseizures.any?
+        @report = preseizures.first.report
+
+        update_report
+
+        preseizures.reload
+      end
     elsif export_ids && export_type == 'report'
+      @report = Pack::Report.where(id: export_ids).first
+
+      update_report
+
       preseizures = Pack::Report.where(id: export_ids).first.preseizures
     elsif export_ids && export_type == 'pack'
       pack    = Pack.where(id: export_ids).first
-      reports = pack.reports
-
-      if reports.empty?
-        reports = Pack::Report.where(name: pack.name.gsub('all', '').strip)
-        if reports.any?
-          reports.update_all(pack_id: pack.id)
-
-          reports.reload
-        end
-      end
+      reports = pack.present? ? assign_report_with(pack) : []
 
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
@@ -734,6 +736,26 @@ class Account::DocumentsController < Account::AccountController
 
     if params[:page].to_i == 1
       @need_delivery = @user.collaborator? && source.is_not_delivered? && !source.is_locked ? 'yes' : 'no'
+    end
+  end
+
+  def assign_report_with(pack)
+    reports = Pack::Report.where(name: pack.name.gsub('all', '').strip)
+    if reports.any?
+      reports.each do |report|
+        report.update(pack_id: pack.id) if report.pack_id.nil?
+      end
+
+      reports.reload
+    end
+
+    reports
+  end
+
+  def update_report
+    if @report && @report.name
+      pack = Pack.where(name: @report.name + ' all').first
+      assign_report_with(pack) if pack.present?
     end
   end
 end
