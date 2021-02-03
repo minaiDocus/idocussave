@@ -13,6 +13,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
 
     @list_accounts = @user.customers
     @list_skiped_accounting_plan = @list_accounts.select { |c| c.options.skip_accounting_plan_finder }
+    @validated_accounts_list     = @list_accounts.select { |c| c.options.keep_account_validation }
   end
 
   # GET /account/organizations/:organization_id/account_number_rules/:id
@@ -132,12 +133,10 @@ class Account::AccountNumberRulesController < Account::OrganizationController
   end
 
   def update_skip_accounting_plan_accounts
-    if params[:account_list]
-      @user.customers.each do |customer|
-        customer.options.skip_accounting_plan_finder = (params[:account_list].include? customer.info) ? true : false
-        customer.options.save
-      end
-    end
+    update_option('skip_accounting_plan_finder', 'account_list') if params[:account_list]
+
+    update_option('keep_account_validation', 'account_validation') if params[:account_validation]
+
     render json: { success: true }, status: 200
   end
 
@@ -174,5 +173,9 @@ class Account::AccountNumberRulesController < Account::OrganizationController
 
   def load_account_number_rule
     @account_number_rule = @organization.account_number_rules.find params[:id]
+  end
+
+  def update_option(field, param_content)
+    @user.customers.each { |customer| customer.options.update(field.to_sym => (params[param_content.to_sym].include? customer.info) ? true : false) }
   end
 end

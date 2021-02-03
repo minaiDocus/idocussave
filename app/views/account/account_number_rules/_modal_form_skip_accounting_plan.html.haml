@@ -13,6 +13,12 @@
             %br
             %br
             = select_tag 'account_list', options_for_select(@list_accounts, @list_skiped_accounting_plan), include_blank: false, multiple: true, class: 'searchable-option-list'
+          %hr
+          %p
+            La présence du résultat de la recherche sera validée dans le plan comptable pour les dossiers suivants :
+            %br
+            %br
+            = select_tag 'account_validation', options_for_select(@list_accounts, @validated_accounts_list), include_blank: false, multiple: true, class: 'searchable-option-list'
         .modal-footer
           .parentFeedback.hide.float-left
             .feedback.active

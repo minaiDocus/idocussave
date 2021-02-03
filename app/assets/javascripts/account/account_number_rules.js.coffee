@@ -75,11 +75,12 @@ jQuery ->
 
   $('#skipAccountingPlan #skipAccountingPlanButton').on 'click', ->
     accounts = $('#skipAccountingPlan #account_list').val()
+    account_validation = $('#skipAccountingPlan #account_validation').val()
     url = $('#skipAccountingPlan #skipAccountingPlanForm').attr('action')
 
     $.ajax({
       url: url,
-      data: { account_list: accounts },
+      data: { account_list: accounts, account_validation: account_validation },
       dataType: 'json',
       type: 'post',
       beforeSend: () ->
