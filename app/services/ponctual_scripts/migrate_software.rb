@@ -37,9 +37,9 @@ class PonctualScripts::MigrateSoftware < PonctualScripts::PonctualScript
 
   def migrate_software_of(organization)
     Interfaces::Software::Configuration::SOFTWARES.each do |software_name|
-      software  = Interfaces::Software::Configuration.softwares[software_name.to_sym].new
+      software  = organization.send(software_name.to_sym) || Interfaces::Software::Configuration.softwares[software_name.to_sym].new
 
-      next if software_name == 'my_unisoft'
+      next if software.persisted? || software_name == 'my_unisoft'
 
       if software_name == 'ibiza'
         ibiza = Ibiza.where(organization_id: organization.id)
@@ -85,9 +85,9 @@ class PonctualScripts::MigrateSoftware < PonctualScripts::PonctualScript
     softwares_setting     = SoftwaresSetting.find_by_user_id(user.id)
 
     Interfaces::Software::Configuration::SOFTWARES.each do |software_name|
-      software  = Interfaces::Software::Configuration.softwares[software_name.to_sym].new
+      software  = user.send(software_name) || Interfaces::Software::Configuration.softwares[software_name.to_sym].new
 
-      next if software_name == 'my_unisoft' || !softwares_setting.present?
+      next if software.persisted? || software_name == 'my_unisoft' || !softwares_setting.present?
 
       if software_name == 'ibiza' && user.try(:ibiza_id).try(:present?) && softwares_setting.try(:is_ibiza_used) && !softwares_setting.try(:is_exact_online_used)
         # Defaut values to avoid exception validation on (state, state_2, and voucher_ref_target)
