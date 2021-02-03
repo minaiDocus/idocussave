@@ -77,6 +77,22 @@ class PreseizureExport::PreseizureToTxt
 
   def export_cegid_tra
     data = []
+
+    line      = ' ' * 222
+    line[0]   = '***'
+    line[3]   = 'S5'
+    line[5]   = 'CLI'
+    line[8]   = 'JRL'
+    line[11]  = 'ETE'
+    line[14]  = Time.now.strftime('%d%m%Y')
+    line[18]  = Time.now.strftime('%d%m%Y')
+    line[22]  = 001
+    line[30]  = Time.now.strftime('%d%m%Y%H%M%S')
+    line[43]  = 'IDOCUS'
+    line[147] = 'X'
+
+    data << line
+
     @preseizures.each do |preseizure|
       if preseizure.operation
         label = preseizure.operation_label[0..29]
@@ -102,30 +118,6 @@ class PreseizureExport::PreseizureToTxt
                  when 'NDF'
                   'OD'
                  end
-
-        # file_name = preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf'
-
-        # line = ' ' * 222
-
-        # line[0] = preseizure.journal_name[0..2]
-        # line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
-        # line[11] = nature
-        # line[13] = case journal.compta_type
-        #            when 'AC'
-        #             '401000'
-        #            when 'VT'
-        #             '411000'
-        #            when 'NDF'
-        #             '471000'
-        #            end
-
-        # line[30] = 'G'
-        # line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
-        # line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
-        # line[83] = file_name
-
-        # data << line
-
 
         preseizure.entries.each do |entry|
           account = case nature
@@ -179,6 +171,29 @@ class PreseizureExport::PreseizureToTxt
             line[150] = 'N'
             line[151] = preseizure.piece.number.to_s
             line[172] = 'E--'
+
+            data << line
+
+            file_name = preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf'
+
+            line = ' ' * 222
+
+            line[0] = preseizure.journal_name[0..2]
+            line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+            line[11] = nature
+            line[13] = case journal.compta_type
+                       when 'AC'
+                        '401000'
+                       when 'VT'
+                        '411000'
+                       when 'NDF'
+                        '471000'
+                       end
+
+            line[30] = 'G'
+            line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
+            line[48] = preseizure.piece_number
+            line[83] = file_name
 
             data << line
 
