@@ -98,10 +98,10 @@ class Subscription < ApplicationRecord
     get_active_packages.try(:first) || :ido_classique
   end
 
-  def is_to_be_disabled_package?(pack)
-    return false if !Subscription::Package::PACKAGES_LIST.include?(pack) || !self.futur_packages
+  def is_to_be_disabled_package?(_package)
+    return false if !Subscription::Package::PACKAGES_LIST.include?(_package) || !self.futur_packages
 
-    is_package?(pack.to_s) && !self.futur_packages.include?(pack.to_s)
+    is_package?(_package.to_s) && !self.futur_packages.include?(_package.to_s)
   end
 
   def is_to_be_disabled_option?(option)
