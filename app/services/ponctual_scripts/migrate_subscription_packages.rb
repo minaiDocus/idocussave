@@ -33,12 +33,18 @@ class PonctualScripts::MigrateSubscriptionPackages < PonctualScripts::PonctualSc
       futur_package << 'pre_assignment_option'     if subscription.is_pre_assignment_active && !subscription.is_pre_assignment_to_be_disabled
 
       subscription.current_packages = current_package
-      subscription.futur_packages   = futur_package
+      subscription.futur_packages   = futur_package if current_package.uniq != futur_package.uniq
 
       subscription.save
     end
   end
 
   def backup
+    Subscription.all.each do |subscription|
+      subscription.current_packages = nil
+      subscription.futur_packages   = nil
+
+      subscription.save
+    end
   end
 end

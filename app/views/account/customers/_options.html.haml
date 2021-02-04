@@ -14,9 +14,7 @@
     - pack = nil
 
     - enabled_packages.each do |package|
-      - pack = package if Subscription::Package::PACKAGES_LIST.include?(package)
-
-      - if !active_packages.include?(pack)
+      - if !active_packages.include?(package)
         - found_pending = true
         - package_infos = Subscription::Package.infos_of(package)
         - unless package_infos[:group].blank?

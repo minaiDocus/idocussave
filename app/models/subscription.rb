@@ -99,27 +99,15 @@ class Subscription < ApplicationRecord
   end
 
   def is_to_be_disabled_package?(pack)
-    return false unless Subscription::Package::PACKAGES_LIST.include?(pack)
+    return false if !Subscription::Package::PACKAGES_LIST.include?(pack) || !self.futur_packages
 
-    if self.futur_packages
-      is_package?(pack.to_s) && !self.futur_packages.include?(pack.to_s)
-    else
-      false
-    end
+    is_package?(pack.to_s) && !self.futur_packages.include?(pack.to_s)
   end
 
   def is_to_be_disabled_option?(option)
-    return false unless Subscription::Package::OPTIONS_LIST.include?(option)
+    return false if !Subscription::Package::OPTIONS_LIST.include?(option) || !self.futur_packages
 
-    pack = self.current_package?
-
-    if is_package?(pack.to_s) && self.futur_packages && self.futur_packages.include?(pack.to_s)
-      is_package?(option.to_s) && !self.futur_packages.include?(option.to_s)
-    elsif self.futur_packages && !self.futur_packages.include?(pack.to_s)
-      true
-    else
-      false
-    end
+    is_package?(option.to_s) && !self.futur_packages.include?(option.to_s)
   end
 
   def is_retriever_only?
