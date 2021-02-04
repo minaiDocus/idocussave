@@ -80,16 +80,7 @@ class PreseizureExport::PreseizureToTxt
 
     line      = ' ' * 222
     line[0]   = '***'
-    line[3]   = 'S5'
-    line[5]   = 'CLI'
-    line[8]   = 'JRL'
-    line[11]  = 'ETE'
-    line[14]  = Time.now.strftime('%d%m%Y')
-    line[18]  = Time.now.strftime('%d%m%Y')
-    line[22]  = '001'
-    line[30]  = Time.now.strftime('%d%m%Y%H%M%S')
-    line[43]  = 'IDOCUS'
-    line[147] = 'X'
+    line[147] = '-'
 
     data << line
 
