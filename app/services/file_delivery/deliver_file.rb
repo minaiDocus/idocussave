@@ -135,7 +135,7 @@ class FileDelivery::DeliverFile
         @services_name << RemoteFile::KNOWINGS if @receiver.knowings.try(:is_configured?)
         @services_name << RemoteFile::FTP if @receiver.ftp.try(:configured?)
         @services_name << RemoteFile::SFTP if @receiver.sftp.try(:configured?)
-        @services_name << RemoteFile::MY_COMPANY_FILES if @receiver.mcf_settings.try(:configured?)
+        @services_name << RemoteFile::MY_COMPANY_FILES if @receiver.mcf_settings.try(:ready?)
       else
         @services_name = ['Dropbox Extended']
       end
