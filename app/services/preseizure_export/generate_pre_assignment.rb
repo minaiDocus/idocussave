@@ -161,6 +161,7 @@ private
   end
 
   def generate_cegid_tra_export(with_file = true)
+    begin
       file_zip = PreseizureExport::Software::Cegid.new(@preseizures, 'tra_cegid').execute
 
       final_file_name = "#{file_real_name}.zip"
@@ -168,6 +169,9 @@ private
       FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
 
       @export.got_success "#{file_real_name}.zip"
+    rescue => e
+      @export.got_error e
+    end
   end
 
   def generate_fec_agiris_export(with_file = true)
