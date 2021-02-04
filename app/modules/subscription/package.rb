@@ -19,7 +19,7 @@ class Subscription::Package
         when :ido_micro
           10
         when :ido_nano
-          10
+          5
         #options
         when :mail_option
           10

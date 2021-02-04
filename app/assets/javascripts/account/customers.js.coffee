@@ -381,7 +381,7 @@ update_price = ->
   price_list = {
     #standard prices
     'subscription':        10,
-    'idox':                5,
+    'idox_nano':           5,
     'pre_assignment':      9,
     'return_paper':        10,
     'retriever':           5,
@@ -395,9 +395,9 @@ update_price = ->
   options = []
 
   if $('#subscription_subscription_option_ido_x').is(':checked')
-    options.push 'idox'
+    options.push 'idox_nano'
   if $('#subscription_subscription_option_ido_nano').is(':checked')
-    options.push 'subscription'
+    options.push 'idox_nano'
   if $('#subscription_subscription_option_ido_micro').is(':checked')
     options.push 'subscription'
   if $('#subscription_subscription_option_ido_mini').is(':checked')
