@@ -17,7 +17,7 @@
       .card-body
         = f.simple_fields_for :ibiza do |sf|
           = sf.hidden_field :id
-          = sf.input :ibiza_id, label: 'Sélectionner le dossier correspondant dans iBiza', collection: [], input_html: { style: 'display:none', data: { original_value: @customer.tr(:ibiza).try(:ibiza_id), users_list_url: account_organization_ibiza_users_path(@organization, format: 'json'), placeholder: 'Choisir un dossier' } }
+          = sf.input :ibiza_id, label: 'Sélectionner le dossier correspondant dans iBiza', collection: [], input_html: { style: 'display:none', data: { original_value: @customer.try(:ibiza).try(:ibiza_id), users_list_url: account_organization_ibiza_users_path(@organization, format: 'json'), placeholder: 'Choisir un dossier' } }
           = sf.input :auto_deliver, collection: auto_deliver_options, as: :radio_buttons
           = sf.input :is_analysis_activated, collection: activate_compta_analytic_options, as: :radio_buttons
           = sf.input :is_analysis_to_validate, collection: activate_compta_analytic_options, as: :radio_buttons, hint: "Cette option suspend l'envoi en pré-affectation des pièces, en passant par une validation manuelle des analyses comptables, Les pièces téléversées via le site ou mobile ne sont pas concernées"
