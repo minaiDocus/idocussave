@@ -25,7 +25,7 @@ class Subscription::Form
       current_packages << 'retriever_option'        if params[:retriever_option] && !current_package_data.include?(params[:retriever_option])
       current_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && !current_package_data.include?(params[:is_pre_assignment_active]) && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
 
-      if current_package_data.size > current_packages.size && @params[:subscription_option] != 'retriever_option'
+      if current_package_data.uniq.size > current_packages.uniq.size
         futur_packages = current_packages
       elsif (current_package_data.size == 1 && !current_package_data.include?(@params[:subscription_option])) || @params[:subscription_option] == 'retriever_option'
         current_package_data = current_packages
