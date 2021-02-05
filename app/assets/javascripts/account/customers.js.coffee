@@ -378,18 +378,7 @@ check_commitment = ->
         $(this).removeAttr('disabled')
 
 update_price = ->
-  prices_list = $('#subscription_packages_price').val()
-  # price_list = {
-  #   #standard prices
-  #   'subscription':        10,
-  #   'idox_nano':           5,
-  #   'pre_assignment':      9,
-  #   'return_paper':        10,
-  #   'retriever':           5,
-  #   'reduced_retriever':   3,
-  #    #special prices
-  #   'subscription_plus':   1,
-  # }
+  prices_list = JSON.parse($('#subscription_packages_price').val())
 
   selected_options = []
   price = 0
