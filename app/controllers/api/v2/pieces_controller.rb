@@ -9,10 +9,34 @@ class Api::V2::PiecesController < ActionController::Base
     piece = Pack::Piece.find(params[:id])
 
     if piece.update(piece_params)
+      piece.reload
       piece.waiting_pre_assignment if piece.pre_assignment_state == 'supplier_recognition' && piece.detected_third_party_id
+
+      piece.reload
+      if !piece.pre_assignment_waiting?
+        log_document = {
+          name: "SupplierRecognition",
+          error_group: "[SupplierRecognition] : cant'update piece's state",
+          erreur_type: "SupplierRecognition - cant'update piece's state",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: { piece: piece.inspect, error: "Can't update state" }
+        }
+
+        ErrorScriptMailer.error_notification(log_document).deliver
+      end
 
       render json: serializer.new(piece)
     else
+      log_document = {
+        name: "SupplierRecognition",
+        error_group: "[SupplierRecognition] : cant'update piece's state",
+        erreur_type: "SupplierRecognition - cant'update piece's state",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: { piece: piece.inspect, error: piece.errors.inspect }
+      }
+
+      ErrorScriptMailer.error_notification(log_document).deliver
+
       render json: piece.errors, status: :unprocessable_entity
     end
   end
