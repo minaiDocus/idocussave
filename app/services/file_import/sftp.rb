@@ -32,6 +32,8 @@ class FileImport::Sftp
     System::Log.info('processing', "#{log_prefix} START")
     start_time = Time.now
 
+    @sftp.clean_error
+
     return unless test_connection
 
     process

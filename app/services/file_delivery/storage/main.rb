@@ -12,7 +12,8 @@ class FileDelivery::Storage::Main
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
 
-    if @storage.class == ::Ftp && @storage.organization
+    if(@storage.class == ::Ftp || @storage.class == ::Sftp) && @storage.organization
+      @storage.try(:clean_error)
       @options[:path_pattern] = File.join @storage.root_path, @options[:path_pattern]
     end
 

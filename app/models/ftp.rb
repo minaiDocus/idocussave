@@ -76,6 +76,10 @@ class Ftp < ApplicationRecord
     end
   end
 
+  def clean_error
+    update({ error_message: nil, error_fetched_at: nil })
+  end
+
   private
 
   def host_format

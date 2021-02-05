@@ -31,7 +31,8 @@ class Ftp::Client
   end
 
   def method_missing(name, *args, &block)
-    grace_time = name.in?(slow_methods) ? 120 : 5
+    # grace_time = name.in?(slow_methods) ? 120 : 5
+    grace_time = 120 #TEMP FIX Set grace time to be always 120
     retries = 0
     begin
       Timeout::timeout grace_time do

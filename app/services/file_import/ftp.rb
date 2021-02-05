@@ -32,6 +32,8 @@ class FileImport::Ftp
     System::Log.info('processing', "#{log_prefix} START")
     start_time = Time.now
 
+    @ftp.clean_error
+
     return unless test_connection
 
     process
@@ -85,7 +87,7 @@ class FileImport::Ftp
         notice_type: @ftp.organization ? 'org_ftp_auth_failure' : 'ftp_auth_failure'
       }).notify_ftp_auth_failure
 
-      @ftp.update is_configured: false
+      @ftp.got_error(e.to_s, true)
     end
     log_infos = {
       name: "FTPImport",
