@@ -378,47 +378,53 @@ check_commitment = ->
         $(this).removeAttr('disabled')
 
 update_price = ->
-  price_list = {
-    #standard prices
-    'subscription':        10,
-    'idox_nano':           5,
-    'pre_assignment':      9,
-    'return_paper':        10,
-    'retriever':           5,
-    'reduced_retriever':   3,
-     #special prices
-    'subscription_plus':   1,
-  }
+  prices_list = $('#subscription_packages_price').val()
+  # price_list = {
+  #   #standard prices
+  #   'subscription':        10,
+  #   'idox_nano':           5,
+  #   'pre_assignment':      9,
+  #   'return_paper':        10,
+  #   'retriever':           5,
+  #   'reduced_retriever':   3,
+  #    #special prices
+  #   'subscription_plus':   1,
+  # }
 
   selected_options = []
   price = 0
   options = []
 
   if $('#subscription_subscription_option_ido_x').is(':checked')
-    options.push 'idox_nano'
+    options.push 'ido_x'
   if $('#subscription_subscription_option_ido_nano').is(':checked')
-    options.push 'idox_nano'
+    options.push 'ido_nano'
   if $('#subscription_subscription_option_ido_micro').is(':checked')
-    options.push 'subscription'
+    options.push 'ido_micro'
   if $('#subscription_subscription_option_ido_mini').is(':checked')
-    options.push 'subscription', 'subscription_plus', 'pre_assignment'
+    options.push 'ido_mini', 'signing_piece', 'pre_assignment_option'
   if $('#subscription_subscription_option_ido_classique').is(':checked')
-    options.push 'subscription', 'subscription_plus', 'pre_assignment'
+    options.push 'ido_classique', 'signing_piece', 'pre_assignment_option'
 
   if $('.active_option#subscription_mail_option').is(':checked')
-    options.push 'return_paper'
+    options.push 'mail_option'
 
   if $('.active_option#subscription_retriever_option').is(':checked')
-    options.push $('.active_option#subscription_retriever_option').data('retriever-price-option')
+    if $('.active_option#subscription_retriever_option').data('retriever-price-option') == 'reduced_retriever'
+      options.push 'retriever_option_reduced'
+    else
+      options.push 'retriever_option'
 
   if $('#subscription_subscription_option_retriever_option').is(':checked')
-    options.push $('#subscription_subscription_option_retriever_option').data('retriever-price-option')
-
+    if $('#subscription_subscription_option_retriever_option').data('retriever-price-option') == 'reduced_retriever'
+      options.push 'retriever_option_reduced'
+    else
+      options.push 'retriever_option'
 
   for option in options
-    if option == 'pre_assignment'
+    if option == 'pre_assignment_option'
       if $('#subscription_is_pre_assignment_active_true').is(':checked')
-        selected_options.push 'pre_assignment'
+        selected_options.push 'pre_assignment_option'
     else
       selected_options.push option
 
@@ -428,7 +434,7 @@ update_price = ->
       price += number_of_journals - 5
 
   for option in selected_options
-    price += price_list[option]
+    price += prices_list[option]
 
   $('.total_price').html(price+",00€ HT")
 

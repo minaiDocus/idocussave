@@ -1,34 +1,16 @@
 class Subscription::Package
   PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_nano, :ido_x].freeze
   OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option].freeze
+  PRICES_LIST   = { ido_classique: 10, ido_x: 5, ido_mini: 10, ido_micro: 10, ido_nano: 5, mail_option: 10, retriever_option: 5, retriever_option_reduced: 3, pre_assignment_option: 9, signing_piece: 1 }
 
   class << self
     def price_of(package_or_option, reduced=false)
-      signing_piece_price  = 1
-      pre_assignment_price = 9
+      if package_or_option.to_s == 'retriever_option'
+        price = reduced ? Subscription::Package::PRICES_LIST[:retriever_option_reduced] : Subscription::Package::PRICES_LIST[:retriever_option]
+      else
+        price = Subscription::Package::PRICES_LIST[package_or_option] || 0
 
-      # package_price + signing_piece_price + pre_assignment_price
-      case package_or_option
-        #packages
-        when :ido_classique
-          10 + signing_piece_price
-        when :ido_x
-          5
-        when :ido_mini
-          10 + signing_piece_price
-        when :ido_micro
-          10
-        when :ido_nano
-          5
-        #options
-        when :mail_option
-          10
-        when :retriever_option
-          reduced ? 3 : 5
-        when :pre_assignment_option
-          9
-        else
-          0
+        price += Subscription::Package::PRICES_LIST[:signing_piece] if [:ido_classique, :ido_mini].include?(package_or_option)
       end
     end
 
