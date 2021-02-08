@@ -52,8 +52,8 @@ class Account::CollaboratorsController < Account::OrganizationController
     if @member.user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
     elsif @user.leader? || @member.collaborator?
-      if User::Collaborator::Destroy.new(@member.user).execute
-        flash[:success] = 'Supprimé avec succès.'
+      if User::Collaborator::Destroy.delay(queue: :low).execute(@member.user.id)
+        flash[:success] = "Votre compte est en cours de suppression ..., Toute information liée au compte sera supprimée d'ici quelques minutes"
       else
         flash[:error] = 'Impossible de supprimer.'
       end
