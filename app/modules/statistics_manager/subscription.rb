@@ -11,7 +11,7 @@ module StatisticsManager::Subscription
     period_date   = date.to_date.end_of_month - 15.days
 
     Organization.billed.where("created_at <= ?", end_date).order(created_at: :asc).each do |organization|
-      options     = { micro_package: 0, basic_package: 0, mail_package: 0, scan_box_package: 0, retriever_package: 0, mini_package: 0, annual_package: 0 }
+      options     = { micro_package: 0, nano_package: 0, basic_package: 0, mail_package: 0, scan_box_package: 0, retriever_package: 0, mini_package: 0, annual_package: 0 }
       consumption = { upload: 0, scan: 0, dematbox_scan: 0, retriever: 0 }
 
       periods = Period.where(user_id: organization.customers.active_at(end_date).map(&:id)).where('start_date <= ? AND end_date >= ?', period_date, period_date)
@@ -23,6 +23,8 @@ module StatisticsManager::Subscription
           case option.name
             when 'micro_package_subscription'
               options[:micro_package] += 1
+            when 'nano_package_subscription'
+              options[:nano_package] += 1
             when 'basic_package_subscription'
               options[:basic_package] += 1
             when 'mail_package_subscription'

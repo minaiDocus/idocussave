@@ -30,6 +30,8 @@ class Subscription::StatisticsToXls
         statistic.options[:mini_package_diff].to_i,
         statistic.options[:micro_package],
         statistic.options[:micro_package_diff].to_i,
+        statistic.options[:nano_package],
+        statistic.options[:nano_package_diff].to_i,
         statistic.consumption[:upload],
         statistic.consumption[:scan],
         statistic.consumption[:dematbox_scan],

@@ -29,7 +29,7 @@
         .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_nano')}", title: Subscription::Package.infos_of(:ido_nano)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_nano', current_package.include?('ido_nano'), class: "form-check-input ido_nano radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_nano" }
           = label_tag 'subscription[subscription_option]', "iDo'Nano", class: 'form-check-label'
-      .col-md-6.form_check_micro_package
+      .col-md-6.form_check_nano_package
         .float-right{ style: 'padding-right: 17em' }
           .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_nano', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
             = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_nano') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_nano_option #{'active_option' if (current_package.include?('ido_nano') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_nano')

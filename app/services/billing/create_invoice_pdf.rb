@@ -138,6 +138,7 @@ class Billing::CreateInvoicePdf
     basic_package_count     = 0
     idox_package_count      = 0
     micro_package_count     = 0
+    nano_package_count      = 0
     mini_package_count      = 0
     annual_package_count    = 0
     scan_box_package_count  = 0
@@ -160,6 +161,8 @@ class Billing::CreateInvoicePdf
           annual_package_count += 1
         when 'micro_package_subscription'
           micro_package_count += 1
+        when 'nano_package_subscription'
+          nano_package_count += 1
         when 'mini_package_subscription'
           mini_package_count += 1
         end
@@ -178,6 +181,10 @@ class Billing::CreateInvoicePdf
 
     if micro_package_count > 0
       @data << ["- #{micro_package_count} forfait#{'s' if micro_package_count > 1} iDo'Micro", '']
+    end
+
+    if nano_package_count > 0
+      @data << ["- #{nano_package_count} forfait#{'s' if nano_package_count > 1} iDo'Nano", '']
     end
 
     if mini_package_count > 0
