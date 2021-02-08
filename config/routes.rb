@@ -446,7 +446,9 @@ Rails.application.routes.draw do
       post 'unlock_operations', on: :collection
     end
 
-    resources :bank_settings, only: %W(index edit update)
+    resources :bank_settings, only: %W(index edit update create) do
+      post 'should_be_disabled', action: 'mark_as_to_be_disabled',   on: :collection
+    end
 
     resources :retrieved_documents do
       get   'piece',    on: :member

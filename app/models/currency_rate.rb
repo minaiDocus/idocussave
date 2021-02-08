@@ -43,6 +43,16 @@ class CurrencyRate < ApplicationRecord
      "RWF", "AWG", "DJF", "BTN", "KMF", "WST", "SPL", "ERN", "FKP", "SHP", "JEP", "TMT", "TVD", "IMP", "GGP", "ZMW"]
   end
 
+
+  def self.original_currencies
+    [
+      ["€", "EUR"], ["$", "USD"], ["$, A$, AU$", "AUD"], ["$, C$", "CAD"], ["Fr., SFr, FS", "CHF"], ["¥" , "JPY"],
+      ["$, NZ$" ,"NZD"], ["£", "GBP"], ["kr", "SEK"], ["kr", "DKK"], ["kr", "NOK"], ["$, S$", "SGD"], ["Kč", "CZK"],
+      ["$, HK$", "HKD"], ["$, Mex$", "MXN"], ["zł", "PLN"], ["₽", "RUB"], ["₺", "TRY"], ["R", "ZAR"], ["¥", "CNH"]
+    ]
+  end
+
+
   private
 
   def self.of(date, from, to)

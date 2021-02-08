@@ -123,4 +123,13 @@ module JournalHelper
   def journal_currencies
     CurrencyRate.lists
   end
+
+
+  def original_currencies
+    CurrencyRate.original_currencies
+  end
+
+  def bank_account_type_name
+    BankAccount.type_name_list
+  end
 end

@@ -1,10 +1,19 @@
 #bank_settings.select
   .box.derivationRight
     .row
-      .col-md-12
+      .col-md-4
         .float-left
           %h3.float-left
             = @account.info
+      .col-md-4
+        .center{ style: "text-align: center" }
+          .notify-warning.fs-origin.mb-3.hide
+            Disparaîtra le mois prochain
+      .col-md-4
+        .float-right
+          %button.btn.btn-primary.btn-sm.float-left{type:'button', :data => {:toggle => 'modal', :target => '#create_bank_account'}, style: 'position:relative;top:-3px;' }
+            = glyphicon('plus', { class: 'mr-sm-1', color: '#fff' })
+            Créer manuellement un compte bancaire
 
   .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
@@ -21,14 +30,18 @@
               %th Paramétrer
           %tbody
             - @bank_accounts.each do |bank_account|
-              %tr
+              - disabled = bank_account.can_be_reopened?
+              %tr{ class: 'should_be_disabled_bank_account', data: { disabled: disabled ? '1' : '0' }}
                 %td= bank_account.bank_name
                 %td= bank_account.name
                 %td= bank_account.number
                 %td= bank_account.journal
                 %td= bank_account.accounting_number
                 %td= bank_account.start_date
-                %td.text-center= link_to t('actions.edit'), edit_account_bank_setting_path(bank_account), class: 'btn btn-light'
+                %td.text-center
+                  = link_to glyphicon('pencil') + ' Éditer', edit_account_bank_setting_path(bank_account), title: 'Éditer', rel: 'tooltip', class: 'btn btn-light'
+                  = link_to glyphicon('trash') + ' Désactiver', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' unless bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Désactivera dans le mois prochain', rel: 'tooltip'
+                  = link_to glyphicon('check') + ' Réactiver', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' unless disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactive maintenant', rel: 'tooltip'
 
     .card.retractable-filter
       = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do
@@ -68,3 +81,67 @@
             .form-actions
               = submit_tag t('filters.action'), class: 'btn btn-primary'
               = link_to glyphicon('x'), account_bank_settings_path({account_id: @account.try(:id)}), class: 'btn btn-light'
+
+  .modal.fade{id: 'create_bank_account', tabindex: '-1', 'data-focus-on' => 'input:first', role: 'dialog', aria: {labelledby: 'title_info', hidden: 'true'}}
+    .modal-dialog.modal-dialog-centered{role: 'document'}
+      .modal-content
+        .modal-header.text-center
+          %h3{class: 'modal-title w-100 font-weight-bold', id: 'title_info'}
+            Paramètrage manuel d'un compte bancaire
+          %button.close{type: 'button', data: {dismiss:'modal'}, aria: {label: 'Close'}} &times;
+        .modal-body
+          .card
+            = simple_form_for @bank_account = BankAccount.new, url: account_bank_settings_path({ id: @customer.id }), html: { class: 'form-horizontal label-medium' } do |f|
+              .card-body
+                = f.input :user_id, :as => :hidden, :input_html => { :value => @customer.id }
+                = f.input :api_name, :as => :hidden, :input_html => { :value => 'idocus' }
+                = f.input :is_used, :as => :hidden, :input_html => { :value => true }
+                = f.input :bank_name, label: 'Banque'
+                = f.input :name, :as => :hidden, :input_html => { :value => 'Same of bank name' }
+                = f.input :type_name, collection: bank_account_type_name, include_blank: false, label: 'Type de compte', selected: "unknown"
+                = f.input :number
+                = f.input :journal
+                - if @customer.uses_ibiza?
+                  - if @customer.organization.ibiza.configured?
+                    = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus'
+                  - else
+                    .form-group.clearfix
+                      .label-section
+                        %label= t('simple_form.labels.bank_account.journal')
+                      .control-section
+                        %select.select.disabled{ disabled: 'disabled' }
+                        %p
+                          = render 'shared/ibiza_not_configured_warning'
+                = f.fields_for :original_currency do |o|
+                  = o.input :symbol, collection: original_currencies, label_method: :second, value_method: :first, label: 'Devise originale', selected: 'EUR', include_blank: false
+                  = o.input :id, :as => :hidden, :input_html => { :value => 'EUR' }
+                  = o.input :prefix, :as => :hidden, :input_html => { :value => false }
+                  = o.input :precision, :as => :hidden, :input_html => { :value => 2 }
+                  = o.input :marketcap, :as => :hidden, :input_html => { :value => nil }
+                  = o.input :datetime, :as => :hidden, :input_html => { :value => nil }
+                  = o.input :name, :as => :hidden, :input_html => { :value => 'Euro' }
+                = f.input :currency, collection: journal_currencies, include_blank: false, selected: (@bank_account.currency || "EUR"), hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de valeur"
+                = f.input :accounting_number, required: true
+                = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
+                .form-group.clearfix{ class: ('error' if @bank_account.errors.keys.include?(:start_date)) }
+                  .label-section
+                    = label_tag 'bank_account[start_date]', content_tag(:abbr, '*', title: 'champ requis') + " Choisir la date de récupération de l'historique bancaire"
+                  .control-section
+                    .input-prepend.date.datepicker
+                      %span.add-on
+                        %i.icon-th
+                      = text_field_tag @bank_account.start_date.present? ? 'bank_account[start_date_disabled]' : 'bank_account[start_date]', @bank_account.start_date, { style: 'width: 180px; left: -3px;', disabled: @bank_account.start_date.present? }
+                      - if @bank_account.start_date.present?
+                        = hidden_field_tag 'bank_account[start_date]', @bank_account.start_date
+                    - if @bank_account.operations.count >= 1
+                      %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.order(date: :asc).first.date.strftime("%d/%m/%Y")}
+                = f.input :lock_old_operation, required: true, hint: "Ne s'applique qu'après un mois depuis la création de ce compte bancaire dans iDocus"
+                = f.input :permitted_late_days, required: true
+              .card-footer
+                .form-actions.margin0bottom
+                  = f.submit t('actions.submit'), class: 'btn btn-primary'
+                  = f.button :submit, 'Réinitialiser', class: 'btn btn-light cancel', type: 'reset'
+
+        .modal-footer
+          .float-right
+            %a{ :class=>"modal-close btn btn-light", "data-dismiss"=>"modal" } Fermer

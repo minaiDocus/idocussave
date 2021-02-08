@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Account::BankSettingsController < Account::RetrieverController
-  before_action :load_bank_account, except: %w[index]
+  before_action :load_bank_account, except: %w[index create]
   before_action :verif_account
 
   def index
@@ -15,6 +15,24 @@ class Account::BankSettingsController < Account::RetrieverController
       @bank_accounts = @bank_accounts.where('accounting_number LIKE ?', "%#{search_by('accounting_number')}%") if search_by('accounting_number').present?
     end
     @bank_accounts
+  end
+
+
+  def create
+    @bank_account = BankAccount.create(bank_account_params)
+
+    if @bank_account.persisted?
+      flash[:success] = 'Créé avec succès.'
+    else
+      _error_messages = @bank_account.errors.messages
+      html_ul_content = "Création de compte bancaire n'a pas été réussie : <ul>"
+      _error_messages.each {|key, value| html_ul_content += "<li>#{key} : #{value.join(', ')}</li>"}
+      html_ul_content += "</ul>"
+
+      flash[:error] = html_ul_content.html_safe
+    end
+
+    redirect_to account_bank_settings_path({ account_id: @account.id , id: @bank_account.id})
   end
 
   def edit; end
@@ -35,6 +53,18 @@ class Account::BankSettingsController < Account::RetrieverController
       render 'edit'
     end
   end
+
+
+  def mark_as_to_be_disabled
+    @bank_account = BankAccount.find(params[:id])
+    @bank_account.update(is_to_be_disabled: params[:disabled])
+    if @bank_account.save
+      render json: { success: true, message: "Le compte bancaire avec le numéro : #{@bank_account.number} #{params[:message]}" }, status: 200
+    else
+      render json: { success: false, message: "Impossible de supprimer le compte bancaire avec le numéro : #{@bank_account.number}" }, status: 200
+    end
+  end
+
 
   private
 
@@ -60,5 +90,25 @@ class Account::BankSettingsController < Account::RetrieverController
     if @account.nil?
       redirect_to account_retrievers_path
     end
+  end
+
+  def bank_account_params
+    params.require(:bank_account).permit(
+      :user_id,
+      :bank_name,
+      :is_used,
+      :name,
+      :type_name,
+      :number,
+      :journal,
+      :currency,
+      :foreign_journal,
+      :accounting_number,
+      :temporary_account,
+      :start_date,
+      :lock_old_operation,
+      :permitted_late_days,
+      :api_name,
+      :original_currency => [:id, :symbol, :prefix, :crypto, :precision, :marketcap, :datetime, :name])
   end
 end

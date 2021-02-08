@@ -4,6 +4,20 @@ Idocus.vent = _.extend({}, Backbone.Events)
 
 Idocus.refreshRetrieversTimer = null
 
+update_warning = ->
+  $('.notify-warning').addClass('hide')
+  $('.to_disable_later').removeClass('to_disable_later')
+
+  if $('#bank_settings .should_be_disabled_bank_account').length > 0
+    $('#bank_settings .should_be_disabled_bank_account').each (e) ->
+      self               = $(this)
+      should_be_disabled = self.attr('data-disabled')
+      if should_be_disabled == '1'
+        self.addClass('to_disable_later')
+
+  if $('.to_disable_later').length > 0
+    $('.notify-warning').removeClass('hide')
+
 jQuery ->
   Idocus.retriever_contains_name  = ''
   Idocus.retriever_contains_state = ''
@@ -396,3 +410,83 @@ jQuery ->
     Idocus.retriever_contains_state = $('#retriever_contains_state').val() 
     load_retrievers_list()
 
+
+  if $('#bank_settings #create_bank_account.modal').length > 0
+    currencies = {
+      usd: "Dollar",
+      cad: "Dollar Australien",
+      chf: "Franc",
+      jpy: "Yen",
+      nzd: "Dollar Néo-Zélandais",
+      eur: "Euro",
+      gbp: "Livre",
+      sek: "Couronne Suédoise",
+      dkk: "Couronne Danoise",
+      nok: "Couronne Norvégienne",
+      sgd: "Dollar de Singapour",
+      czk: "Couronne Tchèque",
+      hkd: "Dollar de Hong Kong",
+      mxn: "Peso Mexicain",
+      pln: "Zloty",
+      rub: "Rouble",
+      try: "Livre turque",
+      zar: "Rand",
+      cnh: "Yuan",
+    }
+
+    if $('form#new_bank_account').length > 0
+      $("select#bank_account_original_currency_symbol").on 'change', (e)->
+        selected = $("select#bank_account_original_currency_symbol option:selected").text()
+        $("#bank_account_original_currency_id").val(selected)
+        $("#bank_account_original_currency_name").val(currencies[selected.toLowerCase()])
+
+      $('form#new_bank_account').submit ->
+        $("#bank_account_name").val($("#bank_account_bank_name").val())
+        true
+
+  if $('#bank_settings.select .destroy_bank_account, #bank_settings.select .reopen_bank_account').length > 0
+    $('.destroy_bank_account, .reopen_bank_account').click (e) ->
+      e.preventDefault()
+      self = $(this)
+      id   = self.data('id')
+      number = self.data('number')
+
+      if $(this).hasClass('reopen_bank_account')
+        disabled        = false
+        disabled_value = 0
+        message    = 'est maintenant activé'
+        action_name = 'réactiver'
+      else
+        disabled        = true
+        disabled_value = 1
+        message         = 'devrait être désactivé dans le mois prochain'
+        action_name = 'désactiver'
+
+      if confirm("Vous êtes sur le point de #{action_name} le compte bancaire avec le numéro : #{number}. Etes-vous sûr ?")
+        $.ajax(
+          type: 'POST',
+          data: JSON.stringify({ id: id, disabled: disabled, message: message })
+          url: '/account/bank_settings/should_be_disabled',
+          contentType: 'application/json',
+          ).success (response) ->
+            alert_element = ''
+
+            if response['success'] == true
+              alert_element = '<div class="alert alert-success col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-success">' + response['message'] + '</div></div>'
+            else
+              alert_element = '<div class="alert alert-danger col-sm-12"><a class="close" data-dismiss="alert">×</a><div id="flash_alert-danger">' + response['message'] + '</div></div>'
+
+            $('.alerts').html('<div class="row-fluid">' + alert_element + '</div>')
+            self.closest('tr').attr('data-disabled', "#{disabled_value}")
+            $('[rel="tooltip"]').tooltip("hide")
+
+            if disabled_value == 0
+              $(".destroy_bank_account_#{id}").removeClass('hide')
+              $(".reopen_bank_account_#{id}").addClass('hide')
+            else if disabled_value == 1
+              $(".reopen_bank_account_#{id}").removeClass('hide')
+              $(".destroy_bank_account_#{id}").addClass('hide')
+
+            update_warning()
+
+  update_warning()
