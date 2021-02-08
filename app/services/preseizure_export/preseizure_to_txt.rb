@@ -183,7 +183,7 @@ class PreseizureExport::PreseizureToTxt
 
             line[30] = 'G'
             line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
-            line[48] = preseizure.piece_number
+            line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
             line[83] = file_name
 
             data << line
