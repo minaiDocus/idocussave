@@ -12,7 +12,7 @@ class Admin::SubscriptionsController < Admin::AdminController
     @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%retriever_option%'").count }
     @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_mini%'").count }
     @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_micro%'").count }
-    @nano_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_nano%'").count }
+    @nano_package_count      = Rails.cache.fetch('admin_report_nano_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_nano%'").count }
 
     params[:per_page] ||= 50
     statistics = order(StatisticsManager.get_compared_subscription_statistics(statistic_params))
@@ -50,12 +50,10 @@ class Admin::SubscriptionsController < Admin::AdminController
     when 'micro_package'
       data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_micro%'")) }
     when 'nano_package'
-      data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_nano%'")) }
+      data_accounts = Rails.cache.fetch('admin_report_nano_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_nano%'")) }
     else
       data_accounts = []
     end
-
-    debugger
 
     render partial: '/admin/subscriptions/accounts', layout: false, locals: { data_accounts: data_accounts }
   end
