@@ -12,6 +12,8 @@ class Subscription::Package
 
         price += Subscription::Package::PRICES_LIST[:signing_piece] if [:ido_classique, :ido_mini].include?(package_or_option)
       end
+
+      price
     end
 
     def available_options_for(package)
