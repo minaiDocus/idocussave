@@ -10,12 +10,14 @@ class Api::Sgi::V1::MappingGeneratorController < SgiApiController
 
   def user
     @user = User.find_by_code(params[:user_code])
+    return nil if not @user
+
     account_book_types = @user.account_book_types.compta_processable
     return @user if account_book_types && @user.still_active?
   end
 
   def json_content
-    return {} unless user
+    return {} if not user
     user.accounting_plan.create_json_format if user.accounting_plan
   end
 
