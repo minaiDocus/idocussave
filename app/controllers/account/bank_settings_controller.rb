@@ -25,7 +25,7 @@ class Account::BankSettingsController < Account::RetrieverController
       flash[:success] = 'Créé avec succès.'
     else
       _error_messages = @bank_account.errors.messages
-      html_ul_content = "Création de compte bancaire n'a pas été réussie : <ul>"
+      html_ul_content = "Erreur lors de la création du compte bancaire : <ul>"
       _error_messages.each {|key, value| html_ul_content += "<li>#{key} : #{value.join(', ')}</li>"}
       html_ul_content += "</ul>"
 
@@ -59,9 +59,9 @@ class Account::BankSettingsController < Account::RetrieverController
     @bank_account = BankAccount.find(params[:id])
     @bank_account.update(is_to_be_disabled: params[:disabled])
     if @bank_account.save
-      render json: { success: true, message: "Le compte bancaire avec le numéro : #{@bank_account.number} #{params[:message]}" }, status: 200
+      render json: { success: true, message: "Compte bancaire : #{@bank_account.number} #{params[:message]}" }, status: 200
     else
-      render json: { success: false, message: "Impossible de supprimer le compte bancaire avec le numéro : #{@bank_account.number}" }, status: 200
+      render json: { success: false, message: "Impossible de supprimer le compte bancaire : #{@bank_account.number}" }, status: 200
     end
   end
 

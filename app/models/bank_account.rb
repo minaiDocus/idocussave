@@ -26,6 +26,10 @@ class BankAccount < ApplicationRecord
   scope :manual_created, -> { where(api_name: 'idocus') }
   scope :should_be_disabled, -> { manual_created.where(is_to_be_disabled: true) }
 
+  def self.type_name_list
+    ["unknown", "checking", "savings", "lifeinsurance", "market", "loan", "card", "deposit", "pea", "capitalisation", "madelin", "perp"]
+  end
+
   def configured?
     journal.present? && accounting_number.present?
   end
@@ -49,15 +53,10 @@ class BankAccount < ApplicationRecord
     manual_created? && is_to_be_disabled == true
   end
 
-
-  def self.type_name_list
-    ["unknown", "checking", "savings", "lifeinsurance", "market", "loan", "card", "deposit", "pea", "capitalisation", "madelin", "perp"]
-  end
-
 private
 
   def validate_data
-    set_record_value if !from_budgea?
+    set_record_value if not from_budgea?
 
     upcase_journal
   end

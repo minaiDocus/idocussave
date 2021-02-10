@@ -13,7 +13,7 @@
         .float-right
           %button.btn.btn-primary.btn-sm.float-left{type:'button', :data => {:toggle => 'modal', :target => '#create_bank_account'}, style: 'position:relative;top:-3px;' }
             = glyphicon('plus', { class: 'mr-sm-1', color: '#fff' })
-            Créer manuellement un compte bancaire
+            Créer un compte bancaire
 
   .row.retractable.with-filter.derivationLeft
     .col-md-12.retractable-content
@@ -40,8 +40,8 @@
                 %td= bank_account.start_date
                 %td.text-center
                   = link_to glyphicon('pencil') + ' Éditer', edit_account_bank_setting_path(bank_account), title: 'Éditer', rel: 'tooltip', class: 'btn btn-light'
-                  = link_to glyphicon('trash') + ' Désactiver', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' unless bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Désactivera dans le mois prochain', rel: 'tooltip'
-                  = link_to glyphicon('check') + ' Réactiver', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' unless disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactive maintenant', rel: 'tooltip'
+                  = link_to glyphicon('trash') + ' Supprimer', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' unless bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Sera supprimé le mois prochain', rel: 'tooltip'
+                  = link_to glyphicon('check') + ' Réstaurer', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' unless disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactiver maintenant', rel: 'tooltip'
 
     .card.retractable-filter
       = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do
