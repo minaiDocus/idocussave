@@ -76,7 +76,7 @@ module MyUnisoftLib
     def update_and_save
       @my_unisoft.owner           = @owner
       @my_unisoft.auto_deliver    = @params[:auto_deliver]  if @params[:auto_deliver].present?
-      @my_unisoft.is_used         = @params[:is_used]       if @params[:is_used].present?
+      @my_unisoft.is_used         = @params[:is_used]       if @params[:is_used].to_s.present?
 
       @my_unisoft.save
     end
