@@ -96,7 +96,7 @@ class Transaction::AccountNumberFinder
     number ||= @temporary_account
 
 
-    number = validate_account(number) if @user.options.try(:keep_account_validation) || (number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder))
+    number = validate_account(number) if @user.options.try(:keep_account_validation) && number != @temporary_account && accounting_plan.any? && !@user.options.try(:skip_accounting_plan_finder)
 
     number
   end
