@@ -61,15 +61,15 @@
     .row
       .col-md-6
         .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique')}", title: Subscription::Package.infos_of(:ido_classique)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'ido_classique', current_package.include?('ido_classique'), class: 'form-check-input ido_classique radio-button', data: { package: "ido_classique" }
+          = radio_button_tag 'subscription[subscription_option]', 'ido_classique', ((@subscription && current_package.include?('ido_classique')) || !@subscription), class: 'form-check-input ido_classique radio-button', data: { package: "ido_classique" }
           = label_tag 'subscription[subscription_option]', "iDo'Classique", class: 'form-check-label'
       .col-md-6.form_check_basic_package
         .float-right{ style: 'padding-right: 4.5em' }
           .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_classique') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_classique')
+            = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_classique') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: (!current_package.include?('ido_classique') && @subscription)
             = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
           .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique', 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = check_box_tag 'subscription[retriever_option]', true, (current_package.include?('ido_classique') && current_package.include?('retriever_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('retriever_option'))}", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }, disabled: !current_package.include?('ido_classique')
+            = check_box_tag 'subscription[retriever_option]', true, (current_package.include?('ido_classique') && current_package.include?('retriever_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('retriever_option'))}", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }, disabled: (!current_package.include?('ido_classique') && @subscription)
             = label_tag 'subscription[retriever_option]', "Avec option automate", class: 'form-check-label'
     .row
       .col-md-12
