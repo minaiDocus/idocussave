@@ -10,12 +10,9 @@ class AccountingWorkflow::SendPieceToSupplierRecognition
   end
 
   def execute
-    request = SupplierRecognition::Document.new(name: @piece.name, external_id: @piece.id, content: @piece.content_text, training: false)
-
-    if request.create
-      @piece.recognize_supplier_pre_assignment
-    end
-
+  	@piece.recognize_supplier_pre_assignment
+    SupplierRecognition::Document.new(name: @piece.name, external_id: @piece.id, content: @piece.content_text, training: false).create
+    
     @piece
   end
 end
