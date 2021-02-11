@@ -358,6 +358,10 @@ class DataProcessor::RetrievedData
           @new_operations_count += 1
         end
       end
+
+      operation.reload
+
+      operation.user.billing_histories.find_or_create(operation.date.strftime('%Y%m').to_i, operation.user.subscription.current_period)
     end
   end
 

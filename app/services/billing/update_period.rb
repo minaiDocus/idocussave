@@ -54,7 +54,7 @@ class Billing::UpdatePeriod
     if @subscription.organization
       _options = [extra_options, discount_options]
     else
-      _options = [base_options, journals_option, order_options, extra_options]
+      _options = [base_options, journals_option, order_options, extra_options, bank_accounts_options, operation_options]
     end
 
     _options.flatten.compact.each_with_index do |option, index|
@@ -270,5 +270,64 @@ class Billing::UpdatePeriod
     month_count = (date2.year == date1.year) ? (date2.month - date1.month) : (12 - date1.month + date2.month)
     month_count = (date2.year == date1.year) ? (month_count + 1) : (((date2.year - date1.year - 1 ) * 12) + (month_count + 1))
     month_count
+  end
+
+
+  def bank_accounts_options
+    excess_bank_accounts = @period.user.bank_accounts.manual_created.size - 2
+
+    if excess_bank_accounts > 0
+      option = ProductOptionOrder.new
+
+      option.name        = 'excess_bank_accounts'
+      option.group_title = 'Excès comptes bancaires'
+
+      if excess_bank_accounts == 1
+        option.title = "#{excess_bank_accounts} compte bancaire supplémentaire"
+      else
+        option.title = "#{excess_bank_accounts} comptes bancaires supplémentaires"
+      end
+
+      option.duration = 0
+      option.quantity = excess_bank_accounts
+      option.price_in_cents_wo_vat = excess_bank_accounts * 200.0
+
+      option
+    end
+  end
+
+
+  def operation_options
+    @period.user.billing_histories.pending.each do |billing_history|
+      reduced = (@subscription.retriever_price_option == :retriever)? false : true
+
+      amount = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
+
+      billing_history.amount = amount
+      billing_history.save
+
+      billing_history.processed
+
+      option_name    = 'billing_bank_operation'
+      option_title   = "Opération(s) bancaire(s) mois de #{I18n.l(@period.start_date, format: '%B')}"
+      value_period   = billing_history.value_period
+      current_period = value_period == (Date.today - 1.month).strftime('%Y%m').to_i
+
+      next if (value_period == @period.start_date.strftime('%Y%m').to_i && current_period) || @period.product_option_orders.where(name: option_name, title: option_title).present?
+
+      option = ProductOptionOrder.new
+
+      option.name        = option_name
+      option.group_title = "Récupération banque + Factures sur Internet"
+
+      option.title = option_title
+
+      option.duration = 0
+      option.quantity = 1
+      option.price_in_cents_wo_vat = amount
+      option.is_frozen = true
+
+      option
+    end
   end
 end

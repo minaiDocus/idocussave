@@ -45,6 +45,7 @@ class User < ApplicationRecord
   has_many :periods
   has_many :expenses, class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :invoices
+  has_many :billing_histories, class_name: 'BillingHistory'
   has_many :addresses, as: :locatable
   has_many :exercises
   has_many :temp_packs

@@ -24,6 +24,10 @@ class Transaction::CreateOperation
 
         piece.processed_pre_assignment if piece && !piece.pre_assignment_processed?
       end
+
+      @operation.reload
+
+      @operation.user.billing_histories.find_or_create(@operation.date.strftime('%Y%m').to_i, @operation.user.subscription.current_period)
     end
 
     result
