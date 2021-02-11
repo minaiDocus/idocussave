@@ -39,9 +39,9 @@
                 %td= bank_account.accounting_number
                 %td= bank_account.start_date
                 %td.text-center
-                  = link_to glyphicon('pencil') + ' Éditer', edit_account_bank_setting_path(bank_account), title: 'Éditer', rel: 'tooltip', class: 'btn btn-light'
-                  = link_to glyphicon('trash') + ' Supprimer', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' unless bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Sera supprimé le mois prochain', rel: 'tooltip'
-                  = link_to glyphicon('check') + ' Réstaurer', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' unless disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactiver maintenant', rel: 'tooltip'
+                  = link_to glyphicon('pencil') + ' Éditer', edit_account_bank_setting_path(bank_account), title: 'Éditer', rel: 'tooltip', class: "btn btn-light edit_bank_account_#{bank_account.id} #{'hide' if disabled}"
+                  = link_to glyphicon('trash') + ' Supprimer', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' if not bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Sera supprimé le mois prochain', rel: 'tooltip'
+                  = link_to glyphicon('check') + ' Réstaurer', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' if not disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactiver maintenant', rel: 'tooltip'
 
     .card.retractable-filter
       = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do
@@ -97,7 +97,7 @@
                 = f.input :user_id, :as => :hidden, :input_html => { :value => @customer.id }
                 = f.input :api_name, :as => :hidden, :input_html => { :value => 'idocus' }
                 = f.input :is_used, :as => :hidden, :input_html => { :value => true }
-                = f.input :bank_name, label: 'Banque'
+                = f.input :bank_name, collection: [['Connecteur de Test', 'Connecteur de Test']], include_blank: false, label: 'Banque'
                 = f.input :name, :as => :hidden, :input_html => { :value => 'Same of bank name' }
                 = f.input :type_name, collection: bank_account_type_name, include_blank: false, label: 'Type de compte', selected: "unknown"
                 = f.input :number
@@ -140,7 +140,7 @@
                 = f.input :permitted_late_days, required: true
               .card-footer
                 .form-actions.margin0bottom
-                  = f.submit t('actions.submit'), class: 'btn btn-primary'
+                  = f.submit t('actions.submit'), class: 'btn btn-primary', id: 'submit_bank_account'
                   = f.button :submit, 'Réinitialiser', class: 'btn btn-light cancel', type: 'reset'
 
         .modal-footer

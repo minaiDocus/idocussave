@@ -412,6 +412,8 @@ jQuery ->
 
 
   if $('#bank_settings #create_bank_account.modal').length > 0
+    $('#submit_bank_account').attr('disabled', true)
+
     currencies = {
       usd: "Dollar",
       cad: "Dollar Australien",
@@ -438,9 +440,16 @@ jQuery ->
     Idocus.budgeaApi = new Idocus.BudgeaApi()
     connectors_list.fetch_all().then(
       ()->
-        # TODO : get banks list
-        console.log(connectors_list.connectors_fetched)
-      (error)-> alert(error)
+        options = $('select#bank_account_bank_name').empty()
+        $.each connectors_list.connectors_fetched, (index, element) ->
+          if $.inArray('bank', element['capabilities']) > -1
+            bank_name = element['name']
+            options.append("<option value='#{bank_name}'>#{bank_name}</option>")
+        $('#submit_bank_account').attr('disabled', false)
+      (error)->
+        if $('form#new_bank_account').length > 0
+          $('select#bank_account_bank_name').empty().append("<option value=''>Erreur de chargement de la page, Veuillez la réactualiser !</option>")
+          $("select#bank_account_bank_name").css({backgroundColor: "#ff9966", color: 'black'})
     )
 
     if $('form#new_bank_account').length > 0
@@ -491,10 +500,12 @@ jQuery ->
 
             if disabled_value == 0
               $(".destroy_bank_account_#{id}").removeClass('hide')
+              $(".edit_bank_account_#{id}").removeClass('hide')
               $(".reopen_bank_account_#{id}").addClass('hide')
             else if disabled_value == 1
               $(".reopen_bank_account_#{id}").removeClass('hide')
               $(".destroy_bank_account_#{id}").addClass('hide')
+              $(".edit_bank_account_#{id}").addClass('hide')
 
             update_warning()
 

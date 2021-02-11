@@ -12,7 +12,7 @@ class BankAccount < ApplicationRecord
 
   validates :api_id, presence: true, :if => :from_budgea?
   validates_presence_of :bank_name, :name, :number
-  validates_uniqueness_of :number
+  validate :uniqueness_of_number_and_bank_name
   validates :permitted_late_days, numericality: { greater_than: 0, less_than_or_equal_to: 365 }
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |e| e.is_for_pre_assignment }
@@ -72,6 +72,13 @@ private
 
   def upcase_journal
     self.journal = journal.upcase if journal_changed?
+  end
+
+
+  def uniqueness_of_number_and_bank_name
+    bank_account = user.bank_accounts.where(number: number, bank_name: bank_name).first
+
+    errors.add(:number, :taken) if bank_account && bank_account != self
   end
 
 
