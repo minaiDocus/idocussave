@@ -41,7 +41,7 @@
                 %td.text-center
                   = link_to glyphicon('pencil') + ' Éditer', edit_account_bank_setting_path(bank_account), title: 'Éditer', rel: 'tooltip', class: "btn btn-light edit_bank_account_#{bank_account.id} #{'hide' if disabled}"
                   = link_to glyphicon('trash') + ' Supprimer', '#', class: "destroy_bank_account destroy_bank_account_#{bank_account.id} btn btn-light #{'hide' if not bank_account.can_be_deleted?}", data: { id: bank_account.id, number: bank_account.number }, title: 'Sera supprimé le mois prochain', rel: 'tooltip'
-                  = link_to glyphicon('check') + ' Réstaurer', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' if not disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactiver maintenant', rel: 'tooltip'
+                  = link_to glyphicon('check') + ' Restaurer', '#', class: "reopen_bank_account reopen_bank_account_#{bank_account.id} btn btn-light #{'hide' if not disabled}", data: { id: bank_account.id, number: bank_account.number }, title: 'Réactiver maintenant', rel: 'tooltip'
 
     .card.retractable-filter
       = form_tag account_bank_settings_path, method: :get, class: 'form-filter' do

@@ -42,7 +42,11 @@ class PreseizureExport::PreseizuresToCsv
 
   def coala_format(entry)
     fifth_column = entry.preseizure.third_party || entry.preseizure.operation_label
-    fifth_column = [entry.preseizure.third_party, entry.preseizure.piece_number].join(' ') if ['NSA'].include?(entry.preseizure.organization.code)
+    if ['NSA'].include?(entry.preseizure.organization.code)
+			fifth_column = [entry.preseizure.third_party, entry.preseizure.piece_number].join(' ')
+    else
+			fifth_column = [fifth_column, entry.preseizure.piece_number].join(' - ')
+    end
 
     result =  [
                 entry.preseizure.computed_date.try(:strftime, "%d/%m/%Y"),
