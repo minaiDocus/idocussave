@@ -434,6 +434,15 @@ jQuery ->
       cnh: "Yuan",
     }
 
+    connectors_list  = new Idocus.Collections.Connectors()
+    Idocus.budgeaApi = new Idocus.BudgeaApi()
+    connectors_list.fetch_all().then(
+      ()->
+        # TODO : get banks list
+        console.log(connectors_list.connectors_fetched)
+      (error)-> alert(error)
+    )
+
     if $('form#new_bank_account').length > 0
       $("select#bank_account_original_currency_symbol").on 'change', (e)->
         selected = $("select#bank_account_original_currency_symbol option:selected").text()

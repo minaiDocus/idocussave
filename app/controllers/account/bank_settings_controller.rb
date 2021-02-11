@@ -2,6 +2,7 @@
 
 class Account::BankSettingsController < Account::RetrieverController
   before_action :load_bank_account, except: %w[index create]
+  before_action :load_budgea_config, only: %w[index]
   before_action :verif_account
 
   def index
@@ -110,5 +111,16 @@ class Account::BankSettingsController < Account::RetrieverController
       :permitted_late_days,
       :api_name,
       :original_currency => [:id, :symbol, :prefix, :crypto, :precision, :marketcap, :datetime, :name])
+  end
+
+  def load_budgea_config
+    bi_config = {
+      url: "https://#{Budgea.config.domain}/2.0",
+      c_id: Budgea.config.client_id,
+      c_ps: Budgea.config.client_secret,
+      c_ky: Budgea.config.encryption_key ? Base64.encode64(Budgea.config.encryption_key.to_json.to_s) : '',
+      proxy: Budgea.config.proxy
+    }.to_json
+    @bi_config = Base64.encode64(bi_config.to_s)
   end
 end

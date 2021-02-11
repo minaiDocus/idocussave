@@ -91,6 +91,7 @@
           %button.close{type: 'button', data: {dismiss:'modal'}, aria: {label: 'Close'}} &times;
         .modal-body
           .card
+            = hidden_field_tag :retriever_budgea_config, @bi_config
             = simple_form_for @bank_account = BankAccount.new, url: account_bank_settings_path({ id: @customer.id }), html: { class: 'form-horizontal label-medium' } do |f|
               .card-body
                 = f.input :user_id, :as => :hidden, :input_html => { :value => @customer.id }
