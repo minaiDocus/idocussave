@@ -122,7 +122,7 @@ class DataProcessor::Operation
 
   def self.initialize_pack_report(user, object)
     name = pack_name(user, object)
-    pack_report = Pack::Report.where(name: name).first
+    pack_report = Pack::Report.where(name: name).where(pack_id: [nil, '']).first
     unless pack_report
       pack_report = Pack::Report.new
       pack_report.organization = user.organization

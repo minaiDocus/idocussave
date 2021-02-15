@@ -47,7 +47,7 @@ class DataProcessor::TempPack
           next
         end
         if !File.exist?(temp_document.cloud_content_object.path.to_s)
-          sleep(5)
+          sleep(15)
           if !File.exist?(temp_document.cloud_content_object.reload.path.to_s)
             temp_document.unreadable
             next
