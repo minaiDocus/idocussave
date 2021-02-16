@@ -59,26 +59,43 @@ describe PreAssignment::Builder::Ibiza do
                                         )
 
     @organization = FactoryBot.create :organization, code: 'IDO'
-    @user         = FactoryBot.create :user, code: 'IDO%LEAD', organization_id: @organization.id, ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}'
+    @user         = FactoryBot.create :user, code: 'IDO%LEAD', organization_id: @organization.id
     @report       = FactoryBot.create :report, user: @user, organization: @organization, name: 'AC0003 AC 201812'
     pack          = FactoryBot.create :pack, owner: @user, organization: @organization , name: (@report.name + ' all')
     @piece        = FactoryBot.create :piece, pack: pack, user: @user, organization: @organization, name: (@report.name + ' 001'), analytic_reference: analytic
     @piece_2      = FactoryBot.create :piece, pack: pack, user: @user, organization: @organization, name: (@report.name + ' 002')
 
-    ibiza = Ibiza.create(
-                          state: 'valid',
-                          state_2: 'none',
-                          is_auto_deliver: true,
-                          description: JSON.parse('{"operation_label":{"is_used":"1", "position":"1"}, "date":{"is_used":"1", "position":"1"}, "third_party":{"is_used":"1", "position":"1"}, "amount":{"is_used":"1", "position":"1"}, "currency":{"is_used":"1", "position":"1"}, "conversion_rate":{"is_used":"1", "position":"1"}, "observation":{"is_used":"1", "position":"1"}, "journal":{"is_used":"1", "position":"1"}, "piece_name":{"is_used":"1", "position":"1"}, "piece_number":{"position":"1"}}'),
-                          description_separator: ' - ',
-                          piece_name_format: JSON.parse('{"code":{"position":"1"}, "code_wp":{"position":"1"}, "journal":{"position":"1"}, "period":{"position":"1"}, "number":{"position":"1"}}'),
-                          piece_name_format_sep: ' ',
-                          organization_id: @organization.id,
-                          encrypted_access_token: "QEVuQwBAEAAFaLtTv1HNQw8upA22aJCPDGe4xq6/kup2Tak02HH27rM+nqSgsBms4CpT1KSMLWMwZilQOuAZK6ZPddXrki6NcddOn/uDw+7DzyBp17G5wYfiIMXHCdZuBGWVj2/g/4f0hWOh4e4jeUK3Qzyl3Qe5RMTPmQpeeUD2h2ae2gXmmZ+CwBs88lJk6KW+/3QUhFUHZ4uZWKV1CUUrwocjM51UFph6PiUDw0yV+ChxSfYWKyW3evhOLitespiY+QmU0qNJDWJwD6exuhNaXndjXSPfvp4FlSZx9kuG156idChMVFCk+Iy1thDQTU5ktK2t0riU+X1GYljQ9DRJBtg0H53cppTAYIAbnCmNR37bI99cYQaEbb+yO9arQ46G0a1kzGy0lw8Fj5BzKtV/mi5PpqE3Y5queXpWEvCpN2NltMOBk/Ej3lRPA4u2DeORI2PMoETCkPOmrr1H8Gi/dpIdMoc2rlnUR7OS/nyvgRswicy0IA/0RNUBZTi0ilWjGe+N8pabrWIEOE8KHJgg6rwF+C2QbtueCqZgHdWzADVK9mQO/gQ2AzKcXop7Eb2NrRejpd8lTAvVH5gvibmKdgtrgeqaeF28+4KVy4CrRH2t5mmWzP9QMwkxVamHiARcfihbaM/vH++TNAZ95mKkiH7+TJmq+e36L2eTX2HtZ8a3vYwRAw==",
-                          encrypted_access_token_2: nil,
-                          is_analysis_activated: true
-                        )
-    ibiza.update(state: 'valid')
+    client_ibiza =  Software::Ibiza.create(
+                                        state: 'valid',
+                                        state_2: 'none',
+                                        owner_type: 'User',
+                                        owner_id: @user.id,
+                                        ibiza_id: '{595450CA-6F48-4E88-91F0-C225A95F5F16}',
+                                        is_analysis_activated: 1,
+                                        voucher_ref_target: 'piece_name',
+                                        auto_deliver: 1,
+                                        is_auto_updating_accounting_plan: 1,
+                                        is_used: true,
+                                      )
+
+    org_ibiza = Software::Ibiza.create(
+                                        state: 'valid',
+                                        state_2: 'none',
+                                        description: JSON.parse('{"operation_label":{"is_used":"1", "position":"1"}, "date":{"is_used":"1", "position":"1"}, "third_party":{"is_used":"1", "position":"1"}, "amount":{"is_used":"1", "position":"1"}, "currency":{"is_used":"1", "position":"1"}, "conversion_rate":{"is_used":"1", "position":"1"}, "observation":{"is_used":"1", "position":"1"}, "journal":{"is_used":"1", "position":"1"}, "piece_name":{"is_used":"1", "position":"1"}, "piece_number":{"position":"1"}}'),
+                                        description_separator: ' - ',
+                                        piece_name_format: JSON.parse('{"code":{"position":"1"}, "code_wp":{"position":"1"}, "journal":{"position":"1"}, "period":{"position":"1"}, "number":{"position":"1"}}'),
+                                        piece_name_format_sep: ' ',
+                                        owner_type: 'Organization',
+                                        owner_id: @organization.id,
+                                        encrypted_access_token: "QEVuQwBAEAAFaLtTv1HNQw8upA22aJCPDGe4xq6/kup2Tak02HH27rM+nqSgsBms4CpT1KSMLWMwZilQOuAZK6ZPddXrki6NcddOn/uDw+7DzyBp17G5wYfiIMXHCdZuBGWVj2/g/4f0hWOh4e4jeUK3Qzyl3Qe5RMTPmQpeeUD2h2ae2gXmmZ+CwBs88lJk6KW+/3QUhFUHZ4uZWKV1CUUrwocjM51UFph6PiUDw0yV+ChxSfYWKyW3evhOLitespiY+QmU0qNJDWJwD6exuhNaXndjXSPfvp4FlSZx9kuG156idChMVFCk+Iy1thDQTU5ktK2t0riU+X1GYljQ9DRJBtg0H53cppTAYIAbnCmNR37bI99cYQaEbb+yO9arQ46G0a1kzGy0lw8Fj5BzKtV/mi5PpqE3Y5queXpWEvCpN2NltMOBk/Ej3lRPA4u2DeORI2PMoETCkPOmrr1H8Gi/dpIdMoc2rlnUR7OS/nyvgRswicy0IA/0RNUBZTi0ilWjGe+N8pabrWIEOE8KHJgg6rwF+C2QbtueCqZgHdWzADVK9mQO/gQ2AzKcXop7Eb2NrRejpd8lTAvVH5gvibmKdgtrgeqaeF28+4KVy4CrRH2t5mmWzP9QMwkxVamHiARcfihbaM/vH++TNAZ95mKkiH7+TJmq+e36L2eTX2HtZ8a3vYwRAw==",
+                                        encrypted_access_token_2: nil,
+                                        is_analysis_activated: 1,
+                                        voucher_ref_target: 'piece_number',
+                                        auto_deliver: 1,
+                                        is_auto_updating_accounting_plan: 1,
+                                        is_used: true,
+                                      )
+    org_ibiza.update(state: 'valid')
   end
 
   after(:all) do

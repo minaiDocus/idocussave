@@ -1,5 +1,9 @@
 module Interfaces::User::Collaborator  
   def collaborator?
     is_prescriber
-  end  
+  end
+
+  def admin?
+    is_admin
+  end
 end

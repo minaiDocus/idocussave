@@ -8,7 +8,6 @@ class PreAssignmentDelivery < ApplicationRecord
 
   has_one_attached :cloud_content
 
-
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
 
   validates_inclusion_of  :deliver_to, in: %w(ibiza exact_online my_unisoft)
@@ -96,7 +95,6 @@ class PreAssignmentDelivery < ApplicationRecord
       ibiza.practical_access_token
     end
   end
-
 
   def self.search(contains)
     deliveries = PreAssignmentDelivery.all

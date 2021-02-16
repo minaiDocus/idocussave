@@ -5,7 +5,6 @@ class PreAssignment::Delivery::MyUnisoft < PreAssignment::Delivery::DataService
 
   def initialize(delivery)
     super
-
   end
 
   private

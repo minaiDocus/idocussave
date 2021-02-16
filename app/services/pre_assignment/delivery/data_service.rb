@@ -25,14 +25,14 @@ class PreAssignment::Delivery::DataService
     end
   end
 
-  attr_accessor :delivery, :software, :preseizures, :report, :user
+  attr_accessor :delivery, :software_name, :preseizures, :report, :user
 
   def initialize(delivery)
-    @delivery    = delivery
-    @software    = @delivery.deliver_to
-    @preseizures = @delivery.preseizures
-    @report      = @delivery.report
-    @user        = @delivery.user
+    @delivery       = delivery
+    @software_name  = @delivery.deliver_to
+    @preseizures    = @delivery.preseizures
+    @report         = @delivery.report
+    @user           = @delivery.user
   end
 
   def run
@@ -57,13 +57,13 @@ class PreAssignment::Delivery::DataService
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.set_delivery_message_for(@software, error_message.to_s) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
+      preseizure.set_delivery_message_for(@software_name, error_message.to_s) if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time
     @report.is_locked         = false
     @report.save
-    @report.set_delivery_message_for(@software, error_message.to_s)
+    @report.set_delivery_message_for(@software_name, error_message.to_s)
 
     Notifications::PreAssignments.new({delivery: @delivery, user: @delivery.user}).notify_pre_assignment_delivery_failure
   end
@@ -77,17 +77,17 @@ class PreAssignment::Delivery::DataService
       preseizure.delivery_tried_at = time
       preseizure.is_locked         = false
       preseizure.save
-      preseizure.delivered_to(@software)
-      preseizure.set_delivery_message_for(@software, '') if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
+      preseizure.delivered_to(@software_name)
+      preseizure.set_delivery_message_for(@software_name, '') if !preseizure.get_delivery_message_of('ibiza').match(/already sent/i)
     end
 
     @report.delivery_tried_at = time
     @report.is_locked         = false
     @report.save
 
-    @report.delivered_to(@software) if @report.preseizures.reload.not_deleted.not_delivered(@software).count == 0
+    @report.delivered_to(@software_name) if @report.preseizures.reload.not_deleted.not_delivered(@software_name).count == 0
 
-    @report.set_delivery_message_for(@software, '')
+    @report.set_delivery_message_for(@software_name, '')
   end
 
   def notify?

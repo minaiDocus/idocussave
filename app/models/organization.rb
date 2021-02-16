@@ -16,7 +16,7 @@ class Organization < ApplicationRecord
   has_many :guest_collaborators, -> { guest_collaborators }, class_name: 'User'
   has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
-  include Owner
+  include OwnedSoftwares
 
   has_one  :knowings
   has_one  :subscription

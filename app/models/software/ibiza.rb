@@ -1,6 +1,5 @@
 class Software::Ibiza < ApplicationRecord
   include Interfaces::Software::Configuration
-  include Interfaces::Software::IbizaSetting
 
   audited
 
@@ -37,7 +36,6 @@ class Software::Ibiza < ApplicationRecord
     access_token.present? && access_token_2.present? && access_token != access_token_2
   end
 
-
   def need_to_verify_access_tokens?
     state == 'waiting' || state_2 == 'waiting'
   end
@@ -71,7 +69,6 @@ class Software::Ibiza < ApplicationRecord
     result
   end
 
-
   def get_users_only_once
     unless Rails.cache.read([:ibiza, id, :users_is_flushing])
       get_users
@@ -79,7 +76,6 @@ class Software::Ibiza < ApplicationRecord
       Rails.cache.write([:ibiza, id, :users_is_flushing], true)
     end
   end
-
 
   def get_users
     client.request.clear
@@ -103,11 +99,9 @@ class Software::Ibiza < ApplicationRecord
     result
   end
 
-
   def flush_users_cache
     Rails.cache.delete([:ibiza, id, :users])
   end
-
 
   def auto_assign_users
     get_users
@@ -122,8 +116,27 @@ class Software::Ibiza < ApplicationRecord
     end
   end
 
-  private
+  def compta_analysis_activated?
+    (owner.is_a?(User) && is_analysis_activated == -1) ? self.owner.organization.compta_analysis_activated?(self) : (is_analysis_activated == 1)
+  end
 
+  # def uses_analytics?
+  #   used? && ibiza_id.present? && is_analysis_activated?
+  # end
+
+  def ibiza_id?
+    ibiza_id.present?
+  end
+
+  def analysis_to_validate?
+    (owner.is_a?(User) && is_analysis_to_validate == -1) ? self.owner.organization.analysis_to_validate?(self) : (is_analysis_to_validate == 1)
+  end
+
+  def auto_update_accounting_plan?
+    is_auto_updating_accounting_plan
+  end
+
+  private
 
   def update_states
     if access_token.present? && access_token_changed?

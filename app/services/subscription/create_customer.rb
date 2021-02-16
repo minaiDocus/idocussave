@@ -20,7 +20,7 @@ class Subscription::CreateCustomer
       @customer.reset_password_sent_at = Time.now
 
       Interfaces::Software::Configuration::SOFTWARES.each do |software|
-        @customer.send("build_#{software}".to_sym) if @customer.send(software.to_sym).nil?
+        @customer.send("build_#{software}".to_sym) if @customer.send(software.to_sym).nil? && @customer.organization.send(software.to_sym).present?
       end
       @customer.build_options   if @customer.options.nil?
       @customer.create_notify

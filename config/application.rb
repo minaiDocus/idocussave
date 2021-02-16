@@ -15,6 +15,7 @@ module Idocus
     config.load_defaults 5.2
 
     # development files
+    Dir.glob("#{Rails.root}/app/interfaces/interfaces.rb").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/api_broker/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/app/workers/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/*.{rb}").each { |file| require file }

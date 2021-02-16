@@ -31,7 +31,7 @@ class User < ApplicationRecord
 
   has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
 
-  include Owner
+  include OwnedSoftwares
 
   has_one :dematbox
   has_one :composition
@@ -157,52 +157,6 @@ class User < ApplicationRecord
     end
   end
 
-  #Overwrite User code method
-  def my_code
-    self.code.presence || self.memberships.first.try(:code)
-  end
-
-  def to_param
-    [id, company.parameterize].join('-')
-  end
-
-  def name
-    [first_name.presence, last_name.presence].compact.join(' ')
-  end
-
-
-  def username
-    code
-  end
-
-  def jefacture_api_key
-    organization.jefacture_api_key
-  end
-
-
-  def username=(param)
-    self.code = param
-  end
-
-
-  def info
-    [(is_guest ? email : code), company, name].reject(&:blank?).join(' - ')
-  end
-
-
-  def short_info
-    [code, company].join(' - ')
-  end
-
-
-  def to_s
-    info
-  end
-
-  def configured?
-    current_configuration_step.nil?
-  end
-
   #login can be email or code
   def self.find_by_mail_or_code(login)
     user = self.find_by_email login
@@ -213,176 +167,6 @@ class User < ApplicationRecord
   def self.find_by_token(token)
     return nil unless token.is_a?(String)
     User.where(authentication_token: token).first
-  end
-
-  def find_or_create_subscription
-    self.subscription ||= Subscription.create(user_id: id)
-  end
-
-  def create_or_update_software(attributes)
-    if attributes[:software].to_s == "my_unisoft"
-      MyUnisoftLib::Setup.new({organization: @organization, customer: self, columns: {is_used: attributes[:columns][:is_used], action: "update"}}).execute
-    else
-      software = self.send(attributes[:software].to_sym) || Interfaces::Software::Configuration.softwares[attributes[:software].to_sym].new
-      begin
-        software.assign_attributes(attributes[:columns])
-      rescue
-        software.assign_attributes(attributes[:columns].to_unsafe_hash)
-      end
-
-      counter = 0
-      counter += 1 if software.try(:ibiza).try(:used?)
-      counter += 1 if software.try(:my_unisoft).try(:used?)
-      counter += 1 if software.try(:exact_online).try(:used?)
-
-      if counter <= 1
-        if software.is_a?(Software::Ibiza) # Assign default value to avoid validation exception
-          software.state                            = 'none'
-          software.state_2                          = 'none'
-          software.voucher_ref_target               = 'piece_number'
-          software.is_auto_updating_accounting_plan = true
-        end
-
-        software.owner = self
-        software.save
-        software
-      else
-        software = nil
-      end
-    end
-  end
-
-  def paper_return_address
-    addresses.for_paper_return.first
-  end
-
-
-  def paper_set_shipping_address
-    addresses.for_paper_set_shipping.first
-  end
-
-
-  def dematbox_shipping_address
-    addresses.for_dematbox_shipping.first
-  end
-
-
-  def find_or_create_external_file_storage
-    self.external_file_storage ||= ExternalFileStorage.create(user_id: id)
-  end
-
-
-  def csv_descriptor!
-    self.csv_descriptor ||= Software::CsvDescriptor.create(owner_id: id)
-  end
-
-
-  def active_for_authentication?
-    super && !is_disabled
-  end
-
-  def set_random_password
-    new_password = rand(36**20).to_s(36)
-
-    self.password              = new_password
-    self.password_confirmation = new_password
-  end
-
-  def prescribers
-    collaborator? ? [] : ((organization&.admins || []) | group_prescribers)
-  end
-
-  def group_prescribers
-    collaborator? ? [] : groups.flat_map(&:collaborators)
-  end
-
-  def compta_processable_journals
-    account_book_types.compta_processable
-  end
-
-
-  def is_return_label_generated_today?
-    if return_label_generated_at
-      return_label_generated_at > Time.now.beginning_of_day
-    else
-      false
-    end
-  end
-
-
-  def get_new_email_code
-    begin
-      new_email_code = rand(36**8).to_s(36)
-    end while self.class.where(email_code: new_email_code).first
-
-    new_email_code
-  end
-
-  def update_email_code
-    update_attribute(:email_code, get_new_email_code)
-  end
-
-  def get_authentication_token
-    update_authentication_token unless self.authentication_token.present?
-    self.reload.authentication_token
-  end
-
-  def get_new_authentication_token
-    begin
-      new_authentication_token = rand(36**AUTHENTICATION_TOKEN_LENGTH).to_s(36)
-    end while self.class.where(authentication_token: new_authentication_token).first
-
-    new_authentication_token
-  end
-
-
-  def update_authentication_token
-    update_attribute(:authentication_token, get_new_authentication_token)
-  end
-
-
-  def format_name
-    self.first_name = (first_name.split.map(&:capitalize).join(' ') rescue '')
-    self.last_name = (last_name.upcase rescue '')
-  end
-
-
-  def active_for_authentication?
-    super && (active? || (inactive_at + 18.months) > Time.now)
-  end
-
-  def recently_created?
-    created_at > 24.hours.ago
-  end
-
-  def admin?
-    is_admin
-  end
-
-  def pre_assignement_displayed?
-    collaborator? || is_pre_assignement_displayed
-  end
-
-  def has_collaborator_action?
-    collaborator? || (is_pre_assignement_displayed && act_as_a_collaborator_into_pre_assignment)
-  end
-
-  def authorized_all_upload?
-    (self.try(:options).try(:upload_authorized?) && authorized_bank_upload?) || self.organization.specific_mission
-  end
-
-  def authorized_upload?
-    self.try(:options).try(:upload_authorized?) || authorized_bank_upload? || self.organization.specific_mission
-  end
-
-  def authorized_bank_upload?
-    period = self.try(:subscription).try(:current_period)
-
-    if period
-      self.try(:options).try(:retriever_authorized?) && period.is_active?(:retriever_option)
-    else
-      false
-    end
   end
 
   # TODO : need a test
@@ -439,6 +223,185 @@ class User < ApplicationRecord
     return User.find_by_code(code)
   end
 
+  #Overwrite User code method
+  def my_code
+    self.code.presence || self.memberships.first.try(:code)
+  end
+
+  def to_param
+    [id, company.parameterize].join('-')
+  end
+
+  def name
+    [first_name.presence, last_name.presence].compact.join(' ')
+  end
+
+
+  def username
+    code
+  end
+
+  def username=(param)
+    self.code = param
+  end
+
+
+  def info
+    [(is_guest ? email : code), company, name].reject(&:blank?).join(' - ')
+  end
+
+
+  def short_info
+    [code, company].join(' - ')
+  end
+
+
+  def to_s
+    info
+  end
+
+  def paper_return_address
+    addresses.for_paper_return.first
+  end
+
+
+  def paper_set_shipping_address
+    addresses.for_paper_set_shipping.first
+  end
+
+
+  def dematbox_shipping_address
+    addresses.for_dematbox_shipping.first
+  end
+
+
+  def find_or_create_external_file_storage
+    self.external_file_storage ||= ExternalFileStorage.create(user_id: id)
+  end
+
+
+  def csv_descriptor!
+    self.csv_descriptor ||= Software::CsvDescriptor.create(owner_id: id)
+  end
+
+
+  def active_for_authentication?
+    super && !is_disabled
+  end
+
+  def set_random_password
+    new_password = rand(36**20).to_s(36)
+
+    self.password              = new_password
+    self.password_confirmation = new_password
+  end
+
+  def is_return_label_generated_today?
+    if return_label_generated_at
+      return_label_generated_at > Time.now.beginning_of_day
+    else
+      false
+    end
+  end
+
+  def get_new_email_code
+    begin
+      new_email_code = rand(36**8).to_s(36)
+    end while self.class.where(email_code: new_email_code).first
+
+    new_email_code
+  end
+
+  def update_email_code
+    update_attribute(:email_code, get_new_email_code)
+  end
+
+  def get_authentication_token
+    update_authentication_token unless self.authentication_token.present?
+    self.reload.authentication_token
+  end
+
+  def get_new_authentication_token
+    begin
+      new_authentication_token = rand(36**AUTHENTICATION_TOKEN_LENGTH).to_s(36)
+    end while self.class.where(authentication_token: new_authentication_token).first
+
+    new_authentication_token
+  end
+
+
+  def update_authentication_token
+    update_attribute(:authentication_token, get_new_authentication_token)
+  end
+
+
+  def format_name
+    self.first_name = (first_name.split.map(&:capitalize).join(' ') rescue '')
+    self.last_name = (last_name.upcase rescue '')
+  end
+
+
+  def active_for_authentication?
+    super && (active? || (inactive_at + 18.months) > Time.now)
+  end
+
+  def recently_created?
+    created_at > 24.hours.ago
+  end
+
+  # TODO : need a test
+  def self.search(contains)
+    users = self.all
+
+    if contains[:collaborator_id].present?
+      collaborator = User.unscoped.find(contains[:collaborator_id].to_i) rescue nil
+      if collaborator
+        collaborator = Collaborator.new(collaborator)
+        groups = collaborator.groups
+        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
+        users = users.where(id: customers)
+      end
+    end
+
+    if contains[:group_ids].present?
+      groups = Group.find(contains[:group_ids]) rescue nil
+      if groups
+        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
+        users = users.where(id: customers)
+      end
+    end
+
+    users = contains[:is_inactive] == '1' ? users.closed : users.active                        if contains[:is_inactive].present?
+    users = users.where(is_admin:            (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
+    users = users.where(is_prescriber:       (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
+    users = users.where(is_guest:            (contains[:is_guest] == '1' ? true : false))      if contains[:is_guest].present?
+    users = users.where(organization_id:     contains[:organization_id])                       if contains[:organization_id].present?
+
+    users = users.where("code LIKE ?",       "%#{contains[:code]}%")                           if contains[:code].present?
+    users = users.where("email LIKE ?",      "%#{contains[:email]}%")                          if contains[:email].present?
+    users = users.where("company LIKE ?",    "%#{contains[:company]}%")                        if contains[:company].present?
+    users = users.where("last_name LIKE ?",  "%#{contains[:last_name]}%")                      if contains[:last_name].present?
+    users = users.where("first_name LIKE ?", "%#{contains[:first_name]}%")                     if contains[:first_name].present?
+
+    if contains[:is_organization_admin].present?
+      user_ids = Organization.all.pluck(:leader_id)
+
+      users = if contains[:is_organization_admin] == '1'
+        users.where(id: user_ids)
+      else
+        users.where.not(id: user_ids)
+      end
+    end
+
+    users
+  end
+
+  def self.get_by_code(code)
+    member = Member.find_by_code(code)
+
+    return member.user if member
+    return User.find_by_code(code)
+  end
 
   private
 

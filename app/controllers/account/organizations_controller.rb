@@ -262,7 +262,7 @@ class Account::OrganizationsController < Account::OrganizationController
         :invoice_mails,
         :jefacture_api_key,
         :specific_mission,
-        :default_banking_provider
+        :default_banking_provider,
         { :quadratus_attributes => %i[id is_used auto_deliver] },
         { :coala_attributes => %i[id is_used auto_deliver] },
         { :cegid_attributes => %i[id is_used auto_deliver] },

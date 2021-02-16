@@ -48,7 +48,7 @@ describe PreAssignment::Builder::MyUnisoft do
     mu2.encrypted_api_token = "QEVuQwBAEAByOREAFhHULN2CJGaf125G4YhHmu/s35ujaoOnwQc65t/n8HeJfIfBhI2aU0wt73fJCiLh51pa9bkB79K61o7Xvru4rIX2v4q+SAkGZrwM04HpoBLNzCaYTQwOKSlkgpbltj3kwv9uJsv+Ug2jGGD5LIxCHqS9MnBILfAmW2aJyUaoJxyAG+sAspfSHkJMHO1YN6+1i9lGqXTbQNWjx8wU0YcOJiemBlx3I1L/WVrRxg=="
     mu2.society_id = 3
     mu2.auto_deliver = 1
-    mu2.auto_update_accounting_plan = true
+    mu2.is_auto_updating_accounting_plan = true
     mu2.save
   end
 
