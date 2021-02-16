@@ -233,7 +233,7 @@ class Billing::CreateInvoicePdf
               end
 
     options.each do |option|
-      @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"] if @invoice.organization.code != 'FIDC' || normal_fidec_orders
+      @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"] if @invoice.organization.code != 'FIDC'
 
       @total += option.price_in_cents_wo_vat
     end

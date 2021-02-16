@@ -274,7 +274,7 @@ class Billing::UpdatePeriod
 
 
   def bank_accounts_options
-    excess_bank_accounts = @period.user.bank_accounts.manual_created.size - 2
+    excess_bank_accounts = @period.user.bank_accounts.size - 2
 
     if excess_bank_accounts > 0
       option = ProductOptionOrder.new
@@ -298,6 +298,8 @@ class Billing::UpdatePeriod
 
 
   def operation_options
+    billing_options = []
+
     @period.user.billing_histories.pending.each do |billing_history|
       reduced = (@subscription.retriever_price_option == :retriever)? false : true
 
@@ -313,8 +315,6 @@ class Billing::UpdatePeriod
       value_period   = billing_history.value_period
       current_period = value_period == (Date.today - 1.month).strftime('%Y%m').to_i
 
-      next if (value_period == @period.start_date.strftime('%Y%m').to_i && current_period) || @period.product_option_orders.where(name: option_name, title: option_title).present?
-
       option = ProductOptionOrder.new
 
       option.name        = option_name
@@ -327,7 +327,11 @@ class Billing::UpdatePeriod
       option.price_in_cents_wo_vat = amount
       option.is_frozen = true
 
-      option
+      next if (value_period == @period.start_date.strftime('%Y%m').to_i && current_period) || billing_options.include?(option) || @period.product_option_orders.where(name: option_name, title: option_title, is_frozen: true).present?
+
+      billing_options << option
     end
+
+    billing_options
   end
 end

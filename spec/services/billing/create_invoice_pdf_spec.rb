@@ -21,8 +21,9 @@ describe Billing::CreateInvoicePdf do
         user.organization = organization
         user.save
 
-        user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_accounts: "{'20':'445660', '8.5':'153141', '13':'754213'}", anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: organization.id)
-        Subscription.create(period_duration: 1, is_basic_package_active: true, number_of_journals: 5, organization_id: 0, user_id: user.id)
+        user.account_book_types.create(name: "AC", description: "AC (Achats)", position: 1, entry_type: 2, currency: "EUR", domain: "AC - Achats", account_number: "0ACC", charge_account: "471000", vat_accounts: {'20':'445660', '8.5':'153141', '13':'754213'}.to_json, anomaly_account: "471000", is_default: true, is_expense_categories_editable: true, organization_id: organization.id)
+        Subscription.create(period_duration: 1, current_packages: '["ido_classique", "pre_assignment_option"]', number_of_journals: 5, organization_id: nil, user_id: user.id)
+
         user.subscription.find_or_create_period(Date.today - 1.month)
       end
     end
@@ -93,7 +94,7 @@ describe Billing::CreateInvoicePdf do
     period       = subscription.periods.order(created_at: :asc).first
     period.set_current_packages
 
-    subscription.update({ is_basic_package_to_be_disabled: true, is_micro_package_active: true })
+    subscription.update(futur_packages: '["ido_micro"]')
 
     Billing::CreateInvoicePdf.for_all
 
@@ -104,5 +105,54 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
     expect(invoice.amount_in_cents_w_vat).to eq 4800
+  end
+
+  it 'generates excess bank account options', :bank_account do
+    user         = User.last
+    subscription = user.subscription
+    period       = subscription.periods.order(created_at: :asc).first
+    period.set_current_packages
+
+    5.times do |i|
+      BankAccount.create(
+        bank_name: "Allianz-#{i}", name: "Allianz-#{i}", number: "456654546#{i}",
+        user: user, api_name: 'idocus', journal: 'BQ', currency: 'EUR',
+        original_currency: {"id"=>"EUR", "symbol"=>"€", "prefix"=>false, "precision"=>2, "marketcap"=>nil, "datetime"=>nil, "name"=>"Euro"},
+        is_used: true, accounting_number: "512000", temporary_account: '471000',
+        start_date: '2020-03-02', type_name: "unknown-#{i}", lock_old_operation: true, permitted_late_days: 12
+      )
+    end
+
+    Billing::CreateInvoicePdf.for_all
+
+    invoice = Invoice.last
+
+    expect(period.reload.get_active_packages).to eq [:ido_classique]
+    expect(period.product_option_orders.size).to eq 3
+    expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
+    expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
+    expect(period.product_option_orders.third.name).to eq 'excess_bank_accounts'
+    expect(invoice.amount_in_cents_w_vat).to eq 5520
+  end
+
+  it 'generates operation options from any previous periods', :billing_history do
+    user         = User.last
+    subscription = user.subscription
+    period       = subscription.periods.order(created_at: :asc).first
+    period.set_current_packages
+
+    BillingHistory.create(value_period: 202002, user: user, period: period, state: 'pending', amount: 0.0)
+
+    Billing::CreateInvoicePdf.for_all
+
+    invoice = Invoice.last
+
+    expect(period.reload.get_active_packages).to eq [:ido_classique]
+    expect(period.product_option_orders.size).to eq 4
+    expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
+    expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
+    expect(period.product_option_orders.third.name).to eq 'excess_bank_accounts'
+    expect(period.product_option_orders.last.name).to eq 'billing_bank_operation'
+    expect(invoice.amount_in_cents_w_vat).to eq 6120
   end
 end
