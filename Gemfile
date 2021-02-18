@@ -146,6 +146,7 @@ gem 'fast_jsonapi'
 
 # Cache
 gem 'redis-rails'
+gem 'activerecord-session_store'
 
 group :development, :test do
   gem 'better_errors'
