@@ -394,6 +394,7 @@ class Account::CustomersController < Account::OrganizationController
       :last_name,
       :email,
       :is_pre_assignement_displayed,
+      :act_as_a_collaborator_into_pre_assignment,
       :phone_number,
       :manager_id,
       :jefacture_account_id,

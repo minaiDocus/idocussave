@@ -170,7 +170,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_preseizure
-    if @user.collaborator?
+    if @user.has_collaborator_action?
       preseizure = Pack::Report::Preseizure.find params[:id]
       error = ''
       if params[:partial_update].present?
@@ -199,7 +199,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_multiple_preseizures
-    if @user.collaborator?
+    if @user.has_collaborator_action?
       preseizures = Pack::Report::Preseizure.where(id: params[:ids])
 
       real_params = update_multiple_preseizures_params
@@ -217,7 +217,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def deliver_preseizures
-    if @user.collaborator?
+    if @user.has_collaborator_action?
       if params[:ids].present?
         preseizures = Pack::Report::Preseizure.not_delivered.not_locked.where(id: params[:ids])
       elsif params[:id]
@@ -257,7 +257,7 @@ class Account::DocumentsController < Account::AccountController
   end
 
   def update_preseizure_account
-    if @user.collaborator?
+    if @user.has_collaborator_action?
       error = ''
       if params[:type] == 'account'
         account = Pack::Report::Preseizure::Account.find params[:id_account]

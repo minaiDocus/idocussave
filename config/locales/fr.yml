@@ -390,6 +390,7 @@ fr:
           email: Email
           phone_number: N° de téléphone
           is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
+          act_as_a_collaborator_into_pre_assignment: Agir comme un collaborateur sur la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
           inactive_at: Dossier clôturé au
           is_inactive: Dossier clôturé ?
           is_admin: Est administrateur ?

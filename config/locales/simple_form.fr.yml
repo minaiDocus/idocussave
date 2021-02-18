@@ -65,6 +65,7 @@ fr:
         jefacture_account_id: Identifiant Jefactrure (SIREN)
         phone_number: Numéro de téléphone
         is_pre_assignement_displayed: Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
+        act_as_a_collaborator_into_pre_assignment: Agir comme un collaborateur sur la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte
         password: Mot de passe
         password_confirmation: Comfirmer le mot de passe
         is_admin: Est admin ?

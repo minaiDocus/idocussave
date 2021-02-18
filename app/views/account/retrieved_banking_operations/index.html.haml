@@ -6,7 +6,7 @@
         - if @operations
           %span.badge.badge-info.fs-origin= @operations.total_count
     .col-md-6
-      - if current_user.collaborator? && !@account.try(:options).try(:operation_processing_forced?)
+      - if current_user.has_collaborator_action? && !@account.try(:options).try(:operation_processing_forced?)
         = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_account_retrieved_banking_operations_path(banking_operation_contains: params.permit(:banking_operation_contains)[:banking_operation_contains]), method: :post, class: 'btn btn-danger float-right margin1right', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
 .row.retractable.with-filter.derivationLeft
   .col-md-12.retractable-content

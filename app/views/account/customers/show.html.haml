@@ -120,6 +120,9 @@
                     %th= t('activerecord.models.user.attributes.is_pre_assignement_displayed')
                     %td= @customer.is_pre_assignement_displayed ? t('yes_value') : t('no_value')
                   %tr
+                    %th= t('activerecord.models.user.attributes.act_as_a_collaborator_into_pre_assignment')
+                    %td= @customer.act_as_a_collaborator_into_pre_assignment ? t('yes_value') : t('no_value')
+                  %tr
                     %th= t('activerecord.models.user.attributes.phone_number')
                     %td= @customer.phone_number
                   %tr

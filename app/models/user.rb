@@ -336,6 +336,10 @@ class User < ApplicationRecord
     collaborator? || is_pre_assignement_displayed
   end
 
+  def has_collaborator_action?
+    collaborator? || (is_pre_assignement_displayed && act_as_a_collaborator_into_pre_assignment)
+  end
+
   # TODO : need a test
   def self.search(contains)
     users = self.all

@@ -52,7 +52,7 @@
               - unless @organization.specific_mission
                 .form-group.clearfix.radio_buttons
                   .label-section
-                    = label_tag 'user[is_pre_assignement_displayed]', "Activer la vue écriture comptable dans l'onglet 'Mes Documents' pour ce compte", class: 'control-label required'
+                    = label_tag 'user[is_pre_assignement_displayed]', t('activerecord.models.user.attributes.is_pre_assignement_displayed'), class: 'control-label required'
                   .control-section
                     %span.radio
                       %label
@@ -61,6 +61,18 @@
                     %span.radio
                       %label
                         = radio_button_tag 'user[is_pre_assignement_displayed]', false, true
+                        Non
+                .form-group.clearfix.radio_buttons
+                  .label-section
+                    = label_tag 'user[act_as_a_collaborator_into_pre_assignment]', t('activerecord.models.user.attributes.act_as_a_collaborator_into_pre_assignment'), class: 'control-label required'
+                  .control-section
+                    %span.radio
+                      %label
+                        = radio_button_tag 'user[act_as_a_collaborator_into_pre_assignment]', true, false
+                        Oui
+                    %span.radio
+                      %label
+                        = radio_button_tag 'user[act_as_a_collaborator_into_pre_assignment]', false, true
                         Non
               .form-group.clearfix.check_boxes
                 .label-section
