@@ -3,7 +3,7 @@ require 'date'
 class TmpCleaner
   def initialize
     tmp_dir = '/home/deploy/main/current/tmp/'
-    sub_dirs = ['Invoice', 'Pack', 'Pack::Piece', 'PreAssignmentDelivery', 'TempDocument']
+    sub_dirs = ['Invoice', 'Pack', 'Pack::Piece', 'PreAssignmentDelivery', 'TempDocument', 'McfDocument']
     today = Date.today.strftime('%Y%m%d')
 
     5.times do |i|
