@@ -160,15 +160,17 @@ private
     end
   end
 
+
+  # NO TIMESTAMPS FOR CEGID TRA
   def generate_cegid_tra_export(with_file = true)
     begin
       file_zip = PreseizureExport::Software::Cegid.new(@preseizures, 'tra_cegid').execute
 
-      final_file_name = "#{file_real_name}.zip"
+      final_file_name = "#{file_previous_name}.zip"
 
       FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
 
-      @export.got_success "#{file_real_name}.zip"
+      @export.got_success "#{file_previous_name}.zip"
     rescue => e
       @export.got_error e
     end

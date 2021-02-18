@@ -79,8 +79,8 @@ class PreseizureExport::PreseizureToTxt
     data = []
 
     line      = ' ' * 222
-    line[0]   = '***'
-    line[147] = '-'
+    line[0]   = '***S5CLIJRLETE'
+    line[53]  = 'IDOCUS'
 
     data << line
 
