@@ -21,7 +21,7 @@
             %th= sortable :category,                 'Catégorie'
             %th= sortable :label,                    'Libellé'
             %th.amount= sortable :amount,            'Montant'
-            - if current_user.collaborator?
+            - if current_user.pre_assignement_displayed?
               %th Pré-affecté
         %tbody.retractable.slidedown
           - @operations.each do |operation|
@@ -32,7 +32,7 @@
               %td= operation.category
               %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || operation.bank_account.original_currency['symbol'] || '€'}"
-              - if current_user.collaborator?
+              - if current_user.pre_assignement_displayed?
                 %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
 
