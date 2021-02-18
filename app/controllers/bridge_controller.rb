@@ -24,6 +24,8 @@ class BridgeController < ApplicationController
 
     Bridge::GetItems.new(bridge_account.user).execute
 
+    Bridge::GetAccounts.new(bridge_account.user).execut
+
     redirect_to(account_retrievers_path)
   end
 end
