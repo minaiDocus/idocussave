@@ -409,12 +409,16 @@ class DataProcessor::RetrievedData
 
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
-      if operation.to_lock?
+      if is_duplicate?(bank_account, operation) || operation.to_lock?
         operation.is_locked = true
       else
         operation.is_locked = !(bank_account.is_used && bank_account.configured?)
       end
     end
+  end
+
+  def is_duplicate?(bank_account, operation)
+    bank_account.operations.where.not(api_name: 'budgea').where(amount: operation.amount, date: operation.date).count > 0
   end
 
   def set_transaction_value(bank_account, transaction)

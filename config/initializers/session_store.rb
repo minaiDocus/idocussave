@@ -1,6 +1,7 @@
 # Be sure to restart your server when you modify this file.
 
-Idocus::Application.config.session_store :cookie_store, :key => '_idocus_session'
+# Idocus::Application.config.session_store :cookie_store, :key => '_idocus_session'
+Idocus::Application.config.session_store :active_record_store, :key => '_idocus_session'
 
 # Idocus::Application.config.session_store ActionDispatch::Session::CacheStore, expire_after: nil
 

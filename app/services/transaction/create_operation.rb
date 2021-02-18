@@ -49,7 +49,7 @@ class Transaction::CreateOperation
   private
 
   def is_duplicate?
-    @bank_account.operations.where(amount: @operation.amount, date: @operation.date).count > 0
+    @bank_account.operations.where.not(api_name: 'capidocus').where(amount: @operation.amount, date: @operation.date).count > 0
   end
 
   def append_credit_card_tag
