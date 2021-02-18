@@ -76,4 +76,8 @@ class UserOptions < ApplicationRecord
     end
     @dashboard_summary
   end
+
+  def banking_provider
+    default_banking_provider ? default_banking_provider : user.organization.banking_provider
+  end
 end

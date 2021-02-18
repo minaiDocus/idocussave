@@ -398,7 +398,7 @@ class Account::CustomersController < Account::OrganizationController
       :manager_id,
       :jefacture_account_id,
       { group_ids: [] },
-      { options_attributes: %i[id is_taxable is_pre_assignment_date_computed] },
+      { options_attributes: %i[id is_taxable is_pre_assignment_date_computed default_banking_provider] },
       { softwares_attributes: %i[id is_ibiza_used is_coala_used is_quadratus_used is_csv_descriptor_used is_exact_online_used is_cegid_used is_fec_agiris_used] }
     ]
 

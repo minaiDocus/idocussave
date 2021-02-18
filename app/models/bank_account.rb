@@ -11,9 +11,10 @@ class BankAccount < ApplicationRecord
   before_save :validate_data
 
   validates :api_id, presence: true, :if => :from_budgea?
-  validates_presence_of :bank_name, :name, :number
+  validates_presence_of :bank_name, :name
   validate :uniqueness_of_number_and_bank_name
   validates :permitted_late_days, numericality: { greater_than: 0, less_than_or_equal_to: 365 }
+  validates_uniqueness_of :api_id, scope: :api_name
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |e| e.is_for_pre_assignment }
   validates_presence_of :currency, if: Proc.new { |e| e.is_for_pre_assignment }
@@ -21,6 +22,7 @@ class BankAccount < ApplicationRecord
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |e| e.is_for_pre_assignment }
 
   scope :used,           -> { where(is_used: true) }
+  scope :bridge,         -> { where(api_name: 'bridge') }
   scope :configured,     -> { where.not(journal: [nil, ''], accounting_number: [nil, '']) }
   scope :not_configured, -> { where(journal: [nil, ''], accounting_number: [nil, '']) }
   scope :manual_created, -> { where(api_name: 'idocus') }
@@ -78,7 +80,9 @@ private
   def uniqueness_of_number_and_bank_name
     bank_account = user.bank_accounts.where(number: number, bank_name: bank_name).first
 
-    errors.add(:number, :taken) if bank_account && bank_account != self
+    if number
+      errors.add(:number, :taken) if bank_account && bank_account != self
+    end
   end
 
 

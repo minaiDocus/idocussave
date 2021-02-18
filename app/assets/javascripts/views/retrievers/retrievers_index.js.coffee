@@ -17,6 +17,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
   render: ->
     @$el.html(@template(loading: @loading, list_url: "#{location.protocol}//#{location.host}/account/retrievers/list", new_connector: Idocus.new_connector))
     custom_checkbox_buttons()
+    @hide_banks_if_bridge()
     this
 
   fetch_connectors: ->
@@ -55,7 +56,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
 
   filter_by_connector_type: ->
     @connectors_filtered = connectors_filtered_bank = connectors_filtered_document = []
-    if @$el.find('#check_banks').is(':checked')
+    if @$el.find('#check_banks').is(':checked') && !$('#budgea_sync').hasClass('bridge')
       connectors_filtered_bank = @connectors.find("capabilities", "include", 'bank')
     if @$el.find('#check_document').is(':checked')
       connectors_filtered_document = @connectors.find("capabilities", "include", 'document')
@@ -88,3 +89,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
 
     @step1_view.load_connector(@model)
     @step1_view.render()
+
+  hide_banks_if_bridge: ->
+    if $('#budgea_sync').hasClass('bridge')
+      $('#banks_label').remove()

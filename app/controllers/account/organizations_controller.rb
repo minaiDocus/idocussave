@@ -261,7 +261,8 @@ class Account::OrganizationsController < Account::OrganizationController
         :is_exact_online_used,
         :is_exact_online_auto_deliver,
         :jefacture_api_key,
-        :specific_mission
+        :specific_mission,
+        :default_banking_provider
       )
     else
       params.require(:organization).permit(

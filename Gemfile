@@ -121,6 +121,7 @@ gem 'dropbox_api'
 gem 'google-api-client'
 gem 'google_drive'
 gem 'ruby-box'
+gem 'bridge_bankin'
 
 # Lock mechanism
 gem 'remote_lock'
@@ -174,6 +175,3 @@ group :test do
   gem 'vcr'
   gem 'webmock'
 end
-
-# API monitoring ; Keep it a the end of the file
-gem 'bearer-agent'

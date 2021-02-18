@@ -72,8 +72,6 @@ GEM
     barby (0.6.8)
     bcrypt (3.1.13)
     bcrypt_pbkdf (1.0.1)
-    bearer-agent (3.1.0)
-      rack
     better_errors (2.7.0)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -88,6 +86,7 @@ GEM
       sassc-rails (>= 2.0.0)
     bootstrap-datepicker-rails (1.9.0.1)
       railties (>= 3.0)
+    bridge_bankin (0.1.2)
     bson (4.8.2)
     builder (3.2.4)
     bullet (6.1.0)
@@ -634,12 +633,12 @@ DEPENDENCIES
   backbone-on-rails
   barby
   bcrypt_pbkdf
-  bearer-agent
   better_errors
   binding_of_caller
   bootsnap
   bootstrap
   bootstrap-datepicker-rails
+  bridge_bankin
   bson
   bullet
   byebug

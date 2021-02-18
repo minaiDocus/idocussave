@@ -79,6 +79,10 @@ Rails.application.routes.draw do
   post 'dropbox/webhook', controller: 'dropboxes', action: 'webhook'
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
+  get 'bridge/callback',   controller: 'bridge', action: 'callback'
+  get 'bridge/setup_item', controller: 'bridge', action: 'setup_item'
+  get 'bridge/delete_item', controller: 'bridge', action: 'delete_item'
+
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
   get  'retriever/callback', controller: 'retrievers', action: 'callback'
   post 'retriever/fetch_webauth_url', controller: 'retrievers', action: 'fetch_webauth_url'

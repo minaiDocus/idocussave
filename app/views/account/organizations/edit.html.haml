@@ -26,6 +26,7 @@
             - unless @organization.specific_mission
               = f.input :subject_to_vat, as: :boolean
             = f.input :specific_mission, as: :boolean
+            = f.input :default_banking_provider, as: :select, collection: default_banking_provider_options_for_select
         - elsif !@organization.specific_mission
           = f.input :is_quadratus_used, as: 'boolean'
           = f.input :is_coala_used, as: 'boolean'

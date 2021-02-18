@@ -1,31 +1,38 @@
-= link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
-- if (retriever.ready? || retriever.waiting_additionnal_info?) || (retriever.error? && !retriever.budgea_error_message.in?(['SCARequired', 'decoupled', 'webauthRequired']))
-  - if retriever.budgea_id.present?
-    = retriever_presenter.action_link
-  = link_to glyphicon('pencil'), edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip', class: 'btn btn-light'
-- if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
-  = link_to glyphicon('x'), '#', class: "destroy_retriever destroy_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
-- case retriever.budgea_error_message
-- when 'SCARequired'
-  %button#SCARequired.btn.btn-primary.scarequire_decoupled_button{ data: { id: retriever.id } }
-    Lancer la procédure d'authentification
-- when 'decoupled'
-  %button#decoupled.btn.btn-success.scarequire_decoupled_button{ data: { id: retriever.id } }
-    Valider la reprise de la synchronisation
-- when 'webauthRequired'
-  %input{ id: "account_id_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.user.id}"}
-  %input{ id: "field_ido_capabilities_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.capabilities}"}
-  %input{ id: "ido_connector_id_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.budgea_id}"}
-  %input{ id: "field_ido_custom_name_#{retriever.budgea_id}", type: :hidden, value: ""}
-  %input{ id: "ido_connector_name_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.name}"}
+- if retriever.budgea_id
+  = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
+  - if (retriever.ready? || retriever.waiting_additionnal_info?) || (retriever.error? && !retriever.budgea_error_message.in?(['SCARequired', 'decoupled', 'webauthRequired']))
+    - if retriever.budgea_id.present?
+      = retriever_presenter.action_link
+    = link_to glyphicon('pencil'), edit_account_retriever_path(retriever), title: 'Editer', rel: 'tooltip', class: 'btn btn-light'
+  - if retriever.ready? || retriever.error? || retriever.unavailable? || retriever.waiting_additionnal_info? || retriever.destroying?
+    = link_to glyphicon('x'), '#', class: "destroy_retriever destroy_retriever_#{retriever.id} btn btn-light", data: { id: retriever.id }, title: 'Supprimer', rel: 'tooltip'
+  - case retriever.budgea_error_message
+  - when 'SCARequired'
+    %button#SCARequired.btn.btn-primary.scarequire_decoupled_button{ data: { id: retriever.id } }
+      Lancer la procédure d'authentification
+  - when 'decoupled'
+    %button#decoupled.btn.btn-success.scarequire_decoupled_button{ data: { id: retriever.id } }
+      Valider la reprise de la synchronisation
+  - when 'webauthRequired'
+    %input{ id: "account_id_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.user.id}"}
+    %input{ id: "field_ido_capabilities_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.capabilities}"}
+    %input{ id: "ido_connector_id_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.budgea_id}"}
+    %input{ id: "field_ido_custom_name_#{retriever.budgea_id}", type: :hidden, value: ""}
+    %input{ id: "ido_connector_name_#{retriever.budgea_id}", type: :hidden, value: "#{retriever.name}"}
 
-  %button#webauth.btn.btn-primary.webauth_button{ data: { id: retriever.budgea_id } }
-    Lancer la procédure d'authentification
-  %span
-    %img.hide{ id: "loading_#{retriever.budgea_id}", src: "/assets/application/bar_loading.gif", alt: "chargement..."}
+    %button#webauth.btn.btn-primary.webauth_button{ data: { id: retriever.budgea_id } }
+      Lancer la procédure d'authentification
+    %span
+      %img.hide{ id: "loading_#{retriever.budgea_id}", src: "/assets/application/bar_loading.gif", alt: "chargement..."}
 
-- if retriever.waiting_selection?
-  - if retriever.provider?
-    = link_to 'Sélectionnez vos documents', select_account_retrieved_documents_path({ account_id: retriever.user.id, document_contains: { retriever_id: retriever }}), class: 'btn btn-primary'
-  - else
-    = link_to 'Sélectionnez vos comptes', account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever, retriever_budgea_id: retriever.budgea_id }}), class: 'btn btn-primary'
+  - if retriever.waiting_selection?
+    - if retriever.provider?
+      = link_to 'Sélectionnez vos documents', select_account_retrieved_documents_path({ account_id: retriever.user.id, document_contains: { retriever_id: retriever }}), class: 'btn btn-primary'
+    - else
+      = link_to 'Sélectionnez vos comptes', account_bank_accounts_path({ account_id: retriever.user.id, bank_account_contains: { retriever_id: retriever, retriever_budgea_id: retriever.budgea_id }}), class: 'btn btn-primary'
+- elsif retriever.bridge_id
+  = link_to glyphicon('info'), '#', class: 'btn btn-light', rel: 'popover', data: { 'original-title' => 'Date de création / modification', content: "#{l(retriever.created_at)} / #{l(retriever.updated_at)}", placement: 'left' }
+  = link_to "Lancer la procédure d'authentification", Bridge::OtpItem.new(retriever.user, retriever).execute, class: 'btn.btn-primary.scarequire_decoupled_button', target: '_blank' if retriever.bridge_status == 1010
+  = link_to "Lancer la procédure d'authentification", Bridge::ValidateProItem.new(retriever.user).execute, class: 'btn.btn-primary.scarequire_decoupled_button', target: '_blank' if retriever.bridge_status == 1100
+  = link_to glyphicon('pencil'), Bridge::EditItem.new(retriever.user, retriever).execute, title: 'Editer', class: 'btn btn-light', target: '_blank', rel: 'tooltip'
+  = link_to glyphicon('x'), bridge_delete_item_path(retriever_id: retriever.id), title: 'Supprimer', class: 'btn btn-light', target: '_blank', rel: 'tooltip'

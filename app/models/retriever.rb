@@ -17,6 +17,8 @@ class Retriever < ApplicationRecord
   validates_presence_of :name
   validate :presence_of_journal
 
+  validates_uniqueness_of :bridge_id, allow_nil: true, allow_blank: true
+
   before_validation do |retriever|
     retriever.journal = nil if retriever.capabilities == ['bank']
   end
@@ -206,11 +208,11 @@ class Retriever < ApplicationRecord
   end
 
   def provider?
-    capabilities.include?('document')
+    capabilities && capabilities.include?('document')
   end
 
   def bank?
-    capabilities.include?('bank')
+    capabilities && capabilities.include?('bank')
   end
 
   def provider_and_bank?

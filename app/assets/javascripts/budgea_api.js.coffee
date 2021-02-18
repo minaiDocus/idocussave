@@ -42,7 +42,7 @@ class Idocus.BudgeaApi
     self = this
     got_error = (error)->
       alert(error)
-      location.href = "#{self.local_host}/account/retrievers"
+
 
     not_registered = ()->
       self.remote_fetch({
@@ -91,7 +91,6 @@ class Idocus.BudgeaApi
     self = this
     got_error = (error)->
       alert(error)
-      location.href = "#{self.local_host}/account/retrievers"
 
     promise = new Promise((resolve, reject)->
       if self.bi_token.length == 0

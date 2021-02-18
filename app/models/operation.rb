@@ -14,6 +14,8 @@ class Operation < ApplicationRecord
 
   validates_presence_of :date, :label, :amount
 
+  validates_uniqueness_of :api_id, scope: :api_name
+
   scope :retrieved,     -> { where(api_name: ['budgea', 'fiduceo']) }
   scope :other,         -> { where.not(api_name: ['budgea', 'fiduceo']) }
   scope :not_accessed,  -> { where(accessed_at: nil) }

@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 module Account::OrganizationHelper
+  def default_banking_provider_options_for_select
+    [
+      ['Bridge', 'bridge'],
+      ['Budget Insight', 'budget_insight']
+    ]
+  end
+
   def collaborator_form_url(organization, member)
     if action_name == 'new' || !member.persisted?
       account_organization_collaborators_url(organization)

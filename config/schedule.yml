@@ -189,3 +189,15 @@ DeliverFileToKnowings:
 DeliverFileToMcf:
   <<: *deliver_file_defaults
   args: mcf
+
+
+## Bridge ##
+
+Bridge::RefreshAllUsersItemsWorker:
+  queue: bridge
+  cron: 0 */4 * * *
+
+
+Bridge::RefreshAllUsersTransactionsWorker:
+  queue: bridge
+  cron: 0 */2 * * *

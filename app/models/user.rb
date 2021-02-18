@@ -72,6 +72,7 @@ class User < ApplicationRecord
   belongs_to :scanning_provider, inverse_of: 'customers', optional: true
 
   has_one  :budgea_account,                                                                     dependent: :destroy
+  has_one  :bridge_account,                                                                     dependent: :destroy
   has_many :retrievers,                                                                         dependent: :destroy
   has_many :retrievers_historics,                                                               dependent: :destroy
   has_many :retrieved_data,                                                                     dependent: :destroy

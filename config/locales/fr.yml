@@ -407,6 +407,7 @@ fr:
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
           organization: Organisation
           jefacture_account_id: Identifiant Jefacture (SIREN)
+          default_banking_provider: Fournisseur d'opérations bancaires
       user_options:
         zero: 0 option
         one: 1 option
@@ -686,6 +687,7 @@ fr:
           preseizure_date_option: Date de l'écriture des opérations bancaires
           is_exact_online_used: Utilise Exact Online?
           is_exact_online_auto_deliver: Livrer automatiquement les écritures ?
+          default_banking_provider: Fournisseur d'opérations bancaires
           status:
             admin: Administrateur
             collaborator: Collaborateur
