@@ -91,17 +91,17 @@
                   %i Supprimez un journal comptable avant de baisser cette option.
 
     %br
-    .form-group.clearfix.radio_buttons.label-50.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')} #{'hide' if ( !@subscription || (!@subscription.is_package?('ido_mini') && !@subscription.is_package?('ido_classique')) || ( @subscription && @subscription.try(:futur_packages).present? && !(@subscription.futur_packages.include?('ido_mini') || @subscription.futur_packages.include?('ido_classique'))))}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
+    .form-group.clearfix.radio_buttons.label-50.pre_assignment{ class: "#{'notify-warning' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')} #{'hide' if (( @subscription && @subscription.try(:futur_packages).present? && !(@subscription.futur_packages.include?('ido_mini') || @subscription.futur_packages.include?('ido_classique'))))}", style: "#{'padding-top: 1.5%' if notify_warning(@subscription, @subscription.try(:current_package?).to_s, 'pre_assignment_option')}" }
       .label-section{style: 'width: 256px;'}
         = label_tag 'subscription[is_pre_assignment_active]', "Souhaitez-vous la pré-saisie comptable ?", class: 'subscription_is_pre_assignment_active_label'        
       .control-section
         %span.radio.pre-assignment-state{title: 'Pré-saisie comptable activée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_true' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', true, current_package.include?('pre_assignment_option'), class: 'is_pre_assignment_active_true is_pre_assignment_active radio-button'
+            = radio_button_tag 'subscription[is_pre_assignment_active]', true, (!@subscription || current_package.include?('pre_assignment_option')), class: 'is_pre_assignment_active_true is_pre_assignment_active radio-button'
             Oui
         %span.radio.pre-assignment-state{title: 'Pré-saisie comptable désactivée', data: { toggle: 'tooltip', placement: 'bottom' }}
           %label{ for: 'subscription_is_pre_assignment_active_false' }
-            = radio_button_tag 'subscription[is_pre_assignment_active]', false, !current_package.include?('pre_assignment_option'), class: 'is_pre_assignment_active_false is_pre_assignment_active radio-button'
+            = radio_button_tag 'subscription[is_pre_assignment_active]', false, (@subscription && !current_package.include?('pre_assignment_option')), class: 'is_pre_assignment_active_false is_pre_assignment_active radio-button'
             Non
     %br
     - if @user.is_admin
