@@ -78,6 +78,10 @@ class UserOptions < ApplicationRecord
   end
 
   def banking_provider
-    default_banking_provider ? default_banking_provider : user.organization.banking_provider
+    if user.organization
+      default_banking_provider ? default_banking_provider : user.organization.banking_provider
+    else
+      default_banking_provider ? default_banking_provider : 'budget_insight'
+    end
   end
 end
