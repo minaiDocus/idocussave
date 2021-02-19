@@ -20,11 +20,13 @@ class BridgeController < ApplicationController
   end
 
   def callback
-    bridge_account = BridgeAccount.find_by(identifier: params[:user_uuid]) unless params[:user_uuid].blank?
+    unless params[:user_uuid].blank?
+      bridge_account = BridgeAccount.find_by(identifier: params[:user_uuid])
 
-    Bridge::GetItems.new(bridge_account.user).execute
+      Bridge::GetItems.new(bridge_account.user).execute
 
-    Bridge::GetAccounts.new(bridge_account.user).execut
+      Bridge::GetAccounts.new(bridge_account.user).execute
+    end
 
     redirect_to(account_retrievers_path)
   end
