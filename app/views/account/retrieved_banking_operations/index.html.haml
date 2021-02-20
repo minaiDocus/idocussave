@@ -2,7 +2,7 @@
   .row.derivationRight
     .col-md-6
       %h3
-        Opérations bancaires 
+        Opérations bancaires
         - if @operations
           %span.badge.badge-info.fs-origin= @operations.total_count
     .col-md-6
@@ -31,7 +31,7 @@
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
               %td= operation.label
-              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || operation.bank_account.original_currency['symbol'] || '€'}"
+              %td.amount= format_price_00((operation.amount * 100).round) + " #{operation.currency["symbol"] || operation.bank_account && operation.bank_account.original_currency['symbol'] || '€'}"
               - if current_user.pre_assignement_displayed?
                 %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
