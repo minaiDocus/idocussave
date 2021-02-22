@@ -10,11 +10,11 @@ class BankAccount < ApplicationRecord
 
   before_save :validate_data
 
-  validates :api_id, presence: true, :if => :from_budgea?
+  validates :api_id, presence: true, :if => :not_manually_created?
   validates_presence_of :bank_name, :name
   validate :uniqueness_of_number_and_bank_name
   validates :permitted_late_days, numericality: { greater_than: 0, less_than_or_equal_to: 365 }
-  validates_uniqueness_of :api_id, scope: :api_name
+  validates_uniqueness_of :api_id, scope: :api_name, :if => :not_manually_created?
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |e| e.is_for_pre_assignment }
   validates_presence_of :currency, if: Proc.new { |e| e.is_for_pre_assignment }
@@ -58,7 +58,7 @@ class BankAccount < ApplicationRecord
 private
 
   def validate_data
-    set_record_value if not from_budgea?
+    set_record_value if from_idocus?
 
     upcase_journal
   end
@@ -69,6 +69,12 @@ private
     self.original_currency['precision'] = 2 if original_currency['precision']   == '2'
     self.original_currency['datetime']  = nil if original_currency['datetime']  == ''
     self.original_currency['marketcap'] = nil if original_currency['marketcap'] == ''
+    self.api_id                         = self.number if self.number
+  end
+
+
+  def not_manually_created?
+    !from_idocus?
   end
 
 
@@ -86,7 +92,7 @@ private
   end
 
 
-  def from_budgea?
-    self.api_name == 'budgea'
+  def from_idocus?
+    self.api_name == 'idocus'
   end
 end

@@ -133,6 +133,7 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
     expect(period.product_option_orders.third.name).to eq 'excess_bank_accounts'
     expect(period.product_option_orders.third.quantity).to eq 3
+    expect(period.product_option_orders.last.price_in_cents_wo_vat).to eq 3*200.0
     expect(invoice.amount_in_cents_w_vat).to eq 5520
   end
 
@@ -154,7 +155,8 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
     expect(period.product_option_orders.last.name).to eq 'billing_bank_operation'
+    expect(period.product_option_orders.last.price_in_cents_wo_vat).to eq 5*100.0
     expect(period.product_option_orders.last.title).to match /mois de février/
-    expect(invoice.amount_in_cents_w_vat).to eq (6120 - 600)
+    expect(invoice.amount_in_cents_w_vat).to eq 5400
   end
 end

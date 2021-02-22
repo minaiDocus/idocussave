@@ -347,7 +347,7 @@ private
 
 
   def find_or_create_billing_history
-    self.billing_histories.find_or_create(self.start_date.strftime('%Y%m').to_i, self)
+    self.billing_histories.find_or_create(self.start_date.strftime('%Y%m').to_i, self) if user
   end
 
 
