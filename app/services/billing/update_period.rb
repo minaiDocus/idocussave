@@ -274,13 +274,14 @@ class Billing::UpdatePeriod
 
 
   def bank_accounts_options
-    excess_bank_accounts = @period.user.bank_accounts.size - 2
+    excess_bank_accounts = @period.user.bank_accounts.used.size - 2
+    option_infos = Subscription::Package.infos_of(:retriever_option)
 
     if excess_bank_accounts > 0
       option = ProductOptionOrder.new
 
       option.name        = 'excess_bank_accounts'
-      option.group_title = 'Excès comptes bancaires'
+      option.group_title = option_infos[:group]
 
       if excess_bank_accounts == 1
         option.title = "#{excess_bank_accounts} compte bancaire supplémentaire"
@@ -303,31 +304,30 @@ class Billing::UpdatePeriod
     @period.user.billing_histories.pending.each do |billing_history|
       reduced = (@subscription.retriever_price_option == :retriever)? false : true
 
-      amount = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
+      amount       = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
+      option_infos = Subscription::Package.infos_of(:retriever_option)
 
       billing_history.amount = amount
       billing_history.save
 
-      billing_history.processed
+      if billing_history.value_period.to_i > @period.start_date.strftime('%Y%m').to_i
+        billing_history.unprocessed
+      else
+        billing_history.processed
 
-      option_name    = 'billing_bank_operation'
-      option_title   = "Opération(s) bancaire(s) mois de #{I18n.l(@period.start_date, format: '%B')}"
-      value_period   = billing_history.value_period
-      current_period = value_period == (Date.today - 1.month).strftime('%Y%m').to_i
+      next if billing_history.value_period.to_i >= @period.start_date.strftime('%Y%m').to_i
 
       option = ProductOptionOrder.new
 
-      option.name        = option_name
-      option.group_title = "Récupération banque + Factures sur Internet"
+      option.name        = 'billing_bank_operation'
+      option.group_title = option_infos[:group]
 
-      option.title = option_title
+      option.title       = "Opérations bancaires mois de #{I18n.l(@period.start_date, format: '%B')}"
 
       option.duration = 0
       option.quantity = 1
       option.price_in_cents_wo_vat = amount
       option.is_frozen = true
-
-      next if (value_period == @period.start_date.strftime('%Y%m').to_i && current_period) || billing_options.include?(option) || @period.product_option_orders.where(name: option_name, title: option_title, is_frozen: true).present?
 
       billing_options << option
     end

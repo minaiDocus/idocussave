@@ -132,10 +132,12 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
     expect(period.product_option_orders.third.name).to eq 'excess_bank_accounts'
+    expect(period.product_option_orders.third.quantity).to eq 3
     expect(invoice.amount_in_cents_w_vat).to eq 5520
   end
 
   it 'generates operation options from any previous periods', :billing_history do
+    BankAccount.destroy_all
     user         = User.last
     subscription = user.subscription
     period       = subscription.periods.order(created_at: :asc).first
@@ -148,11 +150,11 @@ describe Billing::CreateInvoicePdf do
     invoice = Invoice.last
 
     expect(period.reload.get_active_packages).to eq [:ido_classique]
-    expect(period.product_option_orders.size).to eq 4
+    expect(period.product_option_orders.size).to eq 3
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
-    expect(period.product_option_orders.third.name).to eq 'excess_bank_accounts'
     expect(period.product_option_orders.last.name).to eq 'billing_bank_operation'
-    expect(invoice.amount_in_cents_w_vat).to eq 6120
+    expect(period.product_option_orders.last.title).to match /mois de février/
+    expect(invoice.amount_in_cents_w_vat).to eq (6120 - 600)
   end
 end
