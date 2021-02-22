@@ -207,7 +207,7 @@ class AccountBookType < ApplicationRecord
   end
 
   def only_one_jefacture_enabled_by_type
-    if self.jefacture_enabled && journal = user.account_book_types.find_by_jefacture_enabled_and_entry_type(true, self.entry_type)
+    if user && self.jefacture_enabled && journal = user.account_book_types.find_by_jefacture_enabled_and_entry_type(true, self.entry_type)
       errors.add(:jefacture_enabled, :taken) unless journal && journal == self
     end
   end
