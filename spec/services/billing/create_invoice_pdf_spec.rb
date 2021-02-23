@@ -154,7 +154,7 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.size).to eq 3
     expect(period.product_option_orders.first.name).to eq 'basic_package_subscription'
     expect(period.product_option_orders.second.name).to eq 'pre_assignment_option'
-    expect(period.product_option_orders.last.name).to eq 'billing_bank_operation'
+    expect(period.product_option_orders.last.name).to eq 'billing_previous_operations'
     expect(period.product_option_orders.last.price_in_cents_wo_vat).to eq 5*100.0
     expect(period.product_option_orders.last.title).to match /mois de février/
     expect(invoice.amount_in_cents_w_vat).to eq 5400

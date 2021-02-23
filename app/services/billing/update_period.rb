@@ -320,7 +320,7 @@ class Billing::UpdatePeriod
 
       option = ProductOptionOrder.new
 
-      option.name        = 'billing_bank_operation'
+      option.name        = 'billing_previous_operations'
       option.group_title = option_infos[:group]
 
       option.title       = "Opérations bancaires mois de #{I18n.l(Date.new(billing_history.value_period.to_s[0..3].to_i, billing_history.value_period.to_s[4..-1].to_i), format: '%B')}"

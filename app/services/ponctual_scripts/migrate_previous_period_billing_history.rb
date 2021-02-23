@@ -13,7 +13,7 @@ class PonctualScripts::MigratePreviousPeriodBillingHistory < PonctualScripts::Po
 
 
   def periods
-    Period.where('created_at BETWEEN ? AND ? AND user_id > 0', Date.new(2020, 1).beginning_of_month, Date.new(2021, 1).end_of_month)
+    Period.where('created_at BETWEEN ? AND ? AND user_id > 0', Date.new(2020, 1).beginning_of_month, Date.new(2021, 2).end_of_month)
   end
 
 
@@ -22,7 +22,7 @@ class PonctualScripts::MigratePreviousPeriodBillingHistory < PonctualScripts::Po
     counter = 0
 
     periods.each do |period|
-      next if period.user.nil? || !period.user.still_active?
+      next if period.user.nil?
       counter += 1
       BillingHistory.create(value_period: period.start_date.strftime('%Y%m').to_i, user: period.user, period: period, state: 'processed', amount: period.price_in_cents_w_vat)
     end
@@ -36,7 +36,7 @@ class PonctualScripts::MigratePreviousPeriodBillingHistory < PonctualScripts::Po
     counter = 0
 
     periods.each do |period|
-      next if period.user.nil? || !period.user.still_active?
+      next if period.user.nil?
       counter += 1
       period.billing_histories.destroy_all
     end
