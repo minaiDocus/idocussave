@@ -11,7 +11,7 @@ class BankAccount < ApplicationRecord
   before_save :validate_data
 
   validates :api_id, presence: true, :if => :not_manually_created?
-  validates_presence_of :bank_name, :name
+  validates_presence_of :bank_name, :name, :number
   validate :uniqueness_of_number_and_bank_name
   validates :permitted_late_days, numericality: { greater_than: 0, less_than_or_equal_to: 365 }
   validates_uniqueness_of :api_id, scope: :api_name, :if => :not_manually_created?

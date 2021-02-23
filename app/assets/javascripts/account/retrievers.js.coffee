@@ -458,9 +458,11 @@ jQuery ->
         $("#bank_account_original_currency_id").val(selected)
         $("#bank_account_original_currency_name").val(currencies[selected.toLowerCase()])
 
-      $('form#new_bank_account').submit ->
+      $('#submit_bank_account').click (e) ->
         $("#bank_account_name").val($("#bank_account_bank_name").val())
-        true
+        $('form#new_bank_account').submit()
+
+      $('label.required abbr[title="champ requis"]').css({fontWeight:800, color: 'red'})
 
   if $('#bank_settings.select .destroy_bank_account, #bank_settings.select .reopen_bank_account').length > 0
     $('.destroy_bank_account, .reopen_bank_account').click (e) ->
