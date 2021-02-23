@@ -95,7 +95,7 @@
             = f.input :user_id, :as => :hidden, :input_html => { :value => @customer.id }
             = f.input :api_name, :as => :hidden, :input_html => { :value => 'idocus' }
             = f.input :is_used, :as => :hidden, :input_html => { :value => true }
-            = f.input :bank_name, collection: [['Connecteur de Test', 'Connecteur de Test']], include_blank: false, label: 'Banque', hint: "Merci d’écrire à support@idocus.com quand vous voulez choisir un autre compte bancaire que dans cette liste"
+            = f.input :bank_name, collection: [['Connecteur de Test', 'Connecteur de Test']], include_blank: false, label: 'Banque', hint: "Merci de contacter le support (support@idocus.com), si votre compte bancaire ne fait pas partie de la liste, pour une demande d'ajout"
             = f.input :name, :as => :hidden, :input_html => { :value => 'Same of bank name' }
             = f.input :type_name, collection: bank_account_type_name, include_blank: false, label: 'Type de compte', selected: "unknown"
             = f.input :number
