@@ -49,6 +49,8 @@ class PonctualScripts::ResendOperationBlocked < PonctualScripts::PonctualScript
 
   def assign_data(operations)
     operations.each do |operation|
+      operation = operation.with_indifferent_access
+
       @bank_account = BankAccount.find(operation[:bank_account_id])
 
       logger_infos "[ResendOperationBlocked] - #{operation[:label]} sending"
