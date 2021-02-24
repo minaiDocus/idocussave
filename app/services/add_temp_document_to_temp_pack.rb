@@ -97,6 +97,7 @@ class AddTempDocumentToTempPack
           end
         else
           log_document = {
+            subject: "[AddTempDocumentToTempPack] temp document not saved",
             name: "AddTempDocumentToTempPack",
             error_group: "[add-temp-document-to-temp-pack] temp document not saved",
             erreur_type: "Temp Document not saved",
@@ -107,6 +108,7 @@ class AddTempDocumentToTempPack
               user: temp_document.user.inspect
             }
           }
+
           ErrorScriptMailer.error_notification(log_document).deliver
         end
       else

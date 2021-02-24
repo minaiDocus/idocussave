@@ -127,6 +127,7 @@ class EmailedDocument
               EmailedDocumentMailer.notify_finished_with_failure(email, emailed_document).deliver
 
               log_document = {
+                subject: "[EmailedDocument] finish with failure",
                 name: "EmailedDocument finish_with_failure",
                 error_group: "[EmailedDocument] - finish_with_failure",
                 erreur_type: "Emailed documents finish_with_failure",
@@ -150,6 +151,7 @@ class EmailedDocument
             emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver
 
             log_document = {
+              subject: "[EmailedDocument] failure",
               name: "EmailedDocument failure",
               error_group: "[EmailedDocument] - failure",
               erreur_type: "Emailed documents failure",
@@ -176,6 +178,7 @@ class EmailedDocument
           EmailedDocumentMailer.notify_error(email, attachment_names).deliver
 
           log_document = {
+            subject: "[EmailedDocument] error #{e.message}",
             name: "EmailedDocument error",
             error_group: "[EmailedDocument] - error",
             erreur_type: "Emailed documents error",

@@ -228,16 +228,17 @@ class Pack::Piece < ApplicationRecord
   def recreate_pdf(temp_dir = nil)
     unless temp_document
       log_document = {
-          name: "Pack::Piece",
-          error_group: "[pack-piece] piece without temp_document recreate_pdf",
-          erreur_type: "Piece without temp_document - recreate_pdf",
-          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
-          more_information: {
-            model: self.inspect,
-            user: self.user.inspect,
-            method: "recreate_pdf"
-          }
+        subject: "[Pack::Piece] piece without temp document recreate pdf",
+        name: "Pack::Piece",
+        error_group: "[pack-piece] piece without temp_document recreate_pdf",
+        erreur_type: "Piece without temp_document - recreate_pdf",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          model: self.inspect,
+          user: self.user.inspect,
+          method: "recreate_pdf"
         }
+      }
 
       ErrorScriptMailer.error_notification(log_document).deliver
 
@@ -292,6 +293,7 @@ class Pack::Piece < ApplicationRecord
         Pack::Piece.delay_for(20.minutes, queue: :low).correct_pdf_signature_of(self.id)
 
         log_document = {
+          subject: "[Pack::Piece] piece can't be saved or signed file not genereted",
           name: "Pack::Piece",
           error_group: "[pack-piece] piece can't be saved or signed file not genereted",
           erreur_type: "Piece can't be saved or signed file not genereted (#{to_sign_file.to_s}",
@@ -305,6 +307,7 @@ class Pack::Piece < ApplicationRecord
             method: "sign_piece"
           }
         }
+
         ErrorScriptMailer.error_notification(log_document).deliver
       end
     rescue => e
@@ -315,6 +318,7 @@ class Pack::Piece < ApplicationRecord
       Pack::Piece.delay_for(2.hours, queue: :low).correct_pdf_signature_of(self.id)
 
       log_document = {
+        subject: "[Pack::Piece] piece signing rescue #{e.message}",
         name: "Pack::Piece",
         error_group: "[pack-piece] piece signing rescue",
         erreur_type: "Piece - Signing rescue",
@@ -328,6 +332,7 @@ class Pack::Piece < ApplicationRecord
           error: e.to_s
         }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
     end
   end

@@ -54,19 +54,20 @@ class PdfIntegrator
     FileUtils.cp correction_data[:output_file], destination
 
     log_document = {
-        name: "PdfIntegrator",
-        error_group: "[pdf-integrator] file corrupted ==> forcing to correct",
-        erreur_type: "File corrupted, forcing to correct ...",
-        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-        more_information: {
-          api_name: @api,
-          file_path: @file_path,
-          file_corrupted: @file.path,
-          file_corrected: correction_data[:output_file],
-          corrected: correction_data[:corrected],
-          correction_errors: correction_data[:errors]
-        }
+      subject: "[PdfIntegrator] file corrupted, forcing to correct",
+      name: "PdfIntegrator",
+      error_group: "[pdf-integrator] file corrupted ==> forcing to correct",
+      erreur_type: "File corrupted, forcing to correct ...",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        api_name: @api,
+        file_path: @file_path,
+        file_corrupted: @file.path,
+        file_corrected: correction_data[:output_file],
+        corrected: correction_data[:corrected],
+        correction_errors: correction_data[:errors]
       }
+    }
 
     begin
       ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver

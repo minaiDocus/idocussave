@@ -87,6 +87,7 @@ class Retriever::ResumeBudgea
     raw_retriever += "</tbody></table>"
 
     log_info = {
+      subject: "[Retriever::ResumeBudgea] with error message content",
       name: "ResumeBudgeaRetriever",
       error_group: "[resume-budgea-retriever] with error message content",
       erreur_type: "ResumeBudgeaRetriever with error message content",

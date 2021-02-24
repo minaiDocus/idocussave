@@ -330,6 +330,7 @@ class Retriever < ApplicationRecord
     self.reload
 
     log_info = {
+      subject: "[Retriever] state after update",
       name: "UpdateRetrieverState",
       error_group: "[update-retriever-state] state after update",
       erreur_type: "update retriever state - state after update",

@@ -30,6 +30,7 @@ class PonctualScripts::ResendOperationBlocked < PonctualScripts::PonctualScript
     store_operation_result
 
     mail_infos = {
+      subject: "[PonctualScripts::ResendOperationBlocked] resend operation blocked",
       name: "PonctualScripts::ResendOperationBlocked",
       error_group: "[PonctualScripts] Resend Operation Blocked",
       erreur_type: "PonctualScripts to resend operation blocked ",

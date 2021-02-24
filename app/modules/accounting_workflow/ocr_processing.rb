@@ -11,6 +11,7 @@ module AccountingWorkflow::OcrProcessing
             AccountingWorkflow::OcrProcessing.delay_for(30.minutes, queue: :low).send_document(temp_document.id, (retry_count+1))
           else
             log_document = {
+              subject: "[AccountingWorkflow::OcrProcessing] can't send temp document to ocr #{e.message}",
               name: "OcrProcessing",
               error_group: "[OcrProcessing] sending temp doc to ocr",
               erreur_type: "Can't send temp doc to ocr : #{temp_document.original_file_name.to_s}",
@@ -42,6 +43,7 @@ module AccountingWorkflow::OcrProcessing
       end
 
       log_document = {
+        subject: "[AccountingWorkflow::OcrProcessing] an ocr pending document has been released #{temp_document.original_file_name.to_s}",
         name: "OcrProcessing",
         error_group: "[OcrProcessing] unlock blocked ocr_needed document",
         erreur_type: "An ocr pending document has been released : #{temp_document.original_file_name.to_s}",

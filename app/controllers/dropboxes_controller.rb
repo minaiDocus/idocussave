@@ -15,6 +15,7 @@ class DropboxesController < ApplicationController
       System::Log.info('dropbox_webhook', "[Webhook - header] #{request.headers['X-Dropbox-Signature']} - match : #{(signature == request.headers['X-Dropbox-Signature']).to_s}")
 
       log_document = {
+        subject: "[DropboxesController] webhook dropboxes unauthorized",
         name: "DropboxesController",
         error_group: "[dropboxes-controller] webhook dropboxes",
         erreur_type: "Webhook - Dropboxes",

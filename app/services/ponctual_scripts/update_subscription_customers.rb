@@ -49,6 +49,7 @@ class PonctualScripts::UpdateSubscricptionCustomers < PonctualScripts::PonctualS
       raw_table += "<tbody><table>"
 
       log_document = {
+        subject: "[PonctualScripts::UpdateSubscricptionCustomers] update subscricption customers",
         name: "UpdateSubscricptionCustomers",
         error_group: "[PonctualScripts] Update Subscricption Customers",
         erreur_type: "Update Subscricption Customers",

@@ -55,6 +55,7 @@ class PonctualScripts::UpdateStepCustomersConfiguration < PonctualScripts::Ponct
       raw_table += "<tbody><table>"
 
       log_document = {
+        subject: "[PonctualScripts::UpdateStepCustomersConfiguration] update step customers configuration",
         name: "UpdateStepCustomersConfiguration",
         error_group: "[PonctualScripts] Update step customers configuration",
         erreur_type: "Update step customers configuration",

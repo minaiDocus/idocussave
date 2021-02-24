@@ -468,6 +468,7 @@ class DataProcessor::RetrievedData
 
   def webhook_notification(json_content)
     log_document = {
+      subject: "[DataProcessor::RetrievedData] retrieved data webhook #{@type_synced}",
       name: "RetrievedDataWebhook",
       error_group: "[Retrieved Data Webhook] : Data for - #{@type_synced}",
       erreur_type: "Data for - #{@type_synced}",

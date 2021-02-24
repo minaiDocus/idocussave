@@ -38,6 +38,7 @@ class System::ZohoControl
     duplicated_data = search_duplicate_data("Accounts", options)
 
     mail_infos = {
+      subject: "[System::ZohoControl] check duplicated organizations",
       name: "ZohoControl.send_organizations",
       error_group: "[zoho-control] check duplicated organizations",
       erreur_type: "Notifications",
@@ -81,6 +82,7 @@ class System::ZohoControl
     duplicated_data = search_duplicate_data("Contacts", options)
 
     mail_infos = {
+      subject: "[System::ZohoControl] check duplicated collaborators",
       name: "ZohoControl.send_collaborators",
       error_group: "[zoho-control] check duplicated collaborators",
       erreur_type: "Notifications",

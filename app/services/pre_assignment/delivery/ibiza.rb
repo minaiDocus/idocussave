@@ -43,6 +43,7 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
       end
     rescue => e
       log_document = {
+        subject: "[PreAssignment::Delivery::Ibiza] active storage can't read file #{e;message}",
         name: "PreAssignment::Delivery::ForIbiza",
         error_group: "[pre-assignment-delivery-foribiza] active storage can't read file",
         erreur_type: "Active Storage, can't read file",
@@ -52,6 +53,7 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
           error: e.to_s
         }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
 
       if pending_message == 'limit pending reached'

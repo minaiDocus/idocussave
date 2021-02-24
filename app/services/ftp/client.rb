@@ -12,6 +12,7 @@ class Ftp::Client
       @client = Net::FTP.new( nil, ssl: { :verify_mode => OpenSSL::SSL::VERIFY_NONE } )
     rescue => e
       log_infos = {
+        subject: "[Ftp::Client] verify auth ssl / tls support #{e.message}",
         name: "FTPClient",
         error_group: "[ftp-client] verify auth ssl / tls support",
         erreur_type: "FTPClient - Verify auth ssl / tls support",
@@ -52,6 +53,7 @@ class Ftp::Client
       @ftp.got_error e.to_s
 
       log_infos = {
+        subject: "[Ftp::Client]  method missing #{e.message}",
         name: "FTPClient",
         error_group: "[ftp-client] method missing",
         erreur_type: "FTPClient - method missing",

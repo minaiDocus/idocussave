@@ -151,6 +151,7 @@ class SgiApiServices::GroupDocument
 
         rescue => e
           log_document = {
+            subject: "[SgiApiServices::GroupDocument] create temp document errors",
             name: "SgiApiServices::CreateTempDocumentFromGrouping",
             error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors",
             erreur_type: "create temp document with errors",

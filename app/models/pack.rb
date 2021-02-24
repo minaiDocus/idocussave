@@ -421,7 +421,8 @@ class Pack < ApplicationRecord
       FileUtils.rm temp_file_merge, force: true
       return true
     else
-     log_document = {
+      log_document = {
+        subject: "[Pack] pdftk fail merged",
         name: "Pack",
         error_group: "[pack] Pdftk fail merged",
         erreur_type: "Pdftk fail merged",
@@ -434,6 +435,7 @@ class Pack < ApplicationRecord
           modifiable_target_pdf?: DocumentTools.modifiable?(target_file).to_s
         }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
 
       return false

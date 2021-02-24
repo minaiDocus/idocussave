@@ -44,15 +44,17 @@ class Billing::DebitMandateResponse
       @errors = e.message
 
       log_document = {
-          name: "DebitMandateResponseService",
-          error_group: "[debit-mandates-response-service] error slimpay",
-          erreur_type: "Error Slimpay",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-          more_information: {
-            debit_mandate: @debit_mandate.inspect,
-            error: e.message
-          }
+        subject: "[Billing::DebitMandateResponse] error slimpay #{@errors}",
+        name: "DebitMandateResponseService",
+        error_group: "[debit-mandates-response-service] error slimpay",
+        erreur_type: "Error Slimpay",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          debit_mandate: @debit_mandate.inspect,
+          error: e.message
+        }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
     end
   end

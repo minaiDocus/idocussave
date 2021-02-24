@@ -244,6 +244,7 @@ class RetrieversController < ApiController
 
   def send_notification(retriever, initial_state, connection)
     log_document = {
+      subject: "[RetrieversController] budgea error event handler service",
       name: "BudgeaErrorEventHandlerService",
       error_group: "[Budgea Error Handler] : SCARequired/decoupled - retrievers",
       erreur_type: "SCARequired/decoupled retrievers",
@@ -261,6 +262,7 @@ class RetrieversController < ApiController
 
   def send_webauth_notification(parameters, url='', html_dom='', type = 'fetch')
     log_document = {
+      subject: "[RetrieversController] budgea webauth retrievers #{type}",
       name: "BudgeaWebAuth",
       error_group: "[Budgea Error Handler] : webAuth - retrievers - #{type}",
       erreur_type: "webAuth retrievers #{type}",
@@ -274,6 +276,7 @@ class RetrieversController < ApiController
 
   def send_callback_notification(parameters, access_token)
     log_document = {
+      subject: "[RetrieversController] budgea callback retriever",
       name: "BudgeaCallback",
       error_group: "[Budgea Callback] : Callback - retrievers",
       erreur_type: "Callback retriever",
@@ -286,6 +289,7 @@ class RetrieversController < ApiController
 
   def retriever_alert(params, type_synced)
     log_document = {
+      subject: "[RetrieversController] budgea webhook callback retriever does not exist #{type_synced}",
       name: "BudgeaWebhookCallback",
       error_group: "[Budgea Webhook Callback] : Retriever does not exist - #{type_synced}",
       erreur_type: "retriever does not exist",

@@ -16,6 +16,7 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
         end
       rescue => e
         log_document = {
+          subject: "[PreAssignmentDeliveryMailer] active Storage can't read file",
           name: "PreAssignmentDeliveryMailer",
           error_group: "[pre-assignment-delivery-mailer] active Storage can't read file",
           erreur_type: "Active Storage, can't read file",
@@ -25,6 +26,7 @@ class PreAssignmentDeliveryMailer < ActionMailer::Base
             error: e.to_s
           }
         }
+
         ErrorScriptMailer.error_notification(log_document).deliver
       end
     end

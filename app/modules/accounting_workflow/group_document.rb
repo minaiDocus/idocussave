@@ -183,6 +183,7 @@ class AccountingWorkflow::GroupDocument
       end
     rescue => e
       log_detail = {
+        subject: "[AccountingWorkflow::GroupDocument] group document archive rescue #{e.message}",
         name: "AccountingWorkflow::GroupDocument",
         error_group: "[accounting_workflow-group_document] group document archive rescue",
         erreur_type: "Group document archive rescue",
@@ -192,6 +193,7 @@ class AccountingWorkflow::GroupDocument
           error: e.to_s
         }
       }
+
       ErrorScriptMailer.error_notification(log_detail).deliver
     end
   end

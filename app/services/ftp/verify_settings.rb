@@ -28,6 +28,7 @@ class Ftp::VerifySettings
       @ftp.got_error e.to_s
 
       log_infos = {
+        subject: "[Ftp::VerifySettings]  execute #{e.message}",
         name: "VerifyFtpSettings",
         error_group: "[verify-ftp-settings] execute",
         erreur_type: "VerifyFtpSettings - execute",

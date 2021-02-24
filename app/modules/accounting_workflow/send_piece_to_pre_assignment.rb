@@ -17,6 +17,7 @@ class AccountingWorkflow::SendPieceToPreAssignment
         @piece.update(pre_assignment_state: 'ready') if @piece.pre_assignment_state == 'waiting'
 
         log_document = {
+          subject: "[AccountingWorkflow::SendPieceToPreAssignment] re-init pre assignment state",
           name: "AccountingWorkflow::SendPieceToPreAssignment",
           error_group: "[accounting-workflow-send-piece-to-pre-assignment] re-init pre assignment state",
           erreur_type: "Re-init pre assignment state",

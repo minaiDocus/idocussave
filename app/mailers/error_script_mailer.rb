@@ -15,7 +15,7 @@ class ErrorScriptMailer < ActionMailer::Base
 
     if error_script_mailer.counter <=  20 && error_script_mailer.enabled?
       error_script_mailer.save    
-      mail to: Settings.first.notify_errors_to, subject: "[MAIL SCRIPT ERREUR] - #{@script[:name]} - #{@script[:erreur_type]}"[0..200]
+      mail to: Settings.first.notify_errors_to, subject: "#{@script[:subject]}"[0..200]
     else
       error_script_mailer.is_enable = false
       error_script_mailer.save

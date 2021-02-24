@@ -65,6 +65,7 @@ class FileImport::Ftp
     true
   rescue Errno::ETIMEDOUT => e
     log_infos = {
+      subject: "[FileImport::Ftp] Errno::ETIMEDOUT test connection #{e.message}",
       name: "FTPImport",
       error_group: "[ftp-import] Errno::ETIMEDOUT test connection",
       erreur_type: "FTPImport - Errno::ETIMEDOUT test connection",
@@ -90,6 +91,7 @@ class FileImport::Ftp
       @ftp.got_error(e.to_s, true)
     end
     log_infos = {
+      subject: "[FileImport::Ftp] ECONNREFUSED / FTPPermError test connection #{e.message}",
       name: "FTPImport",
       error_group: "[ftp-import] ECONNREFUSED / FTPPermError test connection",
       erreur_type: "FTPImport - FTPTempError / FTPPermError test connection",
@@ -197,6 +199,7 @@ class FileImport::Ftp
           []
         else
           log_infos = {
+            subject: "[FileImport::Ftp] FTPTempError / FTPPermError validate item #{e.message}",
             name: "FTPImport",
             error_group: "[ftp-import] FTPTempError / FTPPermError validate item",
             erreur_type: "FTPImport - FTPTempError / FTPPermError validate item",
@@ -239,6 +242,7 @@ class FileImport::Ftp
         client.mkdir item.path
       rescue => e
         log_infos = {
+          subject: "[FileImport::Ftp] synchronize folder #{e.message}",
           name: "FTPImport",
           error_group: "[ftp-import] synchronize folder",
           erreur_type: "FTPImport - synchronize folder",
@@ -278,6 +282,7 @@ class FileImport::Ftp
         []
       else
         log_infos = {
+          subject: "[FileImport::Ftp] FTPTempError / FTPPermError remove item #{e.message}",
           name: "FTPImport",
           error_group: "[ftp-import] FTPTempError / FTPPermError remove item",
           erreur_type: "FTPImport - FTPTempError / FTPPermError remove item",
@@ -329,6 +334,7 @@ class FileImport::Ftp
           []
         else
           log_infos = {
+            subject: "[FileImport::Ftp] FTPTempError / FTPPermError process #{e.message}",
             name: "FTPImport",
             error_group: "[ftp-import] FTPTempError / FTPPermError process",
             erreur_type: "FTPImport - FTPTempError / FTPPermError process",

@@ -15,9 +15,10 @@ class Api::V2::PiecesController < ActionController::Base
       piece.reload
       if !piece.pre_assignment_waiting?
         log_document = {
+          subject: "[Api::V2::PiecesController] can't update piece state",
           name: "SupplierRecognition",
-          error_group: "[SupplierRecognition] : cant'update piece's state",
-          erreur_type: "SupplierRecognition - cant'update piece's state",
+          error_group: "[SupplierRecognition] : can't update piece state",
+          erreur_type: "SupplierRecognition - can't update piece state",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: { piece: piece.inspect, error: "Can't update state" }
         }
@@ -28,9 +29,10 @@ class Api::V2::PiecesController < ActionController::Base
       render json: serializer.new(piece)
     else
       log_document = {
-        name: "SupplierRecognition",
-        error_group: "[SupplierRecognition] : cant'update piece's state",
-        erreur_type: "SupplierRecognition - cant'update piece's state",
+        subject: "[Api::V2::PiecesController] unprocessable entity",
+        name: "Unprocessable_entity",
+        error_group: "[Unprocessable_entity] : unprocessable entity",
+        erreur_type: "Unprocessable_entity - unprocessable entity",
         date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
         more_information: { piece: piece.inspect, error: piece.errors.inspect }
       }

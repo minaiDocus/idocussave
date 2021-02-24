@@ -21,6 +21,7 @@ class Retriever::CreateBudgeaConnection
       force = true if message.to_s.match(/You need to give the resume parameter/i)
 
       log_info = {
+        subject: "[Retriever::CreateBudgeaConnection] error on creation",
         name: "ErrorRetriever",
         error_group: "[error-retriever] error on creation",
         erreur_type: "error-retriever - error on creation",

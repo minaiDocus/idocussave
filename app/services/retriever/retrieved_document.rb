@@ -45,6 +45,7 @@ class Retriever::RetrievedDocument
     end
 
     log_document = {
+      subject: "[Retriever::RetrievedDocument] retry get file from retriever #{retriever.name.to_s}",
       name: "RetrievedDocument",
       error_group: "[retrieved-document] retry get file from retriever",
       erreur_type: "Retry get file from retriever : #{retriever.name.to_s}",
@@ -97,6 +98,7 @@ class Retriever::RetrievedDocument
         retriever.temp_documents << @temp_document
       else
         log_document = {
+          subject: "[Retriever::RetrievedDocument] invalid retrieved document #{retriever.name.to_s}",
           name: "RetrievedDocument",
           error_group: "[retrieved-document] invalid retrieved document",
           erreur_type: "Invalid document from retriever : #{retriever.name.to_s}",

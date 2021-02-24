@@ -143,16 +143,18 @@ class CustomActiveStorageObject
         System::Log.info('active_storage_logs', "[Generate File] #{@object.class.name} - #{@object.id} - Not generated")
 
         log_document = {
-            name: "CustomActiveStorageObject",
-            error_group: "[custom-active-storage-object] not generated file",
-            erreur_type: "Active Storage, Not generated file",
-            date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
-            more_information: {
-              object: @object.inspect,
-              style: style.to_s,
-              path: tmp_file.try(:path)
-            }
+          subject: "[CustomActiveStorageObject] not generated file",
+          name: "CustomActiveStorageObject",
+          error_group: "[custom-active-storage-object] not generated file",
+          erreur_type: "Active Storage, Not generated file",
+          date_erreur: Time.now.strftime('%Y-%M-%d %H:%M:%S'),
+          more_information: {
+            object: @object.inspect,
+            style: style.to_s,
+            path: tmp_file.try(:path)
+          }
         }
+
         ErrorScriptMailer.error_notification(log_document).deliver
       end
 
@@ -167,6 +169,7 @@ class CustomActiveStorageObject
       end
 
       log_document = {
+        subject: "[CustomActiveStorageObject] generate file retry #{e.message}",
         name: "CustomActiveStorageObject",
         error_group: "[custom-active-storage-object] generate file retry",
         erreur_type: "Active Storage, Generate File Retry",
@@ -178,6 +181,7 @@ class CustomActiveStorageObject
           retry: retries
         }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
 
       @base_path = nil

@@ -138,11 +138,12 @@ class PonctualScripts::BudgeaDeleteConnections < PonctualScripts::PonctualScript
     raw_retrievers += "</tbody></table>"
 
     log_document = {
-        name: "PonctualScripts::BudgeaDeleteConnections",
-        error_group: "[Ponctual Script] : Suppression Users/Connections Budgea",
-        erreur_type: "Suppression Users/Connections Budgea",
-        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-        raw_information: raw_users + "<br/>" + raw_retrievers
+      subject: "[PonctualScripts::BudgeaDeleteConnections] suppression users/connections budgea",
+      name: "PonctualScripts::BudgeaDeleteConnections",
+      error_group: "[Ponctual Script] : Suppression Users/Connections Budgea",
+      erreur_type: "Suppression Users/Connections Budgea",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      raw_information: raw_users + "<br/>" + raw_retrievers
     }
 
     ErrorScriptMailer.error_notification(log_document).deliver

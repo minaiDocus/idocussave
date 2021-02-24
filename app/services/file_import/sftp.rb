@@ -64,6 +64,7 @@ class FileImport::Sftp
     true
   rescue Errno::ETIMEDOUT => e
     log_infos = {
+      subject: "[FileImport::Sftp] Errno::ETIMEDOUT test connection #{e.message}",
       name: "SFTPImport",
       error_group: "[sftp-import] Errno::ETIMEDOUT test connection",
       erreur_type: "SFTPImport - Errno::ETIMEDOUT test connection",
@@ -89,6 +90,7 @@ class FileImport::Sftp
       @sftp.update is_configured: false
     end
     log_infos = {
+      subject: "[FileImport::Sftp] ECONNREFUSED / SFTPPermError test connection #{e.message}",
       name: "SFTPImport",
       error_group: "[sftp-import] ECONNREFUSED / SFTPPermError test connection",
       erreur_type: "SFTPImport - SFTPTempError / SFTPPermError test connection",
@@ -196,6 +198,7 @@ class FileImport::Sftp
           []
         else
           log_infos = {
+            subject: "[FileImport::Sftp] SFTPTempError / SFTPPermError validate item #{e.message}",
             name: "SFTPImport",
             error_group: "[sftp-import] SFTPTempError / SFTPPermError validate item",
             erreur_type: "SFTPImport - SFTPTempError / SFTPPermError validate item",
@@ -238,6 +241,7 @@ class FileImport::Sftp
         client.mkdir item.path
       rescue => e
         log_infos = {
+          subject: "[FileImport::Sftp] synchronize folder #{e.message}",
           name: "SFTPImport",
           error_group: "[sftp-import] synchronize folder",
           erreur_type: "SFTPImport - synchronize folder",
@@ -277,6 +281,7 @@ class FileImport::Sftp
         []
       else
         log_infos = {
+          subject: "[FileImport::Sftp] SFTPTempError / SFTPPermError remove item #{e.message}",
           name: "SFTPImport",
           error_group: "[sftp-import] SFTPTempError / SFTPPermError remove item",
           erreur_type: "SFTPImport - SFTPTempError / SFTPPermError remove item",
@@ -328,6 +333,7 @@ class FileImport::Sftp
           []
         else
           log_infos = {
+            subject: "[FileImport::Sftp] SFTPTempError / SFTPPermError process #{e.message}",
             name: "SFTPImport",
             error_group: "[sftp-import] SFTPTempError / SFTPPermError process",
             erreur_type: "SFTPImport - SFTPTempError / SFTPPermError process",

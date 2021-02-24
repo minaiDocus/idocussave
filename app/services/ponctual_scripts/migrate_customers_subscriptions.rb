@@ -58,6 +58,7 @@ class PonctualScripts::MigrateCustomersSubscriptions < PonctualScripts::Ponctual
 
     if not_updated_lists.present?
       log_document = {
+        subject: "[PonctualScripts::MigrateCustomersSubscriptions] migration extentis to iDo micro",
         name: "MigrateCustomersSubscriptions",
         error_group: "[PonctualScripts] Migration Extentis to Ido micro",
         erreur_type: "Migration Extentis to Ido micro",

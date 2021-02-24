@@ -24,6 +24,7 @@ class PreAssignment::Delivery::ExactOnline < PreAssignment::Delivery::DataServic
       end
     rescue => e
       log_document = {
+        subject: "[PreAssignment::Delivery::ExactOnline] active storage can't read file #{e;message}",
         name: "PreAssignment::Delivery::ForExactOnline",
         error_group: "[pre-assignment-delivery-forexactonline] active storage can't read file",
         erreur_type: "Active Storage, can't read file",
@@ -33,6 +34,7 @@ class PreAssignment::Delivery::ExactOnline < PreAssignment::Delivery::DataServic
           error: e.to_s
         }
       }
+
       ErrorScriptMailer.error_notification(log_document).deliver
 
       if pending_message == 'limit pending reached'

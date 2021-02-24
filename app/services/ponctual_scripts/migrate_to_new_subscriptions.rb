@@ -57,6 +57,7 @@ class PonctualScripts::MigrateToNewSubscriptions < PonctualScripts::PonctualScri
 
 
       log_document = {
+        subject: "[PonctualScripts::MigrateToNewSubscriptions] migration to new subscription",
         name: "MigrateToNewSubscriptions",
         error_group: "[PonctualScripts] Migration to new subscription",
         erreur_type: "Migration to new subscription",
