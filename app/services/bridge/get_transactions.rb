@@ -24,9 +24,10 @@ class Bridge::GetTransactions
 
             save_operation(transaction)
 
-            @operation.reload
-
-            @user.billing_histories.find_or_create(@operation.date.strftime('%Y%m').to_i, @user.subscription.current_period)
+            if @operation && @operation.persisted?
+              @operation.reload
+              @user.billing_histories.find_or_create(@operation.date.strftime('%Y%m').to_i, @user.subscription.current_period)
+            end
           end
         end
       end
