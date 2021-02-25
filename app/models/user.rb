@@ -340,6 +340,24 @@ class User < ApplicationRecord
     collaborator? || (is_pre_assignement_displayed && act_as_a_collaborator_into_pre_assignment)
   end
 
+  def authorized_all_upload?
+    self.try(:options).try(:upload_authorized?) && authorized_bank_upload?
+  end
+
+  def authorized_upload?
+    self.try(:options).try(:upload_authorized?) || authorized_bank_upload?
+  end
+
+  def authorized_bank_upload?
+    period = self.try(:subscription).try(:current_period)
+
+    if period
+      self.try(:options).try(:retriever_authorized?) && period.is_active?(:retriever_option)
+    else
+      false
+    end
+  end
+
   # TODO : need a test
   def self.search(contains)
     users = self.all

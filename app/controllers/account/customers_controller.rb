@@ -260,7 +260,7 @@ class Account::CustomersController < Account::OrganizationController
   def edit_mcf; end
 
   def upload_email_infos
-    if @customer.options.try(:is_upload_authorized) && @customer.active?
+    if @customer.authorized_upload? && @customer.active?
       render :upload_by_email
     else
       flash[:error] = t('authorization.unessessary_rights')
@@ -355,7 +355,7 @@ class Account::CustomersController < Account::OrganizationController
     if action_name.in?(%w[info new create]) && !(@user.leader? || @user.groups.any?)
       authorized = false
     end
-    if action_name.in?(%w[edit_period_options update_period_options]) && !@customer.options.is_upload_authorized
+    if action_name.in?(%w[edit_period_options update_period_options]) && !@customer.authorized_upload?
       authorized = false
     end
     if action_name.in?(%w[edit_ibiza update_ibiza]) && !@organization.ibiza.try(:configured?)

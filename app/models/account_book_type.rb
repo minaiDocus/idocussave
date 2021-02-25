@@ -65,6 +65,7 @@ class AccountBookType < ApplicationRecord
   scope :compta_processable,         -> { where(entry_type: [1,2,3,4]) }
   scope :not_compta_processable,     -> { where(entry_type: 0) }
   scope :pre_assignment_processable, -> { where(entry_type: [1,2,3,4]) }
+  scope :bank_processable,           -> { where('entry_type = 4 OR domain = "BQ - Banque"') }
 
 
 
