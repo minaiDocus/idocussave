@@ -77,7 +77,7 @@
       #pageslist.box.derivationRight
         %input.href_download{type: :hidden, value: ""}
         %input.href_download_zip{type: :hidden, value: ""}
-        %input.is_collaborator{type: :hidden, value: "#{@user.collaborator? ? 1 : 0}"}
+        %input.is_collaborator{type: :hidden, value: "#{@user.has_collaborator_action? ? 1 : 0}"}
         = render partial: '/account/documents/pieces/index'
       #preseizuresList.derivationRight
         = render partial: '/account/documents/preseizures/index'

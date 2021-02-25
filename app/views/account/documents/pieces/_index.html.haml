@@ -2,7 +2,7 @@
   .header.clearfix.margin0left{style: "border-bottom: 1px solid #ddd; margin-bottom: 10px"}
     %h3.float-left
       Pieces
-    - if @user.collaborator?
+    - if @user.has_collaborator_action?
       %a.do-editSelectedPreseizures.do-tooltip.hide{href: '#editSelectedPreseizures', title: 'Edition multiple', style: 'border: 2px solid #B1D837; padding: 5px 2px 5px 5px; border-radius: 3px', data: { toggle: 'modal' } }
         %i.icon-edit        
   .content.pages

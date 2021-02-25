@@ -46,7 +46,7 @@
           - if (@user.pre_assignement_displayed? && @software != '' && @need_delivery != 'no')
             %a.do-deliverAllPreseizure.do-tooltip.margin3{href: '#', title: "Livraison écriture comptable (#{@software_human_name})"}
               = glyphicon('loop-circular')
-          - if (@user.collaborator?) 
+          - if (@user.has_collaborator_action?)
             %a.tip_edit_multiple.do-editSelectedPreseizures.do-tooltip.margin3.hide{"data-toggle"=>"modal", :href => "#editSelectedPreseizures", :title => "Edition multiple"}
               = glyphicon('brush')
           - if @user.pre_assignement_displayed?

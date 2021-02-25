@@ -14,7 +14,7 @@
     .col-md-1.actionbox.padding1
       %a.tip_edit.float-right.do-tooltip{href: '#', title: "Edition", data: {id: preseizure.id}}
         = glyphicon('pencil')
-      - if (@user.collaborator? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
+      - if (@user.has_collaborator_action? && @software != '' && preseizure.is_not_delivered? && !preseizure.is_locked)
         %a.tip_deliver.float-right.do-tooltip{href: '#', title: "Livraison (#{@software_human_name})", data: {id: preseizure.id}}
           = glyphicon('loop-circular')
       %a.tip_selection.float-right.do-tooltip{href: '#', title: "Sélection", data: {id: "div_#{preseizure.id}"}}
@@ -30,10 +30,10 @@
             %th.date.text-center Date
         %tbody
           %tr
-            %td.date.text-center#date{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+            %td.date.text-center#date{title: "#{@user.has_collaborator_action? ? 'Cliquez pour modifier' : ''}"}
               .content_date
                 = preseizure.date.try(:to_date)
-              - if @user.collaborator?
+              - if @user.has_collaborator_action?
                 .edit_content_date.hide
                   %input.edit_content_date_number.margin0bottom{type: :text, value: preseizure.date.try(:to_date), placeholder: preseizure.date.try(:to_date), readonly: :readonly}
     - if preseizure.delivery_tried_at.present?
@@ -86,38 +86,38 @@
             - preseizure_entries.each do |entry|
               %tr
                 %td.account
-                  .content_account{title: "#{@user.collaborator? ? 'Cliquez pour modifier' : ''}"}
+                  .content_account{title: "#{@user.has_collaborator_action? ? 'Cliquez pour modifier' : ''}"}
                     = entry.account.number
-                  - if @user.collaborator?
+                  - if @user.has_collaborator_action?
                     .edit_account.hide
                       %input.edit_account_number.margin0{type: :text, placeholder: entry.account.number , value: entry.account.number}
                       .suggestion_account_list.hide
                 %input.account_id_hidden{type: :hidden, value: entry.account.id}
-                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
+                %td.entry.text-center{title: "#{(@user.has_collaborator_action? && entry.type == 1) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
                   - if entry.type == 1
                     .content_amount
                       .content_amount_number
                         = entry.amount.to_f
-                      - if @user.collaborator?
+                      - if @user.has_collaborator_action?
                         %span.debit_or_credit.hide.float-right
                           = glyphicon('arrow-thick-right')
-                    - if @user.collaborator?
+                    - if @user.has_collaborator_action?
                       .edit_amount.hide
                         %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
                         %input.entry_type{type: :hidden, value: entry.type}
 
-                %td.entry.text-center{title: "#{(@user.collaborator? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
+                %td.entry.text-center{title: "#{(@user.has_collaborator_action? && entry.type == 2) ? 'Cliquez pour modifier' : ''}", class: "#{irregular_debit_credit_somme ? 'color_red' : '' }"}
                   - if entry.type == 2
                     .content_amount
-                      - if @user.collaborator?
+                      - if @user.has_collaborator_action?
                         %span.debit_or_credit.hide.float-left                          
                           = glyphicon('arrow-thick-left')
                       &nbsp;&nbsp;
                       .content_amount_number
                         = entry.amount.to_f
-                    - if @user.collaborator?
+                    - if @user.has_collaborator_action?
                       .edit_amount.hide
                         %input.margin0{type: :text, placeholder: entry.amount, value: entry.amount}
                         %input.entry_type{type: :hidden, value: entry.type}
-                - if @user.collaborator?
+                - if @user.has_collaborator_action?
                   %input.entry_id_hidden{type: :hidden, value: entry.id}

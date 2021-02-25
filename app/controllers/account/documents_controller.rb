@@ -696,7 +696,7 @@ class Account::DocumentsController < Account::AccountController
     end
 
     if params[:page].to_i == 1
-      @need_delivery = @user.collaborator? && pack.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no'
+      @need_delivery = @user.has_collaborator_action? && pack.reports.not_delivered.not_locked.count > 0 ? 'yes' : 'no'
     end
 
     if params[:page].to_i == 1
@@ -735,7 +735,7 @@ class Account::DocumentsController < Account::AccountController
     end
 
     if params[:page].to_i == 1
-      @need_delivery = @user.collaborator? && source.is_not_delivered? && !source.is_locked ? 'yes' : 'no'
+      @need_delivery = @user.has_collaborator_action? && source.is_not_delivered? && !source.is_locked ? 'yes' : 'no'
     end
   end
 

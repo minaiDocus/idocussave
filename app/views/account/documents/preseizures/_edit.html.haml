@@ -1,12 +1,12 @@
 .edit.preseizure
   = simple_form_for @preseizure, url: '', method: 'get', html: { class: 'form-horizontal', id: 'preseizure_edition_form' } do |f|
     = f.hidden_field :id
-    = f.input :date, as: :string, disabled: (@user.collaborator? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
-    = f.input :deadline_date, as: :string, disabled: (@user.collaborator? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.deadline_date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
-    = f.input :third_party, disabled: (@user.collaborator? ? false : true)
-    = f.input :operation_label, as: :text, disabled: (@user.collaborator? ? false : true)
-    = f.input :piece_number, disabled: (@user.collaborator? ? false : true)
-    = f.input :amount, disabled: (@user.collaborator? ? false : true)
-    = f.input :currency, disabled: (@user.collaborator? ? false : true)
-    = f.input :conversion_rate, disabled: (@user.collaborator? ? false : true)
-    = f.input :observation, as: :text, disabled: (@user.collaborator? ? false : true)
+    = f.input :date, as: :string, disabled: (@user.has_collaborator_action? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
+    = f.input :deadline_date, as: :string, disabled: (@user.has_collaborator_action? ? false : true), class: 'input-medium date datepicker', input_html: { :value => f.object.deadline_date.try(:to_date) }, wrapper_html: { class: 'date datepicker' }
+    = f.input :third_party, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :operation_label, as: :text, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :piece_number, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :amount, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :currency, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :conversion_rate, disabled: (@user.has_collaborator_action? ? false : true)
+    = f.input :observation, as: :text, disabled: (@user.has_collaborator_action? ? false : true)
