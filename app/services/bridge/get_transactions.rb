@@ -37,7 +37,7 @@ class Bridge::GetTransactions
   private
 
   def save_operation(transaction)
-    return if transaction.is_future || Date.today.mjd - transaction.date.mjd < 3
+    return if transaction.is_future || Date.today.mjd - transaction.date.mjd >= 3
 
     @operation.date   = transaction.date
     @operation.amount = transaction.amount
