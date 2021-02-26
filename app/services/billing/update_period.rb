@@ -274,6 +274,8 @@ class Billing::UpdatePeriod
 
 
   def bank_accounts_options
+    return nil if not @period.user
+
     excess_bank_accounts = @period.user.bank_accounts.used.size - 2
     option_infos = Subscription::Package.infos_of(:retriever_option)
 
@@ -299,6 +301,8 @@ class Billing::UpdatePeriod
 
 
   def operation_options
+    return nil if not @period.user
+
     billing_options = []
 
     @period.user.billing_histories.pending.each do |billing_history|
@@ -323,7 +327,12 @@ class Billing::UpdatePeriod
       option.name        = 'billing_previous_operations'
       option.group_title = option_infos[:group]
 
-      option.title       = "Opérations bancaires mois de #{I18n.l(Date.new(billing_history.value_period.to_s[0..3].to_i, billing_history.value_period.to_s[4..-1].to_i), format: '%B')}"
+      begin
+        option.title = "Opérations bancaires mois de #{I18n.l(Date.new(billing_history.value_period.to_s[0..3].to_i, billing_history.value_period.to_s[4..-1].to_i), format: '%B')} #{ billing_history.value_period.to_s[0..3].to_i }"
+      rescue => e
+        p '----' + billing_history.inspect
+        option.title = "Ancienne opérations bancaires"
+      end
 
       option.duration = 0
       option.quantity = 1
