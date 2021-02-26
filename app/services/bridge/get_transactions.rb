@@ -22,7 +22,7 @@ class Bridge::GetTransactions
           if transaction.date >= bank_account.start_date
             @operation = Operation.new(bank_account: bank_account, user: @user, organization: @user.organization)
 
-            save_operation(transaction)
+            save_operation(transaction) unless transaction.is_future || transaction.raw_description == 'Virement'
 
             if @operation && @operation.persisted?
               @operation.reload
@@ -37,8 +37,6 @@ class Bridge::GetTransactions
   private
 
   def save_operation(transaction)
-    return if transaction.is_future || Date.today.mjd - transaction.date.mjd >= 3
-
     @operation.date   = transaction.date
     @operation.amount = transaction.amount
     @operation.label  = @operation.bank_account.type_name == 'card' ? '[CB]' + transaction.raw_description : transaction.raw_description
