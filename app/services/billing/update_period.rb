@@ -331,7 +331,7 @@ class Billing::UpdatePeriod
         option.title = "Opérations bancaires mois de #{I18n.l(Date.new(billing_history.value_period.to_s[0..3].to_i, billing_history.value_period.to_s[4..-1].to_i), format: '%B')} #{ billing_history.value_period.to_s[0..3].to_i }"
       rescue => e
         p '----' + billing_history.inspect
-        option.title = "Ancienne opérations bancaires"
+        return nil
       end
 
       option.duration = 0
