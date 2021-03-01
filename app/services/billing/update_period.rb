@@ -319,8 +319,9 @@ class Billing::UpdatePeriod
       else
         billing_history.processed
       end
+      billing_history.save
 
-      next if billing_history.value_period.to_i >= @period.start_date.strftime('%Y%m').to_i
+      next if (billing_history.value_period.to_i >= @period.start_date.strftime('%Y%m').to_i) || (user.reload.billing_histories.where(value_period: billing_history.value_period).where.not(state: 'pending', id: billing_history.id))
 
       option = ProductOptionOrder.new
 
