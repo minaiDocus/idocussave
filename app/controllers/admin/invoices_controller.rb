@@ -51,6 +51,29 @@ class Admin::InvoicesController < Admin::AdminController
 
     filename = "order_#{invoice_time.strftime('%Y%m')}.csv"
 
+    mail_infos = {
+      subject: "[Admin::InvoicesController] generate invoice debit order csv file with #{current_user.info}",
+      name: "Admin::InvoicesController.debit_order",
+      error_group: "[admin-invoices-controller] generate invoice debit order csv file",
+      erreur_type: "Generate invoice debit order csv file",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        target_name: request.path,
+        path: request.path,
+        remote_ip: request.remote_ip,
+        user_info: current_user.info,
+        debit_date: debit_date,
+        invoice_time: invoice_time,
+        method: "debit_order"
+      }
+    }
+
+    begin
+      ErrorScriptMailer.error_notification(mail_infos, { attachements: [{name: filename, file: File.read(csv)}] } ).deliver
+    rescue
+      ErrorScriptMailer.error_notification(mail_infos).deliver
+    end
+
     send_data(csv, type: 'text/csv', filename: filename)
   end
 
