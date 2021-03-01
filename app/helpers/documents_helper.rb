@@ -8,7 +8,7 @@ module DocumentsHelper
   def account_book_types_option
     account_book_types = []
 
-    if @user.authorized_all_upload? || !@user.authorized_bank_upload?
+    if @user.try(:options).try(:upload_authorized?) || @user.authorized_all_upload?
       account_book_types = @user.account_book_types.by_position
     elsif @user.authorized_bank_upload?
       account_book_types = @user.account_book_types.bank_processable
@@ -251,7 +251,7 @@ module DocumentsHelper
         journals                    = []
         journals_compta_processable = []
 
-        if user.authorized_all_upload? || !user.authorized_bank_upload?
+        if user.authorized_all_upload? || user.try(:options).try(:upload_authorized?)
           journals = user.account_book_types.order(name: :asc).map do |j|
             j.name + ' ' + j.description
           end
