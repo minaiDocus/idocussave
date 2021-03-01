@@ -1,19 +1,17 @@
 class PonctualScripts::ResendOperationBlocked < PonctualScripts::PonctualScript
-  def self.execute
-    new().run
+  def self.execute(piece_name)
+    new({piece_name: piece_name}).run
   end
 
   private
 
   def execute
-    api_ids = Operation.where('created_at BETWEEN "2021-02-19 00:00:00" AND "2021-02-22 23:59:59" AND api_name = "capidocus"').collect(&:api_id).uniq
+    api_ids = Operation.where(api_id: @options[:piece_name]).collect(&:api_id).uniq
     @result    = { created_operation: [], created_operation_count: 0, rejected_operation: [], rejected_operation_count: 0 }
 
     logger_infos "[ResendOperationBlocked] - total piece need to resend: #{api_ids.size}"
 
     api_ids.each do |api_id|
-      next if api_id == 'JNT%DINU_BQ_202102_004'
-
       logger_infos "[ResendOperationBlocked] - with api_id: #{api_id} - Start"
 
       file_p = "/nfs/staffing_internal/livraison/pre_assigning/#{api_id}.json"
