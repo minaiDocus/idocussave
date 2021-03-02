@@ -278,7 +278,7 @@ class Billing::UpdatePeriod
 
     bank_ids = @period.user.operations.where("DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime("%Y%m")}").pluck(:bank_account_id).uniq
 
-    excess_bank_accounts = user.bank_accounts.where(id: bank_ids).size - 2
+    excess_bank_accounts = @period.user.bank_accounts.where(id: bank_ids).size - 2
     option_infos = Subscription::Package.infos_of(:retriever_option)
 
     if excess_bank_accounts > 0
@@ -305,13 +305,16 @@ class Billing::UpdatePeriod
     return nil if not @period.user
 
     billing_options = []
+    option_infos = Subscription::Package.infos_of(:retriever_option)
+    reduced      = (@subscription.retriever_price_option == :retriever)? false : true
+    amount       = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
 
     operations_dates = @period.user.operations.where("DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime('%Y%m')}").map{|ope| ope.date.strftime('%Y%m')}.uniq
     period_dates     = @period.user.periods.map{|_period| _period.start_date.strftime('%Y%m')}.uniq
 
     rest = operations_dates - period_dates
 
-    rest.each do |value_date|
+    rest.sort.each do |value_date|
       if value_date.to_s.match(/^[0-9]{6}$/) && value_date.to_i >= 202001 && value_date.to_i < @period.start_date.strftime("%Y%m").to_i
         option = ProductOptionOrder.new
 
@@ -319,9 +322,9 @@ class Billing::UpdatePeriod
         option.group_title = option_infos[:group]
 
         begin
-          option.title = "Opérations bancaires mois de #{I18n.l(Date.new(value_date.to_s[0..3].to_i, valued_date.to_s[4..-1].to_i), format: '%B')} #{ value_date.to_s[0..3].to_i }"
+          option.title = "Opérations bancaires mois de #{I18n.l(Date.new(value_date.to_s[0..3].to_i, value_date.to_s[4..-1].to_i), format: '%B')} #{value_date.to_s[0..3].to_i}"
         rescue => e
-          p '---' + value_date.to_s
+          p "----->#{e.to_s}---->" + value_date.to_s
           next
         end
 
