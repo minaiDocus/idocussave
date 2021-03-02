@@ -276,7 +276,9 @@ class Billing::UpdatePeriod
   def bank_accounts_options
     return nil if not @period.user
 
-    excess_bank_accounts = @period.user.bank_accounts.used.size - 2
+    bank_ids = @period.user.operations.where("DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime("%Y%m")}").pluck(:bank_account_id).uniq
+
+    excess_bank_accounts = user.bank_accounts.where(id: bank_ids).size - 2
     option_infos = Subscription::Package.infos_of(:retriever_option)
 
     if excess_bank_accounts > 0
@@ -299,48 +301,36 @@ class Billing::UpdatePeriod
     end
   end
 
-
   def operation_options
     return nil if not @period.user
 
     billing_options = []
 
-    @period.user.billing_histories.pending.each do |billing_history|
-      reduced = (@subscription.retriever_price_option == :retriever)? false : true
+    operations_dates = @period.user.operations.where("DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime('%Y%m')}").map{|ope| ope.date.strftime('%Y%m')}.uniq
+    period_dates     = @period.user.periods.map{|_period| _period.start_date.strftime('%Y%m')}.uniq
 
-      amount       = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
-      option_infos = Subscription::Package.infos_of(:retriever_option)
+    rest = operations_dates - period_dates
 
-      billing_history.amount = amount
-      billing_history.save
+    rest.each do |value_date|
+      if value_date.to_s.match(/^[0-9]{6}$/) && value_date.to_i >= 202001 && value_date.to_i < @period.start_date.strftime("%Y%m").to_i
+        option = ProductOptionOrder.new
 
-      if billing_history.value_period.to_i > @period.start_date.strftime('%Y%m').to_i
-        billing_history.unprocessed
-      else
-        billing_history.processed
+        option.name        = 'billing_previous_operations'
+        option.group_title = option_infos[:group]
+
+        begin
+          option.title = "Opérations bancaires mois de #{I18n.l(Date.new(value_date.to_s[0..3].to_i, valued_date.to_s[4..-1].to_i), format: '%B')} #{ value_date.to_s[0..3].to_i }"
+        rescue => e
+          p '---' + value_date.to_s
+          next
+        end
+
+        option.duration = 0
+        option.quantity = 1
+        option.price_in_cents_wo_vat = amount
+
+        billing_options << option
       end
-      billing_history.save
-
-      next if (billing_history.value_period.to_i >= @period.start_date.strftime('%Y%m').to_i) || (user.reload.billing_histories.where(value_period: billing_history.value_period).where.not(state: 'pending', id: billing_history.id))
-
-      option = ProductOptionOrder.new
-
-      option.name        = 'billing_previous_operations'
-      option.group_title = option_infos[:group]
-
-      begin
-        option.title = "Opérations bancaires mois de #{I18n.l(Date.new(billing_history.value_period.to_s[0..3].to_i, billing_history.value_period.to_s[4..-1].to_i), format: '%B')} #{ billing_history.value_period.to_s[0..3].to_i }"
-      rescue => e
-        p '----' + billing_history.inspect
-        return nil
-      end
-
-      option.duration = 0
-      option.quantity = 1
-      option.price_in_cents_wo_vat = amount
-      option.is_frozen = true
-
-      billing_options << option
     end
 
     billing_options
