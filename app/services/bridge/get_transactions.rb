@@ -23,11 +23,6 @@ class Bridge::GetTransactions
             @operation = Operation.new(bank_account: bank_account, user: @user, organization: @user.organization)
 
             save_operation(transaction) unless transaction.is_future || transaction.raw_description == 'Virement'
-
-            if @operation && @operation.persisted?
-              @operation.reload
-              @user.billing_histories.find_or_create(@operation.date.strftime('%Y%m').to_i, @user.subscription.current_period)
-            end
           end
         end
       end
