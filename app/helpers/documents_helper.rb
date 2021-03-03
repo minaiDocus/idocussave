@@ -9,9 +9,10 @@ module DocumentsHelper
     account_book_types = []
 
     if @user.try(:options).try(:upload_authorized?) || @user.authorized_all_upload?
-      account_book_types = @user.account_book_types.by_position
+      account_book_types = @user.account_book_types.specific_mission.by_position if not @user.try(:options).try(:upload_authorized?)
+      account_book_types = @user.account_book_types.by_position if @user.try(:options).try(:upload_authorized?)
     elsif @user.authorized_bank_upload?
-      account_book_types = @user.account_book_types.bank_processable
+      account_book_types = @user.account_book_types.bank_processable.by_position
     end
 
     account_book_types.map do |j|

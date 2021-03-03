@@ -341,11 +341,11 @@ class User < ApplicationRecord
   end
 
   def authorized_all_upload?
-    self.try(:options).try(:upload_authorized?) && authorized_bank_upload?
+    (self.try(:options).try(:upload_authorized?) && authorized_bank_upload?) || self.organization.specific_mission
   end
 
   def authorized_upload?
-    self.try(:options).try(:upload_authorized?) || authorized_bank_upload?
+    self.try(:options).try(:upload_authorized?) || authorized_bank_upload? || self.organization.specific_mission
   end
 
   def authorized_bank_upload?
