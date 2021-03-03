@@ -2,6 +2,25 @@
 require 'spec_helper'
 
 describe Billing::CreateInvoicePdf do
+  def create_bank_account_with_operation(user, i=8, month=2)
+    bank_account = BankAccount.create(
+      bank_name: "Allianz-#{i}", name: "Allianz-#{i}", number: "456654546#{i}",
+      user: user, api_id: "456654546#{i}", api_name: 'capidocus', journal: 'BQ', currency: 'EUR',
+      original_currency: {"id"=>"EUR", "symbol"=>"€", "prefix"=>false, "precision"=>2, "marketcap"=>nil, "datetime"=>nil, "name"=>"Euro"},
+      is_used: true, accounting_number: "512000", temporary_account: '471000',
+      start_date: '2020-03-02', type_name: "unknown-#{i}", lock_old_operation: true, permitted_late_days: 12
+    )
+
+    Operation.create(
+      created_at: "2020-03-01 21:00:00", updated_at: "2020-03-01 21:00:00",
+      date: "2020-0#{month}-02", value_date: "2020-0#{month}-02", transaction_date: "2020-0#{month}-02", label: "SARL 231E47", amount: 500.0,
+      category: "Autres recettes", processed_at: "2020-0#{month}-02 04:30:51",
+      is_locked: nil, organization_id: user.organization.id, user_id: user.id, bank_account_id: bank_account.id,
+      api_id: "456654546#{i}", api_name: "capidocus",
+      is_coming: false, deleted_at: nil, forced_processing_at: nil, forced_processing_by_user_id: nil, currency: {}
+    )
+  end
+
   before(:all) do
     Timecop.freeze(Time.local(2020,04,15))
     DatabaseCleaner.start
@@ -114,13 +133,7 @@ describe Billing::CreateInvoicePdf do
     period.set_current_packages
 
     5.times do |i|
-      BankAccount.create(
-        bank_name: "Allianz-#{i}", name: "Allianz-#{i}", number: "456654546#{i}",
-        user: user, api_name: 'idocus', journal: 'BQ', currency: 'EUR',
-        original_currency: {"id"=>"EUR", "symbol"=>"€", "prefix"=>false, "precision"=>2, "marketcap"=>nil, "datetime"=>nil, "name"=>"Euro"},
-        is_used: true, accounting_number: "512000", temporary_account: '471000',
-        start_date: '2020-03-02', type_name: "unknown-#{i}", lock_old_operation: true, permitted_late_days: 12
-      )
+      create_bank_account_with_operation(user, i, 3)
     end
 
     Billing::CreateInvoicePdf.for_all
@@ -144,7 +157,7 @@ describe Billing::CreateInvoicePdf do
     period       = subscription.periods.order(created_at: :asc).first
     period.set_current_packages
 
-    BillingHistory.create(value_period: 202002, user: user, period: period, state: 'pending', amount: 0.0)
+    create_bank_account_with_operation(user)
 
     Billing::CreateInvoicePdf.for_all
 
