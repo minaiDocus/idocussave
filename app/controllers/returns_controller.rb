@@ -9,7 +9,7 @@ class ReturnsController < PaperProcessesController
       format.html do
         @grouped_paper_processes = paper_processes.order(created_at: :desc).group_by { |e| e.created_at.day }
 
-        @paper_process = session[:return_paper_process]
+        @paper_process = PaperProcess.where(id: session[:return_paper_process_id]).first
         @paper_process ||= PaperProcess.new
       end
       format.csv do
@@ -31,13 +31,13 @@ class ReturnsController < PaperProcessesController
     @paper_process.assign_attributes(_params)
 
     if @paper_process.persisted? && @paper_process.valid?
-      session[:return_paper_process] = nil
+      session[:return_paper_process_id] = nil
 
       @paper_process.save
 
       flash[:success] = 'Modifié avec succès.'
     elsif @paper_process.save
-      session[:return_paper_process] = nil
+      session[:return_paper_process_id] = nil
 
       @paper_process.user = User.find_by_code @paper_process.customer_code
       @paper_process.organization = @paper_process.user.try(:organization)
@@ -45,7 +45,7 @@ class ReturnsController < PaperProcessesController
 
       flash[:success] = 'Créé avec succès.'
     else
-      session[:return_paper_process] = @paper_process
+      session[:return_paper_process_id] = @paper_process.id
 
       flash[:error] = 'Donnée(s) invalide(s).'
     end
