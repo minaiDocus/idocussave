@@ -34,7 +34,7 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/supplier_recognition.yml',
   'config/api_authentication.yml',
   'config/jefacture.yml',
-  'config/bridge.yml'
+  'config/bridge.yml',
   'config/my_unisoft.yml'
 )
 
