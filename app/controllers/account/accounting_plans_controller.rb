@@ -110,7 +110,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   def import_fec
     if params[:fec_file].present?
       unless DocumentTools.is_utf8(params[:fec_file].path)
-        flash[:error] = '<b>Format de fichier non supporté.</b>'
+        flash[:error] = '<b>Format de fichier non supporté. (UTF-8 sans bom recommandé)</b>'
       else
         return false if params[:fec_file].content_type != "text/plain"
 
