@@ -51,7 +51,7 @@
                       - if @customer.uses?(:exact_online)
                         = glyphicon('check', { class: 'float-right' })
                 -if software_uses('my_unisoft')
-                  %li
+                  %li.hide
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'my_unisoft'), href: '#my_unisoft', data: { toggle: 'tab' } }
                       .float-left My Unisoft
                       - if @customer.uses?(:my_unisoft)
@@ -510,7 +510,7 @@
                     = link_to t('actions.edit'), edit_exact_online_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary float-right'
 
           - if @customer.organization.try(:my_unisoft).try(:used?)
-            #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
+            #my_unisoft.hide.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
               %h4.margin1bottom Activation My Unisoft
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_my_unisoft', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'my_unisoft'  
