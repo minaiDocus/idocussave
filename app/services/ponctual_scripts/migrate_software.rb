@@ -105,27 +105,23 @@ class PonctualScripts::MigrateSoftware < PonctualScripts::PonctualScript
           software.is_analysis_to_validate          = softwares_setting.try(:is_ibiza_analysis_to_validate) || -1
           software.is_auto_updating_accounting_plan = softwares_setting.try(:is_auto_updating_accounting_plan) == 1 ? true : false
       elsif software_name == 'exact_online'
-        exact_online = ExactOnline.where(user_id: user.id)
+        exact_online = ExactOnline.where(user_id: user.id).first
         if exact_online
-          exact_online                     = exact_online.first
-
           software.is_used                 = softwares_setting.try(:is_exact_online_used)
           software.auto_deliver            = softwares_setting.try(:is_exact_online_auto_deliver) || -1
-          software.encrypted_client_id     = exact_online.encrypted_client_id
-          software.encrypted_client_secret = exact_online.encrypted_client_secret
-          software.user_name               = exact_online.user_name
-          software.full_name               = exact_online.full_name
-          software.email                   = exact_online.email
-          software.state                   = exact_online.state
-          software.encrypted_refresh_token = exact_online.encrypted_refresh_token
-          software.encrypted_access_token  = exact_online.encrypted_access_token
-          software.token_expires_at        = exact_online.token_expires_at
+          software.encrypted_client_id     = exact_online.try(:encrypted_client_id)
+          software.encrypted_client_secret = exact_online.try(:encrypted_client_secret)
+          software.user_name               = exact_online.try(:user_name)
+          software.full_name               = exact_online.try(:full_name)
+          software.email                   = exact_online.try(:email)
+          software.state                   = exact_online.try(:state)
+          software.encrypted_refresh_token = exact_online.try(:encrypted_refresh_token)
+          software.encrypted_access_token  = exact_online.try(:encrypted_access_token)
+          software.token_expires_at        = exact_online.try(:token_expires_at)
         end
       elsif software_name == 'csv_descriptor'
-        csv_descriptor  = CsvDescriptor.where(user_id: user.id)
+        csv_descriptor  = CsvDescriptor.where(user_id: user.id).first
         if csv_descriptor
-          csv_descriptor                         = csv_descriptor.first
-
           software.is_used                       = softwares_setting.try(:is_csv_descriptor_used)
           software.auto_deliver                  = softwares_setting.try(:is_csv_descriptor_auto_deliver) || -1
           software.use_own_csv_descriptor_format = softwares_setting.try(:use_own_csv_descriptor_format)
