@@ -13,7 +13,7 @@ class FileImport::Sftp
   class << self
     def process(sftp_id)
       UniqueJobs.for "ImportFtp-#{sftp_id}" do
-        sftp = Sftp.find ftp_id
+        sftp = Sftp.find sftp_id
         FileImport::Sftp.new(sftp).execute
       end
     end

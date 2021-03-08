@@ -296,20 +296,22 @@ class Account::DocumentsController < Account::AccountController
             end
     end
 
-    user = obj.user
-
+    user    = obj.try(:user)
     options = []
-    options << %w[CSV csv] if user.uses_csv_descriptor?
-    if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
-      options << ['XML (Ibiza)', 'xml_ibiza']
+
+    if user
+      options << %w[CSV csv] if user.uses_csv_descriptor?
+      if current_user.is_admin && user.organization.ibiza.try(:configured?) && user.uses_ibiza?
+        options << ['XML (Ibiza)', 'xml_ibiza']
+      end
+      options << ['TXT (Quadratus)', 'txt_quadratus']          if user.uses_quadratus?
+      options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses_quadratus?
+      options << ['ZIP (Coala)', 'zip_coala']                  if user.uses_coala?
+      options << ['XLS (Coala)', 'xls_coala']                  if user.uses_coala?
+      options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses_cegid?
+      options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses_cegid?
+      options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses_fec_agiris?
     end
-    options << ['TXT (Quadratus)', 'txt_quadratus']          if user.uses_quadratus?
-    options << ['ZIP (Quadratus)', 'zip_quadratus']          if user.uses_quadratus?
-    options << ['ZIP (Coala)', 'zip_coala']                  if user.uses_coala?
-    options << ['XLS (Coala)', 'xls_coala']                  if user.uses_coala?
-    options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses_cegid?
-    options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses_cegid?
-    options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses_fec_agiris?
 
     render json: { options: options }, status: 200
   end
