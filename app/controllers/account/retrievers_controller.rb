@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
-  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls, new_internal]
+  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls new_internal]
   before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls]
-  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls, new_internal create]
+  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls new_internal create]
   before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls new_internal edit_internal create]
   before_action :load_retriever_edition, only: %w[new edit]
 
@@ -73,7 +73,7 @@ class Account::RetrieversController < Account::RetrieverController
     array_bank     = params[:banks].to_s.split(/\;/)
     file           = nil
 
-    CustomUtils.mktmpdir('retrievers_controller', nil, false) do |dir|
+    CustomUtils.mktmpdir('retrievers_controller', '/nfs/tmp', false) do |dir|
       file           = OpenStruct.new({path: "#{dir}/list_des_automates.xls", close: nil})
       xls_data       = []
 
