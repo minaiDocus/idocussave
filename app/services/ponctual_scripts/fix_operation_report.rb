@@ -1,23 +1,28 @@
 class PonctualScripts::FixOperationReport < PonctualScripts::PonctualScript
-  def self.execute
-    new().run
+  def self.execute(options)
+    new(options).run
   end
 
-  def self.rollback
-    new().rollback
+  def self.rollback(options)
+    new(options).rollback
   end
 
   private
 
   def execute
+    @file_name  = @options[:file_name] || 'preseizures'
+    @period     = @options[:period] || '20210215'
+
     if File.exist?(save_file_path)
       logger_infos "[BrokenReport] - This script has been already launched"
       return false
     end
 
+    logger_infos "[BrokenReport] - file name: #{@file_name} - period : #{@period}"
+
     file = File.open(save_file_path, 'w+')
 
-    preseizures  = Pack::Report::Preseizure.where('DATE_FORMAT(created_at, "%Y%m%d") > "20210215" AND operation_id > 0')
+    preseizures  = Pack::Report::Preseizure.where("DATE_FORMAT(created_at, '%Y%m%d') > '#{@period}' AND operation_id > 0")
     changed_pres_count = 0
     new_report_count   = 0
 
@@ -63,6 +68,8 @@ class PonctualScripts::FixOperationReport < PonctualScripts::PonctualScript
   end
 
   def backup
+    @file_name  = @options[:file_name] || 'preseizures'
+
     if File.exist?(save_file_path)
       File.foreach(save_file_path) do |line|
         preseizure = JSON.parse(line).with_indifferent_access
@@ -78,7 +85,7 @@ class PonctualScripts::FixOperationReport < PonctualScripts::PonctualScript
 
 
   def save_file_path
-    File.join(ponctual_dir, "preseizures.txt")
+    File.join(ponctual_dir, "#{@file_name}.txt")
   end
 end
 

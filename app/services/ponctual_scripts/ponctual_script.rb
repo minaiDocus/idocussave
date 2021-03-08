@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class PonctualScripts::PonctualScript
   def initialize(options={})
-    @options = options
+    @options = options.with_indifferent_access
     @class_name = self.class.name
   end
 
