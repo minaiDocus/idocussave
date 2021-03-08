@@ -151,7 +151,7 @@ class PreseizureExport::PreseizureToTxt
             account_number = entry.account.try(:number) || ''
             line[31] = account_number if entry.account.type == Pack::Report::Preseizure::Account::TTC
 
-            line[48] = preseizure.piece_number
+            line[48] = preseizure.piece_number ? preseizure.piece_number : preseizure.third_party
 
             line[83] = label
 
