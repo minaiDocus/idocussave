@@ -157,10 +157,10 @@ class PreseizureExport::PreseizureToTxt
 
             line[129] = entry.type == 1 ? 'D' : 'C'
 
-            amount = entry.amount.to_f.to_s.gsub('.', ',')
-            window = 149 - amount.size
+            amount = sprintf("%.2f", entry.amount.to_f).to_s.gsub('.', ',')
+            window = 150 - amount.size
 
-            line[window..149] = amount
+            line[window..150] = amount
 
             line[150] = 'N'
             line[151] = preseizure.piece.number.to_s
