@@ -169,24 +169,26 @@ class PreseizureExport::PreseizureToTxt
 
             line = ' ' * 222
 
-            line[0] = preseizure.journal_name[0..2]
-            line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
-            line[11] = nature
-            line[13] = case journal.compta_type
-                       when 'AC'
-                        '401000'
-                       when 'VT'
-                        '411000'
-                       when 'NDF'
-                        '471000'
-                       end
+            if entry.account.type == Pack::Report::Preseizure::Account::TTC
+              line[0] = preseizure.journal_name[0..2]
+              line[3..11] = preseizure.computed_date.strftime('%d%m%Y') if preseizure.date
+              line[11] = nature
+              line[13] = case journal.compta_type
+                         when 'AC'
+                          '401000'
+                         when 'VT'
+                          '411000'
+                         when 'NDF'
+                          '471000'
+                         end
 
-            line[30] = 'G'
-            line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
-            line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
-            line[83] = file_name
+              line[30] = 'G'
+              line[31] = Pack::Report::Preseizure::Account.where(id: preseizure.entries.pluck(:account_id)).where(type: Pack::Report::Preseizure::Account::TTC).first.try(:number)
+              line[48] = preseizure.piece.name.tr(' ', '_').tr('%', '_')
+              line[83] = file_name
 
-            data << line
+              data << line
+            end
 
         end
       end
