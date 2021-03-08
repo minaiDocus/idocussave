@@ -146,7 +146,7 @@ class PreseizureExport::PreseizureToTxt
             line[11] = nature
             line[13] = account
 
-            line[30] = 'X'
+            line[30] = 'X' if entry.account.type == Pack::Report::Preseizure::Account::TTC
 
             account_number = entry.account.try(:number) || ''
             line[31] = account_number if entry.account.type == Pack::Report::Preseizure::Account::TTC
