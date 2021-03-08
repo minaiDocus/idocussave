@@ -6,7 +6,16 @@ module DocumentsHelper
   end
 
   def account_book_types_option
-    @user.account_book_types.by_position.map do |j|
+    account_book_types = []
+
+    if @user.try(:options).try(:upload_authorized?) || @user.authorized_all_upload?
+      account_book_types = @user.account_book_types.specific_mission.by_position if not @user.try(:options).try(:upload_authorized?)
+      account_book_types = @user.account_book_types.by_position if @user.try(:options).try(:upload_authorized?)
+    elsif @user.authorized_bank_upload?
+      account_book_types = @user.account_book_types.bank_processable.by_position
+    end
+
+    account_book_types.map do |j|
       [j.name + ' ' + j.description, j.name, { 'compta-processable' => (j.compta_processable? ? '1' : '0') }]
     end
   end
@@ -229,7 +238,7 @@ module DocumentsHelper
       @user.organization.customers.active.order(code: :asc)
     else
       @file_upload_users_list ||= accounts.active.order(code: :asc).select do |user|
-        user.options.is_upload_authorized
+        user.authorized_upload?
       end
     end
   end
@@ -239,15 +248,25 @@ module DocumentsHelper
       result = {}
 
       file_upload_users_list.each do |user|
-        period_service = Billing::Period.new user: user
+        period_service              = Billing::Period.new user: user
+        journals                    = []
+        journals_compta_processable = []
+
+        if user.authorized_all_upload? || user.try(:options).try(:upload_authorized?)
+          journals = user.account_book_types.order(name: :asc).map do |j|
+            j.name + ' ' + j.description
+          end
+          journals_compta_processable  = user.account_book_types.order(name: :asc).map do |j|
+            j.name if j.compta_processable?
+          end.compact
+        elsif user.authorized_bank_upload?
+          journals = user.account_book_types.bank_processable.map{|j| j.name + ' ' + j.description}
+          journals_compta_processable = user.account_book_types.bank_processable.map{|j| j.name if j.compta_processable? }
+        end
 
         hsh = {
-          journals: user.account_book_types.order(name: :asc).map do |j|
-            j.name + ' ' + j.description
-          end,
-          journals_compta_processable: user.account_book_types.order(name: :asc).map do |j|
-            j.name if j.compta_processable?
-          end.compact,
+          journals: journals,
+          journals_compta_processable: journals_compta_processable,
           periods:  options_for_period(period_service),
           is_analytic_used: (user.ibiza_id.present? && user.uses_ibiza? && user.try(:softwares).try(:ibiza_compta_analysis_activated?))
         }

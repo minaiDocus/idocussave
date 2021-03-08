@@ -288,12 +288,12 @@ describe SgiApiServices::GroupDocument do
              ],
              [
                {
-                 id: 1,
+                 id: 2,
                  pages: [2,3]
                },
                {
                  id: 5,
-                 pages: [5, 3, 1, 2, 4]
+                 pages: [1, 4, 5]
                }
              ]
             
@@ -305,14 +305,15 @@ describe SgiApiServices::GroupDocument do
 
         response = group_document.execute
 
-        new_temp_documents = @temp_pack.temp_documents.where(content_file_name: "IDO%0001_AC_202006_all")
+        new_temp_documents = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_all")
 
         expect(response[:success]).to be true
-        expect(@temp_pack.temp_documents.count).to eq 10
-        expect(@temp_pack.temp_documents.bundled.count).to eq 4
-        expect(@temp_pack.temp_documents.ready.count).to eq 5
+        expect(@temp_pack.temp_documents.count).to eq 8
+        expect(@temp_pack.temp_documents.bundled.count).to eq 5
+        expect(@temp_pack.temp_documents.ready.count).to eq 3
         expect(DocumentTools.pages_number(new_temp_documents.first.cloud_content_object.path)).to eq 2
         expect(DocumentTools.pages_number(new_temp_documents.last.cloud_content_object.path)).to eq 5
+        expect(new_temp_documents.last.scan_bundling_document_ids).to eq [2, 5]
       end
     end
   end

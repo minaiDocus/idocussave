@@ -47,11 +47,35 @@ class Admin::InvoicesController < Admin::AdminController
                      Time.now
                   end
 
-    csv = Billing::SepaDirectDebitGenerator.execute(invoice_time, debit_date)
+    @csv = Billing::SepaDirectDebitGenerator.execute(invoice_time, debit_date)
 
-    filename = "order_#{invoice_time.strftime('%Y%m')}.csv"
+    @filename = "order_#{invoice_time.strftime('%Y%m')}.csv"
 
-    send_data(csv, type: 'text/csv', filename: filename)
+    mail_infos = {
+      subject: "[Admin::InvoicesController] generate invoice debit order csv file with #{current_user.info}",
+      name: "Admin::InvoicesController.debit_order",
+      error_group: "[admin-invoices-controller] generate invoice debit order csv file",
+      erreur_type: "Generate invoice debit order csv file",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        target_name: request.path,
+        path: request.path,
+        remote_ip: request.remote_ip,
+        user_info: current_user.info,
+        debit_date: debit_date,
+        invoice_time: invoice_time,
+        method: "debit_order"
+      }
+    }
+
+    begin
+      store_invoice_debit_order
+      ErrorScriptMailer.error_notification(mail_infos, { attachements: [{name: @filename, file: File.read(file_path)}] } ).deliver
+    rescue
+      ErrorScriptMailer.error_notification(mail_infos).deliver
+    end
+
+    send_data(@csv, type: 'text/csv', filename: @filename)
   end
 
   # GET /admin/invoices/:id
@@ -80,4 +104,19 @@ class Admin::InvoicesController < Admin::AdminController
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
+
+  def store_invoice_debit_order
+    File.write(file_path, @csv)
+  end
+
+  def file_path
+    File.join(invoice_dir, @filename)
+  end
+
+  def invoice_dir
+    dir = "#{Rails.root}/files/invoices"
+    FileUtils.makedirs(dir)
+    FileUtils.chmod(0777, dir)
+    dir
+  end
 end

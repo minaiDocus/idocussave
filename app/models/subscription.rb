@@ -226,6 +226,6 @@ class Subscription < ApplicationRecord
   end
 
   def is_package?(package_option)
-    current_packages.include?(package_option)
+    self.user.organization.specific_mission.present? ? false : current_packages.include?(package_option)
   end
 end

@@ -8,7 +8,6 @@ class Period < ApplicationRecord
   has_many :orders
   has_many :invoices
   has_many :billings, class_name: 'PeriodBilling'
-  has_many :billing_histories, class_name: 'BillingHistory'
   has_many :documents, class_name: 'PeriodDocument'
   has_many :product_option_orders, as: :product_optionable
   belongs_to :user, optional: true
@@ -31,8 +30,6 @@ class Period < ApplicationRecord
 
   before_create :add_one_delivery
   before_create :set_start_date_and_end_date
-
-  after_save :find_or_create_billing_history
 
 
   def self.period_name(duration, offset=0, current_time=Time.now)
@@ -343,11 +340,6 @@ private
 
   def add_one_delivery
     self.delivery = PeriodDelivery.new
-  end
-
-
-  def find_or_create_billing_history
-    self.billing_histories.find_or_create(self.start_date.strftime('%Y%m').to_i, self) if user
   end
 
 

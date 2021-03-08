@@ -45,7 +45,6 @@ class User < ApplicationRecord
   has_many :periods
   has_many :expenses, class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :invoices
-  has_many :billing_histories, class_name: 'BillingHistory'
   has_many :addresses, as: :locatable
   has_many :exercises
   has_many :temp_packs
@@ -338,6 +337,24 @@ class User < ApplicationRecord
 
   def has_collaborator_action?
     collaborator? || (is_pre_assignement_displayed && act_as_a_collaborator_into_pre_assignment)
+  end
+
+  def authorized_all_upload?
+    (self.try(:options).try(:upload_authorized?) && authorized_bank_upload?) || self.organization.specific_mission
+  end
+
+  def authorized_upload?
+    self.try(:options).try(:upload_authorized?) || authorized_bank_upload? || self.organization.specific_mission
+  end
+
+  def authorized_bank_upload?
+    period = self.try(:subscription).try(:current_period)
+
+    if period
+      self.try(:options).try(:retriever_authorized?) && period.is_active?(:retriever_option)
+    else
+      false
+    end
   end
 
   # TODO : need a test

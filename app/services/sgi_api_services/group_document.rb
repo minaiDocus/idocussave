@@ -96,11 +96,12 @@ class SgiApiServices::GroupDocument
 
   def create_new_temp_document
     @json_content['pieces'].each do |pieces|
-      pieces.each do |piece|
-        merged_dir = File.join(@merged_dir, "#{piece['id']}")
+      pages       = []
+      ids         = pieces.map{|piece| piece['id'] }
+      merged_dirs = pieces.map{|piece| File.join(@merged_dir, "#{piece['id']}")}
+      pieces.map{|piece| pages << piece['pages']}
 
-        CreateTempDocumentFromGrouping.new(@temp_pack, piece['pages'], piece['id'], merged_dir).execute
-      end
+      CreateTempDocumentFromGrouping.new(@temp_pack, pages, ids, merged_dirs).execute
     end
   end
 
@@ -119,17 +120,17 @@ class SgiApiServices::GroupDocument
       merged_dir = File.join(@merged_dir, "#{id}")
       FileUtils.mkdir_p merged_dir
 
-      Pdftk.new.burst @temp_pack.temp_documents.where(id: id).first.cloud_content_object.path, merged_dir, 'page', DataProcessor::TempPack::POSITION_SIZE
+      Pdftk.new.burst @temp_pack.temp_documents.where(id: id).first.cloud_content_object.path, merged_dir, "page_#{id}", DataProcessor::TempPack::POSITION_SIZE
     end
   end
 
   class CreateTempDocumentFromGrouping
-    def initialize(temp_pack, pages, temp_document_id, merged_path)
-      @temp_pack        = temp_pack
-      @pages            = pages
-      @temp_document_id = temp_document_id
-      @file_name        = @temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf'
-      @merged_path      = merged_path
+    def initialize(temp_pack, pages, temp_document_ids, merged_paths)
+      @temp_pack         = temp_pack
+      @pages             = pages
+      @temp_document_ids = temp_document_ids
+      @file_name         = @temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf'
+      @merged_paths      = merged_paths
     end
 
     # Create a secondary temp documents it comes back from grouping
@@ -170,11 +171,17 @@ class SgiApiServices::GroupDocument
     private
 
     def file_paths
-      @file_paths = @pages.map {|page| File.join(@merged_path, 'page_' + ("%03d" % page) + '.pdf') }
+      _file_paths = []
+
+      @pages.each_with_index do |pages, index_page|
+        pages.map{|page| _file_paths << File.join(@merged_paths[index_page], "page_#{@temp_document_ids[index_page]}_" + ("%03d" % page) + ".pdf") }
+      end
+
+      _file_paths
     end
 
     def temp_documents
-      @temp_documents ||= @temp_pack.temp_documents.where(id: @temp_document_id).by_position
+      @temp_documents ||= @temp_pack.temp_documents.where(id: @temp_document_ids).by_position
     end
 
     def original_temp_document

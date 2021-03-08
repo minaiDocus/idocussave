@@ -87,7 +87,7 @@
             .card-footer
               .float-right
                 = link_to 'Tous les documents', account_documents_path
-      - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
+      - if @user.is_prescriber || @user.authorized_upload?
         .row.mt-sm-5.derivationRight
           .col-md-12
             .card

@@ -405,6 +405,6 @@ class DocumentTools
   def self.is_utf8(file_path)
     is = `file -i #{file_path}`
 
-    is.match /utf-8/
+    is.match(/utf-8/) || is.match(/us-ascii/)
   end
 end

@@ -9,7 +9,7 @@ class KitsController < PaperProcessesController
       format.html do
         @grouped_paper_processes = paper_processes.order(created_at: :desc).group_by { |e| e.created_at.day }
 
-        @paper_process = session[:kit_paper_process]
+        @paper_process = PaperProcess.where(id: session[:kit_paper_process_id]).first
 
         @paper_process ||= PaperProcess.new journals_count: 0, periods_count: 0
       end
@@ -32,13 +32,13 @@ class KitsController < PaperProcessesController
     @paper_process.assign_attributes(_params)
 
     if @paper_process.persisted? && @paper_process.valid?
-      session[:kit_paper_process] = nil
+      session[:kit_paper_process_id] = nil
 
       @paper_process.save
 
       flash[:success] = 'Modifié avec succès.'
     elsif @paper_process.save
-      session[:kit_paper_process] = nil
+      session[:kit_paper_process_id] = nil
 
       @paper_process.user         = User.find_by_code @paper_process.customer_code
       @paper_process.organization = @paper_process.user.try(:organization)
@@ -47,7 +47,7 @@ class KitsController < PaperProcessesController
 
       flash[:success] = 'Créé avec succès.'
     else
-      session[:kit_paper_process] = @paper_process
+      session[:kit_paper_process_id] = @paper_process.id
       flash[:error]               = 'Donnée(s) invalide(s).'
     end
 

@@ -7,7 +7,7 @@ class ReceiptsController < PaperProcessesController
     respond_to do |format|
       format.html do
         @grouped_paper_processes = paper_processes.order(created_at: :desc).group_by { |e| e.created_at.day }
-        @paper_process = session[:receipt_paper_process]
+        @paper_process = PaperProcess.where(id: session[:receipt_paper_process_id]).first
         @paper_process ||= PaperProcess.new
       end
       format.csv do
@@ -28,17 +28,17 @@ class ReceiptsController < PaperProcessesController
         @paper_process ||= PaperProcess.new(type: 'receipt')
         @paper_process.assign_attributes(_params)
         if @paper_process.persisted? && @paper_process.valid?
-          session[:receipt_paper_process] = nil
+          session[:receipt_paper_process_id] = nil
           @paper_process.save
           flash[:success] = 'Modifié avec succès.'
         elsif @paper_process.save
-          session[:receipt_paper_process] = nil
+          session[:receipt_paper_process_id] = nil
           @paper_process.user         = user
           @paper_process.organization = user.organization
           @paper_process.save
           flash[:success] = 'Créé avec succès.'
         else
-          session[:receipt_paper_process] = @paper_process
+          session[:receipt_paper_process_id] = @paper_process.id
           flash[:error] = 'Donnée(s) invalide(s).'
         end
       end
@@ -46,7 +46,7 @@ class ReceiptsController < PaperProcessesController
       paper_process = PaperProcess.new(type: 'receipt')
       paper_process.assign_attributes(_params)
       paper_process.valid?
-      session[:receipt_paper_process] = paper_process
+      session[:receipt_paper_process_id] = paper_process.id
       flash[:error] = 'Donnée(s) invalide(s).'
     end
     redirect_to receipts_path
