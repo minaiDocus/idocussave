@@ -164,10 +164,31 @@ module AccountingWorkflow::OcrProcessing
     end
 
     def move_and_log_errors(errors)
+      files = []
       FileUtils.mkdir_p error_path
       errors.each do |error|
+        files <<  {name: File.basename(error[:file_path]), file: File.read(error[:file_path])}
         FileUtils.mv error[:file_path], error_path
         logger.error error[:error]
+      end
+
+      mail_infos = {
+        subject: "[AccountingWorkflow::OcrProcessing] log errors found",
+        name: "OcrProcessing.move_and_log_errors",
+        error_group: "[OcrProcessing] log errors found",
+        erreur_type: "Notifications",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          error: errors,
+          error_path: error_path.to_s,
+          method: 'move_and_log_errors'
+        }
+      }
+
+      begin
+        ErrorScriptMailer.error_notification(mail_infos, { attachements: files } ).deliver
+      rescue
+        ErrorScriptMailer.error_notification(mail_infos).deliver
       end
     end
 
