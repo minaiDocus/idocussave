@@ -157,7 +157,7 @@ class PreseizureExport::PreseizureToTxt
 
             line[48] = preseizure.piece_number? ? preseizure.piece_number : preseizure.third_party
 
-            line[83] = label
+            line[83] = I18n.transliterate(label)
 
             line[129] = entry.type == 1 ? 'D' : 'C'
 
