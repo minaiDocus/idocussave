@@ -6,7 +6,7 @@ class Account::AnalyticsController < Account::AccountController
   before_action :verify_rights
 
   def index
-    result = IbizaLib::Analytic.new(@customer.ibiza_id, ibiza.access_token).list
+    result = IbizaLib::Analytic.new(@customer.ibiza_id, ibiza.access_token, ibiza.specific_url_options).list
     journal_analytic_references = @journal ? Journal::AnalyticReferences.new(@journal).get_analytic_references : nil
     pieces_analytic_references  = @pieces ? get_pieces_analytic_references : nil
     respond_to do |format|

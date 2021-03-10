@@ -3,9 +3,9 @@ module IbizaLib
     class Client
       attr_accessor :token, :partner_id, :request, :response
 
-      def initialize(token, callback=nil)
+      def initialize(token, specific_url_options, callback=nil)
         @token      = token
-        @request    = Request.new(self, callback)
+        @request    = Request.new(self, specific_url_options, callback)
         @response   = Response.new
         @partner_id = IbizaAPI::Config::PARTNER_ID
       end
@@ -53,12 +53,13 @@ module IbizaLib
         attr_accessor :client, :path, :method, :body, :original
 
 
-        def initialize(client, callback=nil)
-          @path = ''
-          @body = ''
-          @method = :get
-          @client = client
-          @callback = callback
+        def initialize(client, specific_url_options, callback=nil)
+          @path                 = ''
+          @body                 = ''
+          @method               = :get
+          @client               = client
+          @callback             = callback
+          @specific_url_options = specific_url_options
         end
 
 
@@ -78,7 +79,7 @@ module IbizaLib
 
 
         def base
-          IbizaAPI::Config::ROOT_URL
+          @specific_url_options.presence || IbizaAPI::Config::ROOT_URL
         end
 
 

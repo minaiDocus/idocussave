@@ -157,7 +157,7 @@ describe IbizaLib::ExerciseFinder do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:configured?) { true }
-            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456') }
+            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456', nil) }
             @user.ibiza_id = '{123456}'
 
             exercise = IbizaLib::ExerciseFinder.new(@user, Date.parse('15-08-2014'), ibiza).execute
@@ -171,7 +171,7 @@ describe IbizaLib::ExerciseFinder do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:configured?) { true }
-            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456') }
+            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456', nil) }
             @user.ibiza_id = '{123456}'
 
             exercise = IbizaLib::ExerciseFinder.new(@user, Date.parse('15-01-2016'), ibiza).execute
@@ -185,7 +185,7 @@ describe IbizaLib::ExerciseFinder do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:configured?) { true }
-            client = IbizaLib::Api::Client.new('123456')
+            client = IbizaLib::Api::Client.new('123456', nil)
             allow(ibiza).to receive(:client) { client }
             @user.ibiza_id = '{123456}'
 
@@ -201,7 +201,7 @@ describe IbizaLib::ExerciseFinder do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:configured?) { true }
-            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456') }
+            allow(ibiza).to receive(:client) { IbizaLib::Api::Client.new('123456', nil) }
             @user.ibiza_id = '{123456}'
 
             exercise = IbizaLib::ExerciseFinder.new(@user, Date.parse('15-01-2015'), ibiza).execute
@@ -219,7 +219,7 @@ describe IbizaLib::ExerciseFinder do
   describe '.ibiza_exercises' do
     it 'returns false' do
       VCR.use_cassette('find_exercise/insufficient_rights') do
-        client = IbizaLib::Api::Client.new('123456')
+        client = IbizaLib::Api::Client.new('123456', nil)
 
         result = IbizaLib::ExerciseFinder.ibiza_exercises(client, '{123456}', @time)
 
@@ -229,7 +229,7 @@ describe IbizaLib::ExerciseFinder do
 
     it 'returns 1 exercise' do
       VCR.use_cassette('find_exercise/exercises') do
-        client = IbizaLib::Api::Client.new('123456')
+        client = IbizaLib::Api::Client.new('123456', nil)
 
         exercises = IbizaLib::ExerciseFinder.ibiza_exercises(client, '{123456}', @time)
         exercise = exercises.first
@@ -243,7 +243,7 @@ describe IbizaLib::ExerciseFinder do
 
     it 'write in the cache' do
       VCR.use_cassette('find_exercise/exercises') do
-        client = IbizaLib::Api::Client.new('123456')
+        client = IbizaLib::Api::Client.new('123456', nil)
 
         expect(Rails.cache.read(@cache_name)).to be_nil
 

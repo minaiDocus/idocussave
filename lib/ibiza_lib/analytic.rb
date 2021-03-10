@@ -2,10 +2,11 @@
 module IbizaLib
   class Analytic
 
-    def initialize(id, access_token, expires_in=2.minutes)
-      @id = id
-      @access_token = access_token
-      @expires_in = expires_in
+    def initialize(id, access_token, specific_url_options, expires_in=2.minutes)
+      @id                   = id
+      @access_token         = access_token
+      @expires_in           = expires_in
+      @specific_url_options = specific_url_options
     end
 
     def list
@@ -169,7 +170,7 @@ module IbizaLib
     private
 
     def client
-      @client ||= IbizaLib::Api::Client.new(@access_token)
+      @client ||= IbizaLib::Api::Client.new(@access_token, @specific_url_options)
     end
 
 
@@ -186,7 +187,7 @@ module IbizaLib
 
       def valid_analytic_presence?
         if analytic_params_present?
-          IbizaLib::Analytic.new(@user.ibiza_id, @user.organization.ibiza.access_token).exists?(@analytic)
+          IbizaLib::Analytic.new(@user.ibiza_id, @user.organization.ibiza.access_token, @user.organization.ibiza.specific_url_options).exists?(@analytic)
         elsif !@params_valid
           false
         else

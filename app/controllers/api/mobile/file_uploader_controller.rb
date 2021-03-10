@@ -27,7 +27,7 @@ class Api::Mobile::FileUploaderController < MobileApiController
         load_default_analytic_by_params params[:journal], 'journal'
       end
 
-      result = IbizaLib::Analytic.new(@customer.ibiza_id, @customer.organization.ibiza.access_token).list
+      result = IbizaLib::Analytic.new(@customer.ibiza_id, @customer.organization.ibiza.access_token, @customer.organization.ibiza.specific_url_options).list
       journal_analytic_references = @journal ? Journal::AnalyticReferences.new(@journal).get_analytic_references : {}
       pieces_analytic_references  = @pieces ? get_pieces_analytic_references : {}
     end

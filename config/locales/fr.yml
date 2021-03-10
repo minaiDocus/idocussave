@@ -622,6 +622,7 @@ fr:
           is_auto_deliver: Livrer automatiquement les écritures ?
           is_analysis_activated: Activer la compta analytique ?
           is_analysis_to_validate: Valider la compta analytique des pièces avant envoi en pré-affectation ?
+          specific_url_options: URL de connexion iBiZa à iDocus (Optionnel)
           access_token: Jeton d'accès Scan et OCR
           state: Etat
           access_token_2: Jeton d'accès iDo'FacBanque
