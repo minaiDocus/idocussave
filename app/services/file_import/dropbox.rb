@@ -81,41 +81,45 @@ class FileImport::Dropbox
 
   def check
     if @dropbox.is_used? && @dropbox.is_configured? && customers.any?
-      checked_at = Time.now
-      has_more = true
+      if @dropbox.need_to_check_for_all?
+        check_for_all
+      else
+        checked_at = Time.now
+        has_more = true
 
-      initialize_folders if @current_cursor.nil?
+        initialize_folders if @current_cursor.nil?
 
-      while has_more && @current_cursor
-        retryable = true
-        begin
-          result = client.list_folder_continue(@current_cursor)
-        rescue DropboxApi::Errors::WriteError => e
-          if e.message.match(/path\/not_found\//) && retryable
-            initialize_folders
-            retryable = false
-            retry
-          else
-            raise
+        while has_more && @current_cursor
+          retryable = true
+          begin
+            result = client.list_folder_continue(@current_cursor)
+          rescue DropboxApi::Errors::WriteError => e
+            if e.message.match(/path\/not_found\//) && retryable
+              initialize_folders
+              retryable = false
+              retry
+            else
+              raise
+            end
           end
+
+          result.entries.each do |entry|
+            process_entry entry
+          end
+
+          has_more = result.has_more?
+          @current_cursor = result.cursor
         end
 
-        result.entries.each do |entry|
-          process_entry entry
-        end
+        update_folders
 
-        has_more = result.has_more?
-        @current_cursor = result.cursor
+        @dropbox.update(
+          delta_cursor:        @current_cursor,
+          delta_path_prefix:   @current_path_prefix,
+          import_folder_paths: needed_folders,
+          checked_at:          checked_at
+        )
       end
-
-      update_folders
-
-      @dropbox.update(
-        delta_cursor:        @current_cursor,
-        delta_path_prefix:   @current_path_prefix,
-        import_folder_paths: needed_folders,
-        checked_at:          checked_at
-      )
     end
   end
 
@@ -350,5 +354,27 @@ class FileImport::Dropbox
       end
     end
     return true
+  end
+
+  def check_for_all
+    time = Time.now
+
+    begin
+      import_folder_paths = client.list_folder(@dropbox.import_folder_paths)
+    rescue DropboxApi::Errors::WriteError => e
+      if e.message.match(/path\/not_found\//)
+        import_folder_paths = []
+      else
+        raise
+      end
+    end
+
+    import_folder_paths.each do |result|
+      result.entries.each do |entry|
+        process_entry entry
+      end
+    end
+
+    @dropbox.update(checked_at_for_all: time)
   end
 end
