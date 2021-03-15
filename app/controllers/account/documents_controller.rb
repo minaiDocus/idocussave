@@ -745,7 +745,7 @@ class Account::DocumentsController < Account::AccountController
     reports = Pack::Report.where(name: pack.name.gsub('all', '').strip)
     if reports.any?
       reports.each do |report|
-        report.update(pack_id: pack.id) if report.pack_id.nil?
+        report.update(pack_id: pack.id) if report.pack_id.nil? && report.preseizures.first.try(:piece_id).present?
       end
 
       reports.reload
