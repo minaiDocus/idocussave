@@ -247,6 +247,16 @@ class Budgea
       end
     end
 
+    def get_public_key
+      @response = connection.get do |request|
+        request.url "/2.0/publickey"
+        request.headers['Accept'] = 'application/json'
+        request.body = authentification_params
+      end
+
+      p run_and_parse_response
+    end
+
   private
     def connection
       Faraday.new(:url => @settings[:base_url]) do |f|
