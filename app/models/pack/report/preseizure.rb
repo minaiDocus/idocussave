@@ -86,16 +86,24 @@ class Pack::Report::Preseizure < ApplicationRecord
     preseizures = self.all
 
     if software.nil?
-      preseizures = preseizures.where(is_delivered_to: [nil, ''])
-      preseizures = preseizures.joins("INNER JOIN software_ibizas ON software_ibizas.owner_id = pack_report_preseizures.user_id AND software_ibizas.owner_type = 'User' AND software_ibizas.is_used = true").presence ||
-      preseizures.joins("INNER JOIN software_my_unisofts ON software_my_unisofts.owner_id = pack_report_preseizures.user_id AND software_my_unisofts.owner_type = 'User' AND software_my_unisofts.is_used = true").presence ||
-      preseizures.joins("INNER JOIN software_exact_online ON software_exact_online.owner_id = pack_report_preseizures.user_id AND software_exact_online.owner_type = 'User' AND software_exact_online.is_used = true").presence
-    else
-      return preseizures.where(id: -1) if not software.in? Interfaces::Software::Configuration::SOFTWARES #IMPORTANT : we return an empty active record
+      user_ids = []
 
-      table_name  = Interfaces::Software::Configuration.softwares_table_name[software.to_sym]
-      preseizures = preseizures.where.not(is_delivered_to: software)
-      preseizures = preseizures.joins("INNER JOIN #{table_name} ON #{table_name}.owner_id = pack_report_preseizures.user_id AND #{table_name}.owner_type = 'User' AND #{table_name}.is_used = true")
+      ['ibiza', 'my_unisoft', 'exact_online'].each do |software_name|
+        model_software = Interfaces::Software::Configuration.softwares[software_name.to_sym]
+        user_ids = user_ids + model_software.where(is_used: true, owner_type: 'User').pluck(:owner_id)
+      end
+
+      user_ids = user_ids.flatten.compact.uniq
+
+      preseizures = preseizures.where(user_id: user_ids).where(is_delivered_to: [nil, ''])
+    else
+      return preseizures.where(id: -1) if not software.in? Interfaces::Software::Configuration::SOFTWARES #IMPORTANT : we return an empty active record not an Array
+
+      model_software = Interfaces::Software::Configuration.softwares[software.to_sym]
+
+      user_ids = model_software.where(is_used: true, owner_type: 'User').pluck(:owner_id)
+
+      preseizures = preseizures.where(user_id: user_ids).where.not(is_delivered_to: software)
     end
 
     preseizures.distinct
