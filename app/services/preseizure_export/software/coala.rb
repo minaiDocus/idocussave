@@ -57,7 +57,7 @@ class PreseizureExport::Software::Coala
 
   class << self
     def remove_temp_dir(dir)
-      FileUtils.remove_entry_secure dir if File.exist? dir
+      FileUtils.remove_entry dir if File.exist? dir
     end
   end
 end

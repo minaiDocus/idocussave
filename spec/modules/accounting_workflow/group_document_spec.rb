@@ -172,7 +172,7 @@ describe AccountingWorkflow::GroupDocument do
 
     after(:each) do
       @temp_pack.destroy
-      FileUtils.remove_entry_secure Rails.root.join('files', 'test', 'prepa_compta', 'grouping')
+      FileUtils.remove_entry Rails.root.join('files', 'test', 'prepa_compta', 'grouping')
     end
 
     it 'does nothing' do

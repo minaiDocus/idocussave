@@ -85,9 +85,9 @@ class RemoteFile < ApplicationRecord
     if temp_path.present? && File.exist?(temp_path)
       if extension == KnowingsApi::File::EXTENSION
         dir = File.dirname(temp_path)
-        FileUtils.remove_entry_secure File.join(dir, 'meta.xml')
+        FileUtils.remove_entry File.join(dir, 'meta.xml')
       end
-      FileUtils.remove_entry_secure temp_path
+      FileUtils.remove_entry temp_path
     end
 
     self.state = 'synced'

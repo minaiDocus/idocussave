@@ -29,7 +29,7 @@ class CustomActiveStorageObject
   end
 
   def reload
-    FileUtils.remove_entry_secure(path, true)
+    FileUtils.remove_entry(path, true)
     self
   end
 
@@ -132,7 +132,7 @@ class CustomActiveStorageObject
         FileUtils.makedirs(dir)
         FileUtils.chmod(0755, dir)
 
-        FileUtils.delay_for(12.hours, queue: :low).remove_entry_secure(dir, true)
+        FileUtils.delay_for(12.hours, queue: :low).remove_entry(dir, true)
 
         tmp_file = File.open(tmp_file_path, 'wb')
         tmp_file.write blob.download

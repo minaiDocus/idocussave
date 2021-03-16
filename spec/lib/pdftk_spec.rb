@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'Pdftk' do
   context 'Merge' do
     before(:each) do
-      CustomUtils.mktmpdir(nil, false) do |dir|
+      CustomUtils.mktmpdir('pdftk_test', nil, false) do |dir|
         @dir         = dir
         @first_file  = File.join(@dir, '2pages.pdf')
         FileUtils.cp(Rails.root.join('spec', 'support', 'files', '2pages.pdf'), @first_file)
@@ -17,7 +17,7 @@ describe 'Pdftk' do
     end
 
     after(:each) do
-      FileUtils.remove_entry_secure(@dir, true)
+      FileUtils.remove_entry(@dir, true)
     end
 
     it 'merge with mergeable file', :default do

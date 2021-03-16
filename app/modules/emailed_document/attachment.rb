@@ -112,8 +112,8 @@ class EmailedDocument::Attachment
   end
 
   def clean_dir
-    FileUtils.remove_entry_secure(@dir, true) if @dir
-    FileUtils.remove_entry_secure(@dir_2, true) if @dir_2
+    FileUtils.remove_entry(@dir, true) if @dir
+    FileUtils.remove_entry(@dir_2, true) if @dir_2
   end
 
   def processed_file_path
