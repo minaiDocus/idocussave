@@ -75,8 +75,8 @@ class Idocus.Views.RetrieversStep1 extends Backbone.View
             Object.assign(data_remote, data_remote, { id_provider: @$el.find('#ido_connector_id').val() })
           else
             Object.assign(data_remote, data_remote, { id_bank: @$el.find('#ido_connector_id').val() })
-        else
-          delete data_remote.website
+        #else
+          #delete data_remote.website
 
         data_local = @common.serialize_form_json( @$el.find('#ido_form') )
         Object.assign(data_local, data_local, { ido_journal: @$el.find('#field_ido_journal').val(), ido_custom_name: @$el.find('#field_ido_custom_name').val() })
