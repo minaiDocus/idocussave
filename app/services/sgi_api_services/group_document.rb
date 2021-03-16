@@ -141,15 +141,31 @@ class SgiApiServices::GroupDocument
         @file_path = File.join(@file_path, @file_name)
 
         if file_paths.size > 1
-          Pdftk.new.merge file_paths, @file_path
+          is_ok = Pdftk.new.merge file_paths, @file_path
         else
+          is_ok = true
           FileUtils.cp file_paths.first, @file_path
         end
 
         begin
 
-          create_temp_document
+          if is_ok
+            create_temp_document
+          else
+            log_document = {
+              subject: "[SgiApiServices::GroupDocument] create temp document errors - can't be merge",
+              name: "SgiApiServices::CreateTempDocumentFromGrouping",
+              error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors - can't be merge",
+              erreur_type: "create temp document with errors - can't be merge",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                destinations_path: @file_path,
+                source_array: file_paths.join(' && ')
+              }
+            }
 
+            ErrorScriptMailer.error_notification(log_document).deliver
+          end
         rescue => e
           log_document = {
             subject: "[SgiApiServices::GroupDocument] create temp document errors",

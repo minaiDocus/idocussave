@@ -12,7 +12,7 @@ class Retriever::CreateBudgeaConnection
     retriever.assign_attributes parse_parameters
 
     if retriever.save
-      sleep 2
+      sleep 5
       force = false
 
       state   = @budgea_response[:error] || @budgea_response[:status]
