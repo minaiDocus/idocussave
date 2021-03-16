@@ -63,11 +63,7 @@ class CustomUtils
 
         yield(final_dir) if block_given?
 
-        if block_given? && with_remove && final_dir
-          delay_time = rand(2..10).minutes
-          FileUtils.delay_for(delay_time, queue: :low).remove_entry(final_dir, true)
-          CustomUtils.delay_for(delay_time + 2.minutes, queue: :low).check_tmpdir(final_dir, from)
-        end
+        FileUtils.delay_for(rand(2..10).minutes, queue: :low).remove_entry(final_dir, true) if block_given? && with_remove && final_dir
       rescue => e
         log_document = {
           subject: "[CustomUtils] error on tmp dir creation",
@@ -86,25 +82,6 @@ class CustomUtils
       end
 
       final_dir
-    end
-
-    def check_tmpdir(directory, from)
-      if File.directory?(directory)
-        infos = {
-          subject: "[CustomUtils] mktmpdir with remove entry failed",
-          name: "CustomTempDirRemoveEntryFailed",
-          error_group: "[CustomTempDirRemoveEntryFailed] mktmpdir with remove entry failed",
-          erreur_type: "custom temp dir with remove entry failed",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%s'),
-          more_information: {
-            from: from.to_s,
-            directory: directory,
-            method: 'check_tmpdir'
-          }
-        }
-
-        ErrorScriptMailer.error_notification(infos).deliver
-      end
     end
   end
 end
