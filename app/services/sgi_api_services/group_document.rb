@@ -96,12 +96,24 @@ class SgiApiServices::GroupDocument
 
   def create_new_temp_document
     @json_content['pieces'].each do |pieces|
-      pages       = []
-      ids         = pieces.map{|piece| piece['id'] }
-      merged_dirs = pieces.map{|piece| File.join(@merged_dir, "#{piece['id']}")}
-      pieces.map{|piece| pages << piece['pages']}
+      try_again = 0
 
-      CreateTempDocumentFromGrouping.new(@temp_pack, pages, ids, merged_dirs).execute
+      begin
+        pages       = []
+        ids         = pieces.map{|piece| piece['id'] }
+        merged_dirs = pieces.map{|piece| File.join(@merged_dir, "#{piece['id']}")}
+        pieces.map{|piece| pages << piece['pages']}
+
+        result = CreateTempDocumentFromGrouping.new(@temp_pack, pages, ids, merged_dirs, try_again).execute
+
+        raise if not result && try_again < 3
+      rescue
+        FileUtils.rm_rf(Dir["#{@merged_dir}/*"])
+        files_input
+
+        try_again += 1
+        retry
+      end
     end
   end
 
@@ -125,12 +137,13 @@ class SgiApiServices::GroupDocument
   end
 
   class CreateTempDocumentFromGrouping
-    def initialize(temp_pack, pages, temp_document_ids, merged_paths)
+    def initialize(temp_pack, pages, temp_document_ids, merged_paths, try_again)
       @temp_pack         = temp_pack
       @pages             = pages
       @temp_document_ids = temp_document_ids
       @file_name         = @temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf'
       @merged_paths      = merged_paths
+      @try_again         = try_again
     end
 
     # Create a secondary temp documents it comes back from grouping
@@ -152,6 +165,8 @@ class SgiApiServices::GroupDocument
           if is_ok
             create_temp_document
           else
+            return false if @try_again < 3
+
             log_document = {
               subject: "[SgiApiServices::GroupDocument] create temp document errors - can't be merge",
               name: "SgiApiServices::CreateTempDocumentFromGrouping",
@@ -159,14 +174,19 @@ class SgiApiServices::GroupDocument
               erreur_type: "create temp document with errors - can't be merge",
               date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
               more_information: {
+                retries_counter: @try_again,
                 destinations_path: @file_path,
                 source_array: file_paths.join(' && ')
               }
             }
 
             ErrorScriptMailer.error_notification(log_document).deliver
+
+            true
           end
         rescue => e
+          return false if @try_again < 3
+
           log_document = {
             subject: "[SgiApiServices::GroupDocument] create temp document errors",
             name: "SgiApiServices::CreateTempDocumentFromGrouping",
@@ -174,12 +194,15 @@ class SgiApiServices::GroupDocument
             erreur_type: "create temp document with errors",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
+              retries_counter: @try_again,
               temp_dir_path: @file_path,
               service_error: e.to_s
             }
           }
 
           ErrorScriptMailer.error_notification(log_document).deliver
+
+          true
         end
       end
     end
