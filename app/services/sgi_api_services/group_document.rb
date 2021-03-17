@@ -17,8 +17,6 @@ class SgiApiServices::GroupDocument
       CustomUtils.mktmpdir('api_group_document') do |dir|
         @merged_dir = dir
 
-        files_input
-
         create_new_temp_document
 
         @temp_pack.temp_documents.where(id: temp_document_ids(@json_content['pieces'])).each(&:bundled)
@@ -99,6 +97,8 @@ class SgiApiServices::GroupDocument
       try_again = 0
 
       begin
+        files_input
+
         pages       = []
         ids         = pieces.map{|piece| piece['id'] }
         merged_dirs = pieces.map{|piece| File.join(@merged_dir, "#{piece['id']}")}
@@ -106,10 +106,9 @@ class SgiApiServices::GroupDocument
 
         result = CreateTempDocumentFromGrouping.new(@temp_pack, pages, ids, merged_dirs, try_again).execute
 
-        raise if not result && try_again < 3
+        raise if !result && try_again < 3
       rescue
         FileUtils.rm_rf(Dir["#{@merged_dir}/*"])
-        files_input
 
         try_again += 1
         retry
@@ -163,7 +162,7 @@ class SgiApiServices::GroupDocument
         begin
 
           if is_ok
-            create_temp_document
+            return create_temp_document
           else
             return false if @try_again < 3
 
@@ -182,7 +181,7 @@ class SgiApiServices::GroupDocument
 
             ErrorScriptMailer.error_notification(log_document).deliver
 
-            true
+            return true
           end
         rescue => e
           return false if @try_again < 3
@@ -202,7 +201,7 @@ class SgiApiServices::GroupDocument
 
           ErrorScriptMailer.error_notification(log_document).deliver
 
-          true
+          return true
         end
       end
     end
@@ -251,7 +250,8 @@ class SgiApiServices::GroupDocument
       temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
       temp_document.original_fingerprint        = DocumentTools.checksum(@file_path)
 
-      if temp_document.save && temp_document.ready
+      if temp_document.save
+        temp_document.ready
         temp_document.cloud_content_object.attach(File.open(@file_path), file_name)
         true
       else
