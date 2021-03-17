@@ -170,15 +170,15 @@ class DocumentTools
     rescue => e
       System::Log.info('poppler_errors', "[completed?] - #{file_path.to_s} - #{e.to_s}")
       is_ok    = false
-      dir      = "#{Rails.root}/files/temp_pack_processor/poppler_error/"
+      # dir      = "#{Rails.root}/files/temp_pack_processor/poppler_error/"
 
-      FileUtils.makedirs(dir)
-      FileUtils.chmod(0755, dir)
+      # FileUtils.makedirs(dir)
+      # FileUtils.chmod(0755, dir)
 
-      filename        = File.basename(file_path)
-      file_error_path = File.join(dir, filename)
+      # filename        = File.basename(file_path)
+      # file_error_path = File.join(dir, filename)
 
-      FileUtils.copy file_path, file_error_path if File.exist? file_path
+      # FileUtils.copy file_path, file_error_path if File.exist? file_path
     end
 
     if strict

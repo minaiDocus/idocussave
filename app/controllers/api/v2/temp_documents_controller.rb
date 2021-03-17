@@ -6,10 +6,7 @@ class Api::V2::TempDocumentsController < ActionController::Base
     customer = User.find(temp_document_params[:user_id])
     journal  = customer.account_book_types.where(entry_type: params[:accounting_type]).first
 
-    dir = "#{Rails.root}/files/temp_pack_processor/uploaded_document/"
-
-    FileUtils.makedirs(dir)
-    FileUtils.chmod(0755, dir)
+    dir = CustomUtils.mktmpdir('temp_document_controller', nil, false)
 
     filename = File.join(dir, "#{customer.code}_#{temp_document_params[:content_file_name]}")
 
