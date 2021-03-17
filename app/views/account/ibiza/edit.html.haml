@@ -8,7 +8,7 @@
           .card-header
             %h4 Connexion à iBiza pour le transfert des écritures
           .card-body
-            = f.input :specific_url_options, hint: "Pour connecter iBiZa à iDocus, Vous pouvez spécifier votre URL de connexion"
+            = f.input :specific_url_options, hint: "Pour connecter iBiZa à iDocus, Vous pouvez spécifier votre URL de connexion (Par défaut: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc)", placeholder: 'https://webservice.irf-cloud.com/IRFService/services/IRFService.svc'
             = f.input :access_token, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
             = f.input :access_token_2, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
             = f.input :is_auto_deliver, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
