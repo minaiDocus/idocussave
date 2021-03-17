@@ -124,7 +124,6 @@ class User < ApplicationRecord
     end
   end
 
-
   before_save do |user|
     user.format_name
   end
@@ -347,60 +346,6 @@ class User < ApplicationRecord
 
   def recently_created?
     created_at > 24.hours.ago
-  end
-
-  # TODO : need a test
-  def self.search(contains)
-    users = self.all
-
-    if contains[:collaborator_id].present?
-      collaborator = User.unscoped.find(contains[:collaborator_id].to_i) rescue nil
-      if collaborator
-        collaborator = Collaborator.new(collaborator)
-        groups = collaborator.groups
-        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
-        users = users.where(id: customers)
-      end
-    end
-
-    if contains[:group_ids].present?
-      groups = Group.find(contains[:group_ids]) rescue nil
-      if groups
-        customers = groups.map{ |g| g.customers.pluck(:id) }.compact.flatten || [0]
-        users = users.where(id: customers)
-      end
-    end
-
-    users = contains[:is_inactive] == '1' ? users.closed : users.active                        if contains[:is_inactive].present?
-    users = users.where(is_admin:            (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
-    users = users.where(is_prescriber:       (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
-    users = users.where(is_guest:            (contains[:is_guest] == '1' ? true : false))      if contains[:is_guest].present?
-    users = users.where(organization_id:     contains[:organization_id])                       if contains[:organization_id].present?
-
-    users = users.where("code LIKE ?",       "%#{contains[:code]}%")                           if contains[:code].present?
-    users = users.where("email LIKE ?",      "%#{contains[:email]}%")                          if contains[:email].present?
-    users = users.where("company LIKE ?",    "%#{contains[:company]}%")                        if contains[:company].present?
-    users = users.where("last_name LIKE ?",  "%#{contains[:last_name]}%")                      if contains[:last_name].present?
-    users = users.where("first_name LIKE ?", "%#{contains[:first_name]}%")                     if contains[:first_name].present?
-
-    if contains[:is_organization_admin].present?
-      user_ids = Organization.all.pluck(:leader_id)
-
-      users = if contains[:is_organization_admin] == '1'
-        users.where(id: user_ids)
-      else
-        users.where.not(id: user_ids)
-      end
-    end
-
-    users
-  end
-
-  def self.get_by_code(code)
-    member = Member.find_by_code(code)
-
-    return member.user if member
-    return User.find_by_code(code)
   end
 
   private
