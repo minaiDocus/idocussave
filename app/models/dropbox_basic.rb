@@ -25,7 +25,7 @@ class DropboxBasic < ApplicationRecord
   end
 
   def need_to_check_for_all?
-    checked_at_for_all.present? && checked_at_for_all <= 20.hours.ago
+    checked_at_for_all.present? && checked_at_for_all <= 24.hours.ago
   end
 
   def is_configured?

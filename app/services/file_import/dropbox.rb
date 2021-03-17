@@ -79,9 +79,9 @@ class FileImport::Dropbox
     @initial_cursor = @current_cursor.try(:dup)
   end
 
-  def check
+  def check(for_all=false)
     if @dropbox.is_used? && @dropbox.is_configured? && customers.any?
-      if @dropbox.need_to_check_for_all?
+      if (for_all || @dropbox.need_to_check_for_all?) && @dropbox.import_folder_paths.present? && @dropbox.import_folder_paths.any?
         check_for_all
       else
         checked_at = Time.now
@@ -357,24 +357,21 @@ class FileImport::Dropbox
   end
 
   def check_for_all
-    time = Time.now
-
-    begin
-      import_folder_paths = client.list_folder(@dropbox.import_folder_paths)
-    rescue DropboxApi::Errors::WriteError => e
-      if e.message.match(/path\/not_found\//)
-        import_folder_paths = []
-      else
-        raise
+    @dropbox.import_folder_paths.each do |path|
+      begin
+        with_error = false
+        result = client.list_folder(path)
+      rescue => e
+        with_error = true
       end
-    end
 
-    import_folder_paths.each do |result|
+      next if with_error
+
       result.entries.each do |entry|
         process_entry entry
       end
     end
 
-    @dropbox.update(checked_at_for_all: time)
+    @dropbox.update(checked_at_for_all: Time.now)
   end
 end
