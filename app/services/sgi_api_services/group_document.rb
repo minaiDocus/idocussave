@@ -173,13 +173,20 @@ class SgiApiServices::GroupDocument
               erreur_type: "create temp document with errors - can't be merge",
               date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
               more_information: {
+                temp_pack_name: @temp_pack.name,
+                parent_document_ids: @temp_document_ids.join(' && '),
+                pages_should_be_merged: @pages.join(' && '),
                 retries_counter: @try_again,
                 destinations_path: @file_path,
                 source_array: file_paths.join(' && ')
               }
             }
 
-            ErrorScriptMailer.error_notification(log_document).deliver
+            begin
+              ErrorScriptMailer.error_notification(log_document, { attachements: store_failed_merge_attachment } ).deliver
+            rescue
+              ErrorScriptMailer.error_notification(log_document).deliver
+            end
 
             return true
           end
@@ -207,6 +214,16 @@ class SgiApiServices::GroupDocument
     end
 
     private
+
+    def store_failed_merge_attachment
+      files = []
+
+      file_paths.each do |file_path|
+        files <<  {name: File.basename(file_path), file: File.read(file_path)}
+      end
+
+      files
+    end
 
     def file_paths
       _file_paths = []
