@@ -1,9 +1,9 @@
 # encoding: utf-8
 class System::ZohoControl
-  ZOHO_BASE_URI   = 'https://www.zohoapis.com/crm/v2/'
-  ZOHO_AUTH_TOKEN = '5064b25445e1bd95b9d78c49a536ffcd' ###token Prod
-  #ZOHO_AUTH_TOKEN = '7e2b6d448a6d833f46ce3f83d5d25c93' ###token Luc
-  #ZOHO_AUTH_TOKEN  = '1000.ce9223d2a1ac41099eda5802e6b268be.e43ba977987f7600035d5a74f91bad88' ###token mina
+  # ZOHO_BASE_URI   = 'https://www.zohoapis.com/crm/v2/'
+  # ZOHO_AUTH_TOKEN = '5064b25445e1bd95b9d78c49a536ffcd' ###token Prod
+  # ZOHO_AUTH_TOKEN = '7e2b6d448a6d833f46ce3f83d5d25c93' ###token Luc
+  # ZOHO_AUTH_TOKEN  = '1000.ce9223d2a1ac41099eda5802e6b268be.e43ba977987f7600035d5a74f91bad88' ###token mina
 
   class << self
     def send_organizations
@@ -13,13 +13,18 @@ class System::ZohoControl
     def send_collaborators
       new().send_collaborators
     end
+
+    def generate_access_and_refresh_token_by(code)
+      p new().generating_access_and_refresh_token(code)
+    end
   end
 
   def initialize
     @organizations_count, @organizations_sent_with_success_count, @organizations_sent_with_errors_count, @organization_already_exist_count = 0, 0, 0, 0
     @users_count, @users_sent_with_success_count, @users_sent_with_errors_count, @users_already_exist_count = 0, 0, 0, 0
     reset_control
-    @process_id = DateTime.current.strftime("%Y%m%d_%H%M")
+    @process_id   = DateTime.current.strftime("%Y%m%d_%H%M")
+    @access_token = ZohoCrm::USER_TOKEN
   end
 
   def send_organizations
@@ -102,6 +107,10 @@ class System::ZohoControl
     end
   end
 
+  def generating_access_and_refresh_token(code)
+    generate_access_and_refresh_token(code)
+  end
+
   private
 
   def process(data)
@@ -134,10 +143,21 @@ class System::ZohoControl
   end
 
   def result_of(object)
-    url = "#{@data_type.module_name}/search?criteria=#{@data_type.search_record_with_criteria(object)}"
-    response = connection.get do |request|
-      request.url url
-      request.headers = headers
+    retry_count = 0
+
+    begin
+      url = "#{@data_type.module_name}/search?criteria=#{@data_type.search_record_with_criteria(object)}"
+
+      response = connection.get do |request|
+        request.url url
+        request.headers = headers
+      end
+
+      raise if response.status.to_i == 401 && retry_count <= 1
+    rescue
+      retry_count += 1
+      @access_token = refresh_access_token
+      retry
     end
 
     return response.body["data"].first["id"] if response.status.to_i == 200 && response.body["data"].present? && response.body["data"].first["id"].present?
@@ -145,10 +165,21 @@ class System::ZohoControl
   end
 
   def get_record_by(id)
-    url = "#{@data_type.module_name}/#{id}"
-    response = connection.get do |request|
-      request.url url
-      request.headers = headers
+    retry_count = 0
+
+    begin
+      url = "#{@data_type.module_name}/#{id}"
+
+      response = connection.get do |request|
+        request.url url
+        request.headers = headers
+      end
+
+      raise if response.status.to_i == 401 && retry_count <= 1
+    rescue
+      retry_count += 1
+      @access_token = refresh_access_token
+      retry
     end
 
     account_zoho_id, object_idocus_id = 0
@@ -235,24 +266,43 @@ class System::ZohoControl
 
   def send_data_to_zoho
     if @json_content[:insert].present?
-      result = connection.post do |request|
-        request.url @data_type.module_name
-        request.headers = headers
-        request.body    = @json_content[:insert]
+      retry_count = 0
+
+      begin
+        response = connection.post do |request|
+          request.url @data_type.module_name
+          request.headers = headers
+          request.body    = @json_content[:insert]
+        end
+
+        raise if response.status.to_i == 401 && retry_count <= 1
+      rescue
+        retry_count += 1
+        @access_token = refresh_access_token
+        retry
       end
 
-      decode_response(result, 'insert')
+      decode_response(response, 'insert')
     end
 
     if @json_content[:update].present?
-      #request.url "#{@data_type.module_name}?scope=ZohoCRM.modules.#{@data_type.module_name}.UPDATE"
-      result = connection.put do |request|
-        request.url @data_type.module_name
-        request.headers = headers
-        request.body    = @json_content[:update]
+      retry_count = 0
+
+      begin
+        response = connection.put do |request|
+          request.url @data_type.module_name
+          request.headers = headers
+          request.body    = @json_content[:update]
+        end
+
+        raise if response.status.to_i == 401 && retry_count <= 1
+      rescue
+        retry_count += 1
+        @access_token = refresh_access_token
+        retry
       end
 
-      decode_response(result, 'update')
+      decode_response(response, 'update')
     end
   end
 
@@ -260,8 +310,31 @@ class System::ZohoControl
     @data_type.fill_report_file({reports: (@success_report + @error_report), objects: objects})
   end
 
-  def connection
-    Faraday.new(:url => ZOHO_BASE_URI) do |f|
+  def generate_access_and_refresh_token(code=ZohoCrm::CODE)
+    response = connection(ZohoCrm::REFRESH_TOKEN_URL).post do |request|
+      request.url '/oauth/v2/token'
+      # request.headers = headers
+      request.body  = {grant_type: 'authorization_code', client_id: ZohoCrm::CLIENT_ID, client_secret: ZohoCrm::CLIENT_SECRET, redirect_uri: ZohoCrm::REDIRECT_URI, code: code}
+    end
+
+    return "invalid code: #{code}, reset and login with the zoho credentials(Email Address or mobile number)" if response && response.body['error'].present? && response.body['error'] == "invalid_code"
+
+    {access_token: response.body['access_token'], refresh_token: response.body['refresh_token']}
+  end
+
+  def refresh_access_token
+    response = connection(ZohoCrm::REFRESH_TOKEN_URL).post do |request|
+      request.url '/oauth/v2/token'
+      request.headers = headers
+      request.params  = {refresh_token: ZohoCrm::REFRESH_TOKEN, client_id: ZohoCrm::CLIENT_ID, client_secret: ZohoCrm::CLIENT_SECRET, grant_type: ZohoCrm::GRANT_TYPE}
+    end
+
+    @access_token = response.body['access_token']
+    return @access_token
+  end
+
+  def connection(base_url=ZohoCrm::BASE_URI)
+    Faraday.new(:url => base_url) do |f|
       f.response :logger
       f.request :oauth2, 'token', token_type: :bearer
       f.request :url_encoded
@@ -272,8 +345,8 @@ class System::ZohoControl
   end
 
   def headers
-    @headers ||= {
-      authorization: "Zoho-oauthtoken #{ZOHO_AUTH_TOKEN}",
+    @headers = {
+      authorization: "Zoho-oauthtoken #{@access_token}",
       'Accept' => 'application/json',
       'Content-type' => 'application/json'
     }
@@ -286,9 +359,19 @@ class System::ZohoControl
     search_column   = options[:search_column]
     identifier_key  = options[:identifier_key]
 
-    response = connection.get do |request|
-      request.url module_name
-      request.headers = headers
+    retry_count = 0
+
+    begin
+      response = connection.get do |request|
+        request.url module_name
+        request.headers = headers
+      end
+
+      raise if response.status.to_i == 401 && retry_count <= 1
+    rescue
+      retry_count += 1
+      @access_token = refresh_access_token
+      retry
     end
 
     if response.status.to_i == 200 && response.body["data"].present?
