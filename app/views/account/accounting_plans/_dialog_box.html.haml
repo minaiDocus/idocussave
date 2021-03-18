@@ -41,25 +41,26 @@
                 - indexation += 1
         %hr
         .general_account_choice
-          %span Votre compte client ( 411 par défaut )
+          %span Votre compte client générale ( 411 par défaut )
           .customer
             %input.mask_verif_account{ class: "account_customer", name: "account_customer", placeholder: "411", maxlength: 3 }
           %br
-          %span Votre compte fournisseur ( 401 par défaut )
+          %span Votre compte fournisseur générale ( 401 par défaut )
           .provider
             %input.mask_verif_account{ class: "account_provider", name: "account_provider", placeholder: "401", maxlength: 3 }
-        %hr 
+        %hr
         .counter_part_account
-          %span Entrer vos comptes contre parties ( 6 et 7 par défaut )
+          %span Vos comptes de contreparties débutent par : ( 6 et 7 par défaut )
           .part_account
-            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "6" }          
+            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "6" }
           .part_account
             %br
             %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "7" }
-            %span.delete_part_account{ style: "cursor: pointer;"}            
-              = glyphicon('x', {color: 'red'})          
+            %span.delete_part_account{ style: "cursor: pointer;"}
+              = glyphicon('x', {color: 'red'})
 
-        %button.small-shadow.text-bold.btn.btn-primary#add_part_account Ajouter
+        %button.small-shadow.text-bold.btn.btn-secondary#add_part_account
+          = glyphicon('plus')
 
 
   .modal-footer
@@ -71,10 +72,9 @@
         %input#import_button.btn.btn-primary.small-shadow.text-bold{ :type => "submit", :value => "Valider" }
 
 
-.add_part_account.hide  
+.add_part_account.hide
   .part_account
     %br
     %input{ class: "part_account", name: "part_account[]", maxlength: 1 }
-    %span.delete_part_account{ style: "cursor: pointer;"}            
+    %span.delete_part_account{ style: "cursor: pointer;"}
       = glyphicon('x', {color: 'red'})
-  
