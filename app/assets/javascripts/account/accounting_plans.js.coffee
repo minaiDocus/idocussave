@@ -13,6 +13,11 @@ launch_request = (_url, _data, customer_id, organization_id) ->
 
     $('.alerts').html('<div class="row-fluid">' + alert_element + '</div>')
 
+delete_part_account = () ->
+  $('.delete_part_account').on 'click', (e) ->
+    e.preventDefault()
+    $(this).parent().remove()
+
 jQuery ->
   if ($('#import_dialog').length > 0)
     $('#import_dialog').modal('show')
@@ -48,4 +53,18 @@ jQuery ->
   $('.close_modal_fec').click (e) ->
     $(this).attr('disabled', true)
     $(this).html('<img src="/assets/application/bar_loading.gif" alt="chargement..." >')
-	  
+
+
+  $('.mask_verif_account, .part_account').keyup ->
+    value = $(this).val()
+
+    regex = /^\d+$/
+
+    if !regex.exec(value)
+      $(this).val('')
+
+  delete_part_account()
+  $('#add_part_account').on 'click', (e) ->
+    e.preventDefault()
+    $('.counter_part_account').append($('.add_part_account').html())
+    delete_part_account()

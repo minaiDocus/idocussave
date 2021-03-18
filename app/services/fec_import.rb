@@ -43,15 +43,19 @@ class FecImport
 
   def import_txt
     txt_file = File.read(@file_path)
+    tab_part_account = @params[:part_account].select { |n| n != "" }
 
-    @third_parties  = []
-    @for_num_pieces = []
-    @for_pieces     = []
-    book_accepted   = []
+    @third_parties    = []
+    @for_num_pieces   = []
+    @for_pieces       = []
+    @account_provider = @params[:account_provider].blank? ? 401 : @params[:account_provider].to_i
+    @account_customer = @params[:account_customer].blank? ? 411 : @params[:account_customer].to_i
+    @list_counter_part= tab_part_account.any? ? @params[:part_account] : ["6","7"]
 
     txt_file.each_line do |line|
       column      =  make_column_with line
 
+      next if @params[:journal].nil?
       next if !@params[:journal].select{|j| j[column[0]].present? }.present?
 
       journal     = column[0]
@@ -79,15 +83,18 @@ class FecImport
     col    = line.split(/\t/)
     column = col.map { |c| c.strip }
 
+    _account_provider = @account_provider.to_s + '00000'
+    _account_customer = @account_customer.to_s + '00000'
+
     compaux_is_empty        = column[6].blank? && column[7].blank?
-    is_provider_or_customer = %w(401 411).include?(column[4].to_s[0..2])
-    is_general_account      = column[4].in?([40100000, 41100000])
+    is_provider_or_customer = [@account_provider.to_s, @account_customer.to_s].include?(column[4].to_s[0..2])
+    is_general_account      = column[4].to_s.in?([_account_provider, _account_customer])
 
     if compaux_is_empty && is_provider_or_customer && !is_general_account
       column[6] = column[4]
       column[7] = column[5]
-      column[4] = %w(401).include?(column[4].to_s[0..2]) ? '40100000' : '41100000'
-      column[5] = %w(401).include?(column[4].to_s[0..2]) ? 'FOURNISSEUR' : 'CLIENT'
+      column[4] = @account_provider.include?(column[4].to_s[0..2]) ?  _account_provider : _account_customer
+      column[5] = @account_provider.include?(column[4].to_s[0..2]) ? 'FOURNISSEUR' : 'CLIENT'
     end
 
     column
@@ -125,9 +132,9 @@ class FecImport
     item.accounting_plan_itemable_id   = @user.accounting_plan.id
     item.accounting_plan_itemable_type = "AccountingPlan"
 
-    if %w(401).include?(row[:general_account].to_s[0..2])
+    if @account_provider.to_i == row[:general_account].to_s[0..2].to_i
       item.kind = 'provider'
-    elsif %w(411).include?(row[:general_account].to_s[0..2])
+    elsif @account_customer.to_i == row[:general_account].to_s[0..2].to_i
       item.kind = 'customer'
     else
       return false
@@ -164,7 +171,7 @@ class FecImport
     @vat_accounts = {}
 
     @pieces.each do |piece|
-      @counterpart_accounts[piece[:account]] = @counterpart_accounts[piece[:account]].to_i + 1 if %w(6 7).include?(piece[:account].to_s[0]) && piece[:journal] == @third_partie[:journal]
+      @counterpart_accounts[piece[:account]] = @counterpart_accounts[piece[:account]].to_i + 1 if @list_counter_part.include?(piece[:account].to_s[0]) && piece[:journal] == @third_partie[:journal]
 
       if %w(445).include?(piece[:account].to_s[0..2]) && piece[:journal] == @third_partie[:journal]
         amount = piece[:amount_debit] > 0 ? piece[:amount_debit] : piece[:amount_credit]

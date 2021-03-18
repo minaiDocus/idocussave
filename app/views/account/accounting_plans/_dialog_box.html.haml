@@ -39,6 +39,28 @@
               - params_fec[:head_list_fec].each do |head|
                 %option{ value: "#{indexation}", selected: ('selected' if indexation == 2)}= head
                 - indexation += 1
+        %hr
+        .general_account_choice
+          %span Votre compte client ( 411 par défaut )
+          .customer
+            %input.mask_verif_account{ class: "account_customer", name: "account_customer", placeholder: "411", maxlength: 3 }
+          %br
+          %span Votre compte fournisseur ( 401 par défaut )
+          .provider
+            %input.mask_verif_account{ class: "account_provider", name: "account_provider", placeholder: "401", maxlength: 3 }
+        %hr 
+        .counter_part_account
+          %span Entrer vos comptes contre parties ( 6 et 7 par défaut )
+          .part_account
+            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "6" }          
+          .part_account
+            %br
+            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "7" }
+            %span.delete_part_account{ style: "cursor: pointer;"}            
+              = glyphicon('x', {color: 'red'})          
+
+        %button.small-shadow.text-bold.btn.btn-primary#add_part_account Ajouter
+
 
   .modal-footer
     #informations.mrc-5
@@ -47,3 +69,12 @@
         = link_to 'Fermer', account_organization_customer_accounting_plan_path(organization, customer, {dir: params_fec[:dir], new_create_book_type: "#{params_fec[:new_create_book_type]}"} ), :class=>"modal-close"
       .col-md-7
         %input#import_button.btn.btn-primary.small-shadow.text-bold{ :type => "submit", :value => "Valider" }
+
+
+.add_part_account.hide  
+  .part_account
+    %br
+    %input{ class: "part_account", name: "part_account[]", maxlength: 1 }
+    %span.delete_part_account{ style: "cursor: pointer;"}            
+      = glyphicon('x', {color: 'red'})
+  
