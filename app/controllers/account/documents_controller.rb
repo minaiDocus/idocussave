@@ -517,7 +517,7 @@ class Account::DocumentsController < Account::AccountController
     auth_token ||= request.original_url.partition('token=').last
 
     @temp_document = TempDocument.find(params[:id])
-    filepath = @temp_document.cloud_content_object.path(params[:style].presence || :original)
+    filepath = @temp_document.cloud_content_object.reload.path(params[:style].presence || :original)
 
     if File.exist?(filepath.to_s) && (@temp_document.user.in?(accounts) || current_user.try(:is_admin) || auth_token == @temp_document.get_token)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
