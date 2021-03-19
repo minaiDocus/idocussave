@@ -110,6 +110,8 @@ class SgiApiServices::GroupDocument
       rescue
         FileUtils.rm_rf(Dir["#{@merged_dir}/*"])
 
+        sleep(10)
+
         try_again += 1
         retry
       end
@@ -225,6 +227,12 @@ class SgiApiServices::GroupDocument
       files
     end
 
+    def parents_documents_pages
+      @parents_documents_pages = []
+      @temp_document_ids.each_with_index {|temp_document_id, page| @parents_documents_pages << { parent_document_id: temp_document_id, pages: @pages[page] }}
+      @parents_documents_pages
+    end
+
     def file_paths
       _file_paths = []
 
@@ -263,6 +271,7 @@ class SgiApiServices::GroupDocument
       temp_document.delivery_type               = original_temp_document.delivery_type
       temp_document.api_name                    = original_temp_document.api_name
       temp_document.parent_document_id          = original_temp_document.id
+      temp_document.parents_documents_pages     = parents_documents_pages
       temp_document.scan_bundling_document_ids  = bundling_document_ids
       temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
       temp_document.original_fingerprint        = DocumentTools.checksum(@file_path)

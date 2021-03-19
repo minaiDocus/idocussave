@@ -7,6 +7,7 @@ class TempDocument < ApplicationRecord
   attr_accessor :file_base64, :accounting_type
 
   serialize :scan_bundling_document_ids, Array
+  serialize :parents_documents_pages, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
 

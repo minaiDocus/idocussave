@@ -314,6 +314,7 @@ describe SgiApiServices::GroupDocument do
         expect(DocumentTools.pages_number(new_temp_documents.first.cloud_content_object.path)).to eq 2
         expect(DocumentTools.pages_number(new_temp_documents.last.cloud_content_object.path)).to eq 5
         expect(new_temp_documents.last.scan_bundling_document_ids).to eq [2, 5]
+        expect(new_temp_documents.last.parents_documents_pages).to eq [{ parent_document_id: 2, pages: [2,3] }, { parent_document_id: 5, pages: [1, 4, 5] }]
       end
     end
   end
