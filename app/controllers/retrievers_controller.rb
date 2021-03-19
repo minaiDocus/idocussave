@@ -169,6 +169,10 @@ class RetrieversController < ApiController
 
       @retriever.update_state_with params_connection
 
+      #TEMP FIX: reload state from resume after trigger
+      sleep(2)
+      @retriever.reload.resume_me()
+
       render json: { success: true }, status: 200
     else
       render json: { success: false }, status: 200
