@@ -262,6 +262,57 @@ class TempDocument < ApplicationRecord
     collection
   end
 
+  def recreate_grouped_document
+    _parents_documents_pages = self.parents_documents_pages
+    if parent_document && _parents_documents_pages.present? && _parents_documents_pages.any?
+      retries_number = 0
+
+      begin
+        CustomUtils.mktmpdir('recreate_grouped_document') do |dir|
+          merged_paths        = []
+          pages               = []
+          parent_document_ids = []
+
+          _parents_documents_pages.each do |parent_document_pages|
+            parent_document_ids << parent_document_pages[:parent_document_id]
+            _parent_document = TempDocument.find parent_document_pages[:parent_document_id]
+            pages << parent_document_pages[:pages]
+
+            merged_dir = File.join(dir, "#{parent_document_pages[:parent_document_id]}")
+            FileUtils.mkdir_p merged_dir
+
+            merged_paths << merged_dir
+
+            Pdftk.new.burst _parent_document.cloud_content_object.path, merged_dir, "page_#{parent_document_pages[:parent_document_id]}", DataProcessor::TempPack::POSITION_SIZE
+          end
+
+          file_path = File.join(dir, self.temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf')
+
+          files = file_paths(merged_paths, pages, parent_document_ids)
+
+          if files.size > 1
+            is_merged = Pdftk.new.merge files, file_path
+          else
+            is_merged = true
+            FileUtils.cp files.first, file_path
+          end
+
+          if is_merged
+            self.cloud_content_object.attach(File.open(file_path), File.basename(file_path))
+          elsif retries_number < 3
+            raise
+          end
+        end
+      rescue
+        sleep(30)
+        retries_number += 1
+        retry
+      end
+    end
+
+    self.reload.cloud_content_object.path.present?
+  end
+
   def cloud_content_object
     CustomActiveStorageObject.new(self, :cloud_content)
   end
@@ -356,5 +407,17 @@ class TempDocument < ApplicationRecord
   def parent_document
     return nil unless self.parent_document_id
     TempDocument.find self.parent_document_id
+  end
+
+  private
+
+  def file_paths(merged_paths, pages, parent_document_ids)
+    _file_paths = []
+
+    pages.each_with_index do |pages, index_page|
+      pages.map{|page| _file_paths << File.join(merged_paths[index_page], "page_#{parent_document_ids[index_page]}_" + ("%03d" % page) + ".pdf") }
+    end
+
+    _file_paths
   end
 end
