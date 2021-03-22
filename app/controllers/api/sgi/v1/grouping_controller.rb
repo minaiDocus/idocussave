@@ -9,12 +9,16 @@ class Api::Sgi::V1::GroupingController < SgiApiController
 
   # POST /api/sgi/v1/grouping/bundled
   def bundled
-    group_document_response = SgiApiServices::GroupDocument.new(params[:bundled_documents]).execute
+    if params[:bundled_documents].present?
+      group_document_response = SgiApiServices::GroupDocument.new(params[:bundled_documents]).execute
 
-    if group_document_response[:success] == true
-      render json: { success: true, message: '' }, status: 200
+      if group_document_response[:success] == true
+        render json: { success: true, message: '' }, status: 200
+      else
+        render json: { success: false, message: group_document_response.to_json }, status: 601
+      end
     else
-      render json: { success: false, message: group_document_response.to_json }, status: 601
+      render json: { success: false, message: 'Paramètre bundled_documents manquante' }, status: 601
     end
   end
 
