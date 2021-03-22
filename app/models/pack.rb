@@ -394,21 +394,30 @@ class Pack < ApplicationRecord
   private
 
   def merge_document(merge_type, file_path, dir, append_to = nil)
-    target_file = append_to.presence || original_document.cloud_content_object.path
+    target_file     = append_to.presence || original_document.cloud_content_object.path
     temp_file_merge = File.join(dir, "temp_file_merge_#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf")
-    is_merged = true
-    error_reason = 'File not merged'
+    is_merged       = true
+    error_reason    = 'File not merged'
+    retry_again     = 0
 
-    if File.exist?(target_file.to_s)
-      data_merge = (merge_type == 'append')? [target_file, file_path] : [file_path, target_file]
-      is_merged = Pdftk.new.merge(data_merge, temp_file_merge, merge_type)
-    else
-      begin
-        FileUtils.copy file_path, temp_file_merge
-      rescue => e
-        error_reason = "Copy failed => #{e}"
-        is_merged = false
+    begin
+      if File.exist?(target_file.to_s)
+        data_merge = (merge_type == 'append')? [target_file, file_path] : [file_path, target_file]
+        is_merged = Pdftk.new.merge(data_merge, temp_file_merge, merge_type)
+      else
+        begin
+          FileUtils.copy file_path, temp_file_merge
+        rescue => e
+          error_reason = "Copy failed => #{e}"
+          is_merged = false
+        end
       end
+
+      raise if !is_merged && retry_again < 3
+    rescue
+      retry_again += 1
+      sleep(20)
+      retry
     end
 
     if is_merged
