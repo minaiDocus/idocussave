@@ -439,7 +439,7 @@ jQuery ->
       $('#user_authd_prev_period').val(1)
 
   if $('#customer.edit.ibiza').length > 0
-    get_ibiza_customers_list($('#user_ibiza_id'))
+    get_ibiza_customers_list($('#user_ibiza_attributes_ibiza_id'))
 
   if $('#customer.edit.mcf').length > 0
     $('#user_mcf_storage').after('<div class="feedback"><img src="/assets/application/bar_loading.gif" alt="chargement..." ></div>')
