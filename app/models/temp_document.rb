@@ -262,6 +262,11 @@ class TempDocument < ApplicationRecord
     collection
   end
 
+  def self.recreate_grouped_document(temp_doc_id)
+    temp_document = TempDocument.find temp_doc_id
+    temp_document.recreate_grouped_document
+  end
+
   def recreate_grouped_document
     _parents_documents_pages = self.parents_documents_pages
     if parent_document && _parents_documents_pages.present? && _parents_documents_pages.any?

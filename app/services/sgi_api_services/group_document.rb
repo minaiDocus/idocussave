@@ -138,15 +138,6 @@ class SgiApiServices::GroupDocument
   end
 
   class CreateTempDocumentFromGrouping
-
-    def self.recreate_grouped_document(parent_document_id, parents_documents_pages)
-      temp_document = TempDocument.where(parent_document_id: original_temp_document.id, parents_documents_pages: parents_documents_pages).last
-
-      if temp_document && temp_document.cloud_content_object.path.present?
-        temp_document.recreate_grouped_document
-      end
-    end
-
     def initialize(temp_pack, pages, temp_document_ids, merged_paths, try_again)
       @temp_pack         = temp_pack
       @pages             = pages
@@ -199,19 +190,17 @@ class SgiApiServices::GroupDocument
               ErrorScriptMailer.error_notification(log_document).deliver
             end
 
-            create_temp_document
+            create_temp_document(true)
 
             return true
           end
         rescue => e
           return false if @try_again < 3
 
-          CreateTempDocumentFromGrouping.delay_for(10.minutes, queue: :low).recreate_grouped_document(original_temp_document.id, parents_documents_pages)
-
           log_document = {
-            subject: "[SgiApiServices::GroupDocument] create temp document errors (can't be merge) and retry in 10 minutes later",
-            name: "SgiApiServices::CreateTempDocumentFromGrouping",
-            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors (can't be merge) and retry in 10 minutes later",
+            subject: "[SgiApiServices::GroupDocument] create temp document errors (can't be merge)",
+            name: "SgiApiServices::CreateTempDocumentFromGrouping-error",
+            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors (can't be merge)",
             erreur_type: "create temp document with errors",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
@@ -268,7 +257,7 @@ class SgiApiServices::GroupDocument
       temp_documents.map(&:id) if original_temp_document.scanned?
     end
 
-    def create_temp_document
+    def create_temp_document(recreate_later = false)
       file_name                                 = File.basename(@file_path)
 
       temp_document                             = TempDocument.new
@@ -291,7 +280,12 @@ class SgiApiServices::GroupDocument
 
       if temp_document.save
         temp_document.ready
-        temp_document.cloud_content_object.attach(File.open(@file_path), file_name)
+
+        if(recreate_later)
+          TempDocument.delay_for(10.minutes, queue: :low).recreate_grouped_document(temp_document.id)
+        else
+          temp_document.cloud_content_object.attach(File.open(@file_path), file_name) if File.exist?(@file_path)
+        end
         true
       else
         false
