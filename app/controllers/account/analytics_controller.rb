@@ -36,7 +36,7 @@ class Account::AnalyticsController < Account::AccountController
   end
 
   def verify_rights
-    unless @customer && @customer.ibiza.ibiza_id? && @customer.uses?(:ibiza) && @customer.try(:ibiza).try(:compta_analysis_activated?) && ibiza.try(:configured?)
+    unless @customer && @customer.uses?(:ibiza) && @customer.ibiza.try(:ibiza_id?) && @customer.try(:ibiza).try(:compta_analysis_activated?) && ibiza.try(:configured?)
       respond_to do |format|
         format.json { render json: { message: 'Unauthorized' }, status: 401 }
       end

@@ -18,7 +18,7 @@ class Software::Ibiza < ApplicationRecord
   validates_inclusion_of :is_auto_updating_accounting_plan, in: [true, false]
 
 
-  before_save :update_states
+  before_validation :update_states
 
   def configured?
     state == 'valid' || state_2 == 'valid'
@@ -139,6 +139,8 @@ class Software::Ibiza < ApplicationRecord
   private
 
   def update_states
+    self.voucher_ref_target = 'piece_number' if self.voucher_ref_target.blank?
+
     if access_token.present? && access_token_changed?
       self.state = 'waiting'
     elsif !access_token.present?
