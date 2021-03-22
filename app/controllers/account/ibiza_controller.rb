@@ -54,9 +54,9 @@ class Account::IbizaController < Account::OrganizationController
   end
 
   def ibiza_params
-    params.require(:ibiza).permit(:specific_url_options, :ibiza_id, :access_token, :access_token_2, :auto_deliver, :is_analysis_activated, :is_analysis_to_validate, :description_separator, :piece_name_format_sep, :voucher_ref_target).tap do |whitelist|
-      whitelist[:description]       = params[:ibiza][:description].permit!.to_hash
-      whitelist[:piece_name_format] = params[:ibiza][:piece_name_format].permit!.to_hash
+    params.require(:software_ibiza).permit(:specific_url_options, :ibiza_id, :access_token, :access_token_2, :auto_deliver, :is_analysis_activated, :is_analysis_to_validate, :description_separator, :piece_name_format_sep, :voucher_ref_target).tap do |whitelist|
+      whitelist[:description]       = params[:software_ibiza][:description].permit!.to_hash
+      whitelist[:piece_name_format] = params[:software_ibiza][:piece_name_format].permit!.to_hash
     end
   end
 end
