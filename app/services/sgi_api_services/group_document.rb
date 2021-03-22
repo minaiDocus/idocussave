@@ -138,11 +138,20 @@ class SgiApiServices::GroupDocument
   end
 
   class CreateTempDocumentFromGrouping
+
+    def self.recreate_grouped_document(parent_document_id, parents_documents_pages)
+      temp_document = TempDocument.where(parent_document_id: original_temp_document.id, parents_documents_pages: parents_documents_pages).last
+
+      if temp_document && temp_document.cloud_content_object.path.present?
+        temp_document.recreate_grouped_document
+      end
+    end
+
     def initialize(temp_pack, pages, temp_document_ids, merged_paths, try_again)
       @temp_pack         = temp_pack
       @pages             = pages
       @temp_document_ids = temp_document_ids
-      @file_name         = @temp_pack.name.tr('%', '_').tr(' ', '_') + '.pdf'
+      @file_name         = @temp_pack.name.gsub(' all', '').tr(' ', '_') + '.pdf'
       @merged_paths      = merged_paths
       @try_again         = try_again
     end
@@ -169,9 +178,9 @@ class SgiApiServices::GroupDocument
             return false if @try_again < 3
 
             log_document = {
-              subject: "[SgiApiServices::GroupDocument] create temp document errors - can't be merge",
+              subject: "[SgiApiServices::GroupDocument] create temp document errors - can't be merge and retry in 10 minutes later",
               name: "SgiApiServices::CreateTempDocumentFromGrouping",
-              error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors - can't be merge",
+              error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors - can't be merge and retry in 10 minutes later",
               erreur_type: "create temp document with errors - can't be merge",
               date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
               more_information: {
@@ -190,15 +199,19 @@ class SgiApiServices::GroupDocument
               ErrorScriptMailer.error_notification(log_document).deliver
             end
 
+            create_temp_document
+
             return true
           end
         rescue => e
           return false if @try_again < 3
 
+          CreateTempDocumentFromGrouping.delay_for(10.minutes, queue: :low).recreate_grouped_document(original_temp_document.id, parents_documents_pages)
+
           log_document = {
-            subject: "[SgiApiServices::GroupDocument] create temp document errors",
+            subject: "[SgiApiServices::GroupDocument] create temp document errors (can't be merge) and retry in 10 minutes later",
             name: "SgiApiServices::CreateTempDocumentFromGrouping",
-            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors",
+            error_group: "[sgi-api-services-create-temp-document-from-grouping] create temp document errors (can't be merge) and retry in 10 minutes later",
             erreur_type: "create temp document with errors",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
