@@ -97,7 +97,7 @@ module JournalHelper
 
   def journals_for_select(journal_name, type = nil)
     journals = if @customer.uses?(:exact_online)
-                 exact_online_journals
+                exact_online_journals
               elsif @customer.my_unisoft.try(:used?)
                 my_unisoft_journals
               else
@@ -142,7 +142,7 @@ module JournalHelper
   def external_journal_title
     if @customer.uses?(:exact_online)
       'Journaux Exact Online :'
-    elsif @customer.my_unisoft.user_used
+    elsif @customer.uses?(:my_unisoft)
       'Journaux My Unisoft :'
     else
       'Journaux Ibiza :'

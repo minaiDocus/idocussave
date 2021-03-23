@@ -93,8 +93,8 @@ class FecImport
     if compaux_is_empty && is_provider_or_customer && !is_general_account
       column[6] = column[4]
       column[7] = column[5]
-      column[4] = @account_provider.include?(column[4].to_s[0..2]) ?  _account_provider : _account_customer
-      column[5] = @account_provider.include?(column[4].to_s[0..2]) ? 'FOURNISSEUR' : 'CLIENT'
+      column[4] = (@account_provider.to_s == column[4].to_s[0..2]) ?  _account_provider : _account_customer
+      column[5] = (@account_provider.to_s == column[4].to_s[0..2]) ? 'FOURNISSEUR' : 'CLIENT'
     end
 
     column

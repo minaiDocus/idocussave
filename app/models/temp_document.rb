@@ -305,6 +305,7 @@ class TempDocument < ApplicationRecord
           if is_merged
             self.update_attributes(pages_number: DocumentTools.pages_number(file_path), original_fingerprint: DocumentTools.checksum(file_path))
             self.cloud_content_object.attach(File.open(file_path), File.basename(file_path))
+            self.ready if self.state == 'unreadable'
           elsif retries_number < 3
             raise
           end
