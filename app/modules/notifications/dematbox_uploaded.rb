@@ -1,13 +1,28 @@
 class Notifications::DematboxUploaded < Notifications::Notifier
-  def self.notify_dematbox_document_uploaded(temp_doc_id, remaining_tries=0)
-    new({ temp_document_id: temp_doc_id, remaining_tries: remaining_tries }).notify_dematbox_document_uploaded
-  end
+  include Concurrent::Async
 
   def initialize(arguments={})
     super
   end
 
   def notify_dematbox_document_uploaded
+    sleep(10)
+
+    log_document = {
+      subject: "[Notifications::DematboxUploaded] notify dematbox document uploaded: after 10 secondes of waiting",
+      name: "Notifications::DematboxUploaded.notify_dematbox_document_uploaded",
+      error_group: "[Notifications::DematboxUploaded] notify dematbox document uploaded",
+      erreur_type: "notify after of 10 secondes waiting",
+      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      more_information: {
+        temp_document_id: @arguments[:temp_document_id],
+        remaining_tries: @arguments[:remaining_tries],
+        method: 'notify_dematbox_document_uploaded'
+      }
+    }
+
+    ErrorScriptMailer.error_notification(log_document).deliver
+
     temp_document = TempDocument.find(@arguments[:temp_document_id])
 
     if temp_document.dematbox_box_id && temp_document.dematbox_doc_id
@@ -20,7 +35,7 @@ class Notifications::DematboxUploaded < Notifications::Notifier
         if e.message.match(/702:DocId already notified/)
           result = true
         elsif e.message.match(/703:DocId not sent/) && @arguments[:remaining_tries] > 0 && (not Rails.env.test?)
-          Notifications::DematboxUploaded.delay_for(5.seconds).notify_dematbox_document_uploaded(temp_document.id, (@arguments[:remaining_tries] - 1))
+          Notifications::DematboxUploaded.new({ temp_document_id: @arguments[:temp_document_id], remaining_tries: (@arguments[:remaining_tries] - 1) }).notify_dematbox_document_uploaded
         else
           raise
         end
