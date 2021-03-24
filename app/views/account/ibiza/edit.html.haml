@@ -47,7 +47,7 @@
                     %label.checkbox
                       = check_box_tag "software_ibiza[piece_name_format][period][is_used]", 1, (@ibiza.piece_name_format['period']['is_used'] rescue false)
                       %span.text Période de traitement
-                  %td= number_field_tag "ibiza[piece_name_format][period][position]", (@ibiza.piece_name_format['period']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[piece_name_format][period][position]", (@ibiza.piece_name_format['period']['position'] rescue 1)
                 %tr
                   %td
                     %label.checkbox
@@ -92,7 +92,7 @@
                     %label.checkbox
                       = check_box_tag "software_ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
                       %span.text Montant d'origine
-                  %td= number_field_tag "ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)
+                  %td= number_field_tag "software_ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)
                   %td
                 %tr
                   %td
