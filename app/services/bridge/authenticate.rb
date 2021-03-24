@@ -4,8 +4,10 @@ class Bridge::Authenticate
   end
 
   def execute
-    if @user.bridge_account
-      BridgeBankin::Authorization.generate_token(email: @user.bridge_account.username, password: @user.bridge_account.password).access_token
+    begin
+      BridgeBankin::Authorization.generate_token(email: @user.bridge_account.username, password: @user.bridge_account.password).access_token if @user.bridge_account
+    rescue => e
+      return nil
     end
   end
 end
