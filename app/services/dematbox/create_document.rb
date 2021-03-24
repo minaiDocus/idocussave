@@ -60,21 +60,6 @@ class Dematbox::CreateDocument
         end
 
         Notifications::DematboxUploaded.new({ temp_document_id: @temp_document.id, remaining_tries: 3 }).async.notify_dematbox_document_uploaded if Rails.env != 'test'
-
-        log_document = {
-          subject: "[Dematbox::CreateDocument] notify dematbox document uploaded: asynchronous, non-blocking",
-          name: "Dematbox::CreateDocument.execute",
-          error_group: "[Dematbox::CreateDocument] notify dematbox document uploaded",
-          erreur_type: "notify before waiting 10 secondes later",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-          more_information: {
-            temp_document_id: @temp_document.id,
-            remaining_tries: 3,
-            method: 'execute'
-          }
-        }
-
-        ErrorScriptMailer.error_notification(log_document).deliver
       end
     end
   end

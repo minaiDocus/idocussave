@@ -6,22 +6,7 @@ class Notifications::DematboxUploaded < Notifications::Notifier
   end
 
   def notify_dematbox_document_uploaded
-    sleep(10)
-
-    log_document = {
-      subject: "[Notifications::DematboxUploaded] notify dematbox document uploaded: after 10 secondes of waiting",
-      name: "Notifications::DematboxUploaded.notify_dematbox_document_uploaded",
-      error_group: "[Notifications::DematboxUploaded] notify dematbox document uploaded",
-      erreur_type: "notify after of 10 secondes waiting",
-      date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-      more_information: {
-        temp_document_id: @arguments[:temp_document_id],
-        remaining_tries: @arguments[:remaining_tries],
-        method: 'notify_dematbox_document_uploaded'
-      }
-    }
-
-    ErrorScriptMailer.error_notification(log_document).deliver
+    sleep(10) #IMPORANT: wait a few seconds before sending notification to dematbox
 
     temp_document = TempDocument.find(@arguments[:temp_document_id])
 
