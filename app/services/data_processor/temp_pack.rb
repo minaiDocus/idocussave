@@ -264,7 +264,7 @@ class DataProcessor::TempPack
   end
 
   def create_dividers_with(temp_document)
-    pack_divider              = pack.dividers.build
+    pack_divider              = pack.dividers.where(position: @inserted_piece.position, type: 'piece').first || pack.dividers.build
     pack_divider.type         = 'piece'
     pack_divider.origin       = temp_document.delivery_type
     pack_divider.is_a_cover   = @is_a_cover
@@ -294,7 +294,7 @@ class DataProcessor::TempPack
           position += 1
         end
       else
-        pack_divider              = pack.dividers.build
+        pack_divider              = pack.dividers.where(position: position, type: 'sheet').first || pack.dividers.build
         pack_divider.pack         = pack
         pack_divider.type         = 'sheet'
         pack_divider.origin       = temp_document.delivery_type
@@ -341,7 +341,12 @@ class DataProcessor::TempPack
       if @inserted_piece.temp_document.api_name == 'invoice_auto'
         PreAssignment::AutoPreAssignedInvoicePieces.execute([@inserted_piece])
       elsif @inserted_piece.temp_document.api_name == 'jefacture'
-        PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
+        begin
+          PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
+        rescue => e
+          @inserted_piece.pre_assignment_state = 'not_processed'
+          @inserted_piece.save
+        end
       else
         Pack::Piece.extract_content(@inserted_piece)
 
