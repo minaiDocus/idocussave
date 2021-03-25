@@ -9,7 +9,7 @@ class Account::Documents::UploadsController < Account::AccountController
                  @user
                end
 
-    if (customer.authorized_upload? && params[:files].present?) || customer.organization.specific_mission
+    if customer && ( (customer.authorized_upload? && params[:files].present?) || customer.organization.specific_mission )
       uploaded_document = UploadedDocument.new(File.open(params[:files][0].tempfile),
                                                params[:files][0].original_filename,
                                                customer,
