@@ -277,7 +277,8 @@ class Pack < ApplicationRecord
   end
 
   def save_archive_to_storage
-    cloud_archive_object.attach(File.open(archive_file_path), archive_name)
+    archive_file = archive_file_path
+    cloud_archive_object.attach(File.open(archive_file), archive_name) if File.exist?(archive_file)
   end
 
   def self.find_by_name(name)
