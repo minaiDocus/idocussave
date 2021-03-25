@@ -21,7 +21,6 @@
           %th.date.text-center Date
           %th.date.text-center Date d'échéance
           %th.third_party.text-center Nom de tiers
-          %th.tags.text-center Tags
       %tbody
         %tr
           %td.date.text-center#date
@@ -42,10 +41,6 @@
             - if @user.has_collaborator_action?
               .edit_content_third_party.hide
                 %input.edit_content_third_party_number.margin0{type: :text, placeholder: @preseizure.third_party, value: @preseizure.third_party}
-          - tags = @preseizure.piece.try(:get_tags)
-          %td.tags.text_center{title: "#{tags}"}
-            .content_tags
-              = tags.length < 15 ? tags : tags[0..15] + "..."
 
   - if @preseizure.delivery_tried_at.present?
     .other_information.col-sm-3

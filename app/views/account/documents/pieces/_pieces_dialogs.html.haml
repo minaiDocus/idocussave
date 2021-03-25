@@ -191,8 +191,9 @@
             %br
             %br
             Nom du tags
-            %br
+            %btn-primary
             != text_field_tag :tags, nil, :id => "pagesTags", :style => 'width: 50%'
+            #content_list_tag
           %p.names_alert
           %p.length_alert
         .modal-footer
@@ -308,7 +309,7 @@
   .modal-dialog
     .modal-content
       .modal-header
-        %h3 Aperçu PDF
+        %h3
         %a{ :class=>"close", "data-dismiss"=>"modal" } ×
       .modal-body{style: "max-height: none !important; padding:0;"}
         .view-content.margin3

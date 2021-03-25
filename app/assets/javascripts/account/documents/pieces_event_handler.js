@@ -11,6 +11,41 @@ var initEventOnPiecesRefresh = function(){
     return false;
   });
 
+  $(".tag_piece").unbind("click");
+  $(".tag_piece").bind("click",function() {
+    selectPage($(this));
+    get_content_tag();
+    return false;
+  });
+
+  $(".piece_tag").unbind("click");
+  $(".piece_tag").bind("click",function() {
+    get_content_tag();
+    return false;
+  });
+
+  $('.delete_tag').unbind("click");
+  $(".delete_tag").bind("click",function() {
+    var value = $(this).parent().children('input.tag_value').val();
+    var new_value = '-' + value;
+    $(this).parent().children('input.tag_value').val(new_value);
+    $(this).parent().addClass('hide');
+  });
+
+  $("#selectionsTaggingButton").unbind("click");
+  $("#selectionsTaggingButton").bind("click",function(e) {
+    e.preventDefault();
+    var type = $(".tag_content .tag_type").val();
+    Tagging(type);
+  });
+
+  $('.modal-close').unbind("click");
+  $(".modal-close").bind("click",function(e) {
+    removeSelection();
+    countSelectedPieces();
+    $('.modal').modal('hide');
+  });
+
   $(".do-selectAllPages").unbind('click');
   $(".do-selectAllPages").click(function(e){
     e.preventDefault();

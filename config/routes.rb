@@ -391,6 +391,7 @@ Rails.application.routes.draw do
     namespace :documents do
       resource :tags do
         post 'update_multiple', on: :collection
+        post 'get_tag_content', on: :collection
       end
       resource :compta_analytics do
         post 'update_multiple', on: :collection

@@ -151,6 +151,13 @@
       body.stop().animate({scrollTop:0}, 500, 'swing', function() {});
     });
 
+    $("a.pack_tag").unbind("click");
+    $("a.pack_tag").bind("click",function(e) {
+      e.preventDefault();
+      get_content_tag('pack');
+      return false;
+    });
+
   }
 
   function show_pieces_view(){
@@ -375,41 +382,6 @@
 
     $("#pagesTags").change(function() {
       $("#pagesTaggingDialog .names_alert").html("");
-    });
-
-    $("#selectionsTaggingButton").click(function(e){
-      e.preventDefault();
-      var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
-      var $documents = $($.map(document_ids, function(id) { return '#document_' + id }).join(','));
-      var $selectionsTags = $("#selectionsTags");
-
-      if (document_ids.length <= 0)
-        $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
-      if ($selectionsTags.val().length <= 0)
-        $("#selectionTaggingDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
-
-      if (document_ids.length > 0 && $selectionsTags.val().length > 0) {
-        postTags($selectionsTags.val(),document_ids,'piece');
-        var aTags = $selectionsTags.val().split(' ');
-        for(var k=0; k<$documents.length; k++ ) {
-          var $document = $($documents[k]);
-          tags = $document.find('input[name=tags]').val();
-          for ( var i=0; i<aTags.length; ++i ) {
-            if (aTags[i].match("-")) {
-              pattern = "\\s" + aTags[i].replace("-","").replace("*",".*");
-              var reg = new RegExp(pattern,"g");
-              tags = tags.replace(reg,"");
-            } else {
-              if (!tags.match(aTags[i])) {
-                tags = tags + " " + aTags[i];
-              }
-            }
-          }
-          $document.find('input[name=tags]').val(tags);
-        }
-        $selectionsTags.val("");
-        $("#selectionTaggingDialog").modal("hide");
-      }
     });
 
     $("#selectionTaggingDialog").on("hidden.bs.modal",function() {

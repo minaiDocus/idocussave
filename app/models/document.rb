@@ -203,6 +203,16 @@ class Document < ApplicationRecord
     tags << number if !mixed? && number
   end
 
+  def get_tags(separator='-')
+    filters = self.pack.name.split.collect do |f|
+      f.strip.match(/^[0-9]+$/) ? f.strip.to_i.to_s : f.strip.downcase
+    end
+
+    _tags = self.tags.present? ? self.tags.select{ |tag| !filters.include?(tag.to_s.strip.downcase) } : []
+
+    _tags.join(" #{separator} ").presence || '-'
+  end
+
 
   def number
     content_file_name.split('_')[-1].to_i.to_s

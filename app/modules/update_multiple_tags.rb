@@ -1,6 +1,6 @@
 # Update Document tags
 module UpdateMultipleTags
-  def self.execute(user, tags, document_ids, type = 'piece')
+  def self.execute(user, tags, document_ids, type = 'pack::piece')
     sub = []
     add = []
 
@@ -15,7 +15,7 @@ module UpdateMultipleTags
     end
 
     document_ids.each do |document_id|
-      if type == 'piece'
+      if type == 'pack::piece'
         document = Pack::Piece.where(id: document_id).first
         doc_user = document.try(:user)
       else

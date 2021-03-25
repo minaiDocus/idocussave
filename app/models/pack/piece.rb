@@ -456,7 +456,7 @@ class Pack::Piece < ApplicationRecord
 
     _tags = self.tags.present? ? self.tags.select{ |tag| !filters.include?(tag.to_s.strip.downcase) } : []
 
-    _tags.join(" #{separator} ").presence || '-'
+    _tags.join(" #{separator} ").presence || ''
   end
 
   private

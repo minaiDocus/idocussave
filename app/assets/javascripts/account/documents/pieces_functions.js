@@ -248,6 +248,45 @@ function selectPage(link) {
   downloadSelectedPieces();
 }
 
+function Tagging(type_tag='pack::piece') {
+  var $selectionsTags = $("#selectionsTags");
+
+  if (type_tag == 'pack::piece'){
+    var document_ids = $.map($("#lists_pieces_content ul li.selected"), function(li){ return li.id.split("_")[1] });
+  }
+  else{
+    var document_ids = $.map($(".packsList .content ul li.pack.selected"), function(li){ return li.id.split("_")[1] });
+  }
+
+  var list_tag_to_delete = $.map($(".tag_itteration.hide input"), function(input){ return input.value });
+  var post_data = $selectionsTags.val() + list_tag_to_delete.toString().replaceAll(',', ' ');
+
+  if (document_ids.length <= 0)
+    $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
+  if ($selectionsTags.val().length <= 0 && list_tag_to_delete.length <= 0)
+    $("#selectionTaggingDialog .names_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer ou supprimer au moins un tag.</span></div>");
+
+  if ( document_ids.length > 0 && post_data.length > 0) {
+    postTags(post_data,document_ids,type_tag);
+
+    $selectionsTags.val("");
+
+    removeSelection();
+    countSelectedPieces();
+    $("#selectionTaggingDialog").modal("hide");
+
+    if (type_tag == 'pack::piece'){
+      $('.pack.shared.activated a.pack_name_selection').click();
+    }
+  }
+};
+
+function removeSelection(){
+  $("#lists_pieces_content ul li").removeClass('selected');
+  $(".actiongroup a").removeClass('border_piece_action');
+  $('.pack.shared').removeClass('selected');
+}
+
 // remove the document from selection, given by link
 function removePageFromSelection(link) {
   var li = link.parents("li.pages");
@@ -273,6 +312,33 @@ function synchroniseRemovedSelection() {
   });
 }
 
+//get content tag
+function get_content_tag(type_tag='piece'){
+  if (type_tag == 'piece'){
+    var ids = $.map($("#lists_pieces_content ul li.selected"), function(li){ return li.id.split("_")[1] });
+  }
+  else{
+    var ids = $.map($(".packsList .content ul li.pack.selected"), function(li){ return li.id.split("_")[1] });
+  }
+
+  countSelectedPieces();
+
+  if (ids.length > 0){
+    $("#selectionTaggingDialog").modal('show');
+    $("#selectionTaggingDialog .modal-body").html('<div class="feedback text-center"><img class="text-center" src="/assets/application/bar_loading.gif" alt="chargement..." ></div>');
+
+    $.ajax({
+      url: "/account/documents/tags/get_tag_content",
+      data: { ids: ids, type_tag: type_tag },
+      type: "POST",
+      success: function(data){
+        $("#selectionTaggingDialog .modal-body").html(data);
+        initEventOnPiecesRefresh();
+      }
+    });
+  }
+}
+
 // submit tag
 function postTags(tags,document_ids,type) {
   var hsh = {"document_ids": document_ids, "tags": tags, type: type};
@@ -282,10 +348,8 @@ function postTags(tags,document_ids,type) {
     dataType: "json",
     type: "POST",
     beforeSend: function() {
-      logBeforeAction("Traitement en cours");
     },
     success: function(data){
-      logAfterAction();
     }
   });
 }

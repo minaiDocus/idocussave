@@ -30,7 +30,7 @@
       %span.pieces_total_count.hide= @documents.total_count
       - if @user.active?
         .actiongroup.float-right
-          %a.do-tooltip.piece_tag{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
+          %a.do-tooltip.piece_tag{ "data-toggle"=>"modal", :href => "#", :title => "Taguer les pièces sélectionnées" }
             = glyphicon('tag')
           %a.delete_piece_composition.margin3.do-tooltip.hide{href: '#', title: 'Supprimer les pièces' }
             = glyphicon('trash')

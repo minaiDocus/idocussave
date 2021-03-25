@@ -9,4 +9,10 @@ class Account::Documents::TagsController < Account::AccountController
       format.html { redirect_to root_path }
     end
   end
+
+  def get_tag_content
+    @documents = params[:type_tag] == 'piece' ? Pack::Piece.where(id: params[:ids]) : Document.where(id: params[:ids])
+
+    render partial: 'account/documents/pieces/tag_dialog'
+  end
 end

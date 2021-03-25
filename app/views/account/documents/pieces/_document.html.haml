@@ -22,6 +22,12 @@
             = glyphicon('check')
           .do-selectPage-ban-icon.hide
             = glyphicon('ban')
+        %a.float-right.margin3.do-tooltip.tag_piece{"data-toggle"=>"modal", href: '#', title: 'Taguer cette pièce', id: "#{document.id}"}
+          = glyphicon('tag')
+        .content_piece_tags.float-right.margin3
+          - tags = document.get_tags
+          %i{title: "#{tags}"}
+            = tags.length < 30 ? tags : tags[0..30] + "..."
      
   .piece_body
     .piece_image
@@ -71,7 +77,6 @@
                 %th.piece_name.text-center Nom
                 %th.date.text-center Date de cr&eacute;ation
                 %th.pages_number.text-center Nombre de pages
-                %th.piece_tags.text-center Tags
             %tbody
               %tr
                 %td.piece_name.text-center#piece_name
@@ -83,7 +88,3 @@
                 %td.pages_number.text-center#pages_number
                   .content_pages_number
                     = document.pages_number
-                - tags = document.get_tags
-                %td.piece_tags.text-center#piece_tags{title: "#{tags}"}
-                  .content_piece_tags
-                    = tags.length < 15 ? tags : tags[0..15] + "..."

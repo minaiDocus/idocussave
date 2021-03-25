@@ -1,0 +1,24 @@
+.tag_content
+  %p
+    Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+    %br
+    %br
+    Nom du tags
+    %br
+    != text_field_tag :tags, nil, :id => "selectionsTags", :style => 'width: 50%'
+    %br
+    %input.tag_type{ type: :hidden, value: "#{@documents.first.class.name.downcase}"}
+    .tag{ style: "display: inline-flex" }
+      - list_tags = []
+      - @documents.each do |document|
+        - tags = document.get_tags.split('-')
+        - tags.each do |tag|
+          - if not list_tags.include?(tag)
+            - list_tags << tag
+            .tag_itteration{ style: "border: 1px solid #c6c2a4;margin: 0 5px;padding: 2px;border-radius: 5px;background-color: #eeeeea;" }
+              %input.tag_value{ type: :hidden, value: "#{tag.strip}"}
+              %span= tag
+              %span.delete_tag{ style: "cursor: pointer;color: red;", title: "Supprimer ce tag" } &times;
+
+  %p.names_alert
+  %p.length_alert
