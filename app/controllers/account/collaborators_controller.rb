@@ -66,7 +66,8 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   def add_to_organization
     if @user.leader?
-      related_organization = @organization.organization_group.organizations.find(params[:oid])
+      #TODO.....
+      related_organization = @organization.search_in_related_group(params[:oid])
 
       member = related_organization.members.find_by(user_id: @member.user.id)
       if member
@@ -119,7 +120,7 @@ class Account::CollaboratorsController < Account::OrganizationController
               redirect_to account_organization_collaborators_path(@organization)
             end
             return
-          elsif @organization.organization_group.nil? && member.user.memberships.count == 1
+          elsif @organization.organization_groups.empty? && member.user.memberships.count == 1
             redirect_to account_organization_collaborator_path(@organization, @member)
             return
           end

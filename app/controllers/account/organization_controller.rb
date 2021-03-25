@@ -55,7 +55,10 @@ class Account::OrganizationController < ApplicationController
   end
 
   def multi_organizations?
-    (@organization.organization_group&.organizations&.count || 1) > 1
+    @organization.has_multi_relations?
   end
   helper_method :multi_organizations?
 end
+
+
+

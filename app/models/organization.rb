@@ -7,7 +7,7 @@ class Organization < ApplicationRecord
   validates_presence_of   :name, :code
   validates_uniqueness_of :name, :code
 
-  belongs_to :organization_group, optional: true
+  has_and_belongs_to_many :organization_groups, optional: true
   has_many :members
   has_many :admin_members, -> { admins }, class_name: 'Member'
   has_many :admins, through: :admin_members, source: :user
@@ -201,6 +201,16 @@ class Organization < ApplicationRecord
     @software = _software
 
     self.try(software.to_sym).is_analysis_to_validate == 1
+  end
+
+  def search_in_related_group(oid)
+    organization_groups.each do |organization_group|
+      return organization_group.organization(oid) if organization_group.belong_to?(oid)
+    end
+  end
+
+  def has_multi_relations?
+    organization_groups.map {|organization_group| organization_group.multi_organizations?}.uniq.include?(true)
   end
 
   private
