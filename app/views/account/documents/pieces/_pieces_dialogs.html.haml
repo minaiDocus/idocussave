@@ -221,23 +221,23 @@
           %a{ :class=>"modal-close btn btn-light" } Fermer
           %input#selectionsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
-.modal.fade{ :id=>"compositionDialog" }
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %h3 Composer
-        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-      %form
-        .modal-body
-          %p
-            Nom de la composition
-            %br
-            != text_field_tag :composition, nil, :id => "composition_name", :style => 'width: 50%'
-          %p.names_alert
-          %p.length_alert
-        .modal-footer
-          %a{ :class=>"modal-close btn btn-light" } Fermer
-          %input#compositionButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
+/ .modal.fade{ :id=>"compositionDialog" }
+/   .modal-dialog
+/     .modal-content
+/       .modal-header
+/         %h3 Composer
+/         %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+/       %form
+/         .modal-body
+/           %p
+/             Nom de la composition
+/             %br
+/             != text_field_tag :composition, nil, :id => "composition_name", :style => 'width: 50%'
+/           %p.names_alert
+/           %p.length_alert
+/         .modal-footer
+/           %a{ :class=>"modal-close btn btn-light" } Fermer
+/           %input#compositionButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"shareDialog" }
   .modal-dialog

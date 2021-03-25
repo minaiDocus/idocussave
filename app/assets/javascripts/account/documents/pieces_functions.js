@@ -131,6 +131,7 @@ function getPieces(url,title,by_preseizure=null,by_scroll) {
 function toogleSelectionBox(){
   $('#selectionsBox').addClass('hide');
   countSelectedPieces();
+  downloadSelectedPieces();
 }
 
 // add page to the selection field
@@ -212,22 +213,24 @@ function selectPage(link) {
 
   if ($("li.selected").length > 0)
   {
-    if ($("li.selected").length >= 2)
-    {
-      $(".composer").show();
-    }
-    else
-    {
-      $(".composer").hide();
-    }
+    // if ($("li.selected").length >= 2)
+    // {
+    //   $(".composer").show();
+    // }
+    // else
+    // {
+    //   $(".composer").hide();
+    // }
+
+    $(".composer").hide();
 
     $(".compta_analysis_edition, .delete_piece_composition").show();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").addClass('border_piece_action');
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .download").addClass('border_piece_action');
   }
   else 
   {
     $(".compta_analysis_edition, .composer, .delete_piece_composition").hide();
-    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer").removeClass('border_piece_action');
+    $(".delete_piece_composition, .piece_tag, .compta_analysis_edition, .composer, .download").removeClass('border_piece_action');
   } 
 
   if (li.hasClass('selected'))
@@ -242,6 +245,7 @@ function selectPage(link) {
   }
 
   countSelectedPieces();
+  downloadSelectedPieces();
 }
 
 // remove the document from selection, given by link
@@ -395,4 +399,24 @@ function countSelectedPieces(){
   $('#show_pages .head .actiongroup .selected_items_info').remove();
   if(selected_items > 0)
     $('#show_pages .head .actiongroup a:first').before(selected_htm);
+}
+
+function downloadSelectedPieces(){
+  var selected_items = $("#show_pages li.pages.selected")
+  var total_count    = $('#show_pages .head .pieces_total_count').text() || '0';
+  var document_ids   = [];
+  var href_download  = $('#panel1 > .pages .actiongroup .download')
+
+  if(selected_items.length > 0 && total_count > selected_items.length){
+    selected_items.each(function(li){
+      document_ids.push($(this).attr('id').split("_")[1]);
+    });
+
+    if(document_ids.length == 1)
+      href_download.attr('href', selected_items.find('span.choose_action_piece a:eq(1)').attr('href'));
+    else
+      href_download.attr('href', '/account/documents/pieces/download_selected/' + document_ids.join('_'));
+  } else if(total_count == selected_items.length){
+    href_download.attr('href', $(".href_download").val());
+  }
 }

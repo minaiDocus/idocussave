@@ -511,6 +511,55 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
+  # GET /account/documents/pieces/download_selected/:pieces_ids
+  def download_selected
+    auth_token = params[:token]
+    auth_token ||= request.original_url.partition('token=').last
+
+    pieces_ids   = params[:pieces_ids].split('_')
+    merged_paths = []
+    pieces       = []
+
+    pieces_ids.each do |piece_id|
+      piece = piece_id.to_s.length > 20 ? Pack::Piece.find_by_mongo_id(piece_id) : Pack::Piece.unscoped.find(piece_id)
+      file_path = piece.cloud_content_object.path(params[:style].presence || :original)
+
+      if !File.exist?(file_path.to_s) && !piece.cloud_content.attached?
+        sleep 1
+        piece.try(:recreate_pdf)
+        file_path = piece.cloud_content_object.reload.path(params[:style].presence || :original)
+      end
+
+      merged_paths << file_path
+      pieces << piece
+    end
+
+    CustomUtils.add_chmod_access_into("/nfs/tmp/") if Rails.env == 'production'
+    tmp_dir      = Rails.env == 'production' ? '/nfs/tmp/' : Rails.root.join("tmp")
+    _tmp_archive = Tempfile.new(["#{pieces_ids.size}_selected_pieces", '.pdf'], tmp_dir)
+    file_path    = _tmp_archive.path
+    _tmp_archive.close
+    _tmp_archive.unlink
+
+    if merged_paths.size > 1
+      is_merged = Pdftk.new.merge merged_paths, file_path
+    else
+      is_merged = true
+      FileUtils.cp merged_paths.first, file_path
+    end
+
+    if is_merged
+      if File.exist?(file_path.to_s) && (pieces.last.pack.owner.in?(accounts) || current_user.try(:is_admin) || auth_token == pieces.last.get_token)
+        mime_type = File.extname(file_path) == '.png' ? 'image/png' : 'application/pdf'
+        send_file(file_path, type: mime_type, filename: File.basename(file_path), x_sendfile: true, disposition: 'inline')
+      else
+        render body: nil, status: 404
+      end
+    else
+      render body: nil, status: 404
+    end
+  end
+
   # GET /account/documents/temp_documents/:id/download
   def temp_document
     auth_token = params[:token]
