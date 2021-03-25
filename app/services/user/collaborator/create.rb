@@ -22,18 +22,20 @@ class User::Collaborator::Create
       user.create_notify
 
       # Creates membership for each organization in the group
-      if @organization.organization_group&.is_auto_membership_activated
-        base_code = "#{@organization.code}%"
-        @organization.organization_group.organizations.each do |organization|
-          next if organization == @organization
+      @organization.organization_groups.each do |organization_group|
+        if organization_group.is_auto_membership_activated
+          base_code = "#{@organization.code}%"
+          organization_group.organizations.each do |organization|
+            next if organization == @organization
 
-          new_base_code = "#{organization.code}%"
-          Member.create(
-            user: user,
-            organization: organization,
-            role: member.role,
-            code: member.code.sub(/^#{base_code}/, new_base_code)
-          )
+            new_base_code = "#{organization.code}%"
+            Member.create(
+              user: user,
+              organization: organization,
+              role: member.role,
+              code: member.code.sub(/^#{base_code}/, new_base_code)
+            )
+          end
         end
       end
 
