@@ -19,8 +19,8 @@ module UpdateMultipleTags
         document = Pack::Piece.where(id: document_id).first
         doc_user = document.try(:user)
       else
-        document = Document.where(id: document_id).first
-        doc_user = document.try(:pack).try(:owner)
+        document = Pack.where(id: document_id).first
+        doc_user = document.try(:owner)
       end
 
       next unless document && (doc_user == user ||
@@ -39,11 +39,6 @@ module UpdateMultipleTags
       document.tags = (document.tags || []) + add if add.any?
 
       document.save
-
-      if type != 'piece' && document.mixed?
-        document.pack.set_tags
-        document.pack.save
-      end
     end
   end
 end
