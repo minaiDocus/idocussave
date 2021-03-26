@@ -19,10 +19,10 @@ module JournalHelper
   def my_unisoft_journals
     if @customer.my_unisoft.try(:used?)
       Rails.cache.fetch [:my_unisoft, :user, @customer.my_unisoft.id, :journals], expires_in: 1.minutes do
-        client   = MyUnisoftLib::Api::Client.new(@customer.my_unisoft.api_token)
+        client   = MyUnisoftLib::Api::Client.new(@customer.my_unisoft.try(:api_token))
         journals = client.get_diary(@customer.my_unisoft.society_id)
 
-        if journals
+        if journals.first[0].nil?
           journals.map do |j|
             {
               closed:      0,

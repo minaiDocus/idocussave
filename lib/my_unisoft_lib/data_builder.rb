@@ -95,7 +95,7 @@ module MyUnisoftLib
       account_id = 0
 
       get_account.each do |account|
-        account_id = account['account_id'] if account['label'].strip == label
+        account_id = account['account_id'] if account['label'].strip == label.strip
       end
 
       account_id

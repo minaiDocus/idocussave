@@ -16,10 +16,10 @@
                 %h4 Liaison avec My Unisoft
               .card-body
                 = f.simple_fields_for :my_unisoft do |m|
-                  = m.input :encrypted_api_token, required: false,  label: 'Veuillez entrer votre Clé API :', input_html: {  :value => "#{@customer.try(:my_unisoft).try(:api_token)}", :style =>"width: 655px" }
+                  = m.input :encrypted_api_token, required: false,  label: 'Veuillez entrer votre Clé API :', input_html: {  :value => "#{@customer.try(:my_unisoft).try(:encrypted_api_token)}", :style =>"width: 655px" }
                   = m.input :auto_deliver, as: :radio_buttons, collection: auto_deliver_options, label: 'Souhaitez-vous livrer automatiquement les écritures ? '
                   %input#auto_deliver_customer{ type: :hidden, name: "auto_deliver_customer", value: "#{@customer.try(:my_unisoft).try(:auto_deliver?)}"}
-                  %input#check_api_token{ type: :hidden, name: "check_api_token", value: "#{@customer.try(:my_unisoft).try(:api_token).present?}"}
+                  %input#check_api_token{ type: :hidden, name: "check_api_token", value: "#{@customer.try(:my_unisoft).try(:encrypted_api_token).present?}"}
 
       .card-footer
         .form-actions.margin0bottom

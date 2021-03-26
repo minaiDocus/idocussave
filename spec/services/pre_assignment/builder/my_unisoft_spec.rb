@@ -15,7 +15,7 @@ describe PreAssignment::Builder::MyUnisoft do
                                                           { type: 3, number: 'ACMS', preseizure_id: preseizure.id },
                                                         ])
     entries  = Pack::Report::Preseizure::Entry.create([
-                                                        { type: 1, number: 'ACTION', amount: 1213.48, preseizure_id: preseizure.id, account_id: accounts[0].id },
+                                                        { type: 1, number: 'Orange', amount: 1213.48, preseizure_id: preseizure.id, account_id: accounts[0].id },
                                                         { type: 2, number: 'AERO', amount: 1011.23, preseizure_id: preseizure.id, account_id: accounts[1].id },
                                                         { type: 2, number: 'ALLBATTERIES', amount: 202.25, preseizure_id: preseizure.id, account_id: accounts[2].id },
                                                       ])
@@ -45,7 +45,7 @@ describe PreAssignment::Builder::MyUnisoft do
     mu2 = Software::MyUnisoft.new
     mu2.is_used = true
     mu2.owner   = @user
-    mu2.encrypted_api_token = "QEVuQwBAEAByOREAFhHULN2CJGaf125G4YhHmu/s35ujaoOnwQc65t/n8HeJfIfBhI2aU0wt73fJCiLh51pa9bkB79K61o7Xvru4rIX2v4q+SAkGZrwM04HpoBLNzCaYTQwOKSlkgpbltj3kwv9uJsv+Ug2jGGD5LIxCHqS9MnBILfAmW2aJyUaoJxyAG+sAspfSHkJMHO1YN6+1i9lGqXTbQNWjx8wU0YcOJiemBlx3I1L/WVrRxg=="
+    mu2.encrypted_api_token = "QEVuQwBAEACqDdqsXnsqW6p5pbPq5cr51FEbulJqavwCbJF2jWseBZlEiH7kzx8JxRbumy6IrwwVK+U5rOGIdHBEYoy6OHAek22k2TWaphNtxa/b7erPHNMWw86pf93ITEKevjNVwjLtR4x+Xi1u64rnXfCwi4VMo6d2b3nNWSGNfQc0XmqHvVdBNcy9SUbVoGdNKx4wRnbLjs204JeUzm3OLWputWPyYdo/GsEnyNMn73gCCPFADw=="
     mu2.society_id = 3
     mu2.auto_deliver = 1
     mu2.is_auto_updating_accounting_plan = true

@@ -191,17 +191,15 @@ class Account::CustomersController < Account::OrganizationController
   def update_my_unisoft
     @customer.assign_attributes(my_unisoft_params)
 
-    is_api_token_changed = @customer.try(:my_unisoft).try(:api_token_changed?)
+    # is_api_token_changed = my_unisoft_params['encrypted_api_token'].try(:strip) == my_unisoft_params['check_api_token'].try(:strip)
 
     if @customer.save
       if @customer.configured?
-        if is_api_token_changed
-          api_token       = my_unisoft_params['encrypted_api_token']
-          remove_customer = my_unisoft_params['encrypted_api_token'].blank? && my_unisoft_params['check_api_token'] == "true"
-          auto_deliver    = my_unisoft_params['auto_deliver']
+          api_token       = my_unisoft_params["my_unisoft_attributes"]["encrypted_api_token"]
+          remove_customer = my_unisoft_params["my_unisoft_attributes"]['encrypted_api_token'].blank? && my_unisoft_params["my_unisoft_attributes"]['check_api_token'] == "true"
+          auto_deliver    = my_unisoft_params["my_unisoft_attributes"]['auto_deliver']
 
           MyUnisoftLib::Setup.new({organization: @organization, customer: @customer, columns: {api_token: api_token, remove_customer: remove_customer, auto_deliver: auto_deliver}}).execute
-        end
 
         flash[:success] = 'Modifié avec succès'
 

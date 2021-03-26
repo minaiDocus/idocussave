@@ -14,6 +14,8 @@ module MyUnisoftLib
 
       @owner      = nil
 
+      @api_token = @params[:api_token]
+
       unless @customer
         @owner = @organization
         update_and_save
@@ -34,10 +36,10 @@ module MyUnisoftLib
             @my_unisoft.auto_deliver  = -1
 
             return true if @my_unisoft.save
-          elsif @params[:api_token].present?
+          elsif @api_token.present?
             list_keys                 = get_list_key
 
-            @my_unisoft.api_token     = @params[:api_token] if @params[:api_token].present?
+            @my_unisoft.api_token     = @api_token if @api_token.present?
             @my_unisoft.access_routes = list_keys.join(',')
 
             info_societe              = client.get_society_info
