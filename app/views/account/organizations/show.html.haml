@@ -41,7 +41,7 @@
                       .float-left Exact Online
                       - if @organization.try(:exact_online).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
-                  %li.hide
+                  %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'my_unisoft') ? 'active' : ''}", href: '#my_unisoft', data: { toggle: 'tab' } }
                       .float-left My Unisoft
                       - if @organization.try(:my_unisoft).try(:used?)
@@ -536,7 +536,7 @@
                     - if @organization.try(:exact_online).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'exact_online'), class: 'btn btn-secondary'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
-            #my_unisoft.hide.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
+            #my_unisoft.tab-pane.fade{ class: ('active show' if params[:tab] == 'my_unisoft') }
               .aligncenter
                 %h4.margin1bottom Configuration My Unisoft
               = simple_form_for [:account, @organization], html: { id: 'form_my_unisoft', class: 'form-horizontal label-auto' } do |f|
