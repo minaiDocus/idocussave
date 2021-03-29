@@ -26,8 +26,8 @@ production:
   # <<: *defaults
   # redirect_uri: https://my.idocus.com/
   base_uri: https://www.zohoapis.com/crm/v2/
-  user_token: 1000.384772868f40b4cd219b41a04e99e53f.5a05312dc6bdf3a386b11bfafac059be
-  refresh_token: 1000.e3ecf7e67b170197d52b10bc24a85115.0063a4705b6e140f815a6fc629ef0b77
+  user_token: 1000.1be424dba26ae57145981619fd83a000.87f396e930c2354582d48851b3647fb7
+  refresh_token: 1000.251874ae36ff5470f5587b78ed6d8088.e681a23c7aa01e7f886711067ce9411d
   client_id: 1000.NC86AKXDJHV6RQTNVCUJU1K8YE8SQS
   client_secret: af15ff834a2c2bb97fe2a6e3aec83dc92bbda85212
   grant_type: refresh_token
