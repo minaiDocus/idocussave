@@ -37,14 +37,16 @@ class AccountingPlan::MyUnisoftUpdate < AccountingPlan::UpdateService
   end
 
   def generate_data_for(account)
-    if %w(411).include?(account['account_number'].to_s[0..2]) && account['account_number'] != "411000"
+    if %w(41).include?(account['account_number'].to_s[0..1])
       kind = 'customer'
-    elsif %w(401).include?(account['account_number'].to_s[0..2]) && account['account_number'] != "401000"
+    elsif %w(40).include?(account['account_number'].to_s[0..1])
       kind = 'provider'
     end
 
     associate = account['counterpart_account'].nil? ?  "" : account['counterpart_account']['account_number']
 
-    { name: account['label'], number: account['account_number'], associate: associate, kind: kind } if %w(401 411).include?(account['account_number'].to_s[0..2]) && kind.present?
+    code = account['vat_param'].nil? ? "" : account['vat_param']['account_ded']['account_number']
+
+    { name: account['label'], number: account['account_number'], associate: associate, kind: kind, code: code } if %w(40 41).include?(account['account_number'].to_s[0..1]) && kind.present? && !account['label'].blank? && !account['account_number'].blank?
   end
 end
