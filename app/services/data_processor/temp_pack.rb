@@ -344,8 +344,7 @@ class DataProcessor::TempPack
         begin
           PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
         rescue => e
-          @inserted_piece.pre_assignment_state = 'not_processed'
-          @inserted_piece.save
+          AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
         end
       else
         Pack::Piece.extract_content(@inserted_piece)
