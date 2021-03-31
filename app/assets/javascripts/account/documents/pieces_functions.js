@@ -259,7 +259,14 @@ function Tagging(type_tag='pack::piece') {
   }
 
   var list_tag_to_delete = $.map($(".tag_itteration.hide input"), function(input){ return input.value });
-  var post_data = $selectionsTags.val() + list_tag_to_delete.toString().replaceAll(',', ' ');
+
+  var post_data = null
+  if (list_tag_to_delete.length > 0) {
+    post_data = $selectionsTags.val() + list_tag_to_delete.toString().replace(/[,]/g, ' ');
+  }
+  else{
+    post_data = $selectionsTags.val()
+  }
 
   if (document_ids.length <= 0)
     $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-danger'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
@@ -343,6 +350,7 @@ function get_content_tag(type_tag='piece'){
 function postTags(tags,document_ids,type) {
   var hsh = {"document_ids": document_ids, "tags": tags, type: type};
   $.ajax({
+    async: false,
     url: "/account/documents/tags/update_multiple",
     data: hsh,
     dataType: "json",
