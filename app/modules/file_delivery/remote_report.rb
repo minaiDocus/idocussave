@@ -58,7 +58,7 @@ module FileDelivery::RemoteReport
 
     file_path = ''
 
-    CustomUtils.mktmpdir('remote_report', "#{basename}__", false) do |dir|
+    CustomUtils.mktmpdir('remote_report', "/nfs/tmp/#{basename}", false) do |dir|
       file_path = File.join(dir, "#{basename}.csv")
 
       File.write(file_path, data)
