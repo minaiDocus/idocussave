@@ -11,7 +11,7 @@ class SgiApiServices::PushPreAsignmentService
       Billing::UpdatePeriodData.new(period).execute
       Billing::UpdatePeriodPrice.new(period).execute
 
-      return { id: data_pre_assignments["piece_id"], name: piece.try(:name), errors: errors} unless data_pre_assignments["process"] == 'preseizure'
+      return false unless data_pre_assignments["process"] == 'preseizure'
 
       if report.preseizures.not_locked.not_delivered.size > 0
         report.remove_delivered_to
@@ -167,10 +167,8 @@ class SgiApiServices::PushPreAsignmentService
       SgiApiServices::PushPreAsignmentService.delay.process(piece, @data_preassignment, errors)
     else
       piece.not_processed_pre_assignment
-
-      return { id: @data_preassignment["piece_id"], name: piece.try(:name), errors: errors}
     end
 
-    { id: piece.id, name: piece.name, errors: errors }
+    { id: @data_preassignment["piece_id"], name: piece.try(:name), errors: errors}
   end
 end

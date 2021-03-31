@@ -4,6 +4,76 @@ class SgiApiServices::GroupDocument
   FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}\.pdf\z/i
   FILE_NAME_PATTERN_2 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}_\d{3}\.pdf\z/i
 
+  class << self
+    def processing(json_content, _temp_document_ids, temp_pack)
+      CustomUtils.mktmpdir('api_group_document') do |dir|
+        create_new_temp_document(json_content, _temp_document_ids, dir, temp_pack)
+
+        temp_pack.temp_documents.where(id: _temp_document_ids).each(&:bundled)
+      end
+    end
+
+    def position(file_name)
+      if FILE_NAME_PATTERN_1.match(file_name)
+        file_name.split('_')[-1].to_i
+      elsif FILE_NAME_PATTERN_2.match(file_name)
+        file_name.split('_')[-2].to_i
+      end
+    end
+
+
+    def basename(file_name)
+      if (result = FILE_NAME_PATTERN_1.match(file_name))
+        if file_name.split('_').size == 5
+          result[1].sub('_', '%').tr('_', ' ')
+        else
+          result[1].tr('_', ' ')
+        end
+      elsif (result = FILE_NAME_PATTERN_2.match(file_name))
+        if file_name.split('_').size == 6
+          result[1].sub('_', '%').tr('_', ' ')
+        else
+          result[1].tr('_', ' ')
+        end
+      end
+    end
+
+    def create_new_temp_document(json_content, _temp_document_ids, merged_dir, temp_pack)
+      json_content['pieces'].each do |pieces|
+        try_again = 0
+
+        begin
+          files_input(_temp_document_ids, merged_dir, temp_pack)
+
+          pages       = []
+          ids         = pieces.map{|piece| piece['id'] }
+          merged_dirs = pieces.map{|piece| File.join(merged_dir, "#{piece['id']}")}
+          pieces.map{|piece| pages << piece['pages']}
+
+          result = CreateTempDocumentFromGrouping.new(temp_pack, pages, ids, merged_dirs, try_again).execute
+
+          raise if !result && try_again < 3
+        rescue
+          FileUtils.rm_rf(Dir["#{merged_dir}/*"])
+
+          sleep(10)
+
+          try_again += 1
+          retry
+        end
+      end
+    end
+
+    def files_input(_temp_document_ids, _merged_dir, temp_pack)
+      _temp_document_ids.each do |id|
+        merged_dir = File.join(_merged_dir, "#{id}")
+        FileUtils.mkdir_p merged_dir
+
+        Pdftk.new.burst temp_pack.temp_documents.where(id: id).first.cloud_content_object.path, merged_dir, "page_#{id}", DataProcessor::TempPack::POSITION_SIZE
+      end
+    end
+  end
+
   def initialize(json_content)
     @errors       = []
     @json_content = json_content
@@ -22,40 +92,6 @@ class SgiApiServices::GroupDocument
     else
       @errors << { success: false }
       @errors.reduce { |accumulator_value, hash_value| (accumulator_value || {}).merge hash_value }
-    end
-  end
-
-
-  def self.processing(json_content, _temp_document_ids, temp_pack)
-    CustomUtils.mktmpdir('api_group_document') do |dir|
-      create_new_temp_document(json_content, _temp_document_ids, dir, temp_pack)
-
-      temp_pack.temp_documents.where(id: _temp_document_ids).each(&:bundled)
-    end
-  end
-
-  def self.position(file_name)
-    if FILE_NAME_PATTERN_1.match(file_name)
-      file_name.split('_')[-1].to_i
-    elsif FILE_NAME_PATTERN_2.match(file_name)
-      file_name.split('_')[-2].to_i
-    end
-  end
-
-
-  def self.basename(file_name)
-    if (result = FILE_NAME_PATTERN_1.match(file_name))
-      if file_name.split('_').size == 5
-        result[1].sub('_', '%').tr('_', ' ')
-      else
-        result[1].tr('_', ' ')
-      end
-    elsif (result = FILE_NAME_PATTERN_2.match(file_name))
-      if file_name.split('_').size == 6
-        result[1].sub('_', '%').tr('_', ' ')
-      else
-        result[1].tr('_', ' ')
-      end
     end
   end
 
@@ -104,42 +140,6 @@ class SgiApiServices::GroupDocument
       else
         [element['id']]
       end
-    end
-  end
-
-
-  def self.create_new_temp_document(json_content, _temp_document_ids, merged_dir, temp_pack)
-    json_content['pieces'].each do |pieces|
-      try_again = 0
-
-      begin
-        files_input(_temp_document_ids, merged_dir, temp_pack)
-
-        pages       = []
-        ids         = pieces.map{|piece| piece['id'] }
-        merged_dirs = pieces.map{|piece| File.join(merged_dir, "#{piece['id']}")}
-        pieces.map{|piece| pages << piece['pages']}
-
-        result = CreateTempDocumentFromGrouping.new(temp_pack, pages, ids, merged_dirs, try_again).execute
-
-        raise if !result && try_again < 3
-      rescue
-        FileUtils.rm_rf(Dir["#{merged_dir}/*"])
-
-        sleep(10)
-
-        try_again += 1
-        retry
-      end
-    end
-  end
-
-  def self.files_input(_temp_document_ids, _merged_dir, temp_pack)
-    _temp_document_ids.each do |id|
-      merged_dir = File.join(_merged_dir, "#{id}")
-      FileUtils.mkdir_p merged_dir
-
-      Pdftk.new.burst temp_pack.temp_documents.where(id: id).first.cloud_content_object.path, merged_dir, "page_#{id}", DataProcessor::TempPack::POSITION_SIZE
     end
   end
 
