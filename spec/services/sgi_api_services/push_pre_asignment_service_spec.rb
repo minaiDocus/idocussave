@@ -58,6 +58,7 @@ describe SgiApiServices::PushPreAsignmentService do
   end
 
   before(:all) do
+    Rails.cache.clear
     @organization = create :organization, code: 'IDOC'
     @user = create :user, :admin, code: 'IDOC%ALPHA', organization: @organization
     @user.update_authentication_token
@@ -87,7 +88,7 @@ describe SgiApiServices::PushPreAsignmentService do
   end
 
   describe 'retrieve preassignment sending' do
-    it "creates preseizure for valid pieces" do
+    it "creates preseizure for valid pieces", :create_pres do
       response = SgiApiServices::PushPreAsignmentService.new(data_content_valid.with_indifferent_access).execute
 
       @piece1.reload
