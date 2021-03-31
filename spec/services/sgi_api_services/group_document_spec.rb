@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
+Sidekiq::Testing.inline! #execute jobs immediatly
 
 describe SgiApiServices::GroupDocument do
   before(:all) do
@@ -304,7 +305,7 @@ describe SgiApiServices::GroupDocument do
 
         response = group_document.execute
 
-        new_temp_documents = @temp_pack.temp_documents.where(content_file_name: "IDO_0001_AC_202006_all")
+        new_temp_documents = @temp_pack.temp_documents.where(content_file_name: "IDO%0001_AC_202006")
 
         expect(response[:success]).to be true
         expect(@temp_pack.temp_documents.count).to eq 8
