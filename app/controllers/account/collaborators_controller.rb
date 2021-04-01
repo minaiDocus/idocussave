@@ -66,8 +66,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   def add_to_organization
     if @user.leader?
-      #TODO.....
-      related_organization = @organization.search_in_related_group(params[:oid])
+      related_organization = @organization.get_associated_organization(params[:oid])
 
       member = related_organization.members.find_by(user_id: @member.user.id)
       if member

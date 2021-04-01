@@ -6,11 +6,11 @@ class OrganizationGroup < ApplicationRecord
 
 
   def belong_to?(oid)
-    organization(oid).present?
+    get_organization(oid).present?
   end
 
-  def organization(oid)
-    organizations.find oid
+  def get_organization(oid)
+    organizations.where(id: oid).first
   end
 
   def multi_organizations?

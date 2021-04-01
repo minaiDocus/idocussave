@@ -55,7 +55,7 @@ class Account::OrganizationController < ApplicationController
   end
 
   def multi_organizations?
-    @organization.has_multi_relations?
+    @organization.belongs_to_groups?
   end
   helper_method :multi_organizations?
 end

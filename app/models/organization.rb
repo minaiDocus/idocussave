@@ -203,13 +203,13 @@ class Organization < ApplicationRecord
     self.try(software.to_sym).is_analysis_to_validate == 1
   end
 
-  def search_in_related_group(oid)
+  def get_associated_organization(oid)
     organization_groups.each do |organization_group|
-      return organization_group.organization(oid) if organization_group.belong_to?(oid)
+      return organization_group.get_organization(oid) if organization_group.belong_to?(oid)
     end
   end
 
-  def has_multi_relations?
+  def belongs_to_groups?
     organization_groups.map {|organization_group| organization_group.multi_organizations?}.uniq.include?(true)
   end
 

@@ -13,8 +13,8 @@ class PonctualScripts::MigrateOrganizationGroupToOrganizationGroupsOrganizations
     organizations = Organization.all
 
     organizations.each do |organization|
-      next if !organization.organization_group_id
-      logger_infos "[MigrateOrganizationGroupToOrganizationGroupsOrganizations] - organization_code: #{organization.code} - Start"
+      next if not organization.organization_group_id
+      logger_infos "[MigrateOrganizationGroupToOrganizationGroupsOrganizations] - organization_code: #{organization.code} - group : #{organization.organization_group_id} - Start"
 
       ActiveRecord::Base.connection.execute("INSERT INTO organization_groups_organizations (organization_id, organization_group_id) VALUES (#{organization.id}, #{organization.organization_group_id})")
 
