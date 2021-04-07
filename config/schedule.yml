@@ -176,6 +176,17 @@ DataVerificator::DailyDataVerifierWorker:
   queue: default
   cron: '0 3 * * *'
 
+## Staffing flows
+
+StaffingflowGroupingWorker:
+  queue: default
+  cron: '*/10 * * * * *'
+
+StaffingflowPreassignmentWorker:
+  queue: default
+  cron: '*/10 * * * * *'
+
+
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults

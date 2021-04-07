@@ -1,7 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class SgiApiServices::PushPreAsignmentService
   class << self
-    def process(piece, data_pre_assignments, errors)
+    def process(piece_id, data_pre_assignments)
+      piece    = Pack::Piece.where(id: piece_id).first
+      return false if not piece
+
       period   = piece.pack.owner.subscription.current_period
       document = Reporting.find_or_create_period_document(piece.pack, period)
       report   = document.report || create_report(piece.pack, document)
@@ -164,7 +167,7 @@ class SgiApiServices::PushPreAsignmentService
     errors << "Piece #{piece.name} already pre-assigned" if piece && piece.is_already_pre_assigned_with?(@data_preassignment["process"])
 
     if errors.empty?
-      SgiApiServices::PushPreAsignmentService.delay.process(piece, @data_preassignment, errors)
+      staffing = StaffingFlow.new({ kind: 'preassignment', params: { piece_id: piece.id, data_preassignment: @data_preassignment } }).save
     else
       piece.not_processed_pre_assignment
     end

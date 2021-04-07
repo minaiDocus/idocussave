@@ -5,11 +5,15 @@ class SgiApiServices::GroupDocument
   FILE_NAME_PATTERN_2 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}_\d{3}\.pdf\z/i
 
   class << self
-    def processing(json_content, _temp_document_ids, temp_pack)
+    def processing(json_content, _temp_document_ids, temp_pack_id)
       CustomUtils.mktmpdir('api_group_document') do |dir|
-        create_new_temp_document(json_content, _temp_document_ids, dir, temp_pack)
+        temp_pack = TempPack.where(id: temp_pack_id).first
 
-        temp_pack.temp_documents.where(id: _temp_document_ids).each(&:bundled)
+        if temp_pack
+          create_new_temp_document(json_content, _temp_document_ids, dir, temp_pack)
+
+          temp_pack.temp_documents.where(id: _temp_document_ids).each(&:bundled)
+        end
       end
     end
 
@@ -86,7 +90,7 @@ class SgiApiServices::GroupDocument
       temp_pack          = find_temp_pack(json_content['pack_name'])
       _temp_document_ids = temp_document_ids(json_content['pieces']).uniq
 
-      SgiApiServices::GroupDocument.delay(queue: :high).processing(json_content, _temp_document_ids, temp_pack)
+      staffing = StaffingFlow.new({ kind: 'grouping', params: { json_content: json_content, temp_document_ids: _temp_document_ids, temp_pack_id: temp_pack.id } }).save
 
       { success: true }
     else

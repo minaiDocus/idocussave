@@ -5,6 +5,7 @@ class System::DatabaseCleaner
     clear_retrieved_data
     clear_currency_rate
     clear_job_processing
+    clear_staffing_flows
   end
 
   private
@@ -21,11 +22,16 @@ class System::DatabaseCleaner
 
     def clear_currency_rate
       ## Truncate CurrencyRate table when Time.now.month == 6, Time.now.day == 1 and Time.now.hour == 1
-        ActiveRecord::Base.connection.execute("TRUNCATE #{CurrencyRate.table_name}") if (Time.now.month.to_i % 6 == 0) && Time.now.day.to_i == 1
+      ActiveRecord::Base.connection.execute("TRUNCATE #{CurrencyRate.table_name}") if (Time.now.month.to_i % 6 == 0) && Time.now.day.to_i == 1
     end
 
     def clear_job_processing
       ## Destroy all JobProcessing when records 'created_at < ?', 1.month.ago
       JobProcessing.where('started_at < ?', 1.month.ago).finished.destroy_all
+    end
+
+    def clear_staffing_flows
+      ## Destroy all Staffing flow when records 'created_at < ?', 1.month.ago
+      StaffingFlow.where('created_at < ?', 1.weeks.ago).processed.destroy_all
     end
 end
