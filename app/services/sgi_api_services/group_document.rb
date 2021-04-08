@@ -268,7 +268,14 @@ class SgiApiServices::GroupDocument
     end
 
     def create_temp_document(recreate_later = false)
-      file_name                                 = File.basename(@file_path)
+      file_name     = File.basename(@file_path)
+      parents_pages = parents_documents_pages
+      checksum      = DocumentTools.checksum(@file_path)
+
+      found_with_parents  = TempDocument.where(parents_documents_pages: parents_pages).first
+      found_with_checksum = TempDocument.where(original_fingerprint: checksum).where('parent_document_id > 0').first
+
+      return true if found_with_parents || found_with_checksum
 
       temp_document                             = TempDocument.new
       temp_document.temp_pack                   = @temp_pack
@@ -283,10 +290,10 @@ class SgiApiServices::GroupDocument
       temp_document.delivery_type               = original_temp_document.delivery_type
       temp_document.api_name                    = original_temp_document.api_name
       temp_document.parent_document_id          = original_temp_document.id
-      temp_document.parents_documents_pages     = parents_documents_pages
+      temp_document.parents_documents_pages     = parents_pages
       temp_document.scan_bundling_document_ids  = bundling_document_ids
       temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
-      temp_document.original_fingerprint        = DocumentTools.checksum(@file_path)
+      temp_document.original_fingerprint        = checksum
 
       if temp_document.save
         temp_document.ready
