@@ -180,11 +180,11 @@ DataVerificator::DailyDataVerifierWorker:
 
 StaffingflowGroupingWorker:
   queue: default
-  cron: '*/10 * * * * *'
+  cron: '*/20 * * * * *'
 
 StaffingflowPreassignmentWorker:
   queue: default
-  cron: '*/10 * * * * *'
+  cron: '*/20 * * * * *'
 
 
 ## Delivery workers
