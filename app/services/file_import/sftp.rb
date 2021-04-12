@@ -79,7 +79,7 @@ class FileImport::Sftp
     ErrorScriptMailer.error_notification(log_infos).deliver
 
     false
-  rescue Errno::ECONNREFUSED, Net::SFTPPermError => e
+  rescue => e
     if e.message.match(/Login incorrect/)
       Notifications::Ftp.new({
         sftp: @sftp,
