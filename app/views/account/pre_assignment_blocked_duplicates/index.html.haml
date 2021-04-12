@@ -28,6 +28,7 @@
                 %th Statut
             %tbody.retractable.slidedown
               - @duplicates.each do |object|
+                - similar_preseizure = object.similar_preseizure || FakeObject.new
                 %tr
                   %td= check_box_tag 'duplicate_ids[]', object.id, false, class: 'checkbox'
                   %td
@@ -40,35 +41,35 @@
                       - else
                         \-
                     %br
-                    - if object.similar_preseizure.created_at
-                      - if object.similar_preseizure.created_at.today?
-                        = l(object.similar_preseizure.created_at, format: '%H:%M')
+                    - if similar_preseizure.try(:created_at)
+                      - if similar_preseizure.try(:created_at).try(:today?)
+                        = similar_preseizure.try(:created_at) ?  l(similar_preseizure.try(:created_at), format: '%H:%M') : '-'
                       - else
-                        = l(object.similar_preseizure.created_at, format: '%d %b %Y %H:%M')
+                        = similar_preseizure.try(:created_at) ? l(similar_preseizure.try(:created_at), format: '%d %b %Y %H:%M') : '-'
                     - else
                       \-
                   %td
                     %b= object.piece.try(:name)
                     %br
-                    = object.similar_preseizure.piece.try(:name)
+                    = similar_preseizure.try(:piece).try(:name) || 'Duplicated piece has been deleted'
                   %td
                     %b= object.piece_number
                     %br
-                    = object.similar_preseizure.piece_number
+                    = similar_preseizure.piece_number
                   %td
                     %b= object.third_party
                     %br
-                    = object.similar_preseizure.third_party
+                    = similar_preseizure.third_party
                   %td
                     %b= object.cached_amount.to_s + ' €'
                     %br
-                    = object.similar_preseizure.cached_amount.to_s + ' €'
+                    = similar_preseizure.cached_amount.to_s + ' €'
                   %td
                     %b= l object.date, format: '%d %b %Y'
                     %br
-                    = l object.similar_preseizure.date, format: '%d %b %Y'
+                    = similar_preseizure.date ? l(similar_preseizure.date, format: '%d %b %Y') : '-'
                   %td
-                    = link_to glyphicon('eye'), '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.try(:cloud_content_object).try(:url), original_url: object.similar_preseizure.piece.try(:cloud_content_object).try(:url), content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.try(:cloud_content_object).try(:url)}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{object.similar_preseizure.piece.try(:cloud_content_object).try(:url)}' style='width:470px; height:483px;'></iframe></div>"  }
+                    = link_to glyphicon('eye'), '#', class: 'do-showPieces custom_popover', title: 'Voir la différence entre les 2 pièces PDF', data: { duplicate_url: object.piece.try(:cloud_content_object).try(:url), original_url: similar_preseizure.try(:piece).try(:cloud_content_object).try(:url), content: "<div class='row-fluid'><div class='span6 aligncenter'><h3>Doublon</h3></div><div class='span6 aligncenter'><h3>Original</h3></div></div><div style='width: 1000px; height: 500px; padding: 10px;' class='aligncenter'><iframe class='duplicate' src='#{object.piece.try(:cloud_content_object).try(:url)}' style='width:470px; height:483px;'></iframe><iframe class='original' src='#{similar_preseizure.try(:piece).try(:cloud_content_object).try(:url)}' style='width:470px; height:483px;'></iframe></div>"  }
                   %td
                     %b Doublon
                     %br
