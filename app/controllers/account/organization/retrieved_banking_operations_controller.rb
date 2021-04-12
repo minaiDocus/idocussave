@@ -24,7 +24,7 @@ class Account::Organization::RetrievedBankingOperationsController < Account::Org
     @operations = operations(false)
 
     if @operations.present? && params[:banking_operation_contains].present?
-      count = @operations.locked.not_deleted.waiting_processing.where('is_coming = ? AND processed_at IS NULL', false).update_all(is_locked: false)
+      count = @operations.not_duplicated.locked.not_deleted.waiting_processing.where('is_coming = ? AND processed_at IS NULL', false).update_all(is_locked: false)
       if count > 0
         flash[:success] = "#{count} opération(s) débloquée(s) avec succès."
       else

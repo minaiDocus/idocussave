@@ -31,6 +31,9 @@ class Operation < ApplicationRecord
   scope :not_deleted,        -> { where(deleted_at: nil) }
   scope :with_api_id,        -> { where.not(api_id: nil) }
 
+  scope :not_duplicated,    -> { where.not('comment LIKE "%Locked for duplication%"') }
+  scope :duplicated,        -> { where('comment LIKE "%Locked for duplication%"') }
+
   scope :not_recently_added_or_forced, -> { where('operations.created_at < ? OR operations.forced_processing_at IS NOT ?', 7.days.ago, nil) }
 
   after_save do |operation|

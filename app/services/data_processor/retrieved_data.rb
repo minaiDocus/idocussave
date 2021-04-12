@@ -409,8 +409,10 @@ class DataProcessor::RetrievedData
 
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
-      if is_duplicate?(bank_account, operation) || operation.to_lock?
+      _is_duplicated = is_duplicate?(bank_account, operation)
+      if _is_duplicated || operation.to_lock?
         operation.is_locked = true
+        operation.comment = 'Locked for duplication' if _is_duplicated
       else
         operation.is_locked = !(bank_account.is_used && bank_account.configured?)
       end
