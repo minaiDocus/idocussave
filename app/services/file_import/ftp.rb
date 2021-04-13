@@ -354,21 +354,24 @@ class FileImport::Ftp
       end
 
       file_paths.each do |untrusted_file_path|
+        next if not untrusted_file_path.to_s.match(/.+[.].+/)
+
         file_name = File.basename(untrusted_file_path).force_encoding('UTF-8')
         file_path = File.join(item.path, file_name)
 
         next if file_name =~ /^\./
-        next unless valid_file_name(file_name)
+        next if not valid_file_name(file_name)
 
-        unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
+        if not UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
           mark_file_error item.path, file_name, [[:invalid_file_extension]]
           next
         end
 
-        if client.size(file_path) > 10.megabytes
-          mark_file_error item.path, file_name, [[:file_size_is_too_big]]
-          next
-        end
+        # Don't check file size
+        # if client.size(file_path) > 10.megabytes
+        #   mark_file_error item.path, file_name, [[:file_size_is_too_big]]
+        #   next
+        # end
 
         CustomUtils.mktmpdir('ftp_import') do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|

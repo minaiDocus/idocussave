@@ -1,4 +1,9 @@
 # -*- encoding : UTF-8 -*-
+# IMPORTANT :
+#
+# THIS FILE IS NOT USED - JUST KEEP IT IN CASE
+#
+
 require 'net/sftp'
 
 class Sftp::Fetcher

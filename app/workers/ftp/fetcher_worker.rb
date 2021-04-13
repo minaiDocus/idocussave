@@ -6,10 +6,10 @@ class Ftp::FetcherWorker
     if FTPDeliveryConfiguration::IS_ENABLED
       UniqueJobs.for 'FtpFetcher' do
         Ftp::Fetcher.fetch(FTPDeliveryConfiguration::FTP_SERVER,
-                         FTPDeliveryConfiguration::FTP_USERNAME,
-                         FTPDeliveryConfiguration::FTP_PASSWORD,
-                         FTPDeliveryConfiguration::FTP_PATH,
-                         FTPDeliveryConfiguration::FTP_PROVIDER)
+                           FTPDeliveryConfiguration::FTP_USERNAME,
+                           FTPDeliveryConfiguration::FTP_PASSWORD,
+                           FTPDeliveryConfiguration::FTP_PATH,
+                           FTPDeliveryConfiguration::FTP_PROVIDER)
       end
     end
   end

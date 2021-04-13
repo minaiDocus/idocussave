@@ -40,8 +40,6 @@ class FileImport::Sftp
 
     sync_folder folder_tree
 
-    client.close
-
     System::Log.info('processing', "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)")
 
     @sftp.update import_checked_at: Time.now, previous_import_paths: import_folders.map(&:path)
@@ -53,14 +51,12 @@ class FileImport::Sftp
     return @client if @client
 
     @client = Sftp::Client.new(@sftp)
-    @client.connect @sftp.domain, @sftp.port
-    @client.login @sftp.login, @sftp.password
 
     @client
   end
 
   def test_connection
-    client.nlst
+    client.dir.entries(@sftp.root_path || '/').map { |e| e.name }
     true
   rescue Errno::ETIMEDOUT => e
     log_infos = {
@@ -120,7 +116,7 @@ class FileImport::Sftp
 
     if root_path != ''
       root_path.split('/').map(&:presence).compact.each do |folder|
-        item = FileImport::Sftp::Item.new folder, true, false
+        item = FileImport::Sftp::Item.new folder, true, true
         last_item.add item
         last_item = item
       end
@@ -152,6 +148,8 @@ class FileImport::Sftp
         input_item.add FileImport::Sftp::Item.new(name, true, nil)
       end
     end
+
+    @folder_tree = last_item
 
     validate_item @folder_tree
 
@@ -192,9 +190,9 @@ class FileImport::Sftp
   def validate_item(item)
     if item.children.present?
       path_names = begin
-        client.nlst item.path
-      rescue Net::SFTPTempError, Net::SFTPPermError => e
-        if e.message.match(/(No such file or directory)|(Directory not found)/)
+        client.dir.entries(item.path).map { |e| e.name }
+      rescue => e
+        if e.message.match(/(No such file or directory)|(Directory not found)|no such file/i)
           []
         else
           log_infos = {
@@ -204,7 +202,7 @@ class FileImport::Sftp
             erreur_type: "SFTPImport - SFTPTempError / SFTPPermError validate item",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
-              item: item,
+              item: item.path,
               error_message: e.message,
               backtrace_error: e.backtrace.inspect,
               method: "validate_item"
@@ -238,24 +236,26 @@ class FileImport::Sftp
   def sync_folder(item)
     if item.to_be_created?
       begin
-        client.mkdir item.path
+        client.mkdir! item.path
       rescue => e
-        log_infos = {
-          subject: "[FileImport::Sftp] synchronize folder #{e.message}",
-          name: "SFTPImport",
-          error_group: "[sftp-import] synchronize folder",
-          erreur_type: "SFTPImport - synchronize folder",
-          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
-          more_information: {
-            item: item,
-            error_type: e.class,
-            error_message: e.message,
-            backtrace_error: e.backtrace.inspect,
-            method: "sync_folder"
+        if !e.message.match(/(No such file or directory)|(Directory not found)|no such file|failure/i)
+          log_infos = {
+            subject: "[FileImport::Sftp] synchronize folder #{e.message}",
+            name: "SFTPImport",
+            error_group: "[sftp-import] synchronize folder",
+            erreur_type: "SFTPImport - synchronize folder",
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+            more_information: {
+              item: item.path,
+              error_type: e.class,
+              error_message: e.message,
+              backtrace_error: e.backtrace.inspect,
+              method: "sync_folder"
+            }
           }
-        }
 
-        ErrorScriptMailer.error_notification(log_infos).deliver
+          ErrorScriptMailer.error_notification(log_infos).deliver
+        end
 
         false
       end
@@ -275,9 +275,9 @@ class FileImport::Sftp
     end
     # TODO : remove artefact folders too
     files = begin
-      client.nlst item.path
-    rescue Net::SFTPTempError, Net::SFTPPermError => e
-      if e.message.match(/(No such file or directory)|(Directory not found)/)
+      client.dir.entries(item.path).map { |e| e.name }
+    rescue => e
+      if e.message.match(/(No such file or directory)|(Directory not found)|no such file|failure/i)
         []
       else
         log_infos = {
@@ -287,7 +287,7 @@ class FileImport::Sftp
           erreur_type: "SFTPImport - SFTPTempError / SFTPPermError remove item",
           date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
           more_information: {
-            item: item,
+            item: item.path,
             error_message: e.message,
             backtrace_error: e.backtrace.inspect,
             method: "remove_item"
@@ -300,9 +300,10 @@ class FileImport::Sftp
       end
     end
     files.each do |file|
-      client.delete file
+      next if not file.to_s.match(/.+[.].+/)
+      client.remove! file
     end
-    client.rmdir item.path
+    client.rmdir! item.path
     item.orphan
   end
 
@@ -327,9 +328,9 @@ class FileImport::Sftp
       next if item.to_be_created? || item.customer.subscription.current_period.is_active?(:ido_x)
 
       file_paths = begin
-        client.nlst(item.path + '/*.*')
-      rescue Net::SFTPTempError, Net::SFTPPermError => e
-        if e.message.match(/No files found/)
+        client.dir.entries(item.path).map { |e| e.name }
+      rescue => e
+        if e.message.match(/No files found|no such file/i)
           []
         else
           log_infos = {
@@ -339,7 +340,7 @@ class FileImport::Sftp
             erreur_type: "SFTPImport - SFTPTempError / SFTPPermError process",
             date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
             more_information: {
-              item: item,
+              item: item.path,
               error_message: e.message,
               backtrace_error: e.backtrace.inspect,
               method: "process"
@@ -353,31 +354,34 @@ class FileImport::Sftp
       end
 
       file_paths.each do |untrusted_file_path|
+        next if not untrusted_file_path.to_s.match(/.+[.].+/)
+
         file_name = File.basename(untrusted_file_path).force_encoding('UTF-8')
         file_path = File.join(item.path, file_name)
 
         next if file_name =~ /^\./
-        next unless valid_file_name(file_name)
+        next if not valid_file_name(file_name)
 
-        unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
+        if not UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
           mark_file_error item.path, file_name, [[:invalid_file_extension]]
           next
         end
 
-        if client.size(file_path) > 10.megabytes
-          mark_file_error item.path, file_name, [[:file_size_is_too_big]]
-          next
-        end
+        # Don't check file size
+        # if client.size(file_path) > 10.megabytes
+        #   mark_file_error item.path, file_name, [[:file_size_is_too_big]]
+        #   next
+        # end
 
         CustomUtils.mktmpdir('sftp_import') do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
-            client.getbinaryfile file_path, file
+            client.download! file_path, file
 
             uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @sftp.organization, 'sftp'
 
             if uploaded_document.valid?
               System::Log.info('processing', "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
-              client.delete file_path
+              client.remove! file_path
             else
               System::Log.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
               mark_file_error(item.path, file_name, uploaded_document.errors)
@@ -401,7 +405,7 @@ class FileImport::Sftp
 
     while (error && loop_count <= 5)
       begin
-        client.rename File.join(path, file_name), File.join(path, new_file_name)
+        client.rename! File.join(path, file_name), File.join(path, new_file_name)
         error = false
       rescue
         new_file_name = "#{loop_count}_#{file_rename}"

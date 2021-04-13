@@ -98,6 +98,10 @@ FileImport::FtpFromAllWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
 
+FileImport::SftpFromAllWorker:
+  queue: file_import
+  cron: '0 0 */6 * * *'
+
 FileImport::IbizaboxWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
