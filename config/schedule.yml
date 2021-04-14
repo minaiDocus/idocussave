@@ -94,18 +94,17 @@ FileImport::DropboxWorker:
   queue: file_import
   cron: '*/10 * * * * *'
 
-FileImport::FtpFromAllWorker:
+FileImport::IbizaboxWorker:
   queue: file_import
   cron: '0 0 */6 * * *'
 
 FileImport::SftpFromAllWorker:
   queue: file_import
-  cron: '0 0 */6 * * *'
+  cron: '0 15 */6 * * *'
 
-FileImport::IbizaboxWorker:
+FileImport::FtpFromAllWorker:
   queue: file_import
-  cron: '0 0 */6 * * *'
-
+  cron: '0 30 */6 * * *'
 
 
 RetrieveOcrProcessedDocumentWorker:

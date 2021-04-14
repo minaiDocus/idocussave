@@ -5,12 +5,12 @@
 
     = form_tag update_scans_admin_notification_settings_path, class: 'form form-horizontal margin0 padding1top' do
       .card-body
-          .form-group.clearfix
-            .label-section
-              = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
-            .control-section
-              = text_field_tag 'notification[to]', !Settings.first.notify_scans_not_delivered_to ? '' : Settings.first.notify_scans_not_delivered_to.join(', '), class: 'form-control w-25'
-              %span.help-block Séparer les valeurs par une virgule.
+        .form-group.clearfix
+          .label-section
+            = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
+          .control-section
+            = text_field_tag 'notification[to]', !Settings.first.notify_scans_not_delivered_to ? '' : Settings.first.notify_scans_not_delivered_to.join(', '), class: 'form-control w-25'
+            %span.help-block Séparer les valeurs par une virgule.
       .card-footer    
         .form-actions
           = submit_tag t('actions.submit'), class: 'btn btn-primary'

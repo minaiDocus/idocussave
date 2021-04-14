@@ -449,7 +449,7 @@ class DataProcessor::RetrievedData
   end
 
   def get_bank_account_of(account)
-    @user.bank_accounts.where('api_id = ? OR (bank_name = ? AND number = ?)', account['id'], retriever.service_name, account['number']).first
+    @user.bank_accounts.where('api_id = ? OR (bank_name = ? AND name = ? AND number = ?)', account['id'], retriever.service_name, account['name'], account['number']).first
   end
 
   def add_webhook(retriever, contents)
