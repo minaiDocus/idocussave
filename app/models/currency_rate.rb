@@ -52,11 +52,8 @@ class CurrencyRate < ApplicationRecord
     ]
   end
 
-
-  private
-
   def self.of(date, from, to)
-    where(["date = ? AND exchange_from = ? AND exchange_to = ?", date, from, to]).first
+    where(["DATE_FORMAT(date, '%Y%m%d') = ? AND exchange_from = ? AND exchange_to = ?", date.strftime('%Y%m%d'), from, to]).first
   end
 
 end
