@@ -19,6 +19,8 @@ class Account::Documents::UploadsController < Account::AccountController
                                                'web',
                                                params[:analytic])
 
+      debugger
+
       data = present(uploaded_document).to_json
     else
       data = { files: [{ name: params[:files].try(:[], 0).try(:original_filename), error: 'Accès non autorisé.' }] }.to_json

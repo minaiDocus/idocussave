@@ -47,7 +47,37 @@ class UploadedDocument
 
         @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
         @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
-        @errors << [:already_exist, nil]                                   unless unique?
+        
+        unless unique?
+          @errors << [:already_exist, 'link_view']
+
+          CustomUtils.mktmpdir('retrievers_controller', '/nfs/temp_document', false) do |dir|
+
+            
+
+            
+            log_document = {
+              subject: "[UploadedDocument] Document already exist",
+              name: "UploadedDocument",
+              error_group: "[UploadedDocumentService] Document already exist",
+              erreur_type: "[Upload] - Document already exist",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                code: params[:IdBaseClient],
+                journal: params[:Type].upcase,
+                original_file_name: @original_file_name
+              }
+            }
+
+            begin
+              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
+            rescue
+              ErrorScriptMailer.error_notification(log_document).deliver
+            end            
+          end
+
+
+        end
 
         if @errors.empty?
           analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)

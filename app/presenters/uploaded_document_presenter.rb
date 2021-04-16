@@ -19,7 +19,10 @@ class UploadedDocumentPresenter
     else
       file[:name]  = @uploaded_document.original_file_name
       file[:error] = @uploaded_document.full_error_messages.presence || 'Internal error (507 - Try again later)'
-    end
+
+      debugger
+      file[:link]  = @uploaded_document.errors.first if file[:error] == "existe déjà"
+    end                                                                                                             
 
     data << file
     { files: data }.to_json

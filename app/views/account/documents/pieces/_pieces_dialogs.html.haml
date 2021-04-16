@@ -150,6 +150,12 @@
                     <button class="cancel btn btn-light">
                       Vu
                     </button>
+                    {% if (file.error) { %}
+                      <span>{%= file %}</span>
+                      <button class="cancel btn btn-secondary">                    
+                        Voir
+                      </button>
+                    {% } %}                    
                   </td>
             </tr>
         {% } %}
