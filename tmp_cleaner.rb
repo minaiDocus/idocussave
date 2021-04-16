@@ -6,7 +6,7 @@ class TmpCleaner
 
     today = Date.today.strftime('%Y%m%d')
 
-    7.times do |i|
+    20.times do |i|
       day = Date.today.prev_day(i).strftime('%Y%m%d')
       p "=========================================[ #{day} ]=========================================="
 

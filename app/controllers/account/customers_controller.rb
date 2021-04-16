@@ -224,7 +224,7 @@ class Account::CustomersController < Account::OrganizationController
 
     if @customer.save
       if @customer.configured?
-        if is_ibiza_id_changed && @user.try(:ibiza).ibiza_id?
+        if is_ibiza_id_changed && @user.try(:ibiza).try(:ibiza_id?)
           AccountingPlan::IbizaUpdate.new(@user).run
         end
 

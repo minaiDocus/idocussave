@@ -20,6 +20,9 @@ class ErrorScriptMailer < ActionMailer::Base
       error_script_mailer.is_enable = false
       error_script_mailer.save
     end
-    
 	end
+
+  def test_mailer
+    mail to: Settings.first.notify_errors_to, subject: "Mail - ceci est un test"
+  end
 end

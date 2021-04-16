@@ -89,7 +89,7 @@ class Operation < ApplicationRecord
   def to_lock?
     bank_account = self.bank_account
 
-    (bank_account.start_date.present? && self.date < bank_account.start_date) ||
+    bank_account.nil? || (bank_account.start_date.present? && self.date < bank_account.start_date) ||
     self.date < Date.parse('2017-01-01') ||
     self.is_coming || old?
   end
