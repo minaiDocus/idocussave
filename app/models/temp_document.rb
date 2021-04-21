@@ -28,6 +28,7 @@ class TempDocument < ApplicationRecord
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
   has_many :children, class_name: 'TempDocument', foreign_key: 'parent_document_id'
+  has_many :archive_document_duplicated
 
   has_one_attached :cloud_content
   has_one_attached :cloud_raw_content

@@ -19,6 +19,7 @@ class UploadedDocumentPresenter
     else
       file[:name]  = @uploaded_document.original_file_name
       file[:error] = @uploaded_document.full_error_messages.presence || 'Internal error (507 - Try again later)'
+      file[:link]  = @uploaded_document.link if @uploaded_document.link.present?
     end
 
     data << file

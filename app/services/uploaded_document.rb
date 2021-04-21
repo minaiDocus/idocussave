@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 # Handler for incoming documents. Used for web uploads and dropbox imports
 class UploadedDocument
-  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document, :processed_file
+  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document, :processed_file, :link
 
 
   VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
@@ -24,7 +24,9 @@ class UploadedDocument
     @original_file_name  = original_file_name.gsub(/\0/, '')
     @prev_period_offset  = prev_period_offset.to_i
 
+    @link = nil
     @errors = []
+
 
     @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
@@ -47,7 +49,48 @@ class UploadedDocument
 
         @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
         @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
-        @errors << [:already_exist, nil]                                   unless unique?
+
+        unless unique?
+          CustomUtils.mktmpdir('uploaded_document', '/nfs/already_exist', false) do |dir|
+            @errors << [:already_exist, nil]
+
+            document_already_exist = Archive::AlreadyExist.new
+
+            document_already_exist.temp_document = similar_document
+            document_already_exist.fingerprint = DocumentTools.checksum(@file.path)
+            document_already_exist.original_file_name = @original_file_name
+            document_already_exist.save
+
+            @link = document_already_exist.reload.id
+
+            document_already_path = File.join(dir, "doc_already_exist_#{@link}.pdf")
+
+            document_already_exist.path = document_already_path
+            document_already_exist.save
+
+            FileUtils.copy @file.path, document_already_path
+
+            log_document = {
+              subject: "[UploadedDocument] Document already exist",
+              name: "UploadedDocument",
+              error_group: "[UploadedDocumentService] Document already exist",
+              erreur_type: "[Upload] - Document already exist",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                original: similar_document.inspect,
+                fingerprint: DocumentTools.checksum(@file.path),
+                inserer: document_already_exist.inspect,
+                fingerprint: similar_document.original_fingerprint
+              }
+            }
+
+            begin
+              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.path)}]} ).deliver
+            rescue
+              ErrorScriptMailer.error_notification(log_document).deliver
+            end
+          end
+        end
 
         if @errors.empty?
           analytic_validator = IbizaLib::Analytic::Validator.new(@user, analytic)
@@ -180,8 +223,12 @@ class UploadedDocument
     '%0.2f' % (File.size(@file.path) / 1_000_000.0)
   end
 
+  def similar_document
+    TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).first
+  end
+
   def unique?
-    TempDocument.where('user_id = ? AND (original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?)', @user.id, fingerprint, fingerprint, fingerprint).first ? false : true
+    !similar_document.present?
   end
 
   def fingerprint

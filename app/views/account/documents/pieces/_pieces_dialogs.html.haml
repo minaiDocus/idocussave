@@ -147,6 +147,11 @@
                   </td>
                 {% } %}
                   <td class="alignright">
+                    {% if (file.link) { %}
+                    <button class="btn btn-secondary view_already_exist" data-double-id="{%= file.link %}">
+                      Voir le détail
+                    </button>
+                    {% } %}
                     <button class="cancel btn btn-light">
                       Vu
                     </button>
@@ -312,5 +317,16 @@
         %h3
         %a{ :class=>"close", "data-dismiss"=>"modal" } ×
       .modal-body{style: "max-height: none !important; padding:0;"}
+        .view-content.margin3
+      .modal-footer
+
+
+.modal.fade.wauto.hauto{ :id => "AlreadyExistView", style: "top:0% !important; left:25% !important;height: auto;"}
+  .modal-dialog{ style: "max-width: 1150px" }
+    .modal-content
+      .modal-header
+        %h3 Informations
+        %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      .modal-body{style: "max-height: none !important; padding:20px;"}
         .view-content.margin3
       .modal-footer

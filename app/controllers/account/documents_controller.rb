@@ -3,7 +3,7 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  skip_before_action :login_user!, only: %w[download piece handle_bad_url temp_document get_tag]
+  skip_before_action :login_user!, only: %w[download piece handle_bad_url temp_document get_tag already_exist_document]
 
   # GET /account/documents
   def index
@@ -569,6 +569,22 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
+  # GET /account/documents/exist_document/:id/download
+  def exist_document
+    auth_token = params[:token]
+    auth_token ||= request.original_url.partition('token=').last
+
+    already_doc = Archive::AlreadyExist.find(params[:id])
+    filepath    = Rails.root + already_doc.path
+
+    if File.exist?(filepath.to_s) && auth_token == already_doc.get_token
+      mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
+      send_file(filepath, type: mime_type, filename: "document_already_exist", x_sendfile: true, disposition: 'inline')
+    else
+      render body: nil, status: 404
+    end
+  end
+
   # GET /contents/original/missing.png
   def handle_bad_url
     token = request.original_url.partition('token=').last
@@ -665,6 +681,10 @@ class Account::DocumentsController < Account::AccountController
     piece.waiting_pre_assignment if temp_pack.is_compta_processable? && piece.preseizures.size == 0 && piece.temp_document.try(:api_name) != 'invoice_auto' && !piece.pre_assignment_waiting_analytics?
 
     render json: { success: true }, status: 200
+  end
+
+  def already_exist_document
+    @already_document = Archive::AlreadyExist.where(id: params[:id]).first
   end
 
   protected

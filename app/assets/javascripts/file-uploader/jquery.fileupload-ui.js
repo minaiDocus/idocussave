@@ -574,6 +574,22 @@
       }
     },
 
+    _view_already_existHandler: function (e) {
+      e.preventDefault();
+      var id = $(e.currentTarget).attr('data-double-id')
+      $('#AlreadyExistView').modal('show')
+
+      $.ajax({
+      url: '/account/documents/already_exist_document',
+      data: {id : id},
+      type: "POST",
+      success: function(data) {
+        $('#AlreadyExistView .modal-body').html(data)
+      }
+    });
+
+    },
+
     _deleteHandler: function (e) {
       e.preventDefault();
       var button = $(e.currentTarget);
@@ -635,6 +651,12 @@
           filesList.find('.cancel').click();
         }
       });
+      this._on(fileUploadButtonBar.find('.view_already_exist'), {
+        click: function (e) {
+          e.preventDefault();
+          filesList.find('.view_already_exist').click();
+        }
+      });
       this._on(fileUploadButtonBar.find('.delete'), {
         click: function (e) {
           e.preventDefault();
@@ -659,7 +681,7 @@
       this._off(
         this.element
           .find('.fileupload-buttonbar')
-          .find('.start, .cancel, .delete'),
+          .find('.start, .cancel, .delete, .view_already_exist'),
         'click'
       );
       this._off(this.element.find('.fileupload-buttonbar .toggle'), 'change.');
@@ -671,6 +693,7 @@
         'click .edit': this._editHandler,
         'click .start': this._startHandler,
         'click .cancel': this._cancelHandler,
+        'click .view_already_exist': this._view_already_existHandler,
         'click .delete': this._deleteHandler
       });
       this._initButtonBarEventHandlers();

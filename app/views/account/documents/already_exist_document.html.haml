@@ -1,0 +1,29 @@
+.row
+  %table.table{ style: "width: 50%"}
+    %tbody
+      %tr
+        %td{ style: "border: none"}
+          %b Nom du lot :
+        %td{ style: "border: none"}= @already_document.temp_document.temp_pack.basename
+      %tr
+        %td{ style: "border: none; width: 25%"}
+          %b Date d'insertion :
+        %td{ style: "border: none"}= @already_document.temp_document.created_at.strftime('%m/%d/%Y à %I:%M%p ')
+      %tr
+        %td{ style: "border: none"}
+          %b Televerser via :
+        %td{ style: "border: none"}= @already_document.temp_document.api_name
+      %tr
+        %td{ style: "border: none"}
+          %b Televerser par :
+        %td{ style: "border: none"}= @already_document.temp_document.delivered_by
+%hr
+.row
+  .col-md-6
+    %b Existant
+    %p= "Nom du fichier : " + @already_document.temp_document.original_file_name
+    %iframe.new{ style: "width:470px; height:483px;", src: "#{@already_document.temp_document.get_access_url}"}
+  .col-md-6
+    %b Nouveau
+    %p= "Nom du fichier : " + @already_document.original_file_name
+    %iframe.new{ style: "width:470px; height:483px;", src: "#{@already_document.get_access_url}"}
