@@ -103,7 +103,7 @@
           };
         </script>
         <script id="template-upload" type="text/html">
-        {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+        {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=0[++i]) { %}
             <tr class="template-upload fade">
                 <td class="name">{%=file.name%}</td>
                 <td class="size">{%=o.formatFileSize(file.size)%}</td>
@@ -148,9 +148,18 @@
                 {% } %}
                   <td class="alignright">
                     {% if (file.link) { %}
-                    <button class="btn btn-secondary view_already_exist" data-double-id="{%= file.link %}">
-                      Voir le détail
-                    </button>
+                      <input type="hidden" class="original_filename" value="{%= file.original_file_name %}">
+                      <input type="hidden" class="user_code" value="{%= file.user_code %}">
+                      <input type="hidden" class="journal" value="{%= file.journal %}">
+                      <input type="hidden" class="prev_period_offset" value="{%= file.prev_period_offset %}">
+                      <input type="hidden" class="api_name" value="{%= file.api_name %}">
+                      <input type="hidden" class="analytic" value="{%= file.analytic %}">
+                      <button class="btn btn-secondary view_already_exist" data-double-id="{%= file.link %}">
+                        Voir le détail
+                      </button>
+                      <button class="btn btn-danger force" data-link="{%= file.link %}">
+                        Forcer l'intégration
+                      </button>
                     {% } %}
                     <button class="cancel btn btn-light">
                       Vu
@@ -159,7 +168,6 @@
             </tr>
         {% } %}
         </script>
-
 .modal.fade{ :id=>"documentsTaggingDialog" }
   .modal-dialog
     .modal-content

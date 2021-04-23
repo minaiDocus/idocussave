@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 # Handler for incoming documents. Used for web uploads and dropbox imports
 class UploadedDocument
-  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document, :processed_file, :link
+  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :api_name, :analytic, :errors, :temp_document, :processed_file, :link
 
 
   VALID_EXTENSION = %w(.pdf .jpeg .jpg .png .bmp .tiff .tif .heic).freeze
@@ -12,7 +12,7 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil, force=false)
     @file     = file
     @user     = user
     @code     = @user.code
@@ -50,8 +50,8 @@ class UploadedDocument
         @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
         @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
 
-        unless unique?
-          CustomUtils.mktmpdir('uploaded_document', '/nfs/already_exist', false) do |dir|
+        if !unique? && !force
+          CustomUtils.mktmpdir('uploaded_document', 'nfs/already_exist', false) do |_dir|
             @errors << [:already_exist, nil]
 
             document_already_exist = Archive::AlreadyExist.new
@@ -63,7 +63,7 @@ class UploadedDocument
 
             @link = document_already_exist.reload.id
 
-            document_already_path = File.join(dir, "doc_already_exist_#{@link}.pdf")
+            document_already_path = File.join(_dir, "doc_already_exist_#{@link}.pdf")
 
             document_already_exist.path = document_already_path
             document_already_exist.save

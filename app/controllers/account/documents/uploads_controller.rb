@@ -9,15 +9,31 @@ class Account::Documents::UploadsController < Account::AccountController
                  @user
                end
 
-    if customer && ( (customer.authorized_upload? && params[:files].present?) || customer.organization.specific_mission )
-      uploaded_document = UploadedDocument.new(File.open(params[:files][0].tempfile),
-                                               params[:files][0].original_filename,
+    if params[:force]
+      already_doc = Archive::AlreadyExist.find params[:id]
+
+      file              = already_doc.path
+      original_filename = params[:original_filename]
+      customer          = User.find_by_code params[:user_code]
+
+      to_upload = File.exist?(file)
+    elsif params[:files].present?
+      file              = params[:files][0].tempfile
+      original_filename = params[:files][0].original_filename
+      to_upload = true
+    end
+
+    if customer && ( (customer.authorized_upload? && to_upload) || customer.organization.specific_mission )
+      uploaded_document = UploadedDocument.new(File.open(file),
+                                               original_filename,
                                                customer,
                                                params[:file_account_book_type],
                                                params[:file_prev_period_offset],
                                                current_user,
                                                'web',
-                                               params[:analytic])
+                                               params[:analytic],
+                                               nil,
+                                               params[:force])
 
       data = present(uploaded_document).to_json
     else
