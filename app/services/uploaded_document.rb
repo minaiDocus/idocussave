@@ -78,9 +78,9 @@ class UploadedDocument
               date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
               more_information: {
                 original: similar_document.inspect,
-                fingerprint: DocumentTools.checksum(@file.path),
+                fingerprint_1: DocumentTools.checksum(@file.path),
                 inserer: document_already_exist.inspect,
-                fingerprint: similar_document.original_fingerprint
+                fingerprint_2: similar_document.original_fingerprint
               }
             }
 
