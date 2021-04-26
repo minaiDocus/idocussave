@@ -575,11 +575,12 @@ class Account::DocumentsController < Account::AccountController
     auth_token ||= request.original_url.partition('token=').last
 
     already_doc = Archive::AlreadyExist.find(params[:id])
-    filepath    = Rails.root + already_doc.path
+    filepath    = already_doc.path
 
     if File.exist?(filepath.to_s) && auth_token == already_doc.get_token
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: "document_already_exist", x_sendfile: true, disposition: 'inline')
+      # send_file(filepath, type: mime_type, filename: "document_already_exist.pdf", x_sendfile: true, disposition: 'inline')
+      send_data File.read(filepath), filename: "document_already_exist.pdf", type: mime_type, disposition: 'inline' ## TODO: Find why send file doesn't work here
     else
       render body: nil, status: 404
     end

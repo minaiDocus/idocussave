@@ -51,9 +51,9 @@ class UploadedDocument
         @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
 
         if !unique? && !force
-          CustomUtils.mktmpdir('uploaded_document', 'nfs/already_exist', false) do |_dir|
-            @errors << [:already_exist, nil]
+          @errors << [:already_exist, nil]
 
+          CustomUtils.mktmpdir('uploaded_document', '/nfs/already_exist', false) do |_dir|
             document_already_exist = Archive::AlreadyExist.new
 
             document_already_exist.temp_document = similar_document

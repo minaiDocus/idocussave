@@ -36,8 +36,8 @@ Rails.application.routes.draw do
   post '/account/documents/preseizure/entry/:id/update',   controller: 'account/documents', action: 'update_preseizure_entry'
   post '/account/documents/deliver_preseizures',           controller: 'account/documents', action: 'deliver_preseizures'
   post '/account/documents/update_multiple_preseizures',   controller: 'account/documents', action: 'update_multiple_preseizures'
-  post '/account/documents/already_exist_document',   controller: 'account/documents', action: 'already_exist_document'
-  get '/account/documents/exist_document/:id/download',   controller: 'account/documents', action: 'exist_document'
+  post '/account/documents/already_exist_document',        controller: 'account/documents', action: 'already_exist_document'
+  get '/account/documents/exist_document/:id/download',    controller: 'account/documents', action: 'exist_document'
 
   post '/account/preseizure_accounts/accounts_list',       controller: 'account/preseizure_accounts', action: 'accounts_list'
 

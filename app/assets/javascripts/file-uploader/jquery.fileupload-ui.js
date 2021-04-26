@@ -561,38 +561,45 @@
 
     _forceHandler: function (e) {
       e.preventDefault();
-      self = $(e.currentTarget)
-      var original_filename = self.parent().find('input.original_filename').val(),
-        user_code = self.parent().find('input.user_code').val(),
-        journal = self.parent().find('input.journal').val(),
-        prev_period_offset = self.parent().find('input.prev_period_offset').val(),
-        api_name = self.parent().find('input.api_name').val(),
-        analytic = self.parent().find('input.analytic').val();
 
-      var data = { force: true, id: self.data('link') , original_filename: original_filename,user_code: user_code, file_account_book_type: journal, file_prev_period_offset: prev_period_offset, api_name: api_name, analytic: analytic }
-      self.prop('disabled', true);
-      $.ajax({
-        url: '/account/documents/upload',
-        data: data,
-        type: "POST",
-        dataType: 'json',
-        success: function(data) {
-          var file = data['files'][0];
-          var message = "";
-          var tr = self.closest('.template-download');
-          var td = '<td class="name">' + file['name'] + '</td>';
-          td += '<td class="new_name">' + file['new_name'] + '</td>'
-          if (file['message'] === undefined) {
-            message = '<span class="badge badge-success fs-origin">Envoyé</span>'
+      console.log('force handler');
+
+      if(confirm("Voulez vous vraiment forcer l'intégration du document?")){
+        console.log('confirm');
+        self = $(e.currentTarget);
+
+        var original_filename = self.parent().find('input.original_filename').val(),
+          user_code = self.parent().find('input.user_code').val(),
+          journal = self.parent().find('input.journal').val(),
+          prev_period_offset = self.parent().find('input.prev_period_offset').val(),
+          api_name = self.parent().find('input.api_name').val(),
+          analytic = self.parent().find('input.analytic').val();
+
+        var data = { force: true, id: self.data('link') , original_filename: original_filename,user_code: user_code, file_account_book_type: journal, file_prev_period_offset: prev_period_offset, api_name: api_name, analytic: analytic }
+        self.prop('disabled', true);
+        $.ajax({
+          url: '/account/documents/upload',
+          data: data,
+          type: "POST",
+          dataType: 'json',
+          success: function(data) {
+            var file = data['files'][0];
+            var message = "";
+            var tr = self.closest('.template-download');
+            var td = '<td class="name">' + file['name'] + '</td>';
+            td += '<td class="new_name">' + file['new_name'] + '</td>'
+            if (file['message'] === undefined) {
+              message = '<span class="badge badge-success fs-origin">Envoyé</span>'
+            }
+            else{
+              message = file['message']
+            }
+            td += '<td class="message">'+ message +'</td>'
+            td += '<td class="alignright"><button class="cancel btn btn-light">Vu</button></td>'
+            tr.html(td)
           }
-          else{
-            message = file['message']
-          }
-          td += '<td class="message">'+ message +'</td>'
-          td += '<td class="alignright"><button class="cancel btn btn-light">Vu</button></td>'
-          tr.html(td)
-        }
-      });
+        });
+      }
     },
 
     _cancelHandler: function (e) {
