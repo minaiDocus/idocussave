@@ -15,7 +15,9 @@
               %th iDo Mini
               %th iDo Micro
               %th iDo Nano
-              %th Pack Annuel
+              %th iDo X
+              %th Automate uniquement
+              %th Non configuré
               %th Total
               %th Forfait Courrier
               %th Forfait Automates
@@ -27,8 +29,10 @@
               %td= link_to @mini_package_count, "#", class: 'do-showAccounts', title: "iDo Mini", type: "mini_package"
               %td= link_to @micro_package_count, "#", class: 'do-showAccounts', title: "iDo Micro", type: "micro_package"
               %td= link_to @nano_package_count, "#", class: 'do-showAccounts', title: "iDo Nano", type: "nano_package"
-              %td= link_to @annual_package_count, "#", class: 'do-showAccounts', title: "Pack Annuel", type: "annual_package"
-              %td= @basic_package_count + @annual_package_count + @mini_package_count + @micro_package_count + @nano_package_count
+              %td= link_to @idox_package_count, "#", class: 'do-showAccounts', title: "iDo X", type: "idox_package"
+              %td= link_to @retriever_only_package_count, "#", class: 'do-showAccounts', title: "Automate uniquement", type: "retriever_only_package"
+              %td= link_to @not_configured, "#", class: 'do-showAccounts', title: "Non configuré", type: "not_configured"
+              %td= @basic_package_count + @idox_package_count + @mini_package_count + @micro_package_count + @nano_package_count + @retriever_only_package_count + @not_configured
               %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package"
               %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package"
               %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
@@ -55,7 +59,7 @@
               %th= sortable 'options.mini_package', 'mini'
               %th= sortable 'options.micro_package', 'micro'
               %th= sortable 'options.nano_package', 'nano'
-              %th= sortable 'options.annual_package', 'annuel'
+              %th= sortable 'options.idox_package', 'idox'
               %th= sortable 'consumption.upload', 'téléversement'
               %th= sortable 'consumption.scan', 'numérisation'
               %th= sortable 'consumption.dematbox_scan', 'dematbox'
@@ -88,8 +92,8 @@
                   %span= statistic.options[:nano_package]
                   = subscription_diff_content_for(statistic.options[:nano_package_diff])
                 %td
-                  %span= statistic.options[:annual_package]
-                  = subscription_diff_content_for(statistic.options[:annual_package_diff])
+                  %span= statistic.options[:idox_package]
+                  = subscription_diff_content_for(statistic.options[:idox_package_diff])
                 %td= statistic.consumption[:upload]
                 %td= statistic.consumption[:scan]
                 %td= statistic.consumption[:dematbox_scan]
@@ -122,8 +126,8 @@
                 %span= @statistics_total[:nano_package]
                 = subscription_diff_content_for(@statistics_total[:nano_package_diff])
               %td.total_footer
-                %span= @statistics_total[:annual_package]
-                = subscription_diff_content_for(@statistics_total[:annual_package_diff])
+                %span= @statistics_total[:idox_package]
+                = subscription_diff_content_for(@statistics_total[:idox_package_diff])
               %td.total_footer= @statistics_total[:upload]
               %td.total_footer= @statistics_total[:scan]
               %td.total_footer= @statistics_total[:dematbox_scan]

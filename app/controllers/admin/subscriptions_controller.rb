@@ -13,6 +13,9 @@ class Admin::SubscriptionsController < Admin::AdminController
     @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_mini%'").count }
     @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_micro%'").count }
     @nano_package_count      = Rails.cache.fetch('admin_report_nano_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_nano%'").count }
+    @idox_package_count      = Rails.cache.fetch('admin_report_idox_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_x%'").count }
+    @retriever_only_package_count = Rails.cache.fetch('admin_report_retriever_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"retriever_option\"]'").count }
+    @not_configured          = Rails.cache.fetch('admin_report_not_configured_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where(current_packages: [nil, '[]', '', '[""]']).count }
 
     params[:per_page] ||= 50
     statistics = order(StatisticsManager.get_compared_subscription_statistics(statistic_params))
@@ -51,6 +54,12 @@ class Admin::SubscriptionsController < Admin::AdminController
       data_accounts = Rails.cache.fetch('admin_report_micro_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_micro%'")) }
     when 'nano_package'
       data_accounts = Rails.cache.fetch('admin_report_nano_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_nano%'")) }
+    when 'idox_package'
+      data_accounts = Rails.cache.fetch('admin_report_idox_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_x%'")) }
+    when 'retriever_only_package'
+      data_accounts = Rails.cache.fetch('admin_report_retriever_only_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages = '[\"retriever_option\"]'")) }
+    when 'not_configured'
+      data_accounts = Rails.cache.fetch('admin_report_not_configured_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(current_packages: [nil, '[]', '', '[""]'])) }
     else
       data_accounts = []
     end
@@ -63,7 +72,7 @@ class Admin::SubscriptionsController < Admin::AdminController
   def load_accounts_ids
     @accounts_ids = []
     Organization.billed.each do |org|
-      @accounts_ids += org.customers.active_at(Time.now).pluck(:id)
+      @accounts_ids += org.customers.active_at(Time.now.end_of_month).pluck(:id)
     end
     @accounts_ids.flatten!
   end
@@ -95,6 +104,8 @@ class Admin::SubscriptionsController < Admin::AdminController
       micro_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:micro_package_diff].to_i },
       nano_package: statistics.inject(0) { |sum, s| sum + s.options[:nano_package].to_i },
       nano_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:nano_package_diff].to_i },
+      idox_package: statistics.inject(0) { |sum, s| sum + s.options[:idox_package].to_i },
+      idox_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:idox_package_diff].to_i },
       annual_package: statistics.inject(0) { |sum, s| sum + s.options[:annual_package].to_i },
       annual_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:annual_package_diff].to_i },
       upload: statistics.inject(0) { |sum, s| sum + s.consumption[:upload].to_i },

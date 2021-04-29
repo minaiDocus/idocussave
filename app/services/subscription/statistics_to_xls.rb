@@ -8,7 +8,7 @@ class Subscription::StatisticsToXls
     book = Spreadsheet::Workbook.new
     sheet = book.create_worksheet name: "Reporting Forfaits"
 
-    headers = %w(période organisation code basique var_basique courrier var_courrier box var_box automate var_automate mini var_mini micro var_micro)
+    headers = %w(période organisation code basique var_basique courrier var_courrier box var_box automate var_automate mini var_mini micro var_micro nano var_nano idox var_idox automate_unique var_automate_unique)
     headers += %w(téléversement numérisation dematbox automate clients_actifs nouveaux liste_nouveaux clôturés liste_clôturés)
     sheet.row(0).replace headers
 
@@ -32,6 +32,10 @@ class Subscription::StatisticsToXls
         statistic.options[:micro_package_diff].to_i,
         statistic.options[:nano_package],
         statistic.options[:nano_package_diff].to_i,
+        statistic.options[:idox_package],
+        statistic.options[:idox_package_diff].to_i,
+        statistic.options[:retriever_only_package],
+        statistic.options[:retriever_only_package_diff].to_i,
         statistic.consumption[:upload],
         statistic.consumption[:scan],
         statistic.consumption[:dematbox_scan],
