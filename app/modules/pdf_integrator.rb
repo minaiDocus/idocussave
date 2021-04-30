@@ -70,9 +70,9 @@ class PdfIntegrator
     }
 
     begin
-      ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
+      ErrorScriptMailer.error_notification(log_document, { unlimited: true, attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
     rescue
-      ErrorScriptMailer.error_notification(log_document).deliver
+      ErrorScriptMailer.error_notification(log_document, { unlimited: true }).deliver
     end
   end
 end
