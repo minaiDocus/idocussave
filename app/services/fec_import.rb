@@ -102,7 +102,7 @@ class FecImport
 
   def import_processing
     @third_parties.each do |third_partie|
-      next if third_partie[:account_number].empty? && third_partie[:account_name].empty?
+      next if third_partie[:account_number].blank? && third_partie[:account_name].blank?
 
       #Re-Initiate variables for every loop
       @third_partie = third_partie
@@ -115,7 +115,7 @@ class FecImport
 
       parse_counterparts_and_vat_accounts
 
-      next if @counterpart_accounts.empty?
+      next if @counterpart_accounts.blank?
 
       # Then update accounting plan
       update_accounting_plan_with({ aux_account: @third_partie[:account_number], aux_name: @third_partie[:account_name], counterpart_account: counterpart,  vat_account: vat_account, general_account: @third_partie[:general_account] }) if counterpart
