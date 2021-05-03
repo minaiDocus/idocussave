@@ -35,6 +35,18 @@ class PonctualScripts::PonctualScript
     dir
   end
 
+  def lock_with(file_name, mode='w+')
+    if !File.exist?(ponctual_dir.to_s + '/' + file_name.to_s)
+      file = File.open(file_name, mode)
+
+      yield(file_name) if block_given?
+
+      file.close
+    else
+      logger_infos "Script has already launched!!"
+    end
+  end
+
   # Define execute method on the child class (without params, use initializer options if you need params)
   def execute; end
 

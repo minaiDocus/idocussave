@@ -72,17 +72,20 @@ class Billing::CreateInvoicePdf
       print "-> Invoice #{invoice.number}..."
       Billing::CreateInvoicePdf.new(invoice, time, options[:auto_upload]).execute
 
-      # organization.admins.each do |admin|
-      #   Notifications::Notifier.new.create_notification({
-      #     url: Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options)),
-      #     user: admin,
-      #     notice_type: 'invoice',
-      #     title: "Nouvelle facture disponible",
-      #     message: "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
-      #   }, false)
-      # end
 
-      # InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
+      #WORKAROUND: deactivate invoice mailer and notification if needed
+
+      organization.admins.each do |admin|
+        Notifications::Notifier.new.create_notification({
+          url: Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options)),
+          user: admin,
+          notice_type: 'invoice',
+          title: "Nouvelle facture disponible",
+          message: "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+        }, false)
+      end
+
+      InvoiceMailer.delay(queue: :high).notify(invoice) if options[:notify]
     end
 
     def archive_invoice(time = Time.now)
@@ -118,7 +121,7 @@ class Billing::CreateInvoicePdf
     # @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
     @invoice.cloud_content_object.attach(File.open("#{Rails.root}/tmp/#{@invoice.number}.pdf"), "#{@invoice.number}.pdf") if @invoice.save
 
-    #auto_upload_last_invoice if @auto_upload && @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices
+    auto_upload_last_invoice if @auto_upload && @invoice.present? && @invoice.persisted? #WORKAROUND : deactivate auto upload invoices if needed
   end
 
   def initialize_data_utilities
