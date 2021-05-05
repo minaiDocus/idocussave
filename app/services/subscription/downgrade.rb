@@ -6,6 +6,8 @@ class Subscription::Downgrade
   end
 
   def execute
+    @subscription.options = @subscription.options.select{ |option| option.period_duration == 0 }
+
     @subscription.current_packages = @subscription.futur_packages if @subscription.futur_packages && @subscription.futur_packages != '[]'
     @subscription.futur_packages   = nil
     @subscription.save
