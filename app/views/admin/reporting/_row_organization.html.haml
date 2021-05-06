@@ -2,22 +2,30 @@
   = link_to @organization.name, [:account, @organization]
   = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{@organization.id}", title: 'Export XLS', class: 'float-right'
   %input{ :type => "hidden", class: 'total-span-3', value: @year }
-- user_ids = @organization.customers.pluck(:id)
 - @total = 12.times.map { |e| [0,0,0] }
 - 12.times.each do |i|
   %td.months_list
     - time = Time.local(@year, i+1, 15)
-    - centralized_periods, not_centralized_periods = periods_at(time.to_date, @organization, user_ids)
-    - price_in_cents_wo_vat = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, centralized_periods)
-    - price_in_cents_w_vat  = price_in_cents_wo_vat * (centralized_periods.try(:first).try(:tva_ratio).to_f || Billing::PeriodBilling.vat_ratio(time))
-    - not_centralized_price_in_cents_wo_vat = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, not_centralized_periods)
-    - not_centralized_price_in_cents_w_vat = not_centralized_price_in_cents_wo_vat * Billing::PeriodBilling.vat_ratio(time)
+    - invoice = invoice_at(time, @organization, @invoices)
+    - user_ids = @organization.customers.active_at(time.to_date).pluck(:id)
+    - centralized_periods = Period.where(user_id: user_ids).where("start_date <= ? AND end_date >= ?", time.to_date, time.to_date)
+    - not_centralized_periods = []
+    - not_centralized_price_in_cents_wo_vat = 0
+    - not_centralized_price_in_cents_w_vat = 0
+
+    - if invoice
+      - vat_ratio = invoice.vat_ratio.to_f != 0 ? invoice.vat_ratio.to_f : 1
+      - price_in_cents_w_vat  = invoice.amount_in_cents_w_vat
+      - price_in_cents_wo_vat = (price_in_cents_w_vat / vat_ratio).round
+    -else
+      - vat_rate = Billing::PeriodBilling.vat_ratio(time)
+      - price_in_cents_wo_vat = Billing::PeriodBilling.amount_in_cents_wo_vat(time.month, centralized_periods)
+      - price_in_cents_w_vat  = (price_in_cents_wo_vat * vat_rate).round
 
     - if centralized_periods.size > 0 || not_centralized_periods.size > 0
       %div
         = "#{format_price_00(price_in_cents_wo_vat)} €"
         %span.df_symbol HT
-      - invoice = invoice_at(time, @organization, @invoices)
       - if invoice
         %div
           != link_to "#{format_price_00(price_in_cents_w_vat)} €", admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
