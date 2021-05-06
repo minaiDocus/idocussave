@@ -2,7 +2,7 @@
   .row
     .col-md-7
       .box.height_groups.groups_1
-        %h3 Flux de traitement
+        %h4 Flux de traitement
 
         %hr
 
@@ -55,10 +55,17 @@
 
     .col-md-5
       .box.height_groups.groups_1
+        .text-center
+          %h4
+            Information dépuis
+            %strong= I18n.l(30.days.ago)
+            jusqu'à Aujourd'hui
+          .clearfix
+          %br
         - cache 'admin_right_panels', expires_in: 5.minutes do
           .row
             .col-sm-6
-              %h4
+              %h5
                 %strong
                   %u Traitement des documents
               %table.table.table-striped.table-condensed.table-bordered
@@ -85,7 +92,7 @@
                     %th Traités
                     %td= StatisticsManager.get_statistic('processed_temp_documents_count')
             .col-sm-6
-              %h4
+              %h5
                 %strong
                   %u Livraison des documents
               %table.table.table-striped.table-condensed.table-bordered
@@ -116,118 +123,137 @@
                     %td= StatisticsManager.get_statistic('not_processed_retryable_ftp_remote_files_count')
                     %td= StatisticsManager.get_statistic('not_processed_not_retryable_ftp_remote_files_count')
                   %tr
-                    %td Knowings
-                    %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_remote_files_count')
-                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
-          .row
-            .col-sm-6
-              %h4
-                %strong
-                  %u Récupérateurs automatiques
-              %table.table.table-striped.table-condensed.table-bordered
-                %tbody
-                  %tr
-                    %th Total récupérateurs
-                    %td= StatisticsManager.get_statistic('retrievers_count')
-                  %tr
-                    %th Total client (Actif)
-                    %td
-                      = StatisticsManager.get_statistic('retriever_users_count')
-                      (#{StatisticsManager.get_statistic('active_retriever_users_count')})
-                  %tr
-                    %th= Retriever.state_machine.states['ready'].human_name
-                    %td= StatisticsManager.get_statistic('retrievers_ready_count')
-                  %tr
-                    %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
-                    %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
-                  %tr
-                    %th= 'En erreur'
-                    %td= StatisticsManager.get_statistic('retrievers_errors_count')
-                  %tr
-                    %th Données en cours de tr.
-                    %td
-                      = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
-                      (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
-            .col-sm-6
-              %h4
-                %strong
-                  %u Etat des pages
-              %table.table.table-striped.table-condensed.table-bordered
-                %tbody
-                  %tr
-                    %th Total
-                    %td= StatisticsManager.get_statistic('documents_count')
-                  %tr
-                    %th Numérisés
-                    %td= StatisticsManager.get_statistic('scanned_documents_count')
-                  %tr
-                    %th Téléversés (OCR)
-                    %td
-                      = StatisticsManager.get_statistic('uploaded_documents_count')
-                      (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
-                  %tr
-                    %th Num. Dematbox
-                    %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
-                  %tr
-                    %th Auto
-                    %td= StatisticsManager.get_statistic('retrieved_documents_count')
-                  %tr
-                    %th Vignettes rest.
-                    %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
-                  %tr
-                    %th Extractions rest.
-                    %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
+                    %td My Company Files
+                    %td= StatisticsManager.get_statistic('not_processed_retryable_mcf_remote_files_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_retryable_mcf_remote_files_count')
           .row
             .col-sm-12
-              %h4.label
+              %h5
+                %strong
+                  %u Documents téléversés par api
+              %table.table.table-striped.table-condensed.table-bordered
+                %thead
+                  %tr.bg-brown.text-white
+                    - @documents_uploaded_by_api_names.each do |api_name|
+                      %th= api_name[:api_name]
+                %tbody
+                  %tr
+                    - @documents_uploaded_by_api_names.each do |api_name|
+                      %td= api_name[:count]
+            / .col-sm-6
+            /   %h5
+            /     %strong
+            /       %u Documents téléversés par api
+            /   %table.table.table-striped.table-condensed.table-bordered
+            /     %tbody
+            /       %tr
+            /         %th Total récupérateurs
+            /         %td= StatisticsManager.get_statistic('retrievers_count')
+            /       %tr
+            /         %th Total client (Actif)
+            /         %td
+            /           = StatisticsManager.get_statistic('retriever_users_count')
+            /           (#{StatisticsManager.get_statistic('active_retriever_users_count')})
+            /       %tr
+            /         %th= Retriever.state_machine.states['ready'].human_name
+            /         %td= StatisticsManager.get_statistic('retrievers_ready_count')
+            /       %tr
+            /         %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
+            /         %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
+            /       %tr
+            /         %th= 'En erreur'
+            /         %td= StatisticsManager.get_statistic('retrievers_errors_count')
+            /       %tr
+            /         %th Données en cours de tr.
+            /         %td
+            /           = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
+            /           (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
+            / .col-sm-6
+            /   %h5
+            /     %strong
+            /       %u Etat des pages
+            /   %table.table.table-striped.table-condensed.table-bordered
+            /     %tbody
+            /       %tr
+            /         %th Total
+            /         %td= StatisticsManager.get_statistic('documents_count')
+            /       %tr
+            /         %th Numérisés
+            /         %td= StatisticsManager.get_statistic('scanned_documents_count')
+            /       %tr
+            /         %th Téléversés (OCR)
+            /         %td
+            /           = StatisticsManager.get_statistic('uploaded_documents_count')
+            /           (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
+            /       %tr
+            /         %th Num. Dematbox
+            /         %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
+            /       %tr
+            /         %th Auto
+            /         %td= StatisticsManager.get_statistic('retrieved_documents_count')
+            /       %tr
+            /         %th Vignettes rest.
+            /         %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
+            /       %tr
+            /         %th Extractions rest.
+            /         %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
+          .row
+            .col-sm-12
+              %h5.label
                 %strong
                   %u Opérations bancaires
-              .row
-                .col-6
-                  %table.table.table-striped.table-condensed.table-bordered
-                    %tbody
-                      %tr
-                        %th Total
-                        %td= StatisticsManager.get_statistic('operations_count')
-                      %tr
-                        %th Automate
-                        %td= StatisticsManager.get_statistic('retrieved_operations_count')
-                      %tr
-                        %th Import
-                        %td= StatisticsManager.get_statistic('other_operations_count')
-                .col-6
-                  %table.table.table-striped.table-condensed.table-bordered
-                    %tbody
-                      %tr
-                        %th Traités
-                        %td= StatisticsManager.get_statistic('processed_operations_count')
-                      %tr
-                        %th En attente
-                        %td= StatisticsManager.get_statistic('not_processed_not_locked_operations_count')
-                      %tr
-                        %th Bloqués
-                        %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
+              %table.table.table-striped.table-condensed.table-bordered
+                %thead
+                  %tr.bg-brown.text-white
+                    %th Etat
+                    %th Budgea
+                    %th Bridge
+                    %th Manuel
+                    %th Total
+                %tbody
+                  %tr
+                    %td
+                    %td= StatisticsManager.get_statistic('budgea_operations_count')
+                    %td= StatisticsManager.get_statistic('bridge_operations_count')
+                    %td= StatisticsManager.get_statistic('capidocus_operations_count')
+                    %td= StatisticsManager.get_statistic('operations_count')
+                  %tr
+                    %td Traités
+                    %td= StatisticsManager.get_statistic('budgea_processed_operations_count')
+                    %td= StatisticsManager.get_statistic('bridge_processed_operations_count')
+                    %td= StatisticsManager.get_statistic('capidocus_processed_operations_count')
+                    %td= StatisticsManager.get_statistic('processed_operations_count')
+                  %tr
+                    %td En attente
+                    %td= StatisticsManager.get_statistic('budgea_not_processed_not_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('bridge_not_processed_not_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('capidocus_not_processed_not_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('not_processed_not_locked_operations_count')
+                  %tr
+                    %td Bloqués
+                    %td= StatisticsManager.get_statistic('budgea_not_processed_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('bridge_not_processed_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('capidocus_not_processed_locked_operations_count')
+                    %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
         .row
           .col-sm-12
-            %h4
+            %h5
               %strong
-                %u Demande de nouveaux fournisseurs en cours
+                %u Répartition des organisations et clients par logiciel comptable
             %table.table.table-striped.table-condensed.table-bordered
               %thead
                 %tr.bg-brown.text-white
-                  %th Date
+                  %th Software
+                  %th Organisation
                   %th Client
-                  %th Nom
-                  %th Etat
               %tbody
-                - @new_provider_requests.each do |new_provider_request|
+                - @software_infos.each do |software_info|
                   %tr
-                    %td= l(new_provider_request.created_at, format: '%e %b %H:%M')
-                    %td= link_to new_provider_request.user.code, account_new_provider_requests_path(user_code: new_provider_request.user.code)
-                    %td= new_provider_request.name
-                    %td= new_provider_request_state(new_provider_request)
+                    %td= software_info[:name]
+                    %td= software_info[:organization_count]
+                    %td= software_info[:user_count]
         .row
           .col-sm-12
-            %h4 Organisations facturées n'ayant pas d'adresse de facturation
+            %h5 Organisations facturées n'ayant pas d'adresse de facturation
             - @unbillable_organizations.each do |organization|
               = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'badge badge-danger fs-origin'

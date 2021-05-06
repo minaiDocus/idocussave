@@ -37,6 +37,7 @@ class RemoteFile < ApplicationRecord
   scope :not_processed,    -> { where.not(state: [:synced, :cancelled, :sending]) }
   scope :with_extension,   -> (extension) { where(extension: extension) }
   scope :not_synchronized, -> { where(state: :not_synced) }
+  scope :with,             -> (period) { where(updated_at: period) }
 
 
   after_create  :update_pack

@@ -7,4 +7,6 @@ class BudgeaAccount < ApplicationRecord
   validates_presence_of :identifier, :encrypted_access_token
   validates_presence_of :user
   validates :encrypted_access_token, symmetric_encryption: true
+
+  scope :with, -> (period) { where(updated_at: period) }
 end

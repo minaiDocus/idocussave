@@ -29,6 +29,19 @@ module Interfaces::Software::Configuration
     }.with_indifferent_access
   end
 
+  def self.human_format
+    {
+      ibiza:          "iBiza",
+      exact_online:   "Exact Online",
+      my_unisoft:     "My Unisoft",
+      coala:          "Coala",
+      quadratus:      "Quadratus",
+      cegid:          "Cegid",
+      fec_agiris:     "Fec Agiris",
+      csv_descriptor: "Autre(format d'export .csv)"
+    }.with_indifferent_access
+  end
+
   def self.softwares_table_name
     {
       ibiza:          'software_ibizas',

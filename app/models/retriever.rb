@@ -52,6 +52,7 @@ class Retriever < ApplicationRecord
   scope :providers,           -> { where("capabilities LIKE '%document%'") }
   scope :banks,               -> { where("capabilities LIKE '%bank%'") }
   scope :providers_and_banks, -> { where("capabilities LIKE '%document%' AND capabilities LIKE '%bank%'") }
+  scope :with,                -> (period) { where(updated_at: period) }
 
   state_machine initial: :configuring do
     state :ready

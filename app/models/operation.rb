@@ -20,7 +20,7 @@ class Operation < ApplicationRecord
   scope :other,         -> { where.not(api_name: ['budgea', 'fiduceo']) }
   scope :not_accessed,  -> { where(accessed_at: nil) }
   scope :not_processed, -> { where(processed_at: [nil, '']) }
-  scope :processed,     -> { where.not(processed_at: [nil, '']) }
+  scope :processed,     -> { where.not(processed_at: nil) }
   scope :locked,        -> { where(is_locked: true) }
   scope :not_locked,    -> { where(is_locked: [nil, false]) }
 
@@ -35,6 +35,7 @@ class Operation < ApplicationRecord
   scope :duplicated,        -> { where('comment LIKE "%Locked for duplication%"') }
 
   scope :not_recently_added_or_forced, -> { where('operations.created_at < ? OR operations.forced_processing_at IS NOT ?', 7.days.ago, nil) }
+  scope :with,                         -> (period) { where(updated_at: period) }
 
   after_save do |operation|
     Rails.cache.write(['user', operation.user.id, 'operations', 'last_updated_at'], Time.now.to_i)
@@ -76,6 +77,10 @@ class Operation < ApplicationRecord
     forced_operations = Operation.with_api_id.not_processed.not_deleted.not_locked.where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).where(user_id: forced_user_ids).includes(:user, :pack, :bank_account)
 
     operations + forced_operations
+  end
+
+  def self.select_with(_api_name, period)
+    Operation.with(period).where(api_name: _api_name)
   end
 
   def old?

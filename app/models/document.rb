@@ -65,6 +65,7 @@ class Document < ApplicationRecord
   scope :cannot_extract,   -> { where(content_text: '-[none]') }
   scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
   scope :by_position,      -> { order(position: :asc) }
+  scope :with,             -> (period) { where(updated_at: period) }
 
   scope :of_period, lambda { |time, duration|
     case duration

@@ -14,6 +14,7 @@ class RetrievedData < ApplicationRecord
   scope :processed,     -> { where(state: 'processed') }
   scope :not_processed, -> { where(state: 'not_processed') }
   scope :error,         -> { where(state: 'error') }
+  scope :with,          -> (period) { where(updated_at: period) }
 
   before_destroy do |retrieved_data|
     retrieved_data.cloud_content.purge

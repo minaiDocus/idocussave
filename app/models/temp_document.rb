@@ -92,6 +92,7 @@ class TempDocument < ApplicationRecord
   scope :from_mobile,       -> { where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile'") }
   scope :fingerprint_is_nil,-> { where(original_fingerprint: [nil, ''], content_fingerprint: [nil, ''], raw_content_fingerprint: [nil, '']) }
   scope :by_source, -> (delivery_type) { where('delivery_type = ?', delivery_type) }
+  scope :with, -> (period) { where(updated_at: period) }
 
 
   state_machine initial: :created do
@@ -266,6 +267,24 @@ class TempDocument < ApplicationRecord
   def self.recreate_grouped_document(temp_doc_id)
     temp_document = TempDocument.find temp_doc_id
     temp_document.recreate_grouped_document
+  end
+
+
+  def self.api_names
+    api_names = TempDocument.all.select(:api_name).distinct.pluck(:api_name)
+
+    api_names_count = []
+    api_names.each do |api_name|
+      count = TempDocument.with([30.days.ago..Time.now]).where(api_name: api_name).size
+      api_name = 'Aucun' if !api_name.present?
+      api_names_count << {api_name: api_name, count: count}
+    end
+
+    total = 0
+    api_names_count.each{|_count| total += _count[:count]}
+    api_names_count << {api_name: 'Total', count: total}
+
+    api_names_count
   end
 
   def children
