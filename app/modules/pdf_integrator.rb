@@ -69,6 +69,8 @@ class PdfIntegrator
       }
     }
 
+    return true if @api == 'retrieved_document' #Skip sending email when api source is from retrieved document
+
     if !correction_data[:corrected]
       begin
         ErrorScriptMailer.error_notification(log_document, { unlimited: true, attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
