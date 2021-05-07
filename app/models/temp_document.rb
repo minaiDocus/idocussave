@@ -8,6 +8,7 @@ class TempDocument < ApplicationRecord
 
   serialize :scan_bundling_document_ids, Array
   serialize :parents_documents_pages, Array
+  serialize :parents_documents_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
 
@@ -27,7 +28,6 @@ class TempDocument < ApplicationRecord
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
-  has_many :children, class_name: 'TempDocument', foreign_key: 'parent_document_id'
   has_many :archive_already_exist, class_name: 'Archive::AlreadyExist'
 
   has_one_attached :cloud_content
@@ -268,9 +268,21 @@ class TempDocument < ApplicationRecord
     temp_document.recreate_grouped_document
   end
 
+  def children
+    temp_pack = self.temp_pack
+    temp_docs = temp_pack.temp_documents
+    result    = []
+
+    temp_docs.each do |td|
+      result << td if Array(td.parents_documents_ids.presence).include? self.id
+    end
+
+    return result
+  end
+
   def recreate_grouped_document
     _parents_documents_pages = self.parents_documents_pages
-    if parent_document && _parents_documents_pages.present? && _parents_documents_pages.any?
+    if parents_documents.any? && _parents_documents_pages.present? && _parents_documents_pages.any?
       retries_number = 0
 
       begin
@@ -384,7 +396,7 @@ class TempDocument < ApplicationRecord
 
   def is_a_cover?
     if scanned?
-      if !self.parent_document_id.present? && original_file_name.present?
+      if !Array(self.parents_documents_ids.presence).any? && original_file_name.present?
         case original_file_name
         when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
           File.basename(original_file_name, '.*').tr(' ', '_').split('_')[3].match(/\A0*\z/).present?
@@ -412,9 +424,8 @@ class TempDocument < ApplicationRecord
     save
   end
 
-  def parent_document
-    return nil unless self.parent_document_id
-    TempDocument.find self.parent_document_id
+  def parents_documents
+    TempDocument.where(id: Array(self.parents_documents_ids.presence))
   end
 
   private

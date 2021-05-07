@@ -634,13 +634,17 @@ class Account::DocumentsController < Account::AccountController
         temp_document.raw_content_fingerprint = nil
         temp_document.save
 
-        parent_document = temp_document.parent_document
+        parents_documents = temp_document.parents_documents
 
-        if parent_document && parent_document.children.size == parent_document.children.fingerprint_is_nil.size
-          parent_document.original_fingerprint    = nil
-          parent_document.content_fingerprint     = nil
-          parent_document.raw_content_fingerprint = nil
-          parent_document.save
+        if parents_documents.any?
+          parents_documents.each do |parent_document|
+            if parent_document.children.size == parent_document.children.fingerprint_is_nil.size
+              parent_document.original_fingerprint    = nil
+              parent_document.content_fingerprint     = nil
+              parent_document.raw_content_fingerprint = nil
+              parent_document.save
+            end
+          end
         end
       end
 
@@ -663,14 +667,16 @@ class Account::DocumentsController < Account::AccountController
 
     temp_document = piece.temp_document
 
-    parent_document = temp_document.parent_document
+    parents_documents = temp_document.parents_documents
 
     temp_document.original_fingerprint = DocumentTools.checksum(temp_document.cloud_content_object.path)
     temp_document.save
 
-    if parent_document
-      parent_document.original_fingerprint = DocumentTools.checksum(parent_document.cloud_content_object.path)
-      parent_document.save
+    if parents_documents.any?
+      parents_documents.each do |parent_document|
+        parent_document.original_fingerprint = DocumentTools.checksum(parent_document.cloud_content_object.path)
+        parent_document.save
+      end
     end
 
     pack = piece.pack
