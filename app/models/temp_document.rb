@@ -269,11 +269,9 @@ class TempDocument < ApplicationRecord
   end
 
   def children
-    temp_pack = self.temp_pack
-    temp_docs = temp_pack.temp_documents
     result    = []
 
-    temp_docs.each do |td|
+    self.temp_pack.temp_documents.each do |td|
       result << td if Array(td.parents_documents_ids.presence).include? self.id
     end
 
@@ -425,7 +423,7 @@ class TempDocument < ApplicationRecord
   end
 
   def parents_documents
-    TempDocument.where(id: Array(self.parents_documents_ids.presence))
+    self.temp_pack.temp_documents.where(id: Array(self.parents_documents_ids.presence))
   end
 
   private
