@@ -104,7 +104,7 @@ class DocumentTools
         pdf_corrected = output_file_path
       else
         page_number = DocumentTools.pages_number(input_file_path)
-        safe_time   = page_number > 0 ? (page_number * 25) : 5
+        safe_time   = page_number > 0 ? (page_number * 25) : 10
         safe_time   = safe_time > 70 ? 70 : safe_time
 
         Timeout::timeout safe_time do

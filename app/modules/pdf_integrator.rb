@@ -29,7 +29,34 @@ class PdfIntegrator
       DocumentTools.to_pdf(@file.path, @file_path)
     end
 
-    @file_path = Rails.root.join('spec/support/files/corrupted.pdf') unless File.exist?(@file_path) #Set a corrpted file if @file_path had not been generated
+    unless File.exist?(@file_path) #Set a corrpted file if @file_path had not been generated
+      sleep 10
+
+      begin
+        size = File.size(@file_path) * 0.000001
+      rescue => e
+        size = e.to_s
+      end
+
+      log_document = {
+        subject: "[PdfIntegrator] file corrupted, forcing to correct - after 10 sec",
+        name: "PdfIntegrator",
+        error_group: "[pdf-integrator] file corrupted ==> forcing to correct - after 10 sec",
+        erreur_type: "File corrupted, forcing to correct ... 10 sec",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          api_name: @api,
+          exist_1: "#{File.exist?(@file_path)} ==> #{@file_path}",
+          exist_2: "#{File.exist?(@file.path)} ==> #{@file.path}",
+          size: size
+        }
+      }
+
+      ErrorScriptMailer.error_notification(log_document, { unlimited: true }).deliver if @api != 'retrieved_document' #Skip sending email when api source is from retrieved document
+
+      @file_path = Rails.root.join('spec/support/files/corrupted.pdf') unless File.exist?(@file_path) #Set a corrpted file if @file_path had not been generated
+    end
+
     temp_file = File.open(@file_path, 'r')
   end
 
@@ -53,6 +80,16 @@ class PdfIntegrator
 
     FileUtils.cp correction_data[:output_file], destination
 
+    begin
+      size = File.size(@file_path) * 0.000001
+      modifiable = DocumentTools.modifiable?(@file_path)
+      modifiable_2 = DocumentTools.modifiable?(source)
+    rescue => e
+      size = e.to_s
+      modifiable = 'false'
+      modifiable_2 = 'false'
+    end
+
     log_document = {
       subject: "[PdfIntegrator] file corrupted, forcing to correct",
       name: "PdfIntegrator",
@@ -61,8 +98,12 @@ class PdfIntegrator
       date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
       more_information: {
         api_name: @api,
+        file_size: size,
         file_path: @file_path,
+        exist: File.exist?(@file_path),
+        modifiable: modifiable.to_s,
         file_corrupted: @file.path,
+        modifiable_source: modifiable_2.to_s,
         file_corrected: correction_data[:output_file],
         corrected: correction_data[:corrected],
         correction_errors: correction_data[:errors]
@@ -71,9 +112,9 @@ class PdfIntegrator
 
     return true if @api == 'retrieved_document' #Skip sending email when api source is from retrieved document
 
-    if !correction_data[:corrected]
+    if 1 == 1 || !correction_data[:corrected]
       begin
-        ErrorScriptMailer.error_notification(log_document, { unlimited: true, attachements: [{name: @original_file_name, file: File.read(@file.path)}] } ).deliver
+        ErrorScriptMailer.error_notification(log_document, { unlimited: true, attachements: [{name: 'corrupted.pdf', file: File.read(@file_path)}] } ).deliver
       rescue
         ErrorScriptMailer.error_notification(log_document, { unlimited: true }).deliver
       end
