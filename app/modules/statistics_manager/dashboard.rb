@@ -22,7 +22,7 @@ private
     [
       ['ready_temp_documents_count', TempDocument.with(period).ready.count],
       ['locked_temp_documents_count', TempDocument.with(period).locked.count],
-      ['processed_temp_documents_count', TempDocument.with(period).with(period).processed.count],
+      ['processed_temp_documents_count', TempDocument.with(period).processed.count],
       ['unreadable_temp_documents_count', TempDocument.with(period).unreadable.count],
       ['ocr_needed_temp_documents_count', TempDocument.with(period).ocr_needed.count],
       ['wait_selection_temp_documents_count', TempDocument.with(period).wait_selection.count],

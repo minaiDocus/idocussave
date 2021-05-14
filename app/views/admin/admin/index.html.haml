@@ -134,69 +134,13 @@
               %table.table.table-striped.table-condensed.table-bordered
                 %thead
                   %tr.bg-brown.text-white
-                    - @documents_uploaded_by_api_names.each do |api_name|
-                      %th= api_name[:api_name]
+                    %th Api
+                    %th Nombre de documents
                 %tbody
-                  %tr
-                    - @documents_uploaded_by_api_names.each do |api_name|
+                  - @documents_uploaded_by_api_names.each do |api_name|
+                    %tr
+                      %td= api_name[:api_name]
                       %td= api_name[:count]
-            / .col-sm-6
-            /   %h5
-            /     %strong
-            /       %u Documents téléversés par api
-            /   %table.table.table-striped.table-condensed.table-bordered
-            /     %tbody
-            /       %tr
-            /         %th Total récupérateurs
-            /         %td= StatisticsManager.get_statistic('retrievers_count')
-            /       %tr
-            /         %th Total client (Actif)
-            /         %td
-            /           = StatisticsManager.get_statistic('retriever_users_count')
-            /           (#{StatisticsManager.get_statistic('active_retriever_users_count')})
-            /       %tr
-            /         %th= Retriever.state_machine.states['ready'].human_name
-            /         %td= StatisticsManager.get_statistic('retrievers_ready_count')
-            /       %tr
-            /         %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
-            /         %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
-            /       %tr
-            /         %th= 'En erreur'
-            /         %td= StatisticsManager.get_statistic('retrievers_errors_count')
-            /       %tr
-            /         %th Données en cours de tr.
-            /         %td
-            /           = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
-            /           (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
-            / .col-sm-6
-            /   %h5
-            /     %strong
-            /       %u Etat des pages
-            /   %table.table.table-striped.table-condensed.table-bordered
-            /     %tbody
-            /       %tr
-            /         %th Total
-            /         %td= StatisticsManager.get_statistic('documents_count')
-            /       %tr
-            /         %th Numérisés
-            /         %td= StatisticsManager.get_statistic('scanned_documents_count')
-            /       %tr
-            /         %th Téléversés (OCR)
-            /         %td
-            /           = StatisticsManager.get_statistic('uploaded_documents_count')
-            /           (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
-            /       %tr
-            /         %th Num. Dematbox
-            /         %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
-            /       %tr
-            /         %th Auto
-            /         %td= StatisticsManager.get_statistic('retrieved_documents_count')
-            /       %tr
-            /         %th Vignettes rest.
-            /         %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
-            /       %tr
-            /         %th Extractions rest.
-            /         %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
           .row
             .col-sm-12
               %h5.label
