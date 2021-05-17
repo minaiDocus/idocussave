@@ -271,18 +271,18 @@ class TempDocument < ApplicationRecord
 
 
   def self.api_names
-    api_names = TempDocument.all.select(:api_name).distinct.pluck(:api_name)
+    api_names = TempDocument.with([30.days.ago..Time.now]).select(:api_name).distinct.pluck(:api_name)
 
     api_names_count = []
     api_names.each do |api_name|
       count = TempDocument.with([30.days.ago..Time.now]).where(api_name: api_name).size
-      api_name = 'Aucun' if !api_name.present?
+      api_name = 'aucun' if !api_name.present?
       api_names_count << {api_name: api_name, count: count}
     end
 
     total = 0
     api_names_count.each{|_count| total += _count[:count]}
-    api_names_count << {api_name: 'Total', count: total}
+    api_names_count << {api_name: 'total', count: total}
 
     api_names_count
   end

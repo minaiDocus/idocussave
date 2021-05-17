@@ -135,12 +135,56 @@
                 %thead
                   %tr.bg-brown.text-white
                     %th Api
-                    %th Nombre de documents
+                    %th Nb. de documents
                 %tbody
-                  - @documents_uploaded_by_api_names.each do |api_name|
-                    %tr
-                      %td= api_name[:api_name]
-                      %td= api_name[:count]
+                  %tr
+                    %td Aucun
+                    %td= StatisticsManager.get_statistic('aucun_temp_documents_count')
+                  %tr
+                    %td fiduceo
+                    %td= StatisticsManager.get_statistic('fiduceo_temp_documents_count')
+                  %tr
+                    %td budgea
+                    %td= StatisticsManager.get_statistic('budgea_temp_documents_count')
+                  %tr
+                    %td ibiza
+                    %td= StatisticsManager.get_statistic('ibiza_temp_documents_count')
+                  %tr
+                    %td web
+                    %td= StatisticsManager.get_statistic('web_temp_documents_count')
+                  %tr
+                    %td email
+                    %td= StatisticsManager.get_statistic('email_temp_documents_count')
+                  %tr
+                    %td dropbox
+                    %td= StatisticsManager.get_statistic('dropbox_temp_documents_count')
+                  %tr
+                    %td ftp
+                    %td= StatisticsManager.get_statistic('ftp_temp_documents_count')
+                  %tr
+                    %td mcf
+                    %td= StatisticsManager.get_statistic('mcf_temp_documents_count')
+                  %tr
+                    %td mobile
+                    %td= StatisticsManager.get_statistic('mobile_temp_documents_count')
+                  %tr
+                    %td invoice auto
+                    %td= StatisticsManager.get_statistic('invoice_auto_temp_documents_count')
+                  %tr
+                    %td scan
+                    %td= StatisticsManager.get_statistic('scan_temp_documents_count')
+                  %tr
+                    %td invoice setting
+                    %td= StatisticsManager.get_statistic('invoice_setting_temp_documents_count')
+                  %tr
+                    %td jefacture
+                    %td= StatisticsManager.get_statistic('jefacture_temp_documents_count')
+                  %tr
+                    %td sftp
+                    %td= StatisticsManager.get_statistic('sftp_temp_documents_count')
+                  %tr
+                    %td Total
+                    %td= StatisticsManager.get_statistic('total_temp_documents_count')
           .row
             .col-sm-12
               %h5.label
@@ -187,15 +231,42 @@
             %table.table.table-striped.table-condensed.table-bordered
               %thead
                 %tr.bg-brown.text-white
-                  %th Software
+                  %th Logiciel Comptable
                   %th Organisation
                   %th Client
               %tbody
-                - @software_infos.each do |software_info|
-                  %tr
-                    %td= software_info[:name]
-                    %td= software_info[:organization_count]
-                    %td= software_info[:user_count]
+                %tr
+                  %td iBiza
+                  %td= StatisticsManager.get_statistic('ibiza_organizations_count')
+                  %td= StatisticsManager.get_statistic('ibiza_users_count')
+                %tr
+                  %td Exact Online
+                  %td= StatisticsManager.get_statistic('exact_online_organizations_count')
+                  %td= StatisticsManager.get_statistic('exact_online_users_count')
+                %tr
+                  %td My Unisoft
+                  %td= StatisticsManager.get_statistic('my_unisoft_organizations_count')
+                  %td= StatisticsManager.get_statistic('my_unisoft_users_count')
+                %tr
+                  %td Coala
+                  %td= StatisticsManager.get_statistic('coalaorganizations_count')
+                  %td= StatisticsManager.get_statistic('coala_users_count')
+                %tr
+                  %td Quadratus
+                  %td= StatisticsManager.get_statistic('quadratus_organizations_count')
+                  %td= StatisticsManager.get_statistic('quadratus_users_count')
+                %tr
+                  %td Cegid
+                  %td= StatisticsManager.get_statistic('cegid_organizations_count')
+                  %td= StatisticsManager.get_statistic('cegid_users_count')
+                %tr
+                  %td Fec Agiris
+                  %td= StatisticsManager.get_statistic('fec_agirisorganizations_count')
+                  %td= StatisticsManager.get_statistic('fec_agiris_users_count')
+                %tr
+                  %td Autre(format d'export .csv)
+                  %td= StatisticsManager.get_statistic('csv_descriptor_organizations_count')
+                  %td= StatisticsManager.get_statistic('csv_descriptor_users_count')
         .row
           .col-sm-12
             %h5 Organisations facturées n'ayant pas d'adresse de facturation

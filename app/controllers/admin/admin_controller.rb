@@ -8,17 +8,6 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin
   def index
-    @software_infos  = []
-
-    Interfaces::Software::Configuration::SOFTWARES.each do |software_name|
-      organizations  = Interfaces::Software::Configuration.softwares[software_name.to_sym].where(owner_type: 'Organization', is_used: true)
-      customers      = Interfaces::Software::Configuration.softwares[software_name.to_sym].where(owner_type: 'User', is_used: true)
-      software_name  = Interfaces::Software::Configuration.human_format[software_name.to_sym]
-
-      @software_infos << { name: software_name, organization_count: organizations.size, user_count: customers.size }
-    end
-
-    @documents_uploaded_by_api_names = TempDocument.api_names
     @unbillable_organizations = Organization.billed.select { |e| e.billing_address.nil? }
   end
 

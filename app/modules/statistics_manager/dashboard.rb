@@ -9,7 +9,9 @@ class StatisticsManager::Dashboard
     calculate_remote_files_statistics +
     calculate_retrievers_statistics +
     calculate_documents_statistics +
-    calculate_operations_statistics
+    calculate_operations_statistics +
+    calculate_software_owner_statistics +
+    calculate_documents_uploaded_by_api_statistics
   end
 
   def self.statistic_names
@@ -98,6 +100,29 @@ private
       ['not_processed_not_locked_operations_count', Operation.with(period).not_processed.not_locked.size],
       ['processed_operations_count', Operation.with(period).processed.size],
     ]
+  end
+
+  def self.calculate_software_owner_statistics
+    software_infos  = []
+
+    Interfaces::Software::Configuration::SOFTWARES.each do |software_name|
+      organizations  = Interfaces::Software::Configuration.softwares[software_name.to_sym].where(owner_type: 'Organization', is_used: true)
+      customers      = Interfaces::Software::Configuration.softwares[software_name.to_sym].where(owner_type: 'User', is_used: true)
+
+      software_infos << [ "#{software_name}_organizations_count", organizations.size ]
+      software_infos << [ "#{software_name}_users_count", customers.size ]
+    end
+
+    software_infos
+  end
+
+  def self.calculate_documents_uploaded_by_api_statistics
+    documents_uploaded_by_api  = []
+    TempDocument.api_names.each do |api_name|
+      documents_uploaded_by_api << ["#{api_name[:api_name]}_temp_documents_count", api_name[:count]]
+    end
+
+    documents_uploaded_by_api
   end
 
   def self.period
