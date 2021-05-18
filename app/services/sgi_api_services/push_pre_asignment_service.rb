@@ -22,9 +22,12 @@ class SgiApiServices::PushPreAsignmentService
 
       not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
       not_blocked_pre_assignments = not_blocked_pre_assignments.select{|pres| !pres.has_deleted_piece? }
+
       if not_blocked_pre_assignments.size > 0
-        PreAssignment::CreateDelivery.new(not_blocked_pre_assignments, ['ibiza', 'exact_online'], is_auto: true).execute
-        PreseizureExport::GeneratePreAssignment.new(not_blocked_pre_assignments).execute
+        not_blocked_pre_assignments.each_slice(40) do |preseizures_group|
+          PreAssignment::CreateDelivery.new(preseizures_group, ['ibiza', 'exact_online', 'my_unisoft'], is_auto: true).execute
+          PreseizureExport::GeneratePreAssignment.new(preseizures_group).execute
+        end
         FileDelivery.prepare(report)
         FileDelivery.prepare(piece.pack)
       end
