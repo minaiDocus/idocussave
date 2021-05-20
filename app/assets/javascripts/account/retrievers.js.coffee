@@ -441,10 +441,16 @@ jQuery ->
     connectors_list.fetch_all().then(
       ()->
         options = $('select#bank_account_bank_name').empty()
-        $.each connectors_list.connectors_fetched, (index, element) ->
+        banks = connectors_list.connectors_fetched
+
+        # ADD BANKS HERE
+        banks.push({ name: 'UBS', capabilities: ['bank'] })
+        # ADD BANKS HERE - END
+
+        $.each banks.sort((a,b) -> a['name'].toLowerCase() > b['name'].toLowerCase()), (index, element) ->
           if $.inArray('bank', element['capabilities']) > -1
             bank_name = element['name']
-            options.append("<option value='#{bank_name}'>#{bank_name}</option>")
+            options.append("<option value=\"#{bank_name}\">#{bank_name}</option>")
         $('#submit_bank_account').attr('disabled', false)
       (error)->
         if $('form#new_bank_account').length > 0
