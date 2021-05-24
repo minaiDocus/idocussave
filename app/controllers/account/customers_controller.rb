@@ -443,7 +443,7 @@ class Account::CustomersController < Account::OrganizationController
       { ibiza_attributes: %i[id is_used ibiza_id auto_deliver is_analysis_activated is_analysis_to_validate] },
       { exact_online_attributes: %i[id is_used auto_deliver client_id client_secret] },
       { my_unisoft_attributes: %i[id is_used auto_deliver encrypted_api_token check_api_token] },
-      { coala_attributes: %i[id is_used auto_deliver] },
+      { coala_attributes: %i[id is_used auto_deliver internal_id] },
       { fec_agiris_attributes: %i[id is_used auto_deliver] },
       { cegid_attributes: %i[id is_used auto_deliver] },
       { quatratus_attributes: %i[id is_used auto_deliver] },

@@ -578,9 +578,11 @@
                       %tr
                         %th= 'Ce dossier utilise Coala?'
                         %td{width: '8%'}= f.input :is_used, as: 'boolean', label: 'oui?'
-                        - if @user.leader? || @user.manage_customers
-                          %td{width: '8%'}
-                            .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+                      %tr
+                        %th= 'Identifiant unique du dossier'
+                        %td{width: '15%'}= f.input :internal_id, as: 'string', label: false
+                  - if @user.leader? || @user.manage_customers
+                    .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
               - if @customer.try(:coala).try(:used?)
                 .hide
                   %hr

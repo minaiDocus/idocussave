@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_172908) do
+ActiveRecord::Schema.define(version: 2021_05_23_064801) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -188,6 +188,16 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.string "a3_axis3"
   end
 
+  create_table "archive_already_exist", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "temp_document_id"
+    t.text "path"
+    t.text "token"
+    t.string "fingerprint"
+    t.string "original_file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "archive_budgea_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "identifier"
     t.date "signin"
@@ -231,7 +241,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.index ["state"], name: "index_archive_retrievers_on_state"
   end
 
-  create_table "archive_webhook_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "archive_webhook_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "synced_date"
     t.string "synced_type"
     t.text "json_content"
@@ -299,7 +309,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.index ["external_file_storage_id"], name: "external_file_storage_id"
   end
 
-  create_table "bridge_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "bridge_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "encrypted_username"
     t.string "encrypted_password"
     t.datetime "created_at", null: false
@@ -523,6 +533,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.bigint "dropbox_id"
     t.datetime "changed_at"
     t.datetime "checked_at"
+    t.datetime "checked_at_for_all", default: -> { "CURRENT_TIMESTAMP" }
     t.text "delta_cursor", limit: 4294967295
     t.string "delta_path_prefix"
     t.text "import_folder_paths", limit: 4294967295
@@ -753,6 +764,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.text "piece_name_format"
     t.string "piece_name_format_sep", default: " ", null: false
     t.string "voucher_ref_target", default: "piece_number"
+    t.string "specific_url_options"
     t.boolean "is_auto_deliver", default: false, null: false
     t.integer "organization_id"
     t.text "encrypted_access_token"
@@ -1092,6 +1104,11 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.boolean "is_auto_membership_activated", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "organization_groups_organizations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "organization_group_id"
   end
 
   create_table "organization_rights", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1802,12 +1819,152 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.string "encrypted_port"
     t.string "root_path", default: "/"
     t.datetime "import_checked_at"
-    t.string "previous_import_paths"
+    t.text "previous_import_paths"
     t.bigint "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["external_file_storage_id"], name: "index_sftps_on_external_file_storage_id"
     t.index ["organization_id"], name: "index_sftps_on_organization_id"
+  end
+
+  create_table "software_cegids", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_cegids_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_cegids_on_is_used"
+    t.index ["owner_id"], name: "index_software_cegids_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_cegids_on_owner_type_and_owner_id"
+  end
+
+  create_table "software_coalas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "internal_id"
+    t.index ["auto_deliver"], name: "index_software_coalas_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_coalas_on_is_used"
+    t.index ["owner_id"], name: "index_software_coalas_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_coalas_on_owner_type_and_owner_id"
+  end
+
+  create_table "software_csv_descriptors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.boolean "comma_as_number_separator"
+    t.boolean "use_own_csv_descriptor_format"
+    t.text "directive"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_csv_descriptors_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_csv_descriptors_on_is_used"
+    t.index ["owner_id"], name: "index_software_csv_descriptors_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_csv_descriptors_on_owner_type_and_owner_id"
+    t.index ["use_own_csv_descriptor_format"], name: "index_software_csv_descriptors_on_use_own_csv_descriptor_format"
+  end
+
+  create_table "software_exact_online", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.text "encrypted_client_id"
+    t.text "encrypted_client_secret"
+    t.string "user_name"
+    t.string "full_name"
+    t.string "email"
+    t.string "state"
+    t.text "encrypted_refresh_token"
+    t.text "encrypted_access_token"
+    t.datetime "token_expires_at"
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_exact_online_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_exact_online_on_is_used"
+    t.index ["owner_id"], name: "index_software_exact_online_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_exact_online_on_owner_type_and_owner_id"
+    t.index ["state"], name: "index_software_exact_online_on_state"
+  end
+
+  create_table "software_fec_agiris", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_fec_agiris_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_fec_agiris_on_is_used"
+    t.index ["owner_id"], name: "index_software_fec_agiris_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_fec_agiris_on_owner_type_and_owner_id"
+  end
+
+  create_table "software_ibizas", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "state"
+    t.string "state_2"
+    t.text "description"
+    t.string "description_separator"
+    t.text "piece_name_format"
+    t.string "piece_name_format_sep"
+    t.string "voucher_ref_target"
+    t.string "specific_url_options"
+    t.text "encrypted_access_token"
+    t.text "encrypted_access_token_2"
+    t.string "ibiza_id"
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.boolean "is_auto_updating_accounting_plan", default: true
+    t.integer "is_analysis_activated", default: -1
+    t.integer "is_analysis_to_validate", default: -1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_ibizas_on_auto_deliver"
+    t.index ["ibiza_id"], name: "index_software_ibizas_on_ibiza_id"
+    t.index ["is_auto_updating_accounting_plan"], name: "index_software_ibizas_on_is_auto_updating_accounting_plan"
+    t.index ["is_used"], name: "index_software_ibizas_on_is_used"
+    t.index ["owner_id"], name: "index_software_ibizas_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_ibizas_on_owner_type_and_owner_id"
+    t.index ["state"], name: "index_software_ibizas_on_state"
+    t.index ["state_2"], name: "index_software_ibizas_on_state_2"
+  end
+
+  create_table "software_my_unisofts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "encrypted_api_token"
+    t.string "name"
+    t.string "access_routes"
+    t.integer "society_id"
+    t.integer "member_id"
+    t.string "owner_type"
+    t.integer "owner_id"
+    t.boolean "is_used"
+    t.boolean "is_auto_updating_accounting_plan", default: true
+    t.integer "auto_deliver", default: -1
+    t.index ["is_auto_updating_accounting_plan"], name: "index_software_my_unisofts_on_is_auto_updating_accounting_plan"
+    t.index ["is_used"], name: "index_software_my_unisofts_on_is_used"
+    t.index ["owner_id"], name: "index_software_my_unisofts_on_owner_id"
+  end
+
+  create_table "software_quadratus", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_quadratus_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_quadratus_on_is_used"
+    t.index ["owner_id"], name: "index_software_quadratus_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_quadratus_on_owner_type_and_owner_id"
   end
 
   create_table "softwares_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1838,6 +1995,16 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.index ["is_ibiza_used"], name: "index_softwares_settings_on_is_ibiza_used"
     t.index ["is_quadratus_used"], name: "index_softwares_settings_on_is_quadratus_used"
     t.index ["user_id"], name: "index_softwares_settings_on_user_id"
+  end
+
+  create_table "staffing_flows", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "kind"
+    t.text "params", limit: 4294967295
+    t.string "state"
+    t.index ["kind"], name: "index_staffing_flows_on_kind"
+    t.index ["state"], name: "index_staffing_flows_on_state"
   end
 
   create_table "statistics", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1944,6 +2111,8 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.integer "position"
     t.boolean "is_an_original", default: true, null: false
     t.integer "parent_document_id"
+    t.text "parents_documents_pages"
+    t.text "parents_documents_ids"
     t.boolean "is_a_cover", default: false, null: false
     t.boolean "is_ocr_layer_applied"
     t.string "delivered_by"
@@ -2101,6 +2270,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_172908) do
     t.boolean "organization_rights_is_groups_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_collaborators_management_authorized", default: false, null: false
     t.boolean "is_pre_assignement_displayed", default: false
+    t.boolean "act_as_a_collaborator_into_pre_assignment", default: false
     t.boolean "organization_rights_is_customers_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_journals_management_authorized", default: true, null: false
     t.boolean "organization_rights_is_customer_journals_management_authorized", default: true, null: false
