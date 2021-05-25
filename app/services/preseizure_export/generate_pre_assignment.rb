@@ -122,13 +122,19 @@ private
     begin
       file = PreseizureExport::Software::Coala.new(@report.user, @preseizures, {preseizures_only: !to_zip, to_xls: true}).execute
 
+      if @report.user.coala&.internal_id
+        zip_file_name = "#{@report.user.organization.code}_#{@report.user.coala.internal_id}_#{Time.now.strftime("%Y%m%d-%H%M%S")}_manual"
+      else
+        zip_file_name = file_real_name
+      end
+
       if to_zip
         if unzip_result
           POSIX::Spawn.system("unzip -o #{file} -d #{file_path}")
           rename_export 'coala'
           @export.got_success "#{file_real_name}.xls"
         else
-          final_file_name = "#{file_real_name}.zip"
+          final_file_name = "#{zip_file_name}.zip"
           FileUtils.mv file, "#{file_path}/#{final_file_name}"
           @export.got_success "#{final_file_name}"
         end
