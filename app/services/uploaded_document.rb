@@ -90,6 +90,26 @@ class UploadedDocument
               ErrorScriptMailer.error_notification(log_document).deliver
             end
           end
+        elsif !unique? && force
+          log_document = {
+              subject: "[UploadedDocument] Document already exist - force integration",
+              name: "UploadedDocument",
+              error_group: "[UploadedDocumentService] Document already exist - force integration",
+              erreur_type: "[Upload] - Document already exist - force integration",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                original: similar_document.inspect,
+                name: @original_file_name,
+                fingerprint_1: DocumentTools.checksum(@file.path),
+                fingerprint_2: similar_document.original_fingerprint
+              }
+            }
+
+          begin
+            ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.path)}] } ).deliver
+          rescue
+            ErrorScriptMailer.error_notification(log_document).deliver
+          end
         end
 
         if @errors.empty?
