@@ -6,7 +6,7 @@ class DataVerificator::IbizaErrors < DataVerificator::DataVerificator
     messages = []
 
     delivs.each do |delivery|
-      messages << "#{delivery.id} - #{delivery.pack_name} - #{delivery.error_message}"
+      messages << "delivery_id: #{delivery.id}, pack_name: #{delivery.pack_name}, error_message: #{delivery.error_message.tr(',;', '--')}"
     end
 
     delivs = delivs.update_all(state: 'pending')
