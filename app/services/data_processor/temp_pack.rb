@@ -16,6 +16,16 @@ class DataProcessor::TempPack
     new(temp_pack).execute
   end
 
+  def self.unblock_temp_doc(temp_doc_id)
+    temp_document = TempDocument.find temp_doc_id
+
+    return false if temp_document.corruption_notified_at.present?
+
+    temp_document.corruption_notified_at = Time.now
+    temp_document.state = 'ready'
+    temp_document.save
+  end
+
   def initialize(temp_pack)
     @temp_pack      = temp_pack
     @temp_documents = temp_pack.ready_documents
@@ -49,7 +59,22 @@ class DataProcessor::TempPack
         if !File.exist?(temp_document.cloud_content_object.path.to_s)
           sleep(15)
           if !File.exist?(temp_document.cloud_content_object.reload.path.to_s)
+            log_document = {
+              subject: "[DataProcessor::TempPack] - Unreadable temp_document",
+              name: "DataProcessor::TempPack",
+              error_group: "[data_processor-temp_pack] unreadable temp_document",
+              erreur_type: "Unreadable temp document : #{temp_document.id}",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                temp_document: temp_document.inspect,
+                path: temp_document.cloud_content_object.reload.path.to_s
+              }
+            }
+
+            ErrorScriptMailer.error_notification(log_document, { unlimited: true }).deliver
+
             temp_document.unreadable
+            DataProcessor::TempPack.delay_for(1.hours, queue: :low).unblock_temp_doc(temp_document.id)
             next
           end
         end
