@@ -316,13 +316,25 @@ class Billing::UpdatePeriod
 
     rest.sort.each do |value_date|
       if value_date.to_s.match(/^[0-9]{6}$/) && value_date.to_i >= 202001 && value_date.to_i < @period.start_date.strftime("%Y%m").to_i
+        previous_orders = @period.user.periods.collect(&:product_option_orders).flatten.compact
+        jump = false
+        title = "Opérations bancaires mois de #{I18n.l(Date.new(value_date.to_s[0..3].to_i, value_date.to_s[4..-1].to_i), format: '%B')} #{value_date.to_s[0..3].to_i}"
+
+        previous_orders.each do |order|
+          next if jump
+
+          jump = true if title == order.title
+        end
+
+        next if jump
+
         option = ProductOptionOrder.new
 
         option.name        = 'billing_previous_operations'
         option.group_title = option_infos[:group]
 
         begin
-          option.title = "Opérations bancaires mois de #{I18n.l(Date.new(value_date.to_s[0..3].to_i, value_date.to_s[4..-1].to_i), format: '%B')} #{value_date.to_s[0..3].to_i}"
+          option.title = title
         rescue => e
           p "----->#{e.to_s}---->" + value_date.to_s
           next
