@@ -12,11 +12,12 @@
             %th Durée (Mois)
         %tbody
           - @organization.customers.active.order(code: :asc).each do |client|
-            %tr
-              %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", false
-              %td= client.info
-              %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
-              %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+            - if client.orders.size > 0
+              %tr
+                %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", false
+                %td= client.info
+                %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
+                %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
       .form-group.boolean
         .label-section
           = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'

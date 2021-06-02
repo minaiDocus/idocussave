@@ -12,15 +12,26 @@ class Account::FileSendingKitsController < Account::OrganizationController
     @file_sending_kit.title             = params[:file_sending_kit][:title].strip
     @file_sending_kit.position          = params[:file_sending_kit][:position].strip
     @file_sending_kit.instruction       = params[:file_sending_kit][:instruction].strip
-    @file_sending_kit.logo_path         = params[:file_sending_kit][:logo_path].strip
     @file_sending_kit.logo_height       = params[:file_sending_kit][:logo_height].strip
     @file_sending_kit.logo_width        = params[:file_sending_kit][:logo_width].strip
-    @file_sending_kit.left_logo_path    = params[:file_sending_kit][:left_logo_path].strip
     @file_sending_kit.left_logo_height  = params[:file_sending_kit][:left_logo_height].strip
     @file_sending_kit.left_logo_width   = params[:file_sending_kit][:left_logo_width].strip
-    @file_sending_kit.right_logo_path   = params[:file_sending_kit][:right_logo_path].strip
     @file_sending_kit.right_logo_height = params[:file_sending_kit][:right_logo_height].strip
     @file_sending_kit.right_logo_width  = params[:file_sending_kit][:right_logo_width].strip
+
+    if CustomUtils.is_manual_paper_set_order?(@organization) && @file_sending_kit.save
+      attach_images
+
+      @file_sending_kit.reload
+
+      @file_sending_kit.logo_path       = @file_sending_kit.cloud_center_logo_object.reload.path
+      @file_sending_kit.left_logo_path  = @file_sending_kit.cloud_left_logo_object.reload.path
+      @file_sending_kit.right_logo_path = @file_sending_kit.cloud_right_logo_object.reload.path
+    else
+      @file_sending_kit.logo_path       = params[:file_sending_kit][:logo_path].strip
+      @file_sending_kit.left_logo_path  = params[:file_sending_kit][:left_logo_path].strip
+      @file_sending_kit.right_logo_path = params[:file_sending_kit][:right_logo_path].strip
+    end
 
     if @file_sending_kit.save
       flash[:success] = 'Modifié avec succès.'
@@ -106,7 +117,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   private
 
   def verify_rights
-    unless @user.is_admin
+    unless @user.is_admin || (CustomUtils.is_manual_paper_set_order?(@organization) && @user.orders.size > 0)
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
@@ -122,6 +133,26 @@ class Account::FileSendingKitsController < Account::OrganizationController
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
+    end
+  end
+
+  def attach_images
+    center_logo = params[:file_sending_kit][:center_logo]
+    left_logo = params[:file_sending_kit][:left_logo]
+    right_logo = params[:file_sending_kit][:right_logo]
+
+    if center_logo.present? && left_logo.present? && right_logo.present?
+      @file_sending_kit.cloud_center_logo.attach(io: File.open(center_logo.tempfile),
+                                         filename: "center_logo_#{@file_sending_kit.id}.png",
+                                         content_type: "image/png")
+
+      @file_sending_kit.cloud_left_logo.attach(io: File.open(left_logo.tempfile),
+                                         filename: "left_logo_#{@file_sending_kit.id}.png",
+                                         content_type: "image/png")
+
+      @file_sending_kit.cloud_right_logo.attach(io: File.open(right_logo.tempfile),
+                                         filename: "right_logo_#{@file_sending_kit.id}.png",
+                                         content_type: "image/png")
     end
   end
 end

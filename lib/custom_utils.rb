@@ -90,5 +90,12 @@ class CustomUtils
 
       final_dir
     end
+
+    def is_manual_paper_set_order?(organization)
+      ### ADD ORGANIZATION CODE INTO ARRAY FOR MANUAL PAPER SET ORDER ###
+      ### EXAMPLE: ["IDOC", 'ORGCODE1', "ORGCODE2"].include?(organization.code)
+
+      ["IDOC"].include?(organization.code)
+    end
   end
 end

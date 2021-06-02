@@ -19,7 +19,7 @@ class Order < ApplicationRecord
   validates_presence_of  :address,              if: proc { |o| o.address_required? }
   validates_presence_of  :vat_ratio
   validates_presence_of  :period_duration,      if: proc { |o| o.paper_set? }
-  validates_presence_of  :paper_set_casing_count, if: proc { |o| o.paper_set? }
+  validates_presence_of  :paper_set_casing_count, if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
   validates_presence_of  :paper_set_end_date,   if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_return_address, if: proc { |o| o.paper_set? && o.address_required? }
   validates_presence_of  :paper_set_start_date, if: proc { |o| o.paper_set? }
@@ -27,8 +27,8 @@ class Order < ApplicationRecord
 
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_inclusion_of :dematbox_count, in: [1, 2, 10], if: proc { |o| o.dematbox? }
-  validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: proc { |o| o.paper_set? }
-  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
+  validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
+  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
 
 
   accepts_nested_attributes_for :address, :paper_return_address, allow_destroy: true
@@ -71,6 +71,11 @@ class Order < ApplicationRecord
 
   def paper_set?
     type == 'paper_set'
+  end
+
+
+  def normal_paper_set_order?
+   !CustomUtils.is_manual_paper_set_order?(organization) && paper_set_casing_not_being_nil?
   end
 
 
@@ -223,5 +228,9 @@ class Order < ApplicationRecord
     unless paper_set_start_date <= paper_set_end_date
       errors.add(:paper_set_start_date, :invalid)
     end
+  end
+
+  def paper_set_casing_not_being_nil?
+    paper_set_casing_size.to_i > 0 && paper_set_casing_count.to_i > 0
   end
 end

@@ -30,13 +30,15 @@
       %h4 Commande d’un kit complet pour envoi du courrier à iDocus
       %hr
       %input#paper_set_prices{ value: "#{@paper_set_prices}", type: :hidden }
+      %input#paper_set_specific_prices{ value: 1, type: :hidden, data: {manual: manual_paper_set_order.to_s} }
       .row
         .col-md-4
           .box.bg-light.height_groups.groups_1
             = f.hidden_field :period_duration
-            = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
-            = f.input :paper_set_casing_count, collection: [], include_blank: true
-            = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
+            - if not manual_paper_set_order
+              = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
+              = f.input :paper_set_casing_count, collection: [], include_blank: true
+              = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
             = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
             = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
             = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
@@ -71,7 +73,7 @@
 .card-footer
   .form-actions.margin0bottom
     - if @customer.configured?
-      = f.submit 'Commander', class: 'btn btn-primary'
+      = f.submit 'Commander', class: "btn btn-primary#{' valid-manual-paper-set-order' if manual_paper_set_order}"
       = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'btn btn-light'
     - else
       = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-secondary'

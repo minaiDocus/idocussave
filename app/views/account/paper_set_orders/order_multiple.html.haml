@@ -1,5 +1,6 @@
 #paper_set_orders.order_multiple.derivationRight
   %input#paper_set_prices{ value: "#{@paper_set_prices}", type: :hidden }
+  - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
   .card
     .card-header
       .float-left
@@ -8,8 +9,9 @@
           %span.badge.badge-info= @orders.count
       .float-right
         = link_to t('actions.return'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'
-    = form_tag create_multiple_account_organization_paper_set_orders_path(@organization) do |f|
+    = form_tag create_multiple_account_organization_paper_set_orders_path(@organization), :id => manual_paper_set_order ? 'valid-manual-paper-set-order' : 'default' do |f|
       .card-body
+        %input#paper_set_specific_prices{ value: 1, type: :hidden, data: {manual: manual_paper_set_order.to_s} }
         %p Veuillez choisir les options pour chaque commande.
         %span.fs-origin.badge.badge-warning Note :
         %span Pour un écart de période important par rapport au nombre d'enveloppes, nous vous conseillons de prendre une enveloppe de taille supérieur à 500g
@@ -19,8 +21,9 @@
               %th code
               %th société
               %th dern. envel. retour
-              %th proposition
-              %th nb enveloppes
+              - if not manual_paper_set_order
+                %th proposition
+                %th nb enveloppes
               %th nb chemises
               %th= t('activerecord.models.order.attributes.paper_set_start_date').downcase
               %th= t('activerecord.models.order.attributes.paper_set_end_date').downcase
@@ -38,8 +41,10 @@
                     = builder.hidden_field :period_duration, class: "period_duration_#{index}"
                   %td= truncate(order.user.company, length: 20, separator: ' ')
                   %td= paper_return ?  "#{paper_return.letter_type}g" : '-'
-                  %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
-                  %td= builder.input :paper_set_casing_count, label: false, collection: [], include_blank: true, :input_html => { "data-index" => index, class: "casing_count_#{index}" }
+
+                  - if not manual_paper_set_order
+                    %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
+                    %td= builder.input :paper_set_casing_count, label: false, collection: [], include_blank: true, :input_html => { "data-index" => index, class: "casing_count_#{index}" }
                   %td= builder.input :paper_set_folder_count, label: false, collection: 5..10, include_blank: false
                   %td= builder.input :paper_set_start_date, label: false, collection: paper_set_start_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order start_date_#{index}" }
                   %td= builder.input :paper_set_end_date, label: false, collection: paper_set_end_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order end_date_#{index}" }
@@ -50,5 +55,5 @@
           %b.total_price{ style: 'font-size:20px' }
       .card-footer
         .form-actions.margin0bottom
-          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          = submit_tag t('actions.submit'), class: "btn btn-primary#{' valid-manual-paper-set-order' if manual_paper_set_order}"
           = link_to t('actions.cancel'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn btn-light'

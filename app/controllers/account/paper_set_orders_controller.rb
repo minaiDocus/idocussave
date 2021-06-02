@@ -29,6 +29,8 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order.address                = @customer.paper_set_shipping_address.try(:dup) || Address.new
     @order.paper_return_address   = @customer.paper_return_address.try(:dup) || Address.new
     @order.paper_set_annual_end_date
+
+    @paper_set_prices = Order::PaperSet.paper_set_prices
   end
 
   # POST /account/organizations/:organization_id/paper_set_orders/create
@@ -51,6 +53,8 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @order.paper_return_address       ||= @customer.paper_return_address.try(:dup)
     @order.build_address              if @order.address.nil?
     @order.build_paper_return_address if @order.paper_return_address.nil?
+
+    @paper_set_prices = Order::PaperSet.paper_set_prices
   end
 
   # PUT /account/organizations/:organization_id/paper_set_orders/:id

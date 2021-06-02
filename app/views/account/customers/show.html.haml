@@ -230,6 +230,8 @@
                         - if order.pending? && (Time.now < order.created_at + 24.hours)
                           = link_to 'Modifier', edit_account_organization_customer_order_path(@organization, @customer, order), class: 'btn btn-light'
                           = link_to 'Annuler', account_organization_customer_order_path(@organization, @customer, order), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-light'
+                        - if order.confirmed? && !order.normal_paper_set_order?
+                          = link_to "Éditer/Générer", account_organization_path(@organization, { tab: 'file_sending_kit' }), class: 'btn btn-light download-paper-set-order', title: "Kit d'envoi de documents"
               - if @customer.is_dematbox_authorized
                 = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' }), class: 'btn btn-primary'
               - if @customer.subscription.is_package?('mail_option') || @customer.subscription.is_package?('ido_annual')
