@@ -251,7 +251,7 @@ class FileImport::Dropbox
 
     if valid_file_name(file_name)
       if needed_folders.include?(path)
-        if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase) && metadata.size <= 10.megabytes
+        if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase)
           customer, journal_name, period_offset, collaborator_code = get_info_from_path path
 
           begin
