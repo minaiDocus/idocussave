@@ -38,7 +38,10 @@
                 %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
                 %td
                   = link_to glyphicon('plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-light', title: 'Recommander le même kit'
-                  = link_to glyphicon('pencil'), edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', title: 'Editer'
-                  = link_to glyphicon('x'), account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+                  - if order.pending? && (Time.now < order.created_at + 24.hours)
+                    = link_to glyphicon('pencil'), edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', title: 'Editer'
+                    = link_to glyphicon('x'), account_organization_paper_set_order_path(@organization, order), class: 'btn btn-light', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+                  - if order.confirmed? && !order.normal_paper_set_order?
+                    = link_to "Éditer/Générer", account_organization_path(@organization, { tab: 'file_sending_kit' }), class: 'btn btn-light download-paper-set-order', title: "Kit d'envoi de documents"
         = render partial: 'shared/list_options', locals: { collection: @orders }
     = render partial: 'sidebar'

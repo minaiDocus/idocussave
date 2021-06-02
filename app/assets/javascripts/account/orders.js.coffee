@@ -1,6 +1,10 @@
 paper_set_prices = ->
   JSON.parse($('#paper_set_prices').val())
 
+is_manual_paper_set_order_applied = ->
+  manual_paper_set_order = $('#paper_set_specific_prices')
+  manual_paper_set_order.length > 0 && manual_paper_set_order.attr("data-manual") == 'true'
+
 casing_size_index = ->
   paper_set_casing_size = parseInt($('#order_paper_set_casing_size').val())
   if paper_set_casing_size == 500
@@ -42,7 +46,12 @@ price_of_periods = ->
   end_date   = new Date($('#order_paper_set_end_date').val())
   period_index = period_index_of(start_date, end_date, $('#order_period_duration').val())
   if start_date <= end_date
-    discount_price_of(paper_set_prices()[casing_size_index()][folder_count_index()][period_index])
+    paper_set_folder_count = parseInt($(order).find("select[name*='paper_set_folder_count']").val()) - 5
+    if is_manual_paper_set_order_applied()
+      folder_count = if paper_set_folder_count == 0 then 1 else paper_set_folder_count
+      folder_count * (period_index + 1)
+    else
+      discount_price_of(paper_set_prices()[casing_size_index()][folder_count_index()][period_index])
   else
     0
 
@@ -87,6 +96,13 @@ check_casing_size_and_count = ->
   if((max_val - selected_val) >= 2)
     $('#order_paper_set_casing_count').after("<p class='help-block casing_count_hint'>Pour un écart de période important par rapport au nombre d'enveloppes, nous vous conseillons de prendre une enveloppe de taille supérieur à 500g</p>")
 
+confirm_manual_paper_set_order = ->
+  if is_manual_paper_set_order_applied()
+    $('.valid-manual-paper-set-order').on 'click', (e) ->
+      e.preventDefault()
+      if confirm("Vous êtes sur le point de commander un kit sans passer par courrier. Etes-vous sûr ?")
+        $('#valid-manual-paper-set-order').submit()
+
 jQuery ->
   if $('#order form').length > 0
     update_casing_counts()
@@ -110,3 +126,5 @@ jQuery ->
       $('#order_paper_return_address_attributes_address_2').val($('#order_address_attributes_address_2').val())
       $('#order_paper_return_address_attributes_city').val($('#order_address_attributes_city').val())
       $('#order_paper_return_address_attributes_zip').val($('#order_address_attributes_zip').val())
+
+    confirm_manual_paper_set_order()

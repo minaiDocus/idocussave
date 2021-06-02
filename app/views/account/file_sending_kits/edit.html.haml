@@ -1,7 +1,8 @@
+- manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
 .card.derivationRight
   .card-header
     %h3 Edition du kit d'envoi de documents
-  = simple_form_for [:account, @organization, @file_sending_kit], html: { class: 'form form-horizontal margin0' } do |f|
+  = simple_form_for [:account, @organization, @file_sending_kit], html: { class: 'form form-horizontal margin0', :enctype => manual_paper_set_order ? "multipart/form-data" : ""  } do |f|
     .card-body
       .row
         .col-md-6
@@ -17,7 +18,10 @@
             .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.center')
               %hr
-              = f.input :logo_path, input_html: { class: 'span12' }
+              - if manual_paper_set_order
+                = f.input :center_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+              - else
+                = f.input :logo_path, input_html: { class: 'span12' }
               = f.input :logo_height
               = f.input :logo_width
       .row
@@ -26,7 +30,10 @@
             .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.left')
               %hr
-              = f.input :left_logo_path, input_html: { class: 'span12' }
+              - if manual_paper_set_order
+                = f.input :left_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+              - else
+                = f.input :left_logo_path, input_html: { class: 'span12' }
               = f.input :left_logo_height
               = f.input :left_logo_width
         .col-md-6
@@ -34,7 +41,10 @@
             .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.right')
               %hr
-              = f.input :right_logo_path, input_html: { class: 'span12' }
+              - if manual_paper_set_order
+                = f.input :right_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+              - else
+                = f.input :right_logo_path, input_html: { class: 'span12' }
               = f.input :right_logo_height
               = f.input :right_logo_width
     .card-footer

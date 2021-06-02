@@ -17,5 +17,6 @@
           pour le dossier : 
           %span.text-info.fs-origin= @customer
 
-    = simple_form_for @order, url: account_organization_customer_orders_path(@organization, @customer), html: { class: 'form-horizontal' } do |f|
-      = render partial: 'form', locals: { f: f }
+    - manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@organization)
+    = simple_form_for @order, url: account_organization_customer_orders_path(@organization, @customer), html: { :id => manual_paper_set_order ? 'valid-manual-paper-set-order' : 'default', class: 'form-horizontal' } do |f|
+      = render 'form', f: f, manual_paper_set_order: manual_paper_set_order

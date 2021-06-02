@@ -19,7 +19,12 @@ class Order::PaperSet
     if @order.save
       unless @is_an_update
         @period.orders << @order
-        Order::Confirm.delay_for(24.hours).execute(@order.id)
+
+        if @order.normal_paper_set_order?
+          Order::Confirm.delay_for(24.hours).execute(@order.id)
+        else
+          @order.confirm if @order.pending?
+        end
       end
 
       auto_ajust_number_of_journals_authorized
@@ -84,6 +89,8 @@ class Order::PaperSet
 
 
   def casing_size_index
+    return 0 # TODO...
+
     case @order.paper_set_casing_size
     when 500
       0
@@ -121,7 +128,7 @@ class Order::PaperSet
         unit_price = 0
     end
 
-    if selected_casing_count > 0 && max_casing_count > 0
+    if selected_casing_count && selected_casing_count > 0 && max_casing_count > 0
       discount_price = unit_price * (max_casing_count - selected_casing_count)
       price_of_periods - discount_price
     else
