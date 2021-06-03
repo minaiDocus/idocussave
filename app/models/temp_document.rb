@@ -90,7 +90,6 @@ class TempDocument < ApplicationRecord
   scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
   scope :from_ibizabox,     -> { where.not(ibizabox_folder_id: nil) }
   scope :from_mobile,       -> { where("state='processed' AND delivery_type = 'upload' AND api_name = 'mobile'") }
-  scope :fingerprint_is_nil,-> { where(original_fingerprint: [nil, ''], content_fingerprint: [nil, ''], raw_content_fingerprint: [nil, '']) }
   scope :by_source, -> (delivery_type) { where('delivery_type = ?', delivery_type) }
   scope :with, -> (period) { where(updated_at: period) }
 
@@ -295,6 +294,10 @@ class TempDocument < ApplicationRecord
     end
 
     return result
+  end
+
+  def fingerprint_is_nil?
+    original_fingerprint.blank? && content_fingerprint.blank? && raw_content_fingerprint.blank?
   end
 
   def recreate_grouped_document

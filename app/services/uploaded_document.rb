@@ -85,7 +85,7 @@ class UploadedDocument
             }
 
             begin
-              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.path)}]} ).deliver
+              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.reload.path)}]} ).deliver
             rescue
               ErrorScriptMailer.error_notification(log_document).deliver
             end
@@ -106,7 +106,7 @@ class UploadedDocument
             }
 
           begin
-            ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.path)}] } ).deliver
+            ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.reload.path)}] } ).deliver
           rescue
             ErrorScriptMailer.error_notification(log_document).deliver
           end

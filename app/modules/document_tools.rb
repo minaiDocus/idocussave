@@ -52,30 +52,30 @@ class DocumentTools
         tmp_file_path ||= file_path
       end
 
-      system "convert '#{tmp_file_path}' -quality 100 'pdf:#{output_file_path}' 2>&1"
+      system 'convert "' + tmp_file_path + '" -quality 100 "pdf:' + output_file_path + '" 2>&1'
 
       return output_file_path
     end
   end
 
   def self.to_pdf_hight_quality(file_path, output_file_path)
-    system "convert -density 200 '#{file_path}' -quality 100 'pdf:#{output_file_path}' 2>&1"
+    system 'convert -density 200 "' + file_path + '" -quality 100 "pdf:' + output_file_path + '" 2>&1'
   end
 
   def self.to_a4_pdf(file_path, output_file_path)
-    system "convert -page A4+0+350 '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
+    system 'convert -page A4+0+350 "' + file_path + '" "pdf:' + output_file_path + '" 2>&1'
   end
 
   def self.resize_img(file_path, output_file_path)
-    system "convert '#{file_path}' -resize 2000x2000\\> '#{output_file_path}'"
+    system 'convert "' + file_path + '" -resize 2000x2000\\> "' + output_file_path + '"'
   end
 
   def self.sign_pdf(file_path, output_file_path)
-    system "/usr/local/bin/PortableSigner -p '1d0cu5' -n -s /usr/local/PortableSigner/idocus.p12 -t '#{file_path}' -o '#{output_file_path}'"
+    system '/usr/local/bin/PortableSigner -p "1d0cu5" -n -s /usr/local/PortableSigner/idocus.p12 -t "' + file_path + '" -o "' + output_file_path + '"'
   end
 
   def self.convert_heic_to_jpg(input_file_path, output_file_path)
-    system "heif-convert '#{input_file_path}' '#{output_file_path}'"
+    system 'heif-convert "' + input_file_path + '" "' + output_file_path + '"'
   end
 
   def self.is_mergeable?(file_path)
@@ -108,7 +108,7 @@ class DocumentTools
         safe_time   = safe_time > 70 ? 70 : safe_time
 
         Timeout::timeout safe_time do
-          command = "convert -density 400 -colorspace rgb '#{input_file_path}' '#{pdf_to_correct_jpg}'"
+          command = 'convert -density 400 -colorspace rgb "' + input_file_path + '" "' + pdf_to_correct_jpg + '"'
           `#{command}`
 
           if page_number > 1
@@ -119,7 +119,7 @@ class DocumentTools
             input_images = [pdf_to_correct_jpg]
           end
 
-          command = "convert -density 500 #{input_images.join(' ')} -quality 100 'pdf:#{pdf_corrected}' 2>&1"
+          command = 'convert -density 500 #{input_images.join(' ')} -quality 100 "pdf:' + pdf_corrected + '" 2>&1'
           `#{command}`
           corrected = true
 
@@ -182,7 +182,7 @@ class DocumentTools
     end
 
     if strict
-      success = system "#{Pdftk.config[:exe_path]} '#{file_path}' dump_data 2>&1"
+      success = system Pdftk.config[:exe_path].to_s + ' "' + file_path + '" dump_data 2>&1'
       
       is_ok = false unless success
     end
@@ -235,14 +235,14 @@ class DocumentTools
 
 
   def self.remove_pdf_security(file_path, new_file_path)
-    system "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1"
+    system 'gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="' + new_file_path + '" -c .setpdfwrite -f "' + file_path + '" 2>&1'
   end
 
   def self.correct_pdf_if_needed(file_path)
-    unless system("#{Pdftk.config[:exe_path]} '#{file_path}' dump_data")
+    unless system(Pdftk.config[:exe_path].to_s + ' "' + file_path + '" dump_data')
       # NOTE : the original name with the character "%" is problematic with GhostScript, so we use a simple naming "CORRECTED.pdf"
       corrected_file_path = File.dirname(file_path) + '/CORRECTED.pdf'
-      if system "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='#{corrected_file_path}' '#{file_path}'"
+      if system 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="' + corrected_file_path + '" "' + file_path + '"'
         FileUtils.mv corrected_file_path, file_path
       end
     end
@@ -250,7 +250,7 @@ class DocumentTools
 
   def self.need_ocr?(file_path)
     tempfile = Tempfile.new('ocr_result')
-    success = system "pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}' 2>&1"
+    success = system 'pdftotext -raw -nopgbrk -q "' + file_path + '" "' + tempfile.path + '" 2>&1'
 
     if success
       text = tempfile.readlines.join
@@ -356,9 +356,9 @@ class DocumentTools
 
 
   def self.archive(file_path, files_path)
-    clean_files_path = files_path.map { |e| "'#{e}'" }.join(' ')
+    clean_files_path = files_path.map { |e| '"' + e + '"' }.join(' ')
 
-    system "zip -j '#{file_path}' #{clean_files_path} 2>&1"
+    system 'zip -j "' + file_path + '"' + clean_files_path + '" 2>&1'
 
     file_path
   end

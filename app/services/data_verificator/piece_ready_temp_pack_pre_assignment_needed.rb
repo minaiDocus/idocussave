@@ -6,7 +6,7 @@ class DataVerificator::PieceReadyTempPackPreAssignmentNeeded < DataVerificator::
     messages = []
     pieces.each do |pi|
       tp = TempPack.find_by_name(pi.pack.name)
-      messages << "piece_id: #{pi.id}, piece_name: #{pi.name}, temp_pack_name: #{tp.name.to_s}" if tp.try(:is_compta_processable?)
+      messages << "piece_id: #{pi.id}, piece_name: #{pi.name}, temp_pack_name: #{tp.name.to_s}" if tp.try(:is_compta_processable?) && pi.preseizures.size == 0
     end
 
     {
