@@ -80,6 +80,8 @@ class FileImport::Dropbox
   end
 
   def check(for_all=false)
+    @check_all = false
+
     if @dropbox.is_used? && @dropbox.is_configured? && customers.any?
       if (for_all || @dropbox.need_to_check_for_all?) && @dropbox.import_folder_paths.present? && @dropbox.import_folder_paths.any?
         check_for_all
@@ -289,7 +291,11 @@ class FileImport::Dropbox
       error_message = ERROR_LISTS[err[0].to_sym] if ERROR_LISTS[err[0].to_sym].present?
     end
 
-    new_file_name = File.basename(file_name, '.*') + " (#{error_message})" + File.extname(file_name)
+    basename = File.basename(file_name, '.*')
+
+    return false if basename =~ /#{error_message}/i
+
+    new_file_name = basename + " (#{error_message})" + File.extname(file_name)
     client.move(File.join(path, file_name), File.join(path, new_file_name), autorename: true)
     rescue DropboxApi::Errors::NotFoundError
   end
@@ -350,13 +356,20 @@ class FileImport::Dropbox
   def valid_file_name(file_name)
     ERROR_LISTS.each do |pattern|
       if file_name =~ /#{pattern.last}/i
-        return false
+        if @check_all && pattern.last == 'fichier corrompu ou protégé par mdp'
+          System::Log.info('processing', "[Dropbox Import][Attempt Uploading] - #{file_name}")
+          return true
+        else
+          return false
+        end
       end
     end
     return true
   end
 
   def check_for_all
+    @check_all = true
+
     @dropbox.import_folder_paths.each do |path|
       begin
         with_error = false
