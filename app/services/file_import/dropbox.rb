@@ -7,7 +7,7 @@ class FileImport::Dropbox
                   invalid_file_extension: 'extension invalide',
                   file_size_is_too_big: 'fichier trop volumineux',
                   pages_number_is_too_high: 'nombre de page trop important',
-                  file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mdp',
+                  file_is_corrupted_or_protected: 'Vos documents sont en-cours de traitement',
                   unprocessable: 'erreur fichier non valide pour iDocus'
                 }.freeze
 

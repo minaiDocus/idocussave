@@ -190,6 +190,12 @@ StaffingflowPreassignmentWorker:
   cron: '*/20 * * * * *'
 
 
+## Archive resend document corrupted
+
+Archive::ResendDocumentCorruptedWorker:
+  queue: default
+  cron: '0 1 1 * * *'
+
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults

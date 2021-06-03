@@ -1,0 +1,23 @@
+!!!
+%html
+  %head
+    %title [iDocus] Document non traitable notification
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    nous vous informons que les fichiers que vous avez envoyé ne sont pas traitable.
+    %br
+    %br
+    Voici leur nom :
+    %br   
+    %ul
+    - if @documents.present?
+      - @documents.each do |document|
+        %li #{document.params[:original_file_name]} le #{document.created_at.strftime('%d/%m/%Y à %H:%M')}. Source : #{document.params[:api_name]}
+        %br    
+    %br
+    Cordialement
+    %br
+    SI iDocus

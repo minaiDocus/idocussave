@@ -67,6 +67,7 @@ class User < ApplicationRecord
   has_many :pre_assignment_exports
   has_many :notifications, dependent: :destroy
   has_many :ibizabox_folders, dependent: :destroy
+  has_many :archive_document_corrupted, class_name: 'Archive::DocumentCorrupted'
 
   belongs_to :manager, class_name: 'Member', inverse_of: :managed_users, optional: true
 

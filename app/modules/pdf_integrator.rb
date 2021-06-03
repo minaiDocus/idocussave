@@ -7,16 +7,24 @@ class PdfIntegrator
     @file_path = file_path
     @api       = api
 
-    origin_file_path = origin_file_path.gsub(/[^a-z0-9_.éèàçôêîù\/]/i, '_').gsub(/(_)+/, '_')
-    dest_file_path   = dest_file_path.gsub(/[^a-z0-9_.éèàçôêîù\/]/i, '_').gsub(/(_)+/, '_')
+    origin_file_path = origin_file_path.gsub(/[^a-z0-9_.éèàçôêîù:\/]/i, '_').gsub(/(_)+/, '_')
+    dest_file_path   = dest_file_path.gsub(/[^a-z0-9_.éèàçôêîù:\/]/i, '_').gsub(/(_)+/, '_')
 
     if origin_file_path != file.path && File.exist?(file.path)
-      FileUtils.cp file.path, origin_file_path
+      begin
+        FileUtils.cp file.path, origin_file_path
+      rescue => e
+        origin_file_path = file.path
+      end
       @file = File.open(origin_file_path)
     end
 
     if dest_file_path != file_path && File.exist?(file_path)
-      FileUtils.cp file_path, dest_file_path
+      begin
+        FileUtils.cp file_path, dest_file_path
+      rescue
+        dest_file_path = file_path
+      end
       @file_path = dest_file_path
     end
   end
