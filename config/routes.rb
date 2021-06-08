@@ -645,6 +645,11 @@ Rails.application.routes.draw do
         resources :mapping_generator do
           get 'get_json', on: :collection
         end
+
+        resources :jefacture_validation do
+          get 'waiting_validation',  on: :collection
+          post 'pre_assigned',       on: :collection
+        end
       end
     end
   end

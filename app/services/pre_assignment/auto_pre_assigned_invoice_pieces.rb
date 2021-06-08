@@ -21,6 +21,8 @@ class PreAssignment::AutoPreAssignedInvoicePieces
         # @piece.update(is_awaiting_pre_assignment: true)
         # @piece.processing_pre_assignment unless @piece.pre_assignment_force_processing?
 
+        @piece.waiting_pre_assignment
+
         preseizure = Pack::Report::Preseizure.new
         preseizure.organization     = @piece.user.organization
         preseizure.report           = initialize_report
