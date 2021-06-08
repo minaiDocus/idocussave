@@ -9,6 +9,9 @@ class StaffingFlow < ApplicationRecord
   scope :ready_grouping,            -> { where(kind: 'grouping', state: 'ready') }
   scope :processing_grouping,       -> { where(kind: 'grouping', state: 'processing') }
 
+  scope :ready_jefacture,           -> { where(kind: 'jefacture', state: 'ready') }
+  scope :processing_jefacture,      -> { where(kind: 'jefacture', state: 'processing') }
+
   scope :processed,                 -> { where(state: 'processed') }
 
   state_machine initial: :ready do

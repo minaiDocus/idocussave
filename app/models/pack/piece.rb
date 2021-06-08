@@ -13,6 +13,7 @@ class Pack::Piece < ApplicationRecord
 
   has_many   :operations,    class_name: 'Operation', inverse_of: :piece
   has_many   :preseizures,   class_name: 'Pack::Report::Preseizure', inverse_of: :piece
+  has_many   :temp_preseizures,  class_name: 'Pack::Report::TempPreseizure', inverse_of: :piece
   has_many   :remote_files,  as: :remotable, dependent: :destroy
 
   belongs_to :user

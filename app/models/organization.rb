@@ -38,6 +38,7 @@ class Organization < ApplicationRecord
   has_many :addresses, as: :locatable
   has_many :temp_packs
   has_many :preseizures, class_name: 'Pack::Report::Preseizure'
+  has_many :temp_preseizures,  class_name: 'Pack::Report::TempPreseizure'
   has_many :pack_pieces, class_name: 'Pack::Piece', inverse_of: 'organization'
   has_many :remote_files
   has_many :temp_documents
