@@ -13,7 +13,7 @@ class WebRestarter
 
       p "[#{Time.now}]   -- Memory left #{free_memory.to_s}"
 
-      if(time_diff >= 3600) #last restarting is more than 1Hours(3600 sec)
+      if(time_diff >= 3600 || free_memory.to_i <= 250000) #last restarting is more than 1Hours(3600 sec)
         p "[#{Time.now}] -- Restarting now - last restarting : - #{time_diff} sec"
         restarting = %x(touch /home/deploy/main/current/tmp/restart.txt)
       else

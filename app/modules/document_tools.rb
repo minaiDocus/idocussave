@@ -356,7 +356,7 @@ class DocumentTools
 
 
   def self.archive(file_path, files_path)
-    clean_files_path = files_path.map { |e| '"' + e + '"' }.join(' ')
+    clean_files_path = files_path.map { |e| '"' + e.to_s + '"' }.join(' ')
 
     system 'zip -j "' + file_path + '"' + clean_files_path + '" 2>&1'
 
