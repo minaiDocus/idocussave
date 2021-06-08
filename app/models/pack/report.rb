@@ -4,6 +4,7 @@ class Pack::Report < ApplicationRecord
 
   has_many   :expenses,     class_name: 'Pack::Report::Expense',    inverse_of: :report, dependent: :destroy
   has_many   :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :destroy
+  has_many   :temp_preseizures,  class_name: 'Pack::Report::TempPreseizure', inverse_of: :report, dependent: :destroy
   has_many   :remote_files, as: :remotable, dependent: :destroy
   has_many   :pre_assignment_deliveries
   has_many   :pre_assignment_exports

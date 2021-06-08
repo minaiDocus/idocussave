@@ -367,7 +367,8 @@ class DataProcessor::TempPack
         PreAssignment::AutoPreAssignedInvoicePieces.execute([@inserted_piece])
       elsif @inserted_piece.temp_document.api_name == 'jefacture'
         begin
-          PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
+          # PreAssignment::AutoPreAssignedJefacturePieces.execute([@inserted_piece])
+          SgiApiServices::AutoPreAssignedJefacturePiecesValidation.execute([@inserted_piece])
         rescue => e
           AccountingWorkflow::SendPieceToSupplierRecognition.execute([@inserted_piece])
         end
