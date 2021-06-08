@@ -47,13 +47,11 @@ class UploadedDocument
         end
 
         @errors.map do |k,v|
-          if (k.match /file_is_corrupted_or_protected/)
-            file_fingerprint = DocumentTools.checksum(@file.path)
-
-            document_corrupted = Archive::DocumentCorrupted.where(fingerprint: file_fingerprint).first || Archive::DocumentCorrupted.new
+          if (k.to_s.match /file_is_corrupted_or_protected/)
+            document_corrupted = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
 
             if not document_corrupted.persisted?
-              document_corrupted.assign_attributes({ fingerprint: file_fingerprint, user: @uploader, params: { original_file_name: @original_file_name, user: @user, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
+              document_corrupted.assign_attributes({ fingerprint: fingerprint, user: @user, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
 
               begin
                 document_corrupted.cloud_content_object.attach(File.open(@file), @original_file_name) if document_corrupted.save

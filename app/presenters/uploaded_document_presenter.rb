@@ -29,7 +29,7 @@ class UploadedDocumentPresenter
         file[:analytic] = @uploaded_document.analytic
       end
 
-      file[:file_corrupted] = file[:error].match /Vos documents sont en-cours/
+      file[:file_corrupted] = file[:error].match /Votre document est en-cours/
     end
 
     data << file

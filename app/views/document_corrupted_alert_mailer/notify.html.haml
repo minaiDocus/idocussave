@@ -7,15 +7,12 @@
     Bonjour,
     %br
     %br
-    nous vous informons que les fichiers que vous avez envoyé ne sont pas traitable.
-    %br
-    %br
-    Voici leur nom :
+    Nous vous informons que les fichiers suivants ne sont pas traitable.
     %br   
     %ul
     - if @documents.present?
       - @documents.each do |document|
-        %li #{document.params[:original_file_name]} le #{document.created_at.strftime('%d/%m/%Y à %H:%M')}. Source : #{document.params[:api_name]}
+        %li Dossier: #{document.user.code} - #{document.params[:original_file_name]} le #{document.created_at.strftime('%d/%m/%Y à %H:%M')}. Source : #{document.params[:api_name]} ( Fichier corrompu ou protégé par mdp )
         %br    
     %br
     Cordialement

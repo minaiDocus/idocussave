@@ -35,11 +35,11 @@ describe Archive::ResendDocumentCorruptedService do
 
       expect(document_corrupted.fingerprint).to eq @file_fingerprint
       expect(document_corrupted.retry_count).to eq 0
-      expect(File.exist?(document_corrupted.cloud_content_object.path)).to be true
-      expect(document_corrupted.params[:user].code).to eq 'IDO%0001'
+      expect(File.exist?(document_corrupted.cloud_content_object.reload.path)).to be true
+      expect(document_corrupted.user.code).to eq 'IDO%0001'
     end
 
-    it 'retry  to send corrupted file and success' do
+    it 'retry  to send corrupted file with success' do
       document_corrupted = Archive::DocumentCorrupted.last
 
       document_corrupted.retry_count = 1
@@ -53,24 +53,46 @@ describe Archive::ResendDocumentCorruptedService do
       expect(document_corrupted.fingerprint).to eq @file_fingerprint
       expect(document_corrupted.retry_count).to eq 2
       expect(File.exist?(document_corrupted.cloud_content_object.path)).to be true
-      expect(document_corrupted.params[:user].code).to eq 'IDO%0001'
+      expect(document_corrupted.user.code).to eq 'IDO%0001'
     end
 
-    it 'retry  to send corrupted file and failed and count_retry attempted' do
+    it 'retry  to send corrupted file with failed and count_retry attempted' do
       document_corrupted = Archive::DocumentCorrupted.last
 
       document_corrupted.retry_count = 2
       document_corrupted.save
 
       document_corrupted.reload
-     Archive::ResendDocumentCorruptedService.execute
+      Archive::ResendDocumentCorruptedService.execute
 
-    document_corrupted = Archive::DocumentCorrupted.last
+      document_corrupted = Archive::DocumentCorrupted.last
 
-    expect(document_corrupted.fingerprint).to eq @file_fingerprint
-    expect(document_corrupted.retry_count).to eq 2
-    expect(File.exist?(document_corrupted.cloud_content_object.path)).to be true
-    expect(document_corrupted.params[:user].code).to eq 'IDO%0001'
+      expect(document_corrupted.fingerprint).to eq @file_fingerprint
+      expect(document_corrupted.retry_count).to eq 2
+      expect(File.exist?(document_corrupted.cloud_content_object.path)).to be true
+      expect(document_corrupted.user.code).to eq 'IDO%0001'
+    end
+
+    it 'sends notification when document is finally corrupted' do
+      expect(DocumentCorruptedAlertMailer).to receive_message_chain(:notify, :deliver).with(any_args)
+
+      document_corrupted = Archive::DocumentCorrupted.last
+
+      document_corrupted.retry_count = 2
+      document_corrupted.is_notify   = false 
+      document_corrupted.save
+
+      document_corrupted.reload
+      Archive::ResendDocumentCorruptedService.execute
+
+      document_corrupted = Archive::DocumentCorrupted.last
+
+      document_corrupted.reload
+      expect(document_corrupted.fingerprint).to eq @file_fingerprint
+      expect(document_corrupted.retry_count).to eq 2
+      expect(document_corrupted.is_notify).to be true
+      expect(File.exist?(document_corrupted.cloud_content_object.path)).to be true
+      expect(document_corrupted.user.code).to eq 'IDO%0001'
     end
   end    
 end
