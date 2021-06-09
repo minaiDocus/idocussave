@@ -8,6 +8,8 @@
     %br
     %br
     Nous vous informons que les fichiers suivants ne sont pas traitable.
+    %br
+    Téléversé par : #{@uploader.try(:code)} - #{@uploader.try(:email)}
     %br   
     %ul
     - if @documents.present?

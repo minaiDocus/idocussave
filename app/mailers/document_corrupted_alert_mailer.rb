@@ -1,6 +1,6 @@
 class DocumentCorruptedAlertMailer < ActionMailer::Base
   def notify(email, options={})
-    # return true if Rails.env != 'production'
+    return true if Rails.env != 'production'
 
     @documents = email[:documents]
     @uploader  = email[:uploader]
