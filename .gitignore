@@ -17,7 +17,6 @@ doc_data.txt
 .sass-cache
 db/schema.rb
 /storage/
-Gemfile.lock
 
 config/deploy/sandbox.rbs
 
