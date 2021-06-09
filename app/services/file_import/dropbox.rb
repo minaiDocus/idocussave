@@ -80,8 +80,6 @@ class FileImport::Dropbox
   end
 
   def check(for_all=false)
-    @check_all = false
-
     if @dropbox.is_used? && @dropbox.is_configured? && customers.any?
       if (for_all || @dropbox.need_to_check_for_all?) && @dropbox.import_folder_paths.present? && @dropbox.import_folder_paths.any?
         check_for_all
@@ -355,21 +353,12 @@ class FileImport::Dropbox
 
   def valid_file_name(file_name)
     ERROR_LISTS.each do |pattern|
-      if file_name =~ /#{pattern.last}/i
-        if @check_all && pattern.last == 'fichier corrompu ou protégé par mdp'
-          System::Log.info('processing', "[Dropbox Import][Attempt Uploading] - #{file_name}")
-          return true
-        else
-          return false
-        end
-      end
+      return false if file_name =~ /#{pattern.last}/i
     end
     return true
   end
 
   def check_for_all
-    @check_all = true
-
     @dropbox.import_folder_paths.each do |path|
       begin
         with_error = false
