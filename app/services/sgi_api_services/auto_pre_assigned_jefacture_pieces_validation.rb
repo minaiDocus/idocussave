@@ -19,16 +19,26 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
       temp_preseizure.report           = initialize_report
       temp_preseizure.user             = @piece.user
       temp_preseizure.piece            = @piece
-      temp_preseizure.raw_preseizure = @raw_preseizure
+      temp_preseizure.raw_preseizure   = @raw_preseizure
       temp_preseizure.position         = @piece.position
       temp_preseizure.is_made_by_abbyy = true
       temp_preseizure.save
       
       if temp_preseizure.persisted?
         System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - temp preseizure persisted")
+        to_validate = false
 
-        temp_preseizure.waiting_validation
-        
+        @raw_preseizure[:entries].each do |entry|
+          to_validate = true if entry[:account].blank? || entry[:account].to_s.match(/^401/)
+        end
+
+        if to_validate
+          temp_preseizure.waiting_validation
+        else
+          staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: @piece.id, raw_preseizure: @raw_preseizure } }).save
+
+          temp_preseizure.valid
+        end
       else
         System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{temp_preseizure.errors.full_messages}")
       end
