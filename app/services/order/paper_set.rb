@@ -128,11 +128,16 @@ class Order::PaperSet
         unit_price = 0
     end
 
-    if selected_casing_count && selected_casing_count > 0 && max_casing_count > 0
-      discount_price = unit_price * (max_casing_count - selected_casing_count)
-      price_of_periods - discount_price
-    else
-      price_of_periods
+    if @order.normal_paper_set_order?
+      if selected_casing_count && selected_casing_count > 0 && max_casing_count > 0
+        discount_price = unit_price * (max_casing_count - selected_casing_count)
+        price_of_periods - discount_price
+      else
+        price_of_periods
+      end
+    else # When organization applied manuel paper set order
+      folder_count = folder_count_index == 0 ? 1 : folder_count_index
+      folder_count * periods_count
     end
   end
 
