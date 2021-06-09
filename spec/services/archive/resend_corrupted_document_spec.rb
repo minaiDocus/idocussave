@@ -2,7 +2,7 @@
 require 'spec_helper'
 require 'spec_module'
 
-describe Archive::ResendDocumentCorruptedService do
+describe Archive::ResendCorruptedDocument do
   context 'simulate corrupted file' do
     before(:each) do
       DatabaseCleaner.start
@@ -46,7 +46,7 @@ describe Archive::ResendDocumentCorruptedService do
       document_corrupted.save
 
       document_corrupted.reload
-      Archive::ResendDocumentCorruptedService.execute
+      Archive::ResendCorruptedDocument.execute
 
       document_corrupted = Archive::DocumentCorrupted.last
 
@@ -63,7 +63,7 @@ describe Archive::ResendDocumentCorruptedService do
       document_corrupted.save
 
       document_corrupted.reload
-      Archive::ResendDocumentCorruptedService.execute
+      Archive::ResendCorruptedDocument.execute
 
       document_corrupted = Archive::DocumentCorrupted.last
 
@@ -83,7 +83,7 @@ describe Archive::ResendDocumentCorruptedService do
       document_corrupted.save
 
       document_corrupted.reload
-      Archive::ResendDocumentCorruptedService.execute
+      Archive::ResendCorruptedDocument.execute
 
       document_corrupted = Archive::DocumentCorrupted.last
 

@@ -4,7 +4,7 @@ class Archive::ResendDocumentCorruptedWorker
 
   def perform
     UniqueJobs.for "ResendDocumentCorrupted", 1.hours do
-      Archive::ResendDocumentCorruptedService.execute
+      Archive::ResendCorruptedDocument.execute
     end
   end
 end
