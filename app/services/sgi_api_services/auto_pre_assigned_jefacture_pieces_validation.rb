@@ -1,9 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
   def self.execute(pieces)
+    success = false
     pieces.each do |piece|
-      SgiApiServices::AutoPreAssignedJefacturePiecesValidation.new(piece).execute
+      success &&= SgiApiServices::AutoPreAssignedJefacturePiecesValidation.new(piece).execute
     end
+    success
   end
 
   def initialize(piece)
@@ -13,6 +15,8 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
   end
 
   def execute
+    return false if @raw_preseizure.try(:[], 'piece_number').blank?
+
     if @temp_document.present? && @raw_preseizure['piece_number'] && @piece.preseizures.empty? && @piece.temp_preseizures.empty? && !@piece.is_awaiting_pre_assignment?
       temp_preseizure = Pack::Report::TempPreseizure.new
       temp_preseizure.organization     = @piece.user.organization
@@ -37,12 +41,14 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
         else
           staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: @piece.id, raw_preseizure: @raw_preseizure } }).save
 
-          temp_preseizure.valid
+          temp_preseizure.is_valid
         end
       else
         System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{temp_preseizure.errors.full_messages}")
       end
     end
+
+    true
   end
 
   private

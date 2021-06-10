@@ -1,4 +1,4 @@
-class StaffingflowPreassignmentWorker
+class Staffingflow::PreassignmentWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
 
@@ -8,7 +8,7 @@ class StaffingflowPreassignmentWorker
         sleep(3)
         next if StaffingFlow.processing_preassignment.count > 3 #MAXIMUM THREAD (Concurent job)
 
-        StaffingflowPreassignmentWorker::Launcher.delay.process(sf.id)
+        Staffingflow::PreassignmentWorker::Launcher.delay.process(sf.id)
       end
     end
   end

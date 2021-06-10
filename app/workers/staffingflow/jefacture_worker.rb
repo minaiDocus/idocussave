@@ -1,4 +1,4 @@
-class StaffingflowJefactureWorker
+class Staffingflow::JefactureWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
 
@@ -8,7 +8,7 @@ class StaffingflowJefactureWorker
         sleep(3)
         next if StaffingFlow.processing_jefacture.count > 3 #MAXIMUM THREAD (Concurent job)
 
-        StaffingflowJefactureWorker::Launcher.delay.process(sf.id)
+        Staffingflow::JefactureWorker::Launcher.delay.process(sf.id)
       end
     end
   end

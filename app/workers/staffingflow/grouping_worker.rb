@@ -1,4 +1,4 @@
-class StaffingflowGroupingWorker
+class Staffingflow::GroupingWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
 
@@ -8,7 +8,7 @@ class StaffingflowGroupingWorker
         sleep(3)
         next if StaffingFlow.processing_grouping.count > 3 #MAXIMUM THREAD (Concurent job)
 
-        StaffingflowGroupingWorker::Launcher.delay.process(sf.id)
+        Staffingflow::GroupingWorker::Launcher.delay.process(sf.id)
       end
     end
   end

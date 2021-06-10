@@ -109,7 +109,7 @@ describe Api::Sgi::V1::JefactureValidationController, :type => :controller do
     it "with success: false, data size equal 0 and message to be 'Aucune pièce à valider'" do
       temp_preseizure = Pack::Report::TempPreseizure.last
 
-      temp_preseizure.valid
+      temp_preseizure.is_valid
 
       get :waiting_validation, format: :json, params: {:access_token => @token}
       json_response = JSON.parse(response.body)
@@ -133,18 +133,18 @@ describe Api::Sgi::V1::JefactureValidationController, :type => :controller do
 
       temp_preseizure.waiting_validation
 
-      data_valided = [{
+      data_validated = [{
         piece_id: @piece.id, temp_preseizure_id: 1, raw_preseizure: @raw_preseizure
       },]
 
-      post :pre_assigned, format: :json, params: {:data_valided => data_valided}
+      post :pre_assigned, format: :json, params: {:data_validated => data_validated}
 
       before_staff_state = temp_preseizure.reload
 
       staffing_before = StaffingFlow.last
 
       StaffingFlow.ready_jefacture.each do |sf|
-        StaffingflowJefactureWorker::Launcher.process(sf.id)
+        Staffingflow::JefactureWorker::Launcher.process(sf.id)
       end
 
       final_state = temp_preseizure.reload

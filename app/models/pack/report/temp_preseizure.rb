@@ -14,8 +14,8 @@ class Pack::Report::TempPreseizure < ApplicationRecord
 
   state_machine initial: :created do
     state :created
-    state :valid
-    state :invalid
+    state :is_valid
+    state :is_invalid
     state :cloned
     state :waiting_validation
 
@@ -25,18 +25,18 @@ class Pack::Report::TempPreseizure < ApplicationRecord
     end
 
 
-    event :invalid do
-      transition [:created, :waiting_validation] => :invalid
+    event :is_invalid do
+      transition [:created, :waiting_validation] => :is_invalid
     end
 
 
-    event :valid do
-      transition [:created, :waiting_validation] => :valid
+    event :is_valid do
+      transition [:created, :waiting_validation] => :is_valid
     end
 
 
     event :cloned do
-      transition [:valid] => :cloned
+      transition [:is_valid] => :cloned
     end
   end
 end

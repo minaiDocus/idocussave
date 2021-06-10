@@ -155,15 +155,15 @@ DataVerificator::DailyDataVerifierWorker:
 
 ## Staffing flows
 
-StaffingflowGroupingWorker:
+Staffingflow::GroupingWorker:
   queue: default
   cron: '*/20 * * * * *'
 
-StaffingflowPreassignmentWorker:
+Staffingflow::PreassignmentWorker:
   queue: default
   cron: '*/20 * * * * *'
 
-StaffingflowJefactureWorker:
+Staffingflow::JefactureWorker:
   queue: default
   cron: '*/20 * * * * *'
 
