@@ -11,7 +11,8 @@ class DocumentCorruptedAlertMailer < ActionMailer::Base
       end
     end
 
-    # mail(to: @uploader.try(:email), subject: '[iDocus] Documents non traitable') if @uploader.try(:email)
-    mail(to: Settings.first.notify_errors_to, subject: '[iDocus] Document non traitable')
+    dest = @uploader.email.present? ? @uploader.email : 'mina@idocus.com'
+
+    mail(to: dest, cci: Settings.first.notify_errors_to, subject: '[iDocus] Document non traitable')
   end
 end

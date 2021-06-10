@@ -7,14 +7,15 @@
     Bonjour,
     %br
     %br
-    Nous vous informons que les fichiers suivants ne sont pas traitable.
+    Nous vous informons que les fichiers téléversés suivants ne sont pas traitable.
     %br
-    Téléversé par : #{@uploader.try(:code)} - #{@uploader.try(:email)}
+    Téléversé par : #{@uploader.try(:my_code)} - #{@uploader.try(:email)}
     %br   
     %ul
     - if @documents.present?
       - @documents.each do |document|
-        %li Dossier: #{document.user.code} - #{document.params[:original_file_name]} le #{document.created_at.strftime('%d/%m/%Y à %H:%M')}. Source : #{document.params[:api_name]} ( Fichier corrompu ou protégé par mdp )
+        - period = Period.period_name(Billing::Period.new(user: document.user).period_duration, document.params[:prev_period_offset])
+        %li Dossier: #{document.user.my_code} #{document.params[:journal]} #{period.to_s} - #{document.params[:original_file_name]} le #{document.created_at.strftime('%d/%m/%Y à %H:%M')}. Source : #{document.params[:api_name]} ( Fichier corrompu ou protégé par mdp )
         %br    
     %br
     Cordialement
