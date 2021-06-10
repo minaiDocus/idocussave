@@ -638,7 +638,9 @@ class Account::DocumentsController < Account::AccountController
 
         if parents_documents.any?
           parents_documents.each do |parent_document|
-            if parent_document.children.size == parent_document.children.fingerprint_is_nil.size
+            blank_children =  parent_document.children.select{ |child| child.fingerprint_is_nil? }
+
+            if parent_document.children.size == blank_children.size
               parent_document.original_fingerprint    = nil
               parent_document.content_fingerprint     = nil
               parent_document.raw_content_fingerprint = nil

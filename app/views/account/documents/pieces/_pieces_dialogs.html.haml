@@ -132,14 +132,21 @@
         <script id="template-download" type="text/html">
         {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
             <tr class="template-download fade">
-                {% if (file.error) { %}
+                {% if (file.file_corrupted) { %}
+                  <td class="name">{%=file.name%}</td>
+                  <td class="message" colspan="2">
+                    <span class="badge badge-warning fs-origin">En attente</span>
+                    Votre document est en-cours de traitement
+                  </td>
+                {% } else if (file.error) { %}
                   <td class="name">{%=file.name%}</td>
                   <td class="error" colspan="2"><span class="badge badge-danger fs-origin">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
                 {% } else { %}
-                  <td class="name">{%=file.name%}</td>
-                  <td class="new_name">{%=file.new_name%}</td>
+                    <td class="name">{%=file.name%}</td>
+                    <td class="new_name">{%=file.new_name%}</td>
                   <td class="message">
                     {% if (file.message) { %}
+                      <span class="badge badge-warning fs-origin">En attente</span>
                       {%= file.message %}
                     {% } else { %}
                       <span class="badge badge-success fs-origin">Envoyé</span>

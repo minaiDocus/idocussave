@@ -11,6 +11,8 @@ class DataVerificator::DataVerificator
   def execute
     @mail_infos << DataVerificator::IbizaErrors.new().execute
 
+    @mail_infos << DataVerificator::TempDocumentUnreadable.new().execute
+
     @mail_infos << DataVerificator::PieceWithoutTempDocument.new().execute
 
     @mail_infos << DataVerificator::PieceWithPageNumberZero.new().execute

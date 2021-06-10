@@ -330,7 +330,7 @@ fr:
             invalid_file_extension: 'extension %{extension} invalide (%{valid_extensions})'
             journal_unknown: 'journal %{journal} inconnu'
             invalid_period: "période '%{period}' inconnu"
-            file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
+            file_is_corrupted_or_protected: Votre document est en-cours de traitement
             already_exist: existe déjà
             invalid_analytic_params: paramètres analytiques invalides
             invalid_analytic_ventilation: la ventilation analytique doit être répartie sur un total de 100% par analyse

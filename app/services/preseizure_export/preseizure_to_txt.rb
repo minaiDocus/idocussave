@@ -208,7 +208,7 @@ class PreseizureExport::PreseizureToTxt
     data = []
 
     if @preseizures.any?
-      data << "JournalCode\tJournalLib\tEcritureNum\tEcritureDate\tCompteNum\tCompteLib\tCompAuxNum\tCompAuxLib\tPieceRef\tPieceDate\tEcritureLibc\tDebit\tCredit\tEcritureLet\tDateLet\tValidDate\tMontantdevise\tIdevise"
+      data << "JournalCode\tJournalLib\tEcritureNum\tEcritureDate\tCompteNum\tCompteLib\tCompAuxNum\tCompAuxLib\tPieceRef\tPieceDate\tEcritureLibc\tDebit\tCredit\tEcritureLet\tDateLet\tValidDate\tMontantdevise\tIdevise\tMouvementEcriture"
 
       @preseizures.each do |preseizure|
         user = preseizure.user
@@ -271,6 +271,14 @@ class PreseizureExport::PreseizureToTxt
                                   end
               end
             end
+          else
+            accounting = user.accounting_plan.providers.where(third_party_account: general_account).limit(1)
+
+            if accounting.size == 0
+              accounting = user.accounting_plan.customers.where(third_party_account: general_account).limit(1)
+            end
+
+            general_lib = accounting.try(:first).try(:third_party_name).to_s
           end
 
           label = preseizure.piece.try(:name)
@@ -281,7 +289,7 @@ class PreseizureExport::PreseizureToTxt
           ecriture_num   = ""
           ecriture_date  = preseizure.date.strftime('%Y%m%d') || ""
           compte_num     = general_account || ""
-          compte_lib     = ""
+          compte_lib     = general_lib
           comp_aux       = auxiliary_account || ""
           comp_aux_lib   = auxiliary_lib || ""
           piece_ref      = preseizure.piece_number || ""
@@ -293,8 +301,9 @@ class PreseizureExport::PreseizureToTxt
           valid_date     = ""
           montant_devise = preseizure.amount.to_f.to_s || ""
           idevise        = preseizure.amount.to_f > 0 ? preseizure.currency.to_s : ""
+          mouvement_ecriture = preseizure.third_party
 
-          data << [[journal_code, journal_lib, ecriture_num, ecriture_date, compte_num, compte_lib, comp_aux, comp_aux_lib, piece_ref, piece_date, ecriture_libc, debit_credit, ecriture_let, date_let, valid_date, montant_devise, idevise].join("\t")]
+          data << [[journal_code, journal_lib, ecriture_num, ecriture_date, compte_num, compte_lib, comp_aux, comp_aux_lib, piece_ref, piece_date, ecriture_libc, debit_credit, ecriture_let, date_let, valid_date, montant_devise, idevise, mouvement_ecriture].join("\t")]
         end
       end
     end

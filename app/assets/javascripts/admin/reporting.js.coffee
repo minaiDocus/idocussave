@@ -28,6 +28,7 @@ jQuery ->
       url: '/admin/reporting/total_footer',
       contentType: 'application/json',
       ).success (response) ->
+        $('.custom_popover').custom_popover();
         $("#reporting .organization_list tr#total_footer").html(response)
 
   $('#reporting .organization_list tr.row_organizations').each (e)->

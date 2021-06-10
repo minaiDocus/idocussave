@@ -7,7 +7,7 @@ class FileImport::Dropbox
                   invalid_file_extension: 'extension invalide',
                   file_size_is_too_big: 'fichier trop volumineux',
                   pages_number_is_too_high: 'nombre de page trop important',
-                  file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mdp',
+                  file_is_corrupted_or_protected: 'Votre document est en-cours de traitement',
                   unprocessable: 'erreur fichier non valide pour iDocus'
                 }.freeze
 
@@ -251,7 +251,7 @@ class FileImport::Dropbox
 
     if valid_file_name(file_name)
       if needed_folders.include?(path)
-        if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase) && metadata.size <= 10.megabytes
+        if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase)
           customer, journal_name, period_offset, collaborator_code = get_info_from_path path
 
           begin
@@ -289,7 +289,11 @@ class FileImport::Dropbox
       error_message = ERROR_LISTS[err[0].to_sym] if ERROR_LISTS[err[0].to_sym].present?
     end
 
-    new_file_name = File.basename(file_name, '.*') + " (#{error_message})" + File.extname(file_name)
+    basename = File.basename(file_name, '.*')
+
+    return false if basename =~ /#{error_message}/i
+
+    new_file_name = basename + " (#{error_message})" + File.extname(file_name)
     client.move(File.join(path, file_name), File.join(path, new_file_name), autorename: true)
     rescue DropboxApi::Errors::NotFoundError
   end
@@ -349,9 +353,7 @@ class FileImport::Dropbox
 
   def valid_file_name(file_name)
     ERROR_LISTS.each do |pattern|
-      if file_name =~ /#{pattern.last}/i
-        return false
-      end
+      return false if file_name =~ /#{pattern.last}/i
     end
     return true
   end

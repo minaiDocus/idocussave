@@ -28,6 +28,8 @@ class UploadedDocumentPresenter
         file[:api_name] = @uploaded_document.api_name
         file[:analytic] = @uploaded_document.analytic
       end
+
+      file[:file_corrupted] = file[:error].match /Votre document est en-cours/
     end
 
     data << file

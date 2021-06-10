@@ -12,7 +12,7 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil, force=false)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil, force=false, via='')
     @file     = file
     @user     = user
     @code     = @user.code
@@ -26,7 +26,6 @@ class UploadedDocument
 
     @link = nil
     @errors = []
-
 
     @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
@@ -45,6 +44,26 @@ class UploadedDocument
         rescue => e
           System::Log.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
           @errors << [:file_is_corrupted_or_protected, nil]
+        end
+
+        @errors.map do |k,v|
+          if (k.to_s.match /file_is_corrupted_or_protected/)
+            document_corrupted = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
+
+            if not document_corrupted.persisted?
+              document_corrupted.assign_attributes({ fingerprint: fingerprint, user: @user, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
+
+              begin
+                document_corrupted.cloud_content_object.attach(File.open(@file), @original_file_name) if document_corrupted.save
+              rescue
+              end
+            end
+
+            if via == 'worker'
+              document_corrupted.retry_count += 1
+              document_corrupted.save
+            end
+          end
         end
 
         @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
@@ -85,10 +104,30 @@ class UploadedDocument
             }
 
             begin
-              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.path)}]} ).deliver
+              ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.reload.path)}]} ).deliver
             rescue
               ErrorScriptMailer.error_notification(log_document).deliver
             end
+          end
+        elsif !unique? && force
+          log_document = {
+              subject: "[UploadedDocument] Document already exist - force integration",
+              name: "UploadedDocument",
+              error_group: "[UploadedDocumentService] Document already exist - force integration",
+              erreur_type: "[Upload] - Document already exist - force integration",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                original: similar_document.inspect,
+                name: @original_file_name,
+                fingerprint_1: DocumentTools.checksum(@file.path),
+                fingerprint_2: similar_document.original_fingerprint
+              }
+            }
+
+          begin
+            ErrorScriptMailer.error_notification(log_document, { attachements: [{name: @original_file_name, file: File.read(@file.path)}, {name: similar_document.original_file_name, file: File.read(similar_document.cloud_content_object.reload.path)}] } ).deliver
+          rescue
+            ErrorScriptMailer.error_notification(log_document).deliver
           end
         end
 
