@@ -47,3 +47,4 @@ config/symmetric-encryption.yml
 /config/master.key
 config/storage.yml
 /config/bridge.yml
+/config/cedricom.yml

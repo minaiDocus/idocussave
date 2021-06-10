@@ -24,6 +24,7 @@ class BankAccount < ApplicationRecord
   scope :used,           -> { where(is_used: true) }
   scope :bridge,         -> { where(api_name: 'bridge') }
   scope :configured,     -> { where.not(journal: [nil, ''], accounting_number: [nil, '']) }
+  scope :ebics_enabled,  -> { where.not(ebics_enabled_starting: nil) }
   scope :not_configured, -> { where(journal: [nil, ''], accounting_number: [nil, '']) }
   scope :manual_created, -> { where(api_name: 'idocus') }
   scope :should_be_disabled, -> { manual_created.where(is_to_be_disabled: true) }

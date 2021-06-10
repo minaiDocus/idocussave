@@ -10,6 +10,7 @@ class Operation < ApplicationRecord
   belongs_to :pack, optional: true
   belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations, optional: true
   belongs_to :forced_processing_by_user, class_name: 'User',   inverse_of: :forced_processing_operations, optional: true
+  belongs_to :cedricom_reception, optional: true
   has_one :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :operation
 
   validates_presence_of :date, :label, :amount

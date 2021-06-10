@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_23_064801) do
+ActiveRecord::Schema.define(version: 2021_06_10_082619) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 2021_05_23_064801) do
     t.string "type_name"
     t.boolean "lock_old_operation", default: true
     t.integer "permitted_late_days", default: 30
+    t.date "ebics_enabled_starting"
     t.index ["retriever_id"], name: "retriever_id"
     t.index ["user_id"], name: "user_id"
   end
@@ -326,6 +327,21 @@ ActiveRecord::Schema.define(version: 2021_05_23_064801) do
     t.integer "user_id"
     t.text "encrypted_access_token"
     t.index ["user_id"], name: "fk_rails_bc19f24997"
+  end
+
+  create_table "cedricom_receptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "bank_account_id"
+    t.integer "cedricom_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.date "cedricom_reception_date"
+    t.boolean "empty"
+    t.boolean "imported"
+    t.boolean "downloaded"
+    t.integer "imported_operations_count"
+    t.integer "total_operations_count"
+    t.integer "skipped_operations_count"
+    t.index ["bank_account_id"], name: "index_cedricom_receptions_on_bank_account_id"
   end
 
   create_table "ckeditor_assets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1011,10 +1027,12 @@ ActiveRecord::Schema.define(version: 2021_05_23_064801) do
     t.datetime "forced_processing_at"
     t.integer "forced_processing_by_user_id"
     t.text "currency"
+    t.bigint "cedricom_reception_id"
     t.index ["api_id"], name: "fiduceo_id"
     t.index ["api_name"], name: "index_operations_on_api_name"
     t.index ["bank_account_id"], name: "bank_account_id"
     t.index ["bank_account_id_mongo_id"], name: "bank_account_id_mongo_id"
+    t.index ["cedricom_reception_id"], name: "index_operations_on_cedricom_reception_id"
     t.index ["created_at"], name: "index_operations_on_created_at"
     t.index ["deleted_at"], name: "index_operations_on_deleted_at"
     t.index ["forced_processing_at"], name: "index_operations_on_forced_processing_at"
@@ -2293,5 +2311,6 @@ ActiveRecord::Schema.define(version: 2021_05_23_064801) do
   add_foreign_key "budgea_accounts", "users"
   add_foreign_key "debit_mandates", "organizations"
   add_foreign_key "notifications", "users"
+  add_foreign_key "operations", "cedricom_receptions"
   add_foreign_key "retrieved_data", "users"
 end
