@@ -21,10 +21,10 @@ module Cedricom
 
       result = save_operations(operations)
 
-      #self.update(imported: true,
-      #            skipped_operations_count: result[:skipped_operations_count],
-      #            imported_operations_count: result[:imported_operations_count],
-      #            total_operations_count: result[:total_operations_count])
+      @reception.update(imported: true,
+                  skipped_operations_count: result[:skipped_operations_count],
+                  imported_operations_count: result[:imported_operations_count],
+                  total_operations_count: result[:total_operations_count])
     end
 
     private
@@ -86,7 +86,7 @@ module Cedricom
     end
 
     def format_date(date)
-      Date.strptime(date, '%d%m%Y')
+      Date.strptime(date, '%d%m%y')
     end
 
     def format_label(label)
@@ -94,7 +94,7 @@ module Cedricom
     end
 
     def customer_bank_account(bank_account)
-      BankAccount.ebics_enabled.where("number LIKE ?", "#{bank_account}").first
+      BankAccount.ebics_enabled.where("number LIKE ?", "%#{bank_account}%").first
     end
 
     def read_cfonb(cfonb_by_line)
@@ -165,7 +165,7 @@ module Cedricom
                               @operation.currency = { id: 'ZAR', symbol: 'R', prefix: false, crypto: false, precision: 2, marketcap: nil, datetime: nil, name: 'South African Rand'}
                             end
 
-      operation.save
+      operation.save!
     end
 
     def save_operations(operations)
@@ -175,15 +175,14 @@ module Cedricom
         bank_account = customer_bank_account(operation[:bank_account])
         next unless bank_account
 
-        if bank_account.ebics_enabled_starting > operation[:date]
+        if operation[:date] <= bank_account.ebics_enabled_starting
           result[:skipped_operations_count] = result[:skipped_operations_count] + 1
           next
         end
 
-
         customer_operation = save_operation(bank_account, operation)
 
-        if customer_operation.persisted?
+        if customer_operation
           result[:imported_operations_count] = result[:imported_operations_count] + 1
         end
       end
