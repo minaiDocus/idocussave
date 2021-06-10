@@ -117,7 +117,7 @@ class SgiApiServices::AutoPreAssignedJefacturePieces
       if errors.empty?
         staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: piece.id, raw_preseizure: data_validated['raw_preseizure'] } }).save
 
-        temp_preseizure.valid
+        temp_preseizure.is_valid
 
         results << { piece_id: data_validated["piece_id"], piece_name: piece.try(:name), temp_preseizure_id: temp_preseizure.id, message: 'Pré-affectation de jefacture corrigée', errors: []}.with_indifferent_access
       else

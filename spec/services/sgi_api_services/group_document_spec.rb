@@ -306,7 +306,7 @@ describe SgiApiServices::GroupDocument do
         response = group_document.execute
 
         StaffingFlow.ready_grouping.each do |sf|
-          StaffingflowGroupingWorker::Launcher.process(sf.id)
+          Staffingflow::GroupingWorker::Launcher.process(sf.id)
         end
 
         new_temp_documents = @temp_pack.temp_documents.where(content_file_name: "IDO%0001_AC_202006")
