@@ -28,7 +28,7 @@ class Order < ApplicationRecord
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_inclusion_of :dematbox_count, in: [1, 2, 10], if: proc { |o| o.dematbox? }
   validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
-  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
+  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
 
 
   accepts_nested_attributes_for :address, :paper_return_address, allow_destroy: true
