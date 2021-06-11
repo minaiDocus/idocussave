@@ -60,6 +60,31 @@ module IbizaLib
           @client               = client
           @callback             = callback
           @specific_url_options = specific_url_options
+          get_real_base_domain
+        end
+
+        def get_real_base_domain
+          url = 'https://production-api.fulll.io/irfservice/services/irfservice.svc/endpoint'
+
+          headers = {'content-type' => 'application/xml',
+            irfToken: @client.token,
+            partnerID: @client.partner_id
+          }
+
+          connection = Faraday.new(:url => url, request: { timeout: 180 }) do |f|
+            f.response :logger
+            f.request :oauth2, 'token', token_type: :bearer
+            f.adapter Faraday.default_adapter
+          end
+
+          begin
+            response = connection.run_request(:get, url, '', headers)
+            body     = response.body
+
+            @base_domain = Nokogiri::XML(body).css('data').text.presence || IbizaAPI::Config::ROOT_DOMAIN
+          rescue
+            @base_domain  = IbizaAPI::Config::ROOT_DOMAIN
+          end
         end
 
 
@@ -79,7 +104,7 @@ module IbizaLib
 
 
         def base
-          @specific_url_options.presence || IbizaAPI::Config::ROOT_URL
+          @specific_url_options.presence || @base_domain.to_s + IbizaAPI::Config::ROOT_URL
         end
 
 
