@@ -39,30 +39,34 @@ class Idocus.Collections.Connectors extends Backbone.Collection
       else
         Idocus.budgeaApi.get_connectors().then(
           (datas)->
-            fetched_length = datas.length
-            console.log("fetched : " + fetched_length)
+            self.filter_document_capabilities(datas).then((res) ->
+              datas = res
+              fetched_length = datas.length
+              console.log("fetched : " + fetched_length)
 
-            if self.connectors_cache.length <= fetched_length
-              if fetched_length < 300
-                self.connectors_cache = datas
-                self.get_connectors(retry + 1).then(
-                  (d)-> resolve()
-                  (e)-> reject(e)
-                )
+              if self.connectors_cache.length <= fetched_length
+                if fetched_length < 150
+                  self.connectors_cache = datas
+                  self.get_connectors(retry + 1).then(
+                    (d)-> resolve()
+                    (e)-> reject(e)
+                  )
+                else
+                  console.log 'using-fetched'
+                  self.connectors_fetched = datas
+                  resolve()
               else
-                console.log 'using-fetched'
-                self.connectors_fetched = datas
-                resolve()
-            else
-              if self.connectors_cache < 300
-                self.get_connectors(retry + 1).then(
-                  (d)-> resolve()
-                  (e)-> reject(e)
-                )
-              else
-                console.log 'using-cached'
-                self.connectors_fetched = self.connectors_cache
-                resolve()
+                if self.connectors_cache < 150
+                  self.get_connectors(retry + 1).then(
+                    (d)-> resolve()
+                    (e)-> reject(e)
+                  )
+                else
+                  console.log 'using-cached'
+                  self.connectors_fetched = self.connectors_cache
+                  resolve()
+            )
+
           (error)-> reject(error)
         )
     )
@@ -82,3 +86,23 @@ class Idocus.Collections.Connectors extends Backbone.Collection
         result.push(connector)
 
     result
+
+  filter_document_capabilities: (datas) ->
+    promise = new Promise((resolve, reject) ->
+      $.ajax
+        url: "/account/retrievers/has_documents"
+        data: { user_id: $("#account_id").val() }
+        type: 'POST'
+        success: (_data) ->
+          result = []
+          for data in datas
+            if (data.capabilities.indexOf('bank') > 0 || (data.capabilities.indexOf('bank') == -1 && _data.document_names.indexOf(data.name) > 0))
+              if !(_data.document_names.indexOf(data.name) > 0)
+                data.capabilities = data.capabilities.filter((e) -> e != 'document')
+
+              result.push(data)
+
+          resolve(result)
+        error: (error) ->
+          resolve([])
+    )

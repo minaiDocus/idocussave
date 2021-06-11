@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Account::RetrieversController < Account::RetrieverController
-  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls new_internal]
-  before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls]
-  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls new_internal create]
-  before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls new_internal edit_internal create]
+  before_action :verif_account, except: %w[index edit export_connector_to_xls get_connector_xls new_internal get_connector_xls has_documents]
+  before_action :load_budgea_config, except: %w[export_connector_to_xls get_connector_xls has_documents ]
+  before_action :load_retriever, except: %w[index list new export_connector_to_xls get_connector_xls new_internal create has_documents]
+  before_action :verify_retriever_state, except: %w[index list new export_connector_to_xls get_connector_xls new_internal edit_internal create has_documents]
   before_action :load_retriever_edition, only: %w[new edit]
 
   def index
@@ -104,6 +104,13 @@ class Account::RetrieversController < Account::RetrieverController
     file_path = Base64.decode64(params[:key])
 
     send_data File.read(file_path), filename: 'liste_automates.xls'
+  end
+
+  def has_documents
+    user = User.find params[:user_id]
+    document_names = user.retrievers.any? ? user.retrievers.providers.collect(&:name) : []
+
+    render json: { document_names: document_names, status: :ok }
   end
 
   private

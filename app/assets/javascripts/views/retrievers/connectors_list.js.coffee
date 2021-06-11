@@ -71,6 +71,7 @@ class Idocus.Views.ConnectorsList extends Backbone.View
 
   filter_connectors: (filter)->
     @loading = false
+
     @providers_filtered = @connectors.find("capabilities", "include", 'document')
     @banks_filtered = @connectors.find("capabilities", "include", 'bank')
 

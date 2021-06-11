@@ -43,14 +43,14 @@ class Subscription::Package
         when :ido_mini
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'mini_package_subscription', group: "iDo'Mini", tooltip: "iDo Mini (10€ / mois)  : vous permet de transférer jusqu'à 300 pièces/trimèstre, mutualisation des quotas au niveau du cabinet. Au-delà du quota cabinet cumulé, calcul du dépassement simplifié : 0,25€ ht/facture" }
         when :ido_micro
-          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro", tooltip: "iDo Micro (10€ / mois). vous permet de transférer jusqu'à 100 pièces/an et de bénéficier des automates de récupérations bancaires et documentaires pour un engagement de 12 mois. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
+          { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'micro_package_subscription', group: "iDo'Micro", tooltip: "iDo Micro (10€ / mois). vous permet de transférer jusqu'à 100 pièces/an et de bénéficier des automates de récupérations bancaires pour un engagement de 12 mois. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
         when :ido_nano
           { label: 'Téléchargement + Pré-saisie comptable + Engagement 12 mois', name: 'nano_package_subscription', group: "iDo'Nano", tooltip: "iDo Nano (5€ / mois). vous permet de transférer jusqu'à 100 pièces/an pour un engagement de 12 mois. Au-delà de 100 factures, calcul du dépassement simplifié : 0,25€ ht/facture" }
         #options
         when :mail_option
           { label: 'Envoi par courrier A/R', name: 'mail_package_subscription', group: "Courrier", tooltip: "Courrier (10€ / mois) : vous permet d’adresser vos pièces par courrier à notre centre de numérisation. Disponible pour les forfaits iDo Mini et iDo Classique" }
         when :retriever_option
-          { label: 'Récupération banque + Factures sur Internet', name: "retriever_package_subscription", group: "Automates", tooltip: "Automates (5€ / mois) : vous permet de bénéficier des automates de récupération bancaires et documentaires" }
+          { label: 'Récupération banque', name: "retriever_package_subscription", group: "Automates", tooltip: "Automates (5€ / mois) : vous permet de bénéficier des automates de récupération bancaires" }
         when :pre_assignment_option
           { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation", tooltip: "Etat de pré-saisie comptable"}
         else
