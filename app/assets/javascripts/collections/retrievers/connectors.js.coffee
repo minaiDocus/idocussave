@@ -39,6 +39,7 @@ class Idocus.Collections.Connectors extends Backbone.Collection
       else
         Idocus.budgeaApi.get_connectors().then(
           (datas)->
+            console.log datas
             fetched_length = datas.length
             console.log("fetched : " + fetched_length)
 

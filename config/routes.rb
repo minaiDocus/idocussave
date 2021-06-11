@@ -452,6 +452,7 @@ Rails.application.routes.draw do
       get 'new_internal', on: :collection
       get 'edit_internal', on: :collection
       get   'list',                     on: :collection
+      post  'has_documents',      on: :collection
       post 'export_connector_to_xls',   on: :collection
       get  'get_connector_xls(/:key)', action: 'get_connector_xls',   on: :collection
     end

@@ -44,7 +44,7 @@ class Idocus.Views.ConnectorsList extends Backbone.View
       @active_index = filter_index
       @filter_connectors(filter_index)
 
-  send_xls: (e)->
+  send_xls: (e)->    
     list_documents = ""
     list_banks     = ""
 
@@ -69,7 +69,7 @@ class Idocus.Views.ConnectorsList extends Backbone.View
         location.href = '/account/retrievers/get_connector_xls/' + data.key
     })
 
-  filter_connectors: (filter)->
+  filter_connectors: (filter)->    
     @loading = false
     @providers_filtered = @connectors.find("capabilities", "include", 'document')
     @banks_filtered = @connectors.find("capabilities", "include", 'bank')
@@ -77,6 +77,9 @@ class Idocus.Views.ConnectorsList extends Backbone.View
     if filter != undefined && filter != null && filter != ''
       @providers_filtered = @filter_collection(@providers_filtered, filter)
       @banks_filtered = @filter_collection(@banks_filtered, filter)
+
+    if !@capabilities_has_documents
+      @providers_filtered = []
 
     @providers_filtered.sort(@common.sort_array_models_by("name")).reverse()
     @banks_filtered.sort(@common.sort_array_models_by("name")).reverse()
@@ -90,3 +93,14 @@ class Idocus.Views.ConnectorsList extends Backbone.View
       if eval("/^#{filter}/i.test(\"#{connector.get('name').replace(/\"/g, '')}\")")
         result.push(connector)
     result
+
+  capabilities_has_documents: () ->
+    has_documents = false
+
+    $.ajax
+      url: "/account/retrievers/has_documents"
+      data: { user_id: $("#account_id").val() }
+      type: 'POST'
+      success: (_data) ->        
+        has_documents = _data.verification
+    has_documents

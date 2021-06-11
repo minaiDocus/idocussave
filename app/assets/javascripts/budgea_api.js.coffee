@@ -181,6 +181,8 @@ class Idocus.BudgeaApi
     self = this
     connectors_list = []
 
+    # alert($('#account_id').val())
+
     get_banks = (resolve, reject)->
       self.remote_fetch({
         type: 'GET'
@@ -192,17 +194,18 @@ class Idocus.BudgeaApi
         onError: (error)-> reject(error)
       })
 
-    get_providers = (resolve, reject)->
+    get_providers = (resolve, reject)->  
       self.remote_fetch({
         type: 'GET'
         url: "/providers?expand=fields"
         collection: 'banks'
         onSuccess: (data)->
+                   
           connectors_list = connectors_list.concat(data)
           setTimeout(resolve, 2000)
         onError: (error)-> reject(error)
-      })
-
+      })      
+      
     promise = new Promise((resolve, reject)->
       get_banks(
         get_providers(
@@ -636,3 +639,17 @@ class Idocus.BudgeaApi
           delete filtered[k]
 
     filtered
+
+
+  capabilities_has_documents: () ->
+    has_documents = false
+
+    $.ajax
+      url: "/account/retrievers/has_documents"
+      data: { user_id: $("#account_id").val() }
+      type: 'POST'
+      success: (_data) ->        
+        has_documents = _data.verification
+
+
+    has_documents

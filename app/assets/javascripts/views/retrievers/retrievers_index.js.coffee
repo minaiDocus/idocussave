@@ -21,6 +21,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
     this
 
   fetch_connectors: ->
+    alert('fetch')
     self = this
     @connectors  = new Idocus.Collections.Connectors()
     @connectors.on('reset', ()->
@@ -42,6 +43,7 @@ class Idocus.Views.RetrieversIndex extends Backbone.View
     )
 
   filter_connectors: ->
+    alert('filtre')
     self = this
     self.connectors_filtered = []
     setTimeout(() ->
