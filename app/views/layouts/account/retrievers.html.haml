@@ -42,11 +42,11 @@
                     %a.nav-link{ href: ( @account.try(:id)? new_account_retriever_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                       Ajouter un automate
                       = glyphicon('plus', { class: 'float-right' })
+                  %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
+                    %a.nav-link{ href: ( @account.try(:id)? list_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
+                      Liste des automates disponibles
+                      = glyphicon('list-rich', { class: 'float-right' })
                 - elsif @account && @account.options.banking_provider == 'bridge'
-                  %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }
-                    %a.nav-link{ href: ( @account.try(:id)? new_account_retriever_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                      Ajouter un automate documentaire
-                      = glyphicon('plus', { class: 'float-right' })
                   %li.nav-item
                     %a.nav-link{ href: ( @account.try(:id)? bridge_setup_item_path(account_id: @account.id) : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre', target: '_blank'}
                       Ajouter un automate bancaire
@@ -56,10 +56,6 @@
                     %a.nav-link{ href: ( @account.try(:id)? new_internal_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                       Ajouter un automate spécifique
                       = glyphicon('plus', { class: 'float-right' })
-                %li.nav-item{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }
-                  %a.nav-link{ href: ( @account.try(:id)? list_account_retrievers_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
-                    Liste des automates disponibles
-                    = glyphicon('list-rich', { class: 'float-right' })
                 / %li.nav-item{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'new') }
                 /   %a.nav-link{ href: ( @account.try(:id)? new_account_new_provider_request_path : '#' ), class: @account.try(:id)? '' : 'disable', title: @account.try(:id)? '' : 'Sélectionnez un dossier pour pouvoir poursuivre' }
                 /     Demander un nouvel automate

@@ -95,9 +95,10 @@ class Idocus.Collections.Connectors extends Backbone.Collection
         type: 'POST'
         success: (_data) ->
           result = []
+          console.log(datas.length)
           for data in datas
-            if (data.capabilities.indexOf('bank') > 0 || (data.capabilities.indexOf('bank') == -1 && _data.document_names.indexOf(data.name) > 0))
-              if !(_data.document_names.indexOf(data.name) > 0)
+            if (data.capabilities.find((e) -> e == 'bank') || (!data.capabilities.find((e) -> e == 'bank') && _data.document_names.find((e) -> e == data.name)))
+              if !(_data.document_names.find((e) -> e == data.name))
                 data.capabilities = data.capabilities.filter((e) -> e != 'document')
 
               result.push(data)
