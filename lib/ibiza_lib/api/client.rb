@@ -104,7 +104,7 @@ module IbizaLib
 
 
         def base
-          @specific_url_options.presence || @base_domain.to_s + IbizaAPI::Config::ROOT_URL
+          @specific_url_options.presence || IbizaAPI::Config::ROOT_DOMAIN + IbizaAPI::Config::ROOT_URL
         end
 
 
