@@ -75,7 +75,7 @@
             %li= link_to 'Communications', '#news', 'data-toggle' => 'modal', class: 'dropdown-item'
             %li= link_to 'Centre d\'aide', 'https://idocus.zendesk.com/hc/fr', target: '_blank', class: 'dropdown-item'
             - if @user.collaborator?
-              %li= link_to "Produits et tarifs #{Time.now.strftime('%Y')}", docs_download_path(name: 'produits_et_tarifs_2018.pdf'), target: '_blank', class: 'dropdown-item'
+              / %li= link_to "Produits et tarifs #{Time.now.strftime('%Y')}", docs_download_path(name: 'produits_et_tarifs_2018.pdf'), target: '_blank', class: 'dropdown-item'
               %li= link_to "CGU #{Time.now.strftime('%Y')}", docs_download_path(name: 'CGU_iDocus_201805.pdf'), target: '_blank', class: 'dropdown-item'
   %span.auto-scroll-span-right.hide.mr-auto.ml-1
     %button.btn
