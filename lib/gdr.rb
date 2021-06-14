@@ -1,4 +1,4 @@
-module GoogleDrive
+module Gdr
   class << self
     attr_reader :config
   end

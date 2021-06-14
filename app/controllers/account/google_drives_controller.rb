@@ -7,14 +7,14 @@ class Account::GoogleDrivesController < Account::AccountController
   def authorize_url
     session[:google_drive_state] = SecureRandom.hex(30)
 
-    redirect_to GoogleDrive::Client.new.authorize_url(callback_account_google_drive_url, session[:google_drive_state])
+    redirect_to Gdr::Client.new.authorize_url(callback_account_google_drive_url, session[:google_drive_state])
   end
 
   def callback
     if params[:state].present? && params[:state] == session[:google_drive_state]
       if params[:code].present?
         begin
-          client = GoogleDrive::Client.new
+          client = Gdr::Client.new
           client.authorize(params[:code], callback_account_google_drive_url)
 
           @google_doc.access_token            = client.access_token.token

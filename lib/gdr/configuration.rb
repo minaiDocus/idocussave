@@ -1,4 +1,4 @@
-class GoogleDrive::Configuration
+class Gdr::Configuration
   attr_accessor :client_id, :client_secret, :scope, :access_type, :approval_prompt, :include_granted_scopes
 
   def initialize

@@ -4,7 +4,7 @@ class FileDelivery::Storage::GoogleDrive
 
   def initialize(google_doc)
     @google_doc = google_doc
-    @client = GoogleDrive::Client.new
+    @client = Gdr::Client.new
   end
 
 
@@ -24,7 +24,7 @@ class FileDelivery::Storage::GoogleDrive
       end
 
       @session.files if @session
-    rescue Google::Apis::AuthorizationError => e
+    rescue ::Google::Apis::AuthorizationError => e
       @error   = e
       @session = nil
 
@@ -35,10 +35,10 @@ class FileDelivery::Storage::GoogleDrive
       when 403
         @google_doc.reset
       end
-    rescue Google::Apis::ClientError => e
+    rescue ::Google::Apis::ClientError => e
       @error   = e
       @session = nil
-    rescue OAuth2::Error => e
+    rescue ::OAuth2::Error => e
       if e.message =~ /Token has been revoked/
         @error   = e
         @session = nil

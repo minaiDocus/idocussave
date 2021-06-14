@@ -11,7 +11,7 @@ describe "SendToGdr" do
   before(:each) do
     allow_any_instance_of(Settings).to receive(:notify_errors_to).and_return('mina@idocus.com')
     allow(FileUtils).to receive(:delay_for).and_return(FileUtils)
-    allow(FileUtils).to receive(:remove_dir).and_return(true)
+    allow(FileUtils).to receive(:remove_entry).and_return(true)
 
     @leader = FactoryBot.create :user, code: 'IDO%LEAD'
     @organization = create :organization, code: 'IDO'
@@ -30,7 +30,8 @@ describe "SendToGdr" do
 
     @storage = @external_file_storage.google_doc
     @storage.path = "iDocus/:code/:year:month/:account_book/"
-    @storage.access_token = "ya29.a0AfH6SMAFcJz7hw5_Y95DYe72UnDXi66YijOa9sSwEyD3HCanbvSbrUebB1Dz-Y00gMiVqYw_5cGMYAAU7RWLze_FxTq7JQeH_aFp7RbnrRCvqAcbAWzuYW-42lU9ubnkCSWuG0VAJDVOG0NCn0Y9Ktv9w1j_2JQeFPg"
+    @storage.access_token = "ya29.a0AfH6SMC_d51dXI7LeptOoHzwysWSGVxNorAeIO8Qe5wzfHbmD6LC2fiZE_0f8zS4BPtdZyoa4y28mU6m31mleT0BMx7MWTsZCibsYn4DClTmRtxddKa1NHgO1J5LpXCpiaqoldEx7_hxRqUxOo6veeRUSVfe"
+    @storage.refresh_token = "1//03-vp-oHAzk5yCgYIARAAGAMSNwF-L9Irwdi6acEBfKf4xZEOUmP6qC9r5PlCrDWP12CaQm_YI1CmQqXfRtraplNV5cHlmwMEIdE"
     @storage.access_token_expires_at = "Fri, 16 Oct 2020 13:44:46 +0300".to_datetime
     @storage.is_configured = true
     @storage.save

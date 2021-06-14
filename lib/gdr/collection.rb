@@ -1,4 +1,4 @@
-class GoogleDrive::Collection
+class GoogleDrive::Collection #Must be part of GoggleDrive module not Gdr
   def upload_from_file(path, title, params = {})
     find_and_remove_files(title)
 

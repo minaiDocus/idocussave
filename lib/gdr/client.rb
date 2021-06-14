@@ -1,8 +1,8 @@
-class GoogleDrive::Client
+class Gdr::Client
   attr_reader :config, :client, :access_token
 
   def initialize
-    @config = GoogleDrive.config.dup
+    @config = Gdr.config.dup
 
     @client = OAuth2::Client.new(
       @config.client_id,
