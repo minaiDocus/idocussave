@@ -15,7 +15,8 @@
       %table.table.table-bordered-inner.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head
         %thead
           %tr.bg-brown.text-white
-            %th= sortable :date,                     'Date Op'
+            %th= sortable :date,                     'Date Opé'
+            %th= sortable :value_date,               'Date Valeur'
             %th= sortable 'bank_accounts.bank_name', 'Service'
             %th= sortable 'bank_accounts.number',    'Compte'
             %th= sortable :category,                 'Catégorie'
@@ -27,6 +28,7 @@
           - @operations.each do |operation|
             %tr
               %td= l(operation.date, format: '%d %b %Y')
+              %td= l(operation.value_date, format: '%d %b %Y')
               %td= operation.bank_account.bank_name if operation.bank_account
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
@@ -47,7 +49,7 @@
         .card-body
           .form-group.clearfix
             .label-section
-              = label_tag 'banking_operation_contains[date][>=]', 'Date de début'
+              = label_tag 'banking_operation_contains[date][>=]', 'Date Opé. de début'
             .control-section
               .filter-date
                 .input-append.date.datepicker
@@ -56,13 +58,31 @@
                   = text_field_tag 'banking_operation_contains[date][>=]', (params[:banking_operation_contains][:date]['>='] rescue ''), class: 'input-small'
           .form-group.clearfix
             .label-section
-              = label_tag 'banking_operation_contains[date][<=]', 'Date de fin'
+              = label_tag 'banking_operation_contains[date][<=]', 'Date Opé. de fin'
             .control-section
               .filter-date
                 .input-append.date.datepicker
                   %span.add-on.badge.badge-secondary.fs-origin.mr-md-1
                     <=
                   = text_field_tag 'banking_operation_contains[date][<=]', (params[:banking_operation_contains][:date]['<='] rescue ''), class: 'input-small'
+          .form-group.clearfix
+            .label-section
+              = label_tag 'banking_operation_contains[value_date][>=]', 'Date Valeur de début'
+            .control-section
+              .filter-date
+                .input-append.date.datepicker
+                  %span.add-on.badge.badge-secondary.fs-origin.mr-md-1
+                    >=
+                  = text_field_tag 'banking_operation_contains[value_date][>=]', (params[:banking_operation_contains][:value_date]['>='] rescue ''), class: 'input-small'
+          .form-group.clearfix
+            .label-section
+              = label_tag 'banking_operation_contains[value_date][<=]', 'Date Valeur de fin'
+            .control-section
+              .filter-date
+                .input-append.date.datepicker
+                  %span.add-on.badge.badge-secondary.fs-origin.mr-md-1
+                    <=
+                  = text_field_tag 'banking_operation_contains[value_date][<=]', (params[:banking_operation_contains][:value_date]['<='] rescue ''), class: 'input-small'
           .form-group.clearfix
             .label-section
               = label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'

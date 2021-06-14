@@ -58,6 +58,12 @@ class Operation < ApplicationRecord
       end
     end
 
+    if contains[:value_date]
+      contains[:value_date].each do |operator, value|
+        collection = collection.where("value_date #{operator} ?", value) if operator.in?(['>=', '<='])
+      end
+    end
+
     if contains[:bank_account].present? && (contains[:bank_account][:number].present? || contains[:bank_account][:bank_name].present?)
       collection = collection.joins(:bank_account)
       collection = collection.where("bank_accounts.number LIKE ?",    "%#{contains[:bank_account][:number]}%")    if contains[:bank_account][:number].present?

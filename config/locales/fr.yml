@@ -421,8 +421,8 @@ fr:
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
           preseizure_date_option: Date de l'écriture des opérations bancaires
           preseizure_date_option_organization: Paramètres du cabinet
-          operation_date: Date de réalisation de l'opération
-          operation_value_date: Date de prélèvement de l'opération
+          operation_date: Date opération
+          operation_value_date: Date valeur
       address:
         zero: 0 adresses
         one: 1 adresse
