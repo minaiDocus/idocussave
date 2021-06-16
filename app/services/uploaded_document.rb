@@ -54,7 +54,7 @@ class UploadedDocument
               document_corrupted.assign_attributes({ fingerprint: fingerprint, user: @user, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
 
               begin
-                document_corrupted.cloud_content_object.attach(File.open(@file), @original_file_name) if document_corrupted.save
+                document_corrupted.cloud_content_object.attach(File.open(@file), CustomUtils.clear_string(@original_file_name)) if document_corrupted.save
               rescue
               end
             end

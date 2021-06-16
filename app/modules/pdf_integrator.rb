@@ -7,8 +7,8 @@ class PdfIntegrator
     @file_path = file_path
     @api       = api
 
-    origin_file_path = origin_file_path.gsub(/[^a-z0-9_.éèàçôêîù:\/]/i, '_').gsub(/(_)+/, '_')
-    dest_file_path   = dest_file_path.gsub(/[^a-z0-9_.éèàçôêîù:\/]/i, '_').gsub(/(_)+/, '_')
+    origin_file_path = CustomUtils.clear_string(origin_file_path)
+    dest_file_path   = CustomUtils.clear_string(dest_file_path)
 
     if origin_file_path != file.path && File.exist?(file.path)
       begin
