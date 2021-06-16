@@ -96,7 +96,7 @@ FileImport::DropboxWorker:
 
 FileImport::IbizaboxWorker:
   queue: file_import
-  cron: '0 0 */6 * * *'
+  cron: '0 */10 * * * *'
 
 FileImport::SftpFromAllWorker:
   queue: file_import

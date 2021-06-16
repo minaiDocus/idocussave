@@ -45,7 +45,6 @@ class FileImport::Ibizabox
     return false if @user.subscription.try(:current_period).try(:is_active?, :ido_x) || !valid?
 
     @folder.process
-    @folder.update_attribute(:last_checked_at, Time.now)
     accessible_ibiza_periods.each do |period|
       if get_ibiza_folder_contents(period)
         process(contents, prev_period_offset_of(period))

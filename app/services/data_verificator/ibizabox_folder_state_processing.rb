@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::IbizaboxFolderStateProcessing
   def execute
-    ibizabox_folders = IbizaboxFolder.where("updated_at < ? AND state = ?", 6.hours.ago, 'processing')
+    ibizabox_folders = IbizaboxFolder.where("updated_at < ? AND state = ?", 1.hours.ago, 'processing')
 
     counter = 0
 

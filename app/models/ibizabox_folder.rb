@@ -8,6 +8,8 @@ class IbizaboxFolder < ApplicationRecord
   validates_presence_of :user, :journal
 
   scope :ready, -> { where(state: 'ready') }
+  scope :ready_or_blocked_processing, -> { where("state = ? OR (updated_at < ? AND state = ?)", 'ready', 1.hours.ago, 'processing') }
+  scope :not_recently_checked, -> { where('last_checked_at < ?', 3.hours.ago) }
 
   def active?
     !inactive?

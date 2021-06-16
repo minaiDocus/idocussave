@@ -70,5 +70,21 @@ class System::JobProcessor
 
     di = SidekiqUniqueJobs::Digests.all
     di.each{|d| SidekiqUniqueJobs::Digests.delete_by_digest d}
+
+    staffs = StaffingFlow.processing_preassignment
+    p "Processing preassignments - #{staffs.size}"
+    staffs.each{|st| st.update(state: 'ready')}
+
+    staffs = StaffingFlow.processing_grouping
+    p "Processing grouping - #{staffs.size}"
+    staffs.each{|st| st.update(state: 'ready')}
+
+    staffs = PreAssignmentDelivery.ibiza.building_data
+    p "Building ibiza datas - #{staffs.size}"
+    staffs.each{|st| st.update(state: 'pending')}
+
+    staffs = PreAssignmentDelivery.ibiza.sending
+    p "Sending ibiza datas - #{staffs.size}"
+    staffs.each{|st| st.update(state: 'data_built')}
   end
 end
