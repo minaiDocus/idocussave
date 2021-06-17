@@ -16,7 +16,11 @@ class Bridge::GetTransactions
           start_time = bank_account.created_at.beginning_of_day
         end
 
-        transactions = BridgeBankin::Transaction.list_by_account(account_id: bank_account.api_id, access_token: access_token, since: start_time)
+        begin
+          transactions = BridgeBankin::Transaction.list_by_account(account_id: bank_account.api_id, access_token: access_token, since: start_time)
+        rescue
+          transactions = []
+        end
 
         transactions.each do |transaction|
           if transaction.date >= bank_account.start_date

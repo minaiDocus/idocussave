@@ -126,7 +126,11 @@ module IbizaLib
             f.adapter Faraday.default_adapter
           end
 
-          @original = connection.run_request(@method, url, @body, headers)
+          begin
+            @original = connection.run_request(@method, url, @body, headers)
+          rescue
+            @original = OpenStruct.new({ headers: { 'Content-Type' => 'none' } })
+          end
 
           @client.response.original = @original
 

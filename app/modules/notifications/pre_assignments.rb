@@ -42,7 +42,7 @@ class Notifications::PreAssignments < Notifications::Notifier
 
       list = prescriber.notify.notifiable_new_pre_assignments.includes(notifiable: [:report]).to_a
 
-      return if list.empty?
+      return if list.empty? || !list.first.try(:notifiable).try(:report).try(:name)
 
       notification_message = if list.size == 1
         "1 nouvelle pré-affectation est disponible pour le lot suivant : #{list.first.notifiable.report.name}"

@@ -64,18 +64,9 @@ DataProcessor::OperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
 
-# DataProcessor::RetrievedDataWorker:
-#   queue: high
-#   cron: '*/2 * * * * *'
-
 DataProcessor::McfWorker:
   queue: default
   cron: '0 */5 * * * *'
-
-## resume budgea retriever connector state
-# Retriever::ResumeBudgeaWorker:
-#   queue: default
-#   cron: '0 */15 * * * *'
 
 ## Accounting flow workers
 
@@ -85,18 +76,18 @@ Ftp::FetcherWorker:
 
 RetrieveEmailedDocumentWorker:
   queue: default
-  cron: '*/10 * * * * *'
+  cron: '30 */6 * * * *'
 
 
 ## File import
 
 FileImport::DropboxWorker:
   queue: file_import
-  cron: '*/10 * * * * *'
+  cron: '0 */8 * * * *'
 
 FileImport::IbizaboxWorker:
   queue: file_import
-  cron: '0 */10 * * * *'
+  cron: '30 */11 * * * *'
 
 FileImport::SftpFromAllWorker:
   queue: file_import
@@ -111,26 +102,9 @@ RetrieveOcrProcessedDocumentWorker:
   queue: default
   cron: '*/10 * * * * *'
 
-# SendToGroupingWorker:
-#   queue: default
-#   cron: '*/2 * * * * *'
-
-# GroupDocumentWorker:
-#   queue: default
-#   cron: '*/2 * * * * *'
-
 PublishDocumentWorker:
   queue: high
   cron: '*/2 * * * * *'
-
-# SendPieceToPreAssignmentWorker:
-#   queue: high
-#   cron: '*/5 * * * * *'
-
-# RetrievePreAssignmentsWorker:
-#   queue: high
-#   cron: '*/10 * * * * *'
-
 
 
 ## Pre assignment builder & delivery
