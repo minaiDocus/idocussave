@@ -30,7 +30,7 @@ describe Archive::ResendCorruptedDocument do
       DatabaseCleaner.clean
     end
 
-    it 'save corrupted file to archive' do
+    it 'save corrupted file to archive', :test do
       document_corrupted = Archive::DocumentCorrupted.last
 
       expect(document_corrupted.fingerprint).to eq @file_fingerprint

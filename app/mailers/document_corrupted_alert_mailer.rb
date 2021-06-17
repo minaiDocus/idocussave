@@ -5,13 +5,15 @@ class DocumentCorruptedAlertMailer < ActionMailer::Base
     @documents = email[:documents]
     @uploader  = email[:uploader]
 
+    email = (@uploader.class.name == 'Member')? @uploader.user.email : @uploader.email
+
     if options[:attachements].present?
       options[:attachements].each do |attach|
         attachments[attach[:name]] = attach[:file]
       end
     end
 
-    dest = @uploader.email.present? ? @uploader.email : 'mina@idocus.com'
+    dest = email.presence || 'mina@idocus.com'
 
     mail(to: dest, cci: Settings.first.notify_errors_to, subject: '[iDocus] Document non traitable')
   end

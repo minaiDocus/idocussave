@@ -12,7 +12,7 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil, force=false, via='')
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil, api_id=nil, force=false)
     @file     = file
     @user     = user
     @code     = @user.code
@@ -44,26 +44,6 @@ class UploadedDocument
         rescue => e
           System::Log.info('document_upload', "[Upload error] #{@file.path} - file corrupted - #{e.to_s}")
           @errors << [:file_is_corrupted_or_protected, nil]
-        end
-
-        @errors.map do |k,v|
-          if (k.to_s.match /file_is_corrupted_or_protected/)
-            document_corrupted = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
-
-            if not document_corrupted.persisted?
-              document_corrupted.assign_attributes({ fingerprint: fingerprint, user: @user, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
-
-              begin
-                document_corrupted.cloud_content_object.attach(File.open(@file), CustomUtils.clear_string(@original_file_name)) if document_corrupted.save
-              rescue
-              end
-            end
-
-            if via == 'worker'
-              document_corrupted.retry_count += 1
-              document_corrupted.save
-            end
-          end
         end
 
         @errors << [:file_size_is_too_big, { size_in_mo: size_in_mo, authorized_size_mo: authorized_size_mo }] unless valid_file_size?
@@ -157,6 +137,15 @@ class UploadedDocument
         }
 
         @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options) # Create temp document for temp pack
+      else
+        if corrupted_document?
+          corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
+
+          if not corrupted_doc.presisted?
+            corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: full_error_messages, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
+            corrupted_doc.save
+          end
+        end
       end
     end
   end
@@ -171,6 +160,10 @@ class UploadedDocument
 
   def already_exist?
     @errors.detect { |e| e.first == :already_exist }.present?
+  end
+
+  def corrupted_document?
+    @errors.detect { |e| e.first == :file_is_corrupted_or_protected }.present?
   end
 
   def full_error_messages
