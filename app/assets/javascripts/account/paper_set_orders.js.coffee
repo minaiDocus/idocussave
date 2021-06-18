@@ -54,7 +54,7 @@ price_of_periods = ->
 
   if start_date <= end_date
     if is_manual_paper_set_order_applied()
-      paper_set_folder_count = parseInt($(order).find("select[name*='paper_set_folder_count']").val())
+      paper_set_folder_count = parseInt($(order).find("input[name*='paper_set_folder_count']").val())
       paper_set_folder_count * (period_index + 1)
     else
       discount_price_of(paper_set_prices()[casing_size_index_of(size)][folder_count_index()][period_index], size, -1)
@@ -115,7 +115,7 @@ update_table_price = ->
       period_index = period_index_of(start_date, end_date , $(order).find("input[name*='period_duration']").val())
       if start_date <= end_date
         if is_manual_paper_set_order_applied()
-          folder_count = parseInt($(order).find("select[name*='paper_set_folder_count']").val())
+          folder_count = parseInt($(order).find("input[name*='paper_set_folder_count']").val())
           price = folder_count * (period_index + 1)
         else
           price = discount_price_of(paper_set_prices()[casing_size_index_of(paper_set_casing_size)][paper_set_folder_count_index][period_index], paper_set_casing_size, $(order).attr('data-index'))

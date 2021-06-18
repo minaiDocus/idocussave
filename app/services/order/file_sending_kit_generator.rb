@@ -3,7 +3,7 @@ class Order::FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/kit/"
 
   class << self
-    def generate(clients_data,file_sending_kit, one_workshop_labels_page_per_customer=false)
+    def generate(clients_data, file_sending_kit, organization_code, one_workshop_labels_page_per_customer=false)
       BarCode::init
 
       clients = to_clients(clients_data)
@@ -12,10 +12,10 @@ class Order::FileSendingKitGenerator
         BarCode.generate_png(client.code, 20, 0)
       end
 
-      Order::KitGenerator.folder to_folders(clients_data), file_sending_kit
-      Order::KitGenerator.mail to_mails(clients), file_sending_kit
-      Order::KitGenerator.customer_labels to_labels(clients_data, true)
-      Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
+      Order::KitGenerator.folder to_folders(clients_data), file_sending_kit, organization_code
+      Order::KitGenerator.mail to_mails(clients), file_sending_kit, organization_code
+      Order::KitGenerator.customer_labels to_labels(clients_data, true), organization_code
+      Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer), organization_code
     end
 
     def to_clients(clients_data)
