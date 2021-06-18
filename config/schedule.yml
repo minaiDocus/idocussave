@@ -26,9 +26,9 @@ Notifications::RetrieversWorker:
 Notifications::ScansNotDeliveredNotificationWorker:
   queue: high
   cron: '0 1 * * *'
-Notifications::PaperQuotaReachedWorker:
-  queue: default
-  cron: '0 8 * * *'
+# Notifications::PaperQuotaReachedWorker:
+#   queue: default
+#   cron: '0 8 * * *'
 Notifications::PublishedDocumentDailyWorker:
   queue: default
   cron: '0 8 * * *'

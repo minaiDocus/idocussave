@@ -380,25 +380,40 @@ class EmailedDocument
 
   def save_attachments
     @temp_documents = []
-    return @temp_documents if attachments.size == 1 && errors.any?
+    pack = nil
 
-    pack = TempPack.find_or_create_by_name pack_name
-    pack.update_pack_state
+    uploader = User.find_by_email(@mail.from.first)
+    prev_period_offset = Period.period_offsets(period_service)[period].to_i || 0
 
     attachments.each do |attachment|
-      next unless attachment.valid?
-      options = {
-        delivery_type:         'upload',
-        delivered_by:          User.find_by_email(@mail.from.first).try(:code),
-        api_name:              'email',
-        original_file_name:    attachment.name,
-        is_content_file_valid: true,
-        original_fingerprint:  attachment.fingerprint
-      }
-      File.open(attachment.processed_file_path) do |file|
-        @temp_documents << AddTempDocumentToTempPack.execute(pack, file, options)
+      if attachement.valid?
+        options = {
+          delivery_type:         'upload',
+          delivered_by:          uploader.try(:my_code),
+          api_name:              'email',
+          original_file_name:    attachment.name,
+          is_content_file_valid: true,
+          original_fingerprint:  attachment.fingerprint
+        }
+
+        pack ||= TempPack.find_or_create_by_name pack_name
+
+        File.open(attachment.processed_file_path) do |file|
+          @temp_documents << AddTempDocumentToTempPack.execute(pack, file, options)
+        end
+      else
+        if attachment.corrupted?
+          corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: attachment.fingerprint).first || Archive::DocumentCorrupted.new
+
+          if !corrupted_doc.presisted? && user && journal
+            corrupted_doc.assign_attributes({ fingerprint: attachment.fingerprint, user: user, state: 'ready', retry_count: 0, is_notify: false, error_message: 'Votre document est en-cours de traitement', params: { original_file_name: attachment.name, uploader: uploader, api_name:  'email', journal: journal, prev_period_offset: prev_period_offset.to_i, analytic: nil, api_id: nil }})
+            corrupted_doc.save
+          end
+        end
       end
     end
+
+    pack.update_pack_state if pack
     @temp_documents
   end
 end

@@ -46,6 +46,35 @@ class Period < ApplicationRecord
     end
   end
 
+  def self.period_offsets(period_service, current_time = Time.now)
+    results = {}
+    period_duration = period_service.period_duration
+
+    results[period_option_label(period_duration, current_time).to_s] = 0
+
+    if period_service.prev_expires_at.nil? || period_service.prev_expires_at > Time.now
+      period_service.authd_prev_period.times do |i|
+        current_time -= period_duration.month
+
+        results[period_option_label(period_duration, current_time).to_s] = i + 1
+      end
+    end
+
+    results
+  end
+
+  def self.period_option_label(period_duration, time)
+    case period_duration
+    when 1
+      time.strftime('%Y%m')
+    when 3
+      time = time.beginning_of_quarter
+      "#{time.year}T#{(time.month/3.0).ceil}"
+    when 12
+      time.year.to_s
+    end
+  end
+
   def is_not_locked?
     locked_at.nil?
   end
