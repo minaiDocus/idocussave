@@ -386,7 +386,7 @@ class EmailedDocument
     prev_period_offset = Period.period_offsets(period_service)[period].to_i || 0
 
     attachments.each do |attachment|
-      if attachement.valid?
+      if attachment.valid?
         options = {
           delivery_type:         'upload',
           delivered_by:          uploader.try(:my_code),

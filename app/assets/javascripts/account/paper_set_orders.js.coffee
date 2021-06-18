@@ -54,7 +54,7 @@ price_of_periods = ->
 
   if start_date <= end_date
     if is_manual_paper_set_order_applied()
-      paper_set_folder_count = parseInt($(order).find("input[name*='paper_set_folder_count']").val())
+      paper_set_folder_count = parseInt($("input[name*='paper_set_folder_count']").val())
       paper_set_folder_count * (period_index + 1)
     else
       discount_price_of(paper_set_prices()[casing_size_index_of(size)][folder_count_index()][period_index], size, -1)
