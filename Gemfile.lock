@@ -99,12 +99,13 @@ GEM
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     byebug (11.1.3)
-    cairo (1.16.5)
+    cairo (1.17.5)
       native-package-installer (>= 1.0.3)
       pkg-config (>= 1.2.2)
-    cairo-gobject (3.4.3)
+      red-colors
+    cairo-gobject (3.4.4)
       cairo (>= 1.16.2)
-      glib2 (= 3.4.3)
+      glib2 (= 3.4.4)
     capistrano (3.14.0)
       airbrussh (>= 1.0.0)
       i18n
@@ -233,15 +234,15 @@ GEM
     fugit (1.3.5)
       et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.1)
-    gio2 (3.4.3)
-      gobject-introspection (= 3.4.3)
-    glib2 (3.4.3)
+    gio2 (3.4.4)
+      gobject-introspection (= 3.4.4)
+    glib2 (3.4.4)
       native-package-installer (>= 1.0.3)
       pkg-config (>= 1.3.5)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    gobject-introspection (3.4.3)
-      glib2 (= 3.4.3)
+    gobject-introspection (3.4.4)
+      glib2 (= 3.4.4)
     google-api-client (0.36.4)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 0.9)
@@ -331,6 +332,7 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
+    matrix (0.4.1)
     memoist (0.16.2)
     memoizer (1.0.3)
     meta_request (0.7.2)
@@ -352,7 +354,7 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
-    native-package-installer (1.0.9)
+    native-package-installer (1.1.1)
     nenv (0.3.0)
     nested_form (0.3.2)
     net-scp (3.0.0)
@@ -384,11 +386,11 @@ GEM
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
     pdf-core (0.7.0)
-    pkg-config (1.4.1)
+    pkg-config (1.4.6)
     popper_js (1.16.0)
-    poppler (3.4.3)
-      cairo-gobject (= 3.4.3)
-      gio2 (= 3.4.3)
+    poppler (3.4.4)
+      cairo-gobject (= 3.4.4)
+      gio2 (= 3.4.4)
     posix-spawn (0.3.13)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
@@ -445,6 +447,8 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    red-colors (0.3.0)
+      matrix
     redcarpet (3.5.0)
     redis (4.1.4)
     redis-actionpack (5.2.0)
@@ -671,8 +675,8 @@ DEPENDENCIES
   faraday_middleware
   fast_jsonapi
   ftpd
-  gio2
-  gobject-introspection
+  gio2 (= 3.4.4)
+  gobject-introspection (= 3.4.4)
   google-api-client
   google_drive
   guard-livereload
@@ -694,7 +698,7 @@ DEPENDENCIES
   oauth
   oj
   paperclip
-  poppler
+  poppler (= 3.4.4)
   posix-spawn
   prawn
   prawn-qrcode
