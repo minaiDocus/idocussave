@@ -14,6 +14,7 @@ class Order < ApplicationRecord
   validate :inclusion_of_paper_set_end_date,   if: proc { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date, if: proc { |o| o.paper_set? }
   validate :value_of_paper_set_start_date,     if: proc { |o| o.paper_set? }
+  validate :check_paper_set_folder_count, if: proc { |o| o.paper_set? && CustomUtils.is_manual_paper_set_order?(self.organization) }
 
   validates_presence_of  :state
   validates_presence_of  :address,              if: proc { |o| o.address_required? }
@@ -28,7 +29,7 @@ class Order < ApplicationRecord
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_inclusion_of :dematbox_count, in: [1, 2, 10], if: proc { |o| o.dematbox? }
   validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
-  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? }
+  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: proc { |o| o.paper_set? && o.normal_paper_set_order? }
 
 
   accepts_nested_attributes_for :address, :paper_return_address, allow_destroy: true
@@ -76,6 +77,23 @@ class Order < ApplicationRecord
 
   def normal_paper_set_order?
    !CustomUtils.is_manual_paper_set_order?(organization) && paper_set_casing_not_being_nil?
+  end
+
+
+  def periods_count
+    count = 0
+
+    date = self.paper_set_start_date
+
+    if date && self.paper_set_end_date
+      while date <= self.paper_set_end_date
+        count += 1
+
+        date += self.period_duration.month
+      end
+    end
+
+    count
   end
 
 
@@ -208,6 +226,11 @@ class Order < ApplicationRecord
     when 12
       start_date.beginning_of_year
     end
+  end
+
+
+  def check_paper_set_folder_count
+    errors.add(:paper_set_folder_count, "nombre des chemises doivent être égal au nombre des journaux comptables paramétrés") if self.paper_set_folder_count != self.user.account_book_types.size
   end
 
 

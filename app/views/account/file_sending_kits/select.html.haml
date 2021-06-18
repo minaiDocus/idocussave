@@ -16,8 +16,13 @@
               %tr
                 %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", false
                 %td= client.info
-                %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
-                %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+                - last_order = client.orders.last
+                - if last_order.normal_paper_set_order?
+                  %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
+                  %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+                - else
+                  %td= number_field_tag "users[#{client.id}][start_month]", 0, readonly: true, style: 'width:50px;'
+                  %td= number_field_tag "users[#{client.id}][offset_month]", last_order.periods_count, readonly: true, style: 'width:50px;'
       .form-group.boolean
         .label-section
           = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'

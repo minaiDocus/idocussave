@@ -45,7 +45,15 @@
                   - if not manual_paper_set_order
                     %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
                     %td= builder.input :paper_set_casing_count, label: false, collection: [], include_blank: true, :input_html => { "data-index" => index, class: "casing_count_#{index}" }
-                  %td= builder.input :paper_set_folder_count, label: false, collection: 5..10, include_blank: false
+                  %td
+                    - if manual_paper_set_order
+                      %spn
+                        Nb journaux comptables paramétrés:
+                        = order.user.account_book_types.size
+                      = builder.hidden_field :paper_set_folder_count, value: order.user.account_book_types.size
+                    - else
+                      = builder.input :paper_set_folder_count, label: false, collection: 5..10, include_blank: false
+
                   %td= builder.input :paper_set_start_date, label: false, collection: paper_set_start_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order start_date_#{index}" }
                   %td= builder.input :paper_set_end_date, label: false, collection: paper_set_end_date_options(order), include_blank: false, :input_html => { "data-index" => index, class: "date_order end_date_#{index}" }
                   %td.price{ style: 'font-size:15px;text-align: left !important;'}
