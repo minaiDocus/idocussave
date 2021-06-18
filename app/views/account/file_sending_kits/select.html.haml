@@ -21,8 +21,14 @@
                   %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
                   %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
                 - else
-                  %td= number_field_tag "users[#{client.id}][start_month]", 0, readonly: true, style: 'width:50px;'
-                  %td= number_field_tag "users[#{client.id}][offset_month]", last_order.periods_count, readonly: true, style: 'width:50px;'
+                  %td
+                    - value = last_order.periods_offset_start
+                    %span{style: 'width:50px;'}= last_order.paper_set_start_date.strftime('%b')
+                    = hidden_field_tag "users[#{client.id}][start_month]", value
+                  %td
+                    - value = last_order.periods_count
+                    %span{style: 'width:50px;'}= value
+                    = hidden_field_tag "users[#{client.id}][offset_month]", value, style: 'width:50px;'
       .form-group.boolean
         .label-section
           = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'

@@ -15,7 +15,11 @@
             = hidden_field_tag :paper_set_casing_count_hidden, @order.paper_set_casing_count.to_i
             = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
           - else
-            = f.input :paper_set_folder_count, label: 'Nb journaux comptables paramétrés (nb chemises)', value: @order.user.account_book_types.size, input_html: { readonly: true, style:'max-width: 100%;' }
+            - value = @order.user.account_book_types.size
+            %span{style: 'max-width:100%;'}
+              Nb chemises (Nb journaux comptables paramétrés) :
+              %strong= value
+            = f.hidden_field :paper_set_folder_count, value: value
           = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
           = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
       .col-md-4

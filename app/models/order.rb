@@ -80,6 +80,23 @@ class Order < ApplicationRecord
   end
 
 
+  def periods_offset_start
+    count = 0
+
+    time = Time.now.beginning_of_month
+    date = self.paper_set_start_date
+
+    if time && date
+      while time >= date
+        count -= 1
+
+        time -= self.period_duration.month
+      end
+    end
+
+    count
+  end
+
   def periods_count
     count = 0
 
