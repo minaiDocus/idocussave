@@ -692,22 +692,22 @@
                     %th= t('activerecord.models.file_sending_kit.attributes.folders')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', 'kit', "#{@organization.code.downcase}_folders.pdf")
-                        = link_to "#{@organization.code.downcase}_folders.pdf", folders_account_organization_file_sending_kit_path(@organization), target: '_blank'
+                        = link_to "#{@organization.code.downcase}_folders.pdf", folders_account_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
                   %tr
                     %th= t('activerecord.models.file_sending_kit.attributes.mails')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', 'kit', "#{@organization.code.downcase}_mails.pdf")
-                        = link_to "#{@organization.code.downcase}_mails.pdf", mails_account_organization_file_sending_kit_path(@organization), target: '_blank'
+                        = link_to "#{@organization.code.downcase}_mails.pdf", mails_account_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
                   %tr
                     %th= t('activerecord.models.file_sending_kit.attributes.customer_labels')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', 'kit', "#{@organization.code.downcase}_customer_labels.pdf")
-                        = link_to "#{@organization.code.downcase}_customer_labels.pdf", customer_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
+                        = link_to "#{@organization.code.downcase}_customer_labels.pdf", customer_labels_account_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
                   %tr
                     %th= t('activerecord.models.file_sending_kit.attributes.workshop_labels')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', 'kit', "#{@organization.code.downcase}_workshop_labels.pdf")
-                        = link_to "#{@organization.code.downcase}_workshop_labels.pdf", workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
+                        = link_to "#{@organization.code.downcase}_workshop_labels.pdf", workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
                 = link_to t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
                 = link_to 'Générer', select_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
             #reminder_emails.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'reminder_emails') }
