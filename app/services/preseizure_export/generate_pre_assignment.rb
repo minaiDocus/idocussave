@@ -215,15 +215,11 @@ private
 
   def generate_fec_acd_export(with_file = true)
     begin
-      file_txt = PreseizureExport::Software::FecAcd.new(@preseizures).execute
-      final_file_name = "#{file_real_name}.txt"
-      FileUtils.mv file_txt, "#{file_path}/#{final_file_name}"
+      file_zip = PreseizureExport::Software::FecAcd.new(@preseizures).execute
 
-      if with_file
-        @preseizures.each do |preseizure|
-          FileUtils.cp preseizure.piece.cloud_content_object.path, File.join(file_path, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if preseizure.piece
-        end
-      end
+      final_file_name = "#{file_previous_name}.zip"
+
+      FileUtils.mv file_zip, "#{file_path}/#{final_file_name}"
 
       @export.got_success "#{final_file_name}"
     rescue => e
