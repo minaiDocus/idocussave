@@ -132,7 +132,7 @@ class Pack::Report < ApplicationRecord
     self.preseizures.not_deleted.delivered(software).first.present?
   end
 
-  def set_delivery_message_for(software='ibiza', message)
+  def set_delivery_message_for(software='ibiza', message="can t open connection")
     begin
       mess = self.delivery_message.present? ? JSON.parse(self.delivery_message) : {}
     rescue

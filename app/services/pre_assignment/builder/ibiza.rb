@@ -52,7 +52,7 @@ class PreAssignment::Builder::Ibiza < PreAssignment::Builder::DataService
 
       ErrorScriptMailer.error_notification(log_document).deliver
 
-      if e.to_s == "end of file reached" || e.to_s.match(/la connexion sous-jacente a été/i)
+      if e.to_s == "end of file reached" || e.to_s.match(/can not establish connection/) || e.to_s.match(/la connexion sous-jacente a été/i)
         sleep(5)
         @delivery.state = "pending"
         @delivery.save

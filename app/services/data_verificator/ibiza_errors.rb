@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::IbizaErrors < DataVerificator::DataVerificator
   def execute
-    errors_list = ['The fog is not checked', 'La connexion sous-jacente a été', 'An error occured']
+    errors_list = ['The fog is not checked', 'La connexion sous-jacente a été', 'An error occured', "can t open connection", "can not establish connection"]
 
     error_messages = errors_list.map do |error|
       " error_message LIKE '%#{error}%' "
