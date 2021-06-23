@@ -317,7 +317,7 @@ class PreseizureExport::PreseizureToTxt
     data = []
 
     if @preseizures.any?
-      data << "JournalCode\tJournalLib\tEcritureNum\tEcritureDate\tCompteNum\tCompteLib\tCompAuxNum\tCompAuxLib\tPieceRef\tPieceDate\tEcritureLibc\tDebit\tCredit\tEcritureLet\tDateLet\tValidDate\tMontantdevise\tIdevise\tMouvementEcriture"
+      data << "JournalCode|JournalLib|EcritureNum|EcritureDate|CompteNum|CompteLib|CompAuxNum|CompAuxLib|PieceRef|PieceDate|EcritureLibc|Debit|Credit|EcritureLet|DateLet|ValidDate|Montantdevise|Idevise|MouvementEcriture"
 
       @preseizures.each do |preseizure|
         user = preseizure.user
@@ -406,7 +406,7 @@ class PreseizureExport::PreseizureToTxt
           piece_ref      = piece_ref || ""
           piece_date     = preseizure.date.strftime('%Y%m%d') || ""
           ecriture_libc  = label || ""
-          debit_credit   = entry.type == 1 ? entry.amount.to_f.to_s + "\t0" : "0\t" + entry.amount.to_f.to_s
+          debit_credit   = entry.type == 1 ? entry.amount.to_f.to_s + "|0" : "0|" + entry.amount.to_f.to_s
           ecriture_let   = account.lettering || ""
           date_let       = ""
           valid_date     = ""

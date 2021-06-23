@@ -3,7 +3,6 @@ class PreseizureExport::Software::FecAcd
     @preseizures = preseizures
   end
 
-
   def execute
     base_name = @preseizures.first.report.name.tr(' %', '__')
     file_path = ''
@@ -17,14 +16,23 @@ class PreseizureExport::Software::FecAcd
         f.write(data)
       end
 
-      file_path = "#{dir}/#{base_name}.txt"
+      # Copy pieces to temp directory
+      @preseizures.each do |preseizure|
+        @piece = preseizure.piece
+        FileUtils.cp @piece.cloud_content_object.path, File.join(@dir, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if preseizure.piece
+      end
 
-      Dir.chdir dir
+      file_path = File.join(@dir, @base_name + '.zip')
+
+      Dir.chdir @dir
+
+      # Finaly zip the temp @dir
+      POSIX::Spawn.system "zip #{file_path} *"
+
     end
 
     file_path
   end
-
 
   def self.remove_temp_dir(dir)
     FileUtils.remove_entry dir if File.exist? dir
