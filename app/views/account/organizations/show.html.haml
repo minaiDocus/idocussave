@@ -67,6 +67,11 @@
                       - if @organization.try(:fec_agiris).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
                   %li
+                    %a{ class: "dropdown-item #{(params[:tab] == 'fec_acd') ? 'active' : ''}", href: '#fec_acd', data: { toggle: 'tab' } }
+                      .float-left Fec ACD
+                      - if @organization.try(:fec_acd).try(:used?)
+                        = glyphicon('check', { class: 'float-right' })
+                  %li
                     %a{ class: "dropdown-item #{(params[:tab] == 'csv_descriptor') ? 'active' : ''}", href: '#csv_descriptor', data: { toggle: 'tab' } }
                       .float-left Autre (format d'export .csv)
                       - if @organization.try(:csv_descriptor).try(:used?)
@@ -620,6 +625,27 @@
                   .alignright
                     -if @organization.try(:fec_agiris).try(:used?)
                       = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_agiris'), class: 'btn'
+                    = f.submit t('actions.submit'), class: 'btn btn-primary'
+            #fec_acd.tab-pane.fade{ class: ('active show' if params[:tab] == 'fec_acd') }
+              .aligncenter
+                %h4.margin1bottom Configuration Fec ACD
+              = simple_form_for [:account, @organization], html: { id: 'form_fec_acd', class: 'form form-horizontal margin0' } do |f|
+                = hidden_field_tag :part, 'fec_acd'
+                = f.simple_fields_for :fec_acd_attributes do |sf|
+                  %table.table.table-condensed.with_custom_controls
+                    %tbody
+                      %tr
+                        %th= t('activerecord.models.software_fec_acd.attributes.is_used')
+                        %td{width: '30%'} Cette option permet de selectionner/utiliser Fec ACD dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :is_used, as: :boolean, label: 'oui?', input_html: { checked: @organization.try(:fec_acd).try(:used?)}
+                      %tr{ class: "#{@organization.try(:fec_acd).try(:used?) ? '' : 'hide' }"}
+                        %th= t('activerecord.models.software_fec_acd.attributes.auto_deliver')
+                        %td{width: '30%'} Cette option peut être écrasée dans le paramétrage dossier client
+                        %td{width: '5%'}= sf.input :auto_deliver, as: :boolean, label: 'oui?', input_html: { checked: @organization.try(:fec_acd).try(:auto_deliver?)}
+                - if @user.leader?
+                  .alignright
+                    -if @organization.try(:fec_acd).try(:used?)
+                      = link_to 'Modifier les dossiers assignés', edit_software_users_account_organization_path(@organization, software: 'fec_acd'), class: 'btn'
                     = f.submit t('actions.submit'), class: 'btn btn-primary'
             #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               .aligncenter

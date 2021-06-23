@@ -311,6 +311,7 @@ class Account::DocumentsController < Account::AccountController
       options << ['CSV (Cegid)', 'csv_cegid']                  if user.uses?(:cegid)
       options << ['TRA + pièces jointes (Cegid)', 'tra_cegid'] if user.uses?(:cegid)
       options << ['TXT (Fec Agiris)', 'txt_fec_agiris']        if user.uses?(:fec_agiris)
+      options << ['TXT (Fec ACD)', 'txt_fec_acd']              if user.uses?(:fec_acd)
     end
 
     render json: { options: options }, status: 200
@@ -347,7 +348,7 @@ class Account::DocumentsController < Account::AccountController
       preseizures = Pack::Report::Preseizure.not_deleted.where(report_id: reports.collect(&:id))
     end
 
-    supported_format = %w[csv xml_ibiza txt_quadratus zip_quadratus zip_coala xls_coala txt_fec_agiris csv_cegid tra_cegid]
+    supported_format = %w[csv xml_ibiza txt_quadratus zip_quadratus zip_coala xls_coala txt_fec_agiris txt_fec_acd csv_cegid tra_cegid]
 
     if preseizures.any? && export_format.in?(supported_format)
       preseizures = preseizures.by_position

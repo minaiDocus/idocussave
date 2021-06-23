@@ -21,6 +21,10 @@ class PreseizureExport::GeneratePreAssignment
     @report.user.uses?(:fec_agiris) && @report.user.try(:fec_agiris).try(:auto_deliver?)
   end
 
+  def valid_fec_acd?
+    @report.user.uses?(:fec_acd) && @report.user.try(:fec_acd).try(:auto_deliver?)
+  end
+
   def valid_quadratus?
     @report.user.uses?(:quadratus) && @report.user.try(:quadratus).try(:auto_deliver?)
   end
@@ -53,6 +57,11 @@ class PreseizureExport::GeneratePreAssignment
       end
 
       if valid_fec_agiris?
+        create_pre_assignment_export_for('fec_agiris')
+        generate_fec_agiris_export
+      end
+
+      if valid_fec_acd?
         create_pre_assignment_export_for('fec_agiris')
         generate_fec_agiris_export
       end
@@ -103,6 +112,10 @@ class PreseizureExport::GeneratePreAssignment
       create_pre_assignment_export_for('fec_agiris')
 
       generate_fec_agiris_export(false)
+    when 'txt_fec_acd'
+      create_pre_assignment_export_for('fec_acd')
+
+      generate_fec_acd_export(true)
     when 'csv_cegid'
       create_pre_assignment_export_for('cegid')
 
@@ -191,6 +204,24 @@ private
       if with_file
         @preseizures.each do |preseizure|
           FileUtils.cp preseizure.piece.cloud_content_object.path, "#{file_path}/#{preseizure.piece.position.to_s}.pdf" if preseizure.piece
+        end
+      end
+
+      @export.got_success "#{final_file_name}"
+    rescue => e
+      @export.got_error e
+    end
+  end
+
+  def generate_fec_acd_export(with_file = true)
+    begin
+      file_txt = PreseizureExport::Software::FecAcd.new(@preseizures).execute
+      final_file_name = "#{file_real_name}.txt"
+      FileUtils.mv file_txt, "#{file_path}/#{final_file_name}"
+
+      if with_file
+        @preseizures.each do |preseizure|
+          FileUtils.cp preseizure.piece.cloud_content_object.path, File.join(file_path, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if preseizure.piece
         end
       end
 

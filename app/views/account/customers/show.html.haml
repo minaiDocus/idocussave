@@ -80,6 +80,12 @@
                       .float-left Fec Agiris
                       - if @customer.uses?(:fec_agiris)
                         = glyphicon('check', { class: 'float-right' })
+                -if @organization.try(:fec_acd).try(:used?)
+                  %li
+                    %a.dropdown-item{ class: ('active' if params[:tab] == 'fec_acd'), href: '#fec_acd', data: { toggle: 'tab' } }
+                      .float-left Fec ACD
+                      - if @customer.uses?(:fec_acd)
+                        = glyphicon('check', { class: 'float-right' })
                 -if @organization.try(:csv_descriptor).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'csv_descriptor'), href: '#csv_descriptor', data: { toggle: 'tab' } }
@@ -675,6 +681,33 @@
                   .row
                     .col-md-12
                       = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_agiris'), class: 'btn btn-primary float-right'
+
+          - if @organization.try(:fec_acd).try(:used?)
+            #fec_acd.tab-pane.fade{ class: ('active' if params[:tab] == 'fec_acd') }
+              %h4.margin1bottom Activation Fec ACD
+              = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_fec_acd', class: 'form form-horizontal margin0' } do |c|
+                = hidden_field_tag :part, 'fec_acd'
+                = c.simple_fields_for :fec_acd do |f|
+                  %table.table.table-condensed.table-striped
+                    %tbody
+                      %tr
+                        %th= 'Ce dossier utilise Fec ACD?'
+                        %td{width: '5%'}= f.input :is_used, as: 'boolean', label: 'oui?'
+                        - if @user.leader? || @user.manage_customers
+                          %td{width: '8%'}
+                            .alignright= f.submit t('actions.submit'), class: 'btn btn-primary'
+              - if @customer.try(:fec_acd).try(:used?)
+                .hide
+                  %hr
+                  %h4.margin2top.margin1bottom Configuration Fec ACD
+                  %table.table.table-striped.table-condensed
+                    %tbody
+                      %tr
+                        %th Générer automatiquement l'export des écritures et pièces ?
+                        %td= @customer.fec_acd.try(:auto_deliver?) ? t('yes_value') : t('no_value')
+                  .row
+                    .col-md-12
+                      = link_to icon_edit + ' ' + 'Modifier', edit_software_account_organization_customer_path(@organization, @customer, software: 'fec_acd'), class: 'btn btn-primary float-right'
           - if @organization.try(:csv_descriptor).try(:used?)
             #csv_descriptor.tab-pane.fade{ class: ('active show' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               %h4.margin1bottom Activation Fichier d'export personnalisé (.csv)

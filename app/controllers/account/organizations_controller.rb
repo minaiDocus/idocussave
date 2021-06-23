@@ -45,6 +45,8 @@ class Account::OrganizationsController < Account::OrganizationController
                        'My Unisoft'
                      when 'fec_agiris'
                        'Fec Agiris'
+                      when 'fec_acd'
+                       'Fec ACD'
                      else
                        ''
                       end
@@ -267,6 +269,7 @@ class Account::OrganizationsController < Account::OrganizationController
         { :coala_attributes => %i[id is_used auto_deliver] },
         { :cegid_attributes => %i[id is_used auto_deliver] },
         { :fec_agiris_attributes => %i[id is_used auto_deliver] },
+        { :fec_acd_attributes => %i[id is_used auto_deliver] },
         { :csv_descriptor_attributes => %i[id is_used auto_deliver] },
         { :exact_online_attributes => %i[id is_used auto_deliver] },
         { :my_unisoft_attributes => %i[id is_used auto_deliver] }
@@ -287,6 +290,7 @@ class Account::OrganizationsController < Account::OrganizationController
         { :coala_attributes => %i[id is_used auto_deliver] },
         { :cegid_attributes => %i[id is_used auto_deliver] },
         { :fec_agiris_attributes => %i[id is_used auto_deliver] },
+        { :fec_acd_attributes => %i[id is_used auto_deliver] },
         { :csv_descriptor_attributes => %i[id is_used auto_deliver] },
         { :exact_online_attributes => %i[id is_used auto_deliver] },
         { :my_unisoft_attributes => %i[id is_used auto_deliver] }

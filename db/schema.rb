@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_10_082619) do
+ActiveRecord::Schema.define(version: 2021_06_23_150849) do
 
   create_table "account_book_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
@@ -211,6 +211,23 @@ ActiveRecord::Schema.define(version: 2021_06_10_082619) do
     t.index ["is_updated"], name: "index_archive_budgea_users_on_is_updated"
   end
 
+  create_table "archive_document_corrupted", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "fingerprint"
+    t.string "state", default: "ready", null: false
+    t.text "error_message", limit: 4294967295
+    t.boolean "is_notify", default: false
+    t.integer "retry_count", default: 0
+    t.integer "user_id"
+    t.text "params", limit: 4294967295
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fingerprint"], name: "index_archive_document_corrupted_on_fingerprint"
+    t.index ["is_notify"], name: "index_archive_document_corrupted_on_is_notify"
+    t.index ["retry_count"], name: "index_archive_document_corrupted_on_retry_count"
+    t.index ["state"], name: "index_archive_document_corrupted_on_state"
+    t.index ["user_id"], name: "index_archive_document_corrupted_on_user_id"
+  end
+
   create_table "archive_invoices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -330,7 +347,6 @@ ActiveRecord::Schema.define(version: 2021_06_10_082619) do
   end
 
   create_table "cedricom_receptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "bank_account_id"
     t.integer "cedricom_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -341,7 +357,6 @@ ActiveRecord::Schema.define(version: 2021_06_10_082619) do
     t.integer "imported_operations_count"
     t.integer "total_operations_count"
     t.integer "skipped_operations_count"
-    t.index ["bank_account_id"], name: "index_cedricom_receptions_on_bank_account_id"
   end
 
   create_table "ckeditor_assets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1910,6 +1925,19 @@ ActiveRecord::Schema.define(version: 2021_06_10_082619) do
     t.index ["owner_id"], name: "index_software_exact_online_on_owner_id"
     t.index ["owner_type", "owner_id"], name: "index_software_exact_online_on_owner_type_and_owner_id"
     t.index ["state"], name: "index_software_exact_online_on_state"
+  end
+
+  create_table "software_fec_acds", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "is_used"
+    t.integer "auto_deliver", default: -1
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auto_deliver"], name: "index_software_fec_acds_on_auto_deliver"
+    t.index ["is_used"], name: "index_software_fec_acds_on_is_used"
+    t.index ["owner_id"], name: "index_software_fec_acds_on_owner_id"
+    t.index ["owner_type", "owner_id"], name: "index_software_fec_acds_on_owner_type_and_owner_id"
   end
 
   create_table "software_fec_agiris", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

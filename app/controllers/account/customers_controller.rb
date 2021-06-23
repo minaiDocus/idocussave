@@ -445,6 +445,7 @@ class Account::CustomersController < Account::OrganizationController
       { my_unisoft_attributes: %i[id is_used auto_deliver encrypted_api_token check_api_token] },
       { coala_attributes: %i[id is_used auto_deliver internal_id] },
       { fec_agiris_attributes: %i[id is_used auto_deliver] },
+      { fec_acd_attributes: %i[id is_used auto_deliver] },
       { cegid_attributes: %i[id is_used auto_deliver] },
       { quatratus_attributes: %i[id is_used auto_deliver] },
       { csv_descriptor_attributes: %i[id is_used auto_deliver use_own_csv_descriptor_format] }

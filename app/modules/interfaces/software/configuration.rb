@@ -1,7 +1,7 @@
 module Interfaces::Software::Configuration
-  SOFTWARES = ['ibiza', 'exact_online', 'my_unisoft', 'coala', 'quadratus', 'cegid', 'fec_agiris', 'csv_descriptor']
+  SOFTWARES = ['ibiza', 'exact_online', 'my_unisoft', 'coala', 'quadratus', 'cegid', 'fec_agiris', 'fec_acd', 'csv_descriptor']
   TABLE_NAME_WITH_SOFTWARES_USING_API = ['software_ibizas', 'software_exact_online', 'software_my_unisofts']
-  SOFTWARES_OBJECTS = [::Software::Ibiza, ::Software::ExactOnline, ::Software::Cegid, ::Software::Coala, ::Software::FecAgiris, ::Software::Quadratus, ::Software::CsvDescriptor, ::Software::MyUnisoft]
+  SOFTWARES_OBJECTS = [::Software::Ibiza, ::Software::ExactOnline, ::Software::Cegid, ::Software::Coala, ::Software::FecAgiris, ::Software::FecAcd, ::Software::Quadratus, ::Software::CsvDescriptor, ::Software::MyUnisoft]
 
   def self.softwares
     {
@@ -10,6 +10,7 @@ module Interfaces::Software::Configuration
       cegid:          Software::Cegid,
       coala:          Software::Coala,
       fec_agiris:     Software::FecAgiris,
+      fec_acd:        Software::FecAcd,
       quadratus:      Software::Quadratus,
       csv_descriptor: Software::CsvDescriptor,
       my_unisoft:     Software::MyUnisoft
@@ -25,6 +26,7 @@ module Interfaces::Software::Configuration
       quadratus:      'quadratus',
       cegid:          'cegid',
       fec_agiris:     'fec_agiris',
+      fec_acd:        'fec_acd',
       csv_descriptor: 'csv_descriptor'
     }.with_indifferent_access
   end
@@ -38,6 +40,7 @@ module Interfaces::Software::Configuration
       quadratus:      "Quadratus",
       cegid:          "Cegid",
       fec_agiris:     "Fec Agiris",
+      fec_acd:        "Fec ACD",
       csv_descriptor: "Autre(format d'export .csv)"
     }.with_indifferent_access
   end
@@ -51,6 +54,7 @@ module Interfaces::Software::Configuration
       quadratus:      'software_quadratus',
       cegid:          'software_cegids',
       fec_agiris:     'software_fec_agiris',
+      fec_acd:        'software_fec_acds',
       csv_descriptor: 'software_csv_descriptors'
     }.with_indifferent_access
   end
@@ -62,6 +66,7 @@ module Interfaces::Software::Configuration
       'Software::Cegid'         => 'cegid',
       'Software::Coala'         => 'coala',
       'Software::FecAgiris'     => 'fec_agiris',
+      'Software::FecAcd'        => 'fec_acd',
       'Software::Quadratus'     => 'quadratus',
       'Software::CsvDescriptor' => 'csv_descriptor',
       'Software::MyUnisoft'     => 'my_unisoft'

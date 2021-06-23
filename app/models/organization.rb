@@ -53,6 +53,7 @@ class Organization < ApplicationRecord
   accepts_nested_attributes_for :ibiza
   accepts_nested_attributes_for :coala
   accepts_nested_attributes_for :quadratus
+  accepts_nested_attributes_for :fec_acd
   accepts_nested_attributes_for :fec_agiris
   accepts_nested_attributes_for :cegid
   accepts_nested_attributes_for :exact_online
@@ -178,7 +179,7 @@ class Organization < ApplicationRecord
   end
 
   def uses_non_api_softwares?
-    coala.try(:used?) || quadratus.try(:used?) || cegid.try(:used?) || csv_descriptor.try(:used?) || fec_agiris.try(:used?)
+    coala.try(:used?) || quadratus.try(:used?) || cegid.try(:used?) || csv_descriptor.try(:used?) || fec_agiris.try(:used?) || fec_acd.try(:used?)
   end
 
   def auto_deliver?(_software)
