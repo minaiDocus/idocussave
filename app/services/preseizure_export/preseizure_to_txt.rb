@@ -413,7 +413,8 @@ class PreseizureExport::PreseizureToTxt
           montant_devise = preseizure.amount.to_f.to_s || ""
           idevise        = preseizure.amount.to_f > 0 ? preseizure.currency.to_s : ""
           mouvement_ecriture = preseizure.third_party
-          if preseizure.amount
+
+          if entry.amount
             data << [[journal_code, journal_lib, ecriture_num, ecriture_date, compte_num, compte_lib, comp_aux, comp_aux_lib, piece_ref, piece_date, ecriture_libc, debit_credit, ecriture_let, date_let, valid_date, montant_devise, idevise, mouvement_ecriture].join("|")]
           end
         end
