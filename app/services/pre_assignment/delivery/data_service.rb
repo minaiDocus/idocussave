@@ -47,7 +47,7 @@ class PreAssignment::Delivery::DataService
 
   def execute; end
 
-  def handle_delivery_error(error_message)
+  def handle_delivery_error(error_message="can t open connection")
     @delivery.update_attribute(:error_message, error_message.to_s)
     @delivery.error
 

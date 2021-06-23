@@ -134,3 +134,6 @@ jQuery ->
           $('#payments td#debit_state').html("<span class='badge badge-danger fs-origin'>Une erreur inattendue s'est produite, Veuillez réessayer ultérieurement.</span>");
       });
   )
+
+  $('.file_sending_kit_path').on 'click', (e) ->
+      location.reload();

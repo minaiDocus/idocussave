@@ -37,7 +37,7 @@ class PreAssignment::Builder::DataService
     @delivery.data_built
   end
 
-  def building_failed(error_message)
+  def building_failed(error_message="can t open connection.")
     @delivery.error_message = error_message
     @delivery.save
     @delivery.error

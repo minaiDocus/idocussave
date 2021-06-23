@@ -19,11 +19,17 @@
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.center')
               %hr
               - if manual_paper_set_order
-                = f.input :center_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+                .float-left
+                  = f.input :center_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_logo_path)
+                  = f.input :logo_height
+                  = f.input :logo_width
+                .float-right
+                  - if File.exist?(@file_sending_kit.real_logo_path)
+                    %img{ src: get_logo_account_organization_file_sending_kit_path(position: 'center'), alt: 'center_logo', style: 'max-width: 150px;' }
               - else
                 = f.input :logo_path, input_html: { class: 'span12' }
-              = f.input :logo_height
-              = f.input :logo_width
+                = f.input :logo_height
+                = f.input :logo_width
       .row
         .col-md-6
           .field{ style: 'margin-bottom: 10px' }
@@ -31,22 +37,34 @@
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.left')
               %hr
               - if manual_paper_set_order
-                = f.input :left_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+                .float-left
+                  = f.input :left_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_left_logo_path)
+                  = f.input :left_logo_height
+                  = f.input :left_logo_width
+                .float-right
+                  - if File.exist?(@file_sending_kit.real_left_logo_path)
+                    %img{ src: get_logo_account_organization_file_sending_kit_path(position: 'left'), alt: 'left_logo', style: 'max-width: 150px;' }
               - else
                 = f.input :left_logo_path, input_html: { class: 'span12' }
-              = f.input :left_logo_height
-              = f.input :left_logo_width
+                = f.input :left_logo_height
+                = f.input :left_logo_width
         .col-md-6
           .field{ style: 'margin-bottom: 10px' }
             .box.bg-light.height_groups.groups_1
               %h4= t('activerecord.models.file_sending_kit.attributes.logo.right')
               %hr
               - if manual_paper_set_order
-                = f.input :right_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: true
+                .float-left
+                  = f.input :right_logo, as: :file, input_html: { class: 'span12' }, label: 'Chemin', :accept => 'image/png', required: !File.exist?(@file_sending_kit.real_right_logo_path)
+                  = f.input :right_logo_height
+                  = f.input :right_logo_width
+                .float-right
+                  - if File.exist?(@file_sending_kit.real_right_logo_path)
+                    %img{ src: get_logo_account_organization_file_sending_kit_path(position: 'right'), alt: 'right_logo', style: 'max-width: 150px;' }
               - else
                 = f.input :right_logo_path, input_html: { class: 'span12' }
-              = f.input :right_logo_height
-              = f.input :right_logo_width
+                = f.input :right_logo_height
+                = f.input :right_logo_width
     .card-footer
       .form-actions.margin0bottom
         = f.submit t('actions.submit'), class: 'btn btn-primary'

@@ -129,7 +129,7 @@ module IbizaLib
           begin
             @original = connection.run_request(@method, url, @body, headers)
           rescue
-            @original = OpenStruct.new({ headers: { 'Content-Type' => 'none' } })
+            @original = OpenStruct.new({ headers: { 'Content-Type' => 'none' }, custom_error_message: 'can not establish connection' })
           end
 
           @client.response.original = @original
@@ -184,6 +184,7 @@ module IbizaLib
             end
           else
             @result = @datetime = @message = @data_type = @data = nil
+            @message =  @original.try(:custom_error_message).presence
           end
         end
 

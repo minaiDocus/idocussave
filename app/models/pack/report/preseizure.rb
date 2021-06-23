@@ -331,7 +331,7 @@ class Pack::Report::Preseizure < ApplicationRecord
     self.is_delivered_to.to_s.match(/#{software}/) ? true : false
   end
 
-  def set_delivery_message_for(software='ibiza', message)
+  def set_delivery_message_for(software='ibiza', message="can t open connection")
     begin
       mess = self.delivery_message.present? ? JSON.parse(self.delivery_message) : {}
     rescue
