@@ -19,15 +19,15 @@ class FileSendingKit < ApplicationRecord
   end
 
   def real_logo_path
-    normal_paper_set_order? ? CmsImage.get_path_of(logo_path) : self.cloud_center_logo_object.try(:path).to_s
+    normal_paper_set_order? ? CmsImage.get_path_of(logo_path) : self.cloud_center_logo_object.try(:reload).try(:path).to_s
   end
 
   def real_left_logo_path
-    normal_paper_set_order? ? CmsImage.get_path_of(left_logo_path) : self.cloud_left_logo_object.try(:path).to_s
+    normal_paper_set_order? ? CmsImage.get_path_of(left_logo_path) : self.cloud_left_logo_object.try(:reload).try(:path).to_s
   end
 
   def real_right_logo_path
-    normal_paper_set_order? ? CmsImage.get_path_of(right_logo_path) : self.cloud_right_logo_object.try(:path).to_s
+    normal_paper_set_order? ? CmsImage.get_path_of(right_logo_path) : self.cloud_right_logo_object.try(:reload).try(:path).to_s
   end
 
   #this method is required to avoid custom_active_storage bug when seeking for paperclip equivalent method

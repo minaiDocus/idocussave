@@ -7,6 +7,26 @@ class Account::FileSendingKitsController < Account::OrganizationController
   # GET /account/organizations/:organization_id/file_sending_kit/edit
   def edit; end
 
+  def get_logo
+    position = params[:position] || 'center'
+
+    case position
+      when 'center'
+        filepath = @file_sending_kit.real_logo_path
+      when 'left'
+        filepath = @file_sending_kit.real_left_logo_path
+      when 'right'
+        filepath = @file_sending_kit.real_right_logo_path
+    end
+
+    if File.exist?(filepath)
+      extension = File.extname(filepath).downcase
+      send_file(filepath, type: 'application/pdf', filename: "#{position}_logo.#{extension}", x_sendfile: true, disposition: 'inline')
+    else
+      render body: nil, status: 404
+    end
+  end
+
   # PUT /account/organizations/:organization_id/file_sending_kit
   def update
     @file_sending_kit.title             = params[:file_sending_kit][:title].strip
@@ -142,18 +162,8 @@ class Account::FileSendingKitsController < Account::OrganizationController
     left_logo = params[:file_sending_kit][:left_logo]
     right_logo = params[:file_sending_kit][:right_logo]
 
-    if center_logo.present? && left_logo.present? && right_logo.present?
-      @file_sending_kit.cloud_center_logo.attach(io: File.open(center_logo.tempfile),
-                                         filename: "center_logo_#{@file_sending_kit.id}.png",
-                                         content_type: "image/png")
-
-      @file_sending_kit.cloud_left_logo.attach(io: File.open(left_logo.tempfile),
-                                         filename: "left_logo_#{@file_sending_kit.id}.png",
-                                         content_type: "image/png")
-
-      @file_sending_kit.cloud_right_logo.attach(io: File.open(right_logo.tempfile),
-                                         filename: "right_logo_#{@file_sending_kit.id}.png",
-                                         content_type: "image/png")
-    end
+    @file_sending_kit.cloud_center_logo.attach(io: File.open(center_logo.tempfile), filename: "center_logo_#{@file_sending_kit.id}.png", content_type: "image/png") if center_logo.present?
+    @file_sending_kit.cloud_left_logo.attach(io: File.open(left_logo.tempfile), filename: "center_logo_#{@file_sending_kit.id}.png", content_type: "image/png") if left_logo.present?
+    @file_sending_kit.cloud_right_logo.attach(io: File.open(right_logo.tempfile), filename: "center_logo_#{@file_sending_kit.id}.png", content_type: "image/png") if right_logo.present?
   end
 end
