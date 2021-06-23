@@ -4,7 +4,7 @@ class PreseizureExport::Software::FecAcd
   end
 
   def execute
-    base_name = @preseizures.first.report.name.tr(' %', '__')
+    base_name = @preseizures.first.report.name.tr(' ', '_').tr('%', '_')
     file_path = ''
 
     CustomUtils.mktmpdir('fec_acd_export', nil, false) do |dir|
@@ -22,13 +22,12 @@ class PreseizureExport::Software::FecAcd
         FileUtils.cp @piece.cloud_content_object.path, File.join(@dir, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if preseizure.piece
       end
 
-      file_path = File.join(@dir, @base_name + '.zip')
+      file_path = File.join(dir, base_name + '.zip')
 
-      Dir.chdir @dir
+      Dir.chdir dir
 
       # Finaly zip the temp @dir
       POSIX::Spawn.system "zip #{file_path} *"
-
     end
 
     file_path
