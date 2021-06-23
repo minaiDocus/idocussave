@@ -18,15 +18,15 @@ class PreseizureExport::Software::FecAcd
 
       # Copy pieces to temp directory
       @preseizures.each do |preseizure|
-        @piece = preseizure.piece
-        FileUtils.cp @piece.cloud_content_object.path, File.join(@dir, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if preseizure.piece
+        piece = preseizure.piece
+        FileUtils.cp piece.cloud_content_object.path, File.join(dir, preseizure.piece.name.tr(' ', '_').tr('%', '_') + '.pdf') if piece
       end
 
       file_path = File.join(dir, base_name + '.zip')
 
       Dir.chdir dir
 
-      # Finaly zip the temp @dir
+      # Finaly zip the temp dir
       POSIX::Spawn.system "zip #{file_path} *"
     end
 

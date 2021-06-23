@@ -7,7 +7,7 @@ class PreAssignmentExport < ApplicationRecord
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
 
   validates_presence_of   :pack_name, :state
-  validates_inclusion_of  :for, in: %w(ibiza coala cegid quadratus csv_descriptor fec_agiris)
+  validates_inclusion_of  :for, in: %w(ibiza coala cegid quadratus csv_descriptor fec_agiris fec_acd)
 
   scope :not_notified, -> { where(is_notified: false, state: 'generated') }
 
@@ -30,8 +30,8 @@ class PreAssignmentExport < ApplicationRecord
   end
 
   def base_path
-    CustomUtils.add_chmod_access_into("/nfs/export/pre_assignment/")
-    Pathname.new('/nfs/export/pre_assignment').join(self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
+    CustomUtils.add_chmod_access_into("#{Rail.root}/nfs/export/pre_assignment/")
+    Pathname.new('nfs/export/pre_assignment').join(self.organization.code.gsub(/[%]/, '_'), self.user.code.gsub(/[%]/, '_'), self.report.period)
   end
 
   def path

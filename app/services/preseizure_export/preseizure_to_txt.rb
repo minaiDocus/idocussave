@@ -406,7 +406,7 @@ class PreseizureExport::PreseizureToTxt
           piece_ref      = piece_ref || ""
           piece_date     = preseizure.date.strftime('%Y%m%d') || ""
           ecriture_libc  = label || ""
-          debit_credit   = entry.type == 1 ? entry.amount.to_f.to_s + "|0" : "0|" + entry.amount.to_f.to_s
+          debit_credit   = entry.type == 1 ? entry.amount.to_f.to_s + "|" : "|" + entry.amount.to_f.to_s
           ecriture_let   = account.lettering || ""
           date_let       = ""
           valid_date     = ""
