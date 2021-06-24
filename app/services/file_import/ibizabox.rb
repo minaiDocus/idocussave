@@ -127,9 +127,13 @@ class FileImport::Ibizabox
       file_name   = data.at_css('name').content
       document_id = data.at_css('objectID').content
       unless @user.temp_documents.where(api_id: document_id, delivered_by: 'ibiza').first
-        if UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
+        extension = File.extname(file_name).downcase
+
+        if UploadedDocument.valid_extensions.include?(extension) || (file_name.length >= 99 && extension.blank?)
           CustomUtils.mktmpdir('ibizabox_import') do |dir|
             begin
+              file_name = "#{file_name[0..98]}.pdf" if(file_name.length >= 99 && extension.blank?)
+
               file_path = File.join(dir, file_name)
               file = get_file(document_id, file_path)
 
