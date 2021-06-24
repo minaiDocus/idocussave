@@ -69,16 +69,92 @@ module Cedricom
       line[90..102]
     end
 
+    def amount_last_digit(line)
+      line[103..103]
+    end
+
     def operation_reference(line)
       line[104..119]
     end
 
-    def format_amount(amount, operation_code, decimals_count)
-      raw_amount = amount.to_i
+    def get_last_digit_and_sign(last_digit)
+      @sign = nil
+      @last_digit = nil
+
+      case last_digit
+      when "{"
+        @last_digit = "0"
+        @sign = "+"
+      when "A"
+        @last_digit = "1"
+        @sign = "+"
+      when "B"
+        @last_digit = "2"
+        @sign = "+"
+      when "C"
+        @last_digit = "3"
+        @sign = "+"
+      when "D"
+        @last_digit = "4"
+        @sign = "+"
+      when "E"
+        @last_digit = "5"
+        @sign = "+"
+      when "F"
+        @last_digit = "6"
+        @sign = "+"
+      when "G"
+        @last_digit = "7"
+        @sign = "+"
+      when "H"
+        @last_digit = "8"
+        @sign = "+"
+      when "I"
+        @last_digit = "9"
+        @sign = "+"
+      when "}"
+        @last_digit = "0"
+        @sign = "-"
+      when "J"
+        @last_digit = "1"
+        @sign = "-"
+      when "K"
+        @last_digit = "2"
+        @sign = "-"
+      when "L"
+        @last_digit = "3"
+        @sign = "-"
+      when "M"
+        @last_digit = "4"
+        @sign = "-"
+      when "N"
+        @last_digit = "5"
+        @sign = "-"
+      when "O"
+        @last_digit = "6"
+        @sign = "-"
+      when "P"
+        @last_digit = "7"
+        @sign = "-"
+      when "Q"
+        @last_digit = "8"
+        @sign = "-"
+      when "R"
+        @last_digit = "9"
+        @sign = "-"
+      end
+
+      { last_digit: @last_digit, sign: @sign}
+    end
+
+    def format_amount(amount, operation_code, decimals_count, amount_last_digit)
+      last_digit_and_sign = get_last_digit_and_sign(amount_last_digit)
+
+      raw_amount = "#{amount}#{last_digit_and_sign[:last_digit]}".to_i
 
       absolute_amount = (raw_amount.to_f / (10**decimals_count.to_i)).round(2)
 
-      unless operation_code.in?(CREDIT_OPERATION_CODES)
+      if last_digit_and_sign[:sign] == "-"
         absolute_amount = absolute_amount * -1
       end
 
@@ -112,6 +188,7 @@ module Cedricom
           operation_type: operation_type(line),
           operation_code: operation_code(line),
           decimals_count: decimals_count(line),
+          amount_last_digit: amount_last_digit(line),
           operation_reference: operation_reference(line)
         }
       end
@@ -124,10 +201,15 @@ module Cedricom
 
       raw_operations.each do |raw_operation|
         if raw_operation[:operation_type] == "04"
+          amount = format_amount(raw_operation[:amount],
+                                 raw_operation[:operation_code],
+                                 raw_operation[:decimals_count],
+                                 raw_operation[:amount_last_digit])
+
           operations << {
             date: format_date(raw_operation[:date]),
             value_date: format_date(raw_operation[:value_date]),
-            amount: format_amount(raw_operation[:amount], raw_operation[:operation_code], raw_operation[:decimals_count]),
+            amount: amount,
             currency: raw_operation[:currency],
             long_label: format_label(raw_operation[:label]),
             short_label: format_label(raw_operation[:label]),
