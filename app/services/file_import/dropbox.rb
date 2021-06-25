@@ -8,6 +8,7 @@ class FileImport::Dropbox
                   file_size_is_too_big: 'fichier trop volumineux',
                   pages_number_is_too_high: 'nombre de page trop important',
                   file_is_corrupted_or_protected: 'Votre document est en-cours de traitement',
+                  real_corrupted_document: 'fichier corrompu ou protégé par mdp',
                   unprocessable: 'erreur fichier non valide pour iDocus'
                 }.freeze
 
@@ -264,13 +265,16 @@ class FileImport::Dropbox
 
                 uploader = collaborator_code.present? ? user.memberships.find_by_code(collaborator_code) : user
 
-                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, uploader, 'dropbox')
-                if uploaded_document.valid?
+                corrupted_document_state = PdfIntegrator.verify_corruption(file.path)
+
+                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, uploader, 'dropbox') if corrupted_document_state.to_s == 'continu'
+                if corrupted_document_state.to_s == 'uploaded' || uploaded_document.try(:valid?)
                   System::Log.info('processing', "[Dropbox Import][#{uploader.code}][SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
                   client.delete file_path
                 else
                   System::Log.info('processing', "[Dropbox Import][#{uploader.code}][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
-                  mark_file_error(path, file_name, uploaded_document.errors)
+                  error = (corrupted_document_state.to_s == 'rejected') ? [[:real_corrupted_document]] : uploaded_document.errors
+                  mark_file_error(path, file_name, error)
                 end
               end
             end
@@ -289,7 +293,8 @@ class FileImport::Dropbox
       error_message = ERROR_LISTS[err[0].to_sym] if ERROR_LISTS[err[0].to_sym].present?
     end
 
-    basename = File.basename(file_name, '.*')
+
+    basename = File.basename(file_name, '.*').gsub(/\(#{ERROR_LISTS[:file_is_corrupted_or_protected]}\)/, '').strip
 
     return false if basename =~ /#{error_message}/i
 
@@ -353,6 +358,8 @@ class FileImport::Dropbox
 
   def valid_file_name(file_name)
     ERROR_LISTS.each do |pattern|
+      next if pattern.last =~ /#{ERROR_LISTS[:file_is_corrupted_or_protected]}/i
+
       return false if file_name =~ /#{pattern.last}/i
     end
     return true

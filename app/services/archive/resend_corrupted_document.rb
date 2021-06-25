@@ -37,7 +37,7 @@ class Archive::ResendCorruptedDocument
 
     errors = uploaded_document.errors
 
-    if errors.any?
+    if errors.any? && !uploaded_document.already_exist?
       document.error_message = uploaded_document.full_error_messages
       document.save
 
@@ -50,5 +50,5 @@ class Archive::ResendCorruptedDocument
     else
       document.uploaded
     end
-  end  
+  end
 end

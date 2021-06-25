@@ -1,4 +1,18 @@
 class PdfIntegrator
+  def self.verify_corruption(file_path)
+    fingerprint = DocumentTools.checksum(file_path)
+
+    corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first
+
+    if corrupted_doc.rejected?
+      'rejected'
+    elsif corrupted_doc.uploaded?
+      'uploaded'
+    else
+      'continu'
+    end
+  end
+
   def initialize(file, file_path, api='')
     origin_file_path = file.path
     dest_file_path   = file_path

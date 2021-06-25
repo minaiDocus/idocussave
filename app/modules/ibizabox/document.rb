@@ -31,6 +31,15 @@ class Ibizabox::Document
         }
         @temp_document = AddTempDocumentToTempPack.execute(temp_pack, @processed_file, options)
         @folder.temp_documents << @temp_document
+      else
+        if corrupted?
+          corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
+
+          if not corrupted_doc.presisted?
+            corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: 'Votre document est en-cours de traitement', params: { original_file_name: File.basename(@file), uploader: @user, api_name:  'ibiza', journal: @journal.name, prev_period_offset: @prev_period_offset, analytic: nil, api_id: document_id }})
+            corrupted_doc.save
+          end
+        end
       end
     end
   end
@@ -46,7 +55,11 @@ class Ibizabox::Document
 private
 
   def valid?
-    @valid ||= unique? && valid_extension? && valid_pages_number? && valid_file_size? && DocumentTools.modifiable?(@processed_file.path)
+    @valid ||= unique? && valid_extension? && valid_pages_number? && valid_file_size? && corrupted?
+  end
+
+  def corrupted?
+    @corrupted ||= DocumentTools.modifiable?(@processed_file.path)
   end
 
   def unique?
