@@ -738,7 +738,7 @@
                     %td
                       - if File.exist? File.join(Rails.root, 'files', 'kit', "#{@organization.code.downcase}_workshop_labels.pdf")
                         = link_to "#{@organization.code.downcase}_workshop_labels.pdf", workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank', class: 'file_sending_kit_path'
-                = link_to t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary' if current_user.is_developer || !CustomUtils.is_manual_paper_set_order?(@organization)
+                = link_to t('actions.edit'), edit_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
                 = link_to 'Générer', select_account_organization_file_sending_kit_path(@organization), class: 'btn btn-primary'
             #reminder_emails.clearfix.tab-pane.fade{ class: ('active show' if params[:tab] == 'reminder_emails') }
               %p Configurez ici un nouvel e-mail de rappel qui sera envoyé à vos clients afin qu'ils n'oublient pas d'envoyer leurs documents.

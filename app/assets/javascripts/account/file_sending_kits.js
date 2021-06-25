@@ -1,6 +1,6 @@
 
 function appliedManualPaperSetOrder(){
-  setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').click() }, 1000);
+
   $('#loadingPage').addClass('hide');
 
   var elements = $('tbody#fsk_paper_set_orders tr')
@@ -23,14 +23,18 @@ function appliedManualPaperSetOrder(){
           paper_set_folder_count = parseInt($(element).find("#fsk_order_paper_set_folder_count").val());
           price = paper_set_folder_count * (period + 1);
         }
+
+        $(element).find('#fsk_order_paper_set_price').html(price + ",00€")
       }
-      else price = 0;
+      else
+      {
+        price = 0;
+        $(element).find('#fsk_order_paper_set_price').html('<span class="alert alert-danger">Interval de date invalide</span>');
+      }
 
       if ($(element).find('input.fsk_user_checked').is(':checked')){
         total_price += price
       }
-
-      $(element).find('#fsk_order_paper_set_price').html(price + ",00€")
     });
 
     $('.fsk_total_price').html(total_price + ",00€ HT")
@@ -71,7 +75,7 @@ function generateManualPaperSetOrder(){
         $("#generate-manual-paper-set-order").removeAttr("disabled");
         $(".canceling-manual-order").removeAttr("disabled");
 
-        setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').click() }, 1000);
+        //setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').click() }, 1000);
       },
       error: function(data){
         $(".manual-paper-set-loading-content").remove();
@@ -96,12 +100,12 @@ jQuery(function () {
   })
 
   $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').on('click',  function(e) {
-    e.preventDefault();
-    var url    = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('href');
-    var target = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('target');
-    window.open(url, target);
-    window.location.href = url;
-    // setTimeout(function(){ location.reload() }, 500);
+    // e.preventDefault();
+    // var url    = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('href');
+    // var target = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('target');
+    // window.open(url, target);
+    // window.location.href = url;
+    location.reload();
   })
   appliedManualPaperSetOrder();
 
