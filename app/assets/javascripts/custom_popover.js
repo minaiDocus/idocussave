@@ -60,7 +60,6 @@ function hidePopover() {
 
 
 jQuery(function () {
-  console.log('test');
   $.fn.custom_popover = function() {
     this.unbind('mouseenter.customPopover');
     this.bind('mouseenter.customPopover', function(e) {

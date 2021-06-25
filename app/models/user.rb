@@ -262,12 +262,20 @@ class User < ApplicationRecord
   end
 
   def paper_return_address
-    addresses.for_paper_return.first
+    if CustomUtils.is_manual_paper_set_order?(organization)
+      addresses.for_paper_return.first || organization.paper_return_address
+    else
+      addresses.for_paper_return.first
+    end
   end
 
 
   def paper_set_shipping_address
-    addresses.for_paper_set_shipping.first
+    if CustomUtils.is_manual_paper_set_order?(organization)
+      addresses.for_paper_set_shipping.first || organization.paper_set_shipping_address
+    else
+      addresses.for_paper_set_shipping.first
+    end
   end
 
 

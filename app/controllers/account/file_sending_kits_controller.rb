@@ -67,7 +67,35 @@ class Account::FileSendingKitsController < Account::OrganizationController
   # POST /account/organizations/:organization_id/file_sending_kit/generate
   def generate
     without_shipping_address = []
-    clients_data = []
+    clients_data             = []
+    manual_paper_set_order   = CustomUtils.is_manual_paper_set_order?(@organization)
+
+    if manual_paper_set_order
+      orders = []
+      if params[:orders].any?
+        params[:orders].each do |param_order|
+          order_attributes           = param_order.permit(:user_id, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
+          value = begin
+                    params[:users][order_attributes[:user_id].to_s][:is_checked]
+                  rescue StandardError
+                    nil
+                  end
+          next unless value == 'true'
+
+          next if Order.where(order_attributes).first
+
+          order                      = Order.new(order_attributes)
+          order.type                 = 'paper_set'
+          order.address              = order.user.paper_set_shipping_address.try(:dup)
+          order.paper_return_address = order.user.paper_return_address.try(:dup)
+          order.address_required     = false
+          orders << order unless Order::PaperSet.new(order.user, order).execute
+        end
+      end
+
+      flash[:success] = 'Vos commandes de Kit envoi courrier ont été prises en comptes'
+    end
+
     @file_sending_kit.organization.customers.active.order(code: :asc).each do |client|
       value = begin
                 params[:users][client.id.to_s][:is_checked]
@@ -77,9 +105,18 @@ class Account::FileSendingKitsController < Account::OrganizationController
       next unless value == 'true'
 
       unless client.paper_set_shipping_address && client.paper_return_address
-        without_shipping_address << client
+        without_shipping_address << client if !manual_paper_set_order
       end
-      clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
+
+      client.reload
+
+      if client.orders.size > 0 && !client.orders.last.normal_paper_set_order?
+        order = client.orders.last
+        clients_data << { user: client, start_month: order.periods_offset_start, offset_month: order.periods_count }
+      else
+        clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
+      end
+
     end
 
     error_logo = []
@@ -111,7 +148,13 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
       flash[:error] = errors.join(' ') if errors.any?
     end
-    redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
+
+    if manual_paper_set_order
+      render json: {messahe: 'OK'}, status: 200
+      # redirect_to folders_account_organization_file_sending_kit_path(@organization)
+    else
+      redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
+    end
   end
 
   # GET /account/organizations/:organization_id/file_sending_kit/folders

@@ -125,7 +125,9 @@
       = javascript_include_tag 'account/addresses'
     - elsif controller_name.in?(%w(invoices))
       = javascript_include_tag 'account/invoices'
-    - elsif not controller_name.in?(%w(rights collaborators organization_addresses vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_sending_kits file_storage_authorizations use_csv_descriptors list_journals account_sharing_groups guest_collaborators mcf_settings sftps))
+    - elsif controller_name.in?(%w(file_sending_kits))
+      = javascript_include_tag 'account/file_sending_kits'
+    - elsif not controller_name.in?(%w(rights collaborators organization_addresses vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_storage_authorizations use_csv_descriptors list_journals account_sharing_groups guest_collaborators mcf_settings sftps))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'
