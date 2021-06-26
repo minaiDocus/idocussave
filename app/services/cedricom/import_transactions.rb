@@ -234,6 +234,7 @@ module Cedricom
       operation.value_date   = cedricom_operation[:value_date]
       operation.organization = bank_account.user.organization
       operation.bank_account = bank_account
+      operation.cedricom_reception = @reception
       operation.currency = case cedricom_operation[:currency_code]
                             when 'EUR'
                               @operation.currency = { id: 'EUR', symbol: '€', prefix: false, crypto: false, precision: 2, marketcap: nil, datetime: nil, name: 'Euro'}
@@ -248,6 +249,12 @@ module Cedricom
                             end
 
       operation.save!
+
+      if operation.persisted?
+        operation.update(api_id: operation.id)
+      end
+
+      operation
     end
 
     def save_operations(operations)
