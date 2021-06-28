@@ -4,9 +4,9 @@ class PdfIntegrator
 
     corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first
 
-    if corrupted_doc.rejected?
+    if corrupted_doc.try(:rejected?)
       'rejected'
-    elsif corrupted_doc.uploaded?
+    elsif corrupted_doc.try(:uploaded?)
       'uploaded'
     else
       'continu'

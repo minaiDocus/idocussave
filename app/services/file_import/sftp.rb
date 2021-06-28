@@ -386,7 +386,7 @@ class FileImport::Sftp
               System::Log.info('processing', "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}")
               client.remove! file_path
             else
-              System::Log.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.errors.last[0].to_s}] #{file_path}")
+              System::Log.info('processing', "#{log_prefix}[INVALID][#{uploaded_document.try(:errors).try(:last).try(:[], 0).to_s}] #{file_path}")
               error = (corrupted_document_state.to_s == 'rejected') ? [[:real_corrupted_document]] : uploaded_document.errors
               mark_file_error(item.path, file_name, error)
             end
