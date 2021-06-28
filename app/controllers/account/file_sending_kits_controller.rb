@@ -66,95 +66,102 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/file_sending_kit/generate
   def generate
-    without_shipping_address = []
-    clients_data             = []
-    manual_paper_set_order   = CustomUtils.is_manual_paper_set_order?(@organization)
+    begin
+      #Timeout : 10 minutes
+      Timeout::timeout (60*10) do
+        without_shipping_address = []
+        clients_data             = []
+        manual_paper_set_order   = CustomUtils.is_manual_paper_set_order?(@organization)
 
-    current_order = {}
+        current_order = {}
 
-    if manual_paper_set_order
-      orders = []
-      if params[:orders].any?
-        params[:orders].each do |param_order|
-          order_attributes           = param_order.permit(:user_id, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
+        if manual_paper_set_order
+          orders = []
+          if params[:orders].any?
+            params[:orders].each do |param_order|
+              order_attributes           = param_order.permit(:user_id, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
+              value = begin
+                        params[:users][order_attributes[:user_id].to_s][:is_checked]
+                      rescue StandardError
+                        nil
+                      end
+              next unless value == 'true'
+
+              order                      = Order.where(order_attributes).first || Order.new(order_attributes)
+              order.type                 = 'paper_set'
+              order.address              = order.user.paper_set_shipping_address.is_a?(Address) ? order.user.paper_set_shipping_address.try(:dup) : nil
+              order.paper_return_address = order.user.paper_return_address.is_a?(Address) ? order.user.paper_return_address.try(:dup) : nil
+              order.address_required     = false
+              orders << order unless Order::PaperSet.new(order.user, order, order.persisted?).execute
+
+              current_order[order_attributes[:user_id].to_s] = order.reload
+            end
+          end
+        end
+
+        @file_sending_kit.organization.customers.active.order(code: :asc).each do |client|
           value = begin
-                    params[:users][order_attributes[:user_id].to_s][:is_checked]
+                    params[:users][client.id.to_s][:is_checked]
                   rescue StandardError
                     nil
                   end
           next unless value == 'true'
 
-          order                      = Order.where(order_attributes).first || Order.new(order_attributes)
-          order.type                 = 'paper_set'
-          order.address              = order.user.paper_set_shipping_address.is_a?(Address) ? order.user.paper_set_shipping_address.try(:dup) : nil
-          order.paper_return_address = order.user.paper_return_address.is_a?(Address) ? order.user.paper_return_address.try(:dup) : nil
-          order.address_required     = false
-          orders << order unless Order::PaperSet.new(order.user, order, order.persisted?).execute
+          unless client.paper_set_shipping_address && client.paper_return_address
+            without_shipping_address << client if !manual_paper_set_order
+          end
 
-          current_order[order_attributes[:user_id].to_s] = order.reload
+          client.reload
+
+          current_order[client.id.to_s] ||= client.orders.paper_sets.order(updated_at: :desc).first
+
+          if client.orders.paper_sets.size > 0 && !current_order[client.id.to_s].try(:normal_paper_set_order?)
+            clients_data << { user: client, start_month: current_order[client.id.to_s].periods_offset_start, offset_month: current_order[client.id.to_s].periods_count }
+          else
+            clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
+          end
+
+        end
+
+        error_logo = []
+        unless File.exist?(@file_sending_kit.real_logo_path)
+          error_logo << 'Logo central introuvable.</br>'
+        end
+        unless File.exist?(@file_sending_kit.real_left_logo_path)
+          error_logo << 'Logo gauche introuvable.</br>'
+        end
+        unless File.exist?(@file_sending_kit.real_right_logo_path)
+          error_logo << 'Logo droite introuvable.</br>'
+        end
+
+        if without_shipping_address.count == 0 && error_logo.empty?
+          Order::FileSendingKitGenerator.generate clients_data, @file_sending_kit, @organization.code.downcase, (params[:one_workshop_labels_page_per_customer] == '1')
+          flash[:notice] = 'Généré avec succès.'
+        else
+          errors = []
+          if without_shipping_address.count != 0
+            errors << "Les clients suivants n'ont pas d'adresse de livraison et/ou du kit :"
+            without_shipping_address.each do |client|
+              errors << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
+            end
+          end
+          if error_logo.any?
+            errors << '</br></br>' if without_shipping_address.count != 0
+            errors << error_logo.join(' ')
+          end
+
+          flash[:error] = errors.join(' ') if errors.any?
+        end
+
+        if manual_paper_set_order
+          render json: {messahe: 'OK'}, status: 200
+          # redirect_to folders_account_organization_file_sending_kit_path(@organization)
+        else
+          redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
         end
       end
-    end
-
-    @file_sending_kit.organization.customers.active.order(code: :asc).each do |client|
-      value = begin
-                params[:users][client.id.to_s][:is_checked]
-              rescue StandardError
-                nil
-              end
-      next unless value == 'true'
-
-      unless client.paper_set_shipping_address && client.paper_return_address
-        without_shipping_address << client if !manual_paper_set_order
-      end
-
-      client.reload
-
-      current_order[client.id.to_s] ||= client.orders.paper_sets.order(updated_at: :desc).first
-
-      if client.orders.paper_sets.size > 0 && !current_order[client.id.to_s].try(:normal_paper_set_order?)
-        clients_data << { user: client, start_month: current_order[client.id.to_s].periods_offset_start, offset_month: current_order[client.id.to_s].periods_count }
-      else
-        clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
-      end
-
-    end
-
-    error_logo = []
-    unless File.exist?(@file_sending_kit.real_logo_path)
-      error_logo << 'Logo central introuvable.</br>'
-    end
-    unless File.exist?(@file_sending_kit.real_left_logo_path)
-      error_logo << 'Logo gauche introuvable.</br>'
-    end
-    unless File.exist?(@file_sending_kit.real_right_logo_path)
-      error_logo << 'Logo droite introuvable.</br>'
-    end
-
-    if without_shipping_address.count == 0 && error_logo.empty?
-      Order::FileSendingKitGenerator.generate clients_data, @file_sending_kit, @organization.code.downcase, (params[:one_workshop_labels_page_per_customer] == '1')
-      flash[:notice] = 'Généré avec succès.'
-    else
-      errors = []
-      if without_shipping_address.count != 0
-        errors << "Les clients suivants n'ont pas d'adresse de livraison et/ou du kit :"
-        without_shipping_address.each do |client|
-          errors << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
-        end
-      end
-      if error_logo.any?
-        errors << '</br></br>' if without_shipping_address.count != 0
-        errors << error_logo.join(' ')
-      end
-
-      flash[:error] = errors.join(' ') if errors.any?
-    end
-
-    if manual_paper_set_order
-      render json: {messahe: 'OK'}, status: 200
-      # redirect_to folders_account_organization_file_sending_kit_path(@organization)
-    else
-      redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
+    rescue Timeout::Error
+      render body: 'Requete trop volumineux, Veuillez réduire votre sélection svp ...', status: 603
     end
   end
 

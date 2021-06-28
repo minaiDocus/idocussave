@@ -85,11 +85,14 @@ function generateManualPaperSetOrder(){
       },
       error: function(data){
         console.error(data);
+        var message = 'Une erreur a été rencontré lors de la régénération de votre commande ... veuillez réessayer svp'
+        if(data.status == '603')
+          message = data.responseText
         $(".manual-paper-set-loading-content").remove();
         $('#loadingPage').addClass('hide');
         $('#download-manual-paper-set-order .pending-generation').remove();
         $('#download-manual-paper-set-order .success-generation').remove();
-        $('#download-manual-paper-set-order').append('<span class="alert alert-danger show-notify-content blink error-generation">Une erreur a rencontré lors de la régénération de votre commande ... veuillez réessayer svp<span/>');
+        $('#download-manual-paper-set-order').append('<span class="alert alert-danger show-notify-content error-generation">' + message + '<span/>');
         $("#generate-manual-paper-set-order").attr("disabled","disabled");
         $("#generate-manual-paper-set-order").removeAttr("disabled");
         $(".canceling-manual-order").removeAttr("disabled");
