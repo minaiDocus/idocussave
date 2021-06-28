@@ -36,7 +36,9 @@
           - order_active_customers.each do |client|
             - if client&.subscription&.current_period&.is_active?(:mail_option)
               - if manual_paper_set_order
-                - order = Order.new(user: client, type: 'paper_set', period_duration: (client.subscription.present? ? client.subscription.period_duration : 1))
+                - current_order = client.orders.paper_sets.order(updated_at: :desc).first
+                - next_month_order = (Time.now + 1.month).beginning_of_month.strftime("%Y-%m-%d")
+                - order = current_order || Order.new(user: client, type: 'paper_set', period_duration: (client.subscription.present? ? client.subscription.period_duration : 1))
                 %tr
                   %td{style: 'width: 66px'}= check_box_tag "users[#{client.id}][is_checked]", "true", (params[:order_customer_id].present? ? true : false), class: "fsk_user_checked"
                   %td
@@ -48,8 +50,8 @@
                     = hidden_field_tag("orders[][manual_paper_set_order]", manual_paper_set_order, {id: 'fsk_manual_paper_set_order', data: {id: @organization.id}})
                     = hidden_field_tag("orders[][order_period_duration]", (client.subscription.present? ? client.subscription.period_duration : 1), {id: 'fsk_order_period_duration'})
                     = hidden_field_tag("orders[][paper_set_folder_count]", client.account_book_types.size, {id: 'fsk_order_paper_set_folder_count'})
-                  %td= select_tag "orders[][paper_set_start_date]", options_for_select(paper_set_start_date_options(order)), include_blank: false, class: "form-control select optional date_order start_date", id: 'fsk_orders_paper_set_start_date'
-                  %td= select_tag "orders[][paper_set_end_date]", options_for_select(paper_set_end_date_options(order)), include_blank: false, class: "form-control select optional date_order end_date", id: 'fsk_orders_paper_set_end_date'
+                  %td= select_tag "orders[][paper_set_start_date]", options_for_select(paper_set_start_date_options(order), current_order ? current_order.paper_set_start_date : next_month_order), include_blank: false, class: "form-control select optional date_order start_date", id: 'fsk_orders_paper_set_start_date'
+                  %td= select_tag "orders[][paper_set_end_date]", options_for_select(paper_set_end_date_options(order), current_order ? current_order.paper_set_end_date : next_month_order), include_blank: false, class: "form-control select optional date_order end_date", id: 'fsk_orders_paper_set_end_date'
                   %td.hide.price{ style: 'font-size:15px;text-align: left !important;' , id: 'fsk_order_paper_set_price'}
               - else
                 %tr
