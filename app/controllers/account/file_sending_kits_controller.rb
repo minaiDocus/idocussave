@@ -94,8 +94,6 @@ class Account::FileSendingKitsController < Account::OrganizationController
           current_order[order_attributes[:user_id].to_s] = order.reload
         end
       end
-
-      flash[:success] = 'Vos commandes de Kit envoi courrier ont été prises en comptes'
     end
 
     @file_sending_kit.organization.customers.active.order(code: :asc).each do |client|
@@ -183,7 +181,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   private
 
   def verify_rights
-    unless @user.is_admin || (CustomUtils.is_manual_paper_set_order?(@organization) && @user.orders.size > 0)
+    unless @user.is_admin || CustomUtils.is_manual_paper_set_order?(@organization)
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
@@ -195,11 +193,18 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
   def send_pdf(filename)
     filename = "#{@organization.code.downcase}_#{filename}"
-    filepath = File.join([Rails.root, 'files', 'kit', filename])
+    filepath = (Rails.env == 'production')? "/nfs/kits/#{filename}" : File.join([Rails.root, 'files', 'kit', filename])
+
     if File.file? filepath
-      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
+      # send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
+
+      file = File.open(filepath, "rb")
+      contents = file.read
+      file.close
+
+      send_data(contents, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      render body: nil, status: 404
+      render body: 'Aucun fichier généré', status: 200
     end
   end
 

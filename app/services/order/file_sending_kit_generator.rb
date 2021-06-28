@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Order::FileSendingKitGenerator
-  TEMPDIR_PATH = "#{Rails.root}/files/kit/"
+  TEMPDIR_PATH = (Rails.env == 'production')? "/nfs/kits/" : "#{Rails.root}/files/kit/"
 
   class << self
     def generate(clients_data, file_sending_kit, organization_code, one_workshop_labels_page_per_customer=false)

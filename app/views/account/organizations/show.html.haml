@@ -76,16 +76,16 @@
                       .float-left Autre (format d'export .csv)
                       - if @organization.try(:csv_descriptor).try(:used?)
                         = glyphicon('check', { class: 'float-right' })
-            - if (@user.leader? && !@organization.specific_mission) || CustomUtils.is_manual_paper_set_order?(@organization)
+            - if (@user.leader? && !@organization.specific_mission)
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'payments') ? 'active' : ''}", href: '#payments', data: { toggle: 'tab' } } Mode de paiement
+            - if CustomUtils.is_manual_paper_set_order?(@organization) && @user.is_prescriber
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: select_account_organization_file_sending_kit_path(@organization) } Kit d'envoi de numérisation
+            - elsif @user.is_admin && !@organization.specific_mission
+              %li.nav-item
+                %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
             - if @user.is_admin && !@organization.specific_mission
-              - if CustomUtils.is_manual_paper_set_order?(@organization)
-                %li.nav-item
-                  %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: select_account_organization_file_sending_kit_path(@organization) } Kit d'envoi de documents
-              - else
-                %li.nav-item
-                  %a{ class: "nav-link #{(params[:tab] == 'file_sending_kit') ? 'active' : ''}", href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
               %li.nav-item
                 %a{ class: "nav-link #{(params[:tab] == 'subscription') ? 'active' : ''}", href: '#subscription', data: { toggle: 'tab' } } Abonnement
 

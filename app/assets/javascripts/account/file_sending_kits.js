@@ -24,12 +24,14 @@ function appliedManualPaperSetOrder(){
           price = paper_set_folder_count * (period + 1);
         }
 
-        $(element).find('#fsk_order_paper_set_price').html(price + ",00€")
+        // $(element).find('#fsk_order_paper_set_price').html(price + ",00€")
+        $(element).find('#fsk_order_paper_set_price').html("0,00€");
+        $(element).find('span.error_info').html('');
       }
       else
       {
         price = 0;
-        $(element).find('#fsk_order_paper_set_price').html('<span class="alert alert-danger">Interval de date invalide</span>');
+        $(element).find('span.error_info').html('<span class="alert alert-danger">Interval de date invalide</span>');
       }
 
       if ($(element).find('input.fsk_user_checked').is(':checked')){
@@ -37,7 +39,8 @@ function appliedManualPaperSetOrder(){
       }
     });
 
-    $('.fsk_total_price').html(total_price + ",00€ HT")
+    // $('.fsk_total_price').html(total_price + ",00€ HT")
+    $('.fsk_total_price').html("0,00€ HT")
   }
 
   if ($('form.fsk_paper_set_orders').length > 0){
@@ -63,6 +66,7 @@ function generateManualPaperSetOrder(){
         $('#download-manual-paper-set-order .download-manual-paper-set-order-folder-pdf').hide();
         $('#download-manual-paper-set-order .pending-generation').remove();
         $('#download-manual-paper-set-order .error-generation').remove();
+        $('#download-manual-paper-set-order .success-generation').remove();
         $('#download-manual-paper-set-order').append('<span class="alert alert-info show-notify-content blink pending-generation">Génération de fichier de commande en cours ... veuillez patienter svp<span/>');
         $(".canceling-manual-order").attr("disabled","disabled");
         $("#generate-manual-paper-set-order").attr("disabled","disabled");
@@ -72,18 +76,19 @@ function generateManualPaperSetOrder(){
         $(".manual-paper-set-loading-content").remove();
         $('#loadingPage').addClass('hide');
         $('#download-manual-paper-set-order .show-notify-content').hide('fade', 100);
-        $('#download-manual-paper-set-order .generated-success').append('<span class="alert alert-success show-content">Votre fichier de commande a bien été généré =><span/>')
+        $('#download-manual-paper-set-order .generated-success').append('<span class="alert alert-success show-content success-generation">Votre fichier de commande a bien été généré =><span/>')
         $('#download-manual-paper-set-order .download-manual-paper-set-order-folder-pdf').show();
         $("#generate-manual-paper-set-order").removeAttr("disabled");
         $(".canceling-manual-order").removeAttr("disabled");
 
-        //setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').click() }, 1000);
+        // setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').trigger('click') }, 1000);
       },
       error: function(data){
         console.error(data);
         $(".manual-paper-set-loading-content").remove();
         $('#loadingPage').addClass('hide');
         $('#download-manual-paper-set-order .pending-generation').remove();
+        $('#download-manual-paper-set-order .success-generation').remove();
         $('#download-manual-paper-set-order').append('<span class="alert alert-danger show-notify-content blink error-generation">Une erreur a rencontré lors de la régénération de votre commande ... veuillez réessayer svp<span/>');
         $("#generate-manual-paper-set-order").attr("disabled","disabled");
         $("#generate-manual-paper-set-order").removeAttr("disabled");
@@ -103,14 +108,15 @@ jQuery(function () {
     appliedManualPaperSetOrder();
   })
 
-  $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').on('click',  function(e) {
-    // e.preventDefault();
-    // var url    = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('href');
-    // var target = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('target');
-    // window.open(url, target);
-    // window.location.href = url;
-    location.reload();
-  })
+  // $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').on('click',  function(e) {
+  //   // e.preventDefault();
+  //   // var url    = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('href');
+  //   // var target = $("#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf").attr('target');
+  //   // window.open(url, target);
+  //   // window.location.href = url;
+  //   location.reload();
+  // })
+
   appliedManualPaperSetOrder();
 
   generateManualPaperSetOrder();

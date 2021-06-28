@@ -136,7 +136,7 @@ class Order::PaperSet
         price_of_periods
       end
     else # When organization applied manuel paper set order
-      @order.paper_set_folder_count * periods_count
+      (@order.paper_set_folder_count * periods_count) * 0 #No price for manual kit generation
     end
   end
 
