@@ -263,7 +263,7 @@ class User < ApplicationRecord
 
   def paper_return_address
     if CustomUtils.is_manual_paper_set_order?(organization)
-      addresses.for_paper_return.first || organization.paper_return_address
+      addresses.for_paper_return.first || organization.paper_return_address || get_fake_address
     else
       addresses.for_paper_return.first
     end
@@ -272,7 +272,7 @@ class User < ApplicationRecord
 
   def paper_set_shipping_address
     if CustomUtils.is_manual_paper_set_order?(organization)
-      addresses.for_paper_set_shipping.first || organization.paper_set_shipping_address
+      addresses.for_paper_set_shipping.first || organization.paper_set_shipping_address || get_fake_address
     else
       addresses.for_paper_set_shipping.first
     end
@@ -376,5 +376,12 @@ class User < ApplicationRecord
         errors.add(:group_ids, :invalid)
       end
     end
+  end
+
+  def get_fake_address
+    addr = FakeObject.new
+    addr.company = addr.last_name = addr.first_name = addr.address_1 = addr.zip = addr.city = '-'
+
+    addr
   end
 end

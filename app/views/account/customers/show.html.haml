@@ -240,7 +240,7 @@
                 = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' }), class: 'btn btn-primary'
               - if @customer.subscription.is_package?('mail_option')
                 - if CustomUtils.is_manual_paper_set_order?(@organization)
-                  = link_to 'Générer un kit courrier', select_account_organization_file_sending_kit_path(@organization, order_customer_id: @customer.id), class: 'btn btn-primary'
+                  = link_to 'Générer un kit de numérisation', select_account_organization_file_sending_kit_path(@organization, order_customer_id: @customer.id), class: 'btn btn-primary'
                 - else
                   = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary'
             - if @customer.options.is_upload_authorized

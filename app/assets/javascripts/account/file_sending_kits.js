@@ -61,7 +61,9 @@ function generateManualPaperSetOrder(){
       type: "POST",
       beforeSend: function() {
         $('#download-manual-paper-set-order .download-manual-paper-set-order-folder-pdf').hide();
-        $('#download-manual-paper-set-order').append('<span class="alert alert-info show-notify-content blink">Génération de fichier de commande en cours ... veuillez patienter svp<span/>');
+        $('#download-manual-paper-set-order .pending-generation').remove();
+        $('#download-manual-paper-set-order .error-generation').remove();
+        $('#download-manual-paper-set-order').append('<span class="alert alert-info show-notify-content blink pending-generation">Génération de fichier de commande en cours ... veuillez patienter svp<span/>');
         $(".canceling-manual-order").attr("disabled","disabled");
         $("#generate-manual-paper-set-order").attr("disabled","disabled");
         $('#loadingPage').removeClass('hide')
@@ -70,7 +72,7 @@ function generateManualPaperSetOrder(){
         $(".manual-paper-set-loading-content").remove();
         $('#loadingPage').addClass('hide');
         $('#download-manual-paper-set-order .show-notify-content').hide('fade', 100);
-        $('#download-manual-paper-set-order .generated-success').append('<span class="alert alert-success show-content">Votre fichier de commande a été bien généré =><span/>')
+        $('#download-manual-paper-set-order .generated-success').append('<span class="alert alert-success show-content">Votre fichier de commande a bien été généré =><span/>')
         $('#download-manual-paper-set-order .download-manual-paper-set-order-folder-pdf').show();
         $("#generate-manual-paper-set-order").removeAttr("disabled");
         $(".canceling-manual-order").removeAttr("disabled");
@@ -78,9 +80,11 @@ function generateManualPaperSetOrder(){
         //setTimeout(function(){ $('#download-manual-paper-set-order a.download-manual-paper-set-order-folder-pdf').click() }, 1000);
       },
       error: function(data){
+        console.error(data);
         $(".manual-paper-set-loading-content").remove();
         $('#loadingPage').addClass('hide');
-        $('#download-manual-paper-set-order').append('<span class="alert alert-danger show-notify-content blink">Une erreur a rencontré lors de la régénération de votre commande ... veuillez réessayer svp<span/>');
+        $('#download-manual-paper-set-order .pending-generation').remove();
+        $('#download-manual-paper-set-order').append('<span class="alert alert-danger show-notify-content blink error-generation">Une erreur a rencontré lors de la régénération de votre commande ... veuillez réessayer svp<span/>');
         $("#generate-manual-paper-set-order").attr("disabled","disabled");
         $("#generate-manual-paper-set-order").removeAttr("disabled");
         $(".canceling-manual-order").removeAttr("disabled");

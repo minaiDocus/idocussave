@@ -70,6 +70,8 @@ class Account::FileSendingKitsController < Account::OrganizationController
     clients_data             = []
     manual_paper_set_order   = CustomUtils.is_manual_paper_set_order?(@organization)
 
+    current_order = {}
+
     if manual_paper_set_order
       orders = []
       if params[:orders].any?
@@ -82,14 +84,14 @@ class Account::FileSendingKitsController < Account::OrganizationController
                   end
           next unless value == 'true'
 
-          next if Order.where(order_attributes).first
-
-          order                      = Order.new(order_attributes)
+          order                      = Order.where(order_attributes).first || Order.new(order_attributes)
           order.type                 = 'paper_set'
-          order.address              = order.user.paper_set_shipping_address.try(:dup)
-          order.paper_return_address = order.user.paper_return_address.try(:dup)
+          order.address              = order.user.paper_set_shipping_address.is_a?(Address) ? order.user.paper_set_shipping_address.try(:dup) : nil
+          order.paper_return_address = order.user.paper_return_address.is_a?(Address) ? order.user.paper_return_address.try(:dup) : nil
           order.address_required     = false
-          orders << order unless Order::PaperSet.new(order.user, order).execute
+          orders << order unless Order::PaperSet.new(order.user, order, order.persisted?).execute
+
+          current_order[order_attributes[:user_id].to_s] = order.reload
         end
       end
 
@@ -110,9 +112,10 @@ class Account::FileSendingKitsController < Account::OrganizationController
 
       client.reload
 
-      if client.orders.size > 0 && !client.orders.last.normal_paper_set_order?
-        order = client.orders.last
-        clients_data << { user: client, start_month: order.periods_offset_start, offset_month: order.periods_count }
+      current_order[client.id.to_s] ||= client.orders.paper_sets.order(updated_at: :desc).first
+
+      if client.orders.paper_sets.size > 0 && !current_order[client.id.to_s].try(:normal_paper_set_order?)
+        clients_data << { user: client, start_month: current_order[client.id.to_s].periods_offset_start, offset_month: current_order[client.id.to_s].periods_count }
       else
         clients_data << { user: client, start_month: params[:users][client.id.to_s][:start_month].to_i, offset_month: params[:users][client.id.to_s][:offset_month].to_i }
       end
