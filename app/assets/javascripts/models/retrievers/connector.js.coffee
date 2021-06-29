@@ -19,14 +19,16 @@ class Idocus.Models.Connector extends Backbone.Model
     $('#connector_fields #field_contact_field_first_name').val(contact.first_name || $('#contact_first_name').val() || '')
 
   contact_fields: ()->
+    self = this
     fields = [
                 { type: "text", name: "contact_field_society", label: "Nom de la société", class: 'contact_fields', value: '' },
                 { type: "text", name: "contact_field_name", label: "Nom du dirigeant", class: 'contact_fields', value: '' },
                 { type: "text", name: "contact_field_first_name", label: "Prénom du dirigeant", class: 'contact_fields', value: '' }
              ]
-    @common.fields_constructor(fields)
+    @common.fields_constructor(fields, self.is_disabled_fields())
 
   information_fields: ()->
+    self = this
     fields = @get('fields') || []
 
     ##Add field exception for Paypal API REST
@@ -37,9 +39,10 @@ class Idocus.Models.Connector extends Backbone.Model
       for f in fields
         Object.assign(f, f, {required: true})
 
-    @common.fields_constructor(fields)
+    @common.fields_constructor(fields, self.is_disabled_fields())
 
   basic_fields: ()->
+    self = this
     fields = [{ type: "text", name: "ido_custom_name", label: "Nom personnalisé", required: true, value: $('#retriever_custom_name').val() || @get('name') }]
     if @get('capabilities').includes('document')
       journals = [':']
@@ -51,7 +54,7 @@ class Idocus.Models.Connector extends Backbone.Model
         journal_options.push({value: j.split(':')[0], label: j.split(':')[1]})
 
       fields.push({ type: "list", name: "ido_journal", label: "Journal", required: true, values: journal_options, selected: $('#retriever_journal_id').val() || '' })
-    @common.fields_constructor(fields)
+    @common.fields_constructor(fields, self.is_disabled_fields())
 
   get_type: () ->
     capabilities = @get('capabilities')
@@ -63,3 +66,12 @@ class Idocus.Models.Connector extends Backbone.Model
       text.push("Documents (factures)")
 
     text.join(" et ")
+
+
+  is_disabled_fields: () ->
+    disabled = false
+
+    if window.location.pathname == '/account/retrievers/new' && @get('capabilities').includes('document')
+      disabled = true
+
+    disabled
