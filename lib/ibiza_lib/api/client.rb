@@ -128,7 +128,8 @@ module IbizaLib
 
           begin
             @original = connection.run_request(@method, url, @body, headers)
-          rescue
+          rescue => e
+            System::Log.info('ibiza', "[Ibiza][Error] - #{url.to_s} => #{e.to_s}")
             @original = OpenStruct.new({ headers: { 'Content-Type' => 'none' }, custom_error_message: 'can not establish connection' })
           end
 

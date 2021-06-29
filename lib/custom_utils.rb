@@ -95,7 +95,7 @@ class CustomUtils
       ### ADD ORGANIZATION CODE INTO ARRAY FOR MANUAL PAPER SET ORDER ###
       ### EXAMPLE: ["IDOC", 'ORGCODE1', "ORGCODE2"].include?(organization.code)
 
-      ["IDOC", "MCN"].include?(organization.code)
+      ["IDOC", "MCN", "CEN"].include?(organization.code)
     end
   end
 end

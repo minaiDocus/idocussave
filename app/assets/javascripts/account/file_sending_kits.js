@@ -46,10 +46,22 @@ function appliedManualPaperSetOrder(){
   if ($('form.fsk_paper_set_orders').length > 0){
     $("#fsk_all_users_checked").click(function(){
       $('input:checkbox.fsk_user_checked').not(this).prop('checked', this.checked);
+      checkGenerationButton();
     });
   }
+
+  checkGenerationButton();
 }
 
+
+function checkGenerationButton(){
+  $('#generate-manual-paper-set-order').prop('disabled', 'disabled');
+  $('input:checkbox.fsk_user_checked').each(function(e){
+    if( $(this).is(':checked') ){
+      $('#generate-manual-paper-set-order').removeAttr('disabled', 'disabled');
+    }
+  });
+}
 
 function generateManualPaperSetOrder(){
   $("#generate-manual-paper-set-order").click(function(e) {
