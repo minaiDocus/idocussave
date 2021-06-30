@@ -35,7 +35,7 @@
               %td= link_to @retriever_only_package_count, "#", class: 'do-showAccounts', title: "Automate uniquement", type: "retriever_only_package"
               %td= link_to @digitize_only_package_count, "#", class: 'do-showAccounts', title: "Numérisation uniquement", type: "digitize_only_package"
               %td= link_to @not_configured, "#", class: 'do-showAccounts', title: "Non configuré", type: "not_configured"
-              %td= @basic_package_count + @idox_package_count + @mini_package_count + @micro_package_count + @nano_package_count + @retriever_only_package_count + @not_configured
+              %td= @basic_package_count + @idox_package_count + @mini_package_count + @micro_package_count + @nano_package_count + @retriever_only_package_count + @not_configured + @digitize_only_package_count
               %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package"
               %td= link_to @digitize_package_count, "#", class: 'do-showAccounts', title: "Numériser", type: "digitize_package"
               %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package"

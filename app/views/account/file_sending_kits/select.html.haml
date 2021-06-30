@@ -34,7 +34,7 @@
         %tbody{id: ( manual_paper_set_order ? 'fsk_paper_set_orders' : '')}
           - order_active_customers = params[:order_customer_id].present? ? @organization.customers.active.where(id: params[:order_customer_id]) : @organization.customers.active.order(code: :asc)
           - order_active_customers.each do |client|
-            - if client&.subscription&.current_period&.is_active?(:mail_option)
+            - if client&.subscription&.current_period&.is_active?(:mail_option) || client&.subscription&.current_period&.is_active?(:digitize_option)
               - if manual_paper_set_order
                 - current_order = client.orders.paper_sets.order(updated_at: :desc).first
                 - next_month_order = (Time.now + 1.month).beginning_of_month.strftime("%Y-%m-%d")

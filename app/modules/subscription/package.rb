@@ -54,7 +54,7 @@ class Subscription::Package
         when :pre_assignment_option
           { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation", tooltip: "Etat de pré-saisie comptable"}
         when :digitize_option
-          { label: 'Numérisation pour kits', name: "digitize_package_subscription", group: "Numérisation", tooltip: "Options du kit d'envoi de numérisation"}
+          { label: "Génération de kit d'envoi de numérisation", name: "digitize_package_subscription", group: "Numérisation", tooltip: "Vous permet de générer vos kit d'envoi de numérisation gratuitement (0 €)"}
         else
           { label: '', name: '', group: '', tooltip: ''}
       end

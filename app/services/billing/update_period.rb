@@ -233,13 +233,10 @@ class Billing::UpdatePeriod
   end
 
   def order_options
-    order_paper_set_exist = false
     is_manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@period.user.organization)
 
     @period.orders.order(created_at: :asc).map do |order|
-      if is_manual_paper_set_order
-        next if order.paper_set? && order_paper_set_exist
-      end
+      next if order.paper_set? && is_manual_paper_set_order
 
       option      = ProductOptionOrder.new
       option.name = 'extra_option'
@@ -254,7 +251,7 @@ class Billing::UpdatePeriod
                                "iDo’Courrier - Autres"
                              end
 
-        option.title = is_manual_paper_set_order ? 'Génération de Kit de numérisation' : 'Commande de Kit envoi courrier'
+        option.title = 'Commande de Kit envoi courrier'
         order_paper_set_exist = true
       end
 
