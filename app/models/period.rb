@@ -259,6 +259,7 @@ class Period < ApplicationRecord
 
 
   def excess_sheets
+    return 0 if ( (self.subscription.user && self.subscription.is_package?('digitize_option')) || (self.subscription.organization && CustomUtils.is_manual_paper_set_order?(self.subscription.organization)) )
     excess_of(:scanned_sheets, :max_sheets_authorized)
   end
 

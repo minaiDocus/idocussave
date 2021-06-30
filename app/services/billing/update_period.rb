@@ -54,7 +54,7 @@ class Billing::UpdatePeriod
     if @subscription.organization
       _options = [extra_options, discount_options]
     else
-      _options = [base_options, journals_option, order_options, extra_options, bank_accounts_options, operation_options]
+      _options = [base_options, journals_option, order_options, extra_options, bank_accounts_options, operation_options, digitize_options]
     end
 
     _options.flatten.compact.each_with_index do |option, index|
@@ -354,5 +354,53 @@ class Billing::UpdatePeriod
     end
 
     billing_options
+  end
+
+  def digitize_options
+    # is_manual_paper_set_order = CustomUtils.is_manual_paper_set_order?(@period.user.organization)
+    digitize_option = []
+
+    if @period.subscription.is_package?('digitize_option')
+      option_infos = Subscription::Package.infos_of(:digitize_option)
+
+      scanned_sheets_size = @period.scanned_sheets
+
+      if scanned_sheets_size > 0
+        #### ------- Scanned sheet Option -------- ####
+        ss_option = ProductOptionOrder.new
+
+        ss_option.name        = 'scanned_sheets'
+        ss_option.group_title = option_infos[:group]
+
+        ss_option.title = "#{scanned_sheets_size} feuille(s) numérisé(s)"
+
+        ss_option.duration = 0
+        ss_option.quantity = scanned_sheets_size
+        ss_option.price_in_cents_wo_vat = scanned_sheets_size * 10.0
+
+        digitize_option << ss_option
+
+        #### --------- Pack size Option -------- ####
+        pack_names = @period.user.paper_processes.where('created_at >= ? and created_at <= ?', @period.start_date, @period.end_date).where(type: 'scan').select(:pack_name).distinct
+        pack_size  = pack_names.collect(&:pack_name).size
+
+        if pack_size > 0
+          ps_option = ProductOptionOrder.new
+
+          ps_option.name        = 'scanned_sheets'
+          ps_option.group_title = option_infos[:group]
+
+          ps_option.title = "#{pack_size} pochette(s) scannée(s)"
+
+          ps_option.duration = 0
+          ps_option.quantity = pack_size
+          ps_option.price_in_cents_wo_vat = pack_size * 100.0
+
+          digitize_option << ps_option
+        end
+      end
+    end
+
+    digitize_option
   end
 end

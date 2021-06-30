@@ -172,4 +172,36 @@ describe Billing::CreateInvoicePdf do
     expect(period.product_option_orders.last.title).to match /mois de février/
     expect(invoice.amount_in_cents_w_vat).to eq 5400
   end
+
+  it 'create scanned sheets, and paper process option for digitize subscription', :digitize_option do
+    user = User.last
+    subscription = user.subscription
+    subscription.current_packages = ['digitize_option']
+    subscription.save
+    period       = subscription.periods.order(created_at: :asc).first
+    period.set_current_packages(true)
+    period.scanned_sheets = 150
+    period.save
+
+    ##-- Add paper process --##
+    pp = PaperProcess.new(type: 'scan', customer_code: user.code, pack_name: 'TEST%TEST AC 202107 all', organization: user.organization, user: user, created_at: period.end_date.to_date)
+    pp.save
+
+    Billing::CreateInvoicePdf.for_all
+
+    invoice = user.organization.invoices.last
+
+
+    expect(period.reload.get_active_options).to eq [:digitize_option]
+    expect(period.product_option_orders.size).to eq 3
+
+    expect(period.product_option_orders.first.name).to eq 'digitize_package_subscription'
+    expect(period.product_option_orders.first.price_in_cents_wo_vat).to eq 0
+
+    expect(period.product_option_orders.second.name).to eq 'scanned_sheets'
+    expect(period.product_option_orders.second.price_in_cents_wo_vat).to eq 150 * 10.0
+
+    expect(period.product_option_orders.third.name).to eq 'scanned_sheets'
+    expect(period.product_option_orders.third.price_in_cents_wo_vat).to eq 1 * 100.0
+  end
 end
