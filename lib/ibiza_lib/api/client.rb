@@ -82,6 +82,8 @@ module IbizaLib
             body     = response.body
 
             @base_domain = Nokogiri::XML(body).css('data').text.presence || IbizaAPI::Config::ROOT_DOMAIN
+
+            @base_domain = IbizaAPI::Config::ROOT_DOMAIN if @base_domain.match(/localhost/)
           rescue
             @base_domain  = IbizaAPI::Config::ROOT_DOMAIN
           end
