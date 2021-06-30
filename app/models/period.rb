@@ -96,7 +96,7 @@ class Period < ApplicationRecord
     result << :ido_classique if self.current_packages.include?('ido_classique')
     result << :ido_mini      if self.current_packages.include?('ido_mini')
     result << :ido_micro     if self.current_packages.include?('ido_micro')
-    result << :ido_nano     if self.current_packages.include?('ido_nano')
+    result << :ido_nano      if self.current_packages.include?('ido_nano')
     result << :ido_x         if self.current_packages.include?('ido_x')
 
     result
@@ -108,7 +108,8 @@ class Period < ApplicationRecord
     result = []
 
     result << :mail_option      if self.current_packages.include?('mail_option')
-    result << :retriever_option if self.current_packages.include?('retriever_option') 
+    result << :retriever_option if self.current_packages.include?('retriever_option')
+    result << :digitize_option  if self.current_packages.include?('digitize_option')
     result << :pre_assignment_option if self.current_packages.include?('pre_assignment_option')
 
     result

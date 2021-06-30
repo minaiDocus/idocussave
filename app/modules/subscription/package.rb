@@ -1,7 +1,7 @@
 class Subscription::Package
   PACKAGES_LIST = [:ido_classique, :ido_mini, :ido_micro, :ido_nano, :ido_x].freeze
-  OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option].freeze
-  PRICES_LIST   = { ido_classique: 10, ido_x: 5, ido_mini: 10, ido_micro: 10, ido_nano: 5, mail_option: 10, retriever_option: 5, retriever_option_reduced: 3, pre_assignment_option: 9, signing_piece: 1 }
+  OPTIONS_LIST  = [:mail_option, :retriever_option, :pre_assignment_option, :digitize_option].freeze
+  PRICES_LIST   = { ido_classique: 10, ido_x: 5, ido_mini: 10, ido_micro: 10, ido_nano: 5, mail_option: 10, retriever_option: 5, retriever_option_reduced: 3, pre_assignment_option: 9, signing_piece: 1, digitize_option: 0 }
 
   class << self
     def price_of(package_or_option, reduced=false)
@@ -53,6 +53,8 @@ class Subscription::Package
           { label: 'Récupération banque', name: "retriever_package_subscription", group: "Automates", tooltip: "Automates (5€ / mois) : vous permet de bénéficier des automates de récupération bancaires" }
         when :pre_assignment_option
           { label: 'Pré-saisie comptable active', name: "pre_assignment_option", group: "Pré-affectation", tooltip: "Etat de pré-saisie comptable"}
+        when :digitize_option
+          { label: 'Numérisation pour kits', name: "digitize_package_subscription", group: "Numérisation", tooltip: "Options du kit d'envoi de numérisation"}
         else
           { label: '', name: '', group: '', tooltip: ''}
       end

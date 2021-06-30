@@ -398,6 +398,9 @@ update_price = ->
   if $('.active_option#subscription_mail_option').is(':checked')
     options.push 'mail_option'
 
+  if ($('.active_option#subscription_digitize_option').is(':checked') || $('#subscription_subscription_option_digitize_option').is(':checked'))
+    options.push 'digitize_option'
+
   if $('.active_option#subscription_retriever_option').is(':checked')
     if $('.active_option#subscription_retriever_option').data('retriever-price-option') == 'reduced_retriever'
       options.push 'retriever_option_reduced'

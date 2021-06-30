@@ -29,7 +29,7 @@ class Subscription::Evaluate
 
     if period.is_active?(:pre_assignment_option) && ( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) )
       authorize_pre_assignment
-    elsif period.is_active?(:ido_micro) || period.is_active?(:ido_nano) || ( period.is_active?(:retriever_option) && !( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) ))
+    elsif period.is_active?(:ido_micro) || period.is_active?(:ido_nano) || ( (period.is_active?(:retriever_option) || period.is_active?(:digitize_option)) && !( period.is_active?(:ido_classique) || period.is_active?(:ido_mini) ))
       authorize_pre_assignment
     else
       unauthorize_pre_assignment

@@ -4,7 +4,7 @@ module Account::SubscriptionHelper
   def notify_warning(subscription, package, option='')
     if subscription
       if option.blank?
-        if package == 'retriever_option'
+        if %w(retriever_option digitize_option).include?(package.to_s)
           package_size = subscription.current_packages.tr('["\]','   ').tr('"', '').split(',').size
 
           package_size == 1 && subscription.is_package?(package) && @subscription.futur_packages.present? && @subscription.futur_packages != "[]" && !@subscription.futur_packages.include?(package)

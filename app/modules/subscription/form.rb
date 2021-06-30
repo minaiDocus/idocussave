@@ -22,12 +22,15 @@ class Subscription::Form
       current_packages << @params[:subscription_option]
 
       current_packages << 'mail_option'             if params[:mail_option] && !current_package_data.include?(params[:mail_option])
+      current_packages << 'digitize_option'         if params[:digitize_option] && !current_package_data.include?(params[:digitize_option])
       current_packages << 'retriever_option'        if params[:retriever_option] && !current_package_data.include?(params[:retriever_option])
       current_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && !current_package_data.include?(params[:is_pre_assignment_active]) && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
 
-      if current_package_data.uniq.size > current_packages.uniq.size
+      if (@params[:subscription_option] == 'retriever_option' || @params[:subscription_option] == 'digitize_option') && @to_apply_now
+        current_package_data = [@params[:subscription_option]]
+      elsif current_package_data.uniq.size > current_packages.uniq.size
         futur_packages = current_packages
-      elsif (current_package_data.size == 1 && !current_package_data.include?(@params[:subscription_option])) || @params[:subscription_option] == 'retriever_option'
+      elsif (current_package_data.size == 1 && !current_package_data.include?(@params[:subscription_option])) || @params[:subscription_option] == 'retriever_option' || @params[:subscription_option] == 'digitize_option'
         current_package_data = current_packages
       else
         current_package_data = current_package_data + current_packages
@@ -39,6 +42,7 @@ class Subscription::Form
 
       futur_packages << 'mail_option'             if params[:mail_option]
       futur_packages << 'retriever_option'        if params[:retriever_option] && @params[:subscription_option] != 'retriever_option'
+      futur_packages << 'digitize_option'         if params[:digitize_option] && @params[:subscription_option] != 'digitize_option'
       futur_packages << 'pre_assignment_option'   if params[:is_pre_assignment_active] == 'true' && @params[:subscription_option] != 'retriever_option' && (@params[:subscription_option] == 'ido_mini' || @params[:subscription_option] == 'ido_classique')
     end
 
@@ -46,7 +50,7 @@ class Subscription::Form
     @subscription.futur_packages   = futur_packages.any? ? futur_packages.uniq : nil
 
     if @to_apply_now && !@subscription.current_packages.include?(@params[:subscription_option])
-      @subscription.current_packages = futur_packages
+      @subscription.current_packages = futur_packages.uniq
       @subscription.futur_packages   = nil
     end
 

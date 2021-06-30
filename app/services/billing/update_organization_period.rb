@@ -46,7 +46,7 @@ class Billing::UpdateOrganizationPeriod
         option       = c_period.user.options
 
         @period.max_sheets_authorized               += c_period.max_sheets_authorized.to_i               if subscription.is_package?('mail_option')
-        @period.max_upload_pages_authorized         += c_period.max_upload_pages_authorized.to_i         if subscription.is_package?('ido_classique') || subscription.is_package?('mail_option') || subscription.is_package?('scan_option') 
+        @period.max_upload_pages_authorized         += c_period.max_upload_pages_authorized.to_i         if subscription.is_package?('ido_classique') || subscription.is_package?('mail_option') || subscription.is_package?('scan_option')
         @period.max_dematbox_scan_pages_authorized  += c_period.max_dematbox_scan_pages_authorized.to_i  if c_period.user.is_dematbox_authorized
         @period.max_preseizure_pieces_authorized    += c_period.max_preseizure_pieces_authorized.to_i    if option.is_preassignment_authorized
         @period.max_expense_pieces_authorized       += c_period.max_expense_pieces_authorized.to_i       if option.is_preassignment_authorized

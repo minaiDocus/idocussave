@@ -17,9 +17,11 @@
               %th iDo Nano
               %th iDo X
               %th Automate uniquement
+              %th Numérisation uniquement
               %th Non configuré
               %th Total
               %th Forfait Courrier
+              %th Numériser
               %th Forfait Automates
               %th Pré-saisie
           %tbody
@@ -31,9 +33,11 @@
               %td= link_to @nano_package_count, "#", class: 'do-showAccounts', title: "iDo Nano", type: "nano_package"
               %td= link_to @idox_package_count, "#", class: 'do-showAccounts', title: "iDo X", type: "idox_package"
               %td= link_to @retriever_only_package_count, "#", class: 'do-showAccounts', title: "Automate uniquement", type: "retriever_only_package"
+              %td= link_to @digitize_only_package_count, "#", class: 'do-showAccounts', title: "Numérisation uniquement", type: "digitize_only_package"
               %td= link_to @not_configured, "#", class: 'do-showAccounts', title: "Non configuré", type: "not_configured"
               %td= @basic_package_count + @idox_package_count + @mini_package_count + @micro_package_count + @nano_package_count + @retriever_only_package_count + @not_configured
               %td= link_to @mail_package_count, "#", class: 'do-showAccounts', title: "Fofait Courrier", type: "mail_package"
+              %td= link_to @digitize_package_count, "#", class: 'do-showAccounts', title: "Numériser", type: "digitize_package"
               %td= link_to @retriever_package_count, "#", class: 'do-showAccounts', title: "Forfait automates", type: "retriever_package"
               %td= link_to @pre_assignment_count, "#", class: 'do-showAccounts', title: "Pré-saisie", type: "pre_assignment_active"
   .row.retractable.with-filter
@@ -46,7 +50,7 @@
           %thead
             %tr.bg-brown.text-white
               %th(colspan='3') Information
-              %th(colspan='7') Forfaits
+              %th(colspan='8') Forfaits
               %th(colspan='4') Utilisation
               %th(colspan='3') Clients
             %tr.bg-brown-light.text-white
@@ -55,6 +59,7 @@
               %th= sortable 'organization_code', 'code'
               %th= sortable 'options.basic_package', 'basique'
               %th= sortable 'options.mail_package', 'courrier'
+              %th= sortable 'options.digitize_package', 'numérisation kit'
               %th= sortable 'options.retriever_package', 'automate'
               %th= sortable 'options.mini_package', 'mini'
               %th= sortable 'options.micro_package', 'micro'
@@ -79,6 +84,9 @@
                 %td
                   %span= statistic.options[:mail_package]
                   = subscription_diff_content_for(statistic.options[:mail_package_diff])
+                %td
+                  %span= statistic.options[:digitize_package]
+                  = subscription_diff_content_for(statistic.options[:digitize_package_diff])
                 %td
                   %span= statistic.options[:retriever_package]
                   = subscription_diff_content_for(statistic.options[:retriever_package_diff])
@@ -113,6 +121,9 @@
               %td.total_footer
                 %span= @statistics_total[:mail_package]
                 = subscription_diff_content_for(@statistics_total[:mail_package_diff])
+              %td.total_footer
+                %span= @statistics_total[:digitize_package]
+                = subscription_diff_content_for(@statistics_total[:digitize_package_diff])
               %td.total_footer
                 %span= @statistics_total[:retriever_package]
                 = subscription_diff_content_for(@statistics_total[:retriever_package_diff])

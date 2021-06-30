@@ -10,11 +10,13 @@ class Admin::SubscriptionsController < Admin::AdminController
     @pre_assignment_count    = Rails.cache.fetch('admin_report_pre_assignment_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%pre_assignment_option%'").count }
     @scan_box_package_count  = Rails.cache.fetch('admin_report_scan_box_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%scan%'").count }
     @retriever_package_count = Rails.cache.fetch('admin_report_retriever_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%retriever_option%'").count }
+    @digitize_package_count  = Rails.cache.fetch('admin_report_digitize_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%digitize_option%'").count }
     @mini_package_count      = Rails.cache.fetch('admin_report_mini_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_mini%'").count }
     @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_micro%'").count }
     @nano_package_count      = Rails.cache.fetch('admin_report_nano_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_nano%'").count }
     @idox_package_count      = Rails.cache.fetch('admin_report_idox_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_x%'").count }
     @retriever_only_package_count = Rails.cache.fetch('admin_report_retriever_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"retriever_option\"]'").count }
+    @digitize_only_package_count = Rails.cache.fetch('admin_report_digitize_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"digitize_option\"]'").count }
     @not_configured          = Rails.cache.fetch('admin_report_not_configured_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where(current_packages: [nil, '[]', '', '[""]']).count }
 
     params[:per_page] ||= 50
@@ -48,6 +50,8 @@ class Admin::SubscriptionsController < Admin::AdminController
       data_accounts = Rails.cache.fetch('admin_report_scan_box_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%scan%'")) }
     when 'retriever_package'
       data_accounts = Rails.cache.fetch('admin_report_retriever_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%retriever_option%'")) }
+    when 'digitize_package'
+      data_accounts = Rails.cache.fetch('admin_report_digitize_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%digitize_option%'")) }
     when 'mini_package'
       data_accounts = Rails.cache.fetch('admin_report_mini_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_mini%'")) }
     when 'micro_package'
@@ -58,6 +62,8 @@ class Admin::SubscriptionsController < Admin::AdminController
       data_accounts = Rails.cache.fetch('admin_report_idox_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages LIKE '%ido_x%'")) }
     when 'retriever_only_package'
       data_accounts = Rails.cache.fetch('admin_report_retriever_only_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages = '[\"retriever_option\"]'")) }
+    when 'digitize_only_package'
+      data_accounts = Rails.cache.fetch('admin_report_digitize_only_package_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where("current_packages = '[\"digitize_option\"]'")) }
     when 'not_configured'
       data_accounts = Rails.cache.fetch('admin_report_not_configured_accounts', expires_in: 10.minutes) { accounts.merge(Subscription.where(current_packages: [nil, '[]', '', '[""]'])) }
     else
@@ -98,6 +104,8 @@ class Admin::SubscriptionsController < Admin::AdminController
       scan_box_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:scan_box_package_diff].to_i },
       retriever_package: statistics.inject(0) { |sum, s| sum + s.options[:retriever_package].to_i },
       retriever_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:retriever_package_diff].to_i },
+      digitize_package: statistics.inject(0) { |sum, s| sum + s.options[:digitize_package].to_i },
+      digitize_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:digitize_package_diff].to_i },
       mini_package: statistics.inject(0) { |sum, s| sum + s.options[:mini_package].to_i },
       mini_package_diff: statistics.inject(0) { |sum, s| sum + s.options[:mini_package_diff].to_i },
       micro_package: statistics.inject(0) { |sum, s| sum + s.options[:micro_package].to_i },

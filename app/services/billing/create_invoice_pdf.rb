@@ -146,6 +146,7 @@ class Billing::CreateInvoicePdf
     annual_package_count    = 0
     scan_box_package_count  = 0
     retriever_package_count = 0
+    digitize_package_count  = 0
 
     periods.each do |period|
       period.product_option_orders.each do |option|
@@ -168,6 +169,8 @@ class Billing::CreateInvoicePdf
           nano_package_count += 1
         when 'mini_package_subscription'
           mini_package_count += 1
+        when 'digitize_package_subscription'
+          digitize_package_count += 1
         end
       end
     end
@@ -224,6 +227,10 @@ class Billing::CreateInvoicePdf
 
     if ordered_scanner_count > 0
       @data << ["- #{ordered_scanner_count} commande#{'s' if ordered_scanner_count > 1} de scanner#{'s' if ordered_scanner_count > 1} iDo'Box", '']
+    end
+
+    if digitize_package_count > 0
+      @data << ["- #{digitize_package_count} option#{'s' if digitize_package_count > 1} Numérisation", '']
     end
 
     options = begin

@@ -114,6 +114,10 @@ class Subscription < ApplicationRecord
     get_active_packages.empty? && get_active_options.include?(:retriever_option)
   end
 
+  def is_digitize_only?
+    get_active_packages.empty? && get_active_options.include?(:digitize_option)
+  end
+
   def is_pre_assignment_really_active
     is_package?('pre_assignment_option') && (is_package?('ido_classique') || is_package?('ido_mini'))
   end
@@ -221,6 +225,7 @@ class Subscription < ApplicationRecord
     current_package_size = self.current_packages.tr('["\]','   ').tr('"', '').split(',').size
 
     actual_package = 'retriever_option' if current_package_size == 1 && is_package?('retriever_option')
+    actual_package = 'digitize_option'      if current_package_size == 1 && is_package?('digitize_option')
 
     actual_package
   end
