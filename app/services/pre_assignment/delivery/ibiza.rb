@@ -1,4 +1,12 @@
 class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
+  RETRYABLE_ERRORS = ['The fog is not checked', 'La connexion sous-jacente a été', 'An error occured', "can t open connection", "can not establish connection"]
+
+  def self.retry_delivery(delivery_id)
+    delivery = PreAssignmentDelivery.find delivery_id
+
+    delivery.update(state: 'pending', error_message: 'retry sending') if delivery.state == 'error'
+  end
+
 	def self.execute(delivery)
     new(delivery).run
   end
@@ -26,18 +34,30 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
       if ibiza_client.response.success?
         handle_delivery_success
       else
-        handle_delivery_error ibiza_client.response.message.to_s.presence || ibiza_client.response.status.to_s
+        error_message = ibiza_client.response.message.to_s.presence
+        previous_error = @delivery.error_message
 
-        retry_delivery = true
-
-        ['Le journal est inconnu'].each do |message|
-          retry_delivery = false if ibiza_client.response.message.to_s.match /#{message}/
+        is_retryable_error = false
+        RETRYABLE_ERRORS.each do |c_error|
+          is_retryable_error = true if !is_retryable_error && error_message.match(c_error)
         end
 
-        if retry_delivery && @preseizures.size > 1
-          @preseizures.each do |preseizure|
-            deliveries = PreAssignment::CreateDelivery.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
-            deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
+        handle_delivery_error error_message || ibiza_client.response.status.to_s
+
+        if is_retryable_error && previous_error != 'retry sending'
+          PreAssignment::Delivery::Ibiza.delay_for(1.hours, queue: :low).retry_delivery(@delivery.id)
+        else
+          retry_delivery = true
+
+          ['Le journal est inconnu'].each do |message|
+            retry_delivery = false if ibiza_client.response.message.to_s.match /#{message}/
+          end
+
+          if retry_delivery && @preseizures.size > 1
+            @preseizures.each do |preseizure|
+              deliveries = PreAssignment::CreateDelivery.new(preseizure, ['ibiza'], is_auto: false, verify: true).execute
+              deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
+            end
           end
         end
       end
@@ -59,7 +79,7 @@ class PreAssignment::Delivery::Ibiza < PreAssignment::Delivery::DataService
       if pending_message == 'limit pending reached'
         handle_delivery_error pending_message
       else
-        @delivery.update(state: 'pending', error_message: pending_message )
+        @delivery.update(state: 'pending', error_message: pending_message)
       end
     end
 

@@ -1,13 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class DataVerificator::IbizaErrors < DataVerificator::DataVerificator
   def execute
-    errors_list = ['The fog is not checked', 'La connexion sous-jacente a été', 'An error occured', "can t open connection", "can not establish connection"]
+    errors_list = PreAssignment::Delivery::Ibiza::RETRYABLE_ERRORS
 
     error_messages = errors_list.map do |error|
       " error_message LIKE '%#{error}%' "
     end.join(' OR ')
 
-    delivs = PreAssignmentDelivery.where("created_at >= ? AND created_at <= ? AND state = ? AND (#{error_messages})", 2.days.ago, Time.now, 'error')
+    delivs = PreAssignmentDelivery.where("created_at >= ? AND created_at <= ? AND state = ? AND (#{error_messages})", 5.days.ago, Time.now, 'error')
 
     messages = []
 
