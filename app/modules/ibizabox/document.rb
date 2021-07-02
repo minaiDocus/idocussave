@@ -37,7 +37,10 @@ class Ibizabox::Document
 
           if not corrupted_doc.presisted?
             corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: 'Votre document est en-cours de traitement', params: { original_file_name: File.basename(@file), uploader: @user, api_name:  'ibiza', journal: @journal.name, prev_period_offset: @prev_period_offset, analytic: nil, api_id: document_id }})
-            corrupted_doc.save
+            begin
+                corrupted_doc.cloud_content_object.attach(File.open(@file), CustomUtils.clear_string(File.basename(@file))) if corrupted_doc.save
+            rescue
+            end
           end
         end
       end
