@@ -3,7 +3,7 @@ require 'spec_helper'
 
 Sidekiq::Testing.inline! #execute jobs immediatly
 
-describe Api::Sgi::V1::JefactureValidationController, :type => :controller do
+describe Api::Sgi::V1::JefactureController, :type => :controller do
   before(:all) do
     DatabaseCleaner.start
     Timecop.freeze(Time.local(2021,06,8))
@@ -95,13 +95,19 @@ describe Api::Sgi::V1::JefactureValidationController, :type => :controller do
       expect(response).to have_http_status(:ok)
       expect(result.size).to eq 1
       expect(result.first['temp_preseizure_id']).to eq temp_preseizure.id
-      expect(result.first['piece_infos']).to eq @piece_params
-      expect(result.first['raw_preseizure']).to eq @raw_preseizure
+      expect(result.first['piece_id']).to eq @piece_params['piece_id']
+      expect(result.first['piece_name']).to eq @piece_params['piece_name']
+      expect(result.first['detected_third_party_id']).to eq @piece_params['detected_third_party_id']
+      expect(result.first['third_party']).to eq @raw_preseizure['third_party']
+      expect(result.first['entries']).to eq @raw_preseizure['entries']
 
       expect(json_response.keys).to match_array(["success", "data", "message"])
       expect(json_response["success"]).to be true
       json_response[ "data" ].each do |status|
-        expect(status.keys).to contain_exactly( "piece_infos", "raw_preseizure", "temp_preseizure_id" )
+        expect(status.keys).to contain_exactly( 
+          "third_party", "entries", "temp_preseizure_id", "piece_id", "piece_name", "detected_third_party_id",
+          "piece_url", "compta_type", "pack_name"
+        )
       end
     end
 
@@ -134,7 +140,7 @@ describe Api::Sgi::V1::JefactureValidationController, :type => :controller do
       temp_preseizure.waiting_validation
 
       data_validated = [{
-        piece_id: @piece.id, temp_preseizure_id: 1, raw_preseizure: @raw_preseizure
+        piece_id: @piece.id, temp_preseizure_id: 1, third_party: 'FIDUCIAL BUREAUTIQUE', entries: @raw_preseizure['entries']
       },]
 
       post :pre_assigned, format: :json, params: {:data_validated => data_validated}
