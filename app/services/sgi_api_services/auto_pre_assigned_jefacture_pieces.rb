@@ -115,7 +115,11 @@ class SgiApiServices::AutoPreAssignedJefacturePieces
       errors << "TempPreseizure #{data_validated["temp_preseizure_id"]} non trouvé" if not temp_preseizure
 
       if errors.empty?
-        staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: piece.id, raw_preseizure: data_validated['raw_preseizure'] } }).save
+        temp_preseizure.raw_preseizure['third_party'] = data_validated['third_party']
+        temp_preseizure.raw_preseizure['entries']     = data_validated['entries']
+        temp_preseizure.save
+
+        staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: piece.id, raw_preseizure: temp_preseizure.reload.raw_preseizure } }).save
 
         temp_preseizure.is_valid
 

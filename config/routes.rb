@@ -646,7 +646,7 @@ Rails.application.routes.draw do
           get 'get_json', on: :collection
         end
 
-        resources :jefacture_validation do
+        resources :jefacture do
           get 'waiting_validation',  on: :collection
           post 'pre_assigned',       on: :collection
         end

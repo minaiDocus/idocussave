@@ -33,7 +33,7 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
         to_validate = false
 
         @raw_preseizure[:entries].each do |entry|
-          to_validate = true if entry[:account].blank? || entry[:account].to_s.match(/^401/)
+          to_validate = true if entry[:account].blank? || @piece.detected_third_party_id == 6930 || !check_in_accounting_plan(entry[:account])
         end
 
         if to_validate
@@ -67,5 +67,10 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
     end
 
     report
+  end
+
+  def check_in_accounting_plan(third_party_account)
+    found = @piece.user.accounting_plan.active_providers.where(third_party_account: third_party_account).first
+    found = @piece.user.accounting_plan.active_customers.where(third_party_account: third_party_account).first if not found
   end
 end
