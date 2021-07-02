@@ -405,9 +405,12 @@ class EmailedDocument
         if attachment.corrupted?
           corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: attachment.fingerprint).first || Archive::DocumentCorrupted.new
 
-          if !corrupted_doc.presisted? && user && journal
+          if !corrupted_doc.persisted? && user && journal
             corrupted_doc.assign_attributes({ fingerprint: attachment.fingerprint, user: user, state: 'ready', retry_count: 0, is_notify: false, error_message: 'Votre document est en-cours de traitement', params: { original_file_name: attachment.name, uploader: uploader, api_name:  'email', journal: journal, prev_period_offset: prev_period_offset.to_i, analytic: nil, api_id: nil }})
-            corrupted_doc.save
+            begin
+                corrupted_doc.cloud_content_object.attach(File.open(attachment.processed_file_path), CustomUtils.clear_string(attachment.name)) if corrupted_doc.save
+            rescue
+            end
           end
         end
       end
