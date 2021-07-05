@@ -141,6 +141,7 @@ class PdfIntegrator
         exist: File.exist?(@file_path),
         modifiable: modifiable.to_s,
         file_corrupted: @file.path,
+        checksum: DocumentTools.checksum(@file.path),
         modifiable_source: modifiable_2.to_s,
         file_corrected: correction_data[:output_file],
         corrected: correction_data[:corrected],
