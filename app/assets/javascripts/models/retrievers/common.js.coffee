@@ -35,12 +35,16 @@ class Idocus.Models.Common
         class_plus = " "+field.class
 
       class_required = abbr_required = ''
+
+      disabled_attr = ''
+      if is_disabled_fields == true
+        disabled_attr = 'disabled="disabled"'
+
       if field.required
         class_required = 'required'
         abbr_required = '<abbr title="champ requis">*</abbr>'
-        disabled_attr = if is_disabled_fields then 'disabled="disabled"' else ''
 
-        field_input = '<input class="field '+class_required+class_plus+'" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'" ' + disabled_attr + ' >'
+      field_input = '<input class="field '+class_required+class_plus+'" id="field_'+field.name+'" name="'+field.name+'" type="'+field.type+'" value="'+(field.value || '')+'" '+disabled_attr+' >'
 
       if field.type == "list"
         options = ""
@@ -48,7 +52,7 @@ class Idocus.Models.Common
           selected = ''
           if option.value == field.selected
             selected = 'selected'
-            options += "<option value='#{option.value}' #{selected} #{disabled_attr}>#{option.label}</options>"
+          options += "<option value='#{option.value}' #{selected} #{disabled_attr}>#{option.label}</options>"
 
         class_website = ''
         if field.name == "website"
