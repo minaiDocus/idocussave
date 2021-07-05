@@ -42,7 +42,7 @@ class Archive::ResendCorruptedDocument
       document.save
 
       if uploaded_document.corrupted_document? && document.retry_count < 2
-        document.retry_count = document.retry_count + 1
+        document.update(retry_count: document.retry_count + 1)
         document.ready
       else
         document.rejected
