@@ -438,16 +438,29 @@ jQuery ->
 
     connectors_list  = new Idocus.Collections.Connectors()
     Idocus.budgeaApi = new Idocus.BudgeaApi()
+    $('select#bank_account_bank_name').empty().append("<option value=''>Chargement en cours ... Veuillez patientez svp.</option>");
+
     connectors_list.fetch_all().then(
       ()->
+        distinct = (value, index, self) ->
+          return self.findIndex((e)->value['id'] == e['id']) == index
+
         options = $('select#bank_account_bank_name').empty()
-        banks = connectors_list.connectors_fetched
+        banks = connectors_list.connectors_fetched.filter(distinct)
 
         # ADD BANKS HERE
         banks.push({ name: 'UBS', capabilities: ['bank'] })
         # ADD BANKS HERE - END
 
-        $.each banks.sort((a,b) -> a['name'].toLowerCase() > b['name'].toLowerCase()), (index, element) ->
+        banks = banks.sort((a,b)->
+          if a['name'].toLowerCase() < b['name'].toLowerCase()
+            return -1;
+          if a['name'].toLowerCase() > b['name'].toLowerCase()
+            return 1;
+          return 0;
+        )
+
+        $.each banks, (index, element) ->
           if $.inArray('bank', element['capabilities']) > -1
             bank_name = element['name']
             options.append("<option value=\"#{bank_name}\">#{bank_name}</option>")
