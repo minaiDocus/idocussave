@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ReturnLabels
   FILE_NAME = 'return_labels.pdf'.freeze
-  FILE_PATH = File.join([Rails.root, 'files', 'kit', FILE_NAME])
+  FILE_PATH = Order::FileSendingKitGenerator::TEMPDIR_PATH + "#{FILE_NAME}"
 
 
   attr_accessor :scanned_by, :customers, :time

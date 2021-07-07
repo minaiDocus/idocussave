@@ -10,7 +10,11 @@ class ReturnLabelsController < PaperProcessesController
     if File.exist?(filepath)
       filename = File.basename(filepath)
 
-      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
+      file = File.open(filepath, "rb")
+      contents = file.read
+      file.close
+
+      send_data(contents, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render body: nil, status: 404
     end
