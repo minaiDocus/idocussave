@@ -135,7 +135,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
         end
 
         if without_shipping_address.count == 0 && error_logo.empty?
-          Order::FileSendingKitGenerator.generate clients_data, @file_sending_kit, @organization.code.downcase, (params[:one_workshop_labels_page_per_customer] == '1')
+          Order::FileSendingKitGenerator.generate clients_data, @file_sending_kit, @organization, (params[:one_workshop_labels_page_per_customer] == '1')
           flash[:notice] = 'Généré avec succès.'
         else
           errors = []
@@ -199,7 +199,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   end
 
   def send_pdf(filename)
-    filename = "#{@organization.code.downcase}_#{filename}"
+    filename = CustomUtils.is_manual_paper_set_order?(@organization) ? "#{@organization.code.downcase}_#{filename}" : filename
     filepath = (Rails.env == 'production')? "/nfs/kits/#{filename}" : File.join([Rails.root, 'files', 'kit', filename])
 
     if File.file? filepath

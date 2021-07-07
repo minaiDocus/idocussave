@@ -3,7 +3,7 @@ class Order::FileSendingKitGenerator
   TEMPDIR_PATH = (Rails.env == 'production')? "/nfs/kits/" : "#{Rails.root}/files/kit/"
 
   class << self
-    def generate(clients_data, file_sending_kit, organization_code, one_workshop_labels_page_per_customer=false)
+    def generate(clients_data, file_sending_kit, organization, one_workshop_labels_page_per_customer=false)
       BarCode::init
 
       clients = to_clients(clients_data)
@@ -12,10 +12,19 @@ class Order::FileSendingKitGenerator
         BarCode.generate_png(client.code, 20, 0)
       end
 
-      Order::KitGenerator.folder to_folders(clients_data), file_sending_kit, organization_code
-      Order::KitGenerator.mail to_mails(clients), file_sending_kit, organization_code
-      Order::KitGenerator.customer_labels to_labels(clients_data, true), organization_code
-      Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer), organization_code
+      if CustomUtils.is_manual_paper_set_order?(organization)
+        code = organization.code.downcase
+
+        Order::KitGenerator.folder to_folders(clients_data), file_sending_kit, "#{code}_folders.pdf"
+        Order::KitGenerator.mail to_mails(clients), file_sending_kit, "#{code}_mails.pdf"
+        Order::KitGenerator.customer_labels to_labels(clients_data, true), "#{code}_customer_labels.pdf"
+        Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer), "#{code}_workshop_labels.pdf"
+      else
+        Order::KitGenerator.folder to_folders(clients_data), file_sending_kit
+        Order::KitGenerator.mail to_mails(clients), file_sending_kit
+        Order::KitGenerator.customer_labels to_labels(clients_data, true)
+        Order::KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
+      end
     end
 
     def to_clients(clients_data)
