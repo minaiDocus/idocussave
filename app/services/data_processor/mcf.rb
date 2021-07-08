@@ -42,8 +42,14 @@ class DataProcessor::Mcf
   def execute_process
     @mcf_document.processing
 
-    unless File.exist? @file_path.to_s
-      @mcf_document.needs_retake
+    if not File.exist?(@file_path.to_s)
+      sleep(5)
+      @file_path = @mcf_document.cloud_content_object.reload.path
+      if not File.exist?(@file_path.to_s)
+        @mcf_document.needs_retake
+      else
+        process_file
+      end
     else
       process_file
     end
