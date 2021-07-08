@@ -144,7 +144,24 @@ class UploadedDocument
           if not corrupted_doc.presisted?
             corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: full_error_messages, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
             begin
-                corrupted_doc.cloud_content_object.attach(File.open(@file), CustomUtils.clear_string(@original_file_name)) if corrupted_doc.save
+              if corrupted_doc.save
+                corrupted_doc.cloud_content_object.attach(File.open(@file), CustomUtils.clear_string(@original_file_name))
+              else
+                log_document = {
+                    subject: "[CorruptedDocument] Corrupted document - not save - #{api_name.to_s}",
+                    name: "CorruptedDocument",
+                    error_group: "[CorruptedDocument] Corrupted document",
+                    erreur_type: "[CorruptedDocument] Corrupted document",
+                    date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+                    more_information: {
+                      valid: corrupted_doc.valid?,
+                      model: corrupted_doc.inspect,
+                      errors: corrupted_doc.errors.messages,
+                    }
+                  }
+
+                  ErrorScriptMailer.error_notification(log_document).deliver
+              end
             rescue
             end
           end
