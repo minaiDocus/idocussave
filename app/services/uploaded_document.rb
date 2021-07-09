@@ -141,7 +141,7 @@ class UploadedDocument
         if corrupted_document?
           corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
 
-          if not corrupted_doc.presisted?
+          if not corrupted_doc.persisted?
             corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: full_error_messages, params: { original_file_name: @original_file_name, uploader: @uploader, api_name:  @api_name, journal: @journal, prev_period_offset: @prev_period_offset, analytic: analytic, api_id: @api_id }})
             begin
               if corrupted_doc.save

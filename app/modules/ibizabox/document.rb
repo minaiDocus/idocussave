@@ -35,7 +35,7 @@ class Ibizabox::Document
         if corrupted?
           corrupted_doc = Archive::DocumentCorrupted.where(fingerprint: fingerprint).first || Archive::DocumentCorrupted.new
 
-          if not corrupted_doc.presisted?
+          if not corrupted_doc.persisted?
             corrupted_doc.assign_attributes({ fingerprint: fingerprint, user: @user, state: 'ready', retry_count: 0, is_notify: false, error_message: 'Votre document est en-cours de traitement', params: { original_file_name: File.basename(@file), uploader: @user, api_name:  'ibiza', journal: @journal.name, prev_period_offset: @prev_period_offset, analytic: nil, api_id: document_id }})
             begin
               if corrupted_doc.save
