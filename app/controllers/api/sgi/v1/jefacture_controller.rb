@@ -49,8 +49,8 @@ class Api::Sgi::V1::JefactureController < SgiApiController
           compta_type: journal&.compta_type,
           pack_name: temp_pack.name,
           detected_third_party_id: (temp_preseizure.piece.detected_third_party_id.presence || 6930),
-          third_party: temp_preseizure.raw_preseizure[:third_party],
-          entries: temp_preseizure.raw_preseizure[:entries]
+          third_party: temp_preseizure.raw_preseizure['third_party'],
+          entries: temp_preseizure.raw_preseizure['entries']
         }.with_indifferent_access
     end
 end

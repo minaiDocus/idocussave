@@ -15,36 +15,70 @@ class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
   end
 
   def execute
-    return false if @raw_preseizure.try(:[], 'piece_number').blank?
+    if @raw_preseizure.try(:[], 'piece_number').blank?
+      log_document = {
+        subject: "[Auto preAssignment Jefacture] - auto jefacture",
+        name: "Auto preAssignment Jefacturer",
+        error_group: "[Auto preAssignment Jefacture] auto jefacture",
+        erreur_type: "Auto jefacture",
+        date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+        more_information: {
+          piece_id: @piece.id,
+          error: 'raw preseizure blank',
+          retrun: @raw_preseizure.to_s,
+        }
+      }
 
-    if @temp_document.present? && @raw_preseizure['piece_number'] && @piece.preseizures.empty? && @piece.temp_preseizures.empty? && !@piece.is_awaiting_pre_assignment?
-      temp_preseizure = Pack::Report::TempPreseizure.new
-      temp_preseizure.organization     = @piece.user.organization
-      temp_preseizure.report           = initialize_report
-      temp_preseizure.user             = @piece.user
-      temp_preseizure.piece            = @piece
-      temp_preseizure.raw_preseizure   = @raw_preseizure
-      temp_preseizure.position         = @piece.position
-      temp_preseizure.is_made_by_abbyy = true
-      temp_preseizure.save
-      
-      if temp_preseizure.persisted?
-        System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - temp preseizure persisted")
-        to_validate = false
+      ErrorScriptMailer.error_notification(log_document).deliver
+    else
+      if @temp_document.present? && @raw_preseizure['piece_number'] && @piece.preseizures.empty? && @piece.temp_preseizures.empty? && !@piece.is_awaiting_pre_assignment?
+        temp_preseizure = Pack::Report::TempPreseizure.new
+        temp_preseizure.organization     = @piece.user.organization
+        temp_preseizure.report           = initialize_report
+        temp_preseizure.user             = @piece.user
+        temp_preseizure.piece            = @piece
+        temp_preseizure.raw_preseizure   = @raw_preseizure
+        temp_preseizure.position         = @piece.position
+        temp_preseizure.is_made_by_abbyy = true
+        temp_preseizure.save
 
-        @raw_preseizure[:entries].each do |entry|
-          to_validate = true if entry[:account].blank? || @piece.detected_third_party_id == 6930 || !check_in_accounting_plan(entry[:account])
-        end
+        if temp_preseizure.persisted?
+          System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization} - temp preseizure persisted")
+          to_validate = false
 
-        if to_validate
-          temp_preseizure.waiting_validation
+          if @raw_preseizure['entries'].any?
+            @raw_preseizure['entries'].each do |entry|
+              to_validate = true if entry[:account].blank? || @piece.detected_third_party_id == 6930 || !check_in_accounting_plan(entry[:account])
+            end
+          else
+            log_document = {
+              subject: "[Auto preAssignment Jefacture] - auto jefacture",
+              name: "Auto preAssignment Jefacturer",
+              error_group: "[Auto preAssignment Jefacture] auto jefacture",
+              erreur_type: "Auto jefacture",
+              date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+              more_information: {
+                piece_id: @piece.id,
+                error: 'No entries found',
+                retrun: @raw_preseizure.to_s,
+              }
+            }
+
+            ErrorScriptMailer.error_notification(log_document).deliver
+
+            return false
+          end
+
+          if to_validate
+            temp_preseizure.waiting_validation
+          else
+            staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: @piece.id, raw_preseizure: @raw_preseizure } }).save
+
+            temp_preseizure.is_valid
+          end
         else
-          staffing = StaffingFlow.new({ kind: 'jefacture', params: { temp_preseizure_id: temp_preseizure.id, piece_id: @piece.id, raw_preseizure: @raw_preseizure } }).save
-
-          temp_preseizure.is_valid
+          System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{temp_preseizure.errors.full_messages}")
         end
-      else
-        System::Log.info('temp_preseizure', "#{Time.now} - #{@piece.id} - #{@piece.user.organization.id} - errors : #{temp_preseizure.errors.full_messages}")
       end
     end
 
