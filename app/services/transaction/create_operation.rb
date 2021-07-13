@@ -1,7 +1,7 @@
 class Transaction::CreateOperation
   def initialize(operation)
     @operation    = operation
-    @bank_account = BankAccount.find(@operation.bank_account_id)
+    @bank_account = BankAccount.where(id: @operation.bank_account_id.to_i).first
   end
 
   def self.perform(operations)
@@ -12,6 +12,8 @@ class Transaction::CreateOperation
       operation.api_name = 'capidocus'
 
       new_operation = new(operation).perform
+
+      return false if not new_operation
 
       if new_operation.is_locked
         result[:rejected_operation] += 1
@@ -30,6 +32,8 @@ class Transaction::CreateOperation
   end
 
   def perform
+    return nil if not @bank_account && @bank_account.try(:user).try(:options).try(:is_retriever_authorized)
+
     set_operation_currency
     set_operation_administrative_infos
 
