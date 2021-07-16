@@ -40,6 +40,8 @@ module Reporting
         end
       end
 
+      current_period = pack.owner.subscription.current_period
+      Billing::UpdatePeriod.new(current_period) if current_period.updated_at < 1.days.ago
       remaining_dividers -= current_dividers.count
       time += period.duration.month
     end

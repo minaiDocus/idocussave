@@ -372,7 +372,7 @@ class Billing::UpdatePeriod
         ss_option.name        = 'scanned_sheets'
         ss_option.group_title = option_infos[:group]
 
-        ss_option.title = "#{scanned_sheets_size} feuille(s) numérisé(s)"
+        ss_option.title = "#{scanned_sheets_size} feuille(s) numérisée(s)"
 
         ss_option.duration = 0
         ss_option.quantity = scanned_sheets_size
