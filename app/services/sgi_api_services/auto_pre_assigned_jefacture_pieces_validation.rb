@@ -1,11 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class SgiApiServices::AutoPreAssignedJefacturePiecesValidation
   def self.execute(pieces)
-    success = false
     pieces.each do |piece|
-      success &&= SgiApiServices::AutoPreAssignedJefacturePiecesValidation.new(piece).execute
+      SgiApiServices::AutoPreAssignedJefacturePiecesValidation.new(piece).execute
     end
-    success
   end
 
   def initialize(piece)
