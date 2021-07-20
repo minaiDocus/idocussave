@@ -74,7 +74,7 @@ class FecImport
       @for_pieces     << { compauxnum: compauxnum, pieceref: pieceref, comptenum: comptenum, debit: debit, credit: credit, journal: journal }
     end
 
-    @third_parties = @third_parties.uniq!.flatten[1..-1] if @third_parties.present?
+    @third_parties = @third_parties.uniq!.flatten[0..-1] if @third_parties.present?
 
     import_processing
   end

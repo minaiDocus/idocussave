@@ -43,19 +43,19 @@
         .general_account_choice
           %span Votre compte client générale ( 411 par défaut )
           .customer
-            %input.mask_verif_account{ class: "account_customer", name: "account_customer", placeholder: "411", maxlength: 3 }
+            %input.mask_verif_account{ class: "account_customer", name: "account_customer", value: 411, maxlength: 3 }
           %br
           %span Votre compte fournisseur générale ( 401 par défaut )
           .provider
-            %input.mask_verif_account{ class: "account_provider", name: "account_provider", placeholder: "401", maxlength: 3 }
+            %input.mask_verif_account{ class: "account_provider", name: "account_provider", value: 401, maxlength: 3 }
         %hr
         .counter_part_account
           %span Vos comptes de contreparties débutent par : ( 6 et 7 par défaut )
           .part_account
-            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "6" }
+            %input{ class: "part_account", name: "part_account[]", maxlength: 1, value: 6 }
           .part_account
             %br
-            %input{ class: "part_account", name: "part_account[]", maxlength: 1, placeholder: "7" }
+            %input{ class: "part_account", name: "part_account[]", maxlength: 1, value: 7 }
             %span.delete_part_account{ style: "cursor: pointer;"}
               = glyphicon('x', {color: 'red'})
 
