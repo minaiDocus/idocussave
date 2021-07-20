@@ -107,7 +107,7 @@
                     %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
                     %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
                 %tbody
-                  - @accounting_plan.providers.each do |provider|
+                  - @accounting_plan.active_providers.each do |provider|
                     %tr
                       %td= provider.third_party_name
                       %td= provider.third_party_account
@@ -141,7 +141,7 @@
                     %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
                     %th= t('activerecord.models.accounting_plan_item.attributes.code')
                 %tbody
-                  - @accounting_plan.customers.each do |customer|
+                  - @accounting_plan.active_customers.each do |customer|
                     %tr
                       %td= customer.third_party_name
                       %td= customer.third_party_account
