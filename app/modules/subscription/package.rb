@@ -113,14 +113,14 @@ class Subscription::Package
       end
     end
 
-    def discount_billing_of(package, special = false, gmba = false)
+    def discount_billing_of(package, special = '')
       if package == :ido_mini
         [
           { limit: (0..49), subscription_price: 0, retriever_price: 0 },
           { limit: (50..Float::INFINITY), subscription_price: -4, retriever_price: 0 }
         ]
       else
-        if special
+        if special.to_s == 'one'
           [
             { limit: (0..50), subscription_price: -1, retriever_price: 0 },
             { limit: (51..150), subscription_price: -1.5, retriever_price: -0.5 },
@@ -130,7 +130,7 @@ class Subscription::Package
             { limit: (351..500), subscription_price: -4, retriever_price: -1.50 },
             { limit: (501..Float::INFINITY), subscription_price: -5, retriever_price: -2 }
           ]
-        elsif gmba
+        elsif special.to_s == 'two'
           [
             { limit: (0..250), subscription_price: 0, retriever_price: 0 },
             { limit: (251..Float::INFINITY), subscription_price: -10, retriever_price: 0 }

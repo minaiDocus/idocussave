@@ -68,12 +68,13 @@ class Billing::DiscountBilling
   end
 
   def apply_special_policy?
-    groups = []
-    groups.include? @organization.code
-  end
+    groups_one = []
+    groups_two = ['GMBA', 'CEN']
 
-  def apply_gmba_policy?
-    @organization.code == 'GMBA'
+    return 'one' if groups_one.include?(@organization.code)
+    return 'two' if groups_two.include?(@organization.code)
+
+    return ''
   end
 
   private
@@ -107,7 +108,7 @@ class Billing::DiscountBilling
     quantity  = quantity_of(package_sym)
     result    = { subscription: 0, retriever: 0 }
 
-    Subscription::Package.discount_billing_of(package, apply_special_policy?, apply_gmba_policy?).each do |discount|
+    Subscription::Package.discount_billing_of(package, apply_special_policy?).each do |discount|
       if discount[:limit].include?(quantity.to_i)
         result = { subscription: discount[:subscription_price], retriever: discount[:retriever_price] }
         break
