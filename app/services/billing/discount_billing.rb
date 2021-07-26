@@ -29,7 +29,13 @@ class Billing::DiscountBilling
     if is_iDoMini_discount?
       discount_title << "iDoMini : #{unit_amount(:iDoMini)} € x #{classic_quantity_of(:iDoMini)}"
     else
-      discount_title << "Abo. mensuels : #{unit_amount(:subscription)} € x #{classic_quantity_of(:subscription)}" if unit_amount(:subscription) < 0
+      if unit_amount(:subscription) < 0
+        if special2_group?
+          discount_title << "Offre spéciale : 10€ / dossier après 250 dossiers : #{unit_amount(:subscription)} € x #{special2_quantity_of(:subscription)}"
+        else
+          discount_title << "Abo. mensuels : #{unit_amount(:subscription)} € x #{classic_quantity_of(:subscription)}"
+        end
+      end
       discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{classic_quantity_of(:retriever)}" if unit_amount(:retriever) < 0
     end
 
@@ -49,7 +55,11 @@ class Billing::DiscountBilling
   end
 
   def amount_in_cents_of(option)
-    unit_amount(option.to_sym) * classic_quantity_of(option.to_sym) * 100.0
+    if special2_group?
+      unit_amount(option.to_sym) * special2_quantity_of(option.to_sym) * 100.0
+    else
+      unit_amount(option.to_sym) * classic_quantity_of(option.to_sym) * 100.0
+    end
   end
 
   def quantity_of(option)
@@ -69,10 +79,10 @@ class Billing::DiscountBilling
 
   def apply_special_policy?
     groups_one = []
-    groups_two = ['GMBA', 'CEN']
+    #groups_two is GMBA and CEN (special2_group)
 
     return 'one' if groups_one.include?(@organization.code)
-    return 'two' if groups_two.include?(@organization.code)
+    return 'two' if special2_group?
 
     return ''
   end
@@ -118,6 +128,14 @@ class Billing::DiscountBilling
     result
   end
 
+  def special2_group?
+    groups = ['GMBA', 'CEN']
+    groups.include?(@organization.code)
+  end
+
+  def special2_quantity_of(option)
+    classic_quantity_of(option) - 250
+  end
 
   def extentis_group
     # ['FBC','FIDA','FIDC', 'EG']
