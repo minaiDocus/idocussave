@@ -193,6 +193,25 @@ class Ftp::Fetcher
           dir = File.basename file_path, '.*'
           dir = @root_path + dir
 
+          log_document = {
+            subject: "[FtpFetcher] - scanned uploaded file",
+            name: "ftp fetcher",
+            error_group: "[FtpFetcher] scanned uploaded file",
+            erreur_type: "[FtpFetcher] - scanned uploaded file",
+            date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+            more_information: {
+              file_path: file_path,
+              dir: dir.to_s,
+              dir_exist: File.exist?(dir)
+            }
+          }
+
+          begin
+            ErrorScriptMailer.error_notification(log_document, { attachements: [{ name: File.basename(file_path), file: File.open(file_path) }] }).deliver
+          rescue
+            ErrorScriptMailer.error_notification(log_document).deliver
+          end
+
           if File.exist?(dir)
             if Dir.glob(dir + '/*').size == File.read(file_path).to_i
               File.rename dir, "#{dir}_processing"

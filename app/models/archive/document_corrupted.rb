@@ -10,7 +10,7 @@ class Archive::DocumentCorrupted < ApplicationRecord
 
   has_one_attached :cloud_content
 
-  scope :retryable, -> { where('state = ? AND retry_count < ?', 'ready', 2) }
+  scope :retryable, -> { where('state = ? AND retry_count <= ?', 'ready', 2) }
   scope :old_documents, -> { where('created_at < ? ', 6.month.ago) }
   scope :to_notify, -> { where('state = ? AND is_notify = ? ', 'rejected', false) }
 

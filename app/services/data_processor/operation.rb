@@ -19,6 +19,25 @@ class DataProcessor::Operation
           account_number_finder = Transaction::AccountNumberFinder.new(user, bank_account.try(:temporary_account).presence)
 
           operations.each do |operation|
+            if operation.preseizure
+              operation.update_attribute('processed_at', Time.now)
+              operation.update_attribute('is_locked', false)
+              operation.save
+
+              log_document = {
+                subject: "[DataProcessor::Operation] - Duplicated preseizure for operation",
+                name: "dataprocessor_operation",
+                error_group: "[DataProcessor::Operation] - Duplicated preseizure for operation",
+                erreur_type: "Duplicated preseizure for operation",
+                date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+                more_information: { operation: operation.inspect, error_mess: operation.errors.try(:messages).to_s }
+              }
+
+              ErrorScriptMailer.error_notification(log_document).deliver
+
+              next
+            end
+
             counter += 1
             preseizure = Pack::Report::Preseizure.new
             preseizure.organization    = user.organization
@@ -87,9 +106,9 @@ class DataProcessor::Operation
             to_deliver_preseizures << preseizure
             operation.update({ processed_at: Time.now, is_locked: false })
           end
-          if pack_report.preseizures.not_locked.not_delivered.size > 0
-            pack_report.remove_delivered_to
-          end
+
+          pack_report.remove_delivered_to if pack_report.preseizures.not_locked.not_delivered.size > 0
+
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
             pres.each_slice(40) do |preseizures_group|
               PreAssignment::CreateDelivery.new(preseizures_group, ['ibiza', 'exact_online', 'my_unisoft'], is_auto: true).execute
