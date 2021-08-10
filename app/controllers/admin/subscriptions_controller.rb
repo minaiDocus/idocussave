@@ -15,7 +15,7 @@ class Admin::SubscriptionsController < Admin::AdminController
     @micro_package_count     = Rails.cache.fetch('admin_report_micro_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_micro%'").count }
     @nano_package_count      = Rails.cache.fetch('admin_report_nano_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_nano%'").count }
     @idox_package_count      = Rails.cache.fetch('admin_report_idox_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages LIKE '%ido_x%'").count }
-    @retriever_only_package_count = Rails.cache.fetch('admin_report_retriever_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"retriever_option\"]'").count }
+    @retriever_only_package_count = Rails.cache.fetch('admin_report_retriever_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"retriever_option\"]' OR current_packages = '[\"retriever_option\", \"digitize_option\"]' OR current_packages = '[\"digitize_option\", \"retriever_option\"]'").count }
     @digitize_only_package_count = Rails.cache.fetch('admin_report_digitize_only_package_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where("current_packages = '[\"digitize_option\"]'").count }
     @not_configured          = Rails.cache.fetch('admin_report_not_configured_count', expires_in: 10.minutes) { Subscription.where(user_id: @accounts_ids).where(current_packages: [nil, '[]', '', '[""]']).count }
 

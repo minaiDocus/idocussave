@@ -502,6 +502,9 @@ jQuery ->
     check_commitment()
     update_price()
 
+    if $('.notify-warning').length > 1
+      $('.notify-alert-message').removeClass('hide')
+
     $('#personalize_subscription_package_form .radio-button').on 'click', (e) ->
       package_name = $(this).data('package')
 

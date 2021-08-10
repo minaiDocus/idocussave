@@ -10,29 +10,29 @@
     - else
       - current_package = []
 
-    - organization = @subscription.try(:user).try(:organization).presence || FakeObject.new
+    - organization = @subscription.try(:user).try(:organization).presence || Organization.find(params[:organization_id])
 
     .center{ style: "text-align: center" }
-      .notify-warning.fs-origin.mb-3{ class: "#{(@subscription && @subscription.futur_packages.present? && @subscription.futur_packages != '[]') ? '' : 'hide' }" }
+      .notify-warning.fs-origin.mb-3{ class: "notify-alert-message hide" }
         Disparaîtra le mois prochain
     .row
-      .col-md-6
+      .col-md-5
         .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_x')}", title: Subscription::Package.infos_of(:ido_x)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_x', current_package.include?('ido_x'), class: 'form-check-input ido_x radio-button', data: { package: "ido_x" }
           = label_tag 'subscription[subscription_option]', "iDo'X", class: 'form-check-label'
-      .col-md-6.form_check_idox_package
-        .float-right{ style: "padding-right: 4em"}
+      .col-md-7.form_check_idox_package
+        .float-left{ style: "text-align: 4em"}
           .form-inline
             = label_tag 'user[jefacture_account_id]', "Identifiant Jefactrure (SIREN)", class: 'col-form-label'
             &nbsp;&nbsp;&nbsp;&nbsp;
             = text_field_tag 'user[jefacture_account_id]', @customer.jefacture_account_id, class: 'form-control ido_x_option option_checkbox', disabled: !current_package.include?('ido_x')
     .row
-      .col-md-6
+      .col-md-5
         .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_nano')}", title: Subscription::Package.infos_of(:ido_nano)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_nano', current_package.include?('ido_nano'), class: "form-check-input ido_nano radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_nano" }
           = label_tag 'subscription[subscription_option]', "iDo'Nano", class: 'form-check-label'
-      .col-md-6.form_check_nano_package
-        .float-right{ style: 'padding-right: 17em' }
+      .col-md-7.form_check_nano_package
+        .float-left{ style: 'text-align: 5em' }
           .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_nano', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
             = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_nano') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_nano_option #{'active_option' if (current_package.include?('ido_nano') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_nano')
             = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
@@ -41,12 +41,12 @@
               = check_box_tag 'subscription[digitize_option]', true, (current_package.include?('ido_nano') && current_package.include?('digitize_option')), class: "form-check-input option_checkbox ido_nano_option #{'active_option' if (current_package.include?('ido_nano') && current_package.include?('digitize_option'))}", data: { package: "digitize_option" }, disabled: !current_package.include?('ido_nano')
               = label_tag 'subscription[digitize_option]', "Avec option numérisation", class: 'form-check-label'
     .row
-      .col-md-6
+      .col-md-5
         .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_micro')}", title: Subscription::Package.infos_of(:ido_micro)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_micro', current_package.include?('ido_micro'), class: "form-check-input ido_micro radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_micro" }
           = label_tag 'subscription[subscription_option]', "iDo'Micro", class: 'form-check-label'
-      .col-md-6.form_check_micro_package
-        .float-right{ style: 'padding-right: 17em' }
+      .col-md-7.form_check_micro_package
+        .float-left{ style: 'text-align: 5em' }
           .form-check.form-check-inline{ class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_micro', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
             = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_micro') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_micro_option #{'active_option' if (current_package.include?('ido_micro') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_micro')
             = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
@@ -61,7 +61,7 @@
             = radio_button_tag 'subscription[subscription_option]', 'ido_mini',current_package.include?('ido_mini'), class: "form-check-input ido_mini radio-button #{'commitment_pending' if @customer.persisted? && !@customer.try(:subscription).try(:commitment_end?)}", data: { package: "ido_mini" }
             = label_tag 'subscription[subscription_option]', "iDo'Mini", class: 'form-check-label'
         .col-md-6.form_check_mini_package
-          .float-right{style: 'padding-right: 4.5em'}
+          .float-left{style: 'text-align: 4.5em'}
             .form-check.form-check-inline{class: "#{ 'notify-warning' if notify_warning(@subscription, 'ido_mini', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
               = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_mini') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_mini_option #{'active_option' if (current_package.include?('ido_mini') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: !current_package.include?('ido_mini')
               = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
@@ -74,12 +74,12 @@
               = check_box_tag 'subscription[digitize_option]', true, (current_package.include?('ido_mini') && current_package.include?('digitize_option')), class: "form-check-input option_checkbox ido_mini_option #{'active_option' if (current_package.include?('ido_mini') && current_package.include?('digitize_option'))}", data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'scan' }, disabled: !current_package.include?('ido_mini')
               = label_tag 'subscription[digitize_option]', "Avec option automates", class: 'form-check-label'
     .row
-      .col-md-6
+      .col-md-5
         .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique')}", title: Subscription::Package.infos_of(:ido_classique)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
           = radio_button_tag 'subscription[subscription_option]', 'ido_classique', ((@subscription && current_package.include?('ido_classique')) || !@subscription), class: 'form-check-input ido_classique radio-button', data: { package: "ido_classique" }
           = label_tag 'subscription[subscription_option]', "iDo'Classique", class: 'form-check-label'
-      .col-md-6.form_check_basic_package
-        .float-right{ style: "padding-right: 4em"}
+      .col-md-7.form_check_basic_package
+        .float-left{ style: "text-align: 4em"}
           .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'ido_classique', 'mail_option')}", title: Subscription::Package.infos_of(:mail_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
             = check_box_tag 'subscription[mail_option]', true, (current_package.include?('ido_classique') && current_package.include?('mail_option')), class: "form-check-input option_checkbox ido_classique_option #{'active_option' if (current_package.include?('ido_classique') && current_package.include?('mail_option'))}", data: { package: "mail_option" }, disabled: (!current_package.include?('ido_classique') && @subscription)
             = label_tag 'subscription[mail_option]', "Avec option courrier", class: 'form-check-label'
@@ -92,16 +92,22 @@
               = label_tag 'subscription[digitize_option]', "Avec option numérisation", class: 'form-check-label'
 
     .row
-      .col-md-12
-        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'retriever_option')}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-          = radio_button_tag 'subscription[subscription_option]', 'retriever_option', (current_package.include?('retriever_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('digitize_option')), class: 'form-check-input retriever-uniquess-check-radio radio-button', data: { retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }
+      .col-md-5
+        .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'retriever_option', '', true)}", title: Subscription::Package.infos_of(:retriever_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+          = radio_button_tag 'subscription[subscription_option]', 'retriever_option', (current_package.include?('retriever_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_nano') && !current_package.include?('ido_micro') && !current_package.include?('ido_x')), class: 'form-check-input retriever-uniquess-check-radio radio-button', data: {package: "retriever_option", retriever_price_option: @subscription.try(:retriever_price_option).to_s.presence || 'retriever' }
           = label_tag 'subscription[subscription_option]', "Automates uniquement", class: 'form-check-label'
-  
+      .col-md-7.form_check_basic_package
+        .float-left
+          - if CustomUtils.is_manual_paper_set_order?(organization)
+            .form-check.form-check-inline{class: "#{'notify-warning' if notify_warning(@subscription, 'retriever_option', 'digitize_option')}", title: Subscription::Package.infos_of(:digitize_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+              = check_box_tag 'subscription[digitize_option]', true, (current_package.include?('retriever_option') && current_package.include?('digitize_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('ido_nano')), class: "form-check-input option_checkbox retriever_option_option #{'active_option' if (current_package.include?('retriever_option') && current_package.include?('digitize_option'))}", data: { scan_price_option: @subscription.try(:scan_price_option).to_s.presence || 'scan' }, disabled: (current_package == '["digitize_option"]' || current_package.include?('ido_classique') || current_package.include?('ido_mini') || current_package.include?('ido_nano') || current_package.include?('ido_micro') || current_package.include?('ido_x') || @subscription.nil?)
+              = label_tag 'subscription[digitize_option]', "Avec option numérisation", class: 'form-check-label'
+
     - if CustomUtils.is_manual_paper_set_order?(organization)
       .row
         .col-md-12
-          .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'digitize_option')}", title: Subscription::Package.infos_of(:digitize_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
-            = radio_button_tag 'subscription[subscription_option]', 'digitize_option', (current_package.include?('digitize_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('retriever_option')), class: 'form-check-input retriever-uniquess-check-radio radio-button', data: { retriever_price_option: @subscription.try(:scan_price_option).to_s.presence || 'scan' }
+          .form-check.form-check-inline{ class: "#{'notify-warning' if notify_warning(@subscription, 'digitize_option', '', true)}", title: Subscription::Package.infos_of(:digitize_option)[:tooltip], data: { toggle: 'tooltip', placement: 'right' }}
+            = radio_button_tag 'subscription[subscription_option]', 'digitize_option', (current_package.include?('digitize_option') && !current_package.include?('ido_classique') && !current_package.include?('ido_mini') && !current_package.include?('ido_micro') && !current_package.include?('ido_x') && !current_package.include?('ido_nano') && !current_package.include?('retriever_option')), class: 'form-check-input retriever-uniquess-check-radio radio-button', data: { retriever_price_option: @subscription.try(:scan_price_option).to_s.presence || 'scan' }
             = label_tag 'subscription[subscription_option]', "Numérisation uniquement", class: 'form-check-label'
 
     .row.mt-4.number_of_journals
