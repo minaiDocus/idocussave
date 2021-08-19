@@ -226,14 +226,15 @@ module Cedricom
     def save_operation(bank_account, cedricom_operation)
       operation = Operation.new
 
-      operation.user   = bank_account.user
+      operation.user   = bank_account&.user
       operation.date   = cedricom_operation[:date]
       operation.amount = cedricom_operation[:amount]
       operation.label  = cedricom_operation[:long_label]
       operation.api_name     = 'cedricom'
       operation.value_date   = cedricom_operation[:value_date]
-      operation.organization = bank_account.user.organization
+      operation.organization = @reception.organization
       operation.bank_account = bank_account
+      operation.unrecognized_iban = bank_account ? nil : cedricom_operation[:bank_account]
       operation.cedricom_reception = @reception
       operation.currency = case cedricom_operation[:currency_code]
                             when 'EUR'
@@ -250,7 +251,7 @@ module Cedricom
 
       operation.save!
 
-      if operation.persisted?
+      if operation.persisted? && operation.bank_account
         operation.update(api_id: operation.id)
       end
 
@@ -262,11 +263,12 @@ module Cedricom
 
       operations.each do |operation|
         bank_account = customer_bank_account(operation[:bank_account])
-        next unless bank_account
 
-        if operation[:date] <= bank_account.ebics_enabled_starting
-          result[:skipped_operations_count] = result[:skipped_operations_count] + 1
-          next
+        if bank_account
+          if operation[:date] <= bank_account.ebics_enabled_starting
+            result[:skipped_operations_count] = result[:skipped_operations_count] + 1
+            next
+          end
         end
 
         customer_operation = save_operation(bank_account, operation)

@@ -1,0 +1,35 @@
+.retractable-content
+%table.table.table-condensed.table-striped.margin1top.margin1bottom.table-detachable-head.table-bordered-inner{ data: { total: collection.sum {|h| h[1]} }}
+  %thead
+    %tr.bg-brown.text-white
+      %th.aligncenter Date import
+      %th.aligncenter Organisation
+      %th.aligncenter Nb. opérations
+      %th.aligncenter Compte
+  %tbody
+    - total = 0
+    - if collection.count > 0
+      - collection.each do |object|
+        - organization = Organization.find(object[0][0])
+        - date = object[0][2]
+        - iban = object[0][1]
+        - count = object[1]
+        %tr
+          %td.aligncenter
+            - if date
+              = l(date, format: '%d %b %Y %H:%M')
+            - else
+              \-
+          %td.aligncenter= organization.name
+          %td.aligncenter= count
+          %td.aligncenter= iban
+      %tr
+        %td
+        %td
+        %td.aligncenter
+          %strong= collection.sum {|h| h[1]}
+        %td
+    - else
+      %tr
+        %td.aligncenter{ colspan: 4 }
+          %i Aucun

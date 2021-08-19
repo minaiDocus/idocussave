@@ -2,7 +2,9 @@ module Cedricom
   class Api
     CONFIG = YAML.load_file('config/cedricom.yml').freeze
 
-    def initialize
+    def initialize(organization)
+      @organization = organization
+
       token = get_jwt
 
       @connection = Faraday.new(CONFIG['cedricom']['base_url']) do |faraday|
@@ -47,8 +49,8 @@ module Cedricom
         faraday.adapter Faraday.default_adapter
         faraday.headers['Accept'] = "*/*"
         faraday.headers['Content-Type'] = "application/json"
-        faraday.headers['X-Auth-Username'] = CONFIG['cedricom']['username']
-        faraday.headers['X-Auth-Password'] = CONFIG['cedricom']['password']
+        faraday.headers['X-Auth-Username'] = @organization.cedricom_user
+        faraday.headers['X-Auth-Password'] = @organization.cedricom_password
       end
 
       result = @connection.post do |request|

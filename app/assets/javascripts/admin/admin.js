@@ -1,5 +1,5 @@
 function load_resources(resources) {
-  for(i=0;i<10;i++){
+  for(i=0;i<11;i++){
     (function(counter) {
       var resource = resources[counter];
       $.ajax({
@@ -26,7 +26,8 @@ $(document).ready(function() {
     'awaiting_pre_assignments',
     'reports_delivery',
     'failed_reports_delivery',
-    'awaiting_supplier_recognition'
+    'awaiting_supplier_recognition',
+    'cedricom_orphans'
   ];
 
   load_resources(resources);

@@ -1,4 +1,6 @@
 class Organization < ApplicationRecord
+  attr_encrypted :cedricom_password, random_iv: true
+
   validates :authd_prev_period, numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
@@ -46,6 +48,7 @@ class Organization < ApplicationRecord
   has_many :reminder_emails, autosave: true
   has_many :period_documents
   has_many :account_book_types
+  has_many :cedricom_receptions
   has_many :account_number_rules
   has_many :pre_assignment_deliveries
   has_many :pre_assignment_exports
@@ -69,6 +72,7 @@ class Organization < ApplicationRecord
   scope :suspended,   -> { where(is_suspended: true) }
   scope :not_billed,  -> { where("is_test = ? OR is_active = ? OR is_for_admin = ?", true, false, true) }
   scope :unsuspended, -> { where(is_suspended: false) }
+  scope :cedricom_configured, -> { where.not(cedricom_user: nil, encrypted_cedricom_password: nil) }
 
   def self.billed_for_year(year)
     start_time = Time.local(year).beginning_of_year + 15.days

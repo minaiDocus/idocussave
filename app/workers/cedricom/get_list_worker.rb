@@ -4,7 +4,9 @@ class Cedricom::GetListWorker
 
   def perform
     UniqueJobs.for 'GetList' do
-      Cedricom::FetchReceptions.new.get_list
+      Organization.cedricom_configured.each do |organization|
+        Cedricom::FetchReceptions.new(organization).get_list
+      end
     end
   end
 end

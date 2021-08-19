@@ -152,6 +152,13 @@ class Admin::AdminController < ApplicationController
     render partial: 'failed_reports_delivery', locals: { collection: @failed_reports_delivery }
   end
 
+  # GET /admin/cedricom_orphans
+  def cedricom_orphans
+    @orphans = Operation.cedricom_orphans.group(:organization_id, :unrecognized_iban).group("DATE(created_at)").count
+
+    render partial: 'cedricom_orphans', locals: { collection: @orphans }
+  end
+
   private
 
   def verify_admin_rights
