@@ -4,7 +4,7 @@ class CedricomReception < ApplicationRecord
   belongs_to :organization
   has_many :operations
 
-  validates_uniqueness_of :cedricom_id
+  validates_uniqueness_of :cedricom_id, scope: :organization_id
 
   scope :to_download, -> { where(downloaded: false) }
 
