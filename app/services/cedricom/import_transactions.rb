@@ -232,7 +232,7 @@ module Cedricom
       operation.label  = cedricom_operation[:long_label]
       operation.api_name     = 'cedricom'
       operation.value_date   = cedricom_operation[:value_date]
-      operation.organization = @reception.organization
+      operation.organization = bank_account&.user&.organization ? bank_account&.user&.organization : @reception.organization
       operation.bank_account = bank_account
       operation.unrecognized_iban = bank_account ? nil : cedricom_operation[:bank_account]
       operation.cedricom_reception = @reception
