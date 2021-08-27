@@ -62,7 +62,7 @@
                       .float-left Coala
                       - if @customer.uses?(:coala)
                         = glyphicon('check', { class: 'float-right' })
-                -if @organization.try(:quadratus).try(:used)
+                -if @organization.try(:quadratus).try(:used?)
                   %li
                     %a.dropdown-item{ class: ('active' if params[:tab] == 'quadratus'), href: '#quadratus', data: { toggle: 'tab' } }
                       .float-left Quadratus
