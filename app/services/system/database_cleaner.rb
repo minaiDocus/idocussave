@@ -32,6 +32,6 @@ class System::DatabaseCleaner
 
     def clear_staffing_flows
       ## Destroy all Staffing flow when records 'created_at < ?', 1.month.ago
-      StaffingFlow.where('created_at < ?', 1.weeks.ago).processed.destroy_all
+      StaffingFlow.where('created_at < ?', 1.month.ago).processed.destroy_all
     end
 end
