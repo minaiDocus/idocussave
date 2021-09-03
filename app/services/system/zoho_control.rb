@@ -1,11 +1,12 @@
 # encoding: utf-8
 class System::ZohoControl
-  # ZOHO_BASE_URI   = 'https://www.zohoapis.com/crm/v2/'
-  # ZOHO_AUTH_TOKEN = '5064b25445e1bd95b9d78c49a536ffcd' ###token Prod
-  # ZOHO_AUTH_TOKEN = '7e2b6d448a6d833f46ce3f83d5d25c93' ###token Luc
-  # ZOHO_AUTH_TOKEN  = '1000.ce9223d2a1ac41099eda5802e6b268be.e43ba977987f7600035d5a74f91bad88' ###token mina
-
   class << self
+    def launch_test
+      new().send_organizations(true)
+      sleep(7)
+      new().send_collaborators(true)
+    end
+
     def send_organizations
       new().send_organizations
     end
@@ -27,8 +28,13 @@ class System::ZohoControl
     @access_token = ZohoCrm::USER_TOKEN
   end
 
-  def send_organizations
-    organizations = Organization.select([:id, :name, :code, :description, :is_active, :is_suspended])
+  def send_organizations(is_test=false)
+    if is_test
+      organizations = Organization.where(code: 'IDOC').select([:id, :name, :code, :description, :is_active, :is_suspended])
+    else
+      organizations = Organization.select([:id, :name, :code, :description, :is_active, :is_suspended])
+    end
+
     @organizations_count = organizations.size
     organizations.each_slice(10) do |_organizations|
       process(_organizations)
@@ -63,8 +69,13 @@ class System::ZohoControl
     end
   end
 
-  def send_collaborators
-    users = User.where(is_prescriber: true)
+  def send_collaborators(is_test=false)
+    if is_test
+      users = Organization.where(code: 'IDOC').first.collaborators
+    else
+      users = User.where(is_prescriber: true)
+    end
+
     _memberships = []
     users.each do |user|
       member = user.memberships.first
@@ -128,6 +139,10 @@ class System::ZohoControl
     reset_control
 
     @json_content = create_json_format(data)
+
+    p '============================================================================================='
+    p @json_content
+    p '============================================================================================='
 
     send_data_to_zoho
 
@@ -409,7 +424,7 @@ class AccountZoho
   end
 
   def search_record_with_criteria(object)
-    "((Code_iDocus:equals:#{URI.encode_www_form_component(object.code)})and(Account_Number:equals:#{URI.encode_www_form_component(object.id)})or(Account_Name:equals:#{URI.encode_www_form_component(object.name.gsub(/\(/, "%28").gsub(/\)/, "%29"))}))"
+    "((Code_iDocus:equals:#{URI.encode_www_form_component(object.code)})and(Identifiant_iDocus:equals:#{URI.encode_www_form_component(object.id)})or(Account_Name:equals:#{URI.encode_www_form_component(object.name.gsub(/\(/, "%28").gsub(/\)/, "%29"))}))"
   end
 
   def module_name
@@ -424,11 +439,13 @@ class AccountZoho
       counter += 1
       inserted << organization.id
       record_data = {
+        "Client_iDocus": true,
+        "Identifiant_iDocus": organization.id,
         "Account_Number": organization.id,
         "Account_Name": organization.name,
         "Code_iDocus": organization.code,
         "Description": organization.description,
-        "Client_iDocus": (organization.is_active && organization.is_suspended) ? false : true,
+        "Abonnement_iDocus": (organization.is_active) ? 'actif' : 'résilié',
         "Nombre_de_Clients_Actifs": organization.customers.active.count
       }
       data_content << record_data
@@ -450,9 +467,11 @@ class AccountZoho
       updated << organization.id
       record_data = {
         "id": key,
+        "Client_iDocus": true,
+        "Identifiant_iDocus": organization.id,
         "Account_Number": organization.id,
         "Code_iDocus": organization.code,
-        "Client_iDocus": (organization.is_active && organization.is_suspended) ? false : true,
+        "Abonnement_iDocus": (organization.is_active) ? 'actif' : 'résilié',
         "Nombre_de_Clients_Actifs": organization.customers.active.count
       }
       data_content << record_data
@@ -503,7 +522,7 @@ class ContactZoho
   end
 
   def search_record_with_criteria(object)
-    "((Code_iDocus:equals:#{URI.encode_www_form_component(object.code)})and(Email:equals:#{URI.encode_www_form_component(object.email)}))"
+    "((Email:equals:#{URI.encode_www_form_component(object.email)})or(Contact_Number:equals:#{URI.encode_www_form_component(object.id)}))"
   end
 
   def module_name
@@ -521,12 +540,10 @@ class ContactZoho
         "Contact_Number": user.id,
         "Email": user.email,
         "Last_Name": user.last_name,
-        "Code_iDocus": user.code,
-        "Role": user.memberships.first.admin? ? "administrateur" : 'collaborateur',
+        "Fonction": user.memberships.first.admin? ? "Administrateur IDOCUS" : 'Collaborateur',
         "First_Name": user.first_name,
-        "Full_Name": user.first_name + " " + user.last_name,
         "Account_Name"=>{
-          "name": Organization.find(user.organization_id).name
+          "name": user.memberships.first.organization.name
         }
       }
       data_content << record_data
@@ -549,9 +566,9 @@ class ContactZoho
       record_data = {
         "id": key,
         "Contact_Number": user.id,
-        "Code_iDocus": user.code,
+        "Fonction": user.memberships.first.admin? ? "Administrateur IDOCUS" : 'Collaborateur',
         "Account_Name"=>{
-          "name": Organization.find(user.organization_id).name
+          "name": user.memberships.first.organization.name
         }
       }
       data_content << record_data
@@ -561,7 +578,7 @@ class ContactZoho
       "data": data_content
     }
 
-    {json_content: (counter > 0)? data_to_json.to_json : "", list: updated}
+    { json_content: (counter > 0)? data_to_json.to_json : "", list: updated }
   end
 
   def fill_report_file(reports)
