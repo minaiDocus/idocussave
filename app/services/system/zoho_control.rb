@@ -2,9 +2,17 @@
 class System::ZohoControl
   class << self
     def launch_test
-      new().send_organizations(true)
+      new().send_organizations('IDOC')
       sleep(7)
-      new().send_collaborators(true)
+      new().send_collaborators('IDOC')
+    end
+
+    def send_one_organization(code)
+      return false if code.blank?
+
+      new().send_organizations(code)
+      sleep(7)
+      new().send_collaborators(code)
     end
 
     def send_organizations
@@ -28,9 +36,9 @@ class System::ZohoControl
     @access_token = ZohoCrm::USER_TOKEN
   end
 
-  def send_organizations(is_test=false)
-    if is_test
-      organizations = Organization.where(code: 'IDOC').select([:id, :name, :code, :description, :is_active, :is_suspended])
+  def send_organizations(code='all')
+    if code != 'all'
+      organizations = Organization.where(code: code).select([:id, :name, :code, :description, :is_active, :is_suspended])
     else
       organizations = Organization.select([:id, :name, :code, :description, :is_active, :is_suspended])
     end
@@ -69,9 +77,9 @@ class System::ZohoControl
     end
   end
 
-  def send_collaborators(is_test=false)
-    if is_test
-      users = Organization.where(code: 'IDOC').first.collaborators
+  def send_collaborators(code='all')
+    if code != 'all'
+      users = Organization.where(code: code).first.collaborators
     else
       users = User.where(is_prescriber: true)
     end
@@ -174,6 +182,10 @@ class System::ZohoControl
       @access_token = refresh_access_token
       retry
     end
+
+    p '**********************************************************'
+    p response.body
+    p '***************************************************'
 
     return response.body["data"].first["id"] if response.status.to_i == 200 && response.body["data"].present? && response.body["data"].first["id"].present?
     nil
@@ -424,7 +436,7 @@ class AccountZoho
   end
 
   def search_record_with_criteria(object)
-    "((Code_iDocus:equals:#{URI.encode_www_form_component(object.code)})and(Identifiant_iDocus:equals:#{URI.encode_www_form_component(object.id)})or(Account_Name:equals:#{URI.encode_www_form_component(object.name.gsub(/\(/, "%28").gsub(/\)/, "%29"))}))"
+    "((Code_iDocus:equals:#{URI.encode_www_form_component(object.code.strip)})or(Identifiant_iDocus:equals:#{URI.encode_www_form_component(object.id)})or(Account_Name:equals:#{URI.encode_www_form_component(object.name.to_s.gsub(/\(/, "%28").gsub(/\)/, "%29"))}))"
   end
 
   def module_name
@@ -446,7 +458,7 @@ class AccountZoho
         "Code_iDocus": organization.code,
         "Description": organization.description,
         "Abonnement_iDocus": (organization.is_active) ? 'actif' : 'résilié',
-        "Nombre_de_Clients_Actifs": organization.customers.active.count
+        "Nombre_de_Clients_Actifs": organization.customers.active.count.to_s
       }
       data_content << record_data
     end
@@ -470,9 +482,10 @@ class AccountZoho
         "Client_iDocus": true,
         "Identifiant_iDocus": organization.id,
         "Account_Number": organization.id,
+        "Account_Name": organization.name,
         "Code_iDocus": organization.code,
         "Abonnement_iDocus": (organization.is_active) ? 'actif' : 'résilié',
-        "Nombre_de_Clients_Actifs": organization.customers.active.count
+        "Nombre_de_Clients_Actifs": organization.customers.active.count.to_s
       }
       data_content << record_data
     end
@@ -539,9 +552,9 @@ class ContactZoho
       record_data = {
         "Contact_Number": user.id,
         "Email": user.email,
-        "Last_Name": user.last_name,
+        "Last_Name": user.last_name.presence || '-',
         "Fonction": user.memberships.first.admin? ? "Administrateur IDOCUS" : 'Collaborateur',
-        "First_Name": user.first_name,
+        "First_Name": user.first_name.presence || '-',
         "Account_Name"=>{
           "name": user.memberships.first.organization.name
         }
