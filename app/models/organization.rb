@@ -194,7 +194,7 @@ class Organization < ApplicationRecord
   end
 
   def banking_provider
-    default_banking_provider ? default_banking_provider : 'budget_insight'
+    default_banking_provider.present? ? default_banking_provider : 'budget_insight'
   end
 
   def compta_analysis_activated?(_software)
