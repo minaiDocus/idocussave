@@ -764,6 +764,10 @@ Rails.application.routes.draw do
     resources :process_reporting, only: :index do
       get 'process_reporting_table', action: 'process_reporting_table', on: :collection
     end
+
+    resources :zoho_crms, only: %w(index) do
+      post 'synchronize', on: :collection
+    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
