@@ -7,12 +7,15 @@ class System::ZohoControl
       new().send_collaborators('IDOC')
     end
 
-    def send_one_organization(code)
-      return false if code.blank?
+    def send_arr_organizations(codes=[])
+      Array(codes).each do |code|
+        next if not code.present?
 
-      new().send_organizations(code)
-      sleep(7)
-      new().send_collaborators(code)
+        new().send_organizations(code)
+        sleep(7)
+        new().send_collaborators(code)
+        sleep(7)
+      end
     end
 
     def send_organizations

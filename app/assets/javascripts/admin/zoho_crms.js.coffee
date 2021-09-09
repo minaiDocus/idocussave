@@ -1,11 +1,9 @@
 jQuery ->
-  $('#zoho_crm_organization_codes_').searchableOptionList({
-    maxHeight: '150px'
-    })
-  $('.zoho_crm_synchronizer #zoho-crm-check-all').click (e) ->
+  $('.zoho-crm-form-synchronizer #zoho-crm-check-all').on 'click', (e) ->
     if $(this).is(':checked')
+     $('#zoho_crm_organization_codes_ option').attr('selected', 'selected')
      $('#zoho_crm_organization_codes_').attr('disabled', 'disabled')
-     $('#zoho_crm_organization_codes_').removeAttr('selected')
     else    
-      $('#zoho_crm_organization_codes_').removeAttr('disabled')
+     $('#zoho_crm_organization_codes_ option').removeAttr('selected');
+     $('#zoho_crm_organization_codes_').removeAttr('disabled');
 
