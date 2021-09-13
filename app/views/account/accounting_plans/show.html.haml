@@ -96,6 +96,7 @@
                     = submit_tag 'Importer', class: 'btn btn-primary'
                 .links
                   = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_customer_accounting_plan_path(@organization, @customer)
+              - autoliquidation_exist = @accounting_plan.active_providers.select{ |prov| prov.vat_autoliquidation }.size > 0
               %table.table.table-striped.table-condensed.table-bordered-inner.margin0bottom.table-detachable-head.bg-white
                 %thead
                   %tr.bg-brown.text-white
@@ -103,9 +104,9 @@
                     %th= t('activerecord.models.accounting_plan_item.attributes.third_party_account')
                     %th= t('activerecord.models.accounting_plan_item.attributes.conterpart_account')
                     %th= t('activerecord.models.accounting_plan_item.attributes.code')
-                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
-                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
-                    %th.hide= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
+                    %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation')
+                    %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_debit_account')
+                    %th{ class: autoliquidation_exist ? '' : 'hide' }= t('activerecord.models.accounting_plan_item.attributes.vat_autoliquidation_credit_account')
                 %tbody
                   - @accounting_plan.active_providers.each do |provider|
                     %tr
@@ -113,9 +114,9 @@
                       %td= provider.third_party_account
                       %td= provider.conterpart_account
                       %td= provider.code
-                      %td.hide= provider.vat_autoliquidation ? icon_ok : icon_not_ok
-                      %td.hide= provider.vat_autoliquidation_debit_account
-                      %td.hide= provider.vat_autoliquidation_credit_account
+                      %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation ? icon_ok : icon_not_ok
+                      %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation_debit_account
+                      %td{ class: autoliquidation_exist ? '' : 'hide' }= provider.vat_autoliquidation_credit_account
           .col-md-6
             .box.bg-light.height_groups.groups_1
               .float-left.margin1bottom
