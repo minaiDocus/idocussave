@@ -609,7 +609,7 @@
               %h4.margin1bottom Activation Quadratus
               = simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { id: 'form_quadratus', class: 'form form-horizontal label-auto' } do |c|
                 = hidden_field_tag :part, 'quadratus'
-                = c.simple_fields_for :quadratuis do |f|
+                = c.simple_fields_for :quadratus do |f|
                   %table.table.table-condensed.table-striped
                     %tbody
                       %tr
