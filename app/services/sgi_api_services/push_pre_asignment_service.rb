@@ -9,6 +9,8 @@ class SgiApiServices::PushPreAsignmentService
       document = Reporting.find_or_create_period_document(piece.pack, period)
       report   = document.report || create_report(piece.pack, document)
 
+      return false if piece.preseizures.any?
+
       pre_assignments = get_pre_assignments(piece, report, data_pre_assignments)
 
       Billing::UpdatePeriodData.new(period).execute

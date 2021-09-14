@@ -1,0 +1,24 @@
+#zoho_crm_synchronizer
+  .row
+    .col-md-12
+      .box.small-shadow.clearfix
+        .float-left
+          %h3
+            Synchronization Zoho Crm
+
+  .row
+    .col-md-12
+      .card
+        = form_tag synchronize_admin_zoho_crms_path, method: :post, class: 'form zoho-crm-form-synchronizer' do
+          .card-header
+            %h3  Séléctionner les organizations à synchroniser
+          .card-body
+            .form-group.clearfix
+              .label-section
+                = check_box_tag 'zoho_crm[all]', 'all', false, id: 'zoho-crm-check-all', class: 'form-check-input.mr-sm-2'
+                = label_tag 'zoho_crm[all][]', 'Séléctionner toutes les organizations', class: 'form-check-label', for: 'zoho-crm-check-all'
+            .form-group.clearfix
+              .control-section  
+                = select_tag 'zoho_crm[organization_codes][]', options_for_select(@organizations), include_blank: false, class: 'custom-select.mr-sm-2', multiple: 'multiple', style: 'height: 250px'
+          .card-footer
+            = submit_tag 'Synchroniser', name: 'synchonise', class: 'btn btn-primary mb-2'

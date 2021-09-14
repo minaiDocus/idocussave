@@ -19,7 +19,7 @@ Rails.application.config.assets.precompile += %w( paper_process.css account/repo
                                                   account/pre_assignment_blocked_duplicates.css account/pre_assignment_delivery_errors.css account/suspended.css )
 
 Rails.application.config.assets.precompile += %w( admin.js admin/admin.js admin/events.js admin/invoices.js admin/mobile_reporting.js admin/news.js admin/pre_assignment_blocked_duplicates.js
-                                                  admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js admin/retriever_services.js admin/job_processing.js admin/budgea_retriever.js admin/counter_error_script_mailer.js admin/process_reporting.js admin/archives.js )
+                                                  admin/reporting.js admin/scanning_providers.js admin/subscriptions.js admin/user.js admin/retriever_services.js admin/job_processing.js admin/budgea_retriever.js admin/counter_error_script_mailer.js admin/process_reporting.js admin/archives.js admin/zoho_crms.js )
 
 
 Rails.application.config.assets.precompile += %w( paper_process.js account/accounting_plans.js inner.js welcome.js account/ftps.js account/sftps.js account/reporting.js account/profile.js account/addresses.js account/organizations.js account/group_organizations.js account/software_users.js

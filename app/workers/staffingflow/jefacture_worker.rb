@@ -18,8 +18,7 @@ class Staffingflow::JefactureWorker
       UniqueJobs.for "staffing_flow_jefacture-#{staffing_id}" do
         sf = StaffingFlow.find(staffing_id)
         params = sf.params
-        sf.processing
-        SgiApiServices::AutoPreAssignedJefacturePieces.process(params[:temp_preseizure_id], params[:piece_id], params[:raw_preseizure])
+        SgiApiServices::AutoPreAssignedJefacturePieces.process(params[:temp_preseizure_id], params[:piece_id], params[:raw_preseizure]) if sf.processing
         sf.processed
       end
     end
