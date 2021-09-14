@@ -520,6 +520,7 @@ Rails.application.routes.draw do
       resources :pieces,            only: %w(update)
 
       resources :operations,        only: %w(create) do
+        get 'by_iban/:iban', action: 'index_by_iban', on: :collection
         post 'not_processed', action: 'not_processed', on: :collection
       end
 

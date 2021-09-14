@@ -2,6 +2,16 @@ class Api::V2::OperationsController < ActionController::Base
   before_action :authenticate
   skip_before_action :verify_authenticity_token
 
+  def index_by_iban
+    bank_account = BankAccount.find_by_number(params[:iban])
+
+    if bank_account
+      render json: serializer.new(bank_account.operations)
+    else
+      head :not_found
+    end
+  end
+
   def create
     result = Transaction::CreateOperation.perform(operation_params.to_h["_json"])
 
