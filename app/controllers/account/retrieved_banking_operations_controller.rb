@@ -5,20 +5,21 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
 
   def index
     operations
-    @is_filter_empty = search_terms(params[:banking_operation_contains]).blank?
-    @waiting_operations_count = waiting_operations.count
+    @is_filter_empty = search_terms(banking_options_params).blank?
+    @waiting_operations_count = waiting_operations(false).count
   end
 
   def force_processing
     # NOTE using update_all directly does not work because of the join with bank_account
-    ids = waiting_operations.pluck(:id)
+    ids = waiting_operations(true).pluck(:id)
     count = Operation.where(id: ids).update_all(forced_processing_at: Time.now, forced_processing_by_user_id: current_user.id)
     flash[:success] = if count < 2
                         "#{count} opération sera immédiatement pré-affecté."
                       else
                         "#{count} opérations seront immédiatement pré-affectés."
                       end
-    redirect_to account_retrieved_banking_operations_path(banking_operation_contains: params[:banking_operation_contains])
+
+    redirect_to account_retrieved_banking_operations_path(banking_operation_contains: banking_options_params)
   end
 
   def unlock_operations
@@ -32,7 +33,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
       end
     end
 
-    redirect_to account_retrieved_banking_operations_path(banking_operation_contains: params[:banking_operation_contains])
+    redirect_to account_retrieved_banking_operations_path(banking_operation_contains: banking_options_params)
   end
 
   private
@@ -49,7 +50,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
       )
     )
     @operations = Operation.search_for_collection(operations,
-                                                  search_terms(params[:banking_operation_contains]))
+                                                  search_terms(banking_options_params))
                                                   .order("#{sort_column} #{sort_direction}")
                                                   .includes(:bank_account)
     if with_page
@@ -75,11 +76,22 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
   end
   helper_method :sort_direction
 
-  def waiting_operations
+  def waiting_operations(permit_params=false)
     bank_account_ids = @account.bank_accounts.used.map(&:id)
     operations = @account.operations.not_processed.not_locked.recently_added.waiting_processing
     operations = operations.where(bank_account_id: bank_account_ids)
-    Operation.search_for_collection(operations, search_terms(params[:banking_operation_contains])).includes(:bank_account)
+
+    if permit_params
+      _param = banking_options_params.permit!
+    else
+      _param = banking_options_params
+    end
+
+    Operation.search_for_collection(operations, search_terms(_param)).includes(:bank_account)
+  end
+
+  def banking_options_params
+    params[:banking_operation_contains]
   end
 
   def verif_account
