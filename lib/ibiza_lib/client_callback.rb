@@ -10,21 +10,37 @@ module IbizaLib
       return unless response.message.is_a?(Hash)
       return unless response.message.dig('error', 'details').try(:match, /Invalid directory authentication/)
 
+      # TempFix: Don't disable ibiza
       UniqueJobs.for "IbizaClientCallback-#{@ibiza.id}", 1.minute do
-        disable_invalid_access_token
-        notify_disabled
+        disable_invalid_access_token(response)
+        # notify_disabled
       end
     end
 
     private
 
-    def disable_invalid_access_token
-      if @ibiza.access_token == @access_token
-        @ibiza.state = 'invalid'
-      else @ibiza.access_token_2 == @access_token
-        @ibiza.state_2 = 'invalid'
-      end
-      @ibiza.save if @ibiza.changed?
+    def disable_invalid_access_token(response)
+
+        log_document = {
+          subject: "[Disabling ibiza] - attempt desabling ibiza",
+          name: "Disabling Ibiza",
+          error_group: "[Disabling ibiza] : #{@ibiza.id}",
+          erreur_type: "Disabling - #{@ibiza.id}",
+          date_erreur: Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+          more_information: { ibiza: @ibiza.to_json, access_token: @access_token, response: response.message }
+        }
+
+        ErrorScriptMailer.error_notification(log_document).deliver
+      
+      # TempFix: Don't disable ibiza
+      return false
+
+      # if @ibiza.access_token == @access_token
+      #   @ibiza.state = 'invalid'
+      # else @ibiza.access_token_2 == @access_token
+      #   @ibiza.state_2 = 'invalid'
+      # end
+      # @ibiza.save if @ibiza.changed?
     end
 
     def notified?(user)
