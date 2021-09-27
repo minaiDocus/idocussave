@@ -71,7 +71,7 @@ vat_account_field = ->
     $('a.add_vat_account_field').unbind('click')
     $('a.add_vat_account_field').on 'click', (e) ->
       e.preventDefault()
-      add_vat_account_field('10', 445660, 70054614)
+      add_vat_account_field('10', 445660, '')
 
       remove_vat_account_field()
 
@@ -89,7 +89,7 @@ add_vat_account_field = (rate, vat_account, conterpart_account) ->
   input_field += '</div>'
   input_field += '<div class="col-5" style="margin-right: -36px;">'
   input_field += '<input class="form-control string optional vat_accounts_conterpart" type="text" name="account_book_type[vat_accounts_conterpart]" value="' + conterpart_account + '" id="account_book_type_vat_accounts_'+ conterpart_account + '" data-toggle="tooltip" data-placement="top" title="Compte contre partie relative au taux">'
-  input_field += '<i class="help-block">Compte contre partie relative au taux</i>'
+  input_field += '<i class="help-block">Compte de charge/produit relative au taux</i>'
   input_field += '</div>'
   input_field += '<div class="col-1 float-right margin1left" style="margin-right: 10px;">'
   input_field += '<a id="remove_vat_accounts_field" href="#" class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Supprimer">X</a>'
@@ -134,7 +134,7 @@ add_default_vat_account = (vat_account, conterpart_account) ->
   input_field += '</div>'
   input_field += '<div class="col-5" style="margin-right: -36px;">'
   input_field += '<input class="form-control string optional vat_accounts_conterpart" type="text" name="account_book_type[vat_accounts_conterpart]" value="' + conterpart_account + '" id="account_book_type_default_conterpart_accounts" data-toggle="tooltip" data-placement="top" title="Compte contre partie relative au taux">'
-  input_field += '<i class="help-block">Compte contre partie relative au taux</i>'
+  input_field += '<i class="help-block">Compte de charge/produit relative au taux</i>'
   input_field += '</div>'
   input_field += '</div>'
   input_field += '</div>'
@@ -143,7 +143,7 @@ add_default_vat_account = (vat_account, conterpart_account) ->
   $('.pre-assignment-attributes .vat_account_field, #pre-assignment-attributes .vat_account_field').after(input_field)
 
 show_vat_account_field = ->
-  add_default_vat_account(445660, 70054614)
+  add_default_vat_account(445660, '')
 
   vat_accounts = $('input[type=hidden]#account-book-type-vat-accounts-hidden').val()
   if !(vat_accounts == '' || vat_accounts == null || vat_accounts == 'undefined' || vat_accounts == undefined)
@@ -155,7 +155,7 @@ show_vat_account_field = ->
         if /Compte de TVA par défaut/.test(rate) || rate == '0'
           $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
           $('input[type="text"]#account_book_type_default_vat_accounts').change()
-          $('input[type="text"]#account_book_type_default_conterpart_accounts').val(conterpart_account || 70054614)
+          $('input[type="text"]#account_book_type_default_conterpart_accounts').val(conterpart_account)
           $('input[type="text"]#account_book_type_default_conterpart_accounts').change()
 
           if $('.account_book_type_vat_accounts.error').length > 0
