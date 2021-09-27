@@ -71,11 +71,11 @@ vat_account_field = ->
     $('a.add_vat_account_field').unbind('click')
     $('a.add_vat_account_field').on 'click', (e) ->
       e.preventDefault()
-      add_vat_account_field('10', 445660)
+      add_vat_account_field('10', 445660, 70054614)
 
       remove_vat_account_field()
 
-add_vat_account_field = (rate, vat_account) ->
+add_vat_account_field = (rate, vat_account, conterpart_account) ->
   input_field = '<div class="form-group clearfix string optional account_book_type_vat_accounts">'
   input_field += '<div class="label-section">'
   input_field += '<input class="form-control string optional vat_accounts_label account_book_type_label_vat_accounts" type="number" name="account_book_type[vat_accounts_label]" value="' + rate + '" min="1" max="20" step="0.1" id="account_book_type_label_vat_accounts" data-toggle="tooltip" data-placement="top" title="Taux de TVA (1-20)%" style="height: 31px;">'
@@ -83,8 +83,13 @@ add_vat_account_field = (rate, vat_account) ->
   input_field += '</div>'
   input_field += '<div class="control-section">'
   input_field += '<div class="row">'
-  input_field += '<div class="col-10" style="margin-right: -36px;">'
-  input_field += '<input class="form-control string optional vat_accounts" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_vat_accounts">'
+  input_field += '<div class="col-5">'
+  input_field += '<input class="form-control string optional vat_accounts" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_vat_accounts_'+ vat_account + '" data-toggle="tooltip" data-placement="top" title="Compte de TVA relative au taux">'
+  input_field += '<i class="help-block">Compte de TVA relative au taux</i>'
+  input_field += '</div>'
+  input_field += '<div class="col-5" style="margin-right: -36px;">'
+  input_field += '<input class="form-control string optional vat_accounts_conterpart" type="text" name="account_book_type[vat_accounts_conterpart]" value="' + conterpart_account + '" id="account_book_type_vat_accounts_'+ conterpart_account + '" data-toggle="tooltip" data-placement="top" title="Compte contre partie relative au taux">'
+  input_field += '<i class="help-block">Compte contre partie relative au taux</i>'
   input_field += '</div>'
   input_field += '<div class="col-1 float-right margin1left" style="margin-right: 10px;">'
   input_field += '<a id="remove_vat_accounts_field" href="#" class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Supprimer">X</a>'
@@ -115,7 +120,7 @@ add_vat_account_field = (rate, vat_account) ->
         $('#errmsg').html('Taux de TVA doit être inclus entre (1-20%)').show().delay(5000).fadeOut 'slow'
         return false
 
-add_default_vat_account = (vat_account) ->
+add_default_vat_account = (vat_account, conterpart_account) ->
   input_field = '<div class="form-group clearfix string optional account_book_type_vat_accounts" id="account_book_type_with_default_vat_accounts">'
   input_field += '<div class="label-section">'
   input_field += '<input class="form-control string optional vat_accounts_label" type="text" name="account_book_type[vat_accounts_label]" value="Compte de TVA par défaut" id="account_book_type_default_label_vat_accounts" style="height: 31px;" disabled>'
@@ -123,9 +128,13 @@ add_default_vat_account = (vat_account) ->
   input_field += '</div>'
   input_field += '<div class="control-section">'
   input_field += '<div class="row">'
-  input_field += '<div class="col-10" style="margin-right: -36px;">'
-  input_field += '<input class="form-control string optional vat_accounts" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_default_vat_accounts">'
-  input_field += '<i class="help-block">' + vat_account_info("hint_input") + '</i>'
+  input_field += '<div class="col-5">'
+  input_field += '<input class="form-control string optional vat_accounts" type="text" name="account_book_type[vat_accounts_rate]" value="' + vat_account + '" id="account_book_type_default_vat_accounts" data-toggle="tooltip" data-placement="top" title="Compte de TVA relative au taux">'
+  input_field += '<i class="help-block">Compte de TVA relative au taux : ' + vat_account_info("hint_input") + '</i>'
+  input_field += '</div>'
+  input_field += '<div class="col-5" style="margin-right: -36px;">'
+  input_field += '<input class="form-control string optional vat_accounts_conterpart" type="text" name="account_book_type[vat_accounts_conterpart]" value="' + conterpart_account + '" id="account_book_type_default_conterpart_accounts" data-toggle="tooltip" data-placement="top" title="Compte contre partie relative au taux">'
+  input_field += '<i class="help-block">Compte contre partie relative au taux</i>'
   input_field += '</div>'
   input_field += '</div>'
   input_field += '</div>'
@@ -134,22 +143,27 @@ add_default_vat_account = (vat_account) ->
   $('.pre-assignment-attributes .vat_account_field, #pre-assignment-attributes .vat_account_field').after(input_field)
 
 show_vat_account_field = ->
-  add_default_vat_account(445660)
+  add_default_vat_account(445660, 70054614)
 
   vat_accounts = $('input[type=hidden]#account-book-type-vat-accounts-hidden').val()
   if !(vat_accounts == '' || vat_accounts == null || vat_accounts == 'undefined' || vat_accounts == undefined)
     try
       vat_accounts = JSON.parse(vat_accounts)
-      for rate, vat_account of vat_accounts
+      for rate, raw_vat_account of vat_accounts
+        vat_account = raw_vat_account[0]
+        conterpart_account = raw_vat_account[1]
         if /Compte de TVA par défaut/.test(rate) || rate == '0'
           $('input[type="text"]#account_book_type_default_vat_accounts').val(vat_account)
           $('input[type="text"]#account_book_type_default_vat_accounts').change()
+          $('input[type="text"]#account_book_type_default_conterpart_accounts').val(conterpart_account || 70054614)
+          $('input[type="text"]#account_book_type_default_conterpart_accounts').change()
 
           if $('.account_book_type_vat_accounts.error').length > 0
             $('input[type="text"]#account_book_type_default_vat_accounts').css("border", "1px solid #b94a48")
             $('input[type="text"]#account_book_type_default_vat_accounts').val("")
-        if !(rate == '' || rate == 'undefined' || rate == null || rate == undefined || vat_account == '' || vat_account == 'undefined' || vat_account == null || vat_account == undefined || /Compte de TVA par défaut/.test(rate) || rate == '0')
-          add_vat_account_field(rate, vat_account)
+            $('input[type="text"]#account_book_type_default_conterpart_accounts').val("")
+        else if !(rate == '' || rate == 'undefined' || rate == null || rate == undefined || vat_account == '' || vat_account == 'undefined' || vat_account == null || vat_account == undefined || /Compte de TVA par défaut/.test(rate) || rate == '0')
+          add_vat_account_field(rate, vat_account, conterpart_account)
     catch e
       return false
 
@@ -166,13 +180,14 @@ window.on_submit_form = (form)->
   $(form).each (index,element) ->
     vat_account = $(this)
     label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
-    field = vat_account.find('input[type="text"].vat_accounts').val()
+    vat_accounts_field = vat_account.find('input[type="text"].vat_accounts').val()
+    conterpart_vat_accounts_field = vat_account.find('input[type="text"].vat_accounts_conterpart').val()
 
     if label == 'Compte de TVA par défaut'
       label = '0'
 
-    if !(/undefined/.test(field) || /undefined/.test(label) || label == null || label == undefined || label == '' || field == null || field == '' || field == undefined)
-      vat_accounts[label] = field
+    if !(/undefined/.test(vat_accounts_field) || /undefined/.test(label) || label == null || label == undefined || label == '' || vat_accounts_field == null || vat_accounts_field == '' || vat_accounts_field == undefined)
+      vat_accounts[label] = [vat_accounts_field, conterpart_vat_accounts_field]
   vat_accounts = JSON.stringify(vat_accounts)
   $('input[type=hidden]#account-book-type-vat-accounts-hidden').val(vat_accounts)
 

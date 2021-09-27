@@ -18,7 +18,7 @@ class AccountBookType < ApplicationRecord
       journal.account_number         = ''
       journal.default_account_number = ''
       journal.charge_account         = ''
-      journal.vat_accounts           = '{"0":""}'
+      journal.vat_accounts           = '{"0":["", ""]}'
       journal.anomaly_account        = ''
     end
   end
@@ -122,7 +122,7 @@ class AccountBookType < ApplicationRecord
 
 
   def get_vat_accounts_of(rate)
-    JSON.parse(vat_accounts)[rate.to_s] if !vat_accounts.nil?
+    JSON.parse(vat_accounts)[rate.to_s][0] if !vat_accounts.nil?
   end
 
 
@@ -130,7 +130,7 @@ class AccountBookType < ApplicationRecord
     vat_accounts_content = []
     raw_vat_accounts     = JSON.parse(vat_accounts) if !vat_accounts.nil?
     raw_vat_accounts.each do |rate, vat_account|
-      vat_accounts_content << vat_account if vat_account.present?
+      vat_accounts_content << vat_account[0] if vat_account.present?
     end
 
     vat_accounts_content
@@ -176,7 +176,7 @@ class AccountBookType < ApplicationRecord
     self.account_number                 = nil   if account_number.present?
     self.default_account_number         = nil   if default_account_number.present?
     self.charge_account                 = nil   if charge_account.present?
-    self.vat_accounts                   = '{"0":""}'   if vat_accounts.present?
+    self.vat_accounts                   = '{"0":["", ""]}'   if vat_accounts.present?
     self.anomaly_account                = nil   if anomaly_account.present?
     self.is_expense_categories_editable = false if is_expense_categories_editable.present?
   end
