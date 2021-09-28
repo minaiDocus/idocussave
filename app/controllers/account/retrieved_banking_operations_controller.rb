@@ -82,7 +82,7 @@ class Account::RetrievedBankingOperationsController < Account::RetrieverControll
     operations = operations.where(bank_account_id: bank_account_ids)
 
     if permit_params
-      _param = banking_options_params.permit!
+      _param = banking_options_params.try(:permit!)
     else
       _param = banking_options_params
     end
