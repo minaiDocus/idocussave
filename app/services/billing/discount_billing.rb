@@ -39,7 +39,12 @@ class Billing::DiscountBilling
       discount_title << "iDofacb. : #{unit_amount(:retriever)} € x #{classic_quantity_of(:retriever)}" if unit_amount(:retriever) < 0
     end
 
-    discount_title << '- 75 dossiers' if discount_title.empty?
+    if special2_group?
+      discount_title << '- 250 dossiers' if discount_title.empty?
+    else
+      discount_title << '- 75 dossiers' if discount_title.empty?
+    end
+
     "Remise sur CA (#{discount_title.join(', ')})"
   end
 
