@@ -131,6 +131,7 @@ class Billing::UpdatePeriod
     return @remaining_months_option unless @remaining_months_option.nil?
 
     @remaining_months_option = ''
+
     months_remaining = difference_in_months(@period.end_date, @subscription.end_date) - 1
 
     if @subscription.user.inactive? && months_remaining > 0
@@ -272,8 +273,10 @@ class Billing::UpdatePeriod
   end
 
   def difference_in_months(date1, date2)
-    month_count = (date2.year == date1.year) ? (date2.month - date1.month) : (12 - date1.month + date2.month)
-    month_count = (date2.year == date1.year) ? (month_count + 1) : (((date2.year - date1.year - 1 ) * 12) + (month_count + 1))
+    return 0 if date1.blank? || date2.blank?
+
+    month_count = (date2.try(:year) == date1.try(:year)) ? (date2.month - date1.month) : (12 - date1.month + date2.month)
+    month_count = (date2.try(:year) == date1.try(:year)) ? (month_count + 1) : (((date2.year - date1.year - 1 ) * 12) + (month_count + 1))
     month_count
   end
 
