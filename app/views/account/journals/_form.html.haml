@@ -89,6 +89,11 @@
             %fieldset{class: 'border p-2', style: 'border:1px solid #999; border-radius:0px; box-shadow:1px 11px 10px #999; padding: 17px !important'}
               %legend{class: 'w-auto vat_account_field', style: 'padding: 0.2em 0.5em; font-size:90%; text-align:center; position: relative'} Compte de TVA
               - if !@customer || @customer.options.is_taxable
+                .form-group.clearfix.string.optional.account_book_type_vat_accounts#vat_account_exonorated
+                  .label-section
+                    %label Compte exonoré de TVA:
+                  .control-section
+                    %input{type: 'text', name: 'account_book_type[vat_account_exonorated]', id: 'account_book_type_vat_account_exonorated', class: 'form-control string optional vat_account_exonorated', style: 'width: 82.5%;', title: 'Compte exonoré au TVA', data: { toggle: 'tooltip', placement: 'top'}}
                 - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
                 = hidden_field_tag 'required_new_vat_accounts_element', 'can_be_required', hint_input: hint, hint_label: 'Compte de TVA par défaut appliqué à tous les documents dans le journal comptable iDocus'
                 = f.input :vat_accounts, as: :hidden, input_html: { id: 'account-book-type-vat-accounts-hidden' }

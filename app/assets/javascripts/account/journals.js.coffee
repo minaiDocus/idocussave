@@ -140,7 +140,7 @@ add_default_vat_account = (vat_account, conterpart_account) ->
   input_field += '</div>'
   input_field += '</div>'
 
-  $('.pre-assignment-attributes .vat_account_field, #pre-assignment-attributes .vat_account_field').after(input_field)
+  $('.pre-assignment-attributes #vat_account_exonorated, #pre-assignment-attributes #vat_account_exonorated').after(input_field)
 
 show_vat_account_field = ->
   add_default_vat_account(445660, '')
@@ -162,6 +162,9 @@ show_vat_account_field = ->
             $('input[type="text"]#account_book_type_default_vat_accounts').css("border", "1px solid #b94a48")
             $('input[type="text"]#account_book_type_default_vat_accounts').val("")
             $('input[type="text"]#account_book_type_default_conterpart_accounts').val("")
+        else if rate == '-1'
+          $('input[type="text"]#account_book_type_vat_account_exonorated').val(vat_account)
+          $('input[type="text"]#account_book_type_vat_account_exonorated').change()
         else if !(rate == '' || rate == 'undefined' || rate == null || rate == undefined || vat_account == '' || vat_account == 'undefined' || vat_account == null || vat_account == undefined || /Compte de TVA par défaut/.test(rate) || rate == '0')
           add_vat_account_field(rate, vat_account, conterpart_account)
     catch e
@@ -182,6 +185,10 @@ window.on_submit_form = (form)->
     label = vat_account.find('input[type="text"].vat_accounts_label, input[type="number"].vat_accounts_label').val()
     vat_accounts_field = vat_account.find('input[type="text"].vat_accounts').val()
     conterpart_vat_accounts_field = vat_account.find('input[type="text"].vat_accounts_conterpart').val()
+    vat_account_exonorated_field = vat_account.find('input[type="text"].vat_account_exonorated').val()
+
+    if !(vat_account_exonorated_field == null || vat_account_exonorated_field == '' || vat_account_exonorated_field == undefined)
+      vat_accounts['-1'] = [vat_account_exonorated_field]
 
     if label == 'Compte de TVA par défaut'
       label = '0'
