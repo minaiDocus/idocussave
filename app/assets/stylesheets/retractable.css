@@ -204,6 +204,8 @@ tbody.retractable.slidedown tr {
 
 .logo img{
   position: relative;
+  width: 85%;
+  height: 43%;
   animation-name: showLogo;
   animation-duration: 1.8s;
   animation-fill-mode: forwards;
