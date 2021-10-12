@@ -317,7 +317,7 @@ class Billing::UpdatePeriod
     reduced      = (@subscription.retriever_price_option == :retriever)? false : true
     amount       = Subscription::Package.price_of(:retriever_option, reduced) * 100.0
 
-    operations_dates = @period.user.operations.where("DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime('%Y%m')}").map{|ope| ope.date.strftime('%Y%m')}.uniq
+    operations_dates = @period.user.operations.where.not(processed_at: nil).where("is_locked = false AND DATE_FORMAT(created_at, '%Y%m') = #{@period.start_date.strftime('%Y%m')}").map{|ope| ope.date.strftime('%Y%m')}.uniq
     period_dates     = @period.user.periods.map{|_period| _period.start_date.strftime('%Y%m')}.uniq
 
     rest = operations_dates - period_dates
