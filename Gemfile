@@ -103,7 +103,7 @@ gem 'd3_rails'
 gem 'mysql2'
 
 # Scheduling Jobs
-gem 'sidekiq', '5.2.7'
+gem 'sidekiq', '6.4.0'
 gem 'sidekiq-scheduler'
 gem 'sidekiq-unique-jobs'
 
